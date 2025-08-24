@@ -26,8 +26,9 @@ import randoop.util.Randomness;
  * <p>Specifically, this fuzzer:
  *
  * <ol>
- *   <li>Randomly picks one impure method whose signature includes the target's type.
- *   <li>Randomly chooses which parameter slot to supply the target into.
+ *   <li>Randomly picks one side-effecting method whose signature includes the target's type.
+ *   <li>Randomly chooses which parameter slot to supply the target into (if there are multiple
+ *       possibilities).
  *   <li>Fills the other slots by pulling sequences from the ComponentManager's sequence collection.
  *   <li>Appends the new call to the sequence.
  * </ol>
@@ -36,13 +37,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Singleton instance. */
   private static final GrtObjectFuzzer INSTANCE = new GrtObjectFuzzer();
 
-  /**
-   * Cache mapping types to lists of operations that can be applied to mutate values of that type.
-   * None of the operations in the map are annotated with
-   * {@code @org.checkerframework.dataflow.qual.Pure} or
-   * {@code @org.checkerframework.dataflow.qual.SideEffectFree}.
-   */
-  private final Map<Type, List<TypedOperation>> operationsByType = new HashMap<>();
+  /** Maps a type to operations that mutate values of that type. */
+  private final Map<Type, List<TypedOperation>> mutatorsByType = new HashMap<>();
 
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
@@ -50,8 +46,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Whether this fuzzer has been initialized. */
   private boolean initialized = false;
 
-  /** Cache of resolved unions so we don't recompute ancestor walks. */
-  private final Map<Type, List<TypedOperation>> unionCache = new HashMap<>();
+  /** Resolved unions to avoid recomputing ancestor walks. */
+  private final Map<Type, List<TypedOperation>> typeToUnion = new HashMap<>();
 
   /**
    * Get the singleton instance of {@link GrtObjectFuzzer}.
@@ -69,19 +65,18 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
   /**
    * Initialize once with side-effecting operations and component manager. Later calls are no-ops.
-   * This is based on the expectation that each Randoop run has already collected all the
-   * side-effecting operations and the component manager should not change during the run.
+   * This is based on the expectation that Randoop has already collected all the side-effecting
+   * operations and the component manager should not change during the run.
    *
-   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer (not annotated
-   *     with Checker Framework's {@code @Pure} or {@code @SideEffectFree})
+   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer
    * @param cm the component manager to use for getting sequences for types (should not be null)
    */
   public void initializeIfNeeded(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
     if (initialized) {
       return;
     }
-    operationsByType.clear();
-    unionCache.clear();
+    mutatorsByType.clear();
+    typeToUnion.clear();
     addOperations(sideEffectOps);
     this.componentManager = cm;
     initialized = true;
@@ -93,28 +88,17 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Indexes side-effecting operations by input type for the fuzzer.
+   * Adds side-effecting operations to this fuzzer.
    *
-   * @param operations a set of operations to index, all containing side effects (not annotated with
-   *     Checker Framework's {@code @Pure} or {@code @SideEffectFree})
-   * @throws IllegalArgumentException if the operation set is null
+   * @param mutators a set of side-effecting operations to index
    */
-  private void addOperations(Set<TypedOperation> operations) {
-    if (operations == null) {
-      throw new IllegalArgumentException("Operations list cannot be null");
-    }
-
-    if (operations.isEmpty()) {
-      return; // Nothing to add, no operations to index.
-    }
-
-    // Build the type-to-operations map, for quick access later.
-    for (TypedOperation op : operations) {
+  private void addOperations(Set<TypedOperation> mutators) {
+    // Build the type-to-mutators map, for quick access later.
+    for (TypedOperation op : mutators) {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
-        Type type = inputTypes.get(i);
-        type = erase(type);
-        operationsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+        Type type = erase(inputTypes.get(i));
+        mutatorsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
       }
     }
   }
@@ -130,18 +114,18 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       return new VarAndSeq(variable, sequence);
     }
 
-    TypeTuple formals = mutationOp.getInputTypes();
-    int fuzzParamPos = selectFuzzParameterPosition(formals, typeToFuzz, mutationOp);
+    TypeTuple formalTypes = mutationOp.getInputTypes();
+    int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz, mutationOp);
 
     // Keep track of the sequences to concatenate and the index of the necessary variable in each.
-    List<Sequence> sequencesToConcat = new ArrayList<>(formals.size());
-    List<Integer> varIndicesInEachSeq = new ArrayList<>(formals.size());
+    List<Sequence> sequencesToConcat = new ArrayList<>(formalTypes.size());
+    List<Integer> varIndicesInEachSeq = new ArrayList<>(formalTypes.size());
     int targetParamPos = -1; // Initialize to an invalid position.
 
     // Collect input sequences for each formal parameter.
-    for (int i = 0; i < formals.size(); i++) {
-      Type formalType = formals.get(i);
-      if (formalType.isAssignableFrom(typeToFuzz) && i == fuzzParamPos) {
+    for (int i = 0; i < formalTypes.size(); i++) {
+      Type formalType = formalTypes.get(i);
+      if (formalType.isAssignableFrom(typeToFuzz) && i == fuzzParam) {
         sequencesToConcat.add(sequence);
         varIndicesInEachSeq.add(variable.index);
         targetParamPos = i; // Remember where the target variable goes.
@@ -157,14 +141,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         Sequence candidateSeq = Randomness.randomMember(candidates);
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
         if (candidateVar == null) {
-          return new VarAndSeq(
-              variable, sequence); // No variable of the required type in the candidate sequence.
+          // No variable of the required type in the candidate sequence.
+          return new VarAndSeq(variable, sequence);
         }
 
         Type candType = candidateVar.getType();
         if (!formalType.isAssignableFrom(candType)) {
-          return new VarAndSeq(
-              variable, sequence); // The candidate variable's type does not match the formal type.
+          // The candidate variable's type does not match the formal type.
+          return new VarAndSeq(variable, sequence);
         }
 
         sequencesToConcat.add(candidateSeq);
@@ -175,7 +159,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     Sequence concatenated = Sequence.concatenate(sequencesToConcat);
 
     // Precompute offsets of each block within the concatenated sequence.
-    int paramCount = formals.size();
+    int paramCount = formalTypes.size();
     int[] offsets = new int[paramCount];
     int acc = 0;
     for (int i = 0; i < paramCount; i++) {
@@ -247,19 +231,20 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * Returns a list of operations that can be applied to the given type.
    *
    * @param t the type to check for applicable operations
-   * @return a list of operations that can be applied to the type, or an empty list if no operations
-   *     are applicable
+   * @return a list of operations that can be applied to the type; may be an empty list
    */
   private List<TypedOperation> getApplicableOps(Type t) {
     Type root = erase(t);
-    return unionCache.computeIfAbsent(
+    return typeToUnion.computeIfAbsent(
         root,
         k -> {
           // Preserve insertion order & dedup
           java.util.LinkedHashSet<TypedOperation> set = new java.util.LinkedHashSet<>();
-          for (Type a : ancestorsAndSelf(root)) {
-            List<TypedOperation> list = operationsByType.get(a);
-            if (list != null) set.addAll(list);
+          for (Type a : supertypes(root)) {
+            List<TypedOperation> list = mutatorsByType.get(a);
+            if (list != null) {
+              set.addAll(list);
+            }
           }
           return new ArrayList<>(set);
         });
@@ -290,62 +275,49 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * Without this selection, we might generate mutations that don't exercise the target variable.
    *
-   * @param formals the formal parameter types of the mutation operation
+   * @param formalTypes the formal parameter types of the mutation operation
    * @param typeToFuzz the type of the target variable to fuzz
    * @param mutationOp the operation being mutated (used for error reporting)
    * @return the index of the selected parameter position
-   * @throws RandoopBug if no compatible parameter positions exist (indicating improper operation
-   *     filtering)
    */
-  private int selectFuzzParameterPosition(
-      TypeTuple formals, Type typeToFuzz, TypedOperation mutationOp) {
-    List<Integer> candidateParamPositions = new ArrayList<>();
-    for (int i = 0; i < formals.size(); i++) {
-      if (formals.get(i).isAssignableFrom(typeToFuzz)) {
+  private int selectFuzzParameter(
+      TypeTuple formalTypes, Type typeToFuzz, TypedOperation mutationOp) {
+    List<Integer> candidateParamPositions = new ArrayList<>(2);
+    for (int i = 0; i < formalTypes.size(); i++) {
+      if (formalTypes.get(i).isAssignableFrom(typeToFuzz)) {
         candidateParamPositions.add(i);
       }
     }
 
-    // No candidate positions found for the type to fuzz.
-    // This should not happen, as we have already checked that the operation is applicable to the
-    // type to fuzz.
     if (candidateParamPositions.isEmpty()) {
-      throw new RandoopBug(
-          "No candidate positions found for the type "
-              + typeToFuzz
-              + " in the operation "
-              + mutationOp
-              + ". This should not happen.");
+      throw new RandoopBug("No candidate positions found for " + typeToFuzz + " in " + mutationOp);
     }
+
     return Randomness.randomMember(candidateParamPositions);
   }
 
   /**
-   * Returns a canonical/erased view of a type. For parameterized class/interface types, this
-   * returns the raw type; otherwise it returns the type unchanged.
+   * Returns an erased (raw) type. Returns the type unchanged if it is not a parameterized
+   * class/interface.
    *
-   * @param t the type to erase (non-null)
-   * @return the erased/canonical type
+   * @param t the type to erase
+   * @return the erased type
    */
   private Type erase(Type t) {
-    if (t == null) {
-      throw new IllegalArgumentException("type cannot be null");
-    }
     Type raw = t.getRawtype(); // Randoop's API: raw type for generics
     return (raw != null) ? raw : t;
   }
 
   /**
-   * Performs a breadth-first traversal over the given type and its ancestors (superclasses and
-   * interfaces), returning the erased form of each in order.
-   *
-   * <p>Order: the starting type first, then superclass, then interfaces, then their ancestors.
-   * Duplicates are removed while preserving order.
+   * Performs a breadth-first traversal over the given type and its supertypes. Returns the erased
+   * form of each in this order: first the erasure of the argument `t`, then its immediate
+   * superclass and interfaces, then their supertypes. Duplicates are removed while preserving
+   * order.
    *
    * @param t the starting type
    * @return a list of erased types including {@code t} and all ancestors
    */
-  private List<Type> ancestorsAndSelf(Type t) {
+  private List<Type> supertypes(Type t) {
     Type start = erase(t);
 
     // Non-class/interface types (primitives, arrays) have no ancestors.
@@ -356,12 +328,12 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     java.util.Deque<Type> queue = new java.util.ArrayDeque<>();
-    java.util.LinkedHashSet<Type> visited = new java.util.LinkedHashSet<>();
+    java.util.LinkedHashSet<Type> result = new java.util.LinkedHashSet<>();
 
     queue.add(start);
     while (!queue.isEmpty()) {
       Type next = erase(queue.removeFirst());
-      if (!visited.add(next)) {
+      if (!result.add(next)) {
         continue; // already processed
       }
       if (next instanceof ClassOrInterfaceType) {
@@ -377,6 +349,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         }
       }
     }
-    return new ArrayList<>(visited);
+    return new ArrayList<>(result);
   }
 }
