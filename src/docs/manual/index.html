@@ -1548,7 +1548,7 @@ The replacecall agent never modifies
 
 <p>
 You can exclude additional packages from being transformed.
-Create an exclusion file <code>replacecall-exclusions.txt</code> containing, for example:
+Create an exclusion file <code>dont-transform.txt</code> containing, for example:
 </p>
 <pre>
 mypackage.mysubpackage.
@@ -1558,7 +1558,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt
 </pre>
 
 <p>
@@ -1586,12 +1586,19 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
-Each line of a replacement file is whitespace-separated package names
-(replace all calls in all methods of all classes in the package and its
-subpackages), or whitespace-separated class names (replace all methods in
-the class), or whitespace-separated method signatures without return
-types (replace the first method by the second).
+Each line of a replacement file is one of:
 </p>
+<ul>
+  <li>two whitespace-separated package names (replace all calls in all methods
+    of all classes in the package and its subpackages)
+  </li>
+  <li>two whitespace-separated class names (replace all methods in the class)
+  </li>
+  <li>two whitespace-separated method signatures without return
+    types (replace the first method by the second)
+  </li>
+</ul>
+
 
 <p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
