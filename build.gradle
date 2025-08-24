@@ -224,7 +224,7 @@ dependencies {
   implementation 'org.apache.commons:commons-lang3:3.18.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
-  compileOnly 'org.plumelib:require-javadoc:1.0.9'
+  compileOnly 'org.plumelib:require-javadoc:2.0.0'
 
   compileOnly "org.checkerframework:checker-qual:${versions.checkerFramework}"
   implementation "org.checkerframework:checker-qual:${versions.checkerFramework}"
