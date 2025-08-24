@@ -11,7 +11,6 @@ import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
-import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
@@ -30,7 +29,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
-import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -78,14 +76,6 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   /**
-   * The set of all primitive values seen during generation and execution of sequences. This set is
-   * used to tell if a new primitive value has been generated, to add the value to the components.
-   *
-   * <p>Each value in the collection is a primitive wrapper or a String.
-   */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
-
-  /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
@@ -131,8 +121,6 @@ public class ForwardGenerator extends AbstractGenerator {
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.instantiator = componentManager.getTypeInstantiator();
 
-    initializeRuntimePrimitivesSeen();
-
     switch (GenInputsAbstract.method_selection) {
       case UNIFORM:
         this.operationSelector = new UniformRandomMethodSelection(operations);
@@ -168,22 +156,6 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public void newRegressionTestHook(Sequence sequence) {
     operationSelector.newRegressionTestHook(sequence);
-  }
-
-  /**
-   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
-   * used to determine new values that should be added to the component set. The component set
-   * initially contains a set of primitive sequences; this method puts those primitives in this set.
-   */
-  // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
-    for (Sequence s : componentManager.getAllPrimitiveSequences()) {
-      ExecutableSequence es = new ExecutableSequence(s);
-      es.execute(new DummyVisitor(), new DummyCheckGenerator());
-      NormalExecution e = (NormalExecution) es.getResult(0);
-      Object runtimeValue = e.getRuntimeValue();
-      runtimePrimitivesSeen.add(runtimeValue);
-    }
   }
 
   @Override
@@ -395,7 +367,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (runtimeValue instanceof Float && Float.isNaN((float) runtimeValue)) {
           runtimeValue = Float.NaN; // canonicalize NaN value
         }
-        if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
+        if (!looksLikeObjToString && !tooLongString) {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
@@ -968,10 +940,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 "invalid seqs: " + invalidSequenceCount,
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
-            String.join(
-                ", ",
-                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
-        + ")";
+            String.join(", ", "sideEffectFreeMethods: " + sideEffectFreeMethods.size()))
+        + ")"; // matches open paren in "ForwardGenerator(".
   }
 }
