@@ -149,7 +149,7 @@ public final class ObserverEqArray extends ObjectContract {
    * @return a Java array constructor expression for this
    */
   private String newArrayExpression() {
-    return "new " + value.getClass().getCanonicalName() + arrayComponentsToString();
+    return "new " + value.getClass().getCanonicalName() + arrayComponentsToJavaString();
   }
 
   /**
@@ -158,7 +158,7 @@ public final class ObserverEqArray extends ObjectContract {
    *
    * @return a String that represents the components of the array
    */
-  private String arrayComponentsToString() {
+  private String arrayComponentsToJavaString() {
     StringJoiner sj = new StringJoiner(", ", "{", "}");
     int length = Array.getLength(value);
     for (int i = 0; i < length; i++) {
@@ -224,6 +224,6 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toString() {
-    return "ObserverEqArray(" + arrayComponentsToString() + ")";
+    return "ObserverEqArray(" + arrayComponentsToJavaString() + ")";
   }
 }
