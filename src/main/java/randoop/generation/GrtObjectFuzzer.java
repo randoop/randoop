@@ -20,15 +20,15 @@ import randoop.types.TypeTuple;
 import randoop.util.Randomness;
 
 /**
- * Fuzzer that applies a single side‐effecting operation to a variable within a test sequence to
+ * Fuzzer that applies a single side-effecting operation to a variable within a test sequence to
  * explore the stateful behavior (impurity) of that object.
  *
  * <p>Specifically, this fuzzer:
  *
  * <ol>
- *   <li>Randomly picks one impure method whose signature includes the target’s type.
+ *   <li>Randomly picks one impure method whose signature includes the target's type.
  *   <li>Randomly chooses which parameter slot to supply the target into.
- *   <li>Fills the other slots by pulling sequences from the ComponentManager’s sequence collection.
+ *   <li>Fills the other slots by pulling sequences from the ComponentManager's sequence collection.
  *   <li>Appends the new call to the sequence.
  * </ol>
  */
@@ -126,7 +126,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     Type typeToFuzz = variable.getType();
     TypedOperation mutationOp = selectMutationOperation(typeToFuzz);
     if (mutationOp == null) {
-      // No applicable operation for this type—return the original sequence unchanged.
+      // No applicable operation for this type -- return the original sequence unchanged.
       return new VarAndSeq(variable, sequence);
     }
 
@@ -225,8 +225,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
     if (componentManager == null) {
-      throw new RandoopBug(
-          "Component manager is not set. Initialize the fuzzer with a component manager before fuzzing.");
+      throw new RandoopBug("Component manager is not set. Initialize the fuzzer before fuzzing.");
     }
     if (variable == null) {
       throw new RandoopBug("Variable to fuzz is null.");
