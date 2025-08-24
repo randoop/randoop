@@ -52,7 +52,10 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
-          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a>
+            <ul>
+              <li><a href="#replacecall-exclude">Excluding methods from default replacements</a></li>
+            </ul></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
@@ -1568,7 +1571,7 @@ If a package name does not end with a period, one will be added.
 The package name is used to match the prefix of the fully-qualified classname.
 </p>
 
-<h4 id="replacecall-exclude">Excluding Methods from Default Replacements</h4>
+<h4 id="replacecall-exclude">Excluding methods from default replacements</h4>
 
 <p>
   The <code>--replacecall-exclude</code> option lets you prevent <em>specific</em> default
@@ -1642,12 +1645,19 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
-Each line of a replacement file is whitespace-separated package names
-(replace all calls in all methods of all classes in the package and its
-subpackages), or whitespace-separated class names (replace all methods in
-the class), or whitespace-separated method signatures without return
-types (replace the first method by the second).
+Each line of a replacement file is one of:
 </p>
+<ul>
+  <li>two whitespace-separated package names (replace all calls in all methods
+    of all classes in the package and its subpackages)
+  </li>
+  <li>two whitespace-separated class names (replace all methods in the class)
+  </li>
+  <li>two whitespace-separated method signatures without return
+    types (replace the first method by the second)
+  </li>
+</ul>
+
 
 <p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
