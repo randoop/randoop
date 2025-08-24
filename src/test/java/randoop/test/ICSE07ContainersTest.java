@@ -100,7 +100,8 @@ public class ICSE07ContainersTest {
     assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
-    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager componentMgr =
+        new ComponentManager(SeedSequences.defaultSeeds(), accessibility);
     assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
