@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,18 @@ public class ReplaceCallAgent {
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
   public static @Nullable Path dont_transform = null;
+
+  /** Comma-separated list of default replacement method signatures to exclude. */
+  @SuppressWarnings("WeakerAccess")
+  @Option(
+      "comma-separated list of default replacement method signatures to exclude; "
+          + "accepts colon/JVM-descriptor form, e.g. 'java.lang.System.exit:(I)V'")
+  public static @Nullable String replacecall_exclude = null;
+
+  /** File that lists default replacement method signatures to exclude. */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing default replacement method signatures to exclude (one per line)")
+  public static @Nullable Path replacecall_exclude_file = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -167,6 +180,54 @@ public class ReplaceCallAgent {
         }
       }
 
+      // Remove (or override) excluded default replacements.
+      if (replacecall_exclude != null || replacecall_exclude_file != null) {
+        // Parse exclusions to MethodSignature objects (supports multiple input formats).
+        Set<MethodSignature> excludeSignatures = new LinkedHashSet<>();
+
+        // From CLI CSV
+        if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
+          for (String raw : replacecall_exclude.split(",")) {
+            trimAndParseExcludedSignature(excludeSignatures, raw);
+          }
+        }
+
+        // From the file (one per line, '#' comments allowed)
+        if (replacecall_exclude_file != null) {
+          Path excludeFile = replacecall_exclude_file;
+          try (Reader r = Files.newBufferedReader(excludeFile, StandardCharsets.UTF_8)) {
+            for (String line : new EntryReader(r, excludeFile.toString(), "#.*$", null)) {
+              trimAndParseExcludedSignature(excludeSignatures, line);
+            }
+          } catch (IOException e) {
+            System.err.printf(
+                "Error reading replacement exclusion file %s:%n %s%n", excludeFile, e.getMessage());
+            System.exit(1);
+          }
+        }
+
+        // 1) Handle any method-level exclusions.
+        Set<MethodSignature> toRemove = new HashSet<>();
+        for (MethodSignature key : replacementMap.keySet()) {
+          if (excludeSignatures.contains(key)) {
+            toRemove.add(key);
+          }
+        }
+        replacementMap.keySet().removeAll(toRemove);
+
+        // 2) For exclusions that did not match an existing method-level key, install an
+        //    identity override (src -> src). This cancels a class-level mapping for just that
+        // method.
+        Set<MethodSignature> unmatched = new LinkedHashSet<>(excludeSignatures);
+        unmatched.removeAll(toRemove);
+        for (MethodSignature ms : unmatched) {
+          replacementMap.put(ms, ms);
+          if (verbose) {
+            System.err.println("Installed identity override for exclusion: " + ms);
+          }
+        }
+      }
+
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
       Path replacementFilePath = null;
@@ -234,6 +295,27 @@ public class ReplaceCallAgent {
   }
 
   /**
+   * Trims the given string and parses it as a {@link MethodSignature} to add to the set of excluded
+   * signatures.
+   *
+   * @param excludeSignatures the set of excluded method signatures to which the parsed signature is
+   *     added
+   * @param text the string to parse as a method signature
+   */
+  private static void trimAndParseExcludedSignature(
+      Set<MethodSignature> excludeSignatures, String text) {
+    String s = text.trim();
+    if (!s.isEmpty()) {
+      MethodSignature ms = parseExcludedSignature(s);
+      if (ms != null) {
+        excludeSignatures.add(ms);
+      } else if (verbose) {
+        System.err.println("Warning: could not parse replacecall exclusion '" + s + "'");
+      }
+    }
+  }
+
+  /**
    * Load package names from the given file and add them to the set of excluded package names. Adds
    * a period to the end of any name that does not have one.
    *
@@ -258,6 +340,116 @@ public class ReplaceCallAgent {
       }
     }
     return excludedPackagePrefixes;
+  }
+
+  /**
+   * Parses an exclusion string into a {@link MethodSignature}.
+   *
+   * <p>Accepts the colon/JVM-descriptor form: {@code pkg.Clazz.method:(...)}. Examples: {@code
+   * java.lang.System.exit:(I)V}, {@code
+   * java.util.Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;}
+   *
+   * <p>Returns null if parsing fails.
+   *
+   * @param text the string to parse
+   * @return the parsed {@link MethodSignature} or null if parsing fails
+   */
+  private static @Nullable MethodSignature parseExcludedSignature(String text) {
+    String s = text.trim();
+
+    int colon = s.indexOf(':');
+    if (colon > 0 && s.indexOf('(') > colon) {
+      String ownerAndName = s.substring(0, colon);
+      int dot = ownerAndName.lastIndexOf('.');
+      if (dot > 0) {
+        String owner = ownerAndName.substring(0, dot);
+        String name = ownerAndName.substring(dot + 1);
+        String jvmDesc = s.substring(colon + 1); // "(..)[ret]"
+        String paramList = methodDescriptorToParamBinaryNames(jvmDesc);
+        if (paramList != null) {
+          try {
+            return MethodSignature.of(owner + "." + name + "(" + paramList + ")");
+          } catch (IllegalArgumentException ignored) {
+            return null;
+          }
+        }
+      }
+    }
+
+    // Any other format is not supported.
+    return null;
+  }
+
+  /**
+   * Converts a JVM method descriptor to a comma-separated list of formal parameter types, in binary
+   * name format, suitable for {@link MethodSignature#of(String)}. For example, "(I)V" &rarr; "int"
+   * and "([Ljava/lang/String;I)V" &rarr; "java.lang.String[], int". Returns null if the input
+   * doesn't look like a valid method descriptor.
+   */
+  private static @Nullable String methodDescriptorToParamBinaryNames(String methodDescriptor) {
+    if (methodDescriptor == null) {
+      return null;
+    }
+    String s = methodDescriptor.trim();
+    int l = s.indexOf('(');
+    int r = s.indexOf(')');
+    if (l != 0 || r < 0) {
+      return null;
+    }
+    // parse parameter types between '(' and ')'
+    StringBuilder out = new StringBuilder();
+    int i = 1;
+    boolean first = true;
+    while (i < r) {
+      int arr = 0;
+      while (i < r && s.charAt(i) == '[') {
+        arr++;
+        i++;
+      }
+      if (i >= r) break;
+      char c = s.charAt(i++);
+      String base;
+      switch (c) {
+        case 'B':
+          base = "byte";
+          break;
+        case 'C':
+          base = "char";
+          break;
+        case 'D':
+          base = "double";
+          break;
+        case 'F':
+          base = "float";
+          break;
+        case 'I':
+          base = "int";
+          break;
+        case 'J':
+          base = "long";
+          break;
+        case 'S':
+          base = "short";
+          break;
+        case 'Z':
+          base = "boolean";
+          break;
+        case 'L':
+          int semi = s.indexOf(';', i);
+          if (semi < 0 || semi > r) return null;
+          base = s.substring(i, semi).replace('/', '.');
+          i = semi + 1;
+          break;
+        default:
+          return null;
+      }
+      StringBuilder type = new StringBuilder(base);
+      for (int k = 0; k < arr; k++) type.append("[]");
+      if (!first) out.append(", ");
+      out.append(type);
+      first = false;
+    }
+    return out.toString();
   }
 
   /**
@@ -320,6 +512,13 @@ public class ReplaceCallAgent {
     }
     if (exclusionFilePath != null) {
       result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+    }
+    // Preserve the exclude options if they were supplied, so flaky-filter uses identical args.
+    if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
+      result.add("--replacecall-exclude=" + replacecall_exclude.trim());
+    }
+    if (replacecall_exclude_file != null) {
+      result.add("--replacecall-exclude-file=" + replacecall_exclude_file.toAbsolutePath());
     }
     return result.toString();
   }
