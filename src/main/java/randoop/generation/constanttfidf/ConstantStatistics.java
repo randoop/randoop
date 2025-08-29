@@ -1,7 +1,7 @@
 package randoop.generation.constanttfidf;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
@@ -18,7 +18,7 @@ import randoop.types.Type;
 public class ConstantStatistics {
 
   /** A map from type to a map from constant to its usage statistics. */
-  private Map<Type, Map<Sequence, ConstantUses>> constantStats = new HashMap<>();
+  private Map<Type, Map<Sequence, ConstantUses>> constantStats = new LinkedHashMap<>();
 
   /** The number of classes in this scope. */
   private int numClasses = 0;
@@ -45,7 +45,7 @@ public class ConstantStatistics {
    */
   public Map<Sequence, ConstantUses> getConstantUses() {
     if (cachedConstantUses == null) {
-      Map<Sequence, ConstantUses> result = new HashMap<>();
+      Map<Sequence, ConstantUses> result = new LinkedHashMap<>();
       for (Map<Sequence, ConstantUses> typeMap : constantStats.values()) {
         result.putAll(typeMap);
       }
@@ -61,7 +61,10 @@ public class ConstantStatistics {
    * @return the sequences for the given type
    */
   public SIList<Sequence> getSequencesForType(Type type) {
-    Map<Sequence, ConstantUses> typeMap = constantStats.getOrDefault(type, new HashMap<>());
+    Map<Sequence, ConstantUses> typeMap = constantStats.get(type);
+    if (typeMap == null || typeMap.isEmpty()) {
+      return SIList.empty();
+    }
     return SIList.fromList(new ArrayList<>(typeMap.keySet()));
   }
 
@@ -83,10 +86,11 @@ public class ConstantStatistics {
   public void incrementNumUses(Sequence seq, int num) {
     Type outputType = seq.getLastVariable().getType();
     Map<Sequence, ConstantUses> typeMap =
-        constantStats.computeIfAbsent(outputType, k -> new HashMap<>());
+        constantStats.computeIfAbsent(outputType, k -> new LinkedHashMap<>());
     ConstantUses currentStats = typeMap.getOrDefault(seq, new ConstantUses(0, 0));
     typeMap.put(
         seq, new ConstantUses(currentStats.getNumUses() + num, currentStats.getNumClassesWith()));
+    cachedConstantUses = null;
   }
 
   /**
@@ -98,10 +102,11 @@ public class ConstantStatistics {
   public void incrementNumClassesWith(Sequence seq, int num) {
     Type outputType = seq.getLastVariable().getType();
     Map<Sequence, ConstantUses> typeMap =
-        constantStats.computeIfAbsent(outputType, k -> new HashMap<>());
+        constantStats.computeIfAbsent(outputType, k -> new LinkedHashMap<>());
     ConstantUses currentStats = typeMap.getOrDefault(seq, new ConstantUses(0, 0));
     typeMap.put(
         seq, new ConstantUses(currentStats.getNumUses(), currentStats.getNumClassesWith() + num));
+    cachedConstantUses = null;
   }
 
   /**

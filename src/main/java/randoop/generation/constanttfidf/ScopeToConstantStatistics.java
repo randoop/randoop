@@ -2,8 +2,8 @@ package randoop.generation.constanttfidf;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +15,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 
 /** This class stores information about the constants used in the SUT. */
 public class ScopeToConstantStatistics {
@@ -27,8 +26,8 @@ public class ScopeToConstantStatistics {
    * A map from a specific scope to its constant statistics. A null key represents the unnamed
    * package.
    */
-  // Declared as HashMap rather than as Map because some Map implementations prohibit null keys.
-  private HashMap<@Nullable Object, ConstantStatistics> scopeToStatisticsMap = new HashMap<>();
+  private LinkedHashMap<@Nullable Object, ConstantStatistics> scopeToStatisticsMap =
+      new LinkedHashMap<>();
 
   /** Creates a ScopeToConstantStatistics. */
   public ScopeToConstantStatistics() {}
@@ -45,26 +44,25 @@ public class ScopeToConstantStatistics {
   }
 
   /**
-   * Returns sequences for a type, including sequences from superclasses, filtered by the desired
-   * type.
+   * Returns sequences for a type, including sequences from all supertypes (classes and interfaces),
+   * filtered by the desired type.
    *
    * @param type the type to get sequences for
    * @param neededType the type to filter sequences by
-   * @return sequences for the type and its superclasses that match the needed type
+   * @return sequences for the type and its supertypes that match the needed type
    */
-  public SIList<Sequence> getSequencesIncludingSuperclasses(
+  public SIList<Sequence> getSequencesIncludingSupertypes(
       ClassOrInterfaceType type, randoop.types.Type neededType) {
-    List<SIList<Sequence>> resultLists = new ArrayList<>();
+    LinkedHashSet<ClassOrInterfaceType> typesToVisit = new LinkedHashSet<>();
+    typesToVisit.add(type);
+    typesToVisit.addAll(type.getSuperTypes());
 
-    // Collect all sequences from current class and all its superclasses
-    ClassOrInterfaceType currentType = type;
-    while (currentType != null && !currentType.equals(JavaTypes.OBJECT_TYPE)) {
-      ConstantStatistics stats = getConstantStatistics(currentType);
-      SIList<Sequence> typeSequences = stats.getSequencesForType(neededType);
+    List<SIList<Sequence>> resultLists = new ArrayList<>();
+    for (ClassOrInterfaceType t : typesToVisit) {
+      SIList<Sequence> typeSequences = getConstantStatistics(t).getSequencesForType(neededType);
       if (!typeSequences.isEmpty()) {
         resultLists.add(typeSequences);
       }
-      currentType = currentType.getSuperclass();
     }
 
     return SIList.concat(resultLists);
@@ -76,7 +74,7 @@ public class ScopeToConstantStatistics {
    * @return all sequences recorded in this statistics object
    */
   public Set<Sequence> getAllSequences() {
-    Set<Sequence> allSequences = new HashSet<>();
+    Set<Sequence> allSequences = new LinkedHashSet<>();
     for (ConstantStatistics stats : scopeToStatisticsMap.values()) {
       allSequences.addAll(stats.getConstantUses().keySet());
     }

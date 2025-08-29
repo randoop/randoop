@@ -22,20 +22,20 @@ import randoop.util.Log;
 /**
  * Manages the pool of component sequences used by Randoop during generation.
  *
- * <p>A "component sequence" is a previously-constructed {@link randoop.sequence.Sequence}
- * that can be reused as a building block to create larger sequences. The pool contains:
+ * <p>A "component sequence" is a previously-constructed {@link randoop.sequence.Sequence} that can
+ * be reused as a building block to create larger sequences. The pool contains:
  *
  * <ul>
- *   <li>Seed sequences supplied at construction time, which are preserved across calls to
- *       {@link #clearGeneratedSequences()}, and
+ *   <li>Seed sequences supplied at construction time, which are preserved across calls to {@link
+ *       #clearGeneratedSequences()}, and
  *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>This class also maintains per-scope constant information via
- * {@link #scopeToConstantStatistics}. Constants are not stored in the general pool; instead, they
- * are consulted on demand (for example, by
- * {@link #getSequencesForType(randoop.operation.TypedOperation,int,boolean)}) and combined with
- * pool sequences when returning candidates for a parameter.
+ * <p>This class also maintains per-scope constant information via {@link
+ * #scopeToConstantStatistics}. Constants are not stored in the general pool; instead, they are
+ * consulted on demand (for example, by {@link
+ * #getSequencesForType(randoop.operation.TypedOperation,int,boolean)}) and combined with pool
+ * sequences when returning candidates for a parameter.
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
  * to the original seeds.
@@ -203,7 +203,7 @@ public class ComponentManager {
    * @return the sequences extracted by constant that create values of the given type
    */
   SIList<Sequence> getConstantSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    return scopeToConstantStatistics.getSequencesIncludingSuperclasses(declaringType, neededType);
+    return scopeToConstantStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
   }
 
   /**
