@@ -283,6 +283,12 @@ public class OperationModel {
     }
 
     compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
+
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
+      for (Sequence s : scopeToConstantStatistics.getAllSequences()) {
+        compMgr.addGeneratedSequence(s);
+      }
+    }
   }
 
   /**
@@ -759,7 +765,7 @@ public class OperationModel {
               signature, accessibility, reflectionPredicate));
     }
     if (accessibleObject instanceof Constructor) {
-      return TypedOperation.forConstructor((Constructor) accessibleObject);
+      return TypedOperation.forConstructor((Constructor<?>) accessibleObject);
     } else {
       return TypedOperation.forMethod((Method) accessibleObject);
     }
