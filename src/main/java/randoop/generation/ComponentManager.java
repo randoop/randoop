@@ -20,24 +20,25 @@ import randoop.types.Type;
 import randoop.util.Log;
 
 /**
- * Stores the component sequences generated during a run of Randoop. "Component sequences" are
- * sequences that Randoop uses to create larger sequences. The collection of sequences is also
- * called Randoop's "pool".
+ * Manages the pool of component sequences used by Randoop during generation.
  *
- * <p>This class manages different collections of component sequences:
+ * <p>A "component sequence" is a previously-constructed {@link randoop.sequence.Sequence}
+ * that can be reused as a building block to create larger sequences. The pool contains:
  *
  * <ul>
- *   <li>General components that can be used as input to any method in any class.
- *   <li>Class literals: components representing literal values that apply only to a specific class
- *       and should not be used as inputs to other classes.
- *   <li>Package literals: analogous to class literals but at the package level.
+ *   <li>Seed sequences supplied at construction time, which are preserved across calls to
+ *       {@link #clearGeneratedSequences()}, and
+ *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>SEED SEQUENCES. Seed sequences are the initial sequences provided to the generation process.
- * They include (1) sequences passed via the constructor, (2) class literals, and (3) package
- * literals. The only different treatment of seed sequences is during calls to the
- * clearGeneratedSequences() method, which removes only general, non-seed components from the
- * collection.
+ * <p>This class also maintains per-scope constant information via
+ * {@link #scopeToConstantStatistics}. Constants are not stored in the general pool; instead, they
+ * are consulted on demand (for example, by
+ * {@link #getSequencesForType(randoop.operation.TypedOperation,int,boolean)}) and combined with
+ * pool sequences when returning candidates for a parameter.
+ *
+ * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
+ * to the original seeds.
  */
 public class ComponentManager {
 
