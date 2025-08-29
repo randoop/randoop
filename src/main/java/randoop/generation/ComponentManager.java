@@ -7,6 +7,7 @@ import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -182,7 +183,9 @@ public class ComponentManager {
     SIList<Sequence> literals = SIList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
-        && !onlyReceivers) {
+        && !onlyReceivers
+        // Avoid duplication
+        && GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
       // The operation is a method call, where the method is defined in class C.
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
