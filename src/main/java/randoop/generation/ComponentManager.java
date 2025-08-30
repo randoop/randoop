@@ -189,9 +189,7 @@ public class ComponentManager {
       // The operation is a method call, where the method is defined in class C.
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-
-      SIList<Sequence> constantCandidates = getConstantSequences(neededType, declaringCls);
-      literals = SIList.concat(literals, constantCandidates);
+      literals = getConstantSequences(neededType, declaringCls);
     }
 
     return SIList.concat(result, literals);
