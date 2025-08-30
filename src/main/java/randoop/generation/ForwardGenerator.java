@@ -2,10 +2,12 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -15,6 +17,9 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.constanttfidf.ConstantStatistics;
+import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.generation.constanttfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -76,6 +81,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  /**
+   * If {@link GenInputsAbstract#constant_tfidf} is true, this map stores TfIdfSelectors for each
+   * scope, used to select constants from the component manager's constant statistics. A scope is a
+   * type, package, or {@code ScopeToConstantStatistics#ALL_SCOPE}.
+   */
+  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -157,6 +169,10 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.constant_tfidf) {
+      scopeToTfIdfSelectors = new HashMap<>();
     }
   }
 
@@ -741,6 +757,36 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
+      // If constant-tf-idf is enabled and we are determining a parameter for a class
+      // operation, use TF-IDF weighted selection for constants under some probability.
+      if (GenInputsAbstract.constant_tfidf
+          && (operation instanceof TypedClassOperation && !isReceiver)
+          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
+        Log.logPrintf("Using constant from tf-idf as input.");
+        // Get the declaring type for constant selection.
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
+
+        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        Type neededType = operation.getInputTypes().get(i);
+        SIList<Sequence> candidates =
+            componentManager.getConstantSequences(neededType, declaringType);
+
+        // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
+        // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
+        assert scopeToTfIdfSelectors != null
+            : "@AssumeAssertion(nullness)"; // constant_tfidf is true
+        Sequence seq =
+            selectTfidfSequence(
+                candidates, declaringType, componentManager.scopeToConstantStatistics);
+
+        if (seq != null) {
+          inputVars.add(totStatements);
+          sequences.add(seq);
+          totStatements += seq.size();
+          continue;
+        }
+      }
+
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences (stored in the list declared
@@ -972,5 +1018,49 @@ public class ForwardGenerator extends AbstractGenerator {
                 "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
                 "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
+  }
+
+  /**
+   * Selects a sequence from {@code candidates} based on TF-IDF weight. The weight is calculated by
+   * the TF-IDF associated with the given type's scope.
+   *
+   * @param candidates the candidate sequences, all of which have the same return type
+   * @param type the type whose scope will be used for TF-IDF calculation
+   * @param scopeToConstantStatistics the statistics object to get constant data and scope
+   *     information
+   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
+   *     constants
+   */
+  private @Nullable Sequence selectTfidfSequence(
+      SIList<Sequence> candidates,
+      ClassOrInterfaceType type,
+      ScopeToConstantStatistics scopeToConstantStatistics) {
+
+    if (candidates.isEmpty()) {
+      return null;
+    }
+
+    // Get the scope key and constant statistics for the given type
+    @Nullable Object scope = scopeToConstantStatistics.getScope(type);
+
+    // Candidates are filtered from constantStats based on the needed type (from
+    // ComponentManager.getConstantSequences),
+    // while constantStats contains all sequences from the scope regardless of type.
+    ConstantStatistics constantStats = scopeToConstantStatistics.getConstantStatistics(type);
+
+    if (constantStats.getConstantUses().isEmpty()) {
+      return null;
+    }
+
+    // Debug information (keeping the same DEBUG logic as the original class)
+    if (Log.isLoggingOn()) {
+      Log.logPrintf("Selecting sequence: %s%n", candidates);
+      Log.logPrintf("tfidf map: %s%n", scopeToTfIdfSelectors);
+      Log.logPrintf("scope: %s%n", scope);
+    }
+
+    TfIdfSelector tfIdfSelector =
+        scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(constantStats));
+    return tfIdfSelector.selectSequence(candidates);
   }
 }
