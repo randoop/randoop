@@ -1,4 +1,4 @@
-package constanttfidf.test;
+package literaltfidf.test;
 
 import randoop.util.ClassFileConstants;
 

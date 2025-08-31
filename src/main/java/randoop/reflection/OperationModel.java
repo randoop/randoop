@@ -43,7 +43,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
-import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -90,7 +90,7 @@ public class OperationModel {
   private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
   /** The storage for constant information. */
-  private ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
+  private ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
@@ -260,32 +260,32 @@ public class OperationModel {
    * Adds literals to the component manager, by parsing any literals files specified by the user.
    *
    * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
-   * and stored in scopeToConstantStatistics. This method only processes external literals files.
+   * and stored in scopeToLiteralStatistics. This method only processes external literals files.
    *
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    // Process external literals files and add them to scopeToConstantStatistics.
+    // Process external literals files and add them to scopeToLiteralStatistics.
     for (String literalsFile : GenInputsAbstract.literals_file) {
       // "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor.
       if (!literalsFile.equals("CLASSES")) {
-        // Parse external literals file and add to scopeToConstantStatistics
+        // Parse external literals file and add to scopeToLiteralStatistics
         MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
         for (ClassOrInterfaceType type : fileMap.keySet()) {
           Collection<Sequence> sequences = fileMap.getValues(type);
           for (Sequence seq : sequences) {
-            scopeToConstantStatistics.incrementNumUses(
+            scopeToLiteralStatistics.incrementNumUses(
                 type, seq, 1); // Default frequency for file literals
           }
-          scopeToConstantStatistics.incrementClassesWithSequences(type, sequences);
+          scopeToLiteralStatistics.incrementClassesWithSequences(type, sequences);
         }
       }
     }
 
-    compMgr.setScopeToConstantStatistics(scopeToConstantStatistics);
+    compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
 
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
-      for (Sequence s : scopeToConstantStatistics.getAllSequences()) {
+      for (Sequence s : scopeToLiteralStatistics.getAllSequences()) {
         compMgr.addGeneratedSequence(s);
       }
     }
@@ -529,7 +529,7 @@ public class OperationModel {
       out.write(String.format("  classTypes = %s%n", classTypes));
       out.write(String.format("  inputTypes = %s%n", inputTypes));
       out.write(String.format("  coveredClassesGoal = %s%n", coveredClassesGoal));
-      out.write(String.format("  scopeToConstantStatistics = %s%n", scopeToConstantStatistics));
+      out.write(String.format("  scopeToLiteralStatistics = %s%n", scopeToLiteralStatistics));
       out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
       out.write(String.format("  contracts = %s%n", contracts));
       out.write(String.format("  omitMethods = [%n"));
@@ -573,7 +573,7 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
-    mgr.add(new ClassLiteralExtractor(this.scopeToConstantStatistics));
+    mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
 
     // Collect classes under test
     int succeeded = 0;

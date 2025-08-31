@@ -1,4 +1,4 @@
-package randoop.generation.constanttfidf;
+package randoop.generation.literaltfidf;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,31 +16,30 @@ import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 
-/** This class stores information about the constants used in the SUT. */
-public class ScopeToConstantStatistics {
+/** This class stores information about the literals used in the SUT. */
+public class ScopeToLiteralStatistics {
 
   /** A special key representing the "all" scope. */
   public static final Object ALL_SCOPE = "ALL_SCOPE";
 
   /**
-   * A map from a specific scope to its constant statistics. A null key represents the unnamed
+   * A map from a specific scope to its literal statistics. A null key represents the unnamed
    * package.
    */
-  private LinkedHashMap<@Nullable Object, ConstantStatistics> scopeToStatisticsMap =
+  private LinkedHashMap<@Nullable Object, LiteralStatistics> scopeToStatisticsMap =
       new LinkedHashMap<>();
 
-  /** Creates a ScopeToConstantStatistics. */
-  public ScopeToConstantStatistics() {}
+  /** Creates a ScopeToLiteralStatistics. */
+  public ScopeToLiteralStatistics() {}
 
   /**
-   * Returns information about constants in a specific scope.
+   * Returns information about literals in a specific scope.
    *
    * @param type the type whose scope to access
-   * @return information about constants in the scope for {@code type}, including superclass
-   *     constants
+   * @return information about literals in the scope for {@code type}, including superclass literals
    */
-  public ConstantStatistics getConstantStatistics(ClassOrInterfaceType type) {
-    return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new ConstantStatistics());
+  public LiteralStatistics getLiteralStatistics(ClassOrInterfaceType type) {
+    return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
   }
 
   /**
@@ -59,7 +58,7 @@ public class ScopeToConstantStatistics {
 
     List<SIList<Sequence>> resultLists = new ArrayList<>();
     for (ClassOrInterfaceType t : typesToVisit) {
-      SIList<Sequence> typeSequences = getConstantStatistics(t).getSequencesForType(neededType);
+      SIList<Sequence> typeSequences = getLiteralStatistics(t).getSequencesForType(neededType);
       if (!typeSequences.isEmpty()) {
         resultLists.add(typeSequences);
       }
@@ -75,32 +74,32 @@ public class ScopeToConstantStatistics {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new LinkedHashSet<>();
-    for (ConstantStatistics stats : scopeToStatisticsMap.values()) {
-      allSequences.addAll(stats.getConstantUses().keySet());
+    for (LiteralStatistics stats : scopeToStatisticsMap.values()) {
+      allSequences.addAll(stats.getLiteralUses().keySet());
     }
     return allSequences;
   }
 
   /**
-   * Registers uses of the given constant. Creates an entry or increments an existing entry.
+   * Registers uses of the given literal. Creates an entry or increments an existing entry.
    *
    * @param type the class whose scope is being updated
    * @param seq the sequence to be added
    * @param numUses the number of times the {@code seq} is used in {@code type}
    */
   public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
-    getConstantStatistics(type).incrementNumUses(seq, numUses);
+    getLiteralStatistics(type).incrementNumUses(seq, numUses);
   }
 
   /**
    * Records that a class contains the given sequences and increments the total class count.
    *
    * @param type the class whose scope is being updated
-   * @param sequences all the constant sequences in the class
+   * @param sequences all the literal sequences in the class
    */
   public void incrementClassesWithSequences(
       ClassOrInterfaceType type, Collection<Sequence> sequences) {
-    ConstantStatistics stats = getConstantStatistics(type);
+    LiteralStatistics stats = getLiteralStatistics(type);
     for (Sequence seq : sequences) {
       stats.incrementNumClassesWith(seq, 1);
     }
@@ -132,19 +131,19 @@ public class ScopeToConstantStatistics {
   public String toString() {
     StringJoiner sb = new StringJoiner(System.lineSeparator());
 
-    for (Map.Entry<@Nullable Object, ConstantStatistics> scopeEntry :
+    for (Map.Entry<@Nullable Object, LiteralStatistics> scopeEntry :
         scopeToStatisticsMap.entrySet()) {
       Object scope = scopeEntry.getKey();
-      ConstantStatistics stats = scopeEntry.getValue();
+      LiteralStatistics stats = scopeEntry.getValue();
 
       sb.add("Scope: " + scope + " (" + stats.getNumClasses() + " classes)");
 
-      for (Map.Entry<Sequence, ConstantStatistics.ConstantUses> constantEntry :
-          stats.getConstantUses().entrySet()) {
-        Sequence sequence = constantEntry.getKey();
-        ConstantStatistics.ConstantUses constantStats = constantEntry.getValue();
+      for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> literalEntry :
+          stats.getLiteralUses().entrySet()) {
+        Sequence sequence = literalEntry.getKey();
+        LiteralStatistics.LiteralUses literalStats = literalEntry.getValue();
 
-        sb.add("  " + sequence + " -> (" + constantStats.toString() + ")");
+        sb.add("  " + sequence + " -> (" + literalStats.toString() + ")");
       }
     }
 

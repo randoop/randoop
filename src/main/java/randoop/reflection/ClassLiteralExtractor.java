@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -15,23 +15,23 @@ import randoop.util.ClassFileConstants;
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, recording constant statistics including usage frequency and the classes
- * that contain each constant. All extracted literals are stored in {@link
- * ScopeToConstantStatistics} to support both TF-IDF and non-TF-IDF literal selection strategies.
+ * that contain each constant. All extracted literals are stored in {@link ScopeToLiteralStatistics}
+ * to support both TF-IDF and non-TF-IDF literal selection strategies.
  *
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /** The storage for constant information. */
-  private ScopeToConstantStatistics scopeToConstantStatistics;
+  private ScopeToLiteralStatistics scopeToLiteralStatistics;
 
   /**
    * Creates a visitor that records constant statistics.
    *
-   * @param scopeToConstantStatistics the storage for constant information
+   * @param scopeToLiteralStatistics the storage for constant information
    */
-  ClassLiteralExtractor(ScopeToConstantStatistics scopeToConstantStatistics) {
-    this.scopeToConstantStatistics = scopeToConstantStatistics;
+  ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 
   /**
@@ -54,12 +54,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
       @NonNull Object termValue = term.getValue();
-      scopeToConstantStatistics.incrementNumUses(
+      scopeToLiteralStatistics.incrementNumUses(
           containingType, seq, constantSet.getConstantFrequency(termValue));
       allConstants.add(seq);
     }
 
     // Record class-level statistics once per class after processing all sequences
-    scopeToConstantStatistics.incrementClassesWithSequences(containingType, allConstants);
+    scopeToLiteralStatistics.incrementClassesWithSequences(containingType, allConstants);
   }
 }

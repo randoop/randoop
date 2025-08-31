@@ -1,4 +1,4 @@
-package constanttfidf.enumtest;
+package literaltfidf.enumtest;
 
 public class ClassEnumT {
   public enum EnumOne {

@@ -721,26 +721,26 @@ public class RandoopSystemTest {
   }
 
   @Test
-  public void runConstantTfIdfTest() {
+  public void runLiteralTfIdfTest() {
     SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("constant-tfidf-test"); // temp directory
+        systemTestEnvironmentManager.createTestEnvironment("literal-tfidf-test"); // temp directory
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.setPackageName(null);
-    options.setRegressionBasename("ConstantTfIdfTest");
+    options.setRegressionBasename("LiteralTfIdfTest");
     options.setErrorBasename("ConstantTfIdfErr");
 
     options.setOption("attempted_limit", "1000");
     options.setOption("generated_limit", "100");
-    options.addTestClass("constanttfidf.hospital.Doctor");
-    options.addTestClass("constanttfidf.hospital.Patient");
-    options.addTestClass("constanttfidf.hospital.AgeConstants");
-    options.addTestClass("constanttfidf.pharmacy.MedicationConstants");
-    options.addTestClass("constanttfidf.pharmacy.Pharmacist");
-    options.addTestClass("constanttfidf.pharmacy.Prescription");
+    options.addTestClass("literaltfidf.hospital.Doctor");
+    options.addTestClass("literaltfidf.hospital.Patient");
+    options.addTestClass("literaltfidf.hospital.AgeConstants");
+    options.addTestClass("literaltfidf.pharmacy.MedicationConstants");
+    options.addTestClass("literaltfidf.pharmacy.Pharmacist");
+    options.addTestClass("literaltfidf.pharmacy.Prescription");
 
     options.setOption("literals-level", "ALL");
-    options.setOption("constant-tfidf", "true");
-    options.setOption("constant_tfidf_probability", "1");
+    options.setOption("literal-tfidf", "true");
+    options.setOption("literal_tfidf_probability", "1");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;

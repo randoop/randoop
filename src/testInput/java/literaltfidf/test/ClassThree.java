@@ -1,4 +1,4 @@
-package constanttfidf.test;
+package literaltfidf.test;
 
 public class ClassThree {
     // int0 = 2 : 3

@@ -1,4 +1,4 @@
-package constanttfidf.hospital;
+package literaltfidf.hospital;
 
 // Patient.java
 public class Patient {

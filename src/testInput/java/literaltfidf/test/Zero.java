@@ -1,4 +1,4 @@
-package constanttfidf.test;
+package literaltfidf.test;
 
 public class Zero {
    public void ifThree(int a) {

@@ -1,6 +1,6 @@
-package constanttfidf;
+package literaltfidf;
 
-import constanttfidf.test.ClassTwo;
+import literaltfidf.test.ClassTwo;
 
 public class ClassOne {
     // int0 = 2 : 3

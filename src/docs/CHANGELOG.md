@@ -3,8 +3,8 @@ Version ?? (?? ??, 2025)
 
 New command-line arguments:
  * `--cast-to-run-time-type` enables more methods to be called on a value
- * `--constant-tfidf` changes which constant values Randoop uses
- * `--constant-tfidf-probability` changes which constant values Randoop uses
+ * `--literal-tfidf` changes which literal values Randoop uses
+ * `--literal-tfidf-probability` changes which literal values Randoop uses
 
 
 Version 4.3.4 (June 6, 2025)
@@ -777,7 +777,7 @@ Version 1.3.3 (November 21, 2012)
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
   - Fix for PrettyPrinter
-  - Unquoted character constants make Randoop generate uncompilable tests
+  - Unquoted character literals make Randoop generate uncompilable tests
   - Problem of using compare_checks in eclipse plugin by adding
 
 Features

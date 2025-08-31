@@ -1,4 +1,4 @@
-package constanttfidf.hospital;
+package literaltfidf.hospital;
 
 // AgeConstants.java
 public class AgeConstants {

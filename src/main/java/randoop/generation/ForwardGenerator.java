@@ -17,9 +17,9 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
-import randoop.generation.constanttfidf.ConstantStatistics;
-import randoop.generation.constanttfidf.ScopeToConstantStatistics;
-import randoop.generation.constanttfidf.TfIdfSelector;
+import randoop.generation.literaltfidf.LiteralStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
+import randoop.generation.literaltfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -83,9 +83,9 @@ public class ForwardGenerator extends AbstractGenerator {
   private final TypedOperationSelector operationSelector;
 
   /**
-   * If {@link GenInputsAbstract#constant_tfidf} is true, this map stores TfIdfSelectors for each
-   * scope, used to select constants from the component manager's constant statistics. A scope is a
-   * type, package, or {@code ScopeToConstantStatistics#ALL_SCOPE}.
+   * If {@link GenInputsAbstract#literal_tfidf} is true, this map stores TfIdfSelectors for each
+   * scope, used to select literals from the component manager's literal statistics. A scope is a
+   * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
    */
   private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
@@ -159,6 +159,7 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case ORIENTEERING:
         inputSequenceSelector =
+            // The argument is the sequences *so far*, probably just literals and seeds.
             new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       case SMALL_TESTS:
@@ -171,7 +172,7 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
     }
 
-    if (GenInputsAbstract.constant_tfidf) {
+    if (GenInputsAbstract.literal_tfidf) {
       scopeToTfIdfSelectors = new HashMap<>();
     }
   }
@@ -757,27 +758,27 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If constant-tf-idf is enabled and we are determining a parameter for a class
-      // operation, use TF-IDF weighted selection for constants under some probability.
-      if (GenInputsAbstract.constant_tfidf
+      // If literal-tf-idf is enabled and we are determining a parameter for a class
+      // operation, use TF-IDF weighted selection for literals under some probability.
+      if (GenInputsAbstract.literal_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
-          && Randomness.weightedCoinFlip(GenInputsAbstract.constant_tfidf_probability)) {
-        Log.logPrintf("Using constant from tf-idf as input.");
-        // Get the declaring type for constant selection.
+          && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
+        Log.logPrintf("Using literal from tf-idf as input.");
+        // Get the declaring type for literal selection.
         ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
 
         // Construct a list of candidate sequences that create values of type inputTypes[i].
         Type neededType = operation.getInputTypes().get(i);
         SIList<Sequence> candidates =
-            componentManager.getConstantSequences(neededType, declaringType);
+            componentManager.getLiteralSequences(neededType, declaringType);
 
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
-        // GenInputsAbstract.constant_tfidf is true, and we're in that same conditional block.
+        // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
         assert scopeToTfIdfSelectors != null
-            : "@AssumeAssertion(nullness)"; // constant_tfidf is true
+            : "@AssumeAssertion(nullness)"; // literal_tfidf is true
         Sequence seq =
             selectTfidfSequence(
-                candidates, declaringType, componentManager.scopeToConstantStatistics);
+                candidates, declaringType, componentManager.scopeToLiteralStatistics);
 
         if (seq != null) {
           inputVars.add(totStatements);
@@ -803,7 +804,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
         Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         SIList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
         candidates = SIList.concat(l1, l2);
@@ -815,7 +816,7 @@ public class ForwardGenerator extends AbstractGenerator {
               .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
@@ -827,7 +828,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
-        candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+        candidates = componentManager.getSequencesForParam(operation, i, isReceiver);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
@@ -1026,29 +1027,28 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param candidates the candidate sequences, all of which have the same return type
    * @param type the type whose scope will be used for TF-IDF calculation
-   * @param scopeToConstantStatistics the statistics object to get constant data and scope
-   *     information
+   * @param scopeToLiteralStatistics the statistics object to get literal data and scope information
    * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
-   *     constants
+   *     literals
    */
   private @Nullable Sequence selectTfidfSequence(
       SIList<Sequence> candidates,
       ClassOrInterfaceType type,
-      ScopeToConstantStatistics scopeToConstantStatistics) {
+      ScopeToLiteralStatistics scopeToLiteralStatistics) {
 
     if (candidates.isEmpty()) {
       return null;
     }
 
-    // Get the scope key and constant statistics for the given type
-    @Nullable Object scope = scopeToConstantStatistics.getScope(type);
+    // Get the scope key and literal statistics for the given type
+    @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
 
-    // Candidates are filtered from constantStats based on the needed type (from
-    // ComponentManager.getConstantSequences),
-    // while constantStats contains all sequences from the scope regardless of type.
-    ConstantStatistics constantStats = scopeToConstantStatistics.getConstantStatistics(type);
+    // Candidates are filtered from literalStats based on the needed type (from
+    // ComponentManager.getLiteralSequences),
+    // while literalStats contains all sequences from the scope regardless of type.
+    LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
 
-    if (constantStats.getConstantUses().isEmpty()) {
+    if (literalStats.isEmpty()) {
       return null;
     }
 
@@ -1060,7 +1060,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     TfIdfSelector tfIdfSelector =
-        scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(constantStats));
+        scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(literalStats));
     return tfIdfSelector.selectSequence(candidates);
   }
 }

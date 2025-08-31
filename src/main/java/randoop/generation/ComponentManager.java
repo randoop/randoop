@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
-import randoop.generation.constanttfidf.ScopeToConstantStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -32,11 +32,11 @@ import randoop.util.Log;
  *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>This class also maintains per-scope constant information via {@link
- * #scopeToConstantStatistics}. Constants are not stored in the general pool; instead, they are
- * consulted on demand (for example, by {@link
- * #getSequencesForType(randoop.operation.TypedOperation,int,boolean)}) and combined with pool
- * sequences when returning candidates for a parameter.
+ * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
+ * Literals are not stored in the general pool; instead, they are consulted on demand (for example,
+ * by {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}) and combined with
+ * pool sequences when returning candidates for a parameter. The reason is that which literals are
+ * candidates depends on the method being called.
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
  * to the original seeds.
@@ -44,8 +44,8 @@ import randoop.util.Log;
 public class ComponentManager {
 
   /**
-   * The principal set of sequences used to create other, larger sequences by the generator. Is
-   * never null. Contains both general components and seed sequences. Can be reset by calling {@link
+   * The principal set of sequences used to create other, larger sequences by the generator.
+   * Contains both general components and seed sequences. Can be reset by calling {@link
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
@@ -56,17 +56,17 @@ public class ComponentManager {
    * (Does not include literals, I think?)
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the user calls {@link #clearGeneratedSequences}.
+   * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
 
-  /** For each scope in the SUT, statistics about its constants. */
-  public ScopeToConstantStatistics scopeToConstantStatistics = new ScopeToConstantStatistics();
+  /** For each scope in the SUT, statistics about its literals. */
+  public ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = Collections.<Sequence>emptySet();
   }
 
   /**
@@ -77,14 +77,13 @@ public class ComponentManager {
    *     considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
-    seedSet.addAll(generalSeeds);
+    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
   }
 
   /**
-   * Returns the number of (non-seed) sequences stored by the manager.
+   * Returns the number of sequences stored by the manager.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
@@ -103,22 +102,22 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the constant statistics.
+   * Returns the literal statistics map.
    *
-   * @return an object that contains the constant information
+   * @return the literal statistics map
    */
-  public ScopeToConstantStatistics getScopeToConstantStatistics() {
-    return scopeToConstantStatistics;
+  public ScopeToLiteralStatistics getScopeToLiteralStatistics() {
+    return scopeToLiteralStatistics;
   }
 
   /**
-   * Sets the constant statistics.
+   * Sets the literal statistics map.
    *
-   * @param scopeToConstantStatistics the constant statistics
+   * @param scopeToLiteralStatistics the literal statistics map
    */
   // This is called in OperationModel.addClassLiterals().
-  public void setScopeToConstantStatistics(ScopeToConstantStatistics scopeToConstantStatistics) {
-    this.scopeToConstantStatistics = scopeToConstantStatistics;
+  public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 
   /**
@@ -150,7 +149,7 @@ public class ComponentManager {
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
    * a statement that invokes the given operation. Also includes any applicable class- or
-   * package-level literals, and constants.
+   * package-level literals.
    *
    * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
@@ -159,23 +158,21 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  // This method is oddly named, since it does not take as input a type.  However, the method
-  // extensively uses the operation, so refactoring the method to take a type instead would take
-  // some work.
-  SIList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getSequencesForParam(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+    ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
           String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
+              "getSequencesForParam(%s, %s, %s) neededType=%s",
               operation, i, onlyReceivers, neededType));
     }
 
     // This method appends two lists:
     //  * determines sequences from the pool (gralComponents)
-    //  * determines literals
+    //  * determines literals, which depend on the scope of `declaringCls`
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
@@ -187,40 +184,38 @@ public class ComponentManager {
         // Avoid duplication
         && GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
       // The operation is a method call, where the method is defined in class C.
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
-      literals = getConstantSequences(neededType, declaringCls);
+      literals = getLiteralSequences(neededType, declaringCls);
     }
 
     return SIList.concat(result, literals);
   }
 
   /**
-   * Returns constant sequences of the type {@code neededType} from the current {@code
-   * declaringType} as well as its superclasses.
+   * Returns literal sequences of the type {@code neededType} from the current {@code declaringType}
+   * as well as its superclasses.
    *
-   * @param neededType the type of constants
-   * @param declaringType the type whose scope to use for constant selection
-   * @return the sequences extracted by constant that create values of the given type
+   * @param neededType the type of literals
+   * @param declaringType the type whose scope to use for literal selection
+   * @return the sequences extracted by literal that create values of the given type
    */
-  SIList<Sequence> getConstantSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    return scopeToConstantStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
+  SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
+    return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
   }
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components and constant literals.
+   * "int var0 = 1"), including general components and literals.
    *
    * @return the sequences for primitive values
    */
   Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
-    if (scopeToConstantStatistics != null) {
-      result.addAll(scopeToConstantStatistics.getAllSequences());
-    }
+    result.addAll(scopeToLiteralStatistics.getAllSequences());
 
-    // Add primitive sequences from general components
+    // Add primitive sequences from general components.
+    // This code uses `CollectionsPlume.addAll`, whose second argument is an `Iterable`.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }

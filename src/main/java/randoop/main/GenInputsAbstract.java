@@ -656,16 +656,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /** Whether to use Constant-TF-IDF for selecting constants as procedure inputs. */
-  @Option("Whether to use Constant-TF-IDF for selecting constants as procedure inputs")
-  public static boolean constant_tfidf = false;
+  /** Whether to use Literal-TF-IDF for selecting constants as procedure inputs. */
+  @Option("Whether to use Literal-TF-IDF for selecting constants as procedure inputs")
+  public static boolean literal_tfidf = false;
 
   /**
    * The probability of using a constant value as an input to a method under test. This option is
-   * only used when {@code --constant-tfidf} is set to true.
+   * only used when {@code --literal-tfidf} is set to true.
    */
-  @Option("The probability to use Constant-TF-IDF")
-  public static double constant_tfidf_probability = 0.01;
+  @Option("The probability to use Literal-TF-IDF")
+  public static double literal_tfidf_probability = 0.01;
 
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
@@ -1041,23 +1041,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " specified a class literal file and --use-class-literals=NONE");
     }
 
-    if (constant_tfidf && literals_level == ClassLiteralsMode.NONE) {
+    if (literal_tfidf && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified --constant-tfidf and --use-class-literals=NONE");
+              + " specified --literal-tfidf and --use-class-literals=NONE");
     }
 
-    if (constant_tfidf && literals_file.contains("CLASSES")) {
+    if (literal_tfidf && literals_file.contains("CLASSES")) {
       throw new RandoopUsageError(
           "Invalid parameter combination: "
-              + "cannot use both --constant-tfidf and --literals-file=CLASSES. "
-              + "Use --constant-tfidf alone to extract constants with TF-IDF scoring.");
+              + "cannot use both --literal-tfidf and --literals-file=CLASSES. "
+              + "Use --literal-tfidf alone to extract constants with TF-IDF scoring.");
     }
 
-    if (constant_tfidf_probability < 0 || constant_tfidf_probability > 1) {
+    if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
       throw new RandoopUsageError(
-          "Probability --constant-tfidf-probability must be in [0, 1] but was "
-              + constant_tfidf_probability);
+          "Probability --literal-tfidf-probability must be in [0, 1] but was "
+              + literal_tfidf_probability);
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
