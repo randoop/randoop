@@ -52,7 +52,10 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
-          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a>
+            <ul>
+              <li><a href="#replacecall-exclude">Excluding methods from default replacements</a></li>
+            </ul></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
@@ -1567,6 +1570,62 @@ The exclusion file is a list of package names, one package per line.
 If a package name does not end with a period, one will be added.
 The package name is used to match the prefix of the fully-qualified classname.
 </p>
+
+<h4 id="replacecall-exclude">Excluding methods from default replacements</h4>
+
+<p>
+  The <code>--replacecall-exclude</code> option lets you prevent <em>specific</em> default
+  replacement methods from being applied, even if their containing classes are transformed.
+  This differs from <code>--dont-transform</code>, which excludes entire packages or classes
+  from transformation.
+</p>
+
+<p>
+  Default replacements are defined in
+  <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">
+    <code>default-replacements.txt</code>
+  </a>. For example, by default <code>java.lang.System.exit(int)</code>
+  is replaced by a mock implementation that throws an exception.
+</p>
+
+<p>
+  To exclude a default replacement, specify the method signature in JVM descriptor form. For example:
+</p>
+
+<pre>
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacecall-exclude=java.lang.System.exit:(I)V
+</pre>
+
+<p>
+  On Unix-like shells, you may need to quote or escape parentheses:
+</p>
+
+<pre>
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar='--replacecall-exclude=java.lang.System.exit:(I)V'
+</pre>
+
+<p>
+  You can also list exclusions in a file, one method per line:
+</p>
+
+<pre>
+java.lang.System.exit:(I)V
+javax.swing.JOptionPane.showMessageDialog:(Ljava/awt/Component;Ljava/lang/Object;)V
+</pre>
+
+<p>
+  Then run:
+</p>
+
+<pre>
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacecall-exclude-file=exclusions.txt
+</pre>
+
+<p>
+  Blank lines and <code>#</code>-style comments are ignored.
+  Each exclusion must match a method signature exactly as defined in the replacement mapping.
+</p>
+
 
 <p>
 For diagnostic output (such as to see what classes are being transformed),
