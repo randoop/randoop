@@ -45,7 +45,12 @@ public class Value {
     }
 
     if (valueType.getRuntimeClass().equals(Class.class)) {
-      return ((Class<?>) value).getCanonicalName() + ".class";
+      String canonicalName = ((Class<?>) value).getCanonicalName();
+      if (canonicalName == null || canonicalName.equals("null")) {
+        return "null";
+      } else {
+        return canonicalName + ".class";
+      }
     }
 
     if (valueType.isEnum()) {

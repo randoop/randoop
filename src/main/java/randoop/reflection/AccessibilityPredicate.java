@@ -19,28 +19,28 @@ public abstract class AccessibilityPredicate {
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Class} accessible.
+   * Returns true if this AccessibilityPredicate considers a {@link Class} accessible.
    *
    * @param c the class object to check
-   * @return whether this considers the class to be accessible
+   * @return true if this considers the class to be accessible
    */
   public abstract boolean isAccessible(Class<?> c);
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Method} or {@link
-   * Constructor} accessible. Does not test the accessibility of the containing class.
+   * Returns true if this AccessibilityPredicate considers a {@link Method} or {@link Constructor}
+   * accessible. Does not test the accessibility of the containing class.
    *
    * @param e the method/constructor object to check
-   * @return whether this considers the method/constructor to be accessible
+   * @return true if this considers the method/constructor to be accessible
    */
   public abstract boolean isAccessible(Executable e);
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Field} accessible. Does not
-   * test the accessibility of the containing class.
+   * Returns true if this AccessibilityPredicate considers a {@link Field} accessible. Does not test
+   * the accessibility of the containing class.
    *
    * @param f the field object to check
-   * @return whether this considers the field to be accessible
+   * @return true if this considers the field to be accessible
    */
   public abstract boolean isAccessible(Field f);
 
@@ -121,7 +121,7 @@ public abstract class AccessibilityPredicate {
     }
 
     /*
-     * Checks whether the provided modifiers indicate public bit is set.
+     * Returns true if the provided modifiers indicate public bit is set.
      */
     private boolean isAccessible(int mods) {
       return Modifier.isPublic(mods);

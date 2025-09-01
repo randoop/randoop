@@ -196,7 +196,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
+   * Returns true if this {@link OperationSpecification} contains any pre-, post-, or
    * throws-specifications.
    *
    * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise

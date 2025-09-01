@@ -55,11 +55,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The operation to be decorated. */
   private final CallableOperation operation;
 
-  /**
-   * The type tuple of input types. For a non-static method call or an instance field access, the
-   * first input type is always that of the receiver, that is, the declaring class of the method or
-   * the field. Refer to {@link Operation}.
-   */
+  /** The input types, including the receiver if any. See {@link Operation}. */
   protected final TypeTuple inputTypes;
 
   /** The output type. */
@@ -316,14 +312,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicates whether this operation has a type that is a wildcard type.
+   * Returns true if this operation has a type that is a wildcard type.
    *
    * @return true if at least one input or output type has a wildcard, false otherwise
    */
   public abstract boolean hasWildcardTypes();
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @return true if the operation is generic, false if not
@@ -333,7 +329,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the

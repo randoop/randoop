@@ -109,7 +109,7 @@ public class SequenceCollection {
    *
    * @param col the sequences to add
    */
-  public void addAll(Collection<Sequence> col) {
+  public void addAll(Collection<? extends Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -145,6 +145,7 @@ public class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    */
+  @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
@@ -170,7 +171,8 @@ public class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequence) to {@link #sequenceMap}.
+   * Add the entry (type, sequence) to {@link #sequenceMap}. No deduplication is performed; that is,
+   * the entry is added even if an equal entry already exists.
    *
    * @param sequence the sequence
    * @param type the {@link Type}

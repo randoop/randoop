@@ -292,7 +292,7 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Checks whether this type is an instantiation of the given instantiated type. This is only
+   * Returns true if this type is an instantiation of the given instantiated type. This is only
    * possible if this type is {@code A<T1,...,Tk>} where all {@code Ti} are instantiated by ground
    * types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
    * {@code Ti} matches {@code Si} for {@code i = 1,...,k} as follows:

@@ -22,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -65,7 +66,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * Whether to include regression assertions. If false, no assertions are added for sequences whose
+   * If true, include regression assertions. If false, no assertions are added for sequences whose
    * execution is NormalExecution.
    */
   private boolean includeAssertions;
@@ -81,7 +82,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     the type; assertions may call these methods
    * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
-   * @param includeAssertions whether to include regression assertions
+   * @param includeAssertions if true, include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
@@ -193,6 +194,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
+
+                AccessibleObject executable = m.getOperation().getReflectionObject();
+                if (executable instanceof Method) {
+                  if (!MethodCall.isUnarySelfType((Method) executable)) {
+                    continue;
+                  }
+                }
+
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
@@ -242,11 +251,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Returns true if the method is Object.toString (which is nondeterministic for classes that have
-   * not overridden it).
+   * Returns true if the method is {@code Object.toString} (which is nondeterministic for classes
+   * that have not overridden it).
    *
    * @param m the method to test
-   * @return true if the method is Object.toString
+   * @return true if the method is {@code Object.toString}
    */
   private static boolean isObjectToString(TypedClassOperation m) {
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
@@ -268,7 +277,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     should not be called
    * @param accessibility the predicate used to check whether a method or constructor is accessible
    *     to call
-   * @return whether we can use this method or constructor in a side-effect-free assertion
+   * @return true if we can use this method or constructor in a side-effect-free assertion
    * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(

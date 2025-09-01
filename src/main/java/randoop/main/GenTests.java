@@ -40,7 +40,6 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
-import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
@@ -52,7 +51,6 @@ import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -117,6 +115,18 @@ import randoop.util.predicate.AlwaysFalse;
 /** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
+  /** The prefix for Randoop annotations. */
+  private static final String RANDOOP_PREFIX = "randoop.";
+
+  /** The annotation for pure methods. */
+  private static final String PURE_ANNOTATION =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.Pure";
+
+  /** The annotation for side-effect-free methods. */
+  private static final String SIDE_EFFECT_FREE =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
+
+  /** The message printed when there are no operations to test. */
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
@@ -426,8 +436,12 @@ public class GenTests extends GenInputsAbstract {
         Method m = methodCall.getMethod();
         // Read method annotations for @Pure and @SideEffectFree
         for (Annotation annotation : m.getAnnotations()) {
-          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
-            // Get declaring class and create Type object
+          // TODO: All instances of "org.checkerframework" are replaced with
+          //  "randoop.org.checkerframework", annotation name and the check must be prefixed with
+          //  "randoop.". Is there a better way to check annotations?
+          String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
+          if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
+            // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
@@ -703,8 +717,7 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods that take that type as their
-   *     only argument
+   * @return a map from a Type to a set of side-effect-free methods defined in it
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -773,7 +786,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param sideEffectFreeMethodsByType side-effect-free methods; will use the unary ones in
+   *     assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
    * @param accessibilityPredicate accessibility predicate for side-effect-free methods

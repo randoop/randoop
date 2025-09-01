@@ -28,6 +28,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
+import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
@@ -209,7 +210,7 @@ public class ForwardGenerator extends AbstractGenerator {
       long gentimeNanos = System.nanoTime() - startTimeNanos;
       if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf(
-            "Long generation time %d msec for null sequence.%n", gentimeNanos / nanoPerMilli);
+            "%nLong generation time %d msec for null sequence.%n", gentimeNanos / nanoPerMilli);
       }
       return null;
     }
@@ -218,7 +219,7 @@ public class ForwardGenerator extends AbstractGenerator {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
       long gentimeNanos = System.nanoTime() - startTimeNanos;
       if (gentimeNanos > timeWarningLimitNanos) {
-        System.out.printf("Long generation time %d msec for%n", gentimeNanos / nanoPerMilli);
+        System.out.printf("%nLong generation time %d msec for%n", gentimeNanos / nanoPerMilli);
         System.out.println(eSeq.sequence);
       }
       return null;
@@ -234,11 +235,14 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.execute(executionVisitor, checkGenerator);
 
     // Dynamic type casting permits calling methods that do not exist on the declared type.
-    boolean cast = eSeq.castToRunTimeType();
-    // Re-execute the sequence after applying dynamic type casting.
-    if (cast) {
-      setCurrentSequence(eSeq.sequence);
-      eSeq.execute(executionVisitor, checkGenerator);
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      boolean eSeqCasted = eSeq.castToRunTimeType();
+
+      // Re-execute the sequence after applying dynamic type casting.
+      if (eSeqCasted) {
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
     }
 
     startTimeNanos = System.nanoTime(); // reset start time.
@@ -811,19 +815,21 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.var;
-      Sequence chosenSeq = varAndSeq.seq;
+      Variable randomVariable = varAndSeq.getVariable();
+      Sequence chosenSeq = varAndSeq.getSequence();
 
       // Fuzz the inputs for method calls and constructors.
       // See randoop.generation.GrtFuzzing for details.
-      int fuzzingSizeChange = 0;
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
+
+      // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
+      // variable. This ensures the correct fuzzed variable is used as the input.
       if (grtFuzz) {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
-          int prevSize = chosenSeq.size();
-          chosenSeq = fuzzer.fuzz(chosenSeq);
-          fuzzingSizeChange = chosenSeq.size() - prevSize;
+          VarAndSeq fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+          chosenSeq = fuzzedVarAndSeq.getSequence();
+          randomVariable = fuzzedVarAndSeq.getVariable();
         }
       }
 
@@ -842,23 +848,12 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      inputVars.add(totStatements + randomVariable.index + fuzzingSizeChange);
+      inputVars.add(totStatements + randomVariable.index);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
 
     return new InputsAndSuccessFlag(true, sequences, inputVars);
-  }
-
-  // A pair of a variable and a sequence
-  private static class VarAndSeq {
-    final Variable var;
-    final Sequence seq;
-
-    VarAndSeq(Variable var, Sequence seq) {
-      this.var = var;
-      this.seq = seq;
-    }
   }
 
   /**
@@ -867,7 +862,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
    *     each would be a legal return value
    * @param inputType the type of the chosen variable/sequence
-   * @param isReceiver whether the value will be used as a receiver
+   * @param isReceiver true if the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
   VarAndSeq randomVariable(SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
@@ -956,7 +951,7 @@ public class ForwardGenerator extends AbstractGenerator {
             ";" + Globals.lineSep + "    ",
             String.join(
                 ", ",
-                "steps: " + num_steps,
+                "steps: " + numAttemptedSequences(),
                 "null steps: " + null_steps,
                 "num_sequences_generated: " + num_sequences_generated),
             String.join(

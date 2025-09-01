@@ -115,59 +115,63 @@ class CoverageChecker {
     dontCareMethods.add(methodName);
   }
 
+  /** Matches digits at the end of a string. */
+  private Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
+
   /**
    * Add method names to be excluded, ignored, or included (included has no effect).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude17" and "ignore17" are similar, but only active if Java version >= 17.
+   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
+   * 21, or >= 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      if (!(s.endsWith(" exclude")
-          || s.endsWith(" ignore")
-          || s.endsWith(" include")
-          || s.endsWith(" exclude17")
-          || s.endsWith(" ignore17"))) {
-        // Not RandoopBug because that isn't available here.
+      int spacepos = s.lastIndexOf(" ");
+      if (spacepos == -1) {
         throw new Error(
-            "Bad method spec, lacks action at end (exclude, exclude17, ignore, ignore17, or"
-                + " include): "
+            "Bad method spec, lacks action at end "
+                + "(exclude{,NN,NN+}, ignore{,NN,NN+}, or include): "
                 + s);
       }
-
-      int spacepos = s.lastIndexOf(" ");
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
-      switch (action) {
-        case "exclude":
-          exclude(methodName);
-          break;
-        case "exclude17":
-          if (javaVersion >= 17) {
+      boolean plus;
+      if (action.endsWith("+")) {
+        action = action.substring(0, action.length() - 1);
+        plus = true;
+      } else {
+        plus = false;
+      }
+      int actionJdk;
+      Matcher m = TRAILING_NUMBER_PATTERN.matcher(action);
+      if (m.matches()) {
+        action = m.group(1);
+        actionJdk = Integer.parseInt(m.group(2));
+      } else {
+        actionJdk = 0;
+      }
+
+      if (actionJdk == 0
+          || (!plus && javaVersion == actionJdk)
+          || (plus && javaVersion >= actionJdk)) {
+        switch (action) {
+          case "exclude":
             exclude(methodName);
-          } else {
-            // ignore the methodSpec
-          }
-          break;
-        case "ignore":
-          ignore(methodName);
-          break;
-        case "ignore17":
-          if (javaVersion >= 17) {
+            break;
+          case "ignore":
             ignore(methodName);
-          } else {
-            // ignore the methodSpec
-          }
-          break;
-        case "include":
-          // nothing to do
-          break;
-        default:
-          // Not RandoopBug because that isn't available here.
-          throw new Error("Unrecognized action " + action + " in method spec: " + s);
+            break;
+          case "include":
+            // nothing to do
+            break;
+          default:
+            // Not RandoopBug because that isn't available here.
+            throw new Error("Unrecognized action " + action + " in method spec: " + s);
+        }
       }
     }
   }
@@ -287,7 +291,7 @@ class CoverageChecker {
       Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
 
   /**
-   * Indicates whether the given method name should be ignored during the coverage check.
+   * Returns true if the given method name should be ignored during the coverage check.
    *
    * @param methodname the method name
    * @return true if the method should be ignored, false otherwise

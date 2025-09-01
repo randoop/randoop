@@ -39,7 +39,7 @@ import randoop.util.Log;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  /** Whether to produce debugging output to the Randoop log. */
+  /** If true, produce debugging output to the Randoop log. */
   private static boolean debug = false;
 
   /** The type of the declaring class for the collected operations. */

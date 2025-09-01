@@ -76,28 +76,29 @@ import randoop.util.Util;
 public class OperationModel {
 
   /** The set of class declaration types for this model. */
-  private Set<ClassOrInterfaceType> classTypes;
+  // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
+  private Set<ClassOrInterfaceType> classTypes = new TreeSet<>();
 
   /**
    * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
    * TypeExtractor}.
    */
-  private Set<Type> inputTypes;
+  private Set<Type> inputTypes = new TreeSet<>();
 
   /** The set of classes used as goals in the covered-class test filter. */
-  private final LinkedHashSet<Class<?>> coveredClassesGoal;
+  private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
   /** Map from a class to the literals that occur in it. */
-  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap = new MultiMap<>();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues;
+  private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
 
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes. */
-  private final Set<TypedOperation> operations;
+  private final Set<TypedOperation> operations = new TreeSet<>();
 
   /** For debugging only. */
   private List<Pattern> omitMethods;
@@ -111,11 +112,6 @@ public class OperationModel {
    * @param omitMethods the patterns for operations that should be omitted
    */
   private OperationModel(List<Pattern> omitMethods) {
-    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
-    classTypes = new TreeSet<>();
-    inputTypes = new TreeSet<>();
-    classLiteralMap = new MultiMap<>();
-    annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
@@ -129,9 +125,6 @@ public class OperationModel {
     contracts.add(CompareToSubs.getInstance()); // arity=3
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
-
-    coveredClassesGoal = new LinkedHashSet<>();
-    operations = new TreeSet<>();
 
     this.omitMethods = omitMethods;
     this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
@@ -264,13 +257,14 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by the literals level.
+   *
+   * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
+   * and stored in scopeToConstantStatistics. This method only processes external literals files.
    *
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    // Add a (1-element) sequence corresponding to each literal to the component
-    // manager.
+    // Process external literals files and add them to scopeToConstantStatistics.
     for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {

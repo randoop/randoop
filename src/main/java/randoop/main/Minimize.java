@@ -276,7 +276,7 @@ public class Minimize extends CommandHandler {
    * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether to produce verbose output
+   * @param verboseOutput if true, produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    * @throws IOException if write to file fails
@@ -887,7 +887,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
+   * @param verboseOutput if true, output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    * @throws IOException thrown if write to file fails
    */
@@ -1408,7 +1408,7 @@ public class Minimize extends CommandHandler {
    * Deletes the .class file associated with the outputFile.
    *
    * @param outputFile the source file for the class file to be removed
-   * @param verboseOutput whether to print information about minimization status
+   * @param verboseOutput if true, print information about minimization status
    */
   private static void cleanUp(Path outputFile, boolean verboseOutput) {
     System.out.println("Minimizing complete.");
