@@ -1490,7 +1490,7 @@ Here are some examples.
 </p>
 <ul>
   <li><code>System.exit</code> will terminate Randoop if called during test generation.</li>
-  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which interferes with automated testing.</li>
+  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which waits forever during automated testing.</li>
   <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
 </ul>
 <p>
