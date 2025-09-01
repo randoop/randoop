@@ -35,9 +35,8 @@ public class TfIdfSelector {
     int numClasses = literalStats.getNumClasses();
 
     if (DEBUG) {
-      Log.logPrintln("Initializing TF-IDF Selector.  Arguments to constructor are:");
+      Log.logPrintln("Initializing TF-IDF Selector (" + numClasses + " classes) from:");
       Log.logPrintln("  literal stats: " + seqToUses);
-      Log.logPrintln("  number of classes: " + numClasses);
     }
 
     this.literalWeight = new LinkedHashMap<>();
@@ -64,7 +63,7 @@ public class TfIdfSelector {
       }
     }
     if (DEBUG) {
-      Log.logPrintf("TfIdf map: " + literalWeight + "%n");
+      Log.logPrintln("TfIdf map: " + literalWeight);
     }
   }
 
@@ -73,10 +72,10 @@ public class TfIdfSelector {
    *
    * @param candidates the candidate sequences which includes literal sequences from
    *     {ComponentManager.getLiteralSequences()}
-   * @return the selected sequence, or null if literalWeight map is empty or candidates is empty
+   * @return the selected sequence, or null if there are no sequences in this
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
-    // Empty when no literals in scope. Defaults to regular selection.
+    // Empty when no literals in scope.
     if (literalWeight.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TfIdfSelector.java: literalWeight map is empty");

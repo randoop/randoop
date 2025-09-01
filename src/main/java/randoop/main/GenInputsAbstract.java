@@ -1054,9 +1054,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + "Use --literal-tfidf alone to extract constants with TF-IDF scoring.");
     }
 
-    if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
+    if (literal_tfidf_probability <= 0 || literal_tfidf_probability >= 1) {
       throw new RandoopUsageError(
-          "Probability --literal-tfidf-probability must be in [0, 1] but was "
+          "Probability --literal-tfidf-probability must be in (0, 1) but was "
               + literal_tfidf_probability);
     }
 

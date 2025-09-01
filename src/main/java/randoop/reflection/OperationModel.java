@@ -268,17 +268,17 @@ public class OperationModel {
     // Process external literals files and add them to scopeToLiteralStatistics.
     for (String literalsFile : GenInputsAbstract.literals_file) {
       // "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor.
-      if (!literalsFile.equals("CLASSES")) {
-        // Parse external literals file and add to scopeToLiteralStatistics
-        MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
-        for (ClassOrInterfaceType type : fileMap.keySet()) {
-          Collection<Sequence> sequences = fileMap.getValues(type);
-          for (Sequence seq : sequences) {
-            scopeToLiteralStatistics.incrementNumUses(
-                type, seq, 1); // Default frequency for file literals
-          }
-          scopeToLiteralStatistics.incrementClassesWithSequences(type, sequences);
+      if (literalsFile.equals("CLASSES")) {
+        continue;
+      }
+      // Parse external literals file and add to scopeToLiteralStatistics.
+      MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
+      for (ClassOrInterfaceType type : fileMap.keySet()) {
+        Collection<Sequence> sequences = fileMap.getValues(type);
+        for (Sequence seq : sequences) {
+          scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
+        scopeToLiteralStatistics.recordSequencesInClass(type, sequences);
       }
     }
 

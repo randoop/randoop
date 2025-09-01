@@ -763,19 +763,20 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.literal_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
-        Log.logPrintf("Using literal from tf-idf as input.");
         // Get the declaring type for literal selection.
         ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
+        Log.logPrintf("tf-idf is selecing a literal of type " + declaringType);
 
-        // Construct a list of candidate sequences that create values of type inputTypes[i].
+        // Get candidate sequences, from the appropriate scope, that create values of type
+        // inputTypes[i].
         Type neededType = operation.getInputTypes().get(i);
         SIList<Sequence> candidates =
             componentManager.getLiteralSequences(neededType, declaringType);
 
+        // `selectTfidfSequence()` requires `scopeToTfIdfSelectors` to be non-null.
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
-        assert scopeToTfIdfSelectors != null
-            : "@AssumeAssertion(nullness)"; // literal_tfidf is true
+        assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
         Sequence seq =
             selectTfidfSequence(
                 candidates, declaringType, componentManager.scopeToLiteralStatistics);
@@ -1042,7 +1043,6 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Get the scope key and literal statistics for the given type
     @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
-
     // Candidates are filtered from literalStats based on the needed type (from
     // ComponentManager.getLiteralSequences),
     // while literalStats contains all sequences from the scope regardless of type.
@@ -1052,7 +1052,6 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Debug information (keeping the same DEBUG logic as the original class)
     if (Log.isLoggingOn()) {
       Log.logPrintf("Selecting sequence: %s%n", candidates);
       Log.logPrintf("tfidf map: %s%n", scopeToTfIdfSelectors);

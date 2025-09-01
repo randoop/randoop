@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -70,7 +71,7 @@ public class ScopeToLiteralStatistics {
   /**
    * Returns all sequences from all scopes.
    *
-   * @return all sequences recorded in this statistics object
+   * @return all sequences from all scopes
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new LinkedHashSet<>();
@@ -81,25 +82,26 @@ public class ScopeToLiteralStatistics {
   }
 
   /**
-   * Registers uses of the given literal. Creates an entry or increments an existing entry.
+   * Registers uses of the given literal.
    *
-   * @param type the class whose scope is being updated
+   * @param usingType the class whose scope is being updated
    * @param seq the sequence to be added
-   * @param numUses the number of times the {@code seq} is used in {@code type}
+   * @param numUses the number of times the {@code seq} is used in {@code usingType}
    */
-  public void incrementNumUses(ClassOrInterfaceType type, Sequence seq, int numUses) {
-    getLiteralStatistics(type).incrementNumUses(seq, numUses);
+  public void incrementNumUses(ClassOrInterfaceType usingType, Sequence seq, int numUses) {
+    getLiteralStatistics(usingType).incrementNumUses(seq, numUses);
   }
 
   /**
-   * Records that a class contains the given sequences and increments the total class count.
+   * Records that a class uses the given sequences and increments the total class count. The class
+   * might use a literal one time or many times; it makes no difference to this method.
    *
-   * @param type the class whose scope is being updated
+   * @param usingType the class whose scope is being updated
    * @param sequences all the literal sequences in the class
    */
-  public void incrementClassesWithSequences(
-      ClassOrInterfaceType type, Collection<Sequence> sequences) {
-    LiteralStatistics stats = getLiteralStatistics(type);
+  public void recordSequencesInClass(
+      ClassOrInterfaceType usingType, Collection<Sequence> sequences) {
+    LiteralStatistics stats = getLiteralStatistics(usingType);
     for (Sequence seq : sequences) {
       stats.incrementNumClassesWith(seq, 1);
     }
@@ -113,7 +115,7 @@ public class ScopeToLiteralStatistics {
    * @return the scope for the given type
    */
   // This is not static so that the result is @KeyFor("scopeToStatisticsMap").
-  @SuppressWarnings("keyfor:return") // the result will be used as a key
+  @SuppressWarnings("keyfor:return") // the result will be added to the map as a key
   public @Nullable @KeyFor("scopeToStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
@@ -129,24 +131,18 @@ public class ScopeToLiteralStatistics {
 
   @Override
   public String toString() {
-    StringJoiner sb = new StringJoiner(System.lineSeparator());
+    StringJoiner sj = new StringJoiner(System.lineSeparator());
 
     for (Map.Entry<@Nullable Object, LiteralStatistics> scopeEntry :
         scopeToStatisticsMap.entrySet()) {
       Object scope = scopeEntry.getKey();
       LiteralStatistics stats = scopeEntry.getValue();
 
-      sb.add("Scope: " + scope + " (" + stats.getNumClasses() + " classes)");
+      sj.add("Scope: " + scope + " (" + stats.getNumClasses() + " classes)");
 
-      for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> literalEntry :
-          stats.getLiteralUses().entrySet()) {
-        Sequence sequence = literalEntry.getKey();
-        LiteralStatistics.LiteralUses literalStats = literalEntry.getValue();
-
-        sb.add("  " + sequence + " -> (" + literalStats.toString() + ")");
-      }
+      sj.add(CollectionsPlume.mapToStringMultiLine(stats.getLiteralUses(), "  "));
     }
 
-    return sb.toString();
+    return sj.toString();
   }
 }

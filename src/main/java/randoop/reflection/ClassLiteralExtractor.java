@@ -60,6 +60,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     }
 
     // Record class-level statistics once per class after processing all sequences
-    scopeToLiteralStatistics.incrementClassesWithSequences(containingType, allConstants);
+    scopeToLiteralStatistics.recordSequencesInClass(containingType, allConstants);
   }
 }
