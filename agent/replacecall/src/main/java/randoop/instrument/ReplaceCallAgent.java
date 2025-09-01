@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
@@ -56,7 +57,7 @@ public class ReplaceCallAgent {
    */
   @SuppressWarnings("WeakerAccess")
   @Option("directory name where debug logs are written")
-  public static @Nullable String debug_directory;
+  public static @MonotonicNonNull String debug_directory;
 
   /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
@@ -69,24 +70,30 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static @Nullable Path replacement_file = null;
+  public static @MonotonicNonNull Path replacement_file = null;
 
   /** Exclude transformation of classes in the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
-  public static @Nullable Path dont_transform = null;
+  public static @MonotonicNonNull Path dont_transform = null;
 
-  /** Comma-separated list of default replacement method signatures to exclude. */
+  /**
+   * Default replacement methods that should not be used. A comma-separated list of method
+   * signatures in colon/JVM-descriptor form, e.g. "java.lang.System.exit:(I)V". JVM method
+   * descriptors are defined in the Java Virtual Machine Specification, section 4.3.3.
+   */
   @SuppressWarnings("WeakerAccess")
-  @Option(
-      "comma-separated list of default replacement method signatures to exclude; "
-          + "accepts colon/JVM-descriptor form, e.g. 'java.lang.System.exit:(I)V'")
-  public static @Nullable String replacecall_exclude = null;
+  @Option("methods not to replace")
+  public static @MonotonicNonNull String replacecall_exclude = null;
 
-  /** File listing method signatures to exclude from default replacements. */
+  /**
+   * File listing method to exclude from default replacements. Each line is a method signature in
+   * colon/JVM-descriptor form, e.g. "java.lang.System.exit:(I)V". JVM method descriptors are
+   * defined in the Java Virtual Machine Specification, section 4.3.3.
+   */
   @SuppressWarnings("WeakerAccess")
-  @Option("file listing default replacement method signatures to exclude (one per line)")
-  public static @Nullable Path replacecall_exclude_file = null;
+  @Option("file listing methods not to replace, one per line")
+  public static @MonotonicNonNull Path replacecall_exclude_file = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -180,28 +187,30 @@ public class ReplaceCallAgent {
         }
       }
 
-      // Remove (or override) excluded default replacements (from CLI CSV and/or file), if any.
+      // Remove some replacements.
       if (replacecall_exclude != null || replacecall_exclude_file != null) {
-        // Parse exclusions to MethodSignature objects (supports multiple input formats).
         Set<MethodSignature> excludeSignatures = new LinkedHashSet<>();
 
-        // From CLI CSV
-        if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
-          for (String raw : replacecall_exclude.split(",")) {
-            trimAndParseExcludedSignature(excludeSignatures, raw);
+        // From `--replacecall-exclude` command-line argument.
+        if (replacecall_exclude != null) {
+          for (String sig : replacecall_exclude.split(",")) {
+            addSignature(excludeSignatures, sig);
           }
         }
 
-        // From the file (one per line, '#' comments allowed)
+        // From `--replacecall-exclude-file` command-line argument (one per line, '#' comments
+        // allowed).
         if (replacecall_exclude_file != null) {
-          Path excludeFile = replacecall_exclude_file;
-          try (Reader r = Files.newBufferedReader(excludeFile, StandardCharsets.UTF_8)) {
-            for (String line : new EntryReader(r, excludeFile.toString(), "#.*$", null)) {
-              trimAndParseExcludedSignature(excludeSignatures, line);
+          try (Reader r =
+              Files.newBufferedReader(replacecall_exclude_file, StandardCharsets.UTF_8)) {
+            for (String line :
+                new EntryReader(r, replacecall_exclude_file.toString(), "#.*$", null)) {
+              addSignature(excludeSignatures, line);
             }
           } catch (IOException e) {
             System.err.printf(
-                "Error reading replacement exclusion file %s:%n %s%n", excludeFile, e.getMessage());
+                "Error reading replacement exclusion file %s:%n %s%n",
+                replacecall_exclude_file, e.getMessage());
             System.exit(1);
           }
         }
@@ -295,22 +304,20 @@ public class ReplaceCallAgent {
   }
 
   /**
-   * Trims the given string and parses it as a {@link MethodSignature} to add to the set of excluded
-   * signatures.
+   * Parses a method signature and adds it to the given set.
    *
-   * @param excludeSignatures the set of excluded method signatures to which the parsed signature is
-   *     added
-   * @param text the string to parse as a method signature
+   * @param signatures the set of method signatures to which the parsed signature is added
+   * @param text the string to parse as a method signature, in colon/JVM-descriptor form: {@code
+   *     pkg.Clazz.method:(...)}
    */
-  private static void trimAndParseExcludedSignature(
-      Set<MethodSignature> excludeSignatures, String text) {
+  private static void addSignature(Set<MethodSignature> signatures, String text) {
     String s = text.trim();
     if (!s.isEmpty()) {
-      MethodSignature ms = parseExcludedSignature(s);
+      MethodSignature ms = parseMethodSignature(s);
       if (ms != null) {
-        excludeSignatures.add(ms);
-      } else if (verbose) {
-        System.err.println("Warning: could not parse replacecall exclusion '" + s + "'");
+        signatures.add(ms);
+      } else {
+        System.err.println("Warning: could not parse replacecall exclusion: " + s);
       }
     }
   }
@@ -343,28 +350,28 @@ public class ReplaceCallAgent {
   }
 
   /**
-   * Parses an exclusion string into a {@link MethodSignature}.
+   * Parses a string into a {@link MethodSignature}.
    *
    * <p>Accepts the colon/JVM-descriptor form: {@code pkg.Clazz.method:(...)}. Examples: {@code
    * java.lang.System.exit:(I)V}, {@code
    * java.util.Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;}
    *
-   * <p>Returns null if parsing fails or if the input is not in the colon form.
+   * <p>Returns null if parsing fails.
    *
    * @param text the string to parse
    * @return the parsed {@link MethodSignature} or null if parsing fails
    */
-  private static @Nullable MethodSignature parseExcludedSignature(String text) {
+  private static @Nullable MethodSignature parseMethodSignature(String text) {
     String s = text.trim();
 
-    int colon = s.indexOf(':');
-    if (colon > 0 && s.indexOf('(') > colon) {
-      String ownerAndName = s.substring(0, colon);
-      int dot = ownerAndName.lastIndexOf('.');
-      if (dot > 0) {
-        String owner = ownerAndName.substring(0, dot);
-        String name = ownerAndName.substring(dot + 1);
-        String jvmDesc = s.substring(colon + 1); // "(..)[ret]"
+    int colonPos = s.indexOf(':');
+    if (colonPos > 0 && s.indexOf('(') > colonPos) {
+      String fqName = s.substring(0, colonPos);
+      int dotPos = fqName.lastIndexOf('.');
+      if (dotPos > 0) {
+        String owner = fqName.substring(0, dotPos);
+        String name = fqName.substring(dotPos + 1);
+        String jvmDesc = s.substring(colonPos + 1); // "(..)[ret]"
         String paramList = descriptorParamsToBinaryNames(jvmDesc);
         if (paramList != null) {
           try {
@@ -381,8 +388,8 @@ public class ReplaceCallAgent {
   }
 
   /**
-   * Converts a JVM method descriptor to a comma-separated list of binary names suitable for {@link
-   * MethodSignature#of(String)}. For example,
+   * Converts a JVM method descriptor (as defined in JVMS section 4.3.3) to a comma-separated list
+   * of binary names suitable for {@link MethodSignature#of(String)}. For example,
    *
    * <pre>
    *   "(I)V" -> "int"
