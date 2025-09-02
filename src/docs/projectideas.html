@@ -401,7 +401,7 @@ GRT's techniques are
 
 <dl>
 <dt>Constant mining (static)</dt>
-<dd>Extract constants from the program under test for both global usage (seed the main object pool) and for local usage as inputs for specific methods.</dd>
+<dd>Extract literals from the program under test for both global usage (seed the main object pool) and for local usage as inputs for specific methods.</dd>
 <dt>Impurity (static + dynamic)</dt>
 <dd>Perform static purity analysis for all methods under test. At run-time, fuzz selected input from the object pool based on a Gaussian distribution
 and purity results.</dd>
@@ -429,7 +429,7 @@ because GRT is Randoop with a few modifications.
 3. Try Randoop.  Install it and run it on some software.  That could be a project you have written for a class, or an open-source project that you have used.  Running Randoop will help you learn its strengths and weaknesses.
 
 Then, you are ready to implement the GRT techniques and evaluate them.
-Two of the GRT techniques "Bloodhound" and "Orienteering" are already implemented.
+All of the GRT techniques are already implemented, but they require code review and improvement.
 
 "Bloodhound" is documented at https://randoop.github.io/randoop/manual/index.html#option:method-selection , and the commit that implemented it is https://github.com/randoop/randoop/commit/832db48545ee416b375f6c57053b625075ec1e99.
 
