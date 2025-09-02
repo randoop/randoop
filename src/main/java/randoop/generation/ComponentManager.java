@@ -192,15 +192,26 @@ public class ComponentManager {
   }
 
   /**
-   * Returns literal sequences of the type {@code neededType} from the current {@code declaringType}
-   * as well as its superclasses.
+   * Returns literal sequences that produce values assignable to {@code neededType}, using a
+   * selection strategy determined by the current {@code literals_level} configuration.
    *
-   * @param neededType the type of literals
-   * @param declaringType the type whose scope to use for literal selection
-   * @return the sequences extracted by literal that create values of the given type
+   * @param neededType the target type for filtering literal sequences (sequences must produce
+   *     values assignable to this type)
+   * @param declaringType the class containing the operation being tested
+   * @return sequences from the appropriate scope(s) that create values of the needed type
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
+      case PACKAGE:
+      case ALL:
+        return scopeToLiteralStatistics
+            .getLiteralStatistics(declaringType)
+            .getSequencesForType(neededType);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
   }
 
   /**

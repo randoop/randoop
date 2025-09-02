@@ -16,6 +16,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.Type;
 
 /** This class stores information about the literals used in the SUT. */
 public class ScopeToLiteralStatistics {
@@ -44,15 +45,17 @@ public class ScopeToLiteralStatistics {
   }
 
   /**
-   * Returns sequences for a type, including sequences from all supertypes (classes and interfaces),
-   * filtered by the desired type.
+   * Returns literal sequences assignable to {@code neededType} by searching the inheritance
+   * hierarchy of {@code type} (including all supertypes). Designed for CLASS-level literal
+   * selection.
    *
-   * @param type the type to get sequences for
-   * @param neededType the type to filter sequences by
-   * @return sequences for the type and its supertypes that match the needed type
+   * @param type the starting type whose inheritance hierarchy determines which scopes to search
+   * @param neededType the target type for filtering sequences (sequences must produce values
+   *     assignable to this type)
+   * @return concatenated sequences from the type and its supertypes that match the needed type
    */
   public SIList<Sequence> getSequencesIncludingSupertypes(
-      ClassOrInterfaceType type, randoop.types.Type neededType) {
+      ClassOrInterfaceType type, Type neededType) {
     LinkedHashSet<ClassOrInterfaceType> typesToVisit = new LinkedHashSet<>();
     typesToVisit.add(type);
     typesToVisit.addAll(type.getSuperTypes());

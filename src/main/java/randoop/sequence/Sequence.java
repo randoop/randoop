@@ -577,6 +577,10 @@ public final class Sequence {
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
       Statement otherStatement = other.statements.get(i);
+      if (GenInputsAbstract.debug_checks) {
+        assert this.statements.get(i) == thisStatement;
+        assert other.statements.get(i) == otherStatement;
+      }
       if (!thisStatement.equals(otherStatement)) {
         verifyDifferentToString("statement index " + i, other);
         return false;
