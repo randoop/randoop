@@ -211,7 +211,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
-  public static @Nullable Path omit_field_file = null;
+  public static @MonotonicNonNull Path omit_field_file = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
@@ -621,21 +621,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * A file containing literal values to be used as inputs to methods under test, or "CLASSES".
    *
-   * <p>Literals in these files are used in addition to all other constants in the pool. For the
+   * <p>Literals in these files are used in addition to all other literals in the pool. For the
    * format of this file, see documentation in class {@link randoop.reflection.LiteralFileReader}.
    * The special value "CLASSES" (with no quotes) means to read literals from all classes under
-   * test.
+   * test; it may be specified in addition to one or more files.
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<>();
 
   /**
-   * How to use literal values that are specified via the {@code --literals-file} command-line
-   * option.
+   * Where to use literal values as method arguments. Should a literal be used as an argument to any
+   * method, or only to methods defined in the class where the literal appears, or only in the
+   * package where the literal appears?
    *
-   * @see ClassLiteralsMode
+   * <p>The literal values might have been obtained from the bytecode and/or from a file provided
+   * via the {@code --literals-file} command-line option.
    */
-  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
+  @Option("How to use literal values: ALL, PACKAGE, CLASS, or NONE")
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
 
   /**

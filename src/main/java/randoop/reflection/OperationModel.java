@@ -257,13 +257,14 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by the literals level.
+   *
+   * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
+   * and stored in scopeToConstantStatistics. This method only processes external literals files.
    *
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    // Add a (1-element) sequence corresponding to each literal to the component
-    // manager.
+    // Process external literals files and add them to scopeToConstantStatistics.
     for (String literalsFile : GenInputsAbstract.literals_file) {
       MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
