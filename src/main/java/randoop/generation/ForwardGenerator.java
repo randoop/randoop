@@ -1023,14 +1023,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Selects a sequence from {@code candidates} based on TF-IDF weight. The weight is calculated by
-   * the TF-IDF associated with the given type's scope.
+   * Selects one sequence from {@code candidates} using TF-IDF weights computed for the scope
+   * associated with {@code type}. Returns {@code null} if {@code candidates} is empty or the scope
+   * has no literal statistics.
    *
-   * @param candidates the candidate sequences, all of which have the same return type
-   * @param type the type whose scope will be used for TF-IDF calculation
-   * @param scopeToLiteralStatistics the statistics object to get literal data and scope information
-   * @return the selected sequence, or null if either {@code candidates} is empty or the type has no
-   *     literals
+   * @param candidates candidate sequences that produce values of the needed type
+   * @param type the type whose scope determines the TF-IDF statistics
+   * @param scopeToLiteralStatistics provider of literal statistics and scope resolution
+   * @return the TF-IDF–weighted choice, or {@code null} if unavailable
    */
   private @Nullable Sequence selectTfidfSequence(
       SIList<Sequence> candidates,
@@ -1041,21 +1041,21 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    // Get the scope key and literal statistics for the given type
-    @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
-    // Candidates are filtered from literalStats based on the needed type (from
-    // ComponentManager.getLiteralSequences),
-    // while literalStats contains all sequences from the scope regardless of type.
+    // literalStats contains all literal-bearing sequences known for the resolved scope,
+    // regardless of the specific needed input type. The candidates passed here are a typed
+    // subset taken from those statistics.
     LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
 
     if (literalStats.isEmpty()) {
       return null;
     }
 
+    @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
+
     if (Log.isLoggingOn()) {
-      Log.logPrintf("Selecting sequence: %s%n", candidates);
-      Log.logPrintf("tfidf map: %s%n", scopeToTfIdfSelectors);
-      Log.logPrintf("scope: %s%n", scope);
+      Log.logPrintf("TF-IDF selecting from candidates: %s%n", candidates);
+      Log.logPrintf("TF-IDF selector cache (by scope): %s%n", scopeToTfIdfSelectors);
+      Log.logPrintf("Resolved selection scope: %s%n", scope);
     }
 
     TfIdfSelector tfIdfSelector =
