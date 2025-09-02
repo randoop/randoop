@@ -1047,9 +1047,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
               + " specified --literal-tfidf and --use-class-literals=NONE");
     }
 
-    if (literal_tfidf_probability <= 0 || literal_tfidf_probability >= 1) {
+    // Allow edge probabilities 0 and 1 for determinism and consistency with
+    // Randomness.weightedCoinFlip(), which accepts values in [0, 1].
+    if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
       throw new RandoopUsageError(
-          "Probability --literal-tfidf-probability must be in (0, 1) but was "
+          "Probability --literal-tfidf-probability must be in [0, 1] but was "
               + literal_tfidf_probability);
     }
 
