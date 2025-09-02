@@ -30,12 +30,12 @@ public class VisibilityBridgeTest {
    * because we can't use equals() to compare a method of superclass directly to a method of
    * subclass. This method has an equals() method, permitting list search.
    */
-  private static class MethodSignature {
+  private static class MethodSignatureForTest {
     private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
 
-    MethodSignature(Method m, ClassOrInterfaceType declaringType) {
+    MethodSignatureForTest(Method m, ClassOrInterfaceType declaringType) {
       this.returnType = Type.forClass(m.getReturnType());
       this.name = m.getName();
       List<Type> paramTypes = new ArrayList<>();
@@ -48,7 +48,7 @@ public class VisibilityBridgeTest {
       this.parameterTypes = new TypeTuple(paramTypes);
     }
 
-    MethodSignature(TypedOperation op) {
+    MethodSignatureForTest(TypedOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
       this.name = op.getOperation().getName();
@@ -59,10 +59,10 @@ public class VisibilityBridgeTest {
       if (this == obj) {
         return true;
       }
-      if (!(obj instanceof MethodSignature)) {
+      if (!(obj instanceof MethodSignatureForTest)) {
         return false;
       }
-      MethodSignature m = (MethodSignature) obj;
+      MethodSignatureForTest m = (MethodSignatureForTest) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)
           && this.parameterTypes.equals(m.parameterTypes);
@@ -93,22 +93,22 @@ public class VisibilityBridgeTest {
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     // should only inherit public non-synthetic methods of package private superclass
-    List<MethodSignature> superclassMethods = new ArrayList<>();
+    List<MethodSignatureForTest> superclassMethods = new ArrayList<>();
     Class<?> sup = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateBase");
     for (Method m : sup.getDeclaredMethods()) {
       if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-        superclassMethods.add(new MethodSignature(m, declaringType));
+        superclassMethods.add(new MethodSignatureForTest(m, declaringType));
       }
     }
 
-    List<MethodSignature> subclassMethods = new ArrayList<>();
+    List<MethodSignatureForTest> subclassMethods = new ArrayList<>();
     for (TypedOperation op : getConcreteOperations(sub)) {
       if (op.isMethodCall()) {
-        subclassMethods.add(new MethodSignature(op));
+        subclassMethods.add(new MethodSignatureForTest(op));
       }
     }
 
-    for (MethodSignature m : superclassMethods) {
+    for (MethodSignatureForTest m : superclassMethods) {
       assertTrue(
           "superclass method "
               + m.getName()

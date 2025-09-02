@@ -28,7 +28,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * Creates a visitor that records constant statistics.
    *
-   * @param scopeToLiteralStatistics the storage for constant information
+   * @param scopeToLiteralStatistics a map from types to sequences in them that yield a literal
    */
   ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
@@ -37,8 +37,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>For each class, add sequences for each constant that the class uses to the statistics.
-   * Records the constant statistics (numUses, classesWithConstant).
+   * <p>For each class, add to the literal map a sequence for each literal that the class uses.
    */
   @Override
   public void visitBefore(Class<?> c) {
