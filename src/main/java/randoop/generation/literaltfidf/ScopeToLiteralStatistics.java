@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -45,14 +44,13 @@ public class ScopeToLiteralStatistics {
   }
 
   /**
-   * Returns literal sequences assignable to {@code neededType} by searching the inheritance
-   * hierarchy of {@code type} (including all supertypes). Designed for CLASS-level literal
-   * selection.
+   * Returns literal sequences whose output type is exactly {@code neededType}, by searching the
+   * inheritance hierarchy of {@code type} (including all supertypes). Designed for CLASS-level
+   * literal selection.
    *
    * @param type the starting type whose inheritance hierarchy determines which scopes to search
-   * @param neededType the target type for filtering sequences (sequences must produce values
-   *     assignable to this type)
-   * @return concatenated sequences from the type and its supertypes that match the needed type
+   * @param neededType the exact output type to filter sequences by
+   * @return concatenated sequences from the type and its supertypes that match the exact type
    */
   public SIList<Sequence> getSequencesIncludingSupertypes(
       ClassOrInterfaceType type, Type neededType) {
@@ -79,7 +77,9 @@ public class ScopeToLiteralStatistics {
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new LinkedHashSet<>();
     for (LiteralStatistics stats : scopeToStatisticsMap.values()) {
-      allSequences.addAll(stats.getLiteralUses().keySet());
+      for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> e : stats.literalUsesEntries()) {
+        allSequences.add(e.getKey());
+      }
     }
     return allSequences;
   }
@@ -142,8 +142,9 @@ public class ScopeToLiteralStatistics {
       LiteralStatistics stats = scopeEntry.getValue();
 
       sj.add("Scope: " + scope + " (" + stats.getNumClasses() + " classes)");
-
-      sj.add(CollectionsPlume.mapToStringMultiLine(stats.getLiteralUses(), "  "));
+      for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> e : stats.literalUsesEntries()) {
+        sj.add("  " + e.getKey() + " -> " + e.getValue());
+      }
     }
 
     return sj.toString();

@@ -15,8 +15,7 @@ import randoop.util.ClassFileConstants;
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, recording constant statistics including usage frequency and the classes
- * that contain each constant. All extracted literals are stored in {@link ScopeToLiteralStatistics}
- * to support both TF-IDF and non-TF-IDF literal selection strategies.
+ * that contain each constant.
  *
  * @see OperationModel
  */
@@ -37,7 +36,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>For each class, add to the literal map a sequence for each literal that the class uses.
+   * <p>Collects class bytecode literals and updates usage counts and per-class sequences.
    */
   @Override
   public void visitBefore(Class<?> c) {

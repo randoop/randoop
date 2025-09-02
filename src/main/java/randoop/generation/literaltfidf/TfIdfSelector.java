@@ -31,16 +31,15 @@ public class TfIdfSelector {
    * @param literalStats map from sequence to its usage statistics (in the represented scope)
    */
   public TfIdfSelector(LiteralStatistics literalStats) {
-    Map<Sequence, LiteralStatistics.LiteralUses> seqToUses = literalStats.getLiteralUses();
     int numClasses = literalStats.getNumClasses();
 
     if (DEBUG) {
       Log.logPrintln("Initializing TF-IDF Selector (" + numClasses + " classes) from:");
-      Log.logPrintln("  literal stats: " + seqToUses);
     }
 
     this.literalWeight = new LinkedHashMap<>();
-    for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> entry : seqToUses.entrySet()) {
+    for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> entry :
+        literalStats.literalUsesEntries()) {
       Sequence sequence = entry.getKey();
       LiteralStatistics.LiteralUses litUses = entry.getValue();
       int numUses = litUses.getNumUses();

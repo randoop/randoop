@@ -17,14 +17,14 @@ import randoop.types.Type;
  */
 public class LiteralStatistics {
 
-  /** A map from type to a map from literal to its usage statistics. */
-  private Map<Type, Map<Sequence, LiteralUses>> literalUsesMap = new LinkedHashMap<>();
+  /**
+   * Per-output-type index: for each {@link Type}, a map from {@link Sequence} (literal producer) to
+   * its {@link LiteralUses} within the scope.
+   */
+  private final Map<Type, Map<Sequence, LiteralUses>> literalUsesByType = new LinkedHashMap<>();
 
   /** The number of classes in this scope. */
   private int numClasses = 0;
-
-  /** Cached flattened map from literal to its usage statistics. */
-  private Map<Sequence, LiteralUses> cachedLiteralUses = null;
 
   /** Creates a new empty LiteralStatistics. */
   public LiteralStatistics() {}
@@ -34,35 +34,22 @@ public class LiteralStatistics {
    *
    * @return the number of classes in the current scope
    */
-  public Integer getNumClasses() {
+  public int getNumClasses() {
     return numClasses;
   }
 
   /**
-   * Returns true if this is empty.
+   * Return the {@link LiteralUses} for the given sequence.
    *
-   * @return true if this is empty
+   * @param seq a sequence
+   * @return the {@link LiteralUses} for the given sequence
    */
-  public boolean isEmpty() {
-    return literalUsesMap.isEmpty();
-  }
-
-  // TODO: It would likely be more efficient to define an iterator method for clients to use, rather
-  // than creating and caching the map.
-  /**
-   * Returns the map from literal to its usage statistics, flattened across all types.
-   *
-   * @return the map from literal to its usage statistics
-   */
-  public Map<Sequence, LiteralUses> getLiteralUses() {
-    if (cachedLiteralUses == null) {
-      Map<Sequence, LiteralUses> result = new LinkedHashMap<>();
-      for (Map<Sequence, LiteralUses> typeMap : literalUsesMap.values()) {
-        result.putAll(typeMap);
-      }
-      cachedLiteralUses = result;
-    }
-    return cachedLiteralUses;
+  private LiteralUses getLiteralUses(Sequence seq) {
+    Type outputType = seq.getLastVariable().getType();
+    Map<Sequence, LiteralUses> typeMap =
+        literalUsesByType.computeIfAbsent(outputType, k -> new LinkedHashMap<>());
+    LiteralUses currentUses = typeMap.computeIfAbsent(seq, k -> new LiteralUses());
+    return currentUses;
   }
 
   /**
@@ -72,7 +59,7 @@ public class LiteralStatistics {
    * @return the sequences for the given type
    */
   public SIList<Sequence> getSequencesForType(Type type) {
-    Map<Sequence, LiteralUses> typeMap = literalUsesMap.get(type);
+    Map<Sequence, LiteralUses> typeMap = literalUsesByType.get(type);
     if (typeMap == null || typeMap.isEmpty()) {
       return SIList.empty();
     }
@@ -97,7 +84,6 @@ public class LiteralStatistics {
   public void incrementNumUses(Sequence seq, int num) {
     LiteralUses currentUses = getLiteralUses(seq);
     currentUses.incrementNumUses(num);
-    cachedLiteralUses = null;
   }
 
   /**
@@ -109,21 +95,46 @@ public class LiteralStatistics {
   public void incrementNumClassesWith(Sequence seq, int num) {
     LiteralUses currentUses = getLiteralUses(seq);
     currentUses.incrementNumClassesWith(num);
-    cachedLiteralUses = null;
   }
 
   /**
-   * Return the {@link LiteralUses} for the given sequence.
+   * Returns true if this is empty.
    *
-   * @param seq a sequence
-   * @return the {@link LiteralUses} for the given sequence
+   * @return true if this is empty
    */
-  private LiteralUses getLiteralUses(Sequence seq) {
-    Type outputType = seq.getLastVariable().getType();
-    Map<Sequence, LiteralUses> typeMap =
-        literalUsesMap.computeIfAbsent(outputType, k -> new LinkedHashMap<>());
-    LiteralUses currentUses = typeMap.computeIfAbsent(seq, k -> new LiteralUses());
-    return currentUses;
+  public boolean isEmpty() {
+    return literalUsesByType.isEmpty();
+  }
+
+  /**
+   * Returns an iterable over all literal-to-usage entries across all output.
+   *
+   * @return an {@link Iterable} of entries mapping each {@link Sequence} to its {@link LiteralUses}
+   */
+  public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
+    return () ->
+        new java.util.Iterator<Map.Entry<Sequence, LiteralUses>>() {
+          private final java.util.Iterator<Map<Sequence, LiteralUses>> outer =
+              literalUsesByType.values().iterator();
+          private java.util.Iterator<Map.Entry<Sequence, LiteralUses>> inner =
+              java.util.Collections.emptyIterator();
+
+          @Override
+          public boolean hasNext() {
+            while (!inner.hasNext() && outer.hasNext()) {
+              inner = outer.next().entrySet().iterator();
+            }
+            return inner.hasNext();
+          }
+
+          @Override
+          public Map.Entry<Sequence, LiteralUses> next() {
+            if (!hasNext()) {
+              throw new java.util.NoSuchElementException();
+            }
+            return inner.next();
+          }
+        };
   }
 
   /**

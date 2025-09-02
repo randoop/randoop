@@ -172,9 +172,14 @@ public class ComponentManager {
 
     // This method appends two lists:
     //  * determines sequences from the pool (gralComponents)
-    //  * determines literals, which depend on the scope of `declaringCls`
+    //  * determines literals, which depend on `declaringCls`
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
+
+    // If literals are disabled, don't attempt to add any.
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
+      return result;
+    }
 
     // Compute relevant literals.
     SIList<Sequence> literals = SIList.empty();
@@ -202,6 +207,8 @@ public class ComponentManager {
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
     switch (GenInputsAbstract.literals_level) {
+      case NONE:
+        return SIList.empty();
       case CLASS:
         return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
       case PACKAGE:
@@ -223,7 +230,10 @@ public class ComponentManager {
   Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
-    result.addAll(scopeToLiteralStatistics.getAllSequences());
+    // Include literal-derived primitive sequences unless disabled.
+    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE) {
+      result.addAll(scopeToLiteralStatistics.getAllSequences());
+    }
 
     // Add primitive sequences from general components.
     // This code uses `CollectionsPlume.addAll`, whose second argument is an `Iterable`.
