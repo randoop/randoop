@@ -96,9 +96,9 @@ public interface Operation {
   boolean isUncheckedCast();
 
   /**
-   * Returns the "value" of an operation that is actually a ground term, meaning a constant of some
-   * form. Only null if value is null, otherwise throws an exception if there is not a reasonable
-   * meaning of value for type of operation.
+   * Returns the "value" of an operation that is actually a ground term, meaning a literal. Only
+   * null if value is null, otherwise throws an exception if there is not a reasonable meaning of
+   * value for type of operation.
    *
    * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *

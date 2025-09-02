@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.3.0'
 
-  id 'org.checkerframework' version '0.6.56'
+  id 'org.checkerframework' version '0.6.57'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -79,7 +79,7 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.49.5',
+    checkerFramework : '3.50.0',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.41.0',
@@ -313,7 +313,7 @@ compileTestInputJava.options.compilerArgs = [
   '-Xlint:-classfile,-options'
 ]
 
-task compileAll() {
+tasks.register('compileAll') {
   dependsOn compileJava
   dependsOn compileTestJava
   dependsOn ':covered-class:compileJava'
@@ -412,7 +412,7 @@ clean.dependsOn ':covered-class:clean'
 
 boolean testOnJdk8 = project.getProperties().getOrDefault('testOnJdk8', false)
 if (testOnJdk8) {
-  tasks.withType(Test) { testTask ->
+  tasks.withType(Test).configureEach { testTask ->
     javaLauncher = javaToolchains.launcherFor {
       languageVersion = JavaLanguageVersion.of(8)
     }
@@ -470,11 +470,12 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: [
-  shadowJar,
-  'copyJars',
-  'compileTestJava'
-]) {
+tasks.register('coveredTest', Test) {
+  dependsOn(
+      shadowJar,
+      'copyJars',
+      'compileTestJava'
+      )
   description = 'Run covered-class tests'
 
   /*
@@ -504,7 +505,8 @@ task coveredTest(type: Test, dependsOn: [
  */
 check.dependsOn coveredTest
 
-task replacecallTest(type: Test, dependsOn: 'copyJars') {
+tasks.register('replacecallTest', Test) {
+  dependsOn 'copyJars'
   description = 'Run replace-call tests'
 
   workingDir = sourceSets.replacecallTest.output.resourcesDir
@@ -552,10 +554,10 @@ check.dependsOn jacocoTestReport
  * JUnit tests in the systemTest task.
  * If the directory exists then cleans out the contents.
  */
-task generateWorkingDirs {
+tasks.register('generateWorkingDirs') {
   doLast {
     def generated = file(workingDirectories)
-    if (! generated.exists()) {
+    if (!generated.exists()) {
       generated.mkdir()
     } else {
       def workingFiles = fileTree(workingDirectories) {
@@ -572,7 +574,7 @@ task generateWorkingDirs {
 /*
  * Extracts JaCoCo javaagent into build/jacocoagent
  */
-task extractJacocoAgent(type: Copy) {
+tasks.register('extractJacocoAgent', Copy) {
   from {
     configurations.jacocoagent.collect { zipTree(it) }
   }
@@ -587,11 +589,12 @@ task extractJacocoAgent(type: Copy) {
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
-task systemTest(type: Test, dependsOn: [
-  'extractJacocoAgent',
-  'generateWorkingDirs',
-  'assemble'
-]) {
+tasks.register('systemTest', Test) {
+  dependsOn(
+      'extractJacocoAgent',
+      'generateWorkingDirs',
+      'assemble'
+      )
   group = 'Verification'
   description = 'Run system tests'
 
@@ -629,7 +632,7 @@ systemTest.dependsOn shadowJar
 check.dependsOn systemTest
 jacocoTestReport.dependsOn systemTest
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   /*
    * Set the destination directory for JUnit XML output files
    */
@@ -643,7 +646,7 @@ tasks.withType(Test) {
    * Pass along any system properties that begin with "randoop."
    * Used by randoop.main.RandoopOptions in systemTest.
    */
-  System.properties.each { k,v->
+  System.properties.each { k, v ->
     if (k.startsWith('randoop.')) {
       systemProperty k, v
     }
@@ -658,17 +661,17 @@ tasks.withType(Test) {
  *   classes.
  * ]
  */
-task testReport(type: TestReport) {
+tasks.register('testReport', TestReport) {
   group = 'Report'
   description = 'Creates HTML reports for tests results'
   destinationDirectory = file("$buildDir/reports/allTests")
 
-  for (Task t:tasks.withType(Test)){
+  for (Task t : tasks.withType(Test)) {
     testResults.from(t.getBinaryResultsDirectory())
   }
 }
 
-task printJunitJarPath {
+tasks.register('printJunitJarPath') {
   description = 'Print the path to junit.jar'
   doFirst { println configurations.junit.asPath }
 }
@@ -683,10 +686,8 @@ jar {
   from sourceSets.main.output
 }
 
-task copyJars(type: Copy, dependsOn: [
-  ':covered-class:jar',
-  ':replacecall:jar'
-]) {
+tasks.register('copyJars', Copy) {
+  dependsOn(':covered-class:jar', ':replacecall:jar')
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
@@ -728,26 +729,27 @@ shadowJar {
 
 assemble.dependsOn shadowJar
 
-task distributionZip (type: Zip , dependsOn: [
-  'shadowJar',
-  'copyJars',
-  'manual',
-  'extractJacocoAgent'
-]) {
+tasks.register('distributionZip', Zip) {
+  dependsOn(
+      'shadowJar',
+      'copyJars',
+      'manual',
+      'extractJacocoAgent'
+      )
   group = 'Publishing'
   description = 'Assemble a zip file with jar files and user documentation'
-  def dirName = "${base.archivesName}-${version}"
+  def dirName = "${base.archivesName.get()}-${version}"
   from 'build/libs/'
-  from ('src/docs/manual/index.html') {
+  from('src/docs/manual/index.html') {
     into 'doc/manual'
   }
-  from ('src/docs/manual/stylesheets') {
+  from('src/docs/manual/stylesheets') {
     into 'doc/manual/stylesheets'
   }
   from 'src/distribution/resources/README.txt'
-  into (dirName)
+  into(dirName)
   exclude { details ->
-    details.file.name.contains('randoop') && ! details.file.name.contains('-all-')
+    details.file.name.contains('randoop') && !details.file.name.contains('-all-')
   }
 }
 
@@ -772,11 +774,13 @@ task distributionZip (type: Zip , dependsOn: [
  *
  * Grgit has too many limitations.  Use exec instead.
  */
-task cloneLibs( dependsOn: [
-  'cloneChecklink',
-  'cloneHtmlTools',
-  'clonePlumeScripts'
-]) { }
+tasks.register('cloneLibs') {
+  dependsOn(
+      'cloneChecklink',
+      'cloneHtmlTools',
+      'clonePlumeScripts'
+      )
+}
 
 tasks.register('cloneChecklink', CloneTask) {
   url.set('https://github.com/plume-lib/checklink.git')
@@ -835,7 +839,8 @@ javadoc {
   }
 }
 
-task javadocPrivate(dependsOn: javadoc) {
+tasks.register('javadocPrivate') {
+  dependsOn javadoc
   doFirst {
     javadocMemberLevel = JavadocMemberLevel.PRIVATE
   }
@@ -860,8 +865,9 @@ javadoc {
 }
 
 allprojects { subproject ->
-  task requireJavadoc(type: JavaExec, group: 'Documentation') {
+  tasks.register('requireJavadoc', JavaExec) {
     description = 'Ensures that Javadoc documentation exists.'
+    group = 'Documentation'
     mainClass = 'org.plumelib.javadoc.RequireJavadoc'
     classpath = sourceSets.test.compileClasspath
     args 'agent', 'src/main/java', '--exclude=replacecall/src/main/java/randoop/mock'
@@ -894,22 +900,25 @@ build.dependsOn javadoc
 
 /* Update the table-of-contents for the user documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
-task updateUserTOC( type:Exec, dependsOn: ['cloneLibs']) {
+tasks.register('updateUserTOC', Exec) {
+  dependsOn['cloneLibs']
   executable file("$buildDir/utils/html-tools/html-update-toc")
-  args  file("${projectDir}/src/docs/manual/index.html")
+  args file("${projectDir}/src/docs/manual/index.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
 /* Update table of contents in developer documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
-task updateDevTOC( type:Exec, dependsOn: ['cloneLibs']) {
+tasks.register('updateDevTOC', Exec) {
+  dependsOn['cloneLibs']
   executable file("$buildDir/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
   environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
 }
 
 // No group so it doesn't show up in `./gradlew tasks`
-task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
+tasks.register('updateUserOptions', Javadoc) {
+  dependsOn 'assemble'
   description = 'Updates printed documentation of command-line arguments.'
 
   source = sourceSets.main.allJava.files.sort()
@@ -929,7 +938,7 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
 
 
 /* Requires that the html5validator program is installed */
-task html5validatorExists(type: Exec){
+tasks.register('html5validatorExists', Exec) {
 
   def command = 'command -v html5validator'
   def stdout = new ByteArrayOutputStream()
@@ -955,16 +964,17 @@ updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 /*
  * Generate/update and move documentation into build/docs directory.
  */
-task manual(type: Exec, dependsOn: [
-  'updateUserOptions',
-  'updateUserTOC',
-  'updateDevTOC',
-  'html5validatorExists'
-]) {
+tasks.register('manual', Exec) {
+  dependsOn(
+      'updateUserOptions',
+      'updateUserTOC',
+      'updateDevTOC',
+      'html5validatorExists'
+      )
 
   group = 'Documentation'
   description = 'Adds options and TOC to documentation in src/docs'
-  onlyIf {!Os.isFamily(Os.FAMILY_WINDOWS)}
+  onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
   environment PATH: "${System.env.PATH}"
   commandLine "html5validator", '--root', file("${projectDir}/src/docs/manual")
 }
@@ -986,10 +996,11 @@ build.dependsOn manual
 /*
  * Applies HTML5 validator to API javadoc.
  */
-task validateAPI(type: Exec, dependsOn: [
-  'javadoc',
-  'html5validatorExists'
-]) {
+tasks.register('validateAPI', Exec) {
+  dependsOn(
+      'javadoc',
+      'html5validatorExists'
+      )
   group = 'Documentation'
   description = 'Run html5validator to find HTML errors in API documentation'
   // Prior to Java 9, javadoc does not comply with HTML5.
@@ -1008,8 +1019,8 @@ validateAPI.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
  * directory. It can be repopulated by publishSite, but the contents will be
  * based on changes to the files in src/docs and the Javadoc in the source.
  */
-task cleanSite {
-  group=null
+tasks.register('cleanSite') {
+  group = null
   description = 'Removes all files from the project pages directory (CAUTION!)'
   def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
   def oldSiteFiles = fileTree(siteDir) {
@@ -1032,12 +1043,13 @@ task cleanSite {
  *
  * All site files will be read-only.
  */
-task publishSite (dependsOn: [
-  'cleanSite',
-  'javadoc',
-  'validateAPI',
-  'manual'
-]) {
+tasks.register('publishSite') {
+  dependsOn(
+      'cleanSite',
+      'javadoc',
+      'validateAPI',
+      'manual'
+      )
   group = 'Publishing'
   description = 'Publish changes to site files and javadoc to the project pages directory'
   def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
@@ -1048,8 +1060,8 @@ task publishSite (dependsOn: [
   }
   doLast {
     copy {
-      from (buildDocsDir)  //copy api
-      from (newSiteFiles)
+      from(buildDocsDir)  //copy api
+      from(newSiteFiles)
       into siteDir
       fileMode = Integer.parseInt('444', 8)
     }
@@ -1059,7 +1071,8 @@ task publishSite (dependsOn: [
 /*
  * Applies HTML5 validator to project site HTML, including the manual
  */
-task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
+tasks.register('validateSite', Exec) {
+  dependsOn 'html5validatorExists'
   description = 'Run html5validator to find HTML errors in site files (excludes manual and api)'
   environment PATH: "$System.env.PATH"
   commandLine 'html5validator', '--root', 'src/docs/'
@@ -1067,16 +1080,17 @@ task validateSite(type: Exec, dependsOn: 'html5validatorExists') {
 validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
-task thisIsReleaseFile()  {
+tasks.register('thisIsReleaseFile') {
   description = 'Create a file to mark the Randoop .jar file as a release'
   doLast {
-    ant.touch(file:"$thisIsReleaseFilename")
+    ant.touch(file: "$thisIsReleaseFilename")
   }
 }
-task assembleRelease(dependsOn: [
-  'thisIsReleaseFile',
-  'assemble'
-]) {
+tasks.register('assembleRelease') {
+  dependsOn(
+      'thisIsReleaseFile',
+      'assemble'
+      )
   doLast {
     delete thisIsReleaseFilename
   }
@@ -1084,33 +1098,37 @@ task assembleRelease(dependsOn: [
 // If both tasks run, then run them in the given order.
 assemble.mustRunAfter thisIsReleaseFile
 
-task buildRelease(type: DefaultTask, dependsOn: [
-  'assembleRelease',
-  'check',
-  'publishSite',
-  'validateSite',
-  'distributionZip'
-]) {
+tasks.register('buildRelease', DefaultTask) {
+  dependsOn(
+      'assembleRelease',
+      'check',
+      'publishSite',
+      'validateSite',
+      'distributionZip'
+      )
   group = 'Publishing'
   description = 'Builds system and documentation, validates HTML, and publishes site'
 }
 
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
-task tags(type: Exec, group: 'Emacs', dependsOn: 'cloneLibs') {
+tasks.register('tags', Exec) {
+  dependsOn 'cloneLibs'
   description = 'Run etags to create an Emacs TAGS table'
   commandLine 'bash', '-c', "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
-task tagsNoTests(type: Exec, dependsOn: 'cloneLibs') {
+tasks.register('tagsNoTests', Exec) {
+  dependsOn 'cloneLibs'
   group = 'Emacs'
   description = 'Run etags to create an Emacs TAGS table'
   commandLine 'bash', '-c', "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
 }
 
 /* Run checklink */
-task checklink(type: Exec, group: 'Documentation', dependsOn: 'cloneLibs') {
+tasks.register('checklink', Exec) {
+  dependsOn 'cloneLibs'
   description = 'Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt'
   environment PATH: "$System.env.PATH:$buildDir/utils/checklink"
   commandLine 'bash', '-c', """
@@ -1123,7 +1141,7 @@ task checklink(type: Exec, group: 'Documentation', dependsOn: 'cloneLibs') {
   }
 }
 
-task installGitHooks(type: Copy) {
+tasks.register('installGitHooks', Copy) {
   description = 'Installs git hooks for pre-commit'
   from 'scripts/'
   into '.git/hooks'
