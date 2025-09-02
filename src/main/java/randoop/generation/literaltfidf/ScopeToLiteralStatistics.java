@@ -122,7 +122,8 @@ public class ScopeToLiteralStatistics {
   public @Nullable @KeyFor("scopeToStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
-        return type;
+        // Normalize to raw type so ParameterizedType and NonParameterizedType use same key.
+        return type.getRawtype();
       case PACKAGE:
         return type.getPackage();
       case ALL:
