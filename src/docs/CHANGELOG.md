@@ -775,7 +775,7 @@ Version 1.3.3 (November 21, 2012)
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
   - Fix for PrettyPrinter
-  - Unquoted character constants make Randoop generate uncompilable tests
+  - Unquoted character literals make Randoop generate uncompilable tests
   - Problem of using compare_checks in eclipse plugin by adding
 
 Features

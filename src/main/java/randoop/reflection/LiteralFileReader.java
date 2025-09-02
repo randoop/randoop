@@ -57,7 +57,7 @@ public class LiteralFileReader {
   }
 
   /**
-   * Returns a map from class to list of constants.
+   * Returns a map from class to list of literals.
    *
    * @param inFile the input file
    * @return the map from types to literal values

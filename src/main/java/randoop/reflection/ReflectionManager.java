@@ -252,8 +252,7 @@ public class ReflectionManager {
         }
       }
     }
-    // get any inherited methods also declared in anonymous class of some
-    // constant
+    // Get any inherited methods also declared in anonymous class of some constant.
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isAccessible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
