@@ -823,8 +823,7 @@ public class ForwardGenerator extends AbstractGenerator {
       boolean grtFuzz = GenInputsAbstract.grt_fuzzing;
 
       // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
-      // variable. This ensures the correct fuzzed variable is used
-      // as the input.
+      // variable. This ensures the correct fuzzed variable is used as the input.
       if (grtFuzz) {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {

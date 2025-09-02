@@ -76,8 +76,8 @@ public final class Sequence {
       throw new IllegalArgumentException("`statements' argument cannot be null");
     }
     this.statements = statements;
-    this.savedHashCode = hashCode;
-    this.savedNetSize = netSize;
+    this.hashCode = hashCode;
+    this.netSize = netSize;
     this.computeLastStatementInfo();
     this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
@@ -167,9 +167,9 @@ public final class Sequence {
     List<RelativeNegativeIndex> indexList =
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
-    int newNetSize = operation.isNonreceivingValue() ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = operation.isNonreceivingValue() ? this.netSize : this.netSize + 1;
     return new Sequence(
-        this.statements.add(statement), this.savedHashCode + statement.hashCode(), newNetSize);
+        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize);
   }
 
   /**
@@ -208,8 +208,8 @@ public final class Sequence {
     int newHashCode = 0;
     int newNetSize = 0;
     for (Sequence c : sequences) {
-      newHashCode += c.savedHashCode;
-      newNetSize += c.savedNetSize;
+      newHashCode += c.hashCode;
+      newNetSize += c.netSize;
       statements1.add(c.statements);
     }
     return new Sequence(SIList.concat(statements1), newHashCode, newNetSize);
@@ -432,38 +432,26 @@ public final class Sequence {
     return new Variable(this, absoluteIndex);
   }
 
-  /**
-   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
-   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
-   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
-   *
-   * @param statements the list of statements over which to compute the hash code
-   * @return the sum of the hash codes of the statements in the sequence
-   */
-  private static int computeHashcode(SIList<Statement> statements) {
-    int hashCode = 0;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      Statement s = statements.get(i);
-      hashCode += s.hashCode();
-    }
-    return hashCode;
-  }
+  /** The net size of this sequence, cached to avoid recomputation. */
+  private final int netSize;
 
   /**
    * Counts the number of statements in a list that are not initializations with a primitive type.
-   * For instance {@code int var7 = 0}.
+   * For instance, {@code int var7 = 0} would not be counted.
+   *
+   * <p>This should only ever be computed once. Thereafter, use variable {@code netSize} directly.
    *
    * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
   private static int computeNetSize(SIList<Statement> statements) {
-    int netSize = 0;
+    int result = 0;
     for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
       if (!statements.get(i).isNonreceivingInitialization()) {
-        netSize++;
+        result++;
       }
     }
-    return netSize;
+    return result;
   }
 
   /** Set {@link #lastStatementVariables} and {@link #lastStatementTypes}. */
@@ -583,7 +571,7 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      verifyNotEqual("size", other);
+      verifyDifferentToString("size", other);
       return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
@@ -594,7 +582,7 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        verifyNotEqual("statement index " + i, other);
+        verifyDifferentToString("statement index " + i, other);
         return false;
       }
     }
@@ -607,15 +595,15 @@ public final class Sequence {
    * @param message a diagnostic message
    * @param other a sequence whose {@link #toString} to compare to this
    */
-  private void verifyNotEqual(String message, Sequence other) {
-    // This method `verifyNotEqual` is not a useful test, because there can be two tests that differ
-    // only in the receiver type of an operation.  For instance, suppose that A is a supertype of B.
-    // Then one test might choose the operation A.f and the other test might choose the operation
-    // B.f, with the same arguments.  The printed representation of the two tests is identical, so
-    // long as f is not static.  (This example is actually a duplicate that we do not want, since
-    // the two tests will dispatch to the same implementation at run time, but for now Randoop can
-    // produce it, so this method is disabled.)
-    if (true) {
+  private void verifyDifferentToString(String message, Sequence other) {
+    // This method `verifyDifferentToString` is not a useful test, because there can be two tests
+    // that differ only in the receiver type of an operation.  For instance, suppose that A is a
+    // supertype of B.  Then one test might choose the operation A.f and the other test might choose
+    // the operation B.f, with the same arguments.  The printed representation of the two tests is
+    // identical, so long as f is not static.  (This example is actually a duplicate that we do not
+    // want, since the two tests will dispatch to the same implementation at run time, but for now
+    // Randoop can produce it, so this method is disabled.)
+    if (true) { // "if (true)" because with just "return;" the compiler complains about dead code.
       return;
     }
 
@@ -640,16 +628,30 @@ public final class Sequence {
     }
   }
 
-  // A saved copy of this sequence's hashcode to avoid recalculation.
-  private final int savedHashCode;
-
-  // A saved copy of this sequence's net size to avoid recomputation.
-  private final int savedNetSize;
+  /** This sequence's hash code, cached to avoid recomputation. */
+  private final int hashCode;
 
   // See comment at computeHashCode method for notes on hashCode.
   @Override
   public final int hashCode() {
-    return savedHashCode;
+    return hashCode;
+  }
+
+  /**
+   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
+   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
+   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
+   *
+   * @param statements the list of statements over which to compute the hash code
+   * @return the sum of the hash codes of the statements in the sequence
+   */
+  private static int computeHashcode(SIList<Statement> statements) {
+    int hashCode = 0;
+    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
+      Statement s = statements.get(i);
+      hashCode += s.hashCode();
+    }
+    return hashCode;
   }
 
   /**

@@ -24,7 +24,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * Creates a visitor that adds discovered literals to the given map.
    *
-   * @param literalMap a map from types to sequences in them that yield a constant
+   * @param literalMap a map from types to sequences in them that yield a literal
    */
   ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
@@ -33,7 +33,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>For each class, add to the literal map a sequence for each constant that the class uses.
+   * <p>For each class, add to the literal map a sequence for each literal that the class uses.
    */
   @Override
   public void visitBefore(Class<?> c) {

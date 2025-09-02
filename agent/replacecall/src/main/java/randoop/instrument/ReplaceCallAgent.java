@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
@@ -55,7 +56,7 @@ public class ReplaceCallAgent {
    */
   @SuppressWarnings("WeakerAccess")
   @Option("directory name where debug logs are written")
-  public static @Nullable String debug_directory;
+  public static @MonotonicNonNull String debug_directory;
 
   /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
@@ -68,12 +69,12 @@ public class ReplaceCallAgent {
   /** The file from which to read the user replacements for replacing calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose calls to replace by substitute methods")
-  public static @Nullable Path replacement_file = null;
+  public static @MonotonicNonNull Path replacement_file = null;
 
   /** Exclude transformation of classes in the listed packages. */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
-  public static @Nullable Path dont_transform = null;
+  public static @MonotonicNonNull Path dont_transform = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
