@@ -222,9 +222,9 @@ public final class Statement {
   }
 
   /**
-   * getValue returns the "value" for a statement. Is only meaningful if statement is an assignment
-   * of a constant value. Appeals to {@link CallableOperation} to throw appropriate exception when
-   * unable to provide a value.
+   * Returns the "value" for a statement. Is only meaningful if statement is an assignment of a
+   * literal value. Appeals to {@link CallableOperation} to throw appropriate exception when unable
+   * to provide a value.
    *
    * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *
