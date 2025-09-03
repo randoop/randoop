@@ -294,17 +294,25 @@ public class OperationModel {
     }
   }
 
-  /** Returns true if bytecode literal mining should be performed. */
+  /**
+   * Returns whether bytecode literal mining should be performed.
+   *
+   * @return true if literal mining or TF-IDF is enabled, or if the special token "CLASSES" appears
+   *     in {@code --literals-file}; false otherwise
+   */
   private boolean shouldMineLiterals() {
     return GenInputsAbstract.literal_mining
         || GenInputsAbstract.literal_tfidf
         || GenInputsAbstract.literals_file.contains("CLASSES");
   }
 
-  /** Returns true if literal statistics are needed during generation. */
+  /**
+   * Returns whether literal statistics are needed during generation.
+   *
+   * @return true if mining/TF-IDF is enabled or any literals file is provided (including
+   *     "CLASSES"); false otherwise
+   */
   private boolean shouldUseLiteralStatistics() {
-    // Use statistics if mining/TF-IDF is enabled, or if the user supplied any literals file
-    // (including the special token "CLASSES").
     return shouldMineLiterals() || !GenInputsAbstract.literals_file.isEmpty();
   }
 
