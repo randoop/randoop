@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
@@ -60,8 +61,8 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /** For each scope in the SUT, statistics about its literals. */
-  public ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
+  /** For each scope in the SUT, statistics about its literals (if available). */
+  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
@@ -106,7 +107,7 @@ public class ComponentManager {
    *
    * @return the literal statistics map
    */
-  public ScopeToLiteralStatistics getScopeToLiteralStatistics() {
+  public @Nullable ScopeToLiteralStatistics getScopeToLiteralStatistics() {
     return scopeToLiteralStatistics;
   }
 
@@ -206,6 +207,9 @@ public class ComponentManager {
    * @return sequences from the appropriate scope(s) that create values of the needed type
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
+    if (scopeToLiteralStatistics == null) {
+      return SIList.empty();
+    }
     switch (GenInputsAbstract.literals_level) {
       case NONE:
         return SIList.empty();
@@ -231,7 +235,8 @@ public class ComponentManager {
 
     Set<Sequence> result = new LinkedHashSet<>();
     // Include literal-derived primitive sequences unless disabled.
-    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE) {
+    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
+        && scopeToLiteralStatistics != null) {
       result.addAll(scopeToLiteralStatistics.getAllSequences());
     }
 

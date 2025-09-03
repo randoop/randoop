@@ -777,9 +777,12 @@ public class ForwardGenerator extends AbstractGenerator {
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
         assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
-        Sequence seq =
-            selectTfidfSequence(
-                candidates, declaringType, componentManager.scopeToLiteralStatistics);
+        Sequence seq = null;
+        if (componentManager.scopeToLiteralStatistics != null) {
+          seq =
+              selectTfidfSequence(
+                  candidates, declaringType, componentManager.scopeToLiteralStatistics);
+        }
 
         if (seq != null) {
           inputVars.add(totStatements);

@@ -282,13 +282,30 @@ public class OperationModel {
       }
     }
 
-    compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
+    // Attach statistics to the component manager only when they will be used.
+    if (shouldUseLiteralStatistics()) {
+      compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
+    }
 
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
       for (Sequence s : scopeToLiteralStatistics.getAllSequences()) {
         compMgr.addGeneratedSequence(s);
       }
     }
+  }
+
+  /** Returns true if bytecode literal mining should be performed. */
+  private boolean shouldMineLiterals() {
+    return GenInputsAbstract.literal_mining
+        || GenInputsAbstract.literal_tfidf
+        || GenInputsAbstract.literals_file.contains("CLASSES");
+  }
+
+  /** Returns true if literal statistics are needed during generation. */
+  private boolean shouldUseLiteralStatistics() {
+    // Use statistics if mining/TF-IDF is enabled, or if the user supplied any literals file
+    // (including the special token "CLASSES").
+    return shouldMineLiterals() || !GenInputsAbstract.literals_file.isEmpty();
   }
 
   /**
@@ -573,7 +590,10 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
 
-    mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
+    // Mine literals only when requested via flags or CLASSES.
+    if (shouldMineLiterals()) {
+      mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
+    }
 
     // Collect classes under test
     int succeeded = 0;

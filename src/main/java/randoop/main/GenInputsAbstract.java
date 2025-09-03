@@ -661,6 +661,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean literal_tfidf = false;
 
   /**
+   * Whether to mine literal values from the bytecode of classes under test.
+   *
+   * <p>When enabled, Randoop extracts literals from each class under test and records per-scope
+   * statistics so that literals can be considered during generation. When disabled, literals from
+   * class bytecode are not mined unless {@code --literal-tfidf} is also enabled or {@code
+   * --literals-file=CLASSES} is specified.
+   */
+  @Option("Mine literal values from class bytecode (in addition to any literals files)")
+  public static boolean literal_mining = false;
+
+  /**
    * The probability of using a constant value as an input to a method under test. This option is
    * only used when {@code --literal-tfidf} is set to true.
    */
