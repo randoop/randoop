@@ -218,8 +218,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     return typeToUnion.computeIfAbsent(
         erased,
         k -> {
+          // Deduplicate while preserving insertion order (stable, reproducible order).
           java.util.LinkedHashSet<TypedOperation> union = new java.util.LinkedHashSet<>();
           if (t instanceof ClassOrInterfaceType) {
+            // Include the type itself and all supertypes (each erased before lookup).
             for (ClassOrInterfaceType anc :
                 ((ClassOrInterfaceType) t).getAllSupertypesInclusive()) {
               List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
@@ -228,6 +230,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
               }
             }
           } else {
+            // Array/primitive guard: only consider the erased type itself.
             List<TypedOperation> ops = mutatorsByType.get(erased);
             if (ops != null) {
               union.addAll(ops);
@@ -250,22 +253,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Selects a parameter position of the given type in the mutation operation where the target
-   * variable will be used.
+   * Chooses the index of a parameter in {@code mutationOp} whose type can accept the target
+   * variable (of {@code typeToFuzz}). A random compatible index is returned if multiple exist.
    *
-   * <p>This selection ensures the target variable is actually used in the mutation by guaranteeing:
-   *
-   * <ol>
-   *   <li>At least one parameter position matches the target variable's type
-   *   <li>The target variable's sequence is incorporated as input for the mutation
-   * </ol>
-   *
-   * Without this selection, we might generate mutations that don't exercise the target variable.
-   *
-   * @param formalTypes the formal parameter types of the mutation operation
-   * @param typeToFuzz the type of the target variable to fuzz
-   * @param mutationOp the operation being mutated (used for error reporting)
-   * @return the index of the selected parameter position
+   * @param formalTypes the formal parameter types of {@code mutationOp}
+   * @param typeToFuzz the type of the target variable to pass to the operation
+   * @param mutationOp the operation whose parameter is being selected (for diagnostics)
+   * @return the index of a compatible parameter position
+   * @throws RandoopBug if no parameter type is compatible with {@code typeToFuzz}
    */
   private int selectFuzzParameter(
       TypeTuple formalTypes, Type typeToFuzz, TypedOperation mutationOp) {
