@@ -193,11 +193,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Select a side-effecting operation whose signature mentions the target's (raw) type. For
-   * class/interface types, it collects mutators whose parameter raw type matches the target type or
-   * any of its supertypes; for arrays/primitives, only the raw type itself is considered.
-   * Duplicates are removed (preserving insertion order), then one operation is chosen uniformly at
-   * random.
+   * Select a side-effecting operation whose signature mentions the target's type. For
+   * class/interface types, it collects mutators whose parameter type matches the target type or any
+   * of its supertypes. Then one operation is chosen uniformly at random.
    *
    * @param typeToFuzz the type of the variable to fuzz
    * @return a randomly selected mutation operation that can be applied to the type to fuzz, or null
@@ -205,6 +203,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    */
   private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
     Type raw = typeToFuzz.getRawtype();
+    // Start from a coarse, raw-type-based superset.
     List<TypedOperation> applicableOps = typeToApplicableOps.get(raw);
     if (applicableOps == null) {
       // Deduplicate while preserving insertion order
@@ -228,7 +227,25 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       applicableOps = new ArrayList<>(opsSet);
       typeToApplicableOps.put(raw, applicableOps);
     }
-    return applicableOps.isEmpty() ? null : Randomness.randomMember(applicableOps);
+
+    if (applicableOps.isEmpty()) {
+      return null;
+    }
+
+    // Refine: keep only operations that have at least one parameter truly assignable from
+    // typeToFuzz.
+    List<TypedOperation> compatibleOps = new ArrayList<>(applicableOps.size());
+    for (TypedOperation op : applicableOps) {
+      TypeTuple inputs = op.getInputTypes();
+      for (int i = 0; i < inputs.size(); i++) {
+        if (inputs.get(i).isAssignableFrom(typeToFuzz)) {
+          compatibleOps.add(op);
+          break;
+        }
+      }
+    }
+
+    return compatibleOps.isEmpty() ? null : Randomness.randomMember(compatibleOps);
   }
 
   /**
