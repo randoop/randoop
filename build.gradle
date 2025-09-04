@@ -25,7 +25,7 @@ plugins {
   id 'com.dorongold.task-tree' version '4.0.1'
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id 'com.gorylenko.gradle-git-properties' version '2.5.2'
+  id 'com.gorylenko.gradle-git-properties' version '2.5.3'
 }
 
 
