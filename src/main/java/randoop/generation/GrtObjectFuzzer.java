@@ -95,14 +95,15 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     TypeTuple formalTypes = mutationOp.getInputTypes();
+    int paramCount = formalTypes.size();
     int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz, mutationOp);
 
     // Keep track of the sequences to concatenate and the index of the necessary variable in each.
-    List<Sequence> sequencesToConcat = new ArrayList<>(formalTypes.size());
-    List<Integer> varIndicesInEachSeq = new ArrayList<>(formalTypes.size());
+    List<Sequence> sequencesToConcat = new ArrayList<>(paramCount);
+    List<Integer> varIndicesInEachSeq = new ArrayList<>(paramCount);
 
     // Collect input sequences for each formal parameter.
-    for (int i = 0; i < formalTypes.size(); i++) {
+    for (int i = 0; i < paramCount; i++) {
       Type formalType = formalTypes.get(i);
       if (i == fuzzParam) {
         // Use the current sequence's variable for the selected fuzz parameter.
@@ -131,21 +132,13 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
     Sequence concatenated = Sequence.concatenate(sequencesToConcat);
 
-    // Precompute offsets of each block within the concatenated sequence.
-    int paramCount = formalTypes.size();
-    int[] offsets = new int[paramCount];
-    int acc = 0;
-    for (int i = 0; i < paramCount; i++) {
-      offsets[i] = acc;
-      acc += sequencesToConcat.get(i).size();
-    }
-
     // Map indices from individual sequences to the concatenated one.
     List<Variable> inputsForMutation = new ArrayList<>(paramCount);
+    int offset = 0;
     Variable updatedVariable = null;
     for (int i = 0; i < paramCount; i++) {
-      int localIndex = varIndicesInEachSeq.get(i);
-      int globalIndex = offsets[i] + localIndex;
+      int globalIndex = offset + varIndicesInEachSeq.get(i);
+      offset += sequencesToConcat.get(i).size();
       Variable v = concatenated.getVariable(globalIndex);
       inputsForMutation.add(v);
       if (i == fuzzParam) {
@@ -154,8 +147,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     if (updatedVariable == null) {
-      throw new RandoopBug(
-          "Target variable was not found in the concatenated sequence. This should not happen.");
+      throw new RandoopBug("Target variable was not found in the concatenated sequence.");
     }
 
     Sequence mutationSeq = concatenated.extend(mutationOp, inputsForMutation);
