@@ -139,30 +139,25 @@ class CoverageChecker {
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
-      boolean plus = false;
-      boolean minus = false;
+      boolean plus;
       if (action.endsWith("+")) {
         action = action.substring(0, action.length() - 1);
         plus = true;
-      } else if (action.endsWith("-")) {
-        // Interpret a trailing '-' as applying to versions <= NN (e.g., ignore17-).
-        action = action.substring(0, action.length() - 1);
-        minus = true;
+      } else {
+        plus = false;
       }
-      int actionJdk = 0;
+      int actionJdk;
       Matcher m = TRAILING_NUMBER_PATTERN.matcher(action);
       if (m.matches()) {
         action = m.group(1);
         actionJdk = Integer.parseInt(m.group(2));
+      } else {
+        actionJdk = 0;
       }
 
-      boolean applyAction =
-          (actionJdk == 0)
-              || (!plus && !minus && javaVersion == actionJdk)
-              || (plus && javaVersion >= actionJdk)
-              || (minus && javaVersion <= actionJdk);
-
-      if (applyAction) {
+      if (actionJdk == 0
+          || (!plus && javaVersion == actionJdk)
+          || (plus && javaVersion >= actionJdk)) {
         switch (action) {
           case "exclude":
             exclude(methodName);
