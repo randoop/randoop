@@ -829,7 +829,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence chosenSeq = varAndSeq.getSequence();
 
       // Fuzz the inputs for method calls and constructors.
-      // See randoop.generation.GrtFuzzing for details.
+      // See {@link randoop.generation.GrtFuzzer} for details.
       if (GenInputsAbstract.grt_fuzzing) {
         // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
         // variable. This ensures the correct fuzzed variable is used as the input.
@@ -837,12 +837,9 @@ public class ForwardGenerator extends AbstractGenerator {
         if (fuzzer != null) {
           VarAndSeq fuzzedVarAndSeq;
           if (fuzzer instanceof GrtObjectFuzzer) {
-            GrtObjectFuzzer objectFuzzer = (GrtObjectFuzzer) fuzzer;
-            objectFuzzer.initializeIfNeeded(sideEffectingMethods, componentManager);
-            fuzzedVarAndSeq = objectFuzzer.fuzz(chosenSeq, randomVariable);
-          } else {
-            fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+            ((GrtObjectFuzzer) fuzzer).initializeIfNeeded(sideEffectingMethods, componentManager);
           }
+          fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
           chosenSeq = fuzzedVarAndSeq.getSequence();
           randomVariable = fuzzedVarAndSeq.getVariable();
         }
