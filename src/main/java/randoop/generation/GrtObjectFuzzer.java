@@ -205,8 +205,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    */
   private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
     Type raw = typeToFuzz.getRawtype();
-    List<TypedOperation> applicable = typeToApplicableOps.get(raw);
-    if (applicable == null) {
+    List<TypedOperation> applicableOps = typeToApplicableOps.get(raw);
+    if (applicableOps == null) {
       // Deduplicate while preserving insertion order
       java.util.LinkedHashSet<TypedOperation> opsSet = new java.util.LinkedHashSet<>();
       if (typeToFuzz instanceof ClassOrInterfaceType) {
@@ -225,10 +225,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
           opsSet.addAll(ops);
         }
       }
-      applicable = new ArrayList<>(opsSet);
-      typeToApplicableOps.put(raw, applicable);
+      applicableOps = new ArrayList<>(opsSet);
+      typeToApplicableOps.put(raw, applicableOps);
     }
-    return applicable.isEmpty() ? null : Randomness.randomMember(applicable);
+    return applicableOps.isEmpty() ? null : Randomness.randomMember(applicableOps);
   }
 
   /**
