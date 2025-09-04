@@ -13,4 +13,4 @@ JAVA_VER=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut
     ./gradlew spotlessCheck
   fi
 
-#make -C scripts style-check
+make -C scripts style-check

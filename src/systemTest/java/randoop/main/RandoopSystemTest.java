@@ -195,13 +195,15 @@ public class RandoopSystemTest {
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
-            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
+            "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) ignore17-",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class)"
@@ -216,7 +218,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore",
             "java7.util7.Collections.get(java7.util7.ListIterator, int) exclude",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object)"
-                + " exclude",
+                + " ignore17-",
             "java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object,"
                 + " java7.util7.Comparator) exclude",
             "java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object)"
@@ -240,7 +242,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore17+",
             "java7.util7.Collections.synchronizedSet(java7.util7.Set, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
-            "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
+            "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17-",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17+",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore17+",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
@@ -1660,6 +1662,8 @@ public class RandoopSystemTest {
     options.setFlag("use-jdk-specifications");
     options.setOption("output_limit", "800");
     options.setOption("generated_limit", "1600");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1671,7 +1675,7 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
-            "java7.util7.ArrayList.subList(int, int) exclude",
+            "java7.util7.ArrayList.subList(int, int) exclude17-",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
