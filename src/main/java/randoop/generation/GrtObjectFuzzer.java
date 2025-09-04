@@ -46,6 +46,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Cache of applicable operations by raw type to avoid recomputing supertypes traversal. */
   private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
 
+  /** How to select sequences as inputs for creating new sequences. */
+  private @MonotonicNonNull InputSequenceSelector inputSequenceSelector;
+
   /**
    * Get the singleton instance of {@link GrtObjectFuzzer}.
    *
@@ -66,7 +69,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * @param mutators side-effecting operations used as mutators
    * @param cm the component manager used to obtain sequences for required types
    */
-  public void initialize(Set<TypedOperation> mutators, ComponentManager cm) {
+  public void initialize(
+      Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
     // Build the type-to-mutators map, for quick access later.
     for (TypedOperation op : mutators) {
       TypeTuple inputTypes = op.getInputTypes();
@@ -76,6 +80,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       }
     }
     this.componentManager = cm;
+    this.inputSequenceSelector = selector;
   }
 
   @Override
@@ -117,8 +122,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
           return new VarAndSeq(variable, sequence);
         }
 
-        // TODO: Use Randoop's input selection strategy instead of uniform random.
-        Sequence candidateSeq = Randomness.randomMember(candidates);
+        Sequence candidateSeq = inputSequenceSelector.selectInputSequence(candidates);
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
         if (candidateVar == null) {
           // No variable of the required type in the candidate sequence.
@@ -164,7 +168,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * @throws RandoopBug if the component manager or target variable is not set, or if the target
    *     variable is not part of the sequence to fuzz
    */
-  @EnsuresNonNull({"componentManager"})
+  @EnsuresNonNull({"componentManager", "inputSequenceSelector"})
   @SuppressWarnings("ReferenceEquality")
   private void checkPreconditions(Sequence sequence, Variable variable) {
     if (sequence == null) {
@@ -175,6 +179,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
     if (componentManager == null) {
       throw new RandoopBug("Component manager is not set. Initialize the fuzzer before fuzzing.");
+    }
+    if (inputSequenceSelector == null) {
+      throw new RandoopBug(
+          "Input sequence selector is not set. Initialize the fuzzer before fuzzing.");
     }
     if (variable == null) {
       throw new RandoopBug("Variable to fuzz is null.");

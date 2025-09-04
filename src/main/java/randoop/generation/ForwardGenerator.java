@@ -132,14 +132,6 @@ public class ForwardGenerator extends AbstractGenerator {
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.instantiator = componentManager.getTypeInstantiator();
 
-    if (GenInputsAbstract.grt_fuzzing) {
-      Set<TypedOperation> sideEffectingMethods =
-          new HashSet<>(
-              CollectionsPlume.filter(
-                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
-      GrtObjectFuzzer.getInstance().initialize(sideEffectingMethods, this.componentManager);
-    }
-
     initializeRuntimePrimitivesSeen();
 
     switch (GenInputsAbstract.method_selection) {
@@ -166,6 +158,15 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.grt_fuzzing) {
+      Set<TypedOperation> sideEffectingMethods =
+          new HashSet<>(
+              CollectionsPlume.filter(
+                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
+      GrtObjectFuzzer.getInstance()
+          .initialize(sideEffectingMethods, this.componentManager, this.inputSequenceSelector);
     }
   }
 
