@@ -68,6 +68,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param mutators side-effecting operations used as mutators
    * @param cm the component manager used to obtain sequences for required types
+   * @param selector strategy for choosing input sequences to satisfy non-fuzz parameters
    */
   public void initialize(
       Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
