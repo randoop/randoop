@@ -43,8 +43,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
 
-  /** Resolved unions to avoid recomputing ancestor walks. */
-  private final Map<Type, List<TypedOperation>> typeToUnion = new HashMap<>();
+  /** Cache of applicable operations by raw type to avoid recomputing supertypes traversal. */
+  private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
 
   /**
    * Get the singleton instance of {@link GrtObjectFuzzer}.
@@ -193,47 +193,41 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Returns all side-effecting operations applicable to {@code t}.
-   *
-   * @param t the (possibly generic) type to check
-   * @return a deduplicated list of applicable operations; may be empty
-   */
-  private List<TypedOperation> getApplicableOps(Type t) {
-    Type erased = t.getRawtype();
-    return typeToUnion.computeIfAbsent(
-        erased,
-        k -> {
-          // Deduplicate while preserving insertion order (stable, reproducible order).
-          java.util.LinkedHashSet<TypedOperation> union = new java.util.LinkedHashSet<>();
-          if (t instanceof ClassOrInterfaceType) {
-            // Include the type itself and all supertypes (each erased before lookup).
-            for (ClassOrInterfaceType anc :
-                ((ClassOrInterfaceType) t).getAllSupertypesInclusive()) {
-              List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
-              if (ops != null) {
-                union.addAll(ops);
-              }
-            }
-          } else {
-            // Array/primitive guard: only consider the erased type itself.
-            List<TypedOperation> ops = mutatorsByType.get(erased);
-            if (ops != null) {
-              union.addAll(ops);
-            }
-          }
-          return new ArrayList<>(union);
-        });
-  }
-
-  /**
-   * Select a mutation operation that can be applied to the type to fuzz.
+   * Select a side-effecting operation whose signature mentions the target's (raw) type. For
+   * class/interface types, it collects mutators whose parameter raw type matches the target type or
+   * any of its supertypes; for arrays/primitives, only the raw type itself is considered.
+   * Duplicates are removed (preserving insertion order), then one operation is chosen uniformly at
+   * random.
    *
    * @param typeToFuzz the type of the variable to fuzz
    * @return a randomly selected mutation operation that can be applied to the type to fuzz, or null
    *     if no applicable operation is found
    */
   private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
-    List<TypedOperation> applicable = getApplicableOps(typeToFuzz);
+    Type raw = typeToFuzz.getRawtype();
+    List<TypedOperation> applicable = typeToApplicableOps.get(raw);
+    if (applicable == null) {
+      // Deduplicate while preserving insertion order
+      java.util.LinkedHashSet<TypedOperation> opsSet = new java.util.LinkedHashSet<>();
+      if (typeToFuzz instanceof ClassOrInterfaceType) {
+        // Include the type itself and all supertypes.
+        for (ClassOrInterfaceType anc :
+            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
+          List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
+          if (ops != null) {
+            opsSet.addAll(ops);
+          }
+        }
+      } else {
+        // Array/primitive guard: only consider the raw type itself.
+        List<TypedOperation> ops = mutatorsByType.get(raw);
+        if (ops != null) {
+          opsSet.addAll(ops);
+        }
+      }
+      applicable = new ArrayList<>(opsSet);
+      typeToApplicableOps.put(raw, applicable);
+    }
     return applicable.isEmpty() ? null : Randomness.randomMember(applicable);
   }
 
