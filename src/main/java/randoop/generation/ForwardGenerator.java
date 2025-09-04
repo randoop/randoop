@@ -834,8 +834,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // variable. This ensures the correct fuzzed variable is used as the input.
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
-          VarAndSeq fuzzedVarAndSeq;
-          fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+          VarAndSeq fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
           chosenSeq = fuzzedVarAndSeq.getSequence();
           randomVariable = fuzzedVarAndSeq.getVariable();
         }

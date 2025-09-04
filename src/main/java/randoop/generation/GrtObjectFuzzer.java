@@ -63,35 +63,24 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /**
    * Initialize this fuzzer with side-effecting operations and a component manager.
    *
-   * @param sideEffectOps side-effecting operations used as mutators
+   * @param mutators side-effecting operations used as mutators
    * @param cm the component manager used to obtain sequences for required types
    */
-  public void initialize(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
-    mutatorsByType.clear();
-    typeToUnion.clear();
-    addOperations(sideEffectOps);
+  public void initialize(Set<TypedOperation> mutators, ComponentManager cm) {
+    // Build the type-to-mutators map, for quick access later.
+    for (TypedOperation op : mutators) {
+      TypeTuple inputTypes = op.getInputTypes();
+      for (int i = 0; i < inputTypes.size(); i++) {
+        Type type = inputTypes.get(i).getRawtype();
+        mutatorsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+      }
+    }
     this.componentManager = cm;
   }
 
   @Override
   public boolean canFuzz(Type type) {
     return !type.isNonreceiverType();
-  }
-
-  /**
-   * Adds side-effecting operations to this fuzzer.
-   *
-   * @param mutators a set of side-effecting operations to index
-   */
-  private void addOperations(Set<TypedOperation> mutators) {
-    // Build the type-to-mutators map, for quick access later.
-    for (TypedOperation op : mutators) {
-      TypeTuple inputTypes = op.getInputTypes();
-      for (int i = 0; i < inputTypes.size(); i++) {
-        Type type = erase(inputTypes.get(i));
-        mutatorsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
-      }
-    }
   }
 
   @Override
@@ -219,25 +208,32 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Returns a list of operations that can be applied to the given type.
+   * Returns all side-effecting operations applicable to {@code t}.
    *
-   * @param t the type to check for applicable operations
-   * @return a list of operations that can be applied to the type; may be an empty list
+   * @param t the (possibly generic) type to check
+   * @return a deduplicated list of applicable operations; may be empty
    */
   private List<TypedOperation> getApplicableOps(Type t) {
-    Type root = erase(t);
+    Type erased = t.getRawtype();
     return typeToUnion.computeIfAbsent(
-        root,
+        erased,
         k -> {
-          // Preserve insertion order & dedup
-          java.util.LinkedHashSet<TypedOperation> set = new java.util.LinkedHashSet<>();
-          for (Type a : supertypes(root)) {
-            List<TypedOperation> list = mutatorsByType.get(a);
-            if (list != null) {
-              set.addAll(list);
+          java.util.LinkedHashSet<TypedOperation> union = new java.util.LinkedHashSet<>();
+          if (t instanceof ClassOrInterfaceType) {
+            for (ClassOrInterfaceType anc :
+                ((ClassOrInterfaceType) t).getAllSupertypesInclusive()) {
+              List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
+              if (ops != null) {
+                union.addAll(ops);
+              }
+            }
+          } else {
+            List<TypedOperation> ops = mutatorsByType.get(erased);
+            if (ops != null) {
+              union.addAll(ops);
             }
           }
-          return new ArrayList<>(set);
+          return new ArrayList<>(union);
         });
   }
 
@@ -285,61 +281,5 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     return Randomness.randomMember(candidateParamPositions);
-  }
-
-  /**
-   * Returns an erased (raw) type. Returns the type unchanged if it is not a parameterized
-   * class/interface.
-   *
-   * @param t the type to erase
-   * @return the erased type
-   */
-  private Type erase(Type t) {
-    Type raw = t.getRawtype(); // Randoop's API: raw type for generics
-    return (raw != null) ? raw : t;
-  }
-
-  /**
-   * Performs a breadth-first traversal over the given type and its supertypes. Returns the erased
-   * form of each in this order: first the erasure of the argument `t`, then its immediate
-   * superclass and interfaces, then their supertypes. Duplicates are removed while preserving
-   * order.
-   *
-   * @param t the starting type
-   * @return a list of erased types including {@code t} and all ancestors
-   */
-  private List<Type> supertypes(Type t) {
-    Type start = erase(t);
-
-    // Non-class/interface types (primitives, arrays) have no ancestors.
-    if (!(start instanceof ClassOrInterfaceType)) {
-      List<Type> singleton = new ArrayList<>(1);
-      singleton.add(start);
-      return singleton;
-    }
-
-    java.util.Deque<Type> queue = new java.util.ArrayDeque<>();
-    java.util.LinkedHashSet<Type> result = new java.util.LinkedHashSet<>();
-
-    queue.add(start);
-    while (!queue.isEmpty()) {
-      Type next = erase(queue.removeFirst());
-      if (!result.add(next)) {
-        continue; // already processed
-      }
-      if (next instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType ci = (ClassOrInterfaceType) next;
-        ClassOrInterfaceType sup = ci.getSuperclass();
-        if (sup != null) {
-          queue.addLast(erase(sup));
-        }
-        for (Type itf : ci.getInterfaces()) {
-          if (itf != null) {
-            queue.addLast(erase(itf));
-          }
-        }
-      }
-    }
-    return new ArrayList<>(result);
   }
 }
