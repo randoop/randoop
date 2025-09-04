@@ -100,15 +100,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     // Keep track of the sequences to concatenate and the index of the necessary variable in each.
     List<Sequence> sequencesToConcat = new ArrayList<>(formalTypes.size());
     List<Integer> varIndicesInEachSeq = new ArrayList<>(formalTypes.size());
-    int targetParamPos = -1; // Initialize to an invalid position.
 
     // Collect input sequences for each formal parameter.
     for (int i = 0; i < formalTypes.size(); i++) {
       Type formalType = formalTypes.get(i);
-      if (formalType.isAssignableFrom(typeToFuzz) && i == fuzzParam) {
+      if (i == fuzzParam) {
+        // Use the current sequence's variable for the selected fuzz parameter.
         sequencesToConcat.add(sequence);
         varIndicesInEachSeq.add(variable.index);
-        targetParamPos = i; // Remember where the target variable goes.
       } else {
         SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
@@ -122,12 +121,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
         if (candidateVar == null) {
           // No variable of the required type in the candidate sequence.
-          return new VarAndSeq(variable, sequence);
-        }
-
-        Type candType = candidateVar.getType();
-        if (!formalType.isAssignableFrom(candType)) {
-          // The candidate variable's type does not match the formal type.
           return new VarAndSeq(variable, sequence);
         }
 
@@ -155,7 +148,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       int globalIndex = offsets[i] + localIndex;
       Variable v = concatenated.getVariable(globalIndex);
       inputsForMutation.add(v);
-      if (i == targetParamPos) {
+      if (i == fuzzParam) {
         updatedVariable = v;
       }
     }
