@@ -43,9 +43,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
 
-  /** Whether this fuzzer has been initialized. */
-  private boolean initialized = false;
-
   /** Resolved unions to avoid recomputing ancestor walks. */
   private final Map<Type, List<TypedOperation>> typeToUnion = new HashMap<>();
 
@@ -64,22 +61,16 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Initialize once with side-effecting operations and component manager. Later calls are no-ops.
-   * This is based on the expectation that Randoop has already collected all the side-effecting
-   * operations and the component manager should not change during the run.
+   * Initialize this fuzzer with side-effecting operations and a component manager.
    *
-   * @param sideEffectOps a set of side-effecting operations to add to the fuzzer
-   * @param cm the component manager to use for getting sequences for types (should not be null)
+   * @param sideEffectOps side-effecting operations used as mutators
+   * @param cm the component manager used to obtain sequences for required types
    */
-  public void initializeIfNeeded(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
-    if (initialized) {
-      return;
-    }
+  public void initialize(Set<TypedOperation> sideEffectOps, ComponentManager cm) {
     mutatorsByType.clear();
     typeToUnion.clear();
     addOperations(sideEffectOps);
     this.componentManager = cm;
-    initialized = true;
   }
 
   @Override

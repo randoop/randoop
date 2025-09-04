@@ -58,12 +58,6 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Set<TypedOperation> sideEffectFreeMethods;
 
   /**
-   * The methods that might have side effects. This is the complement of {@link
-   * #sideEffectFreeMethods}.
-   */
-  private final Set<TypedOperation> sideEffectingMethods;
-
-  /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
    * components as {@link #allSequences}, in the same order, but stores them as strings obtained via
    * the toCodeString() method.
@@ -136,10 +130,15 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.sideEffectingMethods =
-        new HashSet<>(
-            CollectionsPlume.filter(allOperations, op -> !sideEffectFreeMethods.contains(op)));
     this.instantiator = componentManager.getTypeInstantiator();
+
+    if (GenInputsAbstract.grt_fuzzing) {
+      Set<TypedOperation> sideEffectingMethods =
+          new HashSet<>(
+              CollectionsPlume.filter(
+                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
+      GrtObjectFuzzer.getInstance().initialize(sideEffectingMethods, this.componentManager);
+    }
 
     initializeRuntimePrimitivesSeen();
 
@@ -836,9 +835,6 @@ public class ForwardGenerator extends AbstractGenerator {
         GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
         if (fuzzer != null) {
           VarAndSeq fuzzedVarAndSeq;
-          if (fuzzer instanceof GrtObjectFuzzer) {
-            ((GrtObjectFuzzer) fuzzer).initializeIfNeeded(sideEffectingMethods, componentManager);
-          }
           fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
           chosenSeq = fuzzedVarAndSeq.getSequence();
           randomVariable = fuzzedVarAndSeq.getVariable();
