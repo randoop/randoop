@@ -268,7 +268,6 @@ public class OperationModel {
   public void addClassLiterals(ComponentManager compMgr) {
     // Add sequences from external literals files (ignore "CLASSES").
     for (String literalsFile : GenInputsAbstract.literals_file) {
-      // "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor.
       if (literalsFile.equals("CLASSES")) {
         continue;
       }
