@@ -256,7 +256,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * @param typeToFuzz the type of the target variable to pass to the operation
    * @param mutationOp the operation whose parameter is being selected (for diagnostics)
    * @return the index of a compatible parameter position
-   * @throws RandoopBug if no parameter type is compatible with {@code typeToFuzz}
    */
   private int selectFuzzParameter(
       TypeTuple formalTypes, Type typeToFuzz, TypedOperation mutationOp) {
@@ -266,11 +265,6 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         candidateParamPositions.add(i);
       }
     }
-
-    if (candidateParamPositions.isEmpty()) {
-      throw new RandoopBug("No candidate positions found for " + typeToFuzz + " in " + mutationOp);
-    }
-
     return Randomness.randomMember(candidateParamPositions);
   }
 }
