@@ -96,7 +96,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
     TypeTuple formalTypes = mutationOp.getInputTypes();
     int paramCount = formalTypes.size();
-    int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz, mutationOp);
+    int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz);
 
     // Keep track of the sequences to concatenate and the index of the necessary variable in each.
     List<Sequence> sequencesToConcat = new ArrayList<>(paramCount);
@@ -254,11 +254,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param formalTypes the formal parameter types of {@code mutationOp}
    * @param typeToFuzz the type of the target variable to pass to the operation
-   * @param mutationOp the operation whose parameter is being selected (for diagnostics)
    * @return the index of a compatible parameter position
    */
-  private int selectFuzzParameter(
-      TypeTuple formalTypes, Type typeToFuzz, TypedOperation mutationOp) {
+  private int selectFuzzParameter(TypeTuple formalTypes, Type typeToFuzz) {
     List<Integer> candidateParamPositions = new ArrayList<>(2);
     for (int i = 0; i < formalTypes.size(); i++) {
       if (formalTypes.get(i).isAssignableFrom(typeToFuzz)) {
