@@ -148,9 +148,12 @@ public class ComponentManager {
   }
 
   /**
-   * Returns component sequences that create values of the type required by the i-th input value of
-   * a statement that invokes the given operation. Also includes any applicable class- or
-   * package-level literals.
+   * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
+   * that produce the required type, followed by mined literal sequences for the declaring class if
+   * available.
+   *
+   * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
+   * skipped for receiver positions.
    *
    * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
