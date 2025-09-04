@@ -257,21 +257,23 @@ public class OperationModel {
   }
 
   /**
-   * Adds literals to the component manager, by parsing any literals files specified by the user.
+   * Integrates literal sequences/statistics with the component manager.
    *
-   * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
-   * and stored in scopeToLiteralStatistics. This method only processes external literals files.
+   * <p>Reads external {@code --literals-file} entries (ignoring the token {@code "CLASSES"}) into
+   * {@link #scopeToLiteralStatistics}, attaches the statistics to {@code compMgr} when needed, and
+   * seeds all known sequences when {@code --literals-level=ALL}.
    *
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
-    // Process external literals files and add them to scopeToLiteralStatistics.
+    // Add sequences from external literals files (ignore "CLASSES").
     for (String literalsFile : GenInputsAbstract.literals_file) {
       // "CLASSES" is ignored since class literals are always extracted by ClassLiteralExtractor.
       if (literalsFile.equals("CLASSES")) {
         continue;
       }
-      // Parse external literals file and add to scopeToLiteralStatistics.
+      // Parse external literals file and record the sequences provided by LiteralFileReader in
+      // scopeToLiteralStatistics.
       MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
       for (ClassOrInterfaceType type : fileMap.keySet()) {
         Collection<Sequence> sequences = fileMap.getValues(type);
@@ -287,6 +289,7 @@ public class OperationModel {
       compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
     }
 
+    // Seed all sequences when requested.
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
       for (Sequence s : scopeToLiteralStatistics.getAllSequences()) {
         compMgr.addGeneratedSequence(s);
