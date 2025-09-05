@@ -1,0 +1,277 @@
+package randoop.generation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.SIList;
+import randoop.main.RandoopBug;
+import randoop.operation.TypedOperation;
+import randoop.sequence.Sequence;
+import randoop.sequence.VarAndSeq;
+import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.Type;
+import randoop.types.TypeTuple;
+import randoop.util.Randomness;
+
+/**
+ * Fuzzer that applies a single side-effecting operation to a variable within a test sequence to
+ * explore the stateful behavior (impurity) of that object.
+ *
+ * <p>Specifically, this fuzzer:
+ *
+ * <ol>
+ *   <li>Randomly picks one side-effecting method whose signature includes the target's type.
+ *   <li>Randomly chooses which parameter slot to supply the target into (if there are multiple
+ *       possibilities).
+ *   <li>Fills the other slots by pulling sequences from the ComponentManager's sequence collection.
+ *   <li>Appends the new call to the sequence.
+ * </ol>
+ */
+public final class GrtObjectFuzzer extends GrtFuzzer {
+  /** Singleton instance. */
+  private static final GrtObjectFuzzer INSTANCE = new GrtObjectFuzzer();
+
+  /** Maps a type to operations that mutate values of that type. */
+  private final Map<Type, List<TypedOperation>> mutatorsByType = new HashMap<>();
+
+  /** Component manager to get sequences for types. */
+  private @MonotonicNonNull ComponentManager componentManager;
+
+  /** Cache of applicable operations by raw type to avoid recomputing supertypes traversal. */
+  private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
+
+  /** How to select sequences as inputs for creating new sequences. */
+  private @MonotonicNonNull InputSequenceSelector inputSequenceSelector;
+
+  /**
+   * Get the singleton instance of {@link GrtObjectFuzzer}.
+   *
+   * @return the singleton instance
+   */
+  public static GrtObjectFuzzer getInstance() {
+    return INSTANCE;
+  }
+
+  /** Private constructor to enforce singleton. */
+  private GrtObjectFuzzer() {
+    /* no-op */
+  }
+
+  /**
+   * Initialize this fuzzer with side-effecting operations and a component manager.
+   *
+   * @param mutators side-effecting operations used as mutators
+   * @param cm the component manager used to obtain sequences for required types
+   * @param selector strategy for choosing input sequences to satisfy non-fuzz parameters
+   */
+  public void initialize(
+      Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
+    // Build the type-to-mutators map, for quick access later.
+    for (TypedOperation op : mutators) {
+      TypeTuple inputTypes = op.getInputTypes();
+      for (int i = 0; i < inputTypes.size(); i++) {
+        Type type = inputTypes.get(i).getRawtype();
+        mutatorsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+      }
+    }
+    this.componentManager = cm;
+    this.inputSequenceSelector = selector;
+  }
+
+  @Override
+  public boolean canFuzz(Type type) {
+    return !type.isNonreceiverType();
+  }
+
+  @Override
+  public VarAndSeq fuzz(Sequence sequence, Variable variable) {
+    checkPreconditions(sequence, variable);
+
+    Type typeToFuzz = variable.getType();
+    TypedOperation mutationOp = selectMutationOperation(typeToFuzz);
+    if (mutationOp == null) {
+      // No applicable operation for this type -- return the original sequence unchanged.
+      return new VarAndSeq(variable, sequence);
+    }
+
+    TypeTuple formalTypes = mutationOp.getInputTypes();
+    int paramCount = formalTypes.size();
+    int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz);
+
+    // Keep track of the sequences to concatenate and the index of the necessary variable in each.
+    List<Sequence> sequencesToConcat = new ArrayList<>(paramCount);
+    List<Integer> varIndicesInEachSeq = new ArrayList<>(paramCount);
+
+    // Collect input sequences for each formal parameter.
+    for (int i = 0; i < paramCount; i++) {
+      Type formalType = formalTypes.get(i);
+      if (i == fuzzParam) {
+        // Use the current sequence's variable for the selected fuzz parameter.
+        sequencesToConcat.add(sequence);
+        varIndicesInEachSeq.add(variable.index);
+      } else {
+        SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
+
+        if (candidates.isEmpty()) {
+          // No sequence can satisfy this parameter - abort mutation.
+          return new VarAndSeq(variable, sequence);
+        }
+
+        Sequence candidateSeq = inputSequenceSelector.selectInputSequence(candidates);
+        Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
+        if (candidateVar == null) {
+          // No variable of the required type in the candidate sequence.
+          return new VarAndSeq(variable, sequence);
+        }
+
+        sequencesToConcat.add(candidateSeq);
+        varIndicesInEachSeq.add(candidateVar.index);
+      }
+    }
+
+    Sequence concatenated = Sequence.concatenate(sequencesToConcat);
+
+    // Map indices from individual sequences to the concatenated one.
+    List<Variable> inputsForMutation = new ArrayList<>(paramCount);
+    int offset = 0;
+    Variable updatedVariable = null;
+    for (int i = 0; i < paramCount; i++) {
+      int globalIndex = offset + varIndicesInEachSeq.get(i);
+      offset += sequencesToConcat.get(i).size();
+      Variable v = concatenated.getVariable(globalIndex);
+      inputsForMutation.add(v);
+      if (i == fuzzParam) {
+        updatedVariable = v;
+      }
+    }
+
+    if (updatedVariable == null) {
+      throw new RandoopBug("Target variable was not found in the concatenated sequence.");
+    }
+
+    Sequence mutationSeq = concatenated.extend(mutationOp, inputsForMutation);
+    return new VarAndSeq(updatedVariable, mutationSeq);
+  }
+
+  /**
+   * Check preconditions for fuzzing a sequence. This method is called before fuzzing to ensure the
+   * sequence and variable to fuzz are valid.
+   *
+   * @param sequence the sequence to fuzz
+   * @param variable the variable to fuzz
+   * @throws IllegalArgumentException if the sequence is null or empty
+   * @throws RandoopBug if the component manager or target variable is not set, or if the target
+   *     variable is not part of the sequence to fuzz
+   */
+  @EnsuresNonNull({"componentManager", "inputSequenceSelector"})
+  @SuppressWarnings("ReferenceEquality")
+  private void checkPreconditions(Sequence sequence, Variable variable) {
+    if (sequence == null) {
+      throw new IllegalArgumentException("Sequence cannot be null");
+    }
+    if (sequence.size() == 0) {
+      throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
+    }
+    if (componentManager == null) {
+      throw new RandoopBug("Component manager is not set. Initialize the fuzzer before fuzzing.");
+    }
+    if (inputSequenceSelector == null) {
+      throw new RandoopBug(
+          "Input sequence selector is not set. Initialize the fuzzer before fuzzing.");
+    }
+    if (variable == null) {
+      throw new RandoopBug("Variable to fuzz is null.");
+    }
+    if (variable.sequence == null) {
+      throw new RandoopBug("Variable to fuzz has no sequence set.");
+    }
+    if (variable.sequence != sequence) {
+      throw new RandoopBug(
+          "Variable to fuzz is not part of the sequence to fuzz. "
+              + "Variable sequence: "
+              + variable.sequence
+              + ", sequence to fuzz: "
+              + sequence);
+    }
+  }
+
+  /**
+   * Select a side-effecting operation whose signature mentions the target's type. For
+   * class/interface types, it collects mutators whose parameter type matches the target type or any
+   * of its supertypes. Then one operation is chosen uniformly at random.
+   *
+   * @param typeToFuzz the type of the variable to fuzz
+   * @return a randomly selected mutation operation that can be applied to the type to fuzz, or null
+   *     if no applicable operation is found
+   */
+  private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
+    Type raw = typeToFuzz.getRawtype();
+    // Start from a coarse, raw-type-based superset.
+    List<TypedOperation> applicableOps = typeToApplicableOps.get(raw);
+    if (applicableOps == null) {
+      // Deduplicate while preserving insertion order
+      java.util.LinkedHashSet<TypedOperation> opsSet = new java.util.LinkedHashSet<>();
+      if (typeToFuzz instanceof ClassOrInterfaceType) {
+        // Include the type itself and all supertypes.
+        for (ClassOrInterfaceType anc :
+            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
+          List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
+          if (ops != null) {
+            opsSet.addAll(ops);
+          }
+        }
+      } else {
+        // Array/primitive guard: only consider the raw type itself.
+        List<TypedOperation> ops = mutatorsByType.get(raw);
+        if (ops != null) {
+          opsSet.addAll(ops);
+        }
+      }
+      applicableOps = new ArrayList<>(opsSet);
+      typeToApplicableOps.put(raw, applicableOps);
+    }
+
+    if (applicableOps.isEmpty()) {
+      return null;
+    }
+
+    // Refine: keep only operations that have at least one parameter truly assignable from
+    // typeToFuzz.
+    List<TypedOperation> compatibleOps = new ArrayList<>(applicableOps.size());
+    for (TypedOperation op : applicableOps) {
+      TypeTuple inputs = op.getInputTypes();
+      for (int i = 0; i < inputs.size(); i++) {
+        if (inputs.get(i).isAssignableFrom(typeToFuzz)) {
+          compatibleOps.add(op);
+          break;
+        }
+      }
+    }
+
+    return compatibleOps.isEmpty() ? null : Randomness.randomMember(compatibleOps);
+  }
+
+  /**
+   * Chooses the index of a parameter in {@code mutationOp} whose type can accept the target
+   * variable (of {@code typeToFuzz}). A random compatible index is returned if multiple exist.
+   *
+   * @param formalTypes the formal parameter types of {@code mutationOp}
+   * @param typeToFuzz the type of the target variable to pass to the operation
+   * @return the index of a compatible parameter position
+   */
+  private int selectFuzzParameter(TypeTuple formalTypes, Type typeToFuzz) {
+    List<Integer> candidateParamPositions = new ArrayList<>(2);
+    for (int i = 0; i < formalTypes.size(); i++) {
+      if (formalTypes.get(i).isAssignableFrom(typeToFuzz)) {
+        candidateParamPositions.add(i);
+      }
+    }
+    return Randomness.randomMember(candidateParamPositions);
+  }
+}
