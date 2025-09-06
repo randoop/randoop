@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -160,7 +162,7 @@ public abstract class AbstractGenerator {
     this.outputTest = new AlwaysFalse<>();
 
     if (componentManager == null) {
-      this.componentManager = new ComponentManager();
+      this.componentManager = new ComponentManager(IS_PUBLIC);
     } else {
       this.componentManager = componentManager;
     }

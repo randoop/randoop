@@ -107,10 +107,23 @@ public class OperationModel {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
+   * The types that are SUT-parameters-only types. In other words, these are the types that appear
+   * as formal parameters of methods in the software under test (SUT), but no methods or
+   * constructors in the SUT return these types. {@link randoop.generation.DemandDrivenInputCreator}
+   * tries to create values of these types.
+   *
+   * <p>This is set by {@link #setSutParameterOnlyTypes}.
+   */
+  private Set<Type> sutParameterOnlyTypes;
+
+  /**
    * Create an empty model of test context.
    *
    * @param omitMethods the patterns for operations that should be omitted
    */
+  @SuppressWarnings(
+      "nullness:initialization.fields.uninitialized" // createModel() sets sutParameterOnlyTypes
+  )
   private OperationModel(List<Pattern> omitMethods) {
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -179,6 +192,10 @@ public class OperationModel {
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     // Add the constructor "Object()".
     model.addObjectConstructor();
+
+    if (GenInputsAbstract.demand_driven) {
+      model.setSutParameterOnlyTypes();
+    }
 
     return model;
   }
@@ -447,6 +464,16 @@ public class OperationModel {
    */
   public List<TypedOperation> getOperations() {
     return new ArrayList<>(operations);
+  }
+
+  /**
+   * Returns the set of types that are SUT-parameters but not SUT-returns. Demand-driven input
+   * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
+   *
+   * @return the set of SUT-parameter-only types
+   */
+  public Set<Type> getSutParameterOnlyTypes() {
+    return sutParameterOnlyTypes;
   }
 
   /**
@@ -791,5 +818,37 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  /**
+   * Sets field {@link OperationModel#sutParameterOnlyTypes} to SUT-parameter types that are not
+   * SUT-return types.
+   */
+  private void setSutParameterOnlyTypes() {
+    // This is a single-pass heuristic:
+    //  * Set local variable `outputTypes` to all return types of all SUT operations.
+    //  * Filter the input types (field `inputTypes`) by removing non-receivers (primitives, arrays)
+    //    and Object.
+    //  * Set field `sutParameterOnlyTypes` = remaining inputs - `outputTypes`.
+
+    Set<Type> outputTypes = new LinkedHashSet<>();
+    for (TypedOperation operation : operations) {
+      Type outputType = operation.getOutputType();
+      if (outputType != null) {
+        outputTypes.add(outputType);
+      }
+    }
+
+    // Filter out non-receiver types and Object from the input types.
+    Set<Type> filteredInputTypes = new LinkedHashSet<>();
+    for (Type inputType : inputTypes) {
+      if (!inputType.isNonreceiverType() && !inputType.isArray() && !inputType.isObject()) {
+        filteredInputTypes.add(inputType);
+      }
+    }
+
+    // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
+    sutParameterOnlyTypes = new LinkedHashSet<>(filteredInputTypes);
+    sutParameterOnlyTypes.removeAll(outputTypes);
   }
 }

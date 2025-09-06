@@ -1723,6 +1723,20 @@ public class RandoopSystemTest {
             "misc.PureStaticUnaryMethodExample.printAndStore(java.lang.String) ignore"));
   }
 
+  // Test randoop.generation.DemandDrivenInputCreation
+  @Test
+  public void runDemandDrivenTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("demand-driven-test");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("randoop.test.A");
+    options.setOption("demand_driven", "true");
+    options.setOption("output_limit", "100");
+    options.setOption("generated_limit", "200");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
