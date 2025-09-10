@@ -106,6 +106,9 @@ public class ComponentManager {
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public ComponentManager(Collection<Sequence> generalSeeds, AccessibilityPredicate accessibility) {
+    if (generalSeeds == null) {
+      generalSeeds = Collections.emptySet();
+    }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);

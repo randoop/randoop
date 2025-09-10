@@ -98,9 +98,12 @@ public class NonSutClassSet {
     for (Type type : types) {
       if (type.isPrimitive() || type.isVoid()) {
         throw new IllegalArgumentException(
-            "Tried to insert non-receiver type in NonSutClassSet: " + type);
+            "Tried to insert a primitive or void type in NonSutClassSet: " + type);
       }
       Class<?> cls = type.getRuntimeClass();
+      if (cls == null) {
+        throw new IllegalArgumentException("Type has no runtime class: " + type);
+      }
       String className = cls.getName();
 
       if (nonSutClasses.add(cls)) {
