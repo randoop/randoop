@@ -36,7 +36,7 @@ public abstract class GrtFuzzer {
           GrtObjectFuzzer.getInstance()
         };
     for (GrtFuzzer f : candidates) {
-      if (f != null && f.canFuzz(type)) {
+      if (f.canFuzz(type)) {
         return f;
       }
     }
