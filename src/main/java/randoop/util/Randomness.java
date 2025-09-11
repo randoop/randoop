@@ -20,8 +20,9 @@ public final class Randomness {
   /** 0 = no output, 1 = brief output, 2 = verbose output. */
   public static final int verbosity = 1;
 
+  /** Do not instantiate. */
   private Randomness() {
-    throw new IllegalStateException("no instances");
+    throw new Error("Do not instantiate.");
   }
 
   /** The default initial seed for the random number generator. */
