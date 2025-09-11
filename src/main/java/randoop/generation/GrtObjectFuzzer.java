@@ -59,9 +59,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     return INSTANCE;
   }
 
-  /** Do not instantiate. */
+  /** Creates a GrtObjectFuzzer. The client must call {@link #initialize}. */
+  // This constructor is private to to enforce the singleton pattern.
   private GrtObjectFuzzer() {
-    throw new RandoopBug("Do not instantiate.");
+    // nothing to do; `initialize()` does the initialization.
   }
 
   /**
