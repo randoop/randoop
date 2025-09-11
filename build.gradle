@@ -1036,13 +1036,13 @@ tasks.register('publishSite', Copy) {
     exclude 'api'
   }
 
-  from(buildDocsDir)  //copy api
+  from(buildDocsDir)
   from(newSiteFiles)
   into siteDir
   filePermissions {
-    user.read = true
-    group.read = true
-    other.read = true
+    user.read = true; user.write = false; user.execute = false
+    group.read = true; group.write = false; group.execute = false
+    other.read = true; other.write = false; other.execute = false
   }
 }
 
