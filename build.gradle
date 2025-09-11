@@ -17,7 +17,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.3.0'
 
-  id 'org.checkerframework' version '0.6.57'
+  id 'org.checkerframework' version '0.6.59'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -25,7 +25,7 @@ plugins {
   id 'com.dorongold.task-tree' version '4.0.1'
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id 'com.gorylenko.gradle-git-properties' version '2.5.2'
+  id 'com.gorylenko.gradle-git-properties' version '2.5.3'
 }
 
 
@@ -79,7 +79,7 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.50.0',
+    checkerFramework : '3.51.0',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.41.0',
@@ -161,7 +161,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 description = 'Randoop automated test generation'
 
 /* Root for working directories for system test generated files */
-def workingDirectories = "$buildDir/working-directories"
+def workingDirectories = layout.buildDirectory.get().toString()+'/working-directories'
 
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
@@ -219,7 +219,7 @@ dependencies {
 
   implementation files(project(':replacecall').sourceSets.main.output)
   implementation 'com.github.javaparser:javaparser-core:3.27.0'
-  implementation 'com.google.code.gson:gson:2.13.1'
+  implementation 'com.google.code.gson:gson:2.13.2'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
   implementation 'org.apache.commons:commons-lang3:3.18.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
@@ -429,7 +429,8 @@ test {
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
    */
-  workingDir = file("$buildDir/resources")
+
+  workingDir = layout.buildDirectory.file('resources')
 
   /*
    * Show as much as possible to console.
@@ -485,7 +486,7 @@ tasks.register('coveredTest', Test) {
   workingDir = sourceSets.coveredTest.output.resourcesDir
   testClassesDirs = sourceSets.coveredTest.output.classesDirs
   classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/covered-class-${version}.jar"
+  jvmArgs "-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar"
 
   /*
    * Show as much as possible to console.
@@ -511,10 +512,10 @@ tasks.register('replacecallTest', Test) {
 
   workingDir = sourceSets.replacecallTest.output.resourcesDir
   testClassesDirs = sourceSets.replacecallTest.output.classesDirs
-  classpath = sourceSets.replacecallTest.runtimeClasspath + files("$buildDir/libs/replacecall-${version}.jar")
+  classpath = sourceSets.replacecallTest.runtimeClasspath + files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
   // use the replacecall agent using the exclusions file from replacecallTest/resources
-  jvmArgs "-javaagent:$buildDir/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt"
-  jvmArgs "-Xbootclasspath/a:$buildDir/libs/replacecall-${version}.jar"
+  jvmArgs "-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt"
+  jvmArgs "-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"
   testLogging {
     showStandardStreams = true
     exceptionFormat = 'full'
@@ -578,10 +579,10 @@ tasks.register('extractJacocoAgent', Copy) {
   from {
     configurations.jacocoagent.collect { zipTree(it) }
   }
-  into "$buildDir/jacocoagent/"
+  into layout.buildDirectory.dir('jacocoagent')
   copy {
-    from "$buildDir/jacocoagent/jacocoagent.jar"
-    into "$buildDir/libs"
+    from "${layout.buildDirectory.get()}/jacocoagent/jacocoagent.jar"
+    into layout.buildDirectory.dir('libs')
   }
 }
 
@@ -607,7 +608,7 @@ tasks.register('systemTest', Test) {
     systemProperty 'jar.covered.class.agent', project(':covered-class').shadowJar.archiveFile.get()
   }
 
-  workingDir = file("$buildDir")
+  workingDir = layout.buildDirectory
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
 
@@ -636,7 +637,7 @@ tasks.withType(Test).configureEach {
   /*
    * Set the destination directory for JUnit XML output files
    */
-  reports.junitXml.outputLocation = file("$buildDir/test-results/${name}")
+  reports.junitXml.outputLocation = file("${layout.buildDirectory.get()}/test-results/${name}")
   /*
    * Set the heap size and GC for running tests.
    */
@@ -664,7 +665,7 @@ tasks.withType(Test).configureEach {
 tasks.register('testReport', TestReport) {
   group = 'Report'
   description = 'Creates HTML reports for tests results'
-  destinationDirectory = file("$buildDir/reports/allTests")
+  destinationDirectory = file("${layout.buildDirectory.get()}/reports/allTests")
 
   for (Task t : tasks.withType(Test)) {
     testResults.from(t.getBinaryResultsDirectory())
@@ -689,7 +690,7 @@ jar {
 tasks.register('copyJars', Copy) {
   dependsOn(':covered-class:jar', ':replacecall:jar')
   from subprojects.collect { it.tasks.withType(Jar) }
-  into "$buildDir/libs"
+  into layout.buildDirectory.dir('libs')
 }
 
 assemble.dependsOn copyJars
@@ -805,7 +806,7 @@ tasks.register('clonePlumeScripts', CloneTask) {
  * main sourceSet.
  */
 javadoc {
-  destinationDir = file("${buildDir}/docs/api")
+  destinationDir = file(layout.buildDirectory.file('docs/api'))
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
   // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
@@ -902,18 +903,18 @@ build.dependsOn javadoc
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register('updateUserTOC', Exec) {
   dependsOn['cloneLibs']
-  executable file("$buildDir/utils/html-tools/html-update-toc")
+  executable file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/index.html")
-  environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
+  environment PATH: "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools"
 }
 
 /* Update table of contents in developer documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register('updateDevTOC', Exec) {
   dependsOn['cloneLibs']
-  executable file("$buildDir/utils/html-tools/html-update-toc")
+  executable file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args file("${projectDir}/src/docs/manual/dev.html")
-  environment PATH: "$System.env.PATH:$buildDir/utils/html-tools"
+  environment PATH: "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools"
 }
 
 // No group so it doesn't show up in `./gradlew tasks`
@@ -950,9 +951,9 @@ tasks.register('html5validatorExists', Exec) {
 
   doLast {
     if (executionResult.get().exitValue != 0) {
-      println "Command failed: $command";
-      println "Standard output: $stdout";
-      println "Standard error: $stderr";
+      println "Command failed: $command"
+      println "Standard output: $stdout"
+      println "Standard error: $stderr"
       ant.fail('html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .')
     }
   }
@@ -1006,7 +1007,7 @@ tasks.register('validateAPI', Exec) {
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment PATH: "$System.env.PATH"
-    commandLine 'html5validator', '--root', file("${buildDir}/docs/api")
+    commandLine 'html5validator', '--root', file("${layout.buildDirectory.get()}/docs/api")
   } else {
     commandLine 'echo', 'WARNING: HTML validation of API is only run in Java 9+.'
   }
@@ -1043,7 +1044,7 @@ tasks.register('cleanSite') {
  *
  * All site files will be read-only.
  */
-tasks.register('publishSite') {
+tasks.register('publishSite', Copy) {
   dependsOn(
       'cleanSite',
       'javadoc',
@@ -1053,19 +1054,16 @@ tasks.register('publishSite') {
   group = 'Publishing'
   description = 'Publish changes to site files and javadoc to the project pages directory'
   def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
-  def buildDocsDir = file("${buildDir}/docs") // include any built docs (e.g., api)
+  def buildDocsDir = file("${layout.buildDirectory.get()}/docs") // include any built docs (e.g., api)
   def newSiteFiles = fileTree("${projectDir}/src/docs") {
     exclude 'README.md'
     exclude 'api'
   }
-  doLast {
-    copy {
-      from(buildDocsDir)  //copy api
-      from(newSiteFiles)
-      into siteDir
-      fileMode = Integer.parseInt('444', 8)
-    }
-  }
+
+  from(buildDocsDir)  //copy api
+  from(newSiteFiles)
+  into siteDir
+  filePermissions.unix("444")
 }
 
 /*
@@ -1115,7 +1113,7 @@ tasks.register('buildRelease', DefaultTask) {
 tasks.register('tags', Exec) {
   dependsOn 'cloneLibs'
   description = 'Run etags to create an Emacs TAGS table'
-  commandLine 'bash', '-c', "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | $buildDir/utils/plume-scripts/sort-directory-order | xargs etags"
+  commandLine 'bash', '-c', "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
@@ -1123,14 +1121,14 @@ tasks.register('tagsNoTests', Exec) {
   dependsOn 'cloneLibs'
   group = 'Emacs'
   description = 'Run etags to create an Emacs TAGS table'
-  commandLine 'bash', '-c', "find src/ -name *.java | $buildDir/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
+  commandLine 'bash', '-c', "find src/ -name *.java | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | grep -v /testInput/ | xargs etags"
 }
 
 /* Run checklink */
 tasks.register('checklink', Exec) {
   dependsOn 'cloneLibs'
   description = 'Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt'
-  environment PATH: "$System.env.PATH:$buildDir/utils/checklink"
+  environment PATH: "$System.env.PATH:${layout.buildDirectory.get()}/utils/checklink"
   commandLine 'bash', '-c', """
      checklink -q -r `grep -v '^#' build/utils/checklink/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
   """
