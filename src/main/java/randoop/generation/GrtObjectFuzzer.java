@@ -38,7 +38,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Singleton instance. */
   private static final GrtObjectFuzzer INSTANCE = new GrtObjectFuzzer();
 
-  /** Maps a type to operations that mutate values of that type. */
+  /** Maps RAW type to mutating operations that include that type in a parameter. */
   private final Map<Type, List<TypedOperation>> typeToSideEffectingOps = new HashMap<>();
 
   /** Component manager to get sequences for types. */
@@ -122,6 +122,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         sequencesToConcat.add(sequence);
         varIndicesInEachSeq.add(variable.index);
       } else {
+        // choose sequence from component pool for ith parameter.
         SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
         if (candidates.isEmpty()) {
@@ -249,8 +250,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       return null;
     }
 
-    // Refine: keep only operations that have at least one parameter truly assignable from
-    // typeToFuzz.
+    // Refine raw-type superset: keep ops with at least one parameter where typeToFuzz is a
+    // (generic) subtype.
     List<TypedOperation> compatibleOps = new ArrayList<>(applicableOps.size());
     for (TypedOperation op : applicableOps) {
       TypeTuple inputs = op.getInputTypes();
@@ -266,12 +267,12 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Chooses the index of a parameter in {@code mutationOp} whose type can accept the target
-   * variable (of {@code typeToFuzz}). A random compatible index is returned if multiple exist.
+   * Chooses the index of a parameter in {@code mutationOp} for which {@code typeToFuzz} is a
+   * subtype of the parameter type. If multiple exist, one is chosen at random.
    *
    * @param paramTypes the formal parameter types of {@code mutationOp}
    * @param typeToFuzz the type of the target variable to pass to the operation
-   * @return the index of a compatible parameter position
+   * @return the index of a parameter whose type is a supertype of {@code typeToFuzz}
    */
   private int selectFuzzParameter(TypeTuple paramTypes, Type typeToFuzz) {
     List<Integer> candidateParamPositions = new ArrayList<>(2);
