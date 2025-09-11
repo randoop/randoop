@@ -103,8 +103,8 @@ public abstract class AbstractGenerator {
   private @Nullable IStopper stopper;
 
   /**
-   * Updates the progress display message printed to the console. Null if
-   * GenInputsAbstrect.progressdisplay is false.
+   * Updates the progress display message printed to the console. Null if {@link
+   * GenInputsAbstract#progressdisplay} is false.
    */
   private ProgressDisplay progressDisplay;
 
