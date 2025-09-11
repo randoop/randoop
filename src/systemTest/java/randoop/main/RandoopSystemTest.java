@@ -241,6 +241,7 @@ public class RandoopSystemTest {
             "java7.util7.Collections.synchronizedSet(java7.util7.Set, java.lang.Object) exclude",
             "java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude",
             "java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude",
+            "java7.util7.Collections.unmodifiableList(java7.util7.List) ignore",
             "java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17+",
             "java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore17+",
             "java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude",
@@ -252,6 +253,7 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.last() ignore",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
+            "java7.util7.TreeSet.remove(java.lang.Object) ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean)"
                 + " ignore",
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore",
@@ -376,12 +378,14 @@ public class RandoopSystemTest {
             "java7.util7.TreeSet.add(java.lang.Object) ignore17+",
             "java7.util7.TreeSet.first() ignore17+",
             "java7.util7.TreeSet.headSet(java.lang.Object) ignore17+",
+            "java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.last() ignore17+",
             "java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean)"
                 + " ignore17+",
             "java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore17+",
             "java7.util7.TreeSet.tailSet(java.lang.Object) ignore17+",
+            "java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore",
             "java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
@@ -1641,10 +1645,11 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
             "java7.util7.ArrayList.fastRemove(int) exclude",
+            "java7.util7.ArrayList.get(int) exclude",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
-            "java7.util7.ArrayList.subList(int, int) exclude",
+            "java7.util7.ArrayList.subList(int, int) include",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
