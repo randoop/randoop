@@ -18,7 +18,7 @@ import randoop.main.RandoopBug;
 public final class Randomness {
 
   /** 0 = no output, 1 = brief output, 2 = verbose output. */
-  public static int verbosity = 1;
+  public static final int verbosity = 1;
 
   private Randomness() {
     throw new IllegalStateException("no instances");
@@ -67,6 +67,9 @@ public final class Randomness {
    * @return a value selected from range [0, i)
    */
   public static int nextRandomInt(int i) {
+    if (i == 1) {
+      return 0;
+    }
     incrementCallsToRandom("nextRandomInt");
     int value = Randomness.random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
@@ -98,7 +101,11 @@ public final class Randomness {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    int position = nextRandomInt(list.size());
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+    int position = nextRandomInt(size);
     logSelection(position, "randomMember", list);
     return list.get(position);
   }
@@ -114,7 +121,16 @@ public final class Randomness {
     if (c == null || c.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    int position = nextRandomInt(c.size());
+    int size = c.size();
+    if (size == 1) {
+      if (c instanceof List) {
+        return ((List<T>) c).get(0);
+      } else {
+        return c.iterator().next();
+      }
+    }
+
+    int position = nextRandomInt(size);
     logSelection(position, "randomMember", c);
     if (c instanceof List) {
       return ((List<T>) c).get(position);
@@ -155,8 +171,13 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) { // SIList has no iterator
+    for (int i = 0; i < size; i++) { // SIList has no iterator
       T elt = list.get(i);
       @SuppressWarnings({"nullness:unboxing.of", "nullness:argument"}) // non-null and a key
       double weight = weights.get(elt);
@@ -187,6 +208,11 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SIList)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
@@ -199,7 +225,7 @@ public final class Randomness {
     }
 
     double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < size; i++) {
       currentPoint += weights.get(list.get(i));
       if (currentPoint > chosenPoint) {
         logSelection(i, "randomMemberWeighted", list);
@@ -208,8 +234,8 @@ public final class Randomness {
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
     System.out.printf("currentPoint=%f%n", currentPoint);
-    System.out.printf("list.size()=%d%n", list.size());
-    for (int i = 0; i < list.size(); i++) {
+    System.out.printf("size=%d%n", size);
+    for (int i = 0; i < size; i++) {
       System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
     }
     throw new RandoopBug("Unable to select random member");
@@ -233,6 +259,11 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(List)");
     double chosenPoint = Randomness.random.nextDouble() * totalWeight;
@@ -245,7 +276,7 @@ public final class Randomness {
     }
 
     double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < size; i++) {
       @SuppressWarnings({
         "nullness:argument",
         "nullness:assignment",
@@ -260,8 +291,8 @@ public final class Randomness {
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
     System.out.printf("currentPoint=%f%n", currentPoint);
-    System.out.printf("list.size()=%d%n", list.size());
-    for (int i = 0; i < list.size(); i++) {
+    System.out.printf("size=%d%n", size);
+    for (int i = 0; i < size; i++) {
       @SuppressWarnings({
         "nullness:argument",
         "nullness:assignment",
@@ -276,8 +307,7 @@ public final class Randomness {
   /**
    * Returns a random member of the set, selected uniformly at random.
    *
-   * @param <T> the type of elements of the set param set the collection from which to choose an
-   *     element
+   * @param <T> the type of elements of the set
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
