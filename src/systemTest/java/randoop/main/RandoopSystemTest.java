@@ -407,8 +407,8 @@ public class RandoopSystemTest {
     options.setErrorBasename("JDK_Tests_error");
 
     options.setOption("generated_limit", "6000");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
+    options.setOption("null-ratio", "0.1");
+    options.setOption("alias-ratio", "0.2");
     options.setOption("input-selection", "small-tests");
     options.setFlag("clear=2000");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
