@@ -24,11 +24,11 @@ import randoop.util.Randomness;
  * Fuzzer that applies a single side-effecting operation to a variable within a test sequence to
  * explore the stateful behavior (impurity) of that object.
  *
- * <p>Specifically, this fuzzer:
+ * <p>Specifically, this fuzzer takes a sequence and a variable within that sequence, and then:
  *
  * <ol>
- *   <li>Randomly picks one side-effecting method whose signature includes the target's type.
- *   <li>Randomly chooses which parameter slot to supply the target into (if there are multiple
+ *   <li>Randomly picks one side-effecting method whose signature includes the variable type.
+ *   <li>Randomly chooses which parameter slot to supply the variable into (if there are multiple
  *       possibilities).
  *   <li>Fills the other slots by pulling sequences from the ComponentManager's sequence collection.
  *   <li>Appends the new call to the sequence.
