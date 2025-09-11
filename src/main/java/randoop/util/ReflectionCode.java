@@ -98,15 +98,15 @@ public abstract class ReflectionCode {
    */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
-      return " not run yet";
+      return "not run yet";
     } else if (hasStarted() && !hasRun()) {
-      return " failed to run";
+      return "failed to run";
     } else if (!hasStarted() && hasRun()) {
-      return " ILLEGAL STATE";
+      return "ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return " returned: " + StringsPlume.toStringAndClass(retval);
+      return "returned: " + StringsPlume.toStringAndClass(retval);
     } else {
-      return " threw: " + exceptionThrown;
+      return "threw: " + exceptionThrown;
     }
   }
 

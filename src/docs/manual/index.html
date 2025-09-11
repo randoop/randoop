@@ -1250,7 +1250,7 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <code>[+]</code>.
              A file containing literal values to be used as inputs to methods under test, or "CLASSES".
 
- <p>Literals in these files are used in addition to all other constants in the pool. For the
+ <p>Literals in these files are used in addition to all other literals in the pool. For the
  format of this file, see documentation in class <code>randoop.reflection.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under
  test.
@@ -1490,7 +1490,7 @@ Here are some examples.
 </p>
 <ul>
   <li><code>System.exit</code> will terminate Randoop if called during test generation.</li>
-  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which interferes with automated testing.</li>
+  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which waits forever during automated testing.</li>
   <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
 </ul>
 <p>
@@ -1548,7 +1548,7 @@ The replacecall agent never modifies
 
 <p>
 You can exclude additional packages from being transformed.
-Create an exclusion file <code>replacecall-exclusions.txt</code> containing, for example:
+Create an exclusion file <code>dont-transform.txt</code> containing, for example:
 </p>
 <pre>
 mypackage.mysubpackage.
@@ -1558,7 +1558,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt
 </pre>
 
 <p>
@@ -1586,12 +1586,21 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
-Each line of a replacement file is whitespace-separated package names
-(replace all calls in all methods of all classes in the package and its
-subpackages), or whitespace-separated class names (replace all methods in
-the class), or whitespace-separated method signatures without return
-types (replace the first method by the second).
+Each line of a replacement file is one of:
 </p>
+<ul>
+  <li>two whitespace-separated package names (replace all calls in all methods
+    of all classes in the package and its subpackages)
+  </li>
+  <li>two whitespace-separated class names (replace all methods in the class)
+  </li>
+  <li>two whitespace-separated method signatures without return types (replace
+    the first method by the second); each method signature is
+    a <a href="#fully-qualified-signature">Randoop fully-qualified
+    signature</a>.
+  </li>
+</ul>
+
 
 <p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
@@ -1623,7 +1632,7 @@ constructor.
 
 <p>
 Please keep in mind that when you define a replacement,
-it can change the behavior of client code.
+it can change the behavior of test code.
 </p>
 
 
