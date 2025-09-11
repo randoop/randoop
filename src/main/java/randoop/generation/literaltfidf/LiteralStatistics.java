@@ -192,7 +192,7 @@ public class LiteralStatistics {
     }
 
     /**
-     * Increments the number of classes that use it the literal.
+     * Increments the number of classes that use the literal.
      *
      * @param numClassesWith the number of additional classes that use the literal.
      */
