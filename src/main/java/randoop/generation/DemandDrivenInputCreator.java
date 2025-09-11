@@ -301,7 +301,11 @@ public class DemandDrivenInputCreator {
         }
 
         if (opOutputType.isGeneric()) {
-          typeInstantiator.instantiate((TypedClassOperation) op);
+          TypedClassOperation instantiated = typeInstantiator.instantiate((TypedClassOperation) op);
+          if (instantiated == null) {
+            continue; // Skip if instantiation fails
+          }
+          op = instantiated;
         }
 
         // Add this operation as a producer of the type.
