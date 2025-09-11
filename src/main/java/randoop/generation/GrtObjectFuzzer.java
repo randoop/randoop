@@ -73,7 +73,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    */
   public void initialize(
       Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
-    if (this.componentmanager != null) {
+    if (this.componentManager != null) {
       throw new RandoopBug("Do not call initialize multiple times.");
     }
     // Build the type-to-mutators map, for quick access later.
