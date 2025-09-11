@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   private static final GrtObjectFuzzer INSTANCE = new GrtObjectFuzzer();
 
   /** Maps a type to operations that mutate values of that type. */
-  private final Map<Type, List<TypedOperation>> mutatorsByType = new HashMap<>();
+  private final Map<Type, List<TypedOperation>> typeToSideEffectingOps = new HashMap<>();
 
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
@@ -58,9 +59,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     return INSTANCE;
   }
 
-  /** Private constructor to enforce singleton. */
+  /** Do not instantiate. */
   private GrtObjectFuzzer() {
-    /* no-op */
+    throw new RandoopBug("Do not instantiate.");
   }
 
   /**
@@ -72,12 +73,15 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    */
   public void initialize(
       Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
+    if (this.componentmanager != null) {
+      throw new RandoopBug("Do not call initialize multiple times.");
+    }
     // Build the type-to-mutators map, for quick access later.
     for (TypedOperation op : mutators) {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
         Type type = inputTypes.get(i).getRawtype();
-        mutatorsByType.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+        typeToSideEffectingOps.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
       }
     }
     this.componentManager = cm;
@@ -100,17 +104,18 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       return new VarAndSeq(variable, sequence);
     }
 
-    TypeTuple formalTypes = mutationOp.getInputTypes();
-    int paramCount = formalTypes.size();
-    int fuzzParam = selectFuzzParameter(formalTypes, typeToFuzz);
+    TypeTuple paramTypes = mutationOp.getInputTypes();
+    int paramCount = paramTypes.size();
+    int fuzzParam = selectFuzzParameter(paramTypes, typeToFuzz);
 
-    // Keep track of the sequences to concatenate and the index of the necessary variable in each.
+    // Each sequence provides one argument to `mutationOp`.  One of them (the one for `fuzzParam`)
+    // is the original sequence.
     List<Sequence> sequencesToConcat = new ArrayList<>(paramCount);
     List<Integer> varIndicesInEachSeq = new ArrayList<>(paramCount);
 
     // Collect input sequences for each formal parameter.
     for (int i = 0; i < paramCount; i++) {
-      Type formalType = formalTypes.get(i);
+      Type paramType = paramTypes.get(i);
       if (i == fuzzParam) {
         // Use the current sequence's variable for the selected fuzz parameter.
         sequencesToConcat.add(sequence);
@@ -124,7 +129,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         }
 
         Sequence candidateSeq = inputSequenceSelector.selectInputSequence(candidates);
-        Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(formalType, false);
+        Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(paramType, false);
         if (candidateVar == null) {
           // No variable of the required type in the candidate sequence.
           return new VarAndSeq(variable, sequence);
@@ -178,13 +183,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     if (sequence.size() == 0) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
-    if (componentManager == null) {
-      throw new RandoopBug("Component manager is not set. Initialize the fuzzer before fuzzing.");
-    }
-    if (inputSequenceSelector == null) {
-      throw new RandoopBug(
-          "Input sequence selector is not set. Initialize the fuzzer before fuzzing.");
-    }
+
     if (variable == null) {
       throw new RandoopBug("Variable to fuzz is null.");
     }
@@ -199,6 +198,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
               + ", sequence to fuzz: "
               + sequence);
     }
+
+    if (componentManager == null || inputSequenceSelector == null) {
+      throw new RandoopBug("Fuzzer is not initialized.");
+    }
   }
 
   /**
@@ -211,30 +214,34 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *     if no applicable operation is found
    */
   private @Nullable TypedOperation selectMutationOperation(Type typeToFuzz) {
-    Type raw = typeToFuzz.getRawtype();
+    if (typeToFuzz.isNonreceiverType()) {
+      return null;
+    }
+
+    Type rawType = typeToFuzz.getRawtype();
     // Start from a coarse, raw-type-based superset.
-    List<TypedOperation> applicableOps = typeToApplicableOps.get(raw);
+    List<TypedOperation> applicableOps = typeToApplicableOps.get(rawType);
     if (applicableOps == null) {
       // Deduplicate while preserving insertion order
-      java.util.LinkedHashSet<TypedOperation> opsSet = new java.util.LinkedHashSet<>();
+      LinkedHashSet<TypedOperation> opsSet = new LinkedHashSet<>();
       if (typeToFuzz instanceof ClassOrInterfaceType) {
         // Include the type itself and all supertypes.
         for (ClassOrInterfaceType anc :
             ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
-          List<TypedOperation> ops = mutatorsByType.get(anc.getRawtype());
+          List<TypedOperation> ops = typeToSideEffectingOps.get(anc.getRawtype());
           if (ops != null) {
             opsSet.addAll(ops);
           }
         }
       } else {
-        // Array/primitive guard: only consider the raw type itself.
-        List<TypedOperation> ops = mutatorsByType.get(raw);
+        // Array guard: only consider the raw type itself.
+        List<TypedOperation> ops = typeToSideEffectingOps.get(rawType);
         if (ops != null) {
           opsSet.addAll(ops);
         }
       }
       applicableOps = new ArrayList<>(opsSet);
-      typeToApplicableOps.put(raw, applicableOps);
+      typeToApplicableOps.put(rawType, applicableOps);
     }
 
     if (applicableOps.isEmpty()) {
@@ -261,14 +268,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    * Chooses the index of a parameter in {@code mutationOp} whose type can accept the target
    * variable (of {@code typeToFuzz}). A random compatible index is returned if multiple exist.
    *
-   * @param formalTypes the formal parameter types of {@code mutationOp}
+   * @param paramTypes the formal parameter types of {@code mutationOp}
    * @param typeToFuzz the type of the target variable to pass to the operation
    * @return the index of a compatible parameter position
    */
-  private int selectFuzzParameter(TypeTuple formalTypes, Type typeToFuzz) {
+  private int selectFuzzParameter(TypeTuple paramTypes, Type typeToFuzz) {
     List<Integer> candidateParamPositions = new ArrayList<>(2);
-    for (int i = 0; i < formalTypes.size(); i++) {
-      if (formalTypes.get(i).isAssignableFrom(typeToFuzz)) {
+    for (int i = 0; i < paramTypes.size(); i++) {
+      if (paramTypes.get(i).isAssignableFrom(typeToFuzz)) {
         candidateParamPositions.add(i);
       }
     }
