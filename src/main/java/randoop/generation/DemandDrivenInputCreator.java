@@ -38,11 +38,11 @@ import randoop.util.Randomness;
  * top-down demand-driven approach gives different treatment to an input whose type is a
  * non-SUT-returned class.
  *
- * <p>Consider a non-SUT-returned type T. The type T might or might not be in the SUT, but no method
- * in the SUT returns T. When an input of a type T is needed, demand-driven creates a set of such
- * values. For each constructor/method in T that produces T, demand-driven calls the producer method
- * once (recursively building its inputs if needed, possibly including values of non-SUT-parameter,
- * non-SUT-returned classes). Those results are the set of values, from which Randoop can choose.
+ * <p>Consider a class T which is not returned by any method or constructor declared in the SUT.
+ * When an input of type T is needed, the demand-driven algorithm calls every accessible constructor
+ * or static method in T that can produce T once (recursively building its inputs if needed,
+ * possibly including values of non-SUT-parameter, non-SUT-returned classes). Those results form the
+ * candidate set from which Randoop can choose.
  *
  * <p>This creator relies on {@link ComponentManager}, which holds the main {@link
  * SequenceCollection}, to fetch and store existing sequences. Whenever demand-driven needs to build
@@ -58,7 +58,7 @@ import randoop.util.Randomness;
  *
  * <dl>
  *   <dt>SUT class
- *   <dd>A SUT class, or a "class in the model", is a class that the user specified on the command
+ *   <dd>A SUT class is a class that the user specified on the command
  *       line to be tested. SUT stands for "software under test".
  *   <dt>SUT-returned class
  *   <dd>a class that is the return type for some accessible method or constructor in the SUT.
