@@ -187,6 +187,7 @@ class CoverageChecker {
    */
   void checkCoverage(TestRunStatus regressionStatus, TestRunStatus errorStatus) {
 
+    int numCoveredMethods = 0;
     Set<String> missingMethods = new TreeSet<>();
     Set<String> shouldBeMissingMethods = new TreeSet<>();
 
@@ -196,6 +197,7 @@ class CoverageChecker {
       Set<String> coveredMethods = new HashSet<>();
       coveredMethods.addAll(getCoveredMethodsForClass(regressionStatus, canonicalClassname));
       coveredMethods.addAll(getCoveredMethodsForClass(errorStatus, canonicalClassname));
+      numCoveredMethods += coveredMethods.size();
 
       Class<?> c;
       try {
@@ -229,6 +231,8 @@ class CoverageChecker {
       }
     }
 
+    String totalCoveredMethodsMsg = "Total covered methods: " + numCoveredMethods;
+
     StringBuilder failureMessage = new StringBuilder();
     if (!missingMethods.isEmpty()) {
       failureMessage.append(String.format("Expected methods not covered:%n"));
@@ -244,7 +248,9 @@ class CoverageChecker {
     }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
-      fail(msg);
+      fail(msg + totalCoveredMethodsMsg);
+    } else {
+      System.out.println(totalCoveredMethodsMsg);
     }
   }
 
