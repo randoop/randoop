@@ -58,8 +58,8 @@ import randoop.util.Randomness;
  *
  * <dl>
  *   <dt>SUT class
- *   <dd>A SUT class is a class that the user specified on the command
- *       line to be tested. SUT stands for "software under test".
+ *   <dd>A SUT class is a class that the user specified on the command line to be tested. SUT stands
+ *       for "software under test".
  *   <dt>SUT-returned class
  *   <dd>a class that is the return type for some accessible method or constructor in the SUT.
  *   <dt>SUT-parameter class
