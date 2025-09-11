@@ -1023,11 +1023,11 @@ validateAPI.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 tasks.register('cleanSite') {
   group = null
   description = 'Removes all files from the project pages directory (CAUTION!)'
-  def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
-  def oldSiteFiles = fileTree(siteDir) {
-    exclude 'README.md'
-  }
   doLast {
+    def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
+    def oldSiteFiles = fileTree(siteDir) {
+      exclude 'README.md'
+    }
     delete oldSiteFiles
   }
 }
@@ -1063,7 +1063,11 @@ tasks.register('publishSite', Copy) {
   from(buildDocsDir)  //copy api
   from(newSiteFiles)
   into siteDir
-  filePermissions.unix("444")
+  filePermissions {
+    user.read = true
+    group.read = true
+    other.read = true
+  }
 }
 
 /*
