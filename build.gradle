@@ -277,41 +277,22 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-compileJava.options.compilerArgs = [
-  '-g',
-  '-Werror',
-  '-Xlint',
-  '-Xlint:-classfile,-options'
-]
-compileTestJava.options.compilerArgs = [
-  '-g',
-  '-Werror',
-  '-Xlint',
-  '-Xlint:-classfile,-options'
-]
-compileCoveredTestJava.options.compilerArgs = [
-  '-g',
-  '-Werror',
-  '-Xlint',
-  '-Xlint:-classfile,-options'
-]
-compileReplacecallTestJava.options.compilerArgs = [
-  '-g',
-  '-Werror',
-  '-Xlint',
-  '-Xlint:-classfile,-options'
-]
-compileSystemTestJava.options.compilerArgs = [
-  '-g',
-  '-Werror',
-  '-Xlint',
-  '-Xlint:-classfile,-options'
-]
-compileTestInputJava.options.compilerArgs = [
-  '-g',
-  '-nowarn',
-  '-Xlint:-classfile,-options'
-]
+tasks.withType(JavaCompile).configureEach { t ->
+  if (t.name.equals('compileTestInputJava')) {
+    options.compilerArgs = [
+      '-g',
+      '-nowarn',
+      '-Xlint:-classfile,-options'
+    ]
+  } else {
+    options.compilerArgs = [
+      '-g',
+      '-Werror',
+      '-Xlint',
+      '-Xlint:-classfile,-options'
+    ]
+  }
+}
 
 tasks.register('compileAll') {
   dependsOn compileJava
