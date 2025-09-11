@@ -18,7 +18,7 @@ plugins {
 
   id('net.ltgt.errorprone') version '4.3.0'
 
-  id 'org.checkerframework' version '0.6.57'
+  id 'org.checkerframework' version '0.6.59'
 
   id 'org.aim42.htmlSanityCheck' version '1.1.6'
 
@@ -80,7 +80,7 @@ allprojects {
 
 ext {
   versions = [
-    checkerFramework : '3.50.0',
+    checkerFramework : '3.51.0',
     commonsExec : '1.5.0',
     commonsIo : '2.8.0.1',
     errorProne : '2.41.0',
