@@ -306,11 +306,8 @@ tasks.register('compileAll') {
   dependsOn compileSystemTestJava
 }
 
-// Get early notification of compilation failures.
-assemble.dependsOn compileAll
-
-// This isn't working; maybe I need to make compileAll run first.
-// Get early notification of any compilation failures, before running any tests
+// Get early notification of compilation failures, when running assemble.
+assemble.mustRunAfter compileAll
 build.dependsOn compileAll
 
 ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
