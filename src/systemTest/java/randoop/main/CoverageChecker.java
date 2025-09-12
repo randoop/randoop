@@ -55,7 +55,7 @@ class CoverageChecker {
       version = version.substring(2, 3);
     } else {
       // Since Java 9, from a version string like "11.0.1", extract "11".
-      int i = version.indexOf(".");
+      int i = version.indexOf('.');
       if (i < 0) {
         // Some Linux dockerfiles return only the major version number for
         // the system property "java.version"; i.e., no ".<minor version>".
@@ -65,7 +65,7 @@ class CoverageChecker {
       }
     }
     // Handle version strings like "18-ea".
-    int i = version.indexOf("-");
+    int i = version.indexOf('-');
     if (i > 0) {
       version = version.substring(0, i);
     }
@@ -190,7 +190,7 @@ class CoverageChecker {
       if (s.isEmpty()) {
         continue;
       }
-      int spacepos = s.lastIndexOf(" ");
+      int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
         throw new Error(
             "Bad method spec, lacks action at end "
