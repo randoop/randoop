@@ -29,7 +29,7 @@ class CoverageChecker {
   private final Set<@ClassGetName String> classnames;
 
   /** The number of methods that must be covered. */
-  private final int numMethodsToCover;
+  private final int minMethodsToCover;
 
   /** The methods that must not be covered. */
   private final HashSet<String> excludedMethods = new HashSet<>();
@@ -75,11 +75,11 @@ class CoverageChecker {
    * Create a coverage checker for the set of class names.
    *
    * @param classnames the class name set
-   * @param numMethodsToCover the minimum number of methods that must be covered by this test
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames, int numMethodsToCover) {
+  private CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
     this.classnames = classnames;
-    this.numMethodsToCover = numMethodsToCover;
+    this.minMethodsToCover = minMethodsToCover;
   }
 
   /**
@@ -87,10 +87,10 @@ class CoverageChecker {
    * options are ignored. Assumes all declared methods of the classes under test should be covered.
    *
    * @param options the test generation options
-   * @param numMethodsToCover the minimum number of methods that must be covered by this test
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  CoverageChecker(RandoopOptions options, int numMethodsToCover) {
-    this(options.getClassnames(), numMethodsToCover);
+  CoverageChecker(RandoopOptions options, int minMethodsToCover) {
+    this(options.getClassnames(), minMethodsToCover);
   }
 
   /**
@@ -98,13 +98,13 @@ class CoverageChecker {
    * in the given file
    *
    * @param options the test generation options
-   * @param numMethodsToCover the minimum number of methods that must be covered by this test
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param _dummy unused
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
   CoverageChecker(
-      RandoopOptions options, int numMethodsToCover, boolean _dummy, String methodSpecsFile) {
-    this(options.getClassnames(), numMethodsToCover);
+      RandoopOptions options, int minMethodsToCover, boolean _dummy, String methodSpecsFile) {
+    this(options.getClassnames(), minMethodsToCover);
     Path path =
         Path.of(
             getClass()
@@ -125,11 +125,11 @@ class CoverageChecker {
    * exclusions.
    *
    * @param options the test generation options
-   * @param numMethodsToCover the minimum number of methods that must be covered by this test
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param methodSpecs which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(RandoopOptions options, int numMethodsToCover, String... methodSpecs) {
-    this(options.getClassnames(), numMethodsToCover);
+  CoverageChecker(RandoopOptions options, int minMethodsToCover, String... methodSpecs) {
+    this(options.getClassnames(), minMethodsToCover);
     methods(methodSpecs);
   }
 
@@ -290,8 +290,8 @@ class CoverageChecker {
 
     StringBuilder failureMessage = new StringBuilder();
     String totalCoveredMethodsMsg =
-        "Covered " + numCoveredMethods + " methods, expected at least " + numMethodsToCover;
-    if (numCoveredMethods < numMethodsToCover) {
+        "Covered " + numCoveredMethods + " methods, expected at least " + minMethodsToCover;
+    if (numCoveredMethods < minMethodsToCover) {
       failureMessage.append(totalCoveredMethodsMsg);
     }
     if (!missingMethods.isEmpty()) {
