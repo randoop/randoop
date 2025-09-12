@@ -199,7 +199,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            63,
+            62, // 62 for Java 8, 63 for Java 21.
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
