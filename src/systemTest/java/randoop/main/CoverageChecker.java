@@ -162,9 +162,9 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      int colonPos = s.indexOf("#");
-      if (colonPos != -1) {
-        s = s.substring(0, colonPos);
+      int hashPos = s.indexOf('#');
+      if (hashPos != -1) {
+        s = s.substring(0, hashPos);
       }
       s = s.trim();
       if (s.isEmpty()) {
