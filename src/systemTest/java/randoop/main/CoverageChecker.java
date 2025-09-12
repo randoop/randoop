@@ -130,7 +130,7 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
-      int spacepos = s.lastIndexOf(" ");
+      int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
         throw new Error(
             "Bad method spec, lacks action at end "
