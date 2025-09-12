@@ -1,7 +1,13 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -87,6 +94,32 @@ class CoverageChecker {
   }
 
   /**
+   * Create a coverage checker using the classnames from the option set, and the method exclusions
+   * in the given file
+   *
+   * @param options the test generation options
+   * @param methodSpecsFile which methods should be covered; see {@link #methods}
+   */
+  static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
+    // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
+    CoverageChecker result = new CoverageChecker(options.getClassnames());
+    String resource = "test-methodspecs/" + methodSpecsFile;
+    Class<?> thisClass = MethodHandles.lookup().lookupClass();
+    List<String> methodSpecs;
+    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+      if (in == null) {
+        throw new Error("Resource not found on classpath: " + resource);
+      }
+      methodSpecs =
+          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new Error("Problem reading resource " + resource, e);
+    }
+    result.methods(methodSpecs.toArray(new String[0]));
+    return result;
+  }
+
+  /**
    * Create a coverage checker using the classnames from the option set, and the given method
    * exclusions.
    *
@@ -149,6 +182,14 @@ class CoverageChecker {
    */
   void methods(List<String> methodSpecs) {
     for (String s : methodSpecs) {
+      int hashPos = s.indexOf('#');
+      if (hashPos != -1) {
+        s = s.substring(0, hashPos);
+      }
+      s = s.trim();
+      if (s.isEmpty()) {
+        continue;
+      }
       int spacepos = s.lastIndexOf(" ");
       if (spacepos == -1) {
         throw new Error(
