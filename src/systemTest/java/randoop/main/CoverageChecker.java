@@ -129,7 +129,7 @@ class CoverageChecker {
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or &gte; 22.
+   * 21, or &ge; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
