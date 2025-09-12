@@ -5,8 +5,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -97,19 +95,21 @@ class CoverageChecker {
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
   static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
+    // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
     CoverageChecker result = new CoverageChecker(options.getClassnames());
+    String resource = "test-methodspecs/" + methodSpecsFile;
     Class<?> thisClass = MethodHandles.lookup().lookupClass();
-    Path path =
-        Path.of(
-            thisClass
-                .getClassLoader()
-                .getResource("/test-methodspecs/" + methodSpecsFile)
-                .getFile());
     List<String> methodSpecs;
-    try {
-      methodSpecs = Files.readAllLines(path);
+    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+      if (in == null) {
+        throw new Error("Resource not found on classpath: " + resource);
+      }
+      methodSpecs =
+          new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
+              .lines()
+              .collect(Collectors.toList());
     } catch (IOException e) {
-      throw new Error("Problem reading resource " + methodSpecsFile, e);
+      throw new Error("Problem reading resource " + resource, e);
     }
     result.methods(methodSpecs.toArray(new String[0]));
     return result;
