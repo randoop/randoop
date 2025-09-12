@@ -407,6 +407,9 @@ public class RandoopSystemTest {
     options.setErrorBasename("JDK_Tests_error");
 
     options.setOption("generated_limit", "6000");
+    // Using these values instead slightly reduced coverage:
+    // options.setOption("null-ratio", "0.1");
+    // options.setOption("alias-ratio", "0.2");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
