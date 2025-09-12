@@ -1,8 +1,12 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -12,6 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -105,9 +110,7 @@ class CoverageChecker {
         throw new Error("Resource not found on classpath: " + resource);
       }
       methodSpecs =
-          new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
-              .lines()
-              .collect(Collectors.toList());
+          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
       throw new Error("Problem reading resource " + resource, e);
     }
