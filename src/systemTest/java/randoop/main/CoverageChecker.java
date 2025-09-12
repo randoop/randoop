@@ -294,7 +294,7 @@ class CoverageChecker {
    * inner class methods, and hashCode().
    */
   private static final Pattern IGNORE_PATTERN =
-      Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
+      Pattern.compile("\\$jacocoInit|access\\$\\d+|(\\.hashCode\\(\\)$)");
 
   /**
    * Returns true if the given method name should be ignored during the coverage check.
