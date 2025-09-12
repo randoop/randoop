@@ -106,7 +106,7 @@ class CoverageChecker {
    */
   static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
-    CoverageChecker result = new CoverageChecker(options.getClassnames());
+    CoverageChecker result = new CoverageChecker(options);
     String resource = "test-methodspecs/" + methodSpecsFile;
     Class<?> thisClass = MethodHandles.lookup().lookupClass();
     List<String> methodSpecs;
