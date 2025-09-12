@@ -2,7 +2,10 @@ package randoop.main;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -86,6 +89,31 @@ class CoverageChecker {
   }
 
   /**
+   * Create a coverage checker using the classnames from the option set, and the method exclusions
+   * in the given file
+   *
+   * @param options the test generation options
+   * @param _dummy unused
+   * @param methodSpecsFile which methods should be covered; see {@link #methods}
+   */
+  CoverageChecker(RandoopOptions options, boolean _dummy, String methodSpecsFile) {
+    this(options.getClassnames());
+    Path path =
+        Path.of(
+            getClass()
+                .getClassLoader()
+                .getResource("/test-methodspecs/" + methodSpecsFile)
+                .getFile());
+    List<String> methodSpecs;
+    try {
+      methodSpecs = Files.readAllLines(path);
+    } catch (IOException e) {
+      throw new Error("Problem reading resource " + methodSpecsFile, e);
+    }
+    methods(methodSpecs.toArray(new String[0]));
+  }
+
+  /**
    * Create a coverage checker using the classnames from the option set, and the given method
    * exclusions.
    *
@@ -124,12 +152,17 @@ class CoverageChecker {
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or >= 22.
+   * 21, or &gte; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
+   *
+   * @param methodSpecs method specifications
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
+      if (s.isEmpty() || s.startsWith("#")) {
+        continue;
+      }
       int spacepos = s.lastIndexOf(" ");
       if (spacepos == -1) {
         throw new Error(
