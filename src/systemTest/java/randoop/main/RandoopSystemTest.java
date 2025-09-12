@@ -1012,7 +1012,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            26,
+            25, // 26 for most JDKs, 25 for JDK 17
             "collectiongen.AnInputClass.hashCode() ignore",
             "collectiongen.Day.$values() ignore17+",
             "collectiongen.Day.valueOf(java.lang.String) exclude",
