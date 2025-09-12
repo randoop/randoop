@@ -32,11 +32,14 @@ class CoverageChecker {
   /** The classes whose methods must be covered. */
   private final Set<@ClassGetName String> classnames;
 
+  /** The number of methods that must be covered. */
+  private final int minMethodsToCover;
+
   /** The methods that must not be covered. */
-  private final HashSet<String> excludedMethods;
+  private final Set<String> excludedMethods = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final HashSet<String> dontCareMethods;
+  private final Set<String> dontCareMethods = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -76,21 +79,22 @@ class CoverageChecker {
    * Create a coverage checker for the set of class names.
    *
    * @param classnames the class name set
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames) {
+  private CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
     this.classnames = classnames;
-    this.excludedMethods = new HashSet<>();
-    this.dontCareMethods = new HashSet<>();
+    this.minMethodsToCover = minMethodsToCover;
   }
 
   /**
    * Create a coverage checker using the classnames from the option set. All other parts of the
    * options are ignored. Assumes all declared methods of the classes under test should be covered.
    *
-   * @param options the options
+   * @param options the test generation options
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  CoverageChecker(RandoopOptions options) {
-    this(options.getClassnames());
+  CoverageChecker(RandoopOptions options, int minMethodsToCover) {
+    this(options.getClassnames(), minMethodsToCover);
   }
 
   /**
@@ -98,11 +102,13 @@ class CoverageChecker {
    * in the given file
    *
    * @param options the test generation options
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
-  static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
+  static CoverageChecker fromFile(
+      RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
-    CoverageChecker result = new CoverageChecker(options.getClassnames());
+    CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
     String resource = "test-methodspecs/" + methodSpecsFile;
     Class<?> thisClass = MethodHandles.lookup().lookupClass();
     List<String> methodSpecs;
@@ -123,11 +129,12 @@ class CoverageChecker {
    * Create a coverage checker using the classnames from the option set, and the given method
    * exclusions.
    *
-   * @param options the options
+   * @param options the test generation options
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param methodSpecs which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(RandoopOptions options, String... methodSpecs) {
-    this(options.getClassnames());
+  CoverageChecker(RandoopOptions options, int minMethodsToCover, String... methodSpecs) {
+    this(options.getClassnames(), minMethodsToCover);
     methods(methodSpecs);
   }
 
@@ -291,9 +298,13 @@ class CoverageChecker {
       }
     }
 
-    String totalCoveredMethodsMsg = "Total covered methods: " + numCoveredMethods;
-
     StringBuilder failureMessage = new StringBuilder();
+    String totalCoveredMethodsMsg =
+        String.format(
+            "Covered %d methods, expected at least %d%n", numCoveredMethods, minMethodsToCover);
+    if (numCoveredMethods < minMethodsToCover) {
+      failureMessage.append(totalCoveredMethodsMsg);
+    }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(String.format("Expected methods not covered:%n"));
       for (String name : missingMethods) {
@@ -308,7 +319,7 @@ class CoverageChecker {
     }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
-      fail(msg + totalCoveredMethodsMsg);
+      fail(msg);
     } else {
       System.out.println(totalCoveredMethodsMsg);
     }
