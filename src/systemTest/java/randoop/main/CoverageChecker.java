@@ -36,10 +36,10 @@ class CoverageChecker {
   private final int minMethodsToCover;
 
   /** The methods that must not be covered. */
-  private final HashSet<String> excludedMethods = new HashSet<>();
+  private final Set<String> excludedMethods = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final HashSet<String> dontCareMethods = new HashSet<>();
+  private final Set<String> dontCareMethods = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -102,11 +102,13 @@ class CoverageChecker {
    * in the given file
    *
    * @param options the test generation options
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
-  static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
+  static CoverageChecker fromFile(
+      RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
-    CoverageChecker result = new CoverageChecker(options);
+    CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
     String resource = "test-methodspecs/" + methodSpecsFile;
     Class<?> thisClass = MethodHandles.lookup().lookupClass();
     List<String> methodSpecs;
