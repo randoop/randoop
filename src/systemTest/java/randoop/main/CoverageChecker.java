@@ -162,8 +162,12 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
+      int colonPos = s.indexOf("#");
+      if (colonPos != -1) {
+        s = s.substring(0, colonPos);
+      }
       s = s.trim();
-      if (s.isEmpty() || s.startsWith("#")) {
+      if (s.isEmpty()) {
         continue;
       }
       int spacepos = s.lastIndexOf(" ");
