@@ -24,11 +24,14 @@ class CoverageChecker {
   /** The classes whose methods must be covered. */
   private final Set<@ClassGetName String> classnames;
 
+  /** The number of methods that must be covered. */
+  private final int numMethodsToCover;
+
   /** The methods that must not be covered. */
-  private final HashSet<String> excludedMethods;
+  private final HashSet<String> excludedMethods = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final HashSet<String> dontCareMethods;
+  private final HashSet<String> dontCareMethods = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -68,32 +71,34 @@ class CoverageChecker {
    * Create a coverage checker for the set of class names.
    *
    * @param classnames the class name set
+   * @param numMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames) {
+  private CoverageChecker(Set<@ClassGetName String> classnames, int numMethodsToCover) {
     this.classnames = classnames;
-    this.excludedMethods = new HashSet<>();
-    this.dontCareMethods = new HashSet<>();
+    this.numMethodsToCover = numMethodsToCover;
   }
 
   /**
    * Create a coverage checker using the classnames from the option set. All other parts of the
    * options are ignored. Assumes all declared methods of the classes under test should be covered.
    *
-   * @param options the options
+   * @param options the test generation options
+   * @param numMethodsToCover the minimum number of methods that must be covered by this test
    */
-  CoverageChecker(RandoopOptions options) {
-    this(options.getClassnames());
+  CoverageChecker(RandoopOptions options, int numMethodsToCover) {
+    this(options.getClassnames(), numMethodsToCover);
   }
 
   /**
    * Create a coverage checker using the classnames from the option set, and the given method
    * exclusions.
    *
-   * @param options the options
+   * @param options the test generation options
+   * @param numMethodsToCover the minimum number of methods that must be covered by this test
    * @param methodSpecs which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(RandoopOptions options, String... methodSpecs) {
-    this(options.getClassnames());
+  CoverageChecker(RandoopOptions options, int numMethodsToCover, String... methodSpecs) {
+    this(options.getClassnames(), numMethodsToCover);
     methods(methodSpecs);
   }
 
@@ -124,7 +129,7 @@ class CoverageChecker {
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or >= 22.
+   * 21, or &gte; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    */
@@ -231,9 +236,12 @@ class CoverageChecker {
       }
     }
 
-    String totalCoveredMethodsMsg = "Total covered methods: " + numCoveredMethods;
-
     StringBuilder failureMessage = new StringBuilder();
+    String totalCoveredMethodsMsg =
+        "Covered " + numCoveredMethods + " methods, expected at least " + numMethodsToCover;
+    if (numCoveredMethods < numMethodsToCover) {
+      failureMessage.append(totalCoveredMethodsMsg);
+    }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(String.format("Expected methods not covered:%n"));
       for (String name : missingMethods) {
