@@ -10,9 +10,17 @@ import randoop.sequence.ExecutableSequence;
  */
 public class IncludeTestPredicate implements Predicate<ExecutableSequence> {
 
-  /** Classes whose uses to require. Predicate returns true if one of these is used. */
+  /**
+   * Patterns matching classes whose uses to require. Predicate returns true if one of these is
+   * used.
+   */
   private Pattern testClasses;
 
+  /**
+   * Creates an IncludeTestPredicate.
+   *
+   * @param testClasses patterns matching classes whose uses to require
+   */
   public IncludeTestPredicate(Pattern testClasses) {
     this.testClasses = testClasses;
   }
