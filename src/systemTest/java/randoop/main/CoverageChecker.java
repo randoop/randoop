@@ -3,6 +3,7 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,14 +94,14 @@ class CoverageChecker {
    * in the given file
    *
    * @param options the test generation options
-   * @param _dummy unused
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(RandoopOptions options, boolean _dummy, String methodSpecsFile) {
-    this(options.getClassnames());
+  static CoverageChecker fromFile(RandoopOptions options, String methodSpecsFile) {
+    CoverageChecker result = new CoverageChecker(options.getClassnames());
+    Class<?> thisClass = MethodHandles.lookup().lookupClass();
     Path path =
         Path.of(
-            getClass()
+            thisClass
                 .getClassLoader()
                 .getResource("/test-methodspecs/" + methodSpecsFile)
                 .getFile());
@@ -110,7 +111,8 @@ class CoverageChecker {
     } catch (IOException e) {
       throw new Error("Problem reading resource " + methodSpecsFile, e);
     }
-    methods(methodSpecs.toArray(new String[0]));
+    result.methods(methodSpecs.toArray(new String[0]));
+    return result;
   }
 
   /**
@@ -160,6 +162,7 @@ class CoverageChecker {
    */
   void methods(String... methodSpecs) {
     for (String s : methodSpecs) {
+      s = s.trim();
       if (s.isEmpty() || s.startsWith("#")) {
         continue;
       }

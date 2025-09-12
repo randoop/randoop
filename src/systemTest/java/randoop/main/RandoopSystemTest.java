@@ -416,7 +416,7 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    CoverageChecker coverageChecker = new CoverageChecker(options, true, "JDKTest.methodspecs");
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, "JDKTest.methodspecs");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
