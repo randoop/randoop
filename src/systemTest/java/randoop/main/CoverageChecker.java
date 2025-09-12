@@ -257,7 +257,7 @@ class CoverageChecker {
     }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
-      fail(msg + totalCoveredMethodsMsg);
+      fail(msg);
     } else {
       System.out.println(totalCoveredMethodsMsg);
     }
