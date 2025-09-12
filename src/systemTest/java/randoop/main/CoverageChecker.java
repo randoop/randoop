@@ -116,7 +116,7 @@ class CoverageChecker {
   }
 
   /** Matches digits at the end of a string. */
-  private Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
+  private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
 
   /**
    * Add method names to be excluded, ignored, or included (included has no effect).
