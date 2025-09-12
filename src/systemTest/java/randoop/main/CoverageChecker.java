@@ -1,12 +1,14 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -104,19 +107,19 @@ class CoverageChecker {
    */
   static CoverageChecker fromFile(
       RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
-    CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
+    CoverageChecker result = new CoverageChecker(options.getClassnames(), minMethodsToCover);
+    // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
+    String resource = "test-methodspecs/" + methodSpecsFile;
     Class<?> thisClass = MethodHandles.lookup().lookupClass();
-    Path path =
-        Path.of(
-            thisClass
-                .getClassLoader()
-                .getResource("/test-methodspecs/" + methodSpecsFile)
-                .getFile());
     List<String> methodSpecs;
-    try {
-      methodSpecs = Files.readAllLines(path);
+    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+      if (in == null) {
+        throw new Error("Resource not found on classpath: " + resource);
+      }
+      methodSpecs =
+          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
-      throw new Error("Problem reading resource " + methodSpecsFile, e);
+      throw new Error("Problem reading resource " + resource, e);
     }
     result.methods(methodSpecs.toArray(new String[0]));
     return result;
@@ -186,9 +189,9 @@ class CoverageChecker {
    */
   void methods(List<String> methodSpecs) {
     for (String s : methodSpecs) {
-      int colonPos = s.indexOf("#");
-      if (colonPos != -1) {
-        s = s.substring(0, colonPos);
+      int hashPos = s.indexOf('#');
+      if (hashPos != -1) {
+        s = s.substring(0, hashPos);
       }
       s = s.trim();
       if (s.isEmpty()) {
