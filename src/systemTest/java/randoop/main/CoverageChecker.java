@@ -238,7 +238,8 @@ class CoverageChecker {
 
     StringBuilder failureMessage = new StringBuilder();
     String totalCoveredMethodsMsg =
-        "Covered " + numCoveredMethods + " methods, expected at least " + minMethodsToCover;
+        String.format(
+            "Covered %d methods, expected at least %d%n", numCoveredMethods, minMethodsToCover);
     if (numCoveredMethods < minMethodsToCover) {
       failureMessage.append(totalCoveredMethodsMsg);
     }
