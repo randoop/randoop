@@ -3,6 +3,7 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,15 +100,15 @@ class CoverageChecker {
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
-   * @param _dummy unused
    * @param methodSpecsFile which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(
-      RandoopOptions options, int minMethodsToCover, boolean _dummy, String methodSpecsFile) {
-    this(options.getClassnames(), minMethodsToCover);
+  static CoverageChecker fromFile(
+      RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
+    CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
+    Class<?> thisClass = MethodHandles.lookup().lookupClass();
     Path path =
         Path.of(
-            getClass()
+            thisClass
                 .getClassLoader()
                 .getResource("/test-methodspecs/" + methodSpecsFile)
                 .getFile());
@@ -117,7 +118,8 @@ class CoverageChecker {
     } catch (IOException e) {
       throw new Error("Problem reading resource " + methodSpecsFile, e);
     }
-    methods(methodSpecs);
+    result.methods(methodSpecs.toArray(new String[0]));
+    return result;
   }
 
   /**
@@ -184,7 +186,12 @@ class CoverageChecker {
    */
   void methods(List<String> methodSpecs) {
     for (String s : methodSpecs) {
-      if (s.isEmpty() || s.startsWith("#")) {
+      int colonPos = s.indexOf("#");
+      if (colonPos != -1) {
+        s = s.substring(0, colonPos);
+      }
+      s = s.trim();
+      if (s.isEmpty()) {
         continue;
       }
       int spacepos = s.lastIndexOf(" ");
