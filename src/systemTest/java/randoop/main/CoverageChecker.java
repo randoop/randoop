@@ -150,7 +150,7 @@ class CoverageChecker {
   }
 
   /** Matches digits at the end of a string. */
-  private Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
+  private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
 
   /**
    * Add method names to be excluded, ignored, or included (included has no effect).
@@ -354,7 +354,7 @@ class CoverageChecker {
    * inner class methods, and hashCode().
    */
   private static final Pattern IGNORE_PATTERN =
-      Pattern.compile("\\$jacocoInit|access\\$\\d{3}+|(\\.hashCode\\(\\)$)");
+      Pattern.compile("\\$jacocoInit|access\\$\\d+|(\\.hashCode\\(\\)$)");
 
   /**
    * Returns true if the given method name should be ignored during the coverage check.
