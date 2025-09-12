@@ -3,6 +3,7 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -124,11 +125,29 @@ class CoverageChecker {
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
    * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or >= 22.
+   * 21, or &ge; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
+   *
+   * @param methodSpecs method specifications
    */
   void methods(String... methodSpecs) {
+    methods(Arrays.asList(methodSpecs));
+  }
+
+  /**
+   * Add method names to be excluded, ignored, or included (included has no effect).
+   *
+   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
+   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
+   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
+   * 21, or &ge; 22.
+   *
+   * <p>This format is intended to make it easy to sort the arguments.
+   *
+   * @param methodSpecs method specifications
+   */
+  void methods(List<String> methodSpecs) {
     for (String s : methodSpecs) {
       int spacepos = s.lastIndexOf(" ");
       if (spacepos == -1) {
