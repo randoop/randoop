@@ -1840,14 +1840,14 @@ public class RandoopSystemTest {
    *
    * @param environment the working environment of the test
    * @param options the Randoop options
-   * @param numMethodsToCover the minimum number of methods that must be covered by this test
+   * @param minMethodsToCover the minimum number of methods that must be covered by this test
    * @param expectedRegression the minimum expected number of regression tests
    * @param expectedError the minimum expected error tests
    */
   private void generateAndTest(
       SystemTestEnvironment environment,
       RandoopOptions options,
-      int numMethodsToCover,
+      int minMethodsToCover,
       ExpectedTests expectedRegression,
       ExpectedTests expectedError) {
     generateAndTest(
@@ -1855,7 +1855,7 @@ public class RandoopSystemTest {
         options,
         expectedRegression,
         expectedError,
-        new CoverageChecker(options, numMethodsToCover));
+        new CoverageChecker(options, minMethodsToCover));
   }
 
   /**
