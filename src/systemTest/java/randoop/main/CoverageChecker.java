@@ -206,6 +206,7 @@ class CoverageChecker {
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
+
       boolean plus;
       if (action.endsWith("+")) {
         action = action.substring(0, action.length() - 1);
@@ -213,6 +214,7 @@ class CoverageChecker {
       } else {
         plus = false;
       }
+
       int actionJdk;
       Matcher m = TRAILING_NUMBER_PATTERN.matcher(action);
       if (m.matches()) {
@@ -316,6 +318,13 @@ class CoverageChecker {
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s%n", name));
       }
+    }
+    if (regressionStatus == null) {
+      System.out.printf("No regression tests.%n");
+    } else {
+      System.out.printf(
+          "Ran %d tests, %d succeeded.%n",
+          regressionStatus.testsRun, regressionStatus.testsSucceed);
     }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
