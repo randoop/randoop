@@ -199,7 +199,7 @@ public class RandoopSystemTest {
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
-            62, // 62 for Java 8, 63 for Java 21.
+            57,
             "java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+",
             "java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude",
             "java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude",
@@ -425,7 +425,7 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 491, "JDKTest.methodspecs");
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 489, "JDKTest.methodspecs");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }

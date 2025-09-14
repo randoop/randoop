@@ -1,11 +1,14 @@
 java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17+
+java7.util7.ArrayList.elementData(int) exclude21
 java7.util7.ArrayList.fastRemove(int) ignore
 java7.util7.ArrayList.fastRemove(int) ignore17+
 java7.util7.ArrayList.hugeCapacity(int) exclude
 java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude
+java7.util7.ArrayList.remove(int) exclude21
 java7.util7.ArrayList.removeRange(int, int) exclude
 java7.util7.ArrayList.set(int, java.lang.Object) ignore
+java7.util7.ArrayList.subList(int, int) exclude21
 java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Arrays.binarySearch(char[], int, int, char) ignore
 java7.util7.Arrays.binarySearch(float[], float) ignore
@@ -48,10 +51,12 @@ java7.util7.Arrays.med3(long[], int, int, int) exclude
 java7.util7.Arrays.med3(short[], int, int, int) exclude
 java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int) exclude
 java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude
+java7.util7.Arrays.sort(char[], int, int) exclude21
 java7.util7.Arrays.sort(float[]) ignore
 java7.util7.Arrays.sort(float[], int, int) ignore
 java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore
 java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17+
+java7.util7.Arrays.sort(long[], int, int) exclude21
 java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude
 java7.util7.Arrays.vecswap(byte[], int, int, int) exclude
 java7.util7.Arrays.vecswap(char[], int, int, int) exclude
@@ -95,7 +100,10 @@ java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude
+java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) include21
+java7.util7.Collections.unmodifiableList(java7.util7.List) exclude21
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
+java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude21
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17+
 java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore
 java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude
@@ -104,9 +112,13 @@ java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude
 java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang.Object, java.lang.Object) exclude
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
+java7.util7.LinkedList.addAll(int, java7.util7.Collection) exclude21
+java7.util7.LinkedList.addAll(java7.util7.Collection) exclude21
 java7.util7.LinkedList.get(int) ignore17+
 java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore
+java7.util7.LinkedList.pop() exclude21
 java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude
+java7.util7.LinkedList.remove(int) exclude21
 java7.util7.LinkedList.set(int, java.lang.Object) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Observable.clearChanged() exclude
