@@ -80,6 +80,24 @@ public class ComponentManager {
   private @Nullable PackageLiterals packageLiterals = null;
 
   /**
+   * Decides which constructors/methods are callable from the generated test code. This predicate
+   * matches the visibility rules chosen for the overall test package. This is kept so that if the
+   * user calls {@link #clearGeneratedSequences}, we can create a new {@link
+   * DemandDrivenInputCreator} with the same accessibility rules.
+   */
+  private final AccessibilityPredicate accessibility;
+
+  /**
+   * Types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available. This set is kept so that if the user calls {@link
+   * #clearGeneratedSequences}, we can re-add these types to the {@link DemandDrivenInputCreator}
+   * associated with {@link #gralComponents}.
+   */
+  private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
+
+  /**
    * Create an empty component manager, with an empty seed sequence set.
    *
    * @param accessibility decides which constructors/methods are callable from the generated test
@@ -88,6 +106,7 @@ public class ComponentManager {
   public ComponentManager(AccessibilityPredicate accessibility) {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    this.accessibility = accessibility;
     if (GenInputsAbstract.demand_driven) {
       DemandDrivenInputCreator demandDrivenInputCreator =
           new DemandDrivenInputCreator(
@@ -113,6 +132,7 @@ public class ComponentManager {
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    this.accessibility = accessibility;
     if (GenInputsAbstract.demand_driven) {
       DemandDrivenInputCreator demandDrivenInputCreator =
           new DemandDrivenInputCreator(
@@ -169,6 +189,7 @@ public class ComponentManager {
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
     gralComponents.addSutParameterOnlyTypes(types);
+    this.sutParameterOnlyTypes.addAll(types);
   }
 
   /**
@@ -196,6 +217,15 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator ddic =
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(ddic);
+      if (!sutParameterOnlyTypes.isEmpty()) {
+        gralComponents.addSutParameterOnlyTypes(sutParameterOnlyTypes);
+      }
+    }
   }
 
   /**

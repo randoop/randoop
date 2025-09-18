@@ -146,7 +146,7 @@ public abstract class AbstractGenerator {
    * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
-   *     {@code new ComponentManager()}.
+   *     {@code new ComponentManager(IS_PUBLIC)}.
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
    */
   protected AbstractGenerator(
