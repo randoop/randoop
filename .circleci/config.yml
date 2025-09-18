@@ -1,6 +1,32 @@
 version: 2.1
 
 jobs:
+  build:
+    docker:
+      - image: mdernst/randoop-ubuntu-jdk8
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      # run tests!
+      - run: gradle test
+
   nonSystemTest-jdk8:
 
     docker:
@@ -480,9 +506,9 @@ jobs:
           key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
 
 workflows:
-  version: 2
   build:
     jobs:
+      - build
       - nonSystemTest-jdk11
       - systemTest-jdk11
       - nonSystemTest-jdk17
