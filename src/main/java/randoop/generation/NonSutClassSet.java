@@ -59,7 +59,7 @@ public class NonSutClassSet {
    *     JDK
    */
   public Set<Class<?>> getNonJdkNonSutClasses() {
-    return Collections.unmodifiableSet(new LinkedHashSet<>(nonJdkNonSutClasses));
+    return Collections.unmodifiableSet(nonJdkNonSutClasses);
   }
 
   /**

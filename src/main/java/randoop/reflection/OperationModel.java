@@ -467,7 +467,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of types that are SUT-parameters but not SUT-returns. Demand-driven input
+   * Returns the (non-null) set of SUT-parameter-only types. Maybe empty. Demand-driven input
    * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
    *
    * @return the set of SUT-parameter-only types

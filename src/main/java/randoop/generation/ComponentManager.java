@@ -107,12 +107,7 @@ public class ComponentManager {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
     this.accessibility = accessibility;
-    if (GenInputsAbstract.demand_driven) {
-      DemandDrivenInputCreator demandDrivenInputCreator =
-          new DemandDrivenInputCreator(
-              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
-      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
-    }
+    initDemandDrivenIfEnabled();
   }
 
   /**
@@ -133,11 +128,19 @@ public class ComponentManager {
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
     this.accessibility = accessibility;
+    initDemandDrivenIfEnabled();
+  }
+
+  /**
+   * If demand-driven input generation is enabled, set up the demand-driven input creator for the
+   * component manager.
+   */
+  private void initDemandDrivenIfEnabled() {
     if (GenInputsAbstract.demand_driven) {
-      DemandDrivenInputCreator demandDrivenInputCreator =
+      DemandDrivenInputCreator ddic =
           new DemandDrivenInputCreator(
               gralComponents, gralComponents.getTypeInstantiator(), accessibility);
-      gralComponents.setDemandDrivenInputCreator(demandDrivenInputCreator);
+      gralComponents.setDemandDrivenInputCreator(ddic);
     }
   }
 

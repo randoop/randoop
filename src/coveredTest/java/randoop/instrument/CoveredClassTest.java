@@ -243,7 +243,7 @@ public class CoveredClassTest {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components, IS_PUBLIC);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
     operationModel.addClassLiterals(componentMgr);
 
     // Maps each class type to the side-effect-free methods in it.

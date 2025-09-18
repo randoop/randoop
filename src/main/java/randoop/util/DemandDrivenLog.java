@@ -103,9 +103,8 @@ public final class DemandDrivenLog {
     }
     sb.append("\n-----------------------------------------------------------------------------");
     sb.append(
-        "\n"
-            + "To avoid this warning, explicitly specify these classes (which are already on the"
-            + " classpath) to Randoop.");
+        "\nTo avoid this warning, add these classes as classes-under-test via "
+            + "--testclass, --classlist, or by including a jar with --testjar.");
     return sb.toString();
   }
 
