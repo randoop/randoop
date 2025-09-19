@@ -647,8 +647,7 @@ public final class Sequence {
    */
   private static int computeHashcode(SIList<Statement> statements) {
     int hashCode = 0;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      Statement s = statements.get(i);
+    for (Statement s : statements) {
       hashCode += s.hashCode();
     }
     return hashCode;
