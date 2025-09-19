@@ -359,10 +359,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  nonSystemTest-jdk22:
+  nonSystemTest-jdk24:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk24
 
     steps:
 
@@ -402,10 +402,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  systemTest-jdk22:
+  systemTest-jdk24:
 
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk24
 
     steps:
 
@@ -483,12 +483,30 @@ workflows:
   version: 2
   build:
     jobs:
-      - nonSystemTest-jdk11
-      - systemTest-jdk11
-      - nonSystemTest-jdk17
-      - systemTest-jdk17
+      - nonSystemTest-jdk11:
+          requires:
+            - misc
+            - nonSystemTest-jdk21
+      - systemTest-jdk11:
+          requires:
+            - misc
+            - systemTest-jdk21
+      - nonSystemTest-jdk17:
+          requires:
+            - misc
+            - nonSystemTest-jdk21
+      - systemTest-jdk17:
+          requires:
+            - misc
+            - systemTest-jdk21
       - nonSystemTest-jdk21
       - systemTest-jdk21
-      - nonSystemTest-jdk22
-      - systemTest-jdk22
+      - nonSystemTest-jdk24:
+          requires:
+            - misc
+            - nonSystemTest-jdk21
+      - systemTest-jdk24:
+          requires:
+            - misc
+            - systemTest-jdk21
       - misc
