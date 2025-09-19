@@ -261,7 +261,7 @@ public class TestFilteringTest {
 
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
     ForwardGenerator gen =
         new ForwardGenerator(
             new ArrayList<>(operations),
