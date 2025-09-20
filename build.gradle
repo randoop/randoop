@@ -229,7 +229,7 @@ dependencies {
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation "org.jacoco:org.jacoco.core:${versions.jacoco}"
-  implementation group: 'org.jacoco', name: 'org.jacoco.agent', version: "${versions.jacoco}", classifier: 'runtime'
+  implementation "org.jacoco:org.jacoco.agent:${versions.jacoco}:runtime"
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation 'commons-codec:commons-codec:1.19.0'
