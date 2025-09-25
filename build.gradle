@@ -218,7 +218,7 @@ dependencies {
   implementation 'com.github.javaparser:javaparser-core:3.27.0'
   implementation 'com.google.code.gson:gson:2.13.2'
   implementation "org.apache.commons:commons-exec:${versions.commonsExec}"
-  implementation 'org.apache.commons:commons-lang3:3.18.0'
+  implementation 'org.apache.commons:commons-lang3:3.19.0'
   implementation "org.checkerframework.annotatedlib:commons-io:${versions.commonsIo}"
 
   compileOnly 'org.plumelib:require-javadoc:1.0.9'
