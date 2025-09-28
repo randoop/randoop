@@ -29,6 +29,6 @@ It automatically creates unit tests for your classes, in JUnit format.
   * `test` - source for JUnit tests of Randoop
   * `testInput` - source for libraries used in Randoop testing
 
-The source directories follow the conventions of the Gradle Java plugin, where
-each directory has a *java* subdirectory containing Java source, and,
-in some cases, a *resources* subdirectory containing other files.
+The source directories follow the conventions of the Gradle Java plugin.
+Each directory has a `java/` subdirectory containing Java source and
+possibly a `resources/` subdirectory containing other files.
