@@ -1,4 +1,4 @@
-_Stop! Do NOT edit the files in this directory._
+**Stop! Do NOT edit the files in this directory.**
 
 The files in this directory are the generated contents of the Randoop website
 [https://randoop.github.io/randoop](https://randoop.github.io/randoop)
