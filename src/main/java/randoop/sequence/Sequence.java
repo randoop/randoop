@@ -777,11 +777,7 @@ public final class Sequence {
               "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
               (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
-    if (possibleVars.size() == 1) {
-      return possibleVars.get(0);
-    } else {
-      return Randomness.randomMember(possibleVars);
-    }
+    return Randomness.randomMember(possibleVars);
   }
 
   /**
@@ -812,12 +808,7 @@ public final class Sequence {
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
-    int index;
-    if (possibleIndices.size() == 1) {
-      index = possibleIndices.get(0);
-    } else {
-      index = Randomness.randomMember(possibleIndices);
-    }
+    int index = Randomness.randomMember(possibleIndices);
     return new Variable(this, index);
   }
 
