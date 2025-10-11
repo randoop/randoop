@@ -1,6 +1,6 @@
 .PHONY: all default clean
+
 all default: config.yml
-# TODO: all default: config.yml config-daily.yml
 
 config.yml: config.yml.m4 defs.m4 ../.azure/jobs.m4
 	m4 $< > $@
