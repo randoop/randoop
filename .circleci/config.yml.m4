@@ -1,7 +1,8 @@
-changequote
+changequote dnl
 changequote(`[',`]')dnl
 changecom([], [disable comments, that is, expand within them])dnl
 include([defs.m4])dnl
+
 version: 2.1
 
 jobs:
