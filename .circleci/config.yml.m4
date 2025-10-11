@@ -5,7 +5,7 @@ include([defs.m4])dnl
 version: 2.1
 
 jobs:
-include([jobs.m4])dnl
+include([../.azure/jobs.m4])dnl
 
 workflows:
   build:

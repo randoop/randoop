@@ -2,7 +2,7 @@
 all default: config.yml
 # TODO: all default: config.yml config-daily.yml
 
-config.yml: config.yml.m4 defs.m4 jobs.m4
+config.yml: config.yml.m4 defs.m4 ../.azure/jobs.m4
 	m4 $< > $@
 
 validate: config.yml
