@@ -9,8 +9,8 @@ ifelse([Each macro takes one argument, the JDK version.])dnl
 define([nonSystemTest_job], [dnl
 - job: nonSystemTest_jdk$1
 ifelse($1,canary_version,,[  dependsOn:
-    - nonSystemTest_jdk[]canary_version
-    - misc
+  - nonSystemTest_jdk[]canary_version
+  - misc
 ])dnl
   pool:
     vmImage: 'ubuntu-latest'
@@ -24,8 +24,8 @@ dnl
 define([systemTest_job], [dnl
 - job: systemTest_jdk$1
 ifelse($1,canary_version,,[  dependsOn:
-    - systemTest_jdk[]canary_version
-    - misc
+  - systemTest_jdk[]canary_version
+  - misc
 ])dnl
   pool:
     vmImage: 'ubuntu-latest'
