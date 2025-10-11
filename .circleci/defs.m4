@@ -58,7 +58,6 @@ circleci_boilerplate_post
 circleci_test_results
 ])dnl
 dnl
-dnl
 define([systemTest_job], [dnl
   systemTest-jdk$1:
     docker:

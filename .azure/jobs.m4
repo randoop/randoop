@@ -1,3 +1,5 @@
+nonSystemTest_job(8)
+systemTest_job(8)
 nonSystemTest_job(11)
 systemTest_job(11)
 nonSystemTest_job(17)
@@ -6,5 +8,4 @@ nonSystemTest_job(21)
 systemTest_job(21)
 nonSystemTest_job(24)
 systemTest_job(24)
-
 misc_job
