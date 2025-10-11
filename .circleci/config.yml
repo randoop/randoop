@@ -504,12 +504,4 @@ workflows:
           requires:
             - misc
             - systemTest-jdk21
-      - nonSystemTest-jdk25:
-          requires:
-            - misc
-            - nonSystemTest-jdk21
-      - systemTest-jdk25:
-          requires:
-            - misc
-            - systemTest-jdk21
       - misc
