@@ -19,4 +19,6 @@ job_dependences(21, nonSystemTest)
 job_dependences(21, systemTest)
 job_dependences(24, nonSystemTest)
 job_dependences(24, systemTest)
+job_dependences(25, nonSystemTest)
+job_dependences(25, systemTest)
       - misc
