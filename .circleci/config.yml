@@ -1,8 +1,8 @@
+  
 version: 2.1
 
 jobs:
   nonSystemTest-jdk8:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk8
     resource_class: large
@@ -46,7 +46,6 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk8:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk8
     resource_class: large
@@ -92,7 +91,6 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk11:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
     resource_class: large
@@ -136,7 +134,6 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk11:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
     resource_class: large
@@ -182,7 +179,6 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk17:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
@@ -226,7 +222,6 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk17:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
@@ -272,9 +267,9 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk21:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    resource_class: large
 
     steps:
 
@@ -315,9 +310,9 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk21:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    resource_class: large
 
     steps:
 
@@ -360,9 +355,9 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk24:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk24
+    resource_class: large
 
     steps:
 
@@ -403,9 +398,9 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk24:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk24
+    resource_class: large
 
     steps:
 
@@ -448,7 +443,6 @@ jobs:
           path: ~/test-results/junit
 
   misc:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdkany
     resource_class: large
@@ -479,8 +473,8 @@ jobs:
             - ~/.gradle
           key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
 
+
 workflows:
-  version: 2
   build:
     jobs:
       - nonSystemTest-jdk11:
