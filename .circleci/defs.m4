@@ -79,7 +79,7 @@ circleci_boilerplate_pre
 circleci_boilerplate_post])dnl
 dnl
 dnl
-ifelse([Example arguments: (8, systemTest_job)],,)dnl
+ifelse([Example arguments: (8, systemTest)],,)dnl
 define([job_dependences], [dnl
       - $2-jdk$1[]dnl
 ifelse($1,canary_version,,[:
