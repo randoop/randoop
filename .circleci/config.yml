@@ -480,27 +480,27 @@ workflows:
       - nonSystemTest-jdk11:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk11:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
       - nonSystemTest-jdk17:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk17:
           requires:
             - misc
-            - systemTest-jdk21
-      - nonSystemTest-jdk21
-      - systemTest-jdk21
-      - nonSystemTest-jdk24:
+            - systemTest-jdk24
+      - nonSystemTest-jdk21:
           requires:
             - misc
-            - nonSystemTest-jdk21
-      - systemTest-jdk24:
+            - nonSystemTest-jdk24
+      - systemTest-jdk21:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
+      - nonSystemTest-jdk24
+      - systemTest-jdk24
       - misc
