@@ -477,6 +477,14 @@ jobs:
 workflows:
   build:
     jobs:
+      - nonSystemTest-jdk8:
+          requires:
+            - misc
+            - nonSystemTest-jdk21
+      - systemTest-jdk8:
+          requires:
+            - misc
+            - systemTest-jdk21
       - nonSystemTest-jdk11:
           requires:
             - misc
