@@ -451,12 +451,13 @@ jobs:
 
       - restore_cache:
           keys:
-            - source-v2-{{ .Branch }}-{{ .Revision }}
-            - source-v2-{{ .Branch }}-
-            - source-v2-
-      - checkout
+            - source-v2full-{{ .Branch }}-{{ .Revision }}
+            - source-v2full-{{ .Branch }}-
+            - source-v2full-
+      - checkout:
+          method: full
       - save_cache:
-          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          key: source-v2full-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
 
@@ -480,11 +481,11 @@ workflows:
       - nonSystemTest-jdk8:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk8:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
       - nonSystemTest-jdk11:
           requires:
             - misc
