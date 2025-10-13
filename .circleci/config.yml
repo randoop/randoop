@@ -454,7 +454,7 @@ jobs:
             - source-v2full-{{ .Branch }}-{{ .Revision }}
             - source-v2full-{{ .Branch }}-
             - source-v2full-
-      - checkout
+      - checkout:
           method: full
       - save_cache:
           key: source-v2full-{{ .Branch }}-{{ .Revision }}
