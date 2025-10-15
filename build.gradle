@@ -16,6 +16,7 @@ plugins {
   id 'com.diffplug.spotless' version '6.13.0' apply false
 
   id('net.ltgt.errorprone') version '4.3.0'
+  id 'pmd'
 
   id 'org.checkerframework' version '0.6.59'
 
@@ -369,6 +370,11 @@ allprojects { subproject ->
   }
 }
 
+allprojects {
+  pmd {
+    consoleOutput = true
+  }
+}
 
 /*
  * Configuration for clean
