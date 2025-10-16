@@ -1,11 +1,11 @@
-// These subprojects are in subdirectories of the 'agent/' directory.
-include 'covered-class'
-include 'replacecall'
+// These subprojects are in subdirectories of the "agent/" directory.
+include "covered-class"
+include "replacecall"
 
 // The project should be called "randoop", instead of the directory name
-rootProject.name = 'randoop'
+rootProject.name = "randoop"
 
-// Adds agent subprojects, omitting 'agent' directory name.
+// Adds agent subprojects, omitting "agent" directory name.
 // Should not be necessary to change this unless need to change directory name.
 // (adapted from https://github.com/gradle/gradle/blob/master/settings.gradle)
 rootProject.children.each { project ->
