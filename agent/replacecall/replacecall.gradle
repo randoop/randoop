@@ -1,21 +1,21 @@
 /* build file for replacecall agent */
 
 plugins {
-  id 'java'
+  id "java"
 }
 
-description = 'replacecall agent'
+description = "replacecall agent"
 configurations {
   implementation.extendsFrom(plumelib)
 }
 dependencies {
-  testImplementation 'junit:junit:4.+'
-  testImplementation 'org.hamcrest:hamcrest-all:1.3'
+  testImplementation "junit:junit:4.+"
+  testImplementation "org.hamcrest:hamcrest-all:1.3"
 }
 
 javadoc {
   // Add -Werror once Javadoc warnings are resolved.
-  options.addStringOption('Xdoclint:all', '-quiet')
+  options.addStringOption("Xdoclint:all", "-quiet")
 }
 
 /*
@@ -24,17 +24,17 @@ javadoc {
 jar {
   manifest {
     attributes(
-        'Premain-Class': 'randoop.instrument.ReplaceCallAgent',
-        'Can-Redefine-Classes': 'true'
+        "Premain-Class": "randoop.instrument.ReplaceCallAgent",
+        "Can-Redefine-Classes": "true"
         )
   }
 }
 
 test {
   testLogging {
-    events 'started', 'passed'
+    events "started", "passed"
     showStandardStreams = true
-    exceptionFormat = 'full'
+    exceptionFormat = "full"
   }
 }
 
@@ -42,33 +42,33 @@ shadowJar {
   // We want the jar to be named replacecall-version.jar
   archiveClassifier = null
 
-  relocate 'com.google', 'replacecall.com.google'
-  relocate 'com.jcraft.jsch', 'replacecall.com.jcraft.jsch'
-  relocate 'com.sun.javadoc', 'replacecall.com.sun.javadoc'
-  relocate 'com.sun.jna', 'replacecall.com.sun.jna'
-  relocate 'com.trilead.ssh2', 'replacecall.com.trilead.ssh2'
-  relocate 'de.regnis.q.sequence', 'replacecall.de.regnis.q.sequence'
-  relocate 'net.fortuna.ical4j', 'replacecall.net.fortuna.ical4j'
-  relocate 'nu.xom', 'replacecall.nu.xom'
-  relocate 'org.antlr', 'replacecall.org.antlr'
-  relocate 'org.apache', 'replacecall.org.apache'
-  relocate 'org.ccil.cowan.tagsoup', 'replacecall.org.ccil.cowan.tagsoup'
-  relocate 'org.checkerframework', 'replacecall.org.checkerframework'
-  relocate 'org.ini4j', 'replacecall.org.ini4j'
-  relocate 'org.junit', 'replacecall.org.junit'
-  relocate 'org.slf4j', 'replacecall.org.slf4j'
-  relocate 'org.tigris.subversion', 'replacecall.org.tigris.subversion'
-  relocate 'org.tmatesoft', 'replacecall.org.tmatesoft'
+  relocate "com.google", "replacecall.com.google"
+  relocate "com.jcraft.jsch", "replacecall.com.jcraft.jsch"
+  relocate "com.sun.javadoc", "replacecall.com.sun.javadoc"
+  relocate "com.sun.jna", "replacecall.com.sun.jna"
+  relocate "com.trilead.ssh2", "replacecall.com.trilead.ssh2"
+  relocate "de.regnis.q.sequence", "replacecall.de.regnis.q.sequence"
+  relocate "net.fortuna.ical4j", "replacecall.net.fortuna.ical4j"
+  relocate "nu.xom", "replacecall.nu.xom"
+  relocate "org.antlr", "replacecall.org.antlr"
+  relocate "org.apache", "replacecall.org.apache"
+  relocate "org.ccil.cowan.tagsoup", "replacecall.org.ccil.cowan.tagsoup"
+  relocate "org.checkerframework", "replacecall.org.checkerframework"
+  relocate "org.ini4j", "replacecall.org.ini4j"
+  relocate "org.junit", "replacecall.org.junit"
+  relocate "org.slf4j", "replacecall.org.slf4j"
+  relocate "org.tigris.subversion", "replacecall.org.tigris.subversion"
+  relocate "org.tmatesoft", "replacecall.org.tmatesoft"
 }
 
-apply from: rootProject.file('gradle-mvn-push.gradle')
+apply from: rootProject.file("gradle-mvn-push.gradle")
 
 final replacecallPom(publication) {
   // Don't use publication.from components.java which would publish the skinny jar as randoop.jar.
   // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
   publication.pom {
-    name = 'Randoop\'s replacecall agent'
-    description = 'Replaces certain method calls by others at run time'
+    name = "Randoop's replacecall agent"
+    description = "Replaces certain method calls by others at run time"
   }
 }
 
