@@ -1093,7 +1093,7 @@ tasks.register("buildRelease", DefaultTask) {
 tasks.register("tags", Exec) {
   dependsOn "cloneLibs"
   description = "Run etags to create an Emacs TAGS table"
-  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name "*.java" | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
@@ -1109,9 +1109,7 @@ tasks.register("checklink", Exec) {
   dependsOn "cloneLibs"
   description = "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
   environment PATH: "$System.env.PATH:${layout.buildDirectory.get()}/utils/checklink"
-  commandLine "bash", "-c", """
-     checklink -q -r `grep -v "^#" build/utils/checklink/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
-  """
+  commandLine "bash", "-c", "checklink -q -r `grep -v '^#' build/utils/checklink/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt"
   doLast {
     if (new File("checklink-log.txt").length() > 0) {
       ant.fail("See link-checking failures in file checklink-log.txt")
