@@ -1,6 +1,6 @@
 // These subprojects are in subdirectories of the "agent/" directory.
-include "covered-class"
-include "replacecall"
+include("covered-class")
+include("replacecall")
 
 // The project should be called "randoop", instead of the directory name
 rootProject.name = "randoop"

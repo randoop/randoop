@@ -38,11 +38,11 @@ publishing {
   publications {
 
     remote(MavenPublication) {
-      sharedPublicationConfiguration it
+      sharedPublicationConfiguration(it)
     }
 
     local(MavenPublication) {
-      sharedPublicationConfiguration it
+      sharedPublicationConfiguration(it)
     }
   }
 
@@ -79,7 +79,7 @@ signing {
   // `signRemotePublication` is created immediately and `generateMetadataFileForRemotePublication`
   // and `generatePomFileForRemotePublication` are created during configuration.  Creating these
   // lazily instead will require a fix to <https://github.com/gradle/gradle/issues/8796>.
-  sign publishing.publications.remote
+  sign(publishing.publications.remote)
 }
 
 // Only sign releases; snapshots are unsigned.
