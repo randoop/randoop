@@ -211,7 +211,7 @@ dependencies {
   implementation "com.google.code.gson:gson:2.13.2"
   implementation "org.apache.commons:commons-exec:${commonsExecVersion}"
   implementation "org.apache.commons:commons-lang3:3.19.0"
-  implementation "org.checkerframework.annotatedlib:commons-io:${commonsIoVersion}"
+  implementation("commons-io:commons-io:2.20.0")
 
   compileOnly "org.plumelib:require-javadoc:1.0.9"
 
@@ -248,7 +248,7 @@ dependencies {
   systemTestImplementation "org.jacoco:org.jacoco.core:${jacocoVersion}"
   systemTestImplementation "org.jacoco:org.jacoco.report:${jacocoVersion}"
   systemTestImplementation "org.apache.commons:commons-exec:${commonsExecVersion}"
-  systemTestImplementation "org.checkerframework.annotatedlib:commons-io:${commonsIoVersion}"
+  systemTestImplementation("commons-io:commons-io:2.20.0")
   systemTestImplementation "org.hamcrest:hamcrest-all:${hamcrestAllVersion}"
   systemTestRuntimeOnly sourceSets.testInput.output
 
