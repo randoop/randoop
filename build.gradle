@@ -248,7 +248,7 @@ dependencies {
   systemTestImplementation "org.jacoco:org.jacoco.core:${jacocoVersion}"
   systemTestImplementation "org.jacoco:org.jacoco.report:${jacocoVersion}"
   systemTestImplementation "org.apache.commons:commons-exec:${commonsExecVersion}"
-  systemTestImplementation("commons-io:commons-io:2.20.0")
+  systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation "org.hamcrest:hamcrest-all:${hamcrestAllVersion}"
   systemTestRuntimeOnly sourceSets.testInput.output
 
