@@ -211,7 +211,7 @@ dependencies {
   implementation "com.google.code.gson:gson:2.13.2"
   implementation "org.apache.commons:commons-exec:${commonsExecVersion}"
   implementation "org.apache.commons:commons-lang3:3.19.0"
-  implementation("commons-io:commons-io:2.20.0")
+  implementation("commons-io:commons-io:${commonsIoVersion}")
 
   compileOnly "org.plumelib:require-javadoc:1.0.9"
 
