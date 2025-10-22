@@ -156,7 +156,6 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
    run in deterministic order. */
-  coveredTest
   replacecallTest
 
   /* system tests */
@@ -189,8 +188,6 @@ configurations {
    * The agent tests are JUnit tests run with the covered-class-agent, so
    * borrow from unit test configurations.
    */
-  coveredTestImplementation.extendsFrom(testImplementation)
-  coveredTestRuntimeOnly.extendsFrom(testRuntimeOnly)
   replacecallTestImplementation.extendsFrom(testImplementation)
   replacecallTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 
@@ -228,14 +225,6 @@ dependencies {
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation (configurations.junit.dependencies)
   testImplementation (sourceSets.testInput.output)
-
-  /*
-   * sourceSet coveredTest uses output from main sourceSet, and agent projects.
-   * (Also, see configuration block.)
-   */
-  coveredTestImplementation(sourceSets.main.output)
-  coveredTestImplementation(sourceSets.test.output)
-  coveredTestRuntimeOnly(project(":covered-class"))
 
   replacecallTestImplementation(files(project(":replacecall").sourceSets.main.output))
 
@@ -290,7 +279,6 @@ tasks.register("compileAll") {
   dependsOn(":covered-class:compileTestJava")
   dependsOn(":replacecall:compileJava")
   dependsOn(":covered-class:compileTestJava")
-  dependsOn(compileCoveredTestJava)
   dependsOn(compileReplacecallTestJava)
   dependsOn(compileSystemTestJava)
 }
@@ -368,15 +356,6 @@ allprojects { subproject ->
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
 
-/*
- * Configuration for testing.
- * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredTest require the covered-class Java agent.
- *   * Those in src/test are run without the agent.
- *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testInput.
- */
-
 boolean testOnJdk8 = project.getProperties().getOrDefault("testOnJdk8", false)
 if (testOnJdk8) {
   tasks.withType(Test).configureEach { testTask ->
@@ -438,41 +417,6 @@ test {
   exclude("randoop/operation/OperationParserTests.*")
 }
 
-tasks.register("coveredTest", Test) {
-  dependsOn(
-      shadowJar,
-      "copyJars",
-      "compileTestJava"
-      )
-  description = "Run covered-class tests"
-
-  /*
-   * Set the working directory for JUnit tests to the resources directory
-   * instead of the project directory.
-   */
-  workingDir = sourceSets.coveredTest.output.resourcesDir
-  testClassesDirs = sourceSets.coveredTest.output.classesDirs
-  classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
-
-  /*
-   * Show as much as possible to console.
-   */
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-
-/*
- * Link the coveredTest task into project check task. Includes agent tests into
- * the project build task.
- */
-check.dependsOn(coveredTest)
-
 tasks.register("replacecallTest", Test) {
   dependsOn("copyJars")
   description = "Run replace-call tests"
@@ -512,7 +456,7 @@ jacocoTestReport {
 // What is creating the agentTest.exec files, and how do I create it?
 // test.exec is the default, though it is also created by "gradle test".
 // jacocoTestReport.dependsOn(agentTest)
-jacocoTestReport.dependsOn(coveredTest)
+// jacocoTestReport.dependsOn(coveredTest)
 jacocoTestReport.dependsOn(test)
 
 check.dependsOn(jacocoTestReport)
