@@ -58,9 +58,10 @@ allprojects {
   version = "4.3.4"
 
   configurations {
-    // A collection of all plumelib dependencies required, so that all
     // sub-projects use the same versions.
     plumelib
+    testInput
+    fatJar
   }
 
   dependencies {
@@ -153,11 +154,8 @@ description = "Randoop automated test generation"
 def workingDirectories = layout.buildDirectory.get().toString() + "/working-directories"
 
 sourceSets {
-  /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
    run in deterministic order. */
-  replacecallTest
-
   /* system tests */
   systemTest {
     resources {
@@ -183,13 +181,6 @@ configurations {
   jacocoagent
 
   junit
-
-  /*
-   * The agent tests are JUnit tests run with the covered-class-agent, so
-   * borrow from unit test configurations.
-   */
-  replacecallTestImplementation.extendsFrom(testImplementation)
-  replacecallTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 
   implementation.extendsFrom(plumelib)
   implementation.extendsFrom(junit)
@@ -225,8 +216,6 @@ dependencies {
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation (configurations.junit.dependencies)
   testImplementation (sourceSets.testInput.output)
-
-  replacecallTestImplementation(files(project(":replacecall").sourceSets.main.output))
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -278,8 +267,8 @@ tasks.register("compileAll") {
   dependsOn(":covered-class:compileJava")
   dependsOn(":covered-class:compileTestJava")
   dependsOn(":replacecall:compileJava")
-  dependsOn(":covered-class:compileTestJava")
-  dependsOn(compileReplacecallTestJava)
+  dependsOn(":replacecall:compileTestJava")
+  dependsOn(":replacecall:compileTestAgentJava")
   dependsOn(compileSystemTestJava)
 }
 
@@ -332,7 +321,8 @@ allprojects { subproject ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
       options.errorprone.enabled = false
     } else {
-      options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+      options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
+
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
         // TODO: uncomment once we run the Interning Checker on Randoop.
@@ -349,6 +339,14 @@ allprojects { subproject ->
   }
 }
 
+tasks.register("testInputJar", Jar) {
+  from sourceSets.testInput.output
+  archiveBaseName = "testInput"
+}
+artifacts {
+  testInput(testInputJar)
+  fatJar(shadowJar)
+}
 
 /*
  * Configuration for clean
@@ -416,26 +414,6 @@ test {
   exclude("randoop/test/Test_SomePass.*")
   exclude("randoop/operation/OperationParserTests.*")
 }
-
-tasks.register("replacecallTest", Test) {
-  dependsOn("copyJars")
-  description = "Run replace-call tests"
-
-  workingDir = sourceSets.replacecallTest.output.resourcesDir
-  testClassesDirs = sourceSets.replacecallTest.output.classesDirs
-  classpath = sourceSets.replacecallTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
-  // use the replacecall agent using the exclusions file from replacecallTest/resources
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-check.dependsOn(replacecallTest)
 
 jacoco {
   toolVersion = "${jacocoVersion}"
