@@ -70,19 +70,17 @@ compileTestJava {
 test {
   jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
 
-  /*
-   * Show as much as possible to console.
-   */
+  // Show as much as possible to console.
   testLogging {
     showStandardStreams = true
     exceptionFormat = "full"
   }
 
-  /* Turn off HTML reports -- handled by testReport task */
+  // Turn off HTML reports -- handled by testReport task.
   reports.html.required = false
 
   doFirst {
-    //  Set the working directory for JUnit tests to the resources directory
+    // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
     workingDir = sourceSets.test.output.resourcesDir
   }

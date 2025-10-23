@@ -5,7 +5,7 @@ plugins {
 }
 
 description = "replacecall agent"
-sourceSets{
+sourceSets {
   agentTest
 }
 
@@ -62,7 +62,7 @@ tasks.register("replacecallAgentTest", Test) {
   }
   doFirst{println("${layout.buildDirectory.get()}")}
 
-  /* Turn off HTML reports -- handled by testReport task */
+  // Turn off HTML reports -- handled by testReport task.
   reports.html.required = false
 }
 check.dependsOn(replacecallAgentTest)
