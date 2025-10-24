@@ -1554,12 +1554,13 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("misc.impurity.PureAndImpure");
     options.setOption("grt-fuzzing", "true");
-    options.setOption("output_limit", "3");
-    options.setOption("generated_limit", "3");
+    options.setOption("output_limit", "10");
+    options.setOption("generated_limit", "10");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
             options,
+            1,
             // Include only the one impure method
             "misc.impurity.PureAndImpure.doImpure(int) include",
             // Ignore every other method in PureAndImpure
