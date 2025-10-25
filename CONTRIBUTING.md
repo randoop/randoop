@@ -6,7 +6,6 @@ developers](https://checkerframework.org/manual/#credits), plus countless
 more people who have contributed bug reports and feature suggestions.  We
 couldn't do it without your help.
 
-
 ## Reporting bugs
 
 Please see the [bug
@@ -15,7 +14,6 @@ the Randoop manual.
 
 If the documentation is incorrect, incomplete, or confusing, that is a
 bug, and we want to fix it.  Please report it.
-
 
 ## Submitting changes
 
@@ -31,12 +29,10 @@ first issue"](https://github.com/randoop/randoop/contribute)
 label marks issues that require less deep knowledge and may be appropriate
 for a newcomer to the codebase.
 
-
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
 existing [license](LICENSE.txt), usually the MIT License.
-
 
 ## Code of conduct
 

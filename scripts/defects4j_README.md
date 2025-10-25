@@ -1,38 +1,49 @@
-Randoop coverage on the Defects4J defects
-----------------
-This document describes how to calculate Randoop code coverage over the Defects4J defects.
+# Randoop coverage on the Defects4J defects
+
+This document describes how to calculate Randoop code coverage over the
+Defects4J defects.
 
 Some of the (optional) commands below assume:
+
 ```sh
    export D4J_HOME='path to your defects4j directory'
    export randoop='path to your randoop directory'
 ```
 
-
-1. Follow steps 1-4 under [Steps to set up Defects4J](https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j) in the Defects4j README.
-Note the Perl dependencies section.  If you are using a UW machine for which you
-do not have super user access, you will need to set up a cpan local lib to
-install any missing perl modules.
-
+1. Follow steps 1-4 under [Steps to set up
+   Defects4J](https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j)
+   in the Defects4j README.
+   Note the Perl dependencies section.  If you are using a UW machine for which you
+   do not have super user access, you will need to set up a cpan local lib to
+   install any missing perl modules.
 
 2. Optionally, use a different version of Randoop.
 
    By default, the system uses the version of Randoop at
    $D4J_HOME/framework/lib/test_generation/generation/randooop-current.jar.
 
-   * You can indicate a different directory that contains Randoop (note that the `.jar` files must be suffixed `-current.jar`):
-     ```export TESTGEN_LIB_DIR="path-to-directory-containing-randoop-current.jar"```
-   * You can link `.jar` files from a local version of Randoop:
+   * You can indicate a different directory that contains Randoop (note
+     that the `.jar` files must be suffixed `-current.jar`):
+
+     ```sh
+     export TESTGEN_LIB_DIR="path-to-directory-containing-randoop-current.jar"
      ```
+
+   * You can link `.jar` files from a local version of Randoop:
+
+    <!-- markdownlint-disable line-length -->
+     ```sh
      (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
      (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
+    <!-- markdownlint-enable line-length -->
 
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:
    `(cd $D4J_HOME/framework/test && ln -s $randoop/scripts/defects4j_* .)`
 
 4. Run the test generation and coverage analysis:
-    ```
+
+    ```sh
     cd $D4J_HOME/framework/test
     ./defects4j_randoop.sh
     ```
@@ -51,7 +62,7 @@ install any missing perl modules.
 
 5. The end of the defects4j_randoop.sh script invokes `./defects4j_coverage.pl` to
    display the coverage data.  You may rerun this script to review the results.
-    - `./defects4j_coverage.pl`
+    * `./defects4j_coverage.pl`
 
     The raw coverage data is found at `$TMP_DIR/output/coverage`.
     This script will accept an optional argument of an alternative file location.
