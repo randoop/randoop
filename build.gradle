@@ -343,10 +343,11 @@ allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
       options.errorprone.enabled = false
+    } else if (!isJava21orHigher) {
+      options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
       options.errorprone {
-        enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
         // TODO: uncomment once we run the Interning Checker on Randoop.
         // disable("ReferenceEquality") // Use Interning Checker instead.
         disable("StringSplitter") // Obscure case isn't likely.
@@ -356,7 +357,6 @@ allprojects { subproject ->
 
         excludedPaths = ".*/testInput/.*"
       }
-      options.errorprone.enabled = isJava21orHigher
     }
   }
 }
