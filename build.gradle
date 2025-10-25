@@ -356,7 +356,7 @@ allprojects { subproject ->
 
         excludedPaths = ".*/testInput/.*"
       }
-      options.errorprone.enabled = isJava17orHigher
+      options.errorprone.enabled = isJava21orHigher
     }
   }
 }
