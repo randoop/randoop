@@ -15,7 +15,7 @@ plugins {
   // Version 6.14 and later requires Java 11+
   id("com.diffplug.spotless").version("6.13.0") apply false
 
-  id("net.ltgt.errorprone").version("4.3.0")
+  id("net.ltgt.errorprone").version("4.3.0") apply false
 
   id("org.checkerframework").version("0.6.60")
 
@@ -334,33 +334,32 @@ allprojects { subproject ->
 
 // Error Prone linter
 
-allprojects {
-  dependencies {
-    errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
+if (isJava21orHigher) {
+  allprojects {
+    dependencies {
+      errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
+    }
   }
-}
-allprojects { subproject ->
-  tasks.withType(JavaCompile).configureEach { t ->
-    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
-      options.errorprone.enabled = false
-    } else if (!isJava21orHigher) {
-      options.errorprone.enabled = false
-    } else {
-      options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
-      options.errorprone {
-        // TODO: uncomment once we run the Interning Checker on Randoop.
-        // disable("ReferenceEquality") // Use Interning Checker instead.
-        disable("StringSplitter") // Obscure case isn't likely.
-        disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-        // Removing "public" from private class members loses information about the abstraction.
-        disable("EffectivelyPrivate")
+  allprojects { subproject ->
+    tasks.withType(JavaCompile).configureEach { t ->
+      if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+        options.errorprone.enabled = false
+      } else {
+        options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+        options.errorprone {
+          // TODO: uncomment once we run the Interning Checker on Randoop.
+          // disable("ReferenceEquality") // Use Interning Checker instead.
+          disable("StringSplitter") // Obscure case isn't likely.
+          disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+          // Removing "public" from private class members loses information about the abstraction.
+          disable("EffectivelyPrivate")
 
-        excludedPaths = ".*/testInput/.*"
+          excludedPaths = ".*/testInput/.*"
+        }
       }
     }
   }
 }
-
 
 /*
  * Configuration for clean
