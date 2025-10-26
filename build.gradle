@@ -40,7 +40,6 @@ allprojects {
 
   apply plugin: "java"
   apply plugin: "com.gradleup.shadow"
-  apply plugin: "net.ltgt.errorprone"
 
   java {
     sourceCompatibility = 1.8
@@ -259,8 +258,6 @@ dependencies {
   testInputImplementation(sourceSets.main.output)
   testInputImplementation(configurations.junit.dependencies)
   testInputCompileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-
-  errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
 }
 
 /*
@@ -335,9 +332,10 @@ allprojects { subproject ->
 // Error Prone linter
 
 if (isJava21orHigher) {
+  apply plugin: "net.ltgt.errorprone"
   allprojects {
     dependencies {
-      errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
+      implementation("com.google.errorprone:error_prone_core:${errorProneVersion}")
     }
   }
   allprojects { subproject ->
