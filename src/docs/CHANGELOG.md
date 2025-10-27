@@ -2,8 +2,8 @@ Version ?? (?? ??, 2025)
 ---------------------------
 
 New command-line argument:
- * `--cast-to-run-time-type` enables more methods to be called on a value
 
+* `--cast-to-run-time-type` enables more methods to be called on a value
 
 Version 4.3.4 (June 6, 2025)
 ---------------------------
@@ -13,19 +13,21 @@ Randoop compiles and runs under Java 8-24.
 Renamed command-line argument `--call-timeout` to `--call-timeout-millis`.
 
 New command-line arguments:
- * `--all-logs`
- * `--timed-out-tests`
+
+* `--all-logs`
+* `--timed-out-tests`
 
 Method specification JSON uses "pre", "post", and "throws" rather than
 "pre-conditions", "post-conditions", and "throws-conditions".
 
-
 Version 4.3.3 (May 2, 2024)
 -------------------------------
 
-New technique, "Orienteering", favors sequences with lower number of method calls and cumulative execution time.
-Enable it via `--input-selection=ORIENTEERING`. This option is similar to `--input-selection=SMALL_TESTS`,
-but it considers cumulative execution time more important than test size.
+New technique, "Orienteering", favors sequences with lower number of method
+calls and cumulative execution time.  Enable it via
+`--input-selection=ORIENTEERING`. This option is similar to
+`--input-selection=SMALL_TESTS`, but it considers cumulative execution time more
+important than test size.
 
 Randoop no longer builds under Java 8.  It still runs under Java 8.
 
@@ -33,12 +35,10 @@ Randoop supports Java 20 (and still supports Java 8, Java 11, and Java 17).
 
 Minor documentation improvements.
 
-
 Version 4.3.2 (January 8, 2023)
 -------------------------------
 
 Randoop supports Java 19 (and still supports Java 8, Java 11, and Java 17).
-
 
 Version 4.3.1 (July 13, 2022)
 -----------------------------
@@ -47,17 +47,15 @@ Several bug fixes.
 
 Minor documentation improvements.
 
-
 Version 4.3.0 (January 31, 2022)
 --------------------------------
 
 Randoop supports Java 17 (and still supports Java 8 and Java 11).
 
-Removed command-line argiments `--omitmethods` and `--omitmethods-file`,
+Removed command-line arguments `--omitmethods` and `--omitmethods-file`,
 which were deprecated two years ago.
 
 Support escaping dollar sign from variable name.
-
 
 Version 4.2.7 (December 17, 2021)
 ---------------------------------
@@ -68,25 +66,26 @@ classpath within the given.  Thanks to Ivan Kocherhin.
 Randoop tests public static methods in classes that cannot be instantiated.
 
 Bug fixes.
- * Fixed a problem when calling Randoop twice.
+
+* Fixed a problem when calling Randoop twice.
 
 Minor documentation improvements.
-
 
 Version 4.2.6 (May 3, 2021)
 ---------------------------
 
 Bug fixes.  The most important are:
- * Fix `NullPointerException` that may occur when using JDK 8.
- * Use correct jar path for Windows hosts
 
+* Fix `NullPointerException` that may occur when using JDK 8.
+* Use correct jar path for Windows hosts
 
 Version 4.2.5 (December 2, 2020)
 --------------------------------
 
 New command-line options:
- * `--clear_memory`
- * `--omit-classes-no-defaults`
+
+* `--clear_memory`
+* `--omit-classes-no-defaults`
 
 Randoop will call methods in noninstantiable classes.
 
@@ -94,13 +93,11 @@ Improved documentation about diagnosing when Randoop produces no tests
 
 Better handling of Mockito-generated class files.
 
-
 Version 4.2.4 (July 14, 2020)
 -----------------------------
 
 Bug fixes.
 No user-visible behavior changes.
-
 
 Version 4.2.3 (March 31, 2020)
 ------------------------------
@@ -111,29 +108,27 @@ assertion style (e.g., assertEquals rather than assertTrue).
 Bug fixes.
 One example is proper treatment of resource paths on Windows.
 
-
 Version 4.2.2 (February 29, 2020)
 ---------------------------------
 
 Implemented --omit-classes and --omit-classes-file command-line options.
 
 Renamed command-line options:
- * --omitmethods => --omit-methods
- * --omitmethods-file => --omit-methods-file
- * --omit-fields-list => --omit-fields-file
+
+* --omitmethods => --omit-methods
+* --omitmethods-file => --omit-methods-file
+* --omit-fields-list => --omit-fields-file
 The old versions still work temporarily.
 
 Reduced default for --string-maxlen to 1000.
 
 Bug fixes.
 
-
 Version 4.2.1 (October 27, 2019)
 --------------------------------
 
 Bug fixes.
 No user-visible behavior changes.
-
 
 Version 4.2.0 (August 22, 2019)
 -------------------------------
@@ -152,15 +147,16 @@ Randoop produces more assertions, by calling observer methods.  This only
 works if you supply the --side-effect-free-methods command-line argument.
 
 New command-line arguments:
- * --testjar, --omit-classes, and --omit-classes-file
+
+* --testjar, --omit-classes, and --omit-classes-file
    make it easy to test all classes in a .jar file.
- * --jvm-max-memory indicates how much memory to use when starting a new JVM.
+* --jvm-max-memory indicates how much memory to use when starting a new JVM.
 
 Command-line argument changes:
- * the --omit-methods-file argument can be repeated
- * default for --flaky-test-behavior argument changed from HALT to OUTPUT
- * renamed --print-erroneous-file to --print-non-compiling-file
 
+* the --omit-methods-file argument can be repeated
+* default for --flaky-test-behavior argument changed from HALT to OUTPUT
+* renamed --print-erroneous-file to --print-non-compiling-file
 
 Version 4.1.2 (April 21, 2019)
 ------------------------------
@@ -168,12 +164,10 @@ Version 4.1.2 (April 21, 2019)
 Bug fixes, improve documentation and diagnostics.
 No user-visible behavior changes.
 
-
 Version 4.1.1 (February 3, 2019)
 --------------------------------
 
 Minor bug fixes; no user-visible behavior changes.
-
 
 Version 4.1.0 (September 5, 2018)
 ---------------------------------
@@ -186,15 +180,16 @@ coverage and the number of times the method is chosen for a new sequence.
 Enable it via --method-selection=BLOODHOUND .
 
 Command-line argument changes:
- * renamed --small-tests to --input-selection=small-tests
 
+* renamed --small-tests to --input-selection=small-tests
 
 Version 4.0.4 (May 23, 2018)
 ----------------------------
 
 Command-line argument changes:
- * the --specifications command-line argument can now be a .zip file
- * renamed --print-file-system-state to --print-erroneous-file
+
+* the --specifications command-line argument can now be a .zip file
+* renamed --print-file-system-state to --print-erroneous-file
 
 Randoop's replacecalls agent can now replace constructors.
 
@@ -206,12 +201,10 @@ Bug fixes.
 
 Improvements to documentation.
 
-
 Version 4.0.3 (April 10, 2018)
 ------------------------------
 
 Fixed a bug caused by order of execution of variable initializers.
-
 
 Version 4.0.2 (April 8, 2018)
 -----------------------------
@@ -222,16 +215,15 @@ Make --omitmethods work for constructors as well as methods.
 
 Minor documentation improvements.
 
-
 Version 4.0.1 (March 25, 2018)
 ------------------------------
 
 This release makes minor documentation fixes.  Two examples are:
- * The manual provides a link to a newer Maven plug-in.
- * The documentation of the test minimizer is more prominent.
+
+* The manual provides a link to a newer Maven plug-in.
+* The documentation of the test minimizer is more prominent.
 
 There are also code cleanups and minor bug fixes.
-
 
 Version 4.0.0 (February 28, 2018)
 ---------------------------------
@@ -242,22 +234,24 @@ debugging when Randoop does not produce good test suites.
 Randoop contains a test suite minimizer.  Given a test suite containing
 failing tests, it creates a test suite with smaller tests that fail the
 same way.
- * You can run this minimizer on any test suite, whether it was created by
+
+* You can run this minimizer on any test suite, whether it was created by
    Randoop or not.
- * Command-line option --minimize-error-test makes Randoop automatically
+* Command-line option --minimize-error-test makes Randoop automatically
    run the minimizer on fault-revealing tests before it outputs them; this
    makes the failures easier to understand.
- * There are other command-line options that control the minimization process.
+* There are other command-line options that control the minimization process.
 
 Randoop's mapcall agent has been renamed replacecall and has been improved.
 The replacecall agent prevents Randoop, or a test suite, from calling certain
 methods such as System.exit(); instead, at run time a replacement method is
 called.
- * The file format for specifying replacements has changed, and the file
+
+* The file format for specifying replacements has changed, and the file
    argument is now named --replacement-file.
- * The replacecall agent applies default replacements for System.exit() and
+* The replacecall agent applies default replacements for System.exit() and
    display of AWT/Swing components.
- * Randoop does not make direct calls to methods whose calls are replaced.
+* Randoop does not make direct calls to methods whose calls are replaced.
    You can disable this with option --dont-omit-replaced-methods.
 
 New command-line arguments:
@@ -280,18 +274,19 @@ throws a ConcurrentModificationException or NoClassDefFoundError exception.
 Changed command-line arguments:
 
 Some command-line options have been renamed:
- * --timelimit => --time-limit
- * --inputlimit => --generated-limit
- * --outputlimit => --output-limit
- * --timeout => --call-timout.
- * --include-if-classname-appears => --require-classname-in-test.
- * --include-if-class-exercised => --require-covered-classes.
+
+* --timelimit => --time-limit
+* --inputlimit => --generated-limit
+* --outputlimit => --output-limit
+* --timeout => --call-timout.
+* --include-if-classname-appears => --require-classname-in-test.
+* --include-if-class-exercised => --require-covered-classes.
      File "exercised-class.jar" is now "covered-class.jar".
- * --noprogressdisplay => --progressdisplay=false.
- * --ignore-flaky-tests option => --flaky-test-behavior.  It is now an enum:
-     * HALT: Halt and give a diagnostic message (default).
-     * DISCARD: Discard the flaky test.
-     * OUTPUT: Output the flaky test.
+* --noprogressdisplay => --progressdisplay=false.
+* --ignore-flaky-tests option => --flaky-test-behavior.  It is now an enum:
+  * HALT: Halt and give a diagnostic message (default).
+  * DISCARD: Discard the flaky test.
+  * OUTPUT: Output the flaky test.
 
 Command-line argument --omitmethods can now be supplied multiple times.  New
 argument --omitmethods-file enables providing many patterns in a file.
@@ -318,7 +313,6 @@ error-revealing sequences.
 Fixes a bug that required input using --testclass or --classlist, preventing
 exclusive use of --methodlist.
 
-
 Version 3.1.5 (April 28, 2017)
 ------------------------------
 
@@ -328,30 +322,25 @@ to a later failure when invoking a class member.
 
 Fixes and improves error handling.
 
-
 Version 3.1.4 (April 11, 2017)
 ------------------------------
 
 Fixes a bug uncovered in obscure cases when package accessibility is used.
-
 
 Version 3.1.3 (April 11, 2017)
 ------------------------------
 
 Fixes a bug where package accessibility checks fail to work correctly.
 
-
 Version 3.1.2 (March 21, 2017)
 ------------------------------
 
 The exercised-class jar now includes dependencies.
 
-
 Version 3.1.1 (March 15, 2017)
 ------------------------------
 
 Fix to make the numbering of test classes consistent with previous versions.
-
 
 Version 3.1.0 (March 14, 2017)
 ------------------------------
@@ -365,12 +354,10 @@ setting --check-compilable=false.
 Adds new command-line option --sof-exception that controls how Randoop
 classifies a test that throws a StackOverflowError exception.
 
-
 Version 3.0.10 (March 6, 2017)
 ------------------------------
 
 Avoids Randoop failures due to issues that arise during test generation.
-
 
 Version 3.0.9 (February 22, 2017)
 ---------------------------------
@@ -382,51 +369,51 @@ fixing errors discovered by Randoop.
 Classpath error message explains why a class is not found.
 
 Fixes
-- Many fixes, mostly related to Java generics, including the following.
-- Fixed issues: 123, 128, 132, 139, 141, 143, 144, 145.
-- Fixed assignability for parameterized types with wildcard arguments.
-- Fixed failure when a generic method or constructor has an
+
+* Many fixes, mostly related to Java generics, including the following.
+* Fixed issues: 123, 128, 132, 139, 141, 143, 144, 145.
+* Fixed assignability for parameterized types with wildcard arguments.
+* Fixed failure when a generic method or constructor has an
   argument type that has a wildcard with a bound that includes the type
   parameter of the generic (e.g., Iterable<? extends T>).
 
 Thanks to Marko Dimjasevic for issue reports.
 
-
 Version 3.0.8 (December 8, 2016)
 --------------------------------
 
 Fixes
-- a failure when instantiating the generic containing type of a non-generic
+
+* a failure when instantiating the generic containing type of a non-generic
   member class.
-- generation of different tests between runs over the same classes
+* generation of different tests between runs over the same classes
   where the classes were given in different order.
-- generation of invalid calls to a static member of an inaccessible class when
+* generation of invalid calls to a static member of an inaccessible class when
   inherited by an accessible subclass.
-- a failure when checking type instantiations against certain kinds of bounds
+* a failure when checking type instantiations against certain kinds of bounds
   on type variables.
-- generation of uncompilable code when static final fields with same name are
+* generation of uncompilable code when static final fields with same name are
   inherited by a class under test from more than one class or interface.
-- a failure due to an assertion enforcing a property on type bounds that is
+* a failure due to an assertion enforcing a property on type bounds that is
   valid for type parameters, but not for wildcard bounds.
-- generation of uncompilable code due to improper instantiation when a type
+* generation of uncompilable code due to improper instantiation when a type
   parameter has a bound that is an intersection type that includes a generic
   type.
 
 Thanks to Mark Roberts and Marko Dimjasevic for issue reports.
 
-
 Version 3.0.7 (November 28, 2016)
 ---------------------------------
 
 Randoop now
-- instantiates generic classes and operations on-the-fly using the
+
+* instantiates generic classes and operations on-the-fly using the
   types in previously generated test sequences. As a result, Randoop is able to
   generate more diverse instantiations of generics, as well as multidimensional
   arrays.
-- supports insertion of Java code into test fixtures when tests are written to
+* supports insertion of Java code into test fixtures when tests are written to
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
-
 
 Version 3.0.6 (October 14, 2016)
 --------------------------------
@@ -438,7 +425,6 @@ an OutOfMemoryError.
 Fixed bug that would lead to failure involving a particular case of a static
 member class.
 
-
 Version 3.0.5 (October 5, 2016)
 -------------------------------
 
@@ -446,24 +432,25 @@ Randoop now ignores generic operations or classes for which it is unable to
 assign a type to a type argument. These are included in log output.
 
 Fixed bugs resulting in run-time failures:
-- a member class of a generic class was being constructed so that type
+
+* a member class of a generic class was being constructed so that type
   parameters were not tracked.
-- an exception during loading of a class would result in a failure, now ignored.
-- an enum has an override of toString() that returns null.
+* an exception during loading of a class would result in a failure, now ignored.
+* an enum has an override of toString() that returns null.
 
 Fixed bug in which flaky tests could be generated involving NaN. Thanks to
 Naljorpa Chagmed for reporting this issue.
-
 
 Version 3.0.4 (August 29, 2016)
 -------------------------------
 
 Randoop now:
-- collects all member types accessible by generated tests (fixes issue #88).
-- generates EnumSet objects for an Enum that is an input class (fixes issue #100)
-- generates assertions on Enum values (fixes issue #87)
-- generates Collection objects with parameterized element type (fixes issue #115)
-- generates arrays with parameterized element type (fixes issue #114)
+
+* collects all member types accessible by generated tests (fixes issue #88).
+* generates EnumSet objects for an Enum that is an input class (fixes issue #100)
+* generates assertions on Enum values (fixes issue #87)
+* generates Collection objects with parameterized element type (fixes issue #115)
+* generates arrays with parameterized element type (fixes issue #114)
 
 Fixed a bug in which uncompilable code was being generated for a call to a static
 method of a generic class. Also, fixes a bug where uncompilable code to initialize
@@ -476,7 +463,6 @@ apparent bug in Java reflection classes.)
 Fixed a bug that was preventing contracts over compareTo from being tested.
 Issue thanks to Waylon Huang.
 
-
 Version 3.0.3 (July 28, 2016)
 -----------------------------
 
@@ -485,7 +471,6 @@ type parameters with dependencies among type bounds. Another resulting in a
 failure during capture conversion.
 Also, fixed a case where uncompilable tests involving bridge methods could be
 generated.
-
 
 Version 3.0.2 (July 20, 2016)
 -----------------------------
@@ -500,7 +485,6 @@ Fixed a bug in reading input class names and an empty string was read.
 
 The command-line argument --init-routine has been removed.
 
-
 Version 3.0.1 (June 16, 2016)
 -----------------------------
 
@@ -509,7 +493,6 @@ It also uses a new contract checking heuristic that avoids exhaustive
 enumeration over the new ternary contracts.
 
 Fixed a bug that prevented generation of collections.
-
 
 Version 3.0.0 (June 6, 2016)
 ----------------------------
@@ -531,7 +514,6 @@ The following command-line arguments have been removed: -output-tests-serialized
 For developers: Randoop is now built using Gradle (with the Gradle Wrapper).
 File organization has changed to the default used by Gradle Java plugin.
 See the developer manual for details.
-
 
 Version 2.1.4 (February 24, 2016)
 ---------------------------------
@@ -555,7 +537,6 @@ Renamed command-line arguments --{error,regression}-test-filename to
 Documented that Randoop may create dependent tests whose outcome depends
 on the order in which they are run, and what to do about it.
 
-
 Version 2.1.3 (February 5, 2016)
 --------------------------------
 
@@ -573,16 +554,15 @@ Changed command-line argument defaults to forbid-null=false and
 Fixed a bug in which a primitive type would be selected as a receiver of a
 method call.
 
-
 Version 2.1.2 (January 26, 2016)
 --------------------------------
 
 Fixed issues related to filtering of classes and members so that Randoop ignores:
-- public methods/constructors with package private parameter types, and
-- synthetic constructor with anonymous parameter (generated for
+
+* public methods/constructors with package private parameter types, and
+* synthetic constructor with anonymous parameter (generated for
   private constructor of outer class used by inner class).
 Thanks to Rene Just and Gordon Fraser.
-
 
 Version 2.1.1 (January 22, 2016)
 --------------------------------
@@ -606,7 +586,6 @@ or Float.Nan without a cast.
 Fixed issue #80: package access fields can now be set and read.
 Fixed issue where evaluating a contract resulted in an IllegalArgumentException.
 Thanks to Juan Pablo Galeotti, Rene Just, and Gordon Fraser.
-
 
 Version 2.1.0 (December 30, 2015)
 ---------------------------------
@@ -660,7 +639,6 @@ This release fixes a bug in which a public method inherited from a package
 private class was being excluded from testing. (Thanks to Alberto Goffi for
 raising the issue and providing a concise example.)
 
-
 Version 2.0.1 (November 30, 2015)
 ---------------------------------
 
@@ -677,16 +655,15 @@ JUnit now executes Randoop-generated tests in a deterministic order:
 in ascending order by name.
 
 The Randoop Eclipse plugin has moved into its own repository:
-https://github.com/randoop/randoop-eclipse-plugin
-
+<https://github.com/randoop/randoop-eclipse-plugin>
 
 Version 2.0 (October 13, 2015)
 ------------------------------
 
-The Randoop homepage is now http://randoop.github.io/randoop/ .
+The Randoop homepage is now <http://randoop.github.io/randoop/> .
 Moved the Randoop version control repository to its own GitHub organization:
-it now appears at https://github.com/randoop/randoop
-(previously https://github.com/mernst/randoop).
+it now appears at <https://github.com/randoop/randoop>
+(previously <https://github.com/mernst/randoop>).
 
 Randoop now outputs JUnit 4 tests (previously JUnit 3 tests).
 These can be run from the command line using a command such as
@@ -697,10 +674,9 @@ If command-line argument --junit-reflection-allowed=false is set when
 running Randoop, then Randoop instead produces a Main class that calls each
 of the test methods individually, without using reflection.
 
-Created a new mailing list, randoop-discuss@googlegroups.com, for
+Created a new mailing list, <randoop-discuss@googlegroups.com>, for
 discussions with Randoop users.  It is open to join and should be easier to
-search than the existing randoop-developers@googlegroups.com mailing list.
-
+search than the existing <randoop-developers@googlegroups.com> mailing list.
 
 Version 1.3.6 (August 10, 2015)
 -------------------------------
@@ -717,9 +693,10 @@ observers when you run Randoop, then you are not using Randoop as intended
 and Randoop may be generating sub-optimal test suites.
 
 Fix bugs, notably:
- * #18 Handle non-accessible thrown exceptions
- * #51 Use better variable names in generated tests
- * Use equals, not ==, to compare NaN
+
+* #18 Handle non-accessible thrown exceptions
+* #51 Use better variable names in generated tests
+* Use equals, not ==, to compare NaN
 
 Many documentation improvements, including clarifications and
 restructuring.  The manual mentions the Maven plug-in and explains that
@@ -728,14 +705,14 @@ Randoop is deterministic but your sequential Java program may not be.
 Not directly related to Randoop, but possibly of interest to Randoop users:
 ABB Corporation has released an improved version of Randoop.NET.  Compared to
 the original version of Randoop.NET from Microsoft Research:
- * It fixes some bugs.
- * It adds new features, notably regression assertions for more effective
+
+* It fixes some bugs.
+* It adds new features, notably regression assertions for more effective
    regression testing, method transformers to delete or replace calls to
    specific methods in the assembly, and richer debug information collection.
- * It adds a GUI, as a VS2010 add-in.
+* It adds a GUI, as a VS2010 add-in.
 The Java implementation of Randoop continues to have more features than
 Randoop.NET, but ABB's improvements make the .NET tool more usable.
-
 
 Version 1.3.5 (May 28, 2015)
 ----------------------------
@@ -746,52 +723,52 @@ include assertions about the current behavior.
 Command-line argument --observers lets you provide a file listing observer
 functions.
 
-The Randoop homepage is now http://mernst.github.io/randoop/ .
+The Randoop homepage is now <http://mernst.github.io/randoop/> .
 
 Moved the Randoop version control repository from Google Code to GitHub,
 and from the Mercurial version control system to Git.
 
 Randoop now compiles, and its tests pass, under Java 8.
 
-
 Version 1.3.4 (January 1, 2014)
 -------------------------------
 
 Bug fixes:
- * String lengths are checked correctly
- * No global timeout when per-thread timeout is in force
- * Better agent flag parsing
- * Don't output code like "catch (null e)".
+
+* String lengths are checked correctly
+* No global timeout when per-thread timeout is in force
+* Better agent flag parsing
+* Don't output code like "catch (null e)".
 
 Documentation:
- * Add troubleshooting section about no tests being created
- * Tips on reporting a bug
- * Documentation for building a release
 
+* Add troubleshooting section about no tests being created
+* Tips on reporting a bug
+* Documentation for building a release
 
 Version 1.3.3 (November 21, 2012)
 ---------------------------------
 
 Bugfixes
-  - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
-  - Fix for PrettyPrinter
-  - Unquoted character literals make Randoop generate uncompilable tests
-  - Problem of using compare_checks in eclipse plugin by adding
+
+* Workaround for openjdk bug (<http://bugs.sun.com/view_bug.do?bug_id=6973831>)
+* Fix for PrettyPrinter
+* Unquoted character literals make Randoop generate uncompilable tests
+* Problem of using compare_checks in eclipse plugin by adding
 
 Features
-  - Suppress generics-related compiler warnings
-  - Renaming sequence variables for a better name, and minimizing faulty sequence
-  - Generated JUnit tests are compatible with Java 1.4
-  - TimeoutExceeded and TimeOutException unified into TimeoutExceededException
+
+* Suppress generics-related compiler warnings
+* Renaming sequence variables for a better name, and minimizing faulty sequence
+* Generated JUnit tests are compatible with Java 1.4
+* TimeoutExceeded and TimeOutException unified into TimeoutExceededException
 
 Documentation enhanced
-
 
 Version 1.3.2 (August 22, 2010)
 -------------------------------
 
 (No changelog entry available.)
-
 
 Version 1.3.1
 -------------
