@@ -30,21 +30,21 @@ import randoop.util.Randomness;
  *   <li>Randomly picks one side-effecting method whose signature includes the variable type.
  *   <li>Randomly chooses which parameter slot to supply the variable into (if there are multiple
  *       possibilities).
- *   <li>Fills the other slots by pulling sequences from the ComponentManager's sequence collection.
+ *   <li>Fills the other slots from the ComponentManager's sequence collection.
  *   <li>Appends the new call to the sequence.
  * </ol>
  */
 public final class GrtObjectFuzzer extends GrtFuzzer {
-  /** Singleton instance. */
+  /** The singleton instance. */
   private static final GrtObjectFuzzer INSTANCE = new GrtObjectFuzzer();
 
-  /** Maps RAW type to mutating operations that include that type in a parameter. */
-  private final Map<Type, List<TypedOperation>> typeToSideEffectingOps = new HashMap<>();
+  /** Maps RAW type to mutating operations that have a parameter of that type. */
+  private final Map<Type, List<TypedOperation>> rawTypeToSideEffectingOps = new HashMap<>();
 
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
 
-  /** Cache of applicable operations by raw type to avoid recomputing supertypes traversal. */
+  /** Cache of applicable operations by raw type to avoid retraversing supertypes. */
   private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
 
   /** How to select sequences as inputs for creating new sequences. */
@@ -82,7 +82,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
         Type type = inputTypes.get(i).getRawtype();
-        typeToSideEffectingOps.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+        rawTypeToSideEffectingOps.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
       }
     }
     this.componentManager = cm;
@@ -230,14 +230,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         // Include the type itself and all supertypes.
         for (ClassOrInterfaceType anc :
             ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
-          List<TypedOperation> ops = typeToSideEffectingOps.get(anc.getRawtype());
+          List<TypedOperation> ops = rawTypeToSideEffectingOps.get(anc.getRawtype());
           if (ops != null) {
             opsSet.addAll(ops);
           }
         }
       } else {
         // Array guard: only consider the raw type itself.
-        List<TypedOperation> ops = typeToSideEffectingOps.get(rawType);
+        List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
         if (ops != null) {
           opsSet.addAll(ops);
         }
