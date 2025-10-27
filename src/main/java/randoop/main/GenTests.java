@@ -930,8 +930,8 @@ public class GenTests extends GenInputsAbstract {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
     SIList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      TypedOperation to = statements.get(i).getOperation();
+    for (Statement s : statements) {
+      TypedOperation to = s.getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
       }
@@ -1250,9 +1250,8 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           SIList<Statement> seqStatements = sequence.statements;
-          int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
-            Operation operation = seqStatements.get(i).getOperation();
+          for (Statement s : seqStatements) {
+            Operation operation = s.getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
             }
