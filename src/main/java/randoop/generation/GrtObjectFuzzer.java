@@ -122,18 +122,18 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         sequencesToConcat.add(sequence);
         varIndicesInEachSeq.add(variable.index);
       } else {
-        // choose sequence from component pool for ith parameter.
+        // Choose a sequence from the component pool for the ith parameter.
         SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
 
         if (candidates.isEmpty()) {
-          // No sequence can satisfy this parameter - abort mutation.
+          // No existing sequence can satisfy this parameter -- abort mutation.
           return new VarAndSeq(variable, sequence);
         }
 
         Sequence candidateSeq = inputSequenceSelector.selectInputSequence(candidates);
         Variable candidateVar = candidateSeq.randomVariableForTypeLastStatement(paramType, false);
         if (candidateVar == null) {
-          // No variable of the required type in the candidate sequence.
+          // The candidate sequence has no variable of the required type.
           return new VarAndSeq(variable, sequence);
         }
 
@@ -167,8 +167,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Check preconditions for fuzzing a sequence. This method is called before fuzzing to ensure the
-   * sequence and variable to fuzz are valid.
+   * Check preconditions for fuzzing a sequence. Throw an exception if they are violated.
    *
    * @param sequence the sequence to fuzz
    * @param variable the variable to fuzz
@@ -187,10 +186,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     if (variable == null) {
-      throw new RandoopBug("Variable to fuzz is null.");
+      throw new RandoopBug("Variable to fuzz is null");
     }
     if (variable.sequence == null) {
-      throw new RandoopBug("Variable to fuzz has no sequence set.");
+      throw new RandoopBug("Variable to fuzz (" + variable + ") has no sequence");
     }
     if (variable.sequence != sequence) {
       throw new RandoopBug(
@@ -202,12 +201,12 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
 
     if (componentManager == null || inputSequenceSelector == null) {
-      throw new RandoopBug("Fuzzer is not initialized.");
+      throw new RandoopBug("Fuzzer is not initialized");
     }
   }
 
   /**
-   * Select a side-effecting operation whose signature mentions the target's type. For
+   * Select a side-effecting operation whose signature contains the target's type. For
    * class/interface types, it collects mutators whose parameter type matches the target type or any
    * of its supertypes. Then one operation is chosen uniformly at random.
    *
@@ -222,21 +221,22 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
 
     Type rawType = typeToFuzz.getRawtype();
     // Start from a coarse, raw-type-based superset.
+    // Later code will refine this so the generic types match.
     List<TypedOperation> applicableOps = typeToApplicableOps.get(rawType);
     if (applicableOps == null) {
-      // Deduplicate while preserving insertion order
+      // Deduplicate while preserving insertion order.
       LinkedHashSet<TypedOperation> opsSet = new LinkedHashSet<>();
       if (typeToFuzz instanceof ClassOrInterfaceType) {
         // Include the type itself and all supertypes.
-        for (ClassOrInterfaceType anc :
+        for (ClassOrInterfaceType ancestor :
             ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
-          List<TypedOperation> ops = rawTypeToSideEffectingOps.get(anc.getRawtype());
+          List<TypedOperation> ops = rawTypeToSideEffectingOps.get(ancestor.getRawtype());
           if (ops != null) {
             opsSet.addAll(ops);
           }
         }
       } else {
-        // Array guard: only consider the raw type itself.
+        // Not a ClassOrInterfaceType, so it as an array: only consider the raw type itself.
         List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
         if (ops != null) {
           opsSet.addAll(ops);
