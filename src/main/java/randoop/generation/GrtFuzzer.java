@@ -1,7 +1,5 @@
 package randoop.generation;
 
-import java.util.Arrays;
-import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
@@ -24,14 +22,6 @@ public abstract class GrtFuzzer {
   /** Creates a GrtFuzzer. */
   public GrtFuzzer() {}
 
-  /** List of all fuzzers. */
-  @SuppressWarnings("ClassInitializationDeadlock")
-  private static final List<GrtFuzzer> FUZZERS =
-      Arrays.asList(
-          GrtNumericFuzzer.getInstance(),
-          GrtStringFuzzer.getInstance(),
-          GrtObjectFuzzer.getInstance());
-
   /**
    * Returns a fuzzer that can handle the given type, or null if none.
    *
@@ -39,7 +29,13 @@ public abstract class GrtFuzzer {
    * @return a fuzzer that can handle the type, or null if none can
    */
   public static @Nullable GrtFuzzer getFuzzer(Type type) {
-    for (GrtFuzzer f : FUZZERS) {
+    GrtFuzzer[] candidates =
+        new GrtFuzzer[] {
+          GrtNumericFuzzer.getInstance(),
+          GrtStringFuzzer.getInstance(),
+          GrtObjectFuzzer.getInstance()
+        };
+    for (GrtFuzzer f : candidates) {
       if (f.canFuzz(type)) {
         return f;
       }
