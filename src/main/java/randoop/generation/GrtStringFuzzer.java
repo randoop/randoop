@@ -14,7 +14,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
 
-  /** Singleton instance. */
+  /** The singleton instance. */
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
   /**

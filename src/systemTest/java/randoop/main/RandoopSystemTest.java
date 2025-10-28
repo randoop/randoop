@@ -1547,6 +1547,39 @@ public class RandoopSystemTest {
             "misc.PureStaticUnaryMethodExample.printAndStore(java.lang.String) ignore"));
   }
 
+  @Test
+  public void impurityObjectFuzzingTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("object-fuzzing-test");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("misc.impurity.PureAndImpure");
+    options.setOption("grt-fuzzing", "true");
+    options.setOption("output_limit", "10");
+    options.setOption("generated_limit", "10");
+
+    CoverageChecker coverageChecker =
+        new CoverageChecker(
+            options,
+            1,
+            // Include only the one impure method
+            "misc.impurity.PureAndImpure.doImpure(int) include",
+            // Ignore every other method in PureAndImpure
+            "misc.impurity.PureAndImpure.getConstant0() ignore",
+            "misc.impurity.PureAndImpure.getConstant1() ignore",
+            "misc.impurity.PureAndImpure.getConstant2() ignore",
+            "misc.impurity.PureAndImpure.square(int) ignore",
+            "misc.impurity.PureAndImpure.plusOne(int) ignore",
+            "misc.impurity.PureAndImpure.hello() ignore",
+            "misc.impurity.PureAndImpure.echo(java.lang.String) ignore",
+            "misc.impurity.PureAndImpure.alwaysTrue() ignore",
+            "misc.impurity.PureAndImpure.isZero(int) ignore",
+            "misc.impurity.PureAndImpure.half(double) ignore",
+            "misc.impurity.PureAndImpure.getCounter() ignore");
+
+    generateAndTest(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
