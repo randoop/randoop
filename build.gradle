@@ -139,6 +139,21 @@ allprojects {
       checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
+
+  jacoco {
+    toolVersion = "${jacocoVersion}"
+  }
+
+  jacocoTestReport {
+    group = "Report"
+    dependsOn(test)
+    reports {
+      xml.required = true
+      html.required = true
+    }
+  }
+
+  check.dependsOn(jacocoTestReport)
 } // // end allprojects
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -414,21 +429,6 @@ test {
   exclude("randoop/test/Test_SomePass.*")
   exclude("randoop/operation/OperationParserTests.*")
 }
-
-jacoco {
-  toolVersion = "${jacocoVersion}"
-}
-
-jacocoTestReport {
-  group = "Report"
-  dependsOn(test)
-  reports {
-    xml.required = true
-    html.required = true
-  }
-}
-
-check.dependsOn(jacocoTestReport)
 
 /*
  * Task to build the root directory of working directories used by the
