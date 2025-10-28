@@ -65,6 +65,7 @@ tasks.register("replacecallAgentTest", Test) {
   // Turn off HTML reports -- handled by testReport task.
   reports.html.required = false
 }
+jacocoTestReport.dependsOn(replacecallAgentTest)
 check.dependsOn(replacecallAgentTest)
 
 shadowJar {

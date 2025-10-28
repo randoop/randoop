@@ -421,21 +421,12 @@ jacoco {
 
 jacocoTestReport {
   group = "Report"
+  dependsOn(test)
   reports {
     xml.required = true
     html.required = true
   }
 }
-// Expects these files to exist in build/javcoco/:
-//   agentTest.exec
-//   coveredTest.exec
-//   systemTest.exec
-//   test.exec
-// What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it is also created by "gradle test".
-// jacocoTestReport.dependsOn(agentTest)
-// jacocoTestReport.dependsOn(coveredTest)
-jacocoTestReport.dependsOn(test)
 
 check.dependsOn(jacocoTestReport)
 
