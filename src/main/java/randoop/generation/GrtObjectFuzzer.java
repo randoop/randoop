@@ -47,10 +47,10 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /**
    * Cache of candidate mutator operations keyed by raw type.
    *
-   * Each entry is a coarse superset of mutators collected from the raw-type index
-   * (includes operations declared on the type or any of its supertypes). This avoids
-   * re-walking the supertypes for repeated queries; full type/generic compatibility is
-   * checked later when an operation is selected.
+   * <p>Each entry is a coarse superset of mutators collected from the raw-type index (includes
+   * operations declared on the type or any of its supertypes). This avoids re-walking the
+   * supertypes for repeated queries; full type/generic compatibility is checked later when an
+   * operation is selected.
    */
   private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
 
@@ -77,8 +77,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param mutators side-effecting operations used as mutators
    * @param cm the component manager used to obtain sequences for required types
-   * @param selector strategy for choosing input sequences for the parameters that are not
-   *     being fuzzed
+   * @param selector strategy for choosing input sequences for the parameters that are not being
+   *     fuzzed
    */
   public void initialize(
       Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
@@ -267,9 +267,9 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /**
-   * Computes and caches the list of operations applicable to a given type.
-   * For class/interface types, this includes operations that accept the type or any of its supertypes.
-   * For array types, only operations accepting the exact raw type are included.
+   * Computes and caches the list of operations applicable to a given type. For class/interface
+   * types, this includes operations that accept the type or any of its supertypes. For array types,
+   * only operations accepting the exact raw type are included.
    *
    * @param typeToFuzz the type being fuzzed
    * @return a list of operations applicable to the given type
@@ -302,4 +302,3 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     return applicableOps;
   }
 }
-
