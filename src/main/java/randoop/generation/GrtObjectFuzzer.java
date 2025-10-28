@@ -44,7 +44,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Component manager to get sequences for types. */
   private @MonotonicNonNull ComponentManager componentManager;
 
-  /** Cache of applicable operations by raw type to avoid retraversing supertypes. */
+  /**
+   * Cache of candidate mutator operations keyed by raw type.
+   *
+   * Each entry is a coarse superset of mutators collected from the raw-type index
+   * (includes operations declared on the type or any of its supertypes). This avoids
+   * re-walking the supertypes for repeated queries; full type/generic compatibility is
+   * checked later when an operation is selected.
+   */
   private final Map<Type, List<TypedOperation>> typeToApplicableOps = new HashMap<>();
 
   /** How to select sequences as inputs for creating new sequences. */
@@ -70,7 +77,8 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
    *
    * @param mutators side-effecting operations used as mutators
    * @param cm the component manager used to obtain sequences for required types
-   * @param selector strategy for choosing input sequences to satisfy non-fuzz parameters
+   * @param selector strategy for choosing input sequences for the parameters that are not
+   *     being fuzzed
    */
   public void initialize(
       Set<TypedOperation> mutators, ComponentManager cm, InputSequenceSelector selector) {
@@ -219,33 +227,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       return null;
     }
 
-    Type rawType = typeToFuzz.getRawtype();
-    // Start from a coarse, raw-type-based superset.
-    // Later code will refine this so the generic types match.
-    List<TypedOperation> applicableOps = typeToApplicableOps.get(rawType);
-    if (applicableOps == null) {
-      // Deduplicate while preserving insertion order.
-      LinkedHashSet<TypedOperation> opsSet = new LinkedHashSet<>();
-      if (typeToFuzz instanceof ClassOrInterfaceType) {
-        // Include the type itself and all supertypes.
-        for (ClassOrInterfaceType ancestor :
-            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
-          List<TypedOperation> ops = rawTypeToSideEffectingOps.get(ancestor.getRawtype());
-          if (ops != null) {
-            opsSet.addAll(ops);
-          }
-        }
-      } else {
-        // Not a ClassOrInterfaceType, so it as an array: only consider the raw type itself.
-        List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
-        if (ops != null) {
-          opsSet.addAll(ops);
-        }
-      }
-      applicableOps = new ArrayList<>(opsSet);
-      typeToApplicableOps.put(rawType, applicableOps);
-    }
-
+    List<TypedOperation> applicableOps = computeApplicableOperations(typeToFuzz);
     if (applicableOps.isEmpty()) {
       return null;
     }
@@ -283,4 +265,41 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
     }
     return Randomness.randomMember(candidateParamPositions);
   }
+
+  /**
+   * Computes and caches the list of operations applicable to a given type.
+   * For class/interface types, this includes operations that accept the type or any of its supertypes.
+   * For array types, only operations accepting the exact raw type are included.
+   *
+   * @param typeToFuzz the type being fuzzed
+   * @return a list of operations applicable to the given type
+   */
+  private List<TypedOperation> computeApplicableOperations(Type typeToFuzz) {
+    Type rawType = typeToFuzz.getRawtype();
+    List<TypedOperation> applicableOps = typeToApplicableOps.get(rawType);
+    if (applicableOps == null) {
+      // Deduplicate while preserving insertion order.
+      LinkedHashSet<TypedOperation> opsSet = new LinkedHashSet<>();
+      if (typeToFuzz instanceof ClassOrInterfaceType) {
+        // Include the type itself and all supertypes.
+        for (ClassOrInterfaceType ancestor :
+            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
+          List<TypedOperation> ops = rawTypeToSideEffectingOps.get(ancestor.getRawtype());
+          if (ops != null) {
+            opsSet.addAll(ops);
+          }
+        }
+      } else {
+        // Not a ClassOrInterfaceType, so it as an array: only consider the raw type itself.
+        List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
+        if (ops != null) {
+          opsSet.addAll(ops);
+        }
+      }
+      applicableOps = new ArrayList<>(opsSet);
+      typeToApplicableOps.put(rawType, applicableOps);
+    }
+    return applicableOps;
+  }
 }
+
