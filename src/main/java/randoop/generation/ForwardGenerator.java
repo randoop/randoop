@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -157,6 +158,15 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.grt_fuzzing) {
+      Set<TypedOperation> sideEffectingMethods =
+          new HashSet<>(
+              CollectionsPlume.filter(
+                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
+      GrtObjectFuzzer.getInstance()
+          .initialize(sideEffectingMethods, this.componentManager, this.inputSequenceSelector);
     }
   }
 
