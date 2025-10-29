@@ -37,8 +37,7 @@ ext {
 
 /* Common build configuration for Randoop and agents */
 allprojects {
-
-  apply plugin: "java"
+  apply plugin: "java-library"
   apply plugin: "com.gradleup.shadow"
   apply plugin: "net.ltgt.errorprone"
 
@@ -232,6 +231,7 @@ dependencies {
   systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   systemTestImplementation("junit:junit:${junitVersion}")
+  systemTestImplementation(sourceSets.testInput.output)
 
   /*
    * sourceSet testInput depends on output of main.
