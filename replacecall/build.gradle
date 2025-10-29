@@ -16,8 +16,8 @@ configurations {
 }
 
 dependencies {
-  testImplementation("junit:junit:4.+")
-  testImplementation("org.hamcrest:hamcrest-all:1.3")
+  testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
+  testImplementation("junit:junit:${junitVersion}")
   agentTestImplementation(project(path: ":", configuration: "testInput"))
   agentTestImplementation(project(path: ":", configuration: "shadow"))
 }
