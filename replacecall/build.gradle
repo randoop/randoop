@@ -61,7 +61,6 @@ tasks.register("replacecallAgentTest", Test) {
     showStandardStreams = true
     exceptionFormat = "full"
   }
-  doFirst{println("${layout.buildDirectory.get()}")}
 
   // Turn off HTML reports -- handled by testReport task.
   reports.html.required = false

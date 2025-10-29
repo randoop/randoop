@@ -58,6 +58,7 @@ allprojects {
   version = "4.3.4"
 
   configurations {
+    // A collection of all plumelib dependencies required, so that all
     // sub-projects use the same versions.
     plumelib
     testInput
