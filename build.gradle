@@ -130,9 +130,7 @@ allprojects {
     compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
     implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
     checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
-  }
 
-  dependencies {
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
@@ -196,32 +194,21 @@ configurations {
    */
   jacocoagent
 
-  junit
-
   implementation.extendsFrom(plumelib)
-  implementation.extendsFrom(junit)
-
   systemTestImplementation.extendsFrom(plumelib)
-  systemTestImplementation.extendsFrom(junit)
-
   testInputImplementation.extendsFrom(plumelib)
 }
 
 dependencies {
-  junit("junit:junit:4.+")
-
-  implementation(files(project(":replacecall").sourceSets.main.output))
+  implementation(project(":replacecall"))
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   implementation("org.apache.commons:commons-lang3:3.19.0")
   implementation("commons-io:commons-io:${commonsIoVersion}")
+  implementation("junit:junit:${junitVersion}")
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
-
-  compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
@@ -230,8 +217,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation("commons-codec:commons-codec:1.19.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  testImplementation (configurations.junit.dependencies)
-  testImplementation (sourceSets.testInput.output)
+  testImplementation("junit:junit:${junitVersion}")
+  testImplementation(sourceSets.testInput.output)
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -244,14 +231,14 @@ dependencies {
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  systemTestRuntimeOnly (sourceSets.testInput.output)
+  systemTestImplementation("junit:junit:${junitVersion}")
 
   /*
    * sourceSet testInput depends on output of main.
    * Also, src/testInput/java/ps1/RatPolyTest.java uses JUnit
    */
   testInputImplementation(sourceSets.main.output)
-  testInputImplementation(configurations.junit.dependencies)
+  testInputImplementation("junit:junit:${junitVersion}")
   testInputCompileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
 
   errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
