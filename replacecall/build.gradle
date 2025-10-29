@@ -1,7 +1,7 @@
 /* build file for replacecall agent */
 
 plugins {
-  id("java")
+  id("java-library")
   id("jacoco")
 }
 

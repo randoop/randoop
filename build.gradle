@@ -7,7 +7,7 @@
 
 plugins {
   id("com.gradleup.shadow").version("8.3.9")
-  id("java")
+  id("java-library")
   id("eclipse")
   id("idea")
   id("jacoco")
@@ -200,7 +200,7 @@ configurations {
 
 dependencies {
 
-  implementation(files(project(":replacecall").sourceSets.main.output))
+  implementation(project(":replacecall"))
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
