@@ -533,6 +533,12 @@ tasks.register("testReport", TestReport) {
   }
 }
 
+configurations {
+  junit
+}
+dependencies {
+  junit("junit:junit:${junitVersion}")
+}
 tasks.register("printJunitJarPath") {
   description = "Print the path to junit.jar"
   doFirst { println(configurations.junit.asPath) }
