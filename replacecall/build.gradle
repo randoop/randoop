@@ -14,11 +14,12 @@ configurations {
   implementation.extendsFrom(plumelib)
   agentTestImplementation.extendsFrom(testImplementation)
 }
+
 dependencies {
   testImplementation("junit:junit:4.+")
   testImplementation("org.hamcrest:hamcrest-all:1.3")
   agentTestImplementation(project(path: ":", configuration: "testInput"))
-  agentTestImplementation(project(path: ":", configuration: "fatJar"))
+  agentTestImplementation(project(path: ":", configuration: "shadow"))
 }
 
 javadoc {

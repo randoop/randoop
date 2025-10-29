@@ -62,7 +62,6 @@ allprojects {
     // sub-projects use the same versions.
     plumelib
     testInput
-    fatJar
   }
 
   dependencies {
@@ -200,7 +199,8 @@ configurations {
 }
 
 dependencies {
-  implementation(project(":replacecall"))
+
+  implementation(files(project(":replacecall").sourceSets.main.output))
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
@@ -348,14 +348,7 @@ tasks.register("testInputJar", Jar) {
 }
 artifacts {
   testInput(testInputJar)
-  fatJar(shadowJar)
 }
-
-/*
- * Configuration for clean
- */
-clean.dependsOn(":replacecall:clean")
-clean.dependsOn(":covered-class:clean")
 
 boolean testOnJdk8 = project.getProperties().getOrDefault("testOnJdk8", false)
 if (testOnJdk8) {
