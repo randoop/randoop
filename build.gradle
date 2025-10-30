@@ -61,6 +61,12 @@ allprojects {
     }
   }
 
+  tasks.withType(JavaCompile).configureEach { compilationTask ->
+    javaCompiler = javaToolchains.compilerFor {
+      languageVersion = JavaLanguageVersion.of(testJdkVersion < 21 ? 21 : testJdkVersion)
+    }
+  }
+
   repositories {
     mavenCentral()
     maven { url = uri("https://central.sonatype.com/repository/maven-snapshots/") }
@@ -244,8 +250,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation("commons-codec:commons-codec:1.19.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  testImplementation (configurations.junit.dependencies)
-  testImplementation (sourceSets.testInput.output)
+  testImplementation(configurations.junit.dependencies)
+  testImplementation(sourceSets.testInput.output)
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -258,7 +264,7 @@ dependencies {
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  systemTestRuntimeOnly (sourceSets.testInput.output)
+  systemTestRuntimeOnly(sourceSets.testInput.output)
 
   /*
    * sourceSet testInput depends on output of main.
