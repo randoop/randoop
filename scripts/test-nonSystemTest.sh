@@ -19,7 +19,7 @@ if [ -z "${JAVA21_HOME:-}" ]; then
   fi
 fi
 # Only override JAVA_HOME if JAVA21_HOME points to a usable JDK.
-if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/java" ]; then
+if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
   export JAVA_HOME="${JAVA21_HOME}"
 fi
 
