@@ -33,7 +33,7 @@ ifelse($1,canary_version,,[    dependsOn:
     steps:
       - checkout: self
         fetchDepth: 25
-      - bash:  export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ../scripts/test-systemTest.sh
+      - bash:  export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
         displayName: test-systemTest.sh])dnl
 dnl
 define([misc_job], [dnl
@@ -44,7 +44,7 @@ define([misc_job], [dnl
     steps:
       - checkout: self
         fetchDepth: 25
-      - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ../scripts/test-misc.sh
+      - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-misc.sh
         displayName: test-misc.sh])dnl
 dnl
 ifelse([
