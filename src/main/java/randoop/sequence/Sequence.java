@@ -446,8 +446,8 @@ public final class Sequence {
    */
   private static int computeNetSize(SIList<Statement> statements) {
     int result = 0;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      if (!statements.get(i).isNonreceivingInitialization()) {
+    for (Statement s : statements) {
+      if (!s.isNonreceivingInitialization()) {
         result++;
       }
     }
@@ -505,7 +505,7 @@ public final class Sequence {
       throw new RuntimeException("statements == null");
     }
 
-    for (int si = 0; si < this.statements.size(); si++) { // SIList has no iterator
+    for (int si = 0; si < this.statements.size(); si++) { // `si` is used later
 
       Statement statementWithInputs = this.statements.get(si);
 
@@ -796,7 +796,7 @@ public final class Sequence {
       throw new IllegalArgumentException("type cannot be null.");
     }
     List<Integer> possibleIndices = new ArrayList<>();
-    for (int i = 0; i < size(); i++) { // SIList has no iterator
+    for (int i = 0; i < size(); i++) { // `i` is used in the loop.
       Statement s = statements.get(i);
       if (isActive(i)) {
         Type outputType = s.getOutputType();
@@ -1169,8 +1169,8 @@ public final class Sequence {
    * @return true if any statement has operation with matching declaring class, false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      Type declaringType = statements.get(i).getDeclaringClass();
+    for (Statement s : statements) {
+      Type declaringType = s.getDeclaringClass();
       if (declaringType != null && classNames.matcher(declaringType.getBinaryName()).matches()) {
         return true;
       }
