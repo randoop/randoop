@@ -44,7 +44,7 @@ define([misc_job], [dnl
     steps:
       - checkout: self
         fetchDepth: 25
-      - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-misc.sh
+      - bash: ./scripts/test-misc.sh
         displayName: test-misc.sh])dnl
 dnl
 ifelse([
