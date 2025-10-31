@@ -347,8 +347,7 @@ allprojects { subproject ->
         // Removing "public" from private class members loses information about the abstraction.
         disable("EffectivelyPrivate")
 
-          excludedPaths = ".*/testInput/.*"
-        }
+        excludedPaths = ".*/testInput/.*"
       }
     }
   }
