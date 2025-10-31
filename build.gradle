@@ -60,6 +60,8 @@ allprojects {
     // A collection of all plumelib dependencies required, so that all
     // sub-projects use the same versions.
     plumelib
+    testInput
+    fatJar
   }
 
   dependencies {
@@ -137,6 +139,21 @@ allprojects {
       checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
+
+  jacoco {
+    toolVersion = "${jacocoVersion}"
+  }
+
+  jacocoTestReport {
+    group = "Report"
+    dependsOn(test)
+    reports {
+      xml.required = true
+      html.required = true
+    }
+  }
+
+  check.dependsOn(jacocoTestReport)
 } // // end allprojects
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -152,12 +169,8 @@ description = "Randoop automated test generation"
 def workingDirectories = layout.buildDirectory.get().toString() + "/working-directories"
 
 sourceSets {
-  /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
    run in deterministic order. */
-  coveredTest
-  replacecallTest
-
   /* system tests */
   systemTest {
     resources {
@@ -183,15 +196,6 @@ configurations {
   jacocoagent
 
   junit
-
-  /*
-   * The agent tests are JUnit tests run with the covered-class-agent, so
-   * borrow from unit test configurations.
-   */
-  coveredTestImplementation.extendsFrom(testImplementation)
-  coveredTestRuntimeOnly.extendsFrom(testRuntimeOnly)
-  replacecallTestImplementation.extendsFrom(testImplementation)
-  replacecallTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 
   implementation.extendsFrom(plumelib)
   implementation.extendsFrom(junit)
@@ -227,16 +231,6 @@ dependencies {
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation (configurations.junit.dependencies)
   testImplementation (sourceSets.testInput.output)
-
-  /*
-   * sourceSet coveredTest uses output from main sourceSet, and agent projects.
-   * (Also, see configuration block.)
-   */
-  coveredTestImplementation(sourceSets.main.output)
-  coveredTestImplementation(sourceSets.test.output)
-  coveredTestRuntimeOnly(project(":covered-class"))
-
-  replacecallTestImplementation(files(project(":replacecall").sourceSets.main.output))
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -286,9 +280,8 @@ tasks.register("compileAll") {
   dependsOn(":covered-class:compileJava")
   dependsOn(":covered-class:compileTestJava")
   dependsOn(":replacecall:compileJava")
-  dependsOn(":covered-class:compileTestJava")
-  dependsOn(compileCoveredTestJava)
-  dependsOn(compileReplacecallTestJava)
+  dependsOn(":replacecall:compileTestJava")
+  dependsOn(":replacecall:compileAgentTestJava")
   dependsOn(compileSystemTestJava)
 }
 
@@ -338,19 +331,21 @@ if (isJava21orHigher) {
       implementation("com.google.errorprone:error_prone_core:${errorProneVersion}")
     }
   }
-  allprojects { subproject ->
-    tasks.withType(JavaCompile).configureEach { t ->
-      if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
-        options.errorprone.enabled = false
-      } else {
-        options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
-        options.errorprone {
-          // TODO: uncomment once we run the Interning Checker on Randoop.
-          // disable("ReferenceEquality") // Use Interning Checker instead.
-          disable("StringSplitter") // Obscure case isn't likely.
-          disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
-          // Removing "public" from private class members loses information about the abstraction.
-          disable("EffectivelyPrivate")
+}
+allprojects { subproject ->
+  tasks.withType(JavaCompile).configureEach { t ->
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+      options.errorprone.enabled = false
+    } else {
+      options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
+
+      options.errorprone {
+        // TODO: uncomment once we run the Interning Checker on Randoop.
+        // disable("ReferenceEquality") // Use Interning Checker instead.
+        disable("StringSplitter") // Obscure case isn't likely.
+        disable("AnnotateFormatMethod") // Error Prone doesn't use Checker Framework @FormatMethod.
+        // Removing "public" from private class members loses information about the abstraction.
+        disable("EffectivelyPrivate")
 
           excludedPaths = ".*/testInput/.*"
         }
@@ -359,20 +354,20 @@ if (isJava21orHigher) {
   }
 }
 
+tasks.register("testInputJar", Jar) {
+  from sourceSets.testInput.output
+  archiveBaseName = "testInput"
+}
+artifacts {
+  testInput(testInputJar)
+  fatJar(shadowJar)
+}
+
 /*
  * Configuration for clean
  */
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
-
-/*
- * Configuration for testing.
- * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredTest require the covered-class Java agent.
- *   * Those in src/test are run without the agent.
- *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testInput.
- */
 
 boolean testOnJdk8 = project.getProperties().getOrDefault("testOnJdk8", false)
 if (testOnJdk8) {
@@ -434,85 +429,6 @@ test {
   exclude("randoop/test/Test_SomePass.*")
   exclude("randoop/operation/OperationParserTests.*")
 }
-
-tasks.register("coveredTest", Test) {
-  dependsOn(
-      shadowJar,
-      "copyJars",
-      "compileTestJava"
-      )
-  description = "Run covered-class tests"
-
-  /*
-   * Set the working directory for JUnit tests to the resources directory
-   * instead of the project directory.
-   */
-  workingDir = sourceSets.coveredTest.output.resourcesDir
-  testClassesDirs = sourceSets.coveredTest.output.classesDirs
-  classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
-
-  /*
-   * Show as much as possible to console.
-   */
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-
-/*
- * Link the coveredTest task into project check task. Includes agent tests into
- * the project build task.
- */
-check.dependsOn(coveredTest)
-
-tasks.register("replacecallTest", Test) {
-  dependsOn("copyJars")
-  description = "Run replace-call tests"
-
-  workingDir = sourceSets.replacecallTest.output.resourcesDir
-  testClassesDirs = sourceSets.replacecallTest.output.classesDirs
-  classpath = sourceSets.replacecallTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
-  // use the replacecall agent using the exclusions file from replacecallTest/resources
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-check.dependsOn(replacecallTest)
-
-jacoco {
-  toolVersion = "${jacocoVersion}"
-}
-
-jacocoTestReport {
-  group = "Report"
-  reports {
-    xml.required = true
-    html.required = true
-  }
-}
-// Expects these files to exist in build/javcoco/:
-//   agentTest.exec
-//   coveredTest.exec
-//   systemTest.exec
-//   test.exec
-// What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it is also created by "gradle test".
-// jacocoTestReport.dependsOn(agentTest)
-jacocoTestReport.dependsOn(coveredTest)
-jacocoTestReport.dependsOn(test)
-
-check.dependsOn(jacocoTestReport)
 
 /*
  * Task to build the root directory of working directories used by the

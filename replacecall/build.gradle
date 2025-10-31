@@ -2,15 +2,23 @@
 
 plugins {
   id("java")
+  id("jacoco")
 }
 
 description = "replacecall agent"
+sourceSets {
+  agentTest
+}
+
 configurations {
   implementation.extendsFrom(plumelib)
+  agentTestImplementation.extendsFrom(testImplementation)
 }
 dependencies {
   testImplementation("junit:junit:4.+")
   testImplementation("org.hamcrest:hamcrest-all:1.3")
+  agentTestImplementation(project(path: ":", configuration: "testInput"))
+  agentTestImplementation(project(path: ":", configuration: "fatJar"))
 }
 
 javadoc {
@@ -37,6 +45,28 @@ test {
     exceptionFormat = "full"
   }
 }
+compileAgentTestJava {
+  dependsOn(":copyJars")
+}
+tasks.register("replacecallAgentTest", Test) {
+  description = "Run replace-call tests"
+
+  workingDir = sourceSets.agentTest.output.resourcesDir
+  testClassesDirs = sourceSets.agentTest.output.classesDirs
+  classpath = sourceSets.agentTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
+  // use the replacecall agent using the exclusions file from agentTest/resources
+  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
+  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = "full"
+  }
+
+  // Turn off HTML reports -- handled by testReport task.
+  reports.html.required = false
+}
+jacocoTestReport.dependsOn(replacecallAgentTest)
+check.dependsOn(replacecallAgentTest)
 
 shadowJar {
   // We want the jar to be named replacecall-version.jar
