@@ -16,7 +16,7 @@ plugins {
 
   id("net.ltgt.errorprone").version("4.3.0")
 
-  id("org.checkerframework").version("0.6.60")
+  id("org.checkerframework").version("0.6.60") apply false
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -101,46 +101,51 @@ allprojects {
     withSourcesJar()
   }
 
-  apply plugin: "org.checkerframework"
+  // TODO: Using ext.testJdkVersion here doesnot work because the property isn't set yet.
+  testJdkVersionString = providers.gradleProperty("testJdkVersion").getOrElse(JavaVersion.current().getMajorVersion())
+  testJdkVersion = Integer.valueOf(testJdkVersionString)
+  if (testJdkVersion > 8) {
+    apply plugin: "org.checkerframework"
 
-  checkerFramework {
-    excludeTests = true
-    if (project.hasProperty("cfNullness")) {
-      checkers = [
-        "org.checkerframework.checker.nullness.NullnessChecker",
-        // These are included to avoid this failure:
-        //   The following options were not recognized by any processor: "[permitStaticOwning]"
-        "org.checkerframework.checker.regex.RegexChecker",
-        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-        "org.checkerframework.checker.signedness.SignednessChecker",
-        "org.checkerframework.checker.signature.SignatureChecker",
-      ]
-    } else {
-      checkers = [
-        // "org.checkerframework.checker.nullness.NullnessChecker",
-        "org.checkerframework.checker.regex.RegexChecker",
-        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-        "org.checkerframework.checker.signedness.SignednessChecker",
-        "org.checkerframework.checker.signature.SignatureChecker",
+    checkerFramework {
+      excludeTests = true
+      if (project.hasProperty("cfNullness")) {
+        checkers = [
+          "org.checkerframework.checker.nullness.NullnessChecker",
+          // These are included to avoid this failure:
+          //   The following options were not recognized by any processor: "[permitStaticOwning]"
+          "org.checkerframework.checker.regex.RegexChecker",
+          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+          "org.checkerframework.checker.signedness.SignednessChecker",
+          "org.checkerframework.checker.signature.SignatureChecker",
+        ]
+      } else {
+        checkers = [
+          // "org.checkerframework.checker.nullness.NullnessChecker",
+          "org.checkerframework.checker.regex.RegexChecker",
+          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+          "org.checkerframework.checker.signedness.SignednessChecker",
+          "org.checkerframework.checker.signature.SignatureChecker",
+        ]
+      }
+      extraJavacArgs = [
+        // Uncomment -proc:none to disable all annotation processing and speed up the build.
+        // "-proc:none",
+
+        "-Werror",
+        "-Awarns",
+        "-Xmaxwarns",
+        "10000",
+        // "-AcheckPurityAnnotations",
+        "-ArequirePrefixInWarningSuppressions",
+        "-AwarnUnneededSuppressions",
+        "-AwarnRedundantAnnotations",
+        "-ApermitStaticOwning",
+        // -processing: suppresses "No processor claimed any of these annotations ..."
+        // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
+        "-Xlint:-processing,-options"
       ]
     }
-    extraJavacArgs = [
-      // Uncomment -proc:none to disable all annotation processing and speed up the build.
-      // "-proc:none",
-
-      "-Werror",
-      "-Awarns",
-      "-Xmaxwarns",
-      "10000",
-      // "-AcheckPurityAnnotations",
-      "-ArequirePrefixInWarningSuppressions",
-      "-AwarnUnneededSuppressions",
-      "-AwarnRedundantAnnotations",
-      "-ApermitStaticOwning",
-      // -processing: suppresses "No processor claimed any of these annotations ..."
-      // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
-      "-Xlint:-processing,-options"
-    ]
   }
 
 
