@@ -71,7 +71,7 @@ public class LiteralFileReader {
           @Override
           public void processRecord(List<String> lines) {
 
-            if (!(lines.size() >= 1
+            if (!(!lines.isEmpty()
                 && lines.get(0).trim().toUpperCase(Locale.getDefault()).equals("CLASSNAME"))) {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }

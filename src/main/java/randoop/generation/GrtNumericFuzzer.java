@@ -48,7 +48,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
 
   @Override
   public VarAndSeq fuzz(Sequence sequence, Variable variable) {
-    if (sequence.size() == 0) {
+    if (sequence.isEmpty()) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
