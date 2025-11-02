@@ -617,7 +617,7 @@ public class RandoopSystemTest {
       }
     }
 
-    if (outputLinesFiltered.size() != 0) {
+    if (!outputLinesFiltered.isEmpty()) {
       fail(
           "There should be no output, but got "
               + outputLinesFiltered.size()
