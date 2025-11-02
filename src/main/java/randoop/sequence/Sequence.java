@@ -246,6 +246,16 @@ public final class Sequence {
   }
 
   /**
+   * Returns true if this is empty.
+   *
+   * @return true if this is empty
+   */
+  @Pure
+  public final boolean isEmpty() {
+    return statements.isEmpty();
+  }
+
+  /**
    * The number of method calls in this sequence.
    *
    * @return the number of method calls in this sequence
