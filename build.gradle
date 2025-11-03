@@ -60,7 +60,11 @@ allprojects {
 
   tasks.withType(JavaCompile).configureEach { compilationTask ->
     javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(JavaVersion.current().getMajorVersion())
+      if(compilationTask.name.contentEquals("compileSystemTestJava")){
+        languageVersion = JavaLanguageVersion.of(testJdkVersion)
+      } else {
+        languageVersion = JavaLanguageVersion.of(JavaVersion.current().getMajorVersion())
+      }
     }
   }
 
@@ -360,7 +364,7 @@ allprojects {
 }
 allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
-    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
