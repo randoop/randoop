@@ -60,11 +60,7 @@ allprojects {
 
   tasks.withType(JavaCompile).configureEach { compilationTask ->
     javaCompiler = javaToolchains.compilerFor {
-      if(compilationTask.name.contentEquals("compileSystemTestJava")){
-        languageVersion = JavaLanguageVersion.of(testJdkVersion)
-      } else {
-        languageVersion = JavaLanguageVersion.of(JavaVersion.current().getMajorVersion())
-      }
+      languageVersion = JavaLanguageVersion.of(JavaVersion.current().getMajorVersion())
     }
   }
 
