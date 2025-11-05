@@ -18,7 +18,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.lang.model.SourceVersion;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -43,8 +42,39 @@ class CoverageChecker {
   private final Set<String> dontCareMethods = new HashSet<>();
 
   /** The major version number of the Java runtime. */
-  public static final int javaVersion =
-      Integer.parseInt(SourceVersion.latest().toString().substring("RELEASE_".length()));
+  public static final int javaVersion = getJavaVersion();
+
+  // This is identical to bcel-util's BcelUtil.getJavaVersion.
+  // Starting in Java 9, you can use `Runtime.version()`.
+  /**
+   * Extract the major version number from the "java.version" system property.
+   *
+   * @return the major version of the Java runtime
+   */
+  private static int getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      // Up to Java 8, from a version string like "1.8.whatever", extract "8".
+      version = version.substring(2, 3);
+    } else {
+      // Since Java 9, from a version string like "11.0.1", extract "11".
+      int i = version.indexOf('.');
+      if (i < 0) {
+        // Some Linux dockerfiles return only the major version number for
+        // the system property "java.version"; i.e., no ".<minor version>".
+        // Return 'version' unchanged in this case.
+      } else {
+        version = version.substring(0, i);
+      }
+    }
+    // Handle version strings like "18-ea".
+    int i = version.indexOf('-');
+    if (i > 0) {
+      version = version.substring(0, i);
+    }
+    System.out.println("*********VERSION************" + version);
+    return Integer.parseInt(version);
+  }
 
   /**
    * Create a coverage checker for the set of class names.

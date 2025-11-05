@@ -504,6 +504,7 @@ tasks.register("systemTest", Test) {
     systemProperty("jar.randoop", shadowJar.archiveFile.get())
     systemProperty("jar.replacecall.agent", project(":replacecall").shadowJar.archiveFile.get())
     systemProperty("jar.covered.class.agent", project(":covered-class").shadowJar.archiveFile.get())
+    systemProperty("java.version", testJdkVersion)
   }
 
   workingDir = layout.buildDirectory
