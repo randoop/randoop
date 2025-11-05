@@ -982,6 +982,15 @@ tasks.register("validateSite", Exec) {
 }
 validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
+/* Validate Markdown files. */
+tasks.register("markdownlint", Exec) {
+  group = "Verification"
+  description = "Run markdownlint-cli2 linter on Markdown files"
+  executable = "markdownlint-cli2"
+  args(".")
+}
+check.dependsOn("markdownlint")
+
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {
   description = "Create a file to mark the Randoop .jar file as a release"
