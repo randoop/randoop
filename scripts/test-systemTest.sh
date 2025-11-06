@@ -8,7 +8,9 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
-# Set JAVA_HOME to JDK 21 so that Gradle runs using Java 21.
+# Don't override JAVA_HOME because the system tests use JAVA_HOME to run Randoop.
+# Instead find a Java 21 or 24 to pass with -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}" to
+# Gradle.
 # Prefer an OS-appropriate default only if JAVA21_HOME is unset and exists.
 if [ -z "${JAVA21_HOME:-}" ]; then
   if [ "$(uname)" = "Darwin" ]; then
@@ -18,17 +20,16 @@ if [ -z "${JAVA21_HOME:-}" ]; then
     export JAVA_GRADLE_HOME=/usr/lib/jvm/java-21-openjdk-amd64
   fi
 fi
-# Don't override JAVA_HOME because the system tests use JAVA_HOME to run Randoop.
-# Instead pass -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"
 if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
   export JAVA_GRADLE_HOME="${JAVA21_HOME}"
 fi
-
-if [ "$(uname)" = "Darwin" ]; then
-  CANDIDATE="$(/usr/libexec/java_home -v 24 2> /dev/null || true)"
-  [ -n "$CANDIDATE" ] && export JAVA_GRADLE_HOME="$CANDIDATE"
-elif [ -d /usr/lib/jvm/java-24-openjdk-amd64 ]; then
-  export JAVA_GRADLE_HOME=/usr/lib/jvm/java-24-openjdk-amd64
+if [ -z "${JAVA_GRADLE_HOME:-}" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    CANDIDATE="$(/usr/libexec/java_home -v 24 2> /dev/null || true)"
+    [ -n "$CANDIDATE" ] && export JAVA_GRADLE_HOME="$CANDIDATE"
+  elif [ -d /usr/lib/jvm/java-24-openjdk-amd64 ]; then
+    export JAVA_GRADLE_HOME=/usr/lib/jvm/java-24-openjdk-amd64
+  fi
 fi
 
 # Download dependencies, trying a second time if there is a failure.
