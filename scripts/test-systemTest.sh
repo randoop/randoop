@@ -15,15 +15,20 @@ if [ -z "${JAVA21_HOME:-}" ]; then
     CANDIDATE="$(/usr/libexec/java_home -v 21 2> /dev/null || true)"
     [ -n "$CANDIDATE" ] && export JAVA21_HOME="$CANDIDATE"
   elif [ -d /usr/lib/jvm/java-21-openjdk-amd64 ]; then
-    export JAVA21_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+    export JAVA_GRADLE_HOME=/usr/lib/jvm/java-21-openjdk-amd64
   fi
 fi
 # Don't override JAVA_HOME because the system tests use JAVA_HOME to run Randoop.
 # Instead pass -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"
 if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
   export JAVA_GRADLE_HOME="${JAVA21_HOME}"
-elif [ -n "${JAVA_HOME:-}" ] && [ -x "${JAVA_HOME}/bin/javac" ]; then
-  export JAVA_GRADLE_HOME="${JAVA_HOME}"
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  CANDIDATE="$(/usr/libexec/java_home -v 24 2> /dev/null || true)"
+  [ -n "$CANDIDATE" ] && export JAVA_GRADLE_HOME="$CANDIDATE"
+elif [ -d /usr/lib/jvm/java-24-openjdk-amd64 ]; then
+  export JAVA_GRADLE_HOME=/usr/lib/jvm/java-24-openjdk-amd64
 fi
 
 # Download dependencies, trying a second time if there is a failure.
