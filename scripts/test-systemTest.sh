@@ -17,7 +17,7 @@ if [ -z "${JAVA21_HOME:-}" ]; then
     CANDIDATE="$(/usr/libexec/java_home -v 21 2> /dev/null || true)"
     [ -n "$CANDIDATE" ] && export JAVA21_HOME="$CANDIDATE"
   elif [ -d /usr/lib/jvm/java-21-openjdk-amd64 ]; then
-    export JAVA_GRADLE_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+    export JAVA21_HOME=/usr/lib/jvm/java-21-openjdk-amd64
   fi
 fi
 if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
