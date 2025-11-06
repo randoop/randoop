@@ -18,16 +18,17 @@ if [ -z "${JAVA21_HOME:-}" ]; then
     export JAVA21_HOME=/usr/lib/jvm/java-21-openjdk-amd64
   fi
 fi
-# Only override JAVA_HOME if JAVA21_HOME points to a usable JDK.
-if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
-  export JAVA_HOME="${JAVA21_HOME}"
-fi
+# Don't override JAVA_HOME beause the system tests use JAVA_HOME to run Randoop.
+# Instead pass -Dorg.gradle.java.home="${JAVA21_HOME}"
+# if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
+#   export JAVA_HOME="${JAVA21_HOME}"
+# fi
 
 # Download dependencies, trying a second time if there is a failure.
 (./gradlew --write-verification-metadata sha256 help --dry-run \
   || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
 
-./gradlew assemble
+./gradlew assemble -Dorg.gradle.java.home="${JAVA21_HOME}"
 
 # Need GUI for running runDirectSwingTest.
 # Run xvfb.
@@ -38,7 +39,7 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile "$PIDFILE" --make-pidfile --background --exec $XVFB -- "$XVFBARGS"
 sleep 3 # give xvfb some time to start
 
-./gradlew --info systemTest
+./gradlew --info systemTest -Dorg.gradle.java.home="${JAVA21_HOME}"
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE" || true

@@ -202,6 +202,36 @@ public class GenTests extends GenInputsAbstract {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
 
+  /**
+   * Extract the major version number from the "java.version" system property.
+   *
+   * @return the major version of the Java runtime
+   */
+  private static int getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      // Up to Java 8, from a version string like "1.8.whatever", extract "8".
+      version = version.substring(2, 3);
+    } else {
+      // Since Java 9, from a version string like "11.0.1", extract "11".
+      int i = version.indexOf('.');
+      if (i < 0) {
+        // Some Linux dockerfiles return only the major version number for
+        // the system property "java.version"; i.e., no ".<minor version>".
+        // Return 'version' unchanged in this case.
+      } else {
+        version = version.substring(0, i);
+      }
+    }
+    // Handle version strings like "18-ea".
+    int i = version.indexOf('-');
+    if (i > 0) {
+      version = version.substring(0, i);
+    }
+    System.out.println("*********VERSION************" + version);
+    return Integer.parseInt(version);
+  }
+
   @Override
   @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
   public boolean handle(String[] args) {
@@ -218,6 +248,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+      System.out.println("Java version " + getJavaVersion() + ".");
     }
 
     checkOptionsValid();
