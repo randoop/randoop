@@ -228,7 +228,7 @@ public class GenTests extends GenInputsAbstract {
     if (i > 0) {
       version = version.substring(0, i);
     }
-    System.out.println("*********VERSION************" + version);
+    System.out.println("*********VERSION GenTESTS************" + version);
     return Integer.parseInt(version);
   }
 

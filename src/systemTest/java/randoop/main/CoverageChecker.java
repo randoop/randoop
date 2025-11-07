@@ -72,7 +72,7 @@ class CoverageChecker {
     if (i > 0) {
       version = version.substring(0, i);
     }
-    System.out.println("*********VERSION************" + version);
+    System.out.println("*********VERSION Coverage Checker ************" + version);
     return Integer.parseInt(version);
   }
 
