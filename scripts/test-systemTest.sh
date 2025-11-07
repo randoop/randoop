@@ -33,8 +33,8 @@ if [ -z "${JAVA_GRADLE_HOME:-}" ]; then
 fi
 
 # Download dependencies, trying a second time if there is a failure.
-(./gradlew --write-verification-metadata sha256 help --dry-run \
-  || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+(./gradlew --write-verification-metadata sha256 help --dry-run -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}" \
+  || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"))
 
 ./gradlew assemble -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"
 
