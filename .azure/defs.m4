@@ -2,7 +2,7 @@ changequote dnl
 changequote(`[',`]')dnl
 changecom([], [Disable comments, that is, expand within them.])dnl
 ifelse([The built-in "dnl" macro means "discard to next line".,])dnl
-define([canary_version], [11])dnl
+define([canary_version], [24])dnl
 dnl
 dnl
 ifelse([Each macro takes one argument, the JDK version.])dnl
