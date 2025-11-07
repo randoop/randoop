@@ -34,7 +34,7 @@ ext {
   javadocMemberLevel = JavadocMemberLevel.PROTECTED
 
   // The JDK for running tests: the jdkTestVersion property or if not set, JavaVersion.current()
-  testJdkVersionString = providers.gradleProperty("testJdkVersion").getOrElse(JavaVersion.current().getMajorVersion())
+  testJdkVersionString = providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion())
   testJdkVersion = Integer.valueOf(testJdkVersionString)
 }
 
@@ -504,8 +504,8 @@ tasks.register("systemTest", Test) {
     systemProperty("jar.randoop", shadowJar.archiveFile.get())
     systemProperty("jar.replacecall.agent", project(":replacecall").shadowJar.archiveFile.get())
     systemProperty("jar.covered.class.agent", project(":covered-class").shadowJar.archiveFile.get())
-    println("***************VERSION testJDKVersion*******"+providers.gradleProperty("testJdkVersion").getOrElse(JavaVersion.current().getMajorVersion()))
-    systemProperty("java.version", providers.gradleProperty("testJdkVersion").getOrElse(JavaVersion.current().getMajorVersion()))
+    println("***************VERSION testJDKVersion*******"+providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion()))
+    systemProperty("java.version", providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion()))
   }
 
   workingDir = layout.buildDirectory
