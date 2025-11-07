@@ -505,7 +505,6 @@ tasks.register("systemTest", Test) {
     systemProperty("jar.replacecall.agent", project(":replacecall").shadowJar.archiveFile.get())
     systemProperty("jar.covered.class.agent", project(":covered-class").shadowJar.archiveFile.get())
     println("***************VERSION testJDKVersion*******"+providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion()))
-    systemProperty("java.version", providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion()))
   }
 
   workingDir = layout.buildDirectory
