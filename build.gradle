@@ -101,9 +101,6 @@ allprojects {
     withSourcesJar()
   }
 
-  // TODO: Using ext.testJdkVersion here doesnot work because the property isn't set yet.
-  testJdkVersionString = providers.gradleProperty("testJdkVersion").getOrElse(JavaVersion.current().getMajorVersion())
-  testJdkVersion = Integer.valueOf(testJdkVersionString)
   // The Checker Framework plugin doesn't use the main Java toolchain version rather than the Java
   // version of the compiler. This means it adds `-Xbootclasspath/p` to the compiler options which
   // is no longer supported. So just skip the Checker Framework when testing JDK 8.
