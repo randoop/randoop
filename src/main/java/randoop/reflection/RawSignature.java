@@ -261,7 +261,6 @@ public class RawSignature {
    * @param name a class name
    * @return an identifier name produced from the class name
    */
-  // Error Prone won't let me name the formal parameter `className`. :-(
   public static String classNameToIdentifier(String name) {
     String result = name;
     result = result.replace("[]", "ARRAY");
