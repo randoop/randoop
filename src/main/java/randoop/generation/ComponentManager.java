@@ -188,6 +188,7 @@ public class ComponentManager {
   SIList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+    ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
@@ -198,7 +199,7 @@ public class ComponentManager {
 
     // This method appends two lists:
     //  * determines sequences from the pool (gralComponents)
-    //  * determines literals
+    //  * determines literals, which depend on `declaringCls`
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
@@ -207,11 +208,10 @@ public class ComponentManager {
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
-      // The operation is a method call, where the method is defined in class C.  Augment the
-      // returned list with literals that appear in class C or in its package.  At most one of
-      // classLiterals and packageLiterals is non-null.
+      // The operation is a method call, where the method is defined in class C.
+      // Augment the returned list with literals that appear in class C or in its package.  At most
+      // one of classLiterals and packageLiterals is non-null.
 
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
       if (classLiterals != null) {
@@ -236,7 +236,7 @@ public class ComponentManager {
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components, class literals and package literals.
+   * "int var0 = 1"), including general components and literals.
    *
    * @return the sequences for primitive values
    */
@@ -249,6 +249,8 @@ public class ComponentManager {
     if (packageLiterals != null) {
       result.addAll(packageLiterals.getAllSequences());
     }
+
+    // Add primitive sequences from general components.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
