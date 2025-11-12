@@ -340,7 +340,7 @@ allprojects { subproject ->
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
 
       options.errorprone {
-        enabled = isJava11orHigher
+        enabled = isJava21orHigher
         // TODO: uncomment once we run the Interning Checker on Randoop.
         // disable("ReferenceEquality") // Use Interning Checker instead.
         disable("StringSplitter") // Obscure case isn't likely.
