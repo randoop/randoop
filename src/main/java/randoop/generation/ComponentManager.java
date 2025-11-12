@@ -44,8 +44,8 @@ import randoop.util.Log;
 public class ComponentManager {
 
   /**
-   * The principal set of sequences used to create other, larger sequences by the generator. Is
-   * never null. Contains both general components and seed sequences. Can be reset by calling {@link
+   * The principal set of sequences used to create other, larger sequences by the generator.
+   * Contains both general components and seed sequences. Can be reset by calling {@link
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
@@ -56,7 +56,7 @@ public class ComponentManager {
    * (Does not include literals, I think?)
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the user calls {@link #clearGeneratedSequences}.
+   * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
 

@@ -148,6 +148,7 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case ORIENTEERING:
         inputSequenceSelector =
+            // The argument is the sequences *so far*, probably just literals and seeds.
             new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       case SMALL_TESTS:
