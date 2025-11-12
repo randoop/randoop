@@ -189,7 +189,7 @@ public class ComponentManager {
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
           String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
+              "getSequencesForParam(%s, %s, %s) neededType=%s",
               operation, i, onlyReceivers, neededType));
     }
 
