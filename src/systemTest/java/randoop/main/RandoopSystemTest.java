@@ -554,7 +554,8 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    generateAndTest(
+        testEnvironment, options, /*TODO*/ 0, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
