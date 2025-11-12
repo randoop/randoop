@@ -244,7 +244,6 @@ public class ComponentManager {
     }
 
     // Add primitive sequences from general components.
-    // This code uses `CollectionsPlume.addAll`, whose second argument is an `Iterable`.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
