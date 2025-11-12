@@ -44,8 +44,8 @@ import randoop.util.Log;
 public class ComponentManager {
 
   /**
-   * The principal set of sequences used to create other, larger sequences by the generator. Is
-   * never null. Contains both general components and seed sequences. Can be reset by calling {@link
+   * The principal set of sequences used to create other, larger sequences by the generator.
+   * Contains both general components and seed sequences. Can be reset by calling {@link
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
@@ -56,7 +56,7 @@ public class ComponentManager {
    * (Does not include literals, I think?)
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the user calls {@link #clearGeneratedSequences}.
+   * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
 
@@ -236,7 +236,7 @@ public class ComponentManager {
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components, class literals and package literals.
+   * "int var0 = 1"), including general components and literals.
    *
    * @return the sequences for primitive values
    */
@@ -249,6 +249,8 @@ public class ComponentManager {
     if (packageLiterals != null) {
       result.addAll(packageLiterals.getAllSequences());
     }
+
+    // Add primitive sequences from general components.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
