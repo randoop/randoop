@@ -550,7 +550,7 @@ public class RandoopSystemTest {
 
     options.setOption("literals-level", "ALL");
     options.setOption("literal-tfidf", "true");
-    options.setOption("literal_tfidf_probability", "1");
+    options.setOption("literal-tfidf-probability", "1");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
