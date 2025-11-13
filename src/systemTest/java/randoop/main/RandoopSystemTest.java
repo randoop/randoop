@@ -819,7 +819,7 @@ public class RandoopSystemTest {
             options,
             25, // 26 for most JDKs, 25 for JDK 17
             "collectiongen.AnInputClass.hashCode() ignore",
-            "collectiongen.Day.$values() ignore17+",
+            "collectiongen.Day.$values() ignore",
             "collectiongen.Day.valueOf(java.lang.String) exclude",
             "collectiongen.Day.values() ignore"
             // end of list (line break to permit easier sorting)
