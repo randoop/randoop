@@ -44,8 +44,8 @@ import randoop.util.Log;
 public class ComponentManager {
 
   /**
-   * The principal set of sequences used to create other, larger sequences by the generator. Is
-   * never null. Contains both general components and seed sequences. Can be reset by calling {@link
+   * The principal set of sequences used to create other, larger sequences by the generator.
+   * Contains both general components and seed sequences. Can be reset by calling {@link
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
@@ -56,7 +56,7 @@ public class ComponentManager {
    * (Does not include literals, I think?)
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the user calls {@link #clearGeneratedSequences}.
+   * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
 
@@ -182,23 +182,21 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  // This method is oddly named, since it does not take as input a type.  However, the method
-  // extensively uses the operation, so refactoring the method to take a type instead would take
-  // some work.
-  SIList<Sequence> getSequencesForType(TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getSequencesForParam(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
+    ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
           String.format(
-              "getSequencesForType(%s, %s, %s) neededType=%s",
+              "getSequencesForParam(%s, %s, %s) neededType=%s",
               operation, i, onlyReceivers, neededType));
     }
 
     // This method appends two lists:
     //  * determines sequences from the pool (gralComponents)
-    //  * determines literals
+    //  * determines literals, which depend on `declaringCls`
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
@@ -207,11 +205,10 @@ public class ComponentManager {
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
-      // The operation is a method call, where the method is defined in class C.  Augment the
-      // returned list with literals that appear in class C or in its package.  At most one of
-      // classLiterals and packageLiterals is non-null.
+      // The operation is a method call, where the method is defined in class C.
+      // Augment the returned list with literals that appear in class C or in its package.  At most
+      // one of classLiterals and packageLiterals is non-null.
 
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
 
       if (classLiterals != null) {
@@ -236,7 +233,7 @@ public class ComponentManager {
 
   /**
    * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components, class literals and package literals.
+   * "int var0 = 1"), including general components and literals.
    *
    * @return the sequences for primitive values
    */
@@ -249,6 +246,8 @@ public class ComponentManager {
     if (packageLiterals != null) {
       result.addAll(packageLiterals.getAllSequences());
     }
+
+    // Add primitive sequences from general components.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
