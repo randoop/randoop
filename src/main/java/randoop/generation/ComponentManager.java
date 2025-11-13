@@ -37,7 +37,8 @@ import randoop.util.Log;
  * Literals are not stored in the general pool; instead, they are consulted on demand (for example,
  * by {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}) and combined with
  * pool sequences when returning candidates for a parameter. The reason is that which literals are
- * candidates depends on the method being called.
+ * candidates depends on the method being called. (More precisely, on the class and package in which
+ * the method is defined.)
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
  * to the original seeds.
@@ -94,7 +95,7 @@ public class ComponentManager {
   }
 
   /**
-   * Add a component sequence.
+   * Adds a component sequence.
    *
    * @param sequence the sequence
    */
@@ -149,7 +150,7 @@ public class ComponentManager {
 
   /**
    * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
-   * that produce the required type, followed by mined literal sequences for the declaring class if
+   * that produce the required type, followed by literal sequences for the declaring class if
    * available.
    *
    * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
