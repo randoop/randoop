@@ -25,8 +25,8 @@ public class ListOfListsSelectorTest {
   public static void setUp() throws Exception {
 
     SIList<Integer> l1List = SIList.empty();
-    SIList<Integer> l2List = SIList.fromList(Arrays.asList(1));
-    SIList<Integer> l3List = SIList.fromList(Arrays.asList(2, 3));
+    SIList<Integer> l2List = SIList.list(Arrays.asList(1));
+    SIList<Integer> l3List = SIList.list(Arrays.asList(2, 3));
 
     List<SIList<Integer>> l1ListList = Collections.singletonList(l1List);
     l1 = SIList.concat(l1ListList);

@@ -33,7 +33,7 @@ public class RandomnessTest extends TestCase {
       weightMap.put(i, (double) weight);
       sumOfAllWeights += weight;
     }
-    SIList<Object> list = SIList.fromList(backingList);
+    SIList<Object> list = SIList.list(backingList);
 
     Map<Double, Integer> weightToTimesSelected = new LinkedHashMap<>();
     int totalSelections = 0;
