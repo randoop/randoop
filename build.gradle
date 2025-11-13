@@ -26,6 +26,8 @@ plugins {
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id("com.gorylenko.gradle-git-properties").version("2.5.3")
+
+  id("pmd")
 }
 
 ext {
@@ -352,6 +354,12 @@ allprojects { subproject ->
       }
       options.errorprone.enabled = isJava17orHigher
     }
+  }
+}
+
+allprojects {
+  pmd {
+    consoleOutput = true
   }
 }
 
