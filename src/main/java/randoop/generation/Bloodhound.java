@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
@@ -151,7 +151,7 @@ public class Bloodhound implements TypedOperationSelector {
             operationList, methodWeights, totalWeightOfMethodsUnderTest);
 
     // Update the selected method's selection count and recompute its weight.
-    CollectionsPlume.incrementMap(methodSelectionCounts, selectedOperation);
+    MapsP.incrementMap(methodSelectionCounts, selectedOperation);
     updateWeight(selectedOperation);
 
     return selectedOperation;
@@ -353,7 +353,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
-    CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    MapsP.incrementMap(methodInvocationCounts, operation);
     // The `methodInvocationCounts` map contains the key `operation`.
     int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);

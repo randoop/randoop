@@ -722,7 +722,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // variable types.
           assert typesToVars.keySet().contains(match);
           // TODO: eliminate the need for the copy performed by `new ArrayList`.
-          candidateVars.add(SIList.fromList(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(SIList.from(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
