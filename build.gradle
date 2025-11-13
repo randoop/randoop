@@ -326,12 +326,10 @@ allprojects { subproject ->
 
 if (isJava21orHigher) {
   apply plugin: "net.ltgt.errorprone"
-  allprojects {
+  allprojects { subproject ->
     dependencies {
       implementation("com.google.errorprone:error_prone_core:${errorProneVersion}")
     }
-  }
-  allprojects { subproject ->
     tasks.withType(JavaCompile).configureEach { t ->
       if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
         options.errorprone {
