@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.util.Log;
 
 /**
@@ -144,8 +144,7 @@ public class ReflectionManager {
       // inherited ones).
 
       Method[] deterministicMethods = ClassDeterministic.getMethods(c);
-      Set<Method> methods =
-          new HashSet<>(CollectionsPlume.mapCapacity(deterministicMethods.length));
+      Set<Method> methods = new HashSet<>(MapsP.mapCapacity(deterministicMethods.length));
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);

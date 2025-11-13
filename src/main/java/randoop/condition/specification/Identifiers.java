@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -109,7 +109,7 @@ public class Identifiers {
    * @return a name occurs more than once, or null if there are no duplicate names
    */
   public @Nullable String duplicateName() {
-    Set<String> names = new HashSet<>(CollectionsPlume.mapCapacity(parameters.size() + 2));
+    Set<String> names = new HashSet<>(MapsP.mapCapacity(parameters.size() + 2));
     for (String name : parameters) {
       if (!names.add(name)) {
         return name;
