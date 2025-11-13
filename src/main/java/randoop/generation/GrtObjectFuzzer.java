@@ -131,7 +131,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
         varIndicesInEachSeq.add(variable.index);
       } else {
         // Choose a sequence from the component pool for the ith parameter.
-        SIList<Sequence> candidates = componentManager.getSequencesForType(mutationOp, i, false);
+        SIList<Sequence> candidates = componentManager.getSequencesForParam(mutationOp, i, false);
 
         if (candidates.isEmpty()) {
           // No existing sequence can satisfy this parameter -- abort mutation.

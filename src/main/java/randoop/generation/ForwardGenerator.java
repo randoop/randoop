@@ -148,6 +148,7 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case ORIENTEERING:
         inputSequenceSelector =
+            // The argument is the sequences *so far*, probably just literals and seeds.
             new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       case SMALL_TESTS:
@@ -767,7 +768,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
         Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         SIList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
         candidates = SIList.concat(l1, l2);
@@ -779,7 +780,7 @@ public class ForwardGenerator extends AbstractGenerator {
               .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
@@ -791,7 +792,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
-        candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+        candidates = componentManager.getSequencesForParam(operation, i, isReceiver);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
