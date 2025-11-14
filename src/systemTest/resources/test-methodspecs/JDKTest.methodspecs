@@ -13,7 +13,6 @@ java7.util7.Arrays.binarySearch(char[], int, int, char) ignore
 java7.util7.Arrays.binarySearch(float[], float) ignore
 java7.util7.Arrays.binarySearch(float[], int, int, float) ignore
 java7.util7.Arrays.binarySearch(int[], int, int, int) ignore
-java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator)
 java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object) ignore
 java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object, java7.util7.Comparator) ignore
