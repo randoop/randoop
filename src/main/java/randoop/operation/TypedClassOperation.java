@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
 import randoop.main.RandoopBug;
@@ -190,8 +190,7 @@ public class TypedClassOperation extends TypedOperation {
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> inputTypeParams = getInputTypes().getTypeParameters();
     // This set, and the returned list, is likely to be very small.
-    Set<TypeVariable> paramSet =
-        new LinkedHashSet<>(CollectionsPlume.mapCapacity(inputTypeParams.size()));
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(MapsP.mapCapacity(inputTypeParams.size()));
     paramSet.addAll(inputTypeParams);
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());

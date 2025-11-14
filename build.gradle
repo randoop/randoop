@@ -26,6 +26,8 @@ plugins {
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id("com.gorylenko.gradle-git-properties").version("2.5.3")
+
+  id("pmd")
 }
 
 ext {
@@ -75,7 +77,7 @@ allprojects {
       plumelib("org.plumelib:options:2.0.3")
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib("org.plumelib:plume-util:1.11.0")
+    plumelib("org.plumelib:plume-util:1.12.2")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib("org.plumelib:reflection-util:1.1.5")
   }
@@ -292,9 +294,8 @@ tasks.register("compileAll") {
 assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
-ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 allprojects { subproject ->
-  if (isJava11orHigher) {
+  if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
       format "misc", {
@@ -310,7 +311,7 @@ allprojects { subproject ->
         // Use fileTree per https://github.com/diffplug/spotless/issues/399
         targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
 
-        googleJavaFormat("1.7")   // this version of google-java-format works on Java 8
+        googleJavaFormat("1.32.0")
         formatAnnotations()
       }
       groovyGradle {
@@ -352,6 +353,12 @@ allprojects { subproject ->
       }
       options.errorprone.enabled = isJava17orHigher
     }
+  }
+}
+
+allprojects {
+  pmd {
+    consoleOutput = true
   }
 }
 
