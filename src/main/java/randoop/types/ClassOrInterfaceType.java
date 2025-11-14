@@ -337,9 +337,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the type for the superclass for this class.
+   * Returns the type for the superclass for this class. Returns null if this type has no superclass
+   * (it is the Object type or an interface type).
    *
-   * @return superclass of this type, or the {@code Object} type if this type has no superclass
+   * @return the superclass of this type, or null
    */
   public abstract ClassOrInterfaceType getSuperclass();
 
@@ -378,7 +379,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     ClassOrInterfaceType superclass = this.getSuperclass();
     List<ClassOrInterfaceType> interfaces = this.getInterfaces();
     List<ClassOrInterfaceType> supertypes = new ArrayList<>(interfaces.size() + 1);
-    supertypes.add(superclass);
+    if (superclass != null) {
+      supertypes.add(superclass);
+    }
     supertypes.addAll(interfaces);
     return supertypes;
   }
@@ -478,6 +481,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
+   * <p>Returns true if {@code otherType} is the same type as this type.
+   *
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    * @see #isAssignableFrom(Type)
@@ -497,10 +502,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    // This handles two cases: this==otherType, or otherType==Object
-    if (super.isSubtypeOf(otherType)) {
+    if (this.equals(otherType)) {
       return true;
     }
+
     if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
       Class<?> thisClass = this.getRuntimeClass();
       Class<?> otherClass = otherType.getRuntimeClass();
@@ -513,9 +518,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
 
-    // Check all the supertypes of this:  that is, interfaces and superclasses.
+    // TODO: have different helper methods for interfaces and superclasses, and choose at the
+    // beginning of this method.
 
-    // First, check interfaces (only if otherType is an interface)
+    // Check all the supertypes of this:  that is, (1) interfaces and (2) superclasses.
+
+    // (1) Check interfaces (only if otherType is an interface)
     if (otherType.isInterface()) {
       for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
         if (debug) {
@@ -532,7 +540,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // a superclass might implement otherType
     }
 
-    // Second, check superclasses
+    // (2) Check superclasses.
 
     // If this type is an interface, it has no superclasses, so there is nothing to do
     if (this.isInterface()) {
@@ -544,10 +552,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       System.out.printf("  superClassType: %s%n", superClassType);
     }
 
-    if (superClassType == null || superClassType.isObject()) {
-      // Search has failed; stop.
+    if (superClassType == null) {
       return false;
     }
+
+    // TODO: Use iteration rather than recursion, if possible.
 
     // Check whether superclass is a subtype of otherType.
     return superClassType.isSubtypeOf(otherType);
