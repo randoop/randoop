@@ -233,7 +233,7 @@ public class GenericTypesTest {
     assertStrictSubtype(typeC, typeIB);
     assertStrictSubtype(typeC, typeB);
 
-    oassertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
   }
 
   /** Assert that {@code subtype} is a strict subtype of {@code supertype}. */

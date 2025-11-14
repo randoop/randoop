@@ -174,7 +174,7 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "intersection type bound isSubTypeOf not implemented";
+    assert false : "IntersectionTypeBound: isSubtypeOfOrEqualTo is not implemented";
     return false;
   }
 
