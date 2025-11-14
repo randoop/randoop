@@ -294,9 +294,8 @@ tasks.register("compileAll") {
 assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
-ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 allprojects { subproject ->
-  if (isJava11orHigher) {
+  if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
       format "misc", {
@@ -312,7 +311,7 @@ allprojects { subproject ->
         // Use fileTree per https://github.com/diffplug/spotless/issues/399
         targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
 
-        googleJavaFormat("1.7")   // this version of google-java-format works on Java 8
+        googleJavaFormat("1.32.0")
         formatAnnotations()
       }
       groovyGradle {

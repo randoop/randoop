@@ -450,7 +450,9 @@ public class AccessibilityTest {
 
   @Test
   public void checkFieldAccessibility()
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+      throws ClassNotFoundException,
+          InstantiationException,
+          IllegalAccessException,
           InvocationTargetException {
     Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
