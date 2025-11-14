@@ -499,6 +499,21 @@ public class ExecutableSequence {
       return null;
     }
 
+    Class<?> runtimeClass = runTimeType.getRuntimeClass();
+    if (runtimeClass.isSynthetic()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is a synthetic class.%n",
+          runTimeType);
+      return null;
+    }
+
+    if (runtimeClass.isAnonymousClass()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is an anonymous class.%n",
+          runTimeType);
+      return null;
+    }
+
     // Sanity check.
     assert lastOpIsGetClass || runTimeType.isSubtypeOf(declaredType)
         : String.format(
