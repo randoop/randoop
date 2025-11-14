@@ -129,21 +129,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.isObject()) {
-      return this;
-    }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      if (superclass != null) {
-        return NonParameterizedType.forClass(superclass);
-      }
+      return superclass == null ? null : NonParameterizedType.forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
+      return supertype == null ? null : ClassOrInterfaceType.forType(supertype);
     }
-    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override

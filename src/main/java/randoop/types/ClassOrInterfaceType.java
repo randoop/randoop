@@ -538,7 +538,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           return true;
         }
       }
-      // a superclass might implement otherType
+      // A superclass might implement otherType, but that is handled below.
     }
 
     // (2) Check superclasses.
@@ -550,7 +550,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
     if (debug) {
-      System.out.printf("  superClassType: %s%n", superClassType);
+      System.out.printf("  superClassType: %s%n    for: %s%n", superClassType, this);
     }
 
     if (superClassType == null) {
