@@ -109,7 +109,7 @@ public abstract class ReferenceType extends Type {
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return super.isAssignableFrom(sourceType)
-        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
+        || (sourceType.isReferenceType() && sourceType.isSubtypeOfOrEqualTo(this));
   }
 
   /**
@@ -198,12 +198,12 @@ public abstract class ReferenceType extends Type {
    * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType == null) {
-      throw new IllegalArgumentException("type may not be null");
+      throw new IllegalArgumentException("isSubtypeOfOrEqualTo: argument may not be null");
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
