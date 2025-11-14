@@ -159,10 +159,11 @@ public class SequenceCollection {
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
-        typesAndSupertypes.add(formalType);
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSuperTypes());
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSuperTypesNonstrict());
+        } else {
+          typesAndSupertypes.add(formalType);
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);

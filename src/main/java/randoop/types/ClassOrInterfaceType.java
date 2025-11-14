@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
@@ -337,32 +338,58 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the type for the superclass for this class.
+   * Returns the type for the superclass for this class. Returns null if this type has no superclass
+   * (it is the Object type or an interface type)
    *
-   * @return superclass of this type, or the {@code Object} type if this type has no superclass
+   * @return the superclass of this type, or null
    */
   public abstract ClassOrInterfaceType getSuperclass();
 
   /**
-   * Returns the set of all of the supertypes of this type.
+   * Returns a set of all of the strict supertypes of this type. The result contains no duplicates
+   * and does not contain this type itself.
    *
    * @return the set of all supertypes of this type
    */
-  public Collection<ClassOrInterfaceType> getSuperTypes() {
-    Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
-    if (this.isObject()) {
-      return supertypes;
+  public Set<ClassOrInterfaceType> getSuperTypesStrict() {
+    return getSuperTypes(false);
+  }
+
+  /**
+   * Returns a set containing this type and all its supertypes. The result contains no duplicates.
+   *
+   * @return the set of all supertypes of this type
+   */
+  public Set<ClassOrInterfaceType> getSuperTypesNonstrict() {
+    return getSuperTypes(true);
+  }
+
+  /**
+   * Returns a set containing all of the strict supertypes of this type. If {@code includeSelf} is
+   * true, the set also contains this type itself. The set contains no duplicates.
+   *
+   * @boolean includeSelf if true, the result contains this type as well as all supertypes
+   * @return the set of all supertypes of this type
+   */
+  public Set<ClassOrInterfaceType> getSuperTypes(boolean includeSelf) {
+    Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
+    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
+    worklist.add(this);
+    if (includeSelf) {
+      result.add(this);
     }
-    ClassOrInterfaceType superclass = this.getSuperclass();
-    if (superclass != null) {
-      supertypes.add(superclass);
-      supertypes.addAll(superclass.getSuperTypes());
+    while (!worklist.isEmpty()) {
+      ClassOrInterfaceType t = worklist.remove();
+      result.add(t);
+      ClassOrInterfaceType superclass = t.getSuperclass();
+      if (superclass != null) {
+        worklist.add(superclass);
+      }
+      for (ClassOrInterfaceType interfaceType : t.getInterfaces()) {
+        worklist.add(interfaceType);
+      }
     }
-    for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
-      supertypes.add(interfaceType);
-      supertypes.addAll(interfaceType.getSuperTypes());
-    }
-    return supertypes;
+    return result;
   }
 
   /**
@@ -378,7 +405,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     ClassOrInterfaceType superclass = this.getSuperclass();
     List<ClassOrInterfaceType> interfaces = this.getInterfaces();
     List<ClassOrInterfaceType> supertypes = new ArrayList<>(interfaces.size() + 1);
-    supertypes.add(superclass);
+    if (superclass != null) {
+      supertypes.add(superclass);
+    }
     supertypes.addAll(interfaces);
     return supertypes;
   }
