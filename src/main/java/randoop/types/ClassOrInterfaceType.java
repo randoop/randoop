@@ -551,14 +551,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // TODO: Use iteration rather than recursion, for efficiency?
       if (iface.isSubinterfaceOf(otherInterface)) {
         if (debug) {
-          System.out.printf("    => true");
+          System.out.printf("    => true%n");
         }
         return true;
       }
     }
 
     if (debug) {
-      System.out.printf("    => false");
+      System.out.printf("    => false%n");
     }
     return false;
   }
