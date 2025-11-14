@@ -1051,8 +1051,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     // Randomness.weightedCoinFlip(), which accepts values in [0, 1].
     if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
       throw new RandoopUsageError(
-          "Probability --literal-tfidf-probability must be in [0, 1] but was "
-              + literal_tfidf_probability);
+          "Probability --literal-tfidf-probability="
+              + literal_tfidf_probability
+              + " must be in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

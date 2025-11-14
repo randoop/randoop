@@ -18,8 +18,8 @@ import randoop.types.Type;
 public class LiteralStatistics {
 
   /**
-   * Per-output-type index: for each {@link Type}, a map from {@link Sequence} (literal producer) to
-   * its {@link LiteralUses} within the scope.
+   * Per-output-type index: for each {@link Type}, a map from {@link Sequence} (a literal producer)
+   * to its {@link LiteralUses} within the type's scope.
    */
   private final Map<Type, Map<Sequence, LiteralUses>> literalUsesByType = new LinkedHashMap<>();
 
@@ -28,6 +28,19 @@ public class LiteralStatistics {
 
   /** Creates a new empty LiteralStatistics. */
   public LiteralStatistics() {}
+
+  // ///////////////////////////////////////////////////////////////////////////
+  // Observers
+  //
+
+  /**
+   * Returns true if this is empty.
+   *
+   * @return true if this is empty
+   */
+  public boolean isEmpty() {
+    return literalUsesByType.isEmpty();
+  }
 
   /**
    * Returns the number of classes in the current scope.
@@ -67,6 +80,41 @@ public class LiteralStatistics {
   }
 
   /**
+   * Returns an iterable over all literal-to-usage entries across all output.
+   *
+   * @return an {@link Iterable} of entries mapping each {@link Sequence} to its {@link LiteralUses}
+   */
+  public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
+    return () ->
+        new java.util.Iterator<Map.Entry<Sequence, LiteralUses>>() {
+          private final java.util.Iterator<Map<Sequence, LiteralUses>> outer =
+              literalUsesByType.values().iterator();
+          private java.util.Iterator<Map.Entry<Sequence, LiteralUses>> inner =
+              java.util.Collections.emptyIterator();
+
+          @Override
+          public boolean hasNext() {
+            while (!inner.hasNext() && outer.hasNext()) {
+              inner = outer.next().entrySet().iterator();
+            }
+            return inner.hasNext();
+          }
+
+          @Override
+          public Map.Entry<Sequence, LiteralUses> next() {
+            if (!hasNext()) {
+              throw new java.util.NoSuchElementException();
+            }
+            return inner.next();
+          }
+        };
+  }
+
+  // ///////////////////////////////////////////////////////////////////////////
+  // Mutators
+  //
+
+  /**
    * Increments the number of classes.
    *
    * @param num the number of classes to add to the current total
@@ -97,45 +145,9 @@ public class LiteralStatistics {
     currentUses.incrementNumClassesWith(num);
   }
 
-  /**
-   * Returns true if this is empty.
-   *
-   * @return true if this is empty
-   */
-  public boolean isEmpty() {
-    return literalUsesByType.isEmpty();
-  }
-
-  /**
-   * Returns an iterable over all literal-to-usage entries across all output.
-   *
-   * @return an {@link Iterable} of entries mapping each {@link Sequence} to its {@link LiteralUses}
-   */
-  public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
-    return () ->
-        new java.util.Iterator<Map.Entry<Sequence, LiteralUses>>() {
-          private final java.util.Iterator<Map<Sequence, LiteralUses>> outer =
-              literalUsesByType.values().iterator();
-          private java.util.Iterator<Map.Entry<Sequence, LiteralUses>> inner =
-              java.util.Collections.emptyIterator();
-
-          @Override
-          public boolean hasNext() {
-            while (!inner.hasNext() && outer.hasNext()) {
-              inner = outer.next().entrySet().iterator();
-            }
-            return inner.hasNext();
-          }
-
-          @Override
-          public Map.Entry<Sequence, LiteralUses> next() {
-            if (!hasNext()) {
-              throw new java.util.NoSuchElementException();
-            }
-            return inner.next();
-          }
-        };
-  }
+  // ///////////////////////////////////////////////////////////////////////////
+  // Helper class
+  //
 
   /**
    * Statistics for one literal within one scope: the number of uses of the literal and the number

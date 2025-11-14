@@ -309,7 +309,7 @@ public class OperationModel {
   /**
    * Returns whether literal statistics are needed during generation.
    *
-   * @return true if mining/TF-IDF is enabled or any literals file is provided (including
+   * @return true if literal mining is enabled or any literals file is provided (including
    *     "CLASSES"); false otherwise
    */
   private boolean shouldUseLiteralStatistics() {

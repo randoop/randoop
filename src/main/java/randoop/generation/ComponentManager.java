@@ -190,12 +190,13 @@ public class ComponentManager {
     SIList<Sequence> literals = SIList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
-        && !onlyReceivers
-        // Avoid duplication
-        && GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
+        && !onlyReceivers) {
       // The operation is a method call, where the method is defined in class C.
-      assert declaringCls != null;
-      literals = getLiteralSequences(neededType, declaringCls);
+      // Avoid duplication.
+      if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
+        assert declaringCls != null;
+        literals = getLiteralSequences(neededType, declaringCls);
+      }
     }
 
     return SIList.concat(result, literals);
@@ -205,8 +206,7 @@ public class ComponentManager {
    * Returns literal sequences that produce values assignable to {@code neededType}, using a
    * selection strategy determined by the current {@code literals_level} configuration.
    *
-   * @param neededType the target type for filtering literal sequences (sequences must produce
-   *     values assignable to this type)
+   * @param neededType the returned sequences produce values assignable to this type
    * @param declaringType the class containing the operation being tested
    * @return sequences from the appropriate scope(s) that create values of the needed type
    */

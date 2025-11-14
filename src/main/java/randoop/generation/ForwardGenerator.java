@@ -775,7 +775,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
         // Get the declaring type for literal selection.
         ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
-        Log.logPrintf("tf-idf is selecing a literal of type " + declaringType);
+        Log.logPrintf("tf-idf is selecting a literal of type " + declaringType);
 
         // Get candidate sequences, from the appropriate scope, that create values of type
         // inputTypes[i].
@@ -1040,15 +1040,19 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param candidates candidate sequences that produce values of the needed type
    * @param type the type whose scope determines the TF-IDF statistics
    * @param scopeToLiteralStatistics provider of literal statistics and scope resolution
-   * @return the TF-IDF–weighted choice, or {@code null} if unavailable
+   * @return the TF-IDF-weighted choice, or {@code null} if unavailable
    */
   private @Nullable Sequence selectTfidfSequence(
       SIList<Sequence> candidates,
       ClassOrInterfaceType type,
       ScopeToLiteralStatistics scopeToLiteralStatistics) {
 
-    if (candidates.isEmpty()) {
+    int numCandidates = candidates.size();
+    if (numCandidates == 0) {
       return null;
+    }
+    if (numCandidates == ) {
+      return candidates.get(0);
     }
 
     // literalStats contains all literal-bearing sequences known for the resolved scope,

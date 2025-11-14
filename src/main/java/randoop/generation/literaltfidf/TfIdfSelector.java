@@ -69,8 +69,7 @@ public class TfIdfSelector {
   /**
    * Select a sequence from {@code candidates} based on TF-IDF.
    *
-   * @param candidates the candidate sequences which includes literal sequences from
-   *     {ComponentManager.getLiteralSequences()}
+   * @param candidates the candidate sequences
    * @return the selected sequence, or null if there are no sequences in this
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
