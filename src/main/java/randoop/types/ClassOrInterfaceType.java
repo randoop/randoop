@@ -516,6 +516,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (!otherType.isReferenceType()) {
       return false;
     }
+    if (otherType.isArray()) {
+      return false;
+    }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
     if (otherRefType.isInterface()) {
       return this.isSubinterfaceOf(otherRefType);
