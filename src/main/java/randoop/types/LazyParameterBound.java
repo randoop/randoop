@@ -286,9 +286,9 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
     throw new LazyBoundException();
-    // assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    // assert false : "LazyParameterBound.isSubtypeOfOrEqualTo is not implemented";
     // return false;
   }
 

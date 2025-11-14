@@ -777,7 +777,7 @@ public class ForwardGenerator extends AbstractGenerator {
       } else if (inputType.isParameterized()
           && ((InstantiatedType) inputType)
               .getGenericClassType()
-              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+              .isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
         SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
