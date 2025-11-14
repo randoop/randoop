@@ -31,7 +31,7 @@ import org.plumelib.util.StringsPlume;
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /** Set to true to enable debug output to standard out. */
-  private static boolean debug = false;
+  private static boolean debug = true;
 
   /**
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
@@ -550,10 +550,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       // TODO: Use iteration rather than recursion, for efficiency?
       if (iface.isSubinterfaceOf(otherInterface)) {
+        if (debug) {
+          System.out.printf("    => true");
+        }
         return true;
       }
     }
 
+    if (debug) {
+      System.out.printf("    => false");
+    }
     return false;
   }
 
