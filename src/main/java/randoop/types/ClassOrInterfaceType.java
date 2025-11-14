@@ -31,7 +31,7 @@ import org.plumelib.util.StringsPlume;
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /** Set to true to enable debug output to standard out. */
-  private static boolean debug = true;
+  private static boolean debug = false;
 
   /**
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
@@ -490,6 +490,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    // TODO: Cache and look up results, for efficiency?
     if (debug) {
       System.out.printf(
           "isSubtypeOfOrEqualTo(%s, %s) [%s, %s]%n",
@@ -540,6 +541,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     assert otherInterface.isInterface();
 
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null) {
+      if (superclass.isSubinterfaceOf(otherInterface)) {
+        return true;
+      }
+    }
+
     for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
       if (debug) {
         System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
@@ -551,14 +559,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // TODO: Use iteration rather than recursion, for efficiency?
       if (iface.isSubinterfaceOf(otherInterface)) {
         if (debug) {
-          System.out.printf("    => true%n");
+          System.out.printf(
+              "isSubinterfaceOf(%s, %s) [%s, %s] => true%n",
+              this, otherInterface, this.getClass(), otherInterface.getClass());
         }
         return true;
       }
     }
 
     if (debug) {
-      System.out.printf("    => false%n");
+      System.out.printf(
+          "isSubinterfaceOf(%s, %s) [%s, %s] => false%n",
+          this, otherInterface, this.getClass(), otherInterface.getClass());
     }
     return false;
   }
