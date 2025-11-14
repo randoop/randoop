@@ -496,9 +496,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           this, otherType, this.getClass(), otherType.getClass());
     }
 
-    // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
-    // otherType.
-
     if (otherType.isObject()) {
       return true;
     }
@@ -518,49 +515,76 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (!otherType.isReferenceType()) {
       return false;
     }
+    ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
+    if (otherRefType.isInterface()) {
+      return this.isSubinterfaceOf(otherRefType);
+    } else {
+      return this.isSubclassOf(otherRefType);
+    }
+  }
 
-    // TODO: have different helper methods for interfaces and superclasses, and choose at the
-    // beginning of this method.
-
-    // Check all the supertypes of this:  that is, (1) interfaces and (2) superclasses.
-
-    // (1) Check interfaces (only if otherType is an interface)
-    if (otherType.isInterface()) {
-      for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
-        if (debug) {
-          System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
-        }
-
-        if (iface.equals(otherType)) {
-          return true;
-        }
-        if (iface.isSubtypeOfOrEqualTo(otherType)) {
-          return true;
-        }
-      }
-      // A superclass might implement otherType, but that is handled below.
+  /**
+   * Returns true if this type is a subtype of the given interface.
+   *
+   * <p>The receiver type may be a class or an interface.
+   *
+   * @param otherInterface an interface that might be a supertype of this
+   * @return true if this type implements the given interface, false otherwise
+   */
+  public boolean isSubinterfaceOf(ClassOrInterfaceType otherInterface) {
+    if (debug) {
+      System.out.printf(
+          "isSubinterfaceOf(%s, %s) [%s, %s]%n",
+          this, otherInterface, this.getClass(), otherInterface.getClass());
     }
 
-    // (2) Check superclasses.
+    assert otherInterface.isInterface();
 
-    // If this type is an interface, it has no superclasses, so there is nothing to do
+    for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
+      if (debug) {
+        System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
+      }
+
+      if (iface.equals(otherInterface)) {
+        return true;
+      }
+      // TODO: Use iteration rather than recursion, for efficiency?
+      if (iface.isSubinterfaceOf(otherInterface)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Returns true if this type is a strict subclass of the given class.
+   *
+   * @param otherClass the possible supertype
+   * @return true if this type is a subclass of the given type, false otherwise
+   */
+  public boolean isSubclassOf(ClassOrInterfaceType otherClass) {
+    if (debug) {
+      System.out.printf(
+          "isSubclassOf(%s, %s) [%s, %s]%n",
+          this, otherClass, this.getClass(), otherClass.getClass());
+    }
+
+    assert !otherClass.isInterface();
     if (this.isInterface()) {
       return false;
     }
 
-    ClassOrInterfaceType superClassType = this.getSuperclass();
-    if (debug) {
-      System.out.printf("  superClassType: %s%n    for: %s%n", superClassType, this);
+    if (otherClass.isObject()) {
+      return true;
     }
 
-    if (superClassType == null) {
-      return false;
+    for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
+      if (current.equals(otherClass)) {
+        return true;
+      }
     }
-
-    // TODO: Use iteration rather than recursion, if possible.
-
-    // Check whether superclass is a subtype of otherType.
-    return superClassType.isSubtypeOfOrEqualTo(otherType);
+    return false;
   }
 
   @Override
