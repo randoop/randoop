@@ -478,6 +478,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
+   * <p>Returns true if {@code otherType} is the same type as this type.
+   *
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    * @see #isAssignableFrom(Type)
@@ -498,8 +500,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    // This handles two cases: this==otherType, or otherType==Object
-    if (super.isSubtypeOfOrEqualTo(otherType)) {
+    if (this.equals(otherType)) {
       return true;
     }
     if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
