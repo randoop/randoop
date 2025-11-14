@@ -144,6 +144,7 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void exclude(String methodName) {
+    dontCareMethods.remove(methodName);
     excludedMethods.add(methodName);
   }
 
@@ -153,6 +154,7 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void ignore(String methodName) {
+    excludedMethods.remove(methodName);
     dontCareMethods.add(methodName);
   }
 
