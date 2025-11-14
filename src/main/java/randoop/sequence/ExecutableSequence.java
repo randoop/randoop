@@ -500,7 +500,7 @@ public class ExecutableSequence {
     }
 
     // Sanity check.
-    assert lastOpIsGetClass || runTimeType.isSubtypeOf(declaredType)
+    assert lastOpIsGetClass || runTimeType.isSubtypeOfOrEqualTo(declaredType)
         : String.format(
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());

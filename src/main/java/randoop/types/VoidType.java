@@ -64,7 +64,7 @@ public class VoidType extends Type {
    * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return false;
   }
 

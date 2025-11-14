@@ -84,7 +84,7 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return !otherType.equals(JavaTypes.VOID_TYPE) && otherType.isReferenceType();
   }
 }

@@ -146,7 +146,7 @@ public class PrimitiveType extends Type {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return otherType.isPrimitive()
         && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
   }
