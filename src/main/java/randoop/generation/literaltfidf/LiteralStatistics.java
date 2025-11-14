@@ -153,6 +153,8 @@ public class LiteralStatistics {
   /**
    * Statistics for one literal within one scope: the number of uses of the literal and the number
    * of classes that contain the literal.
+   *
+   * <p>A LiteralUses is mutable.
    */
   public static class LiteralUses {
     /** The number of uses of the literal. */
