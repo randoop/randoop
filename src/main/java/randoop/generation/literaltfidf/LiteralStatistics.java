@@ -1,7 +1,10 @@
 package randoop.generation.literaltfidf;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.types.Type;
@@ -85,11 +88,10 @@ public class LiteralStatistics {
    */
   public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
     return () ->
-        new java.util.Iterator<Map.Entry<Sequence, LiteralUses>>() {
-          private final java.util.Iterator<Map<Sequence, LiteralUses>> outer =
+        new Iterator<Map.Entry<Sequence, LiteralUses>>() {
+          private final Iterator<Map<Sequence, LiteralUses>> outer =
               literalUsesByType.values().iterator();
-          private java.util.Iterator<Map.Entry<Sequence, LiteralUses>> inner =
-              java.util.Collections.emptyIterator();
+          private Iterator<Map.Entry<Sequence, LiteralUses>> inner = Collections.emptyIterator();
 
           @Override
           public boolean hasNext() {
@@ -102,7 +104,7 @@ public class LiteralStatistics {
           @Override
           public Map.Entry<Sequence, LiteralUses> next() {
             if (!hasNext()) {
-              throw new java.util.NoSuchElementException();
+              throw new NoSuchElementException();
             }
             return inner.next();
           }
