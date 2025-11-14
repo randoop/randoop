@@ -249,7 +249,7 @@ public abstract class ParameterBound {
    * @param boundType the other bound
    * @return true if this type is a subtype of the other bound, false otherwise
    */
-  public abstract boolean isSubtypeOf(ParameterBound boundType);
+  public abstract boolean isSubtypeOfOrEqualTo(ParameterBound boundType);
 
   /**
    * Determines if this bound is an upper bound for the argument type.

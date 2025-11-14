@@ -179,7 +179,7 @@ public abstract class Type implements Comparable<Type> {
    * <p>Note that when the type corresponds to a generic class type, this method returns the type
    * variables from the {@link java.lang.reflect.ParameterizedType#getActualTypeArguments()
    * getActualTypeArguments()} method to maintain the guarantees needed for {@link
-   * ParameterizedType#isSubtypeOf(Type)}.
+   * ParameterizedType#isSubtypeOfOrEqualTo(Type)}.
    *
    * @param type the type to interpret
    * @return a {@link Type} object corresponding to the given type
@@ -552,7 +552,7 @@ public abstract class Type implements Comparable<Type> {
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // default behavior, refined by overrides in subclasses
     return this.equals(otherType);
   }

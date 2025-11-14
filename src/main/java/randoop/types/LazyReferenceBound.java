@@ -99,8 +99,8 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "subtype not implemented for LazyReferenceBound";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
+    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
     return false;
   }
 
