@@ -84,7 +84,7 @@ public class CollectionGenerationTest {
       outputTypeSet.add(outputType);
       assertTrue(
           "statement type should be one of four types, got " + outputType,
-          outputType.isSubtypeOf(collectionType)
+          outputType.isSubtypeOfOrEqualTo(collectionType)
               || outputType.equals(elementType)
               || outputType.equals(arrayType)
               || outputType.equals(JavaTypes.BOOLEAN_TYPE));
@@ -107,7 +107,7 @@ public class CollectionGenerationTest {
       outputTypeSet.add(outputType);
       assertTrue(
           "statement type should be one of five types, got " + outputType,
-          outputType.isSubtypeOf(collectionType)
+          outputType.isSubtypeOfOrEqualTo(collectionType)
               || outputType.equals(enumType)
               || outputType.equals(arrayType)
               || outputType.equals(JavaTypes.BOOLEAN_TYPE)
@@ -136,7 +136,7 @@ public class CollectionGenerationTest {
       outputTypeSet.add(outputType);
       assertTrue(
           "statement type should be one of five types, got " + outputType,
-          outputType.isSubtypeOf(collectionType)
+          outputType.isSubtypeOfOrEqualTo(collectionType)
               || outputType.equals(concreteElementType)
               || outputType.equals(arrayType)
               || outputType.equals(JavaTypes.STRING_TYPE)

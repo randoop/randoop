@@ -79,7 +79,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
       ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
       ClassOrInterfaceType expected = exception.getExceptionType();
-      if (throwableType.isSubtypeOf(expected)) { // if exception is in set
+      if (throwableType.isSubtypeOfOrEqualTo(expected)) { // if exception is in set
         return expected;
       }
     }
