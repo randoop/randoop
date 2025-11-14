@@ -365,7 +365,7 @@ public class OperationModel {
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
       }
-      if (operation.getInputTypes().size() > 0) {
+      if (!operation.getInputTypes().isEmpty()) {
         operationsMap.add(operation.getInputTypes().get(0), operation);
       }
     }
@@ -774,7 +774,7 @@ public class OperationModel {
               signature, accessibility, reflectionPredicate));
     }
     if (accessibleObject instanceof Constructor) {
-      return TypedOperation.forConstructor((Constructor) accessibleObject);
+      return TypedOperation.forConstructor((Constructor<?>) accessibleObject);
     } else {
       return TypedOperation.forMethod((Method) accessibleObject);
     }

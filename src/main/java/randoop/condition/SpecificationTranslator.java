@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -236,8 +236,7 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap =
-        new HashMap<>(CollectionsPlume.mapCapacity(parameterNames));
+    Map<String, String> replacementMap = new HashMap<>(MapsP.mapCapacity(parameterNames));
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }

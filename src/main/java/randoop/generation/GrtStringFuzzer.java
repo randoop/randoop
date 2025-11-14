@@ -14,7 +14,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
 
-  /** Singleton instance. */
+  /** The singleton instance. */
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
   /**
@@ -40,7 +40,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   @Override
   public VarAndSeq fuzz(Sequence sequence, Variable variable) {
-    if (sequence.size() == 0) {
+    if (sequence.isEmpty()) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 

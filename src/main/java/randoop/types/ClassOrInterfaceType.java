@@ -478,16 +478,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
+   * <p>Returns true if {@code otherType} is the same type as this type.
+   *
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    * @see #isAssignableFrom(Type)
-   * @see ParameterizedType#isSubtypeOf(Type)
+   * @see ParameterizedType#isSubtypeOfOrEqualTo(Type)
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (debug) {
       System.out.printf(
-          "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(), otherType.getClass());
+          "isSubtypeOfOrEqualTo(%s, %s) [%s, %s]%n",
+          this, otherType, this.getClass(), otherType.getClass());
     }
 
     // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
@@ -497,8 +500,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    // This handles two cases: this==otherType, or otherType==Object
-    if (super.isSubtypeOf(otherType)) {
+    if (this.equals(otherType)) {
       return true;
     }
     if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
@@ -525,7 +527,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (iface.equals(otherType)) {
           return true;
         }
-        if (iface.isSubtypeOf(otherType)) {
+        if (iface.isSubtypeOfOrEqualTo(otherType)) {
           return true;
         }
       }
@@ -550,7 +552,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     // Check whether superclass is a subtype of otherType.
-    return superClassType.isSubtypeOf(otherType);
+    return superClassType.isSubtypeOfOrEqualTo(otherType);
   }
 
   @Override
