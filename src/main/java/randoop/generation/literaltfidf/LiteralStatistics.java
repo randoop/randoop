@@ -1,6 +1,5 @@
 package randoop.generation.literaltfidf;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.plumelib.util.SIList;
@@ -76,7 +75,7 @@ public class LiteralStatistics {
     if (typeMap == null || typeMap.isEmpty()) {
       return SIList.empty();
     }
-    return SIList.fromList(new ArrayList<>(typeMap.keySet()));
+    return SIList.from(typeMap.keySet());
   }
 
   /**

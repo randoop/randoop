@@ -1051,7 +1051,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (numCandidates == 0) {
       return null;
     }
-    if (numCandidates == ) {
+    if (numCandidates == 1) {
       return candidates.get(0);
     }
 

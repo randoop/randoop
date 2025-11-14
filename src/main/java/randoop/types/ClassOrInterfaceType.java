@@ -365,9 +365,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       supertypes.add(interfaceType);
       supertypes.addAll(interfaceType.getSuperTypes());
     }
-    if (CollectionsPlume.hasDuplicates(supertypes)) {
-      throw new RandoopBug("duplicates: " + supertypes);
-    }
     return supertypes;
   }
 
