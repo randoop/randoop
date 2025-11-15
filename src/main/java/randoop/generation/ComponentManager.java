@@ -7,12 +7,12 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
-import randoop.sequence.ClassLiterals;
-import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
@@ -22,24 +22,26 @@ import randoop.types.Type;
 import randoop.util.Log;
 
 /**
- * Stores the component sequences generated during a run of Randoop. "Component sequences" are
- * sequences that Randoop uses to create larger sequences. The collection of sequences is also
- * called Randoop's "pool".
+ * Manages the pool of component sequences used by Randoop during generation.
  *
- * <p>This class manages different collections of component sequences:
+ * <p>A "component sequence" is a previously-constructed {@link randoop.sequence.Sequence} that can
+ * be reused as a building block to create larger sequences. The pool contains:
  *
  * <ul>
- *   <li>General components that can be used as input to any method in any class.
- *   <li>Class literals: components representing literal values that apply only to a specific class
- *       and should not be used as inputs to other classes.
- *   <li>Package literals: analogous to class literals but at the package level.
+ *   <li>Seed sequences supplied at construction time, which are preserved across calls to {@link
+ *       #clearGeneratedSequences()}, and
+ *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>SEED SEQUENCES. Seed sequences are the initial sequences provided to the generation process.
- * They include (1) sequences passed via the constructor, (2) class literals, and (3) package
- * literals. The only different treatment of seed sequences is during calls to the
- * clearGeneratedSequences() method, which removes only general, non-seed components from the
- * collection.
+ * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
+ * Literals are not stored in the general pool; instead, they are consulted on demand (for example,
+ * by {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}) and combined with
+ * pool sequences when returning candidates for a parameter. The reason is that which literals are
+ * candidates depends on the method being called. (More precisely, on the class and package in which
+ * the method is defined.)
+ *
+ * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
+ * to the original seeds.
  */
 public class ComponentManager {
 
@@ -60,27 +62,13 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
-  /**
-   * Components representing literals that should only be used as input to specific classes.
-   *
-   * <p>Null if class literals are not used or none were found. At most one of classLiterals and
-   * packageliterals is non-null.
-   */
-  private @Nullable ClassLiterals classLiterals = null;
-
-  /**
-   * A set of additional components representing literals that should only be used as input to
-   * specific packages.
-   *
-   * <p>Null if package literals are not used or none were found. At most one of classLiterals and
-   * packageliterals is non-null.
-   */
-  private @Nullable PackageLiterals packageLiterals = null;
+  /** For each scope in the SUT, statistics about its literals (if available). */
+  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = Collections.<Sequence>emptySet();
   }
 
   /**
@@ -91,14 +79,13 @@ public class ComponentManager {
    *     considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
-    seedSet.addAll(generalSeeds);
+    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
   }
 
   /**
-   * Returns the number of (non-seed) sequences stored by the manager.
+   * Returns the number of sequences stored by the manager.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
@@ -108,40 +95,31 @@ public class ComponentManager {
   }
 
   /**
-   * Add a sequence representing a literal value that can be used when testing members of the given
-   * class.
-   *
-   * @param type the class literal to add for the sequence
-   * @param seq the sequence
-   */
-  public void addClassLevelLiteral(ClassOrInterfaceType type, Sequence seq) {
-    if (classLiterals == null) {
-      classLiterals = new ClassLiterals();
-    }
-    classLiterals.addSequence(type, seq);
-  }
-
-  /**
-   * Add a sequence representing a literal value that can be used when testing classes in the given
-   * package.
-   *
-   * @param pkg the package to add for the sequence
-   * @param seq the sequence
-   */
-  public void addPackageLevelLiteral(@Nullable Package pkg, Sequence seq) {
-    if (packageLiterals == null) {
-      packageLiterals = new PackageLiterals();
-    }
-    packageLiterals.addSequence(pkg, seq);
-  }
-
-  /**
-   * Add a component sequence.
+   * Adds a component sequence.
    *
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+  }
+
+  /**
+   * Returns the literal statistics map.
+   *
+   * @return the literal statistics map
+   */
+  public @Nullable ScopeToLiteralStatistics getScopeToLiteralStatistics() {
+    return scopeToLiteralStatistics;
+  }
+
+  /**
+   * Sets the literal statistics map.
+   *
+   * @param scopeToLiteralStatistics the literal statistics map
+   */
+  // This is called in OperationModel.addClassLiterals().
+  public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 
   /**
@@ -171,9 +149,12 @@ public class ComponentManager {
   }
 
   /**
-   * Returns component sequences that create values of the type required by the i-th input value of
-   * a statement that invokes the given operation. Also includes any applicable class- or
-   * package-level literals.
+   * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
+   * that produce the required type, followed by literal sequences for the declaring class if
+   * available.
+   *
+   * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
+   * skipped for receiver positions.
    *
    * @param operation the operation whose {@code i}th parameter to find values for
    * @param i an input value index for {@code operation}
@@ -200,35 +181,52 @@ public class ComponentManager {
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
+    // If literals are disabled, don't attempt to add any.
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
+      return result;
+    }
+
     // Compute relevant literals.
     SIList<Sequence> literals = SIList.empty();
     if (operation instanceof TypedClassOperation
         // Don't add literals for the receiver
         && !onlyReceivers) {
       // The operation is a method call, where the method is defined in class C.
-      // Augment the returned list with literals that appear in class C or in its package.  At most
-      // one of classLiterals and packageLiterals is non-null.
-
-      assert declaringCls != null;
-
-      if (classLiterals != null) {
-        SIList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-        if (!sl.isEmpty()) {
-          literals = sl;
-        }
-      }
-
-      if (packageLiterals != null) {
-        Package pkg = declaringCls.getPackage();
-        if (pkg != null) {
-          @SuppressWarnings("nullness:dereference.of.nullable") // tested above, no side effects
-          SIList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-          literals = SIList.concat(literals, sl);
-        }
+      // Avoid duplication.
+      if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
+        assert declaringCls != null;
+        literals = getLiteralSequences(neededType, declaringCls);
       }
     }
 
     return SIList.concat(result, literals);
+  }
+
+  /**
+   * Returns literal sequences that produce values assignable to {@code neededType}, using a
+   * selection strategy determined by the current {@code literals_level} configuration.
+   *
+   * @param neededType the returned sequences produce values assignable to this type
+   * @param declaringType the class containing the operation being tested
+   * @return sequences from the appropriate scope(s) that create values of the needed type
+   */
+  SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
+    if (scopeToLiteralStatistics == null) {
+      return SIList.empty();
+    }
+    switch (GenInputsAbstract.literals_level) {
+      case NONE:
+        return SIList.empty();
+      case CLASS:
+        return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
+      case PACKAGE:
+      case ALL:
+        return scopeToLiteralStatistics
+            .getLiteralStatistics(declaringType)
+            .getSequencesForType(neededType);
+      default:
+        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
+    }
   }
 
   /**
@@ -240,11 +238,10 @@ public class ComponentManager {
   Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
-    if (classLiterals != null) {
-      result.addAll(classLiterals.getAllSequences());
-    }
-    if (packageLiterals != null) {
-      result.addAll(packageLiterals.getAllSequences());
+    // Include literal-derived primitive sequences unless disabled.
+    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
+        && scopeToLiteralStatistics != null) {
+      result.addAll(scopeToLiteralStatistics.getAllSequences());
     }
 
     // Add primitive sequences from general components.
