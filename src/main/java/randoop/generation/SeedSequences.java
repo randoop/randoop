@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -79,7 +79,7 @@ public final class SeedSequences {
    * @return sequences that create the primitives
    */
   public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
-    Set<Sequence> seedSequences = new LinkedHashSet<>(CollectionsPlume.mapCapacity(seeds));
+    Set<Sequence> seedSequences = new LinkedHashSet<>(MapsP.mapCapacity(seeds));
     for (Object seed : seeds) {
       if (seed == null) {
         seedSequences.add(Sequence.zero(JavaTypes.STRING_TYPE));

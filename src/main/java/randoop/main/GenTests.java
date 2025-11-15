@@ -46,6 +46,7 @@ import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
@@ -423,8 +424,7 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
     Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
     Set<Sequence> components =
-        new LinkedHashSet<>(
-            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+        new LinkedHashSet<>(MapsP.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
@@ -537,7 +537,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
+    Set<Sequence> excludeSet = new LinkedHashSet<>(MapsP.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -683,7 +683,8 @@ public class GenTests extends GenInputsAbstract {
 
         // Build an SUT runtime-class set.
         Set<Class<?>> sutRuntime =
-            operationModel.getClassTypes() // Set<ClassOrInterfaceType>
+            operationModel
+                .getClassTypes() // Set<ClassOrInterfaceType>
                 .stream()
                 .map(ClassOrInterfaceType::getRuntimeClass)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -785,8 +786,7 @@ public class GenTests extends GenInputsAbstract {
 
     MultiMap<Type, TypedClassOperation> result =
         new MultiMap<>(
-            CollectionsPlume.mapCapacity(
-                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
+            MapsP.mapCapacity(sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;
@@ -973,8 +973,8 @@ public class GenTests extends GenInputsAbstract {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
     SIList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      TypedOperation to = statements.get(i).getOperation();
+    for (Statement s : statements) {
+      TypedOperation to = s.getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
       }
@@ -1293,9 +1293,8 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           SIList<Statement> seqStatements = sequence.statements;
-          int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
-            Operation operation = seqStatements.get(i).getOperation();
+          for (Statement s : seqStatements) {
+            Operation operation = s.getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
             }

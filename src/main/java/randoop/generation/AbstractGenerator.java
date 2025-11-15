@@ -93,6 +93,13 @@ public abstract class AbstractGenerator {
    */
   protected final List<TypedOperation> operations;
 
+  /**
+   * A copy of {@link AbstractGenerator#operations} that contains all operations used to generate
+   * sequences. This set always represents the complete set of operations available to the
+   * generator, and is not modified during generation.
+   */
+  protected final List<TypedOperation> allOperations;
+
   /** Container for execution visitors used during execution of sequences. */
   protected ExecutionVisitor executionVisitor;
 
@@ -158,6 +165,7 @@ public abstract class AbstractGenerator {
 
     this.limits = limits;
     this.operations = operations;
+    this.allOperations = new ArrayList<>(operations);
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
 

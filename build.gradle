@@ -17,7 +17,7 @@ plugins {
 
   id("net.ltgt.errorprone").version("4.3.0")
 
-  id("org.checkerframework").version("0.6.60")
+  id("org.checkerframework").version("0.6.61")
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -26,6 +26,8 @@ plugins {
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id("com.gorylenko.gradle-git-properties").version("2.5.3")
+
+  id("pmd")
 }
 
 ext {
@@ -61,6 +63,8 @@ allprojects {
     // A collection of all plumelib dependencies required, so that all
     // sub-projects use the same versions.
     plumelib
+    testInput
+    fatJar
   }
 
   dependencies {
@@ -73,7 +77,7 @@ allprojects {
       plumelib("org.plumelib:options:2.0.3")
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib("org.plumelib:plume-util:1.11.0")
+    plumelib("org.plumelib:plume-util:1.12.2")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib("org.plumelib:reflection-util:1.1.5")
   }
@@ -138,6 +142,21 @@ allprojects {
       checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
+
+  jacoco {
+    toolVersion = "${jacocoVersion}"
+  }
+
+  jacocoTestReport {
+    group = "Report"
+    dependsOn(test)
+    reports {
+      xml.required = true
+      html.required = true
+    }
+  }
+
+  check.dependsOn(jacocoTestReport)
 } // // end allprojects
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -153,12 +172,8 @@ description = "Randoop automated test generation"
 def workingDirectories = layout.buildDirectory.get().toString() + "/working-directories"
 
 sourceSets {
-  /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
    run in deterministic order. */
-  coveredTest
-  replacecallTest
-
   /* system tests */
   systemTest {
     resources {
@@ -184,15 +199,6 @@ configurations {
   jacocoagent
 
   junit
-
-  /*
-   * The agent tests are JUnit tests run with the covered-class-agent, so
-   * borrow from unit test configurations.
-   */
-  coveredTestImplementation.extendsFrom(testImplementation)
-  coveredTestRuntimeOnly.extendsFrom(testRuntimeOnly)
-  replacecallTestImplementation.extendsFrom(testImplementation)
-  replacecallTestRuntimeOnly.extendsFrom(testRuntimeOnly)
 
   implementation.extendsFrom(plumelib)
   implementation.extendsFrom(junit)
@@ -224,20 +230,10 @@ dependencies {
   implementation("org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation("commons-codec:commons-codec:1.19.0")
+  testImplementation("commons-codec:commons-codec:1.20.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation (configurations.junit.dependencies)
   testImplementation (sourceSets.testInput.output)
-
-  /*
-   * sourceSet coveredTest uses output from main sourceSet, and agent projects.
-   * (Also, see configuration block.)
-   */
-  coveredTestImplementation(sourceSets.main.output)
-  coveredTestImplementation(sourceSets.test.output)
-  coveredTestRuntimeOnly(project(":covered-class"))
-
-  replacecallTestImplementation(files(project(":replacecall").sourceSets.main.output))
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -289,9 +285,8 @@ tasks.register("compileAll") {
   dependsOn(":covered-class:compileJava")
   dependsOn(":covered-class:compileTestJava")
   dependsOn(":replacecall:compileJava")
-  dependsOn(":covered-class:compileTestJava")
-  dependsOn(compileCoveredTestJava)
-  dependsOn(compileReplacecallTestJava)
+  dependsOn(":replacecall:compileTestJava")
+  dependsOn(":replacecall:compileAgentTestJava")
   dependsOn(compileSystemTestJava)
 }
 
@@ -299,9 +294,8 @@ tasks.register("compileAll") {
 assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
-ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 allprojects { subproject ->
-  if (isJava11orHigher) {
+  if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
       format "misc", {
@@ -317,7 +311,7 @@ allprojects { subproject ->
         // Use fileTree per https://github.com/diffplug/spotless/issues/399
         targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
 
-        googleJavaFormat("1.7")   // this version of google-java-format works on Java 8
+        googleJavaFormat("1.32.0")
         formatAnnotations()
       }
       groovyGradle {
@@ -344,7 +338,8 @@ allprojects { subproject ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
       options.errorprone.enabled = false
     } else {
-      options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+      options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
+
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
         // TODO: uncomment once we run the Interning Checker on Randoop.
@@ -361,21 +356,26 @@ allprojects { subproject ->
   }
 }
 
+allprojects {
+  pmd {
+    consoleOutput = true
+  }
+}
+
+tasks.register("testInputJar", Jar) {
+  from sourceSets.testInput.output
+  archiveBaseName = "testInput"
+}
+artifacts {
+  testInput(testInputJar)
+  fatJar(shadowJar)
+}
 
 /*
  * Configuration for clean
  */
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
-
-/*
- * Configuration for testing.
- * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/coveredTest require the covered-class Java agent.
- *   * Those in src/test are run without the agent.
- *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/testInput.
- */
 
 boolean testOnJdk8 = project.getProperties().getOrDefault("testOnJdk8", false)
 if (testOnJdk8) {
@@ -437,85 +437,6 @@ test {
   exclude("randoop/test/Test_SomePass.*")
   exclude("randoop/operation/OperationParserTests.*")
 }
-
-tasks.register("coveredTest", Test) {
-  dependsOn(
-      shadowJar,
-      "copyJars",
-      "compileTestJava"
-      )
-  description = "Run covered-class tests"
-
-  /*
-   * Set the working directory for JUnit tests to the resources directory
-   * instead of the project directory.
-   */
-  workingDir = sourceSets.coveredTest.output.resourcesDir
-  testClassesDirs = sourceSets.coveredTest.output.classesDirs
-  classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
-
-  /*
-   * Show as much as possible to console.
-   */
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-
-/*
- * Link the coveredTest task into project check task. Includes agent tests into
- * the project build task.
- */
-check.dependsOn(coveredTest)
-
-tasks.register("replacecallTest", Test) {
-  dependsOn("copyJars")
-  description = "Run replace-call tests"
-
-  workingDir = sourceSets.replacecallTest.output.resourcesDir
-  testClassesDirs = sourceSets.replacecallTest.output.classesDirs
-  classpath = sourceSets.replacecallTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
-  // use the replacecall agent using the exclusions file from replacecallTest/resources
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  /* Turn off HTML reports -- handled by testReport task */
-  reports.html.required = false
-}
-check.dependsOn(replacecallTest)
-
-jacoco {
-  toolVersion = "${jacocoVersion}"
-}
-
-jacocoTestReport {
-  group = "Report"
-  reports {
-    xml.required = true
-    html.required = true
-  }
-}
-// Expects these files to exist in build/javcoco/:
-//   agentTest.exec
-//   coveredTest.exec
-//   systemTest.exec
-//   test.exec
-// What is creating the agentTest.exec files, and how do I create it?
-// test.exec is the default, though it is also created by "gradle test".
-// jacocoTestReport.dependsOn(agentTest)
-jacocoTestReport.dependsOn(coveredTest)
-jacocoTestReport.dependsOn(test)
-
-check.dependsOn(jacocoTestReport)
 
 /*
  * Task to build the root directory of working directories used by the
@@ -1049,6 +970,15 @@ tasks.register("validateSite", Exec) {
   commandLine("html5validator", "--root", "src/docs/")
 }
 validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+
+/* Validate Markdown files. */
+tasks.register("markdownlint", Exec) {
+  group = "Verification"
+  description = "Run markdownlint-cli2 linter on Markdown files"
+  executable = "markdownlint-cli2"
+  args(".")
+}
+check.dependsOn("markdownlint")
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {

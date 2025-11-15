@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -147,6 +148,7 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case ORIENTEERING:
         inputSequenceSelector =
+            // The argument is the sequences *so far*, probably just literals and seeds.
             new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       case SMALL_TESTS:
@@ -157,6 +159,15 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.grt_fuzzing) {
+      Set<TypedOperation> sideEffectingMethods =
+          new HashSet<>(
+              CollectionsPlume.filter(
+                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
+      GrtObjectFuzzer.getInstance()
+          .initialize(sideEffectingMethods, this.componentManager, this.inputSequenceSelector);
     }
   }
 
@@ -711,7 +722,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // variable types.
           assert typesToVars.keySet().contains(match);
           // TODO: eliminate the need for the copy performed by `new ArrayList`.
-          candidateVars.add(SIList.fromList(new ArrayList<>(typesToVars.getValues(match))));
+          candidateVars.add(SIList.from(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -757,7 +768,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
         Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         SIList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
         candidates = SIList.concat(l1, l2);
@@ -766,10 +777,10 @@ public class ForwardGenerator extends AbstractGenerator {
       } else if (inputType.isParameterized()
           && ((InstantiatedType) inputType)
               .getGenericClassType()
-              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+              .isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
-        SIList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
@@ -781,7 +792,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
-        candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+        candidates = componentManager.getSequencesForParam(operation, i, isReceiver);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
@@ -923,8 +934,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Try every element of the list, in order.
     int numCandidates = candidates.size();
     List<VarAndSeq> validResults = new ArrayList<>(numCandidates);
-    for (int i = 0; i < numCandidates; i++) { // SIList has no iterator
-      Sequence s = candidates.get(i);
+    for (Sequence s : candidates) {
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
     }
