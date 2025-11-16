@@ -6,8 +6,6 @@ nonSystemTest_job(17)
 systemTest_job(17)
 nonSystemTest_job(21)
 systemTest_job(21)
-nonSystemTest_job(24)
-systemTest_job(24)
 nonSystemTest_job(25)
 systemTest_job(25)
 misc_job
