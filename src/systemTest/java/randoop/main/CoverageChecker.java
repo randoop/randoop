@@ -333,15 +333,17 @@ class CoverageChecker {
       failureMessage.append(totalCoveredMethodsMsg);
     }
     if (!missingMethods.isEmpty()) {
-      failureMessage.append(String.format("Expected methods not covered:%n"));
+      failureMessage.append(
+          String.format("Expected methods not covered (given lines adjust goals):%n"));
       for (String name : missingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s exclude%d%n", name, javaVersion));
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
-      failureMessage.append(String.format("Excluded methods that are covered:%n"));
+      failureMessage.append(
+          String.format("Excluded methods that are covered (given lines adjust goals):%n"));
       for (String name : shouldBeMissingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
     }
     String msg = failureMessage.toString();
