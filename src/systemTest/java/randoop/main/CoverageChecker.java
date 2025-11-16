@@ -144,11 +144,6 @@ class CoverageChecker {
     methods(methodSpecs);
   }
 
-  /** Unmodifiable collection. */
-  private static final HashSet<String> loggedMethods =
-      new HashSet<>(
-          Arrays.asList("java7.util7.Collections.unmodifiableCollection(java7.util7.Collection)"));
-
   /**
    * Add a method name to the included method names in this checker.
    *
@@ -158,9 +153,6 @@ class CoverageChecker {
     includedMethodsGoal.add(methodName);
     excludedMethodsGoal.remove(methodName);
     ignoredMethodsGoal.remove(methodName);
-    if (loggedMethods.contains(methodName)) {
-      System.out.printf("including " + methodName);
-    }
   }
 
   /**
@@ -172,9 +164,6 @@ class CoverageChecker {
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.add(methodName);
     ignoredMethodsGoal.remove(methodName);
-    if (loggedMethods.contains(methodName)) {
-      System.out.printf("excluding " + methodName);
-    }
   }
 
   /**
@@ -186,9 +175,6 @@ class CoverageChecker {
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.remove(methodName);
     ignoredMethodsGoal.add(methodName);
-    if (loggedMethods.contains(methodName)) {
-      System.out.printf("ignoring " + methodName);
-    }
   }
 
   /** Matches digits at the end of a string. */
@@ -396,7 +382,7 @@ class CoverageChecker {
 
   /**
    * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
-   * inner class methods, and hashCode().
+   * inner class methods, and {@code hashCode()}.
    */
   private static final Pattern IGNORE_PATTERN =
       Pattern.compile("\\$jacocoInit|access\\$\\d+|(\\.hashCode\\(\\)$)");
