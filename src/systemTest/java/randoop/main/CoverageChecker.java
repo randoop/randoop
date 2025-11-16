@@ -39,6 +39,7 @@ class CoverageChecker {
    * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
    * covered, but this set does not contain them.
    */
+  // This isn't read; the main purpose of `include()` is to remove from the other two sets.
   private final Set<String> includedMethodsGoal = new HashSet<>();
 
   /** The methods that must not be covered. */
@@ -219,20 +220,21 @@ class CoverageChecker {
       }
       int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
-        throw new Error(
-            "Bad method spec, lacks action at end "
-                + "(exclude{,NN,NN+}, ignore{,NN,NN+}, or include): "
-                + s);
+        throw new Error("Bad method spec, lacks action at end: " + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
-      boolean plus;
+
+      boolean orGreater = false;
+      boolean orLess = false;
       if (action.endsWith("+")) {
         action = action.substring(0, action.length() - 1);
-        plus = true;
-      } else {
-        plus = false;
+        orGreater = true;
+      } else if (action.endsWith("-")) {
+        action = action.substring(0, action.length() - 1);
+        orLess = true;
       }
+
       int actionJdk;
       Matcher m = TRAILING_NUMBER_PATTERN.matcher(action);
       if (m.matches()) {
@@ -243,8 +245,9 @@ class CoverageChecker {
       }
 
       if (actionJdk == 0
-          || (!plus && javaVersion == actionJdk)
-          || (plus && javaVersion >= actionJdk)) {
+          || (javaVersion == actionJdk)
+          || (orGreater && javaVersion > actionJdk)
+          || (orLess && javaVersion < actionJdk)) {
         switch (action) {
           case "exclude":
             exclude(methodName);
