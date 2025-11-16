@@ -241,6 +241,10 @@ class CoverageChecker {
         action = m.group(1);
         actionJdk = Integer.parseInt(m.group(2));
       } else {
+        if (orGreater || orLess) {
+          throw new RandoopUsageError(
+              "Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+        }
         actionJdk = 0;
       }
 
