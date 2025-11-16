@@ -45,7 +45,7 @@ class CoverageChecker {
   private final Set<String> excludedMethodsGoal = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final Set<String> dontCareMethodsGoal = new HashSet<>();
+  private final Set<String> ignoredMethodsGoal = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -144,6 +144,11 @@ class CoverageChecker {
     methods(methodSpecs);
   }
 
+  /** Unmodifiable collection. */
+  private static final HashSet<String> loggedMethods =
+      new HashSet<>(
+          Arrays.asList("java7.util7.Collections.unmodifiableCollection(java7.util7.Collection)"));
+
   /**
    * Add a method name to the included method names in this checker.
    *
@@ -152,7 +157,10 @@ class CoverageChecker {
   void include(String methodName) {
     includedMethodsGoal.add(methodName);
     excludedMethodsGoal.remove(methodName);
-    dontCareMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.remove(methodName);
+    if (loggedMethods.contains(methodName)) {
+      System.out.printf("including " + methodName);
+    }
   }
 
   /**
@@ -163,7 +171,10 @@ class CoverageChecker {
   void exclude(String methodName) {
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.add(methodName);
-    dontCareMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.remove(methodName);
+    if (loggedMethods.contains(methodName)) {
+      System.out.printf("excluding " + methodName);
+    }
   }
 
   /**
@@ -174,7 +185,10 @@ class CoverageChecker {
   void ignore(String methodName) {
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.remove(methodName);
-    dontCareMethodsGoal.add(methodName);
+    ignoredMethodsGoal.add(methodName);
+    if (loggedMethods.contains(methodName)) {
+      System.out.printf("ignoring " + methodName);
+    }
   }
 
   /** Matches digits at the end of a string. */
@@ -253,7 +267,7 @@ class CoverageChecker {
             ignore(methodName);
             break;
           case "include":
-            // nothing to do
+            include(methodName);
             break;
           default:
             // Not RandoopBug because that isn't available here.
@@ -298,7 +312,7 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname) && !dontCareMethodsGoal.contains(methodname)) {
+        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
           if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);
