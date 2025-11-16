@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -57,7 +58,9 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -105,6 +108,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -424,7 +428,11 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
+
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
+    }
     operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
@@ -669,6 +677,42 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     if (GenInputsAbstract.progressdisplay) {
+      if (GenInputsAbstract.demand_driven) {
+        DemandDrivenInputCreator demandDrivenInputCreator =
+            componentMgr.getDemandDrivenInputCreator();
+
+        // Build an SUT runtime-class set.
+        Set<Class<?>> sutRuntime =
+            operationModel
+                .getClassTypes() // Set<ClassOrInterfaceType>
+                .stream()
+                .map(ClassOrInterfaceType::getRuntimeClass)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        // Filter visited types down to non-SUT.
+        Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
+        Set<Type> nonSutTypes = new LinkedHashSet<>(CollectionsPlume.mapCapacity(visited.size()));
+        for (Type t : visited) {
+          if (!sutRuntime.contains(t.getRuntimeClass())) {
+            nonSutTypes.add(t);
+          }
+        }
+
+        // Build the reporting helper and log.
+        NonSutClassSet nonSutClassSet = new NonSutClassSet(nonSutTypes);
+        DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
+
+        // Print classes that could not be instantiated by demand-driven.
+        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
+        DemandDrivenLog.printUninstantiableTypes(uninstantiableTypes);
+
+        if (DemandDrivenLog.isLoggingOn()) {
+          // Log all non-SUT classes, including those in the JDK that were not specified
+          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+          // Log all uninstantiable types
+          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        }
+      }
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }
