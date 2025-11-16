@@ -44,8 +44,10 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
     return SIList.concat(listOfLists);
   }
 
+  // TODO: Why isn't this defined in `ClassOrInterfaceType`?
   /**
-   * Gets superclasses for the given class. Stops at null or Object (excludes Object from result).
+   * Gets superclasses for the given class, not including Object. Does not include implemented
+   * interfaces.
    *
    * @param cls the class/interface type
    * @return the superclasses for the given type

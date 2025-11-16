@@ -2,7 +2,7 @@ changequote dnl
 changequote(`[',`]')dnl
 changecom([], [Disable comments, that is, expand within them.])dnl
 ifelse([The built-in "dnl" macro means "discard to next line".,])dnl
-define([canary_version], [21])dnl
+define([canary_version], [24])dnl
 ifelse([each macro takes two arguments, the OS name and the JDK version])dnl
 dnl
 define([circleci_boilerplate_pre], [dnl
@@ -12,12 +12,13 @@ define([circleci_boilerplate_pre], [dnl
 
       - restore_cache:
           keys:
-            - source-v2-{{ .Branch }}-{{ .Revision }}
-            - source-v2-{{ .Branch }}-
-            - source-v2-
-      - checkout
+            - source-v2$1-{{ .Branch }}-{{ .Revision }}
+            - source-v2$1-{{ .Branch }}-
+            - source-v2$1-
+      - checkout[]ifelse($1,full,[:
+          method: full])
       - save_cache:
-          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          key: source-v2$1-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
 
@@ -74,12 +75,12 @@ define([misc_job], [dnl
   misc:
     docker:
       - image: mdernst/randoop-ubuntu-jdkany
-circleci_boilerplate_pre
+circleci_boilerplate_pre(full)
       - run: ./scripts/test-misc.sh
 circleci_boilerplate_post])dnl
 dnl
 dnl
-ifelse([Example arguments: (8, systemTest_job)],,)dnl
+ifelse([Example arguments: (8, systemTest)],,)dnl
 define([job_dependences], [dnl
       - $2-jdk$1[]dnl
 ifelse($1,canary_version,,[:

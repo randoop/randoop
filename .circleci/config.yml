@@ -539,12 +539,13 @@ jobs:
 
       - restore_cache:
           keys:
-            - source-v2-{{ .Branch }}-{{ .Revision }}
-            - source-v2-{{ .Branch }}-
-            - source-v2-
-      - checkout
+            - source-v2full-{{ .Branch }}-{{ .Revision }}
+            - source-v2full-{{ .Branch }}-
+            - source-v2full-
+      - checkout:
+          method: full
       - save_cache:
-          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          key: source-v2full-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
 
@@ -565,38 +566,46 @@ jobs:
 workflows:
   build:
     jobs:
+      - nonSystemTest-jdk8:
+          requires:
+            - misc
+            - nonSystemTest-jdk24
+      - systemTest-jdk8:
+          requires:
+            - misc
+            - systemTest-jdk24
       - nonSystemTest-jdk11:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk11:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
       - nonSystemTest-jdk17:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk17:
           requires:
             - misc
-            - systemTest-jdk21
-      - nonSystemTest-jdk21
-      - systemTest-jdk21
-      - nonSystemTest-jdk24:
+            - systemTest-jdk24
+      - nonSystemTest-jdk21:
           requires:
             - misc
-            - nonSystemTest-jdk21
-      - systemTest-jdk24:
+            - nonSystemTest-jdk24
+      - systemTest-jdk21:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
+      - nonSystemTest-jdk24
+      - systemTest-jdk24
       - nonSystemTest-jdk25:
           requires:
             - misc
-            - nonSystemTest-jdk21
+            - nonSystemTest-jdk24
       - systemTest-jdk25:
           requires:
             - misc
-            - systemTest-jdk21
+            - systemTest-jdk24
       - misc

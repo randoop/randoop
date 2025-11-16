@@ -11,6 +11,8 @@ include([../.azure/jobs.m4])dnl
 workflows:
   build:
     jobs:
+job_dependences(8, nonSystemTest)
+job_dependences(8, systemTest)
 job_dependences(11, nonSystemTest)
 job_dependences(11, systemTest)
 job_dependences(17, nonSystemTest)
