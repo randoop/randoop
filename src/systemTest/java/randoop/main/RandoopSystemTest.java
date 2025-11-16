@@ -198,7 +198,7 @@ public class RandoopSystemTest {
 
     // The file is ../../../resources/test-methodspecs/CollectionsTest.methodspecs .
     CoverageChecker coverageChecker =
-        new CoverageChecker(options, 57, "CollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 57, "CollectionsTest.methodspecs");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
@@ -226,7 +226,7 @@ public class RandoopSystemTest {
 
     // The file is ../../../resources/test-methodspecs/NaiveCollectionsTest.methodspecs .
     CoverageChecker coverageChecker =
-        new CoverageChecker(options, 126, "NaiveCollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.methodspecs");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
