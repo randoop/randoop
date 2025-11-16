@@ -74,7 +74,7 @@ public final class MethodReflectionCode extends ReflectionCode {
       int numArgs = (receiver == null ? 0 : 1) + inputs.length;
       String message =
           String.format(
-              "error invoking %s on %s:", method, StringsPlume.nplural(numArgs, "argument"));
+              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument"));
       if (receiver != null) {
         message += lineSep + "  receiver: " + StringsPlume.toStringAndClass(receiver);
       }

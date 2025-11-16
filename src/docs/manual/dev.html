@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
-<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
+<meta charset="utf-8">
+<link rel="stylesheet" href="stylesheets/main.css" type="text/css">
+<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png">
 <title>Randoop Developer's Manual</title>
 </head>
 <body>
@@ -182,27 +182,10 @@
     <td>to compile the <code>test</code> source set</td>
   </tr>
   <tr>
-    <td><code>./gradlew compileCoveredTestJava</code></td>
-    <td>to compile the <code>coveredTest</code> source set</td>
-  </tr>
-  <tr>
     <td><code>./gradlew manual</code></td>
     <td>to update the manual from the source Javadoc</td>
   </tr>
 </table>
-<p>
-  Compiling uses the concept of
-  <a href="https://docs.gradle.org/current/userguide/java_plugin.html"><i>source sets</i></a>.
-  A source set is a grouping of source files that can have its own set of
-  dependencies and tasks.
-  For instance, in the Randoop <code>build.gradle</code> there is the
-  <code>coveredTest</code> and <code>replacecallTest</code> source sets that
-  are separate from the <code>test</code> sourceset because the test classes
-  must run using the <code>covered-class</code> and <code>replacecall</code> Java
-  agents.
-  The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
-  and the Randoop build script defines others to better structure the build process.
-</p>
 
 <p>
 Gradle allows you to run multiple tasks.  For instance, for a clean build,
@@ -448,8 +431,8 @@ cd randoop-fork-USER-branch-BRANCHNAME
   As you add new functionality to Randoop, you should also add new tests.
   Randoop has three kinds of tests:
   tests of Randoop internal classes (under directory <code>src/test</code>),
-  tests of Randoop Java agents (under directories <code>src/coveredTest</code>
-  and <code>src/replacecallTest</code>), and
+  tests of Randoop Java agents (under directories <code>covered-class/src/test</code>
+  and <code>replacecall/src/agentTest</code>), and
   system tests that run Randoop on input classes.
   All of the tests are written as JUnit classes, but are separate because each
   needs to be executed differently.
