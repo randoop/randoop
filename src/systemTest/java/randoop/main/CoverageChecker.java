@@ -242,8 +242,7 @@ class CoverageChecker {
         actionJdk = Integer.parseInt(m.group(2));
       } else {
         if (orGreater || orLess) {
-          throw new RandoopUsageError(
-              "Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+          throw new Error("Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
         }
         actionJdk = 0;
       }
@@ -263,7 +262,6 @@ class CoverageChecker {
             include(methodName);
             break;
           default:
-            // Not RandoopBug because that isn't available here.
             throw new Error("Unrecognized action " + action + " in method spec: " + s);
         }
       }
