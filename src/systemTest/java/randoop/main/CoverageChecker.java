@@ -182,9 +182,9 @@ class CoverageChecker {
   private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
 
   /**
-   * Add method names to be excluded, ignored, or included (included has no effect).
+   * Add method names to be excluded, ignored, or included. For documentation, see {@link
+   * #methods(List)}.
    *
-   * @see #methods(List)
    * @param methodSpecs method specifications
    */
   void methods(String... methodSpecs) {
@@ -241,6 +241,10 @@ class CoverageChecker {
         action = m.group(1);
         actionJdk = Integer.parseInt(m.group(2));
       } else {
+        if (orGreater || orLess) {
+          throw new RandoopUsageError(
+              "Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+        }
         actionJdk = 0;
       }
 
@@ -329,15 +333,17 @@ class CoverageChecker {
       failureMessage.append(totalCoveredMethodsMsg);
     }
     if (!missingMethods.isEmpty()) {
-      failureMessage.append(String.format("Expected methods not covered:%n"));
+      failureMessage.append(
+          String.format("Expected methods not covered (given lines adjust goals):%n"));
       for (String name : missingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s exclude%d%n", name, javaVersion));
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
-      failureMessage.append(String.format("Excluded methods that are covered:%n"));
+      failureMessage.append(
+          String.format("Excluded methods that are covered (given lines adjust goals):%n"));
       for (String name : shouldBeMissingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
     }
     String msg = failureMessage.toString();
