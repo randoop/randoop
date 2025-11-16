@@ -35,11 +35,17 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
+  /**
+   * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
+   * covered, but this set does not contain them.
+   */
+  private final Set<String> includedMethodsGoal = new HashSet<>();
+
   /** The methods that must not be covered. */
-  private final Set<String> excludedMethods = new HashSet<>();
+  private final Set<String> excludedMethodsGoal = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final Set<String> dontCareMethods = new HashSet<>();
+  private final Set<String> ignoredMethodsGoal = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -139,12 +145,25 @@ class CoverageChecker {
   }
 
   /**
+   * Add a method name to the included method names in this checker.
+   *
+   * @param methodName the name to add
+   */
+  void include(String methodName) {
+    includedMethodsGoal.add(methodName);
+    excludedMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.remove(methodName);
+  }
+
+  /**
    * Add a method name to the excluded method names in this checker.
    *
    * @param methodName the name to add
    */
   void exclude(String methodName) {
-    excludedMethods.add(methodName);
+    includedMethodsGoal.remove(methodName);
+    excludedMethodsGoal.add(methodName);
+    ignoredMethodsGoal.remove(methodName);
   }
 
   /**
@@ -153,7 +172,9 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void ignore(String methodName) {
-    dontCareMethods.add(methodName);
+    includedMethodsGoal.remove(methodName);
+    excludedMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.add(methodName);
   }
 
   /** Matches digits at the end of a string. */
@@ -162,13 +183,7 @@ class CoverageChecker {
   /**
    * Add method names to be excluded, ignored, or included (included has no effect).
    *
-   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or &ge; 22.
-   *
-   * <p>This format is intended to make it easy to sort the arguments.
-   *
+   * @see #methods(List)
    * @param methodSpecs method specifications
    */
   void methods(String... methodSpecs) {
@@ -176,7 +191,8 @@ class CoverageChecker {
   }
 
   /**
-   * Add method names to be excluded, ignored, or included (included has no effect).
+   * Add method names to be excluded, ignored, or included (included has no effect, except to
+   * override/remove a previous exclusion or ignoring).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
@@ -184,6 +200,10 @@ class CoverageChecker {
    * 21, or &ge; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
+   *
+   * <p>When multiple lines apply to a single method, the last one takes precedence. (TODO: Should
+   * this be changed to the most restrictive one taking precedence? That would require a different
+   * implementation.)
    *
    * @param methodSpecs method specifications
    */
@@ -233,7 +253,7 @@ class CoverageChecker {
             ignore(methodName);
             break;
           case "include":
-            // nothing to do
+            include(methodName);
             break;
           default:
             // Not RandoopBug because that isn't available here.
@@ -278,8 +298,8 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
-          if (excludedMethods.contains(methodname)) {
+        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
+          if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);
             }
@@ -362,7 +382,7 @@ class CoverageChecker {
 
   /**
    * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
-   * inner class methods, and hashCode().
+   * inner class methods, and {@code hashCode()}.
    */
   private static final Pattern IGNORE_PATTERN =
       Pattern.compile("\\$jacocoInit|access\\$\\d+|(\\.hashCode\\(\\)$)");
