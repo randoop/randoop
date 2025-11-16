@@ -103,7 +103,7 @@ import randoop.util.Log;
   public boolean isCompilable(
       final String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    boolean result = compile(packageName, classname, javaSource, diagnostics);
+    boolean result = compile(classname, javaSource, diagnostics);
 
     // Compilation can create multiple .class files; this only deletes the main one.
     Path dir = Paths.get((packageName == null) ? "." : packageName.replace(".", "/"));
@@ -143,7 +143,7 @@ import randoop.util.Log;
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    boolean success = compile(packageName, classname, javaSource, diagnostics);
+    boolean success = compile(classname, javaSource, diagnostics);
     if (!success) {
       throw new SequenceCompilerException("Compilation failed", javaSource, diagnostics);
     }
@@ -154,16 +154,13 @@ import randoop.util.Log;
    * #isCompilable(String, String, String)} methods: compiles the given class using the given
    * diagnostics collector.
    *
-   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
-  @SuppressWarnings("UnusedVariable") // TODO: remove packageName formal parameter
   private boolean compile(
-      final String packageName,
       final String classname,
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
