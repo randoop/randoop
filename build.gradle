@@ -216,7 +216,7 @@ dependencies {
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
-  implementation("org.apache.commons:commons-lang3:3.19.0")
+  implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("commons-io:commons-io:${commonsIoVersion}")
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
