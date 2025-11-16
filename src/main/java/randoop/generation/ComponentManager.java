@@ -77,7 +77,7 @@ public class ComponentManager {
    */
   private @Nullable PackageLiterals packageLiterals = null;
 
-  /** Create an empty component manager, with an empty seed sequence set. */
+  /** Create an empty component manager, with an immutable empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
