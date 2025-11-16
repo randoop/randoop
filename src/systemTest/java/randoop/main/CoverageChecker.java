@@ -182,9 +182,9 @@ class CoverageChecker {
   private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
 
   /**
-   * Add method names to be excluded, ignored, or included (included has no effect).
+   * Add method names to be excluded, ignored, or included. For documentation, see {@link
+   * #methods(List)}.
    *
-   * @see #methods(List)
    * @param methodSpecs method specifications
    */
   void methods(String... methodSpecs) {
