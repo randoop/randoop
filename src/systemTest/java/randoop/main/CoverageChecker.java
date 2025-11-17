@@ -35,6 +35,9 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
+  /** The name of the file that contains the method specs, or null. */
+  private static @Nullable String methodSpecsFile;
+
   /**
    * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
    * covered, but this set does not contain them.
@@ -106,7 +109,7 @@ class CoverageChecker {
 
   /**
    * Create a coverage checker using the classnames from the option set, and the method exclusions
-   * in the given file
+   * in the given file.
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
@@ -116,17 +119,18 @@ class CoverageChecker {
       RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
-    String resource = "test-methodspecs/" + methodSpecsFile;
-    Class<?> thisClass = MethodHandles.lookup().lookupClass();
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().thisClass.getClassLoader();
+    String resourceName = "test-methodspecs/" + methodSpecsFile;
+    result.methodSpecsFile = cloader.getResource(resourceName).getPath();
     List<String> methodSpecs;
-    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+    try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
-        throw new Error("Resource not found on classpath: " + resource);
+        throw new Error("Resource not found on classpath: " + resourceName);
       }
       methodSpecs =
           new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
-      throw new Error("Problem reading resource " + resource, e);
+      throw new Error("Problem reading resource " + resourceName, e);
     }
     result.methods(methodSpecs.toArray(new String[0]));
     return result;
@@ -330,16 +334,22 @@ class CoverageChecker {
     if (numCoveredMethods < minMethodsToCover) {
       failureMessage.append(totalCoveredMethodsMsg);
     }
+    String inFileName = "";
+    if (methodSpecsFile != null) {
+      inFileName = String.format("in%n%s", +methodSpecsFile);
+    }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(
-          String.format("Expected methods not covered (given lines adjust goals):%n"));
+          String.format(
+              "Expected methods not covered (given lines adjust goals%s):%n", inFileName));
       for (String name : missingMethods) {
         failureMessage.append(String.format("  %s exclude%d%n", name, javaVersion));
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
       failureMessage.append(
-          String.format("Excluded methods that are covered (given lines adjust goals):%n"));
+          String.format(
+              "Excluded methods that are covered (given lines adjust goals%s):%n", inFileName));
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
