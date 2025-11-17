@@ -99,7 +99,7 @@ java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
-java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude
+java7.util7.Collections.unmodifiableSet(java7.util7.Set) ignore
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17+
 java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore
 java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude
