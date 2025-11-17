@@ -34,7 +34,7 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound substitute(Substitution substitution) {
-    // if the substitution has no effect on this bound just return this
+    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
