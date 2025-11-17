@@ -336,7 +336,7 @@ class CoverageChecker {
     }
     String inFileName = "";
     if (methodSpecsFile != null) {
-      inFileName = String.format("in%n%s", +methodSpecsFile);
+      inFileName = String.format("in%n%s", methodSpecsFile);
     }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(
