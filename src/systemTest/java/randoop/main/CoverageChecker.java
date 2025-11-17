@@ -120,7 +120,7 @@ class CoverageChecker {
       RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
-    ClassLoader cloader = MethodHandles.lookup().lookupClass().thisClass.getClassLoader();
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
     String resourceName = "test-methodspecs/" + methodSpecsFile;
     result.methodSpecsFile = cloader.getResource(resourceName).getPath();
     List<String> methodSpecs;
