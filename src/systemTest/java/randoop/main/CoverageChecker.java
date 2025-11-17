@@ -36,7 +36,7 @@ class CoverageChecker {
   private final int minMethodsToCover;
 
   /** The name of the file that contains the method specs, or null. */
-  private static @Nullable String methodSpecsFile;
+  private @Nullable String methodSpecsFile;
 
   /**
    * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
