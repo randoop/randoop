@@ -133,12 +133,11 @@ import randoop.util.Log;
   /**
    * Compiles the given class. If this method returns normally, compilation was successful.
    *
-   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  private void compile(final String packageName, final String classname, final String javaSource)
+  private void compile(final String classname, final String javaSource)
       throws SequenceCompilerException {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -150,9 +149,8 @@ import randoop.util.Log;
   }
 
   /**
-   * A helper method for the {@link #compile(String, String, String)} and {@link
-   * #isCompilable(String, String, String)} methods: compiles the given class using the given
-   * diagnostics collector.
+   * A helper method for the {@link #compile(String, String)} and {@link #isCompilable(String,
+   * String, String)} methods: compiles the given class using the given diagnostics collector.
    *
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
@@ -220,7 +218,7 @@ import randoop.util.Log;
       final @Identifier String classname,
       final String javaSource)
       throws SequenceCompilerException {
-    compile(packageName, classname, javaSource);
+    compile(classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
     File dir = new File("").getAbsoluteFile();
     return loadClassFile(dir, fqName);
