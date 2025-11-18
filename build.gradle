@@ -35,7 +35,7 @@ ext {
   isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
   javadocMemberLevel = JavadocMemberLevel.PROTECTED
 
-  // The JDK for running tests: the jdkTestVersion property or if not set, JavaVersion.current()
+  // The JDK for running tests: the jdkTestVersion property, or if not set, JavaVersion.current().
   testJdkVersionString = providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion())
   testJdkVersion = Integer.valueOf(testJdkVersionString)
 }
@@ -149,7 +149,6 @@ allprojects {
       ]
     }
   }
-
 
   dependencies {
     compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
