@@ -25,6 +25,8 @@ plugins {
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   id("com.gorylenko.gradle-git-properties").version("2.5.3")
+
+  id("pmd")
 }
 
 ext {
@@ -92,7 +94,7 @@ allprojects {
       plumelib("org.plumelib:options:2.0.3")
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib("org.plumelib:plume-util:1.11.0")
+    plumelib("org.plumelib:plume-util:1.12.2")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib("org.plumelib:reflection-util:1.1.5")
   }
@@ -237,7 +239,7 @@ dependencies {
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
-  implementation("org.apache.commons:commons-lang3:3.19.0")
+  implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("commons-io:commons-io:${commonsIoVersion}")
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
@@ -315,9 +317,8 @@ tasks.register("compileAll") {
 assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
-ext.isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 allprojects { subproject ->
-  if (isJava11orHigher) {
+  if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
       format "misc", {
@@ -375,6 +376,12 @@ allprojects { subproject ->
       }
       options.errorprone.enabled = isJava17orHigher
     }
+  }
+}
+
+allprojects {
+  pmd {
+    consoleOutput = true
   }
 }
 

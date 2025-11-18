@@ -41,7 +41,7 @@ import org.apache.bcel.generic.LDC_W;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
@@ -748,7 +748,7 @@ public class ClassFileConstants {
    */
   static void registerDoubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -759,7 +759,7 @@ public class ClassFileConstants {
    */
   static void registerFloatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -770,7 +770,7 @@ public class ClassFileConstants {
    */
   static void registerIntegerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -781,7 +781,7 @@ public class ClassFileConstants {
    */
   static void registerLongConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -792,7 +792,7 @@ public class ClassFileConstants {
    */
   static void registerStringConstant(String value, ConstantSet cs) {
     cs.strings.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**
@@ -803,7 +803,7 @@ public class ClassFileConstants {
    */
   static void registerClassConstant(Class<?> value, ConstantSet cs) {
     cs.classes.add(value);
-    CollectionsPlume.incrementMap(cs.constantFrequency, value);
+    MapsP.incrementMap(cs.constantFrequency, value);
   }
 
   /**

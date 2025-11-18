@@ -45,6 +45,7 @@ import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
@@ -449,8 +450,7 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
     Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
     Set<Sequence> components =
-        new LinkedHashSet<>(
-            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+        new LinkedHashSet<>(MapsP.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
@@ -559,7 +559,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
+    Set<Sequence> excludeSet = new LinkedHashSet<>(MapsP.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -772,8 +772,7 @@ public class GenTests extends GenInputsAbstract {
 
     MultiMap<Type, TypedClassOperation> result =
         new MultiMap<>(
-            CollectionsPlume.mapCapacity(
-                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
+            MapsP.mapCapacity(sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;
