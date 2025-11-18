@@ -337,7 +337,13 @@ class CoverageChecker {
     }
     String inFileName = "";
     if (methodSpecsFile != null) {
-      inFileName = String.format("in%n%s", methodSpecsFile);
+      methodSpecsFile =
+          methodSpecsFile.replaceFirst(
+              "/build/resources/systemTest/", "/src/systemTest/resources/");
+      if (methodSpecsFile.startsWith("/__w/1/s/")) {
+        methodSpecsFile = methodSpecsFile.substring(9);
+      }
+      inFileName = String.format(" in%n%s", methodSpecsFile);
     }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(
