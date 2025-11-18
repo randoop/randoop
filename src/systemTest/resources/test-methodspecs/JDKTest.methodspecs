@@ -13,8 +13,9 @@ java7.util7.Arrays.binarySearch(char[], int, int, char) ignore
 java7.util7.Arrays.binarySearch(float[], float) ignore
 java7.util7.Arrays.binarySearch(float[], int, int, float) ignore
 java7.util7.Arrays.binarySearch(int[], int, int, int) ignore
-java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object) ignore
+java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) exclude
+java7.util7.Arrays.binarySearch(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) include8
 java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object, java7.util7.Comparator) ignore
 java7.util7.Arrays.binarySearch(java.lang.Object[], java.lang.Object, java7.util7.Comparator) ignore17+
 java7.util7.Arrays.binarySearch(long[], int, int, long) ignore17+
@@ -37,10 +38,10 @@ java7.util7.Arrays.hashCode(int[]) exclude
 java7.util7.Arrays.hashCode(java.lang.Object[]) exclude
 java7.util7.Arrays.hashCode(long[]) exclude
 java7.util7.Arrays.hashCode(short[]) exclude
-java7.util7.Arrays.legacyMergeSort(java.lang.Object[], int, int, java7.util7.Comparator) exclude
-java7.util7.Arrays.legacyMergeSort(java.lang.Object[], int, int) exclude
-java7.util7.Arrays.legacyMergeSort(java.lang.Object[], java7.util7.Comparator) exclude
 java7.util7.Arrays.legacyMergeSort(java.lang.Object[]) exclude
+java7.util7.Arrays.legacyMergeSort(java.lang.Object[], int, int) exclude
+java7.util7.Arrays.legacyMergeSort(java.lang.Object[], int, int, java7.util7.Comparator) exclude
+java7.util7.Arrays.legacyMergeSort(java.lang.Object[], java7.util7.Comparator) exclude
 java7.util7.Arrays.med3(byte[], int, int, int) exclude
 java7.util7.Arrays.med3(char[], int, int, int) exclude
 java7.util7.Arrays.med3(double[], int, int, int) exclude
@@ -48,10 +49,10 @@ java7.util7.Arrays.med3(float[], int, int, int) exclude
 java7.util7.Arrays.med3(int[], int, int, int) exclude
 java7.util7.Arrays.med3(long[], int, int, int) exclude
 java7.util7.Arrays.med3(short[], int, int, int) exclude
-java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude
 java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int) exclude
-java7.util7.Arrays.sort(float[], int, int) ignore
+java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude
 java7.util7.Arrays.sort(float[]) ignore
+java7.util7.Arrays.sort(float[], int, int) ignore
 java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore
 java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore
 java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude
@@ -68,8 +69,8 @@ java7.util7.BitSet.valueOf(byte[]) ignore
 java7.util7.BitSet.valueOf(java.nio.LongBuffer) exclude
 java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+
-java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) ignore
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude
+java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) ignore
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude
 java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # inconsistent Java 8 vs 9, so ignore
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
@@ -79,22 +80,22 @@ java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class)
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
-java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude
-java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
+java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
-java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude
+java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection) exclude
-java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude
+java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude
 java7.util7.Collections.min(java7.util7.Collection) exclude
+java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
 java7.util7.Collections.shuffle(java7.util7.List) exclude
 java7.util7.Collections.singletonIterator(java.lang.Object) exclude
 java7.util7.Collections.singletonIterator(java.lang.Object) ignore
 java7.util7.Collections.singletonIterator(java.lang.Object) ignore17+
-java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude
 java7.util7.Collections.sort(java7.util7.List) exclude
+java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude
@@ -136,8 +137,8 @@ java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.get(java.lang.Object) ignore17+
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
-java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.parentOf(java7.util7.TreeMap.Entry) exclude
@@ -152,21 +153,21 @@ java7.util7.TreeMap.setColor(java7.util7.TreeMap.Entry, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude
-java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.tailMap(java.lang.Object) exclude
+java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
 java7.util7.TreeSet.first() ignore
-java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.headSet(java.lang.Object) exclude
+java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.last() ignore
 java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeSet.remove(java.lang.Object) ignore17+
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore
-java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.tailSet(java.lang.Object) exclude
+java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Vector.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.Vector.addAll(java7.util7.Collection) ignore17+
