@@ -22,6 +22,10 @@ fi
 if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
   export JAVA_HOME="${JAVA21_HOME}"
 fi
+if [ -z "${JAVA_GRADLE_HOME:-}" ]; then
+  echo "Error: Neither Java 21 nor Java 24 found. Cannot run Gradle."
+  exit 1
+fi
 
 # Download dependencies, trying a second time if there is a failure.
 (./gradlew --write-verification-metadata sha256 help --dry-run \

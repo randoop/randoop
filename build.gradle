@@ -103,9 +103,7 @@ allprojects {
     withSourcesJar()
   }
 
-  // The Checker Framework plugin doesn't use the main Java toolchain version rather than the Java
-  // version of the compiler. This means it adds `-Xbootclasspath/p` to the compiler options which
-  // is no longer supported. So just skip the Checker Framework when testing JDK 8.
+  // The Checker Framework plugin adds `-Xbootclasspath/p` to the compiler options when it should not. So just skip the Checker Framework when testing JDK 8.
   if (testJdkVersion > 8) {
     apply plugin: "org.checkerframework"
 
@@ -154,14 +152,14 @@ allprojects {
   dependencies {
     compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
     implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    // TODO: This is causing a build failure.
+    // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
     // checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
 
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
       testCompileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      // TODO: This is causing a build failure.
+      // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
       // checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
@@ -334,7 +332,7 @@ allprojects { subproject ->
         // Use fileTree per https://github.com/diffplug/spotless/issues/399
         targetExclude(fileTree("$projectDir/src/testInput") { include("**/*.java") })
 
-        googleJavaFormat()
+        googleJavaFormat("1.32.0")
         formatAnnotations()
       }
       groovyGradle {
