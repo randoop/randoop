@@ -340,8 +340,11 @@ class CoverageChecker {
       methodSpecsFile =
           methodSpecsFile.replaceFirst(
               "/build/resources/systemTest/", "/src/systemTest/resources/");
+      // Special cases for CI (Azure and CircleCI, respectively).
       if (methodSpecsFile.startsWith("/__w/1/s/")) {
         methodSpecsFile = methodSpecsFile.substring(9);
+      } else if (methodSpecsFile.startsWith("/root/project/")) {
+        methodSpecsFile = methodSpecsFile.substring(14);
       }
       inFileName = String.format(" in%n%s", methodSpecsFile);
     }
