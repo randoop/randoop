@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -34,6 +35,9 @@ class CoverageChecker {
 
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
+
+  /** The name of the file that contains the method specs, or null. */
+  private @Nullable String methodSpecsFile;
 
   /**
    * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
@@ -106,7 +110,7 @@ class CoverageChecker {
 
   /**
    * Create a coverage checker using the classnames from the option set, and the method exclusions
-   * in the given file
+   * in the given file.
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
@@ -116,17 +120,18 @@ class CoverageChecker {
       RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
-    String resource = "test-methodspecs/" + methodSpecsFile;
-    Class<?> thisClass = MethodHandles.lookup().lookupClass();
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
+    String resourceName = "test-methodspecs/" + methodSpecsFile;
+    result.methodSpecsFile = cloader.getResource(resourceName).getPath();
     List<String> methodSpecs;
-    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+    try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
-        throw new Error("Resource not found on classpath: " + resource);
+        throw new Error("Resource not found on classpath: " + resourceName);
       }
       methodSpecs =
           new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
-      throw new Error("Problem reading resource " + resource, e);
+      throw new Error("Problem reading resource " + resourceName, e);
     }
     result.methods(methodSpecs.toArray(new String[0]));
     return result;
@@ -330,16 +335,31 @@ class CoverageChecker {
     if (numCoveredMethods < minMethodsToCover) {
       failureMessage.append(totalCoveredMethodsMsg);
     }
+    String inFileName = "";
+    if (methodSpecsFile != null) {
+      methodSpecsFile =
+          methodSpecsFile.replaceFirst(
+              "/build/resources/systemTest/", "/src/systemTest/resources/");
+      // Special cases for CI (Azure and CircleCI, respectively).
+      if (methodSpecsFile.startsWith("/__w/1/s/")) {
+        methodSpecsFile = methodSpecsFile.substring(9);
+      } else if (methodSpecsFile.startsWith("/root/project/")) {
+        methodSpecsFile = methodSpecsFile.substring(14);
+      }
+      inFileName = String.format(" in%n%s", methodSpecsFile);
+    }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(
-          String.format("Expected methods not covered (given lines adjust goals):%n"));
+          String.format(
+              "Expected methods not covered (given lines adjust goals%s):%n", inFileName));
       for (String name : missingMethods) {
         failureMessage.append(String.format("  %s exclude%d%n", name, javaVersion));
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
       failureMessage.append(
-          String.format("Excluded methods that are covered (given lines adjust goals):%n"));
+          String.format(
+              "Excluded methods that are covered (given lines adjust goals%s):%n", inFileName));
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }

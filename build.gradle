@@ -232,8 +232,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation("commons-codec:commons-codec:1.20.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  testImplementation (configurations.junit.dependencies)
-  testImplementation (sourceSets.testInput.output)
+  testImplementation(configurations.junit.dependencies)
+  testImplementation(sourceSets.testInput.output)
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -246,7 +246,7 @@ dependencies {
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  systemTestRuntimeOnly (sourceSets.testInput.output)
+  systemTestRuntimeOnly(sourceSets.testInput.output)
 
   /*
    * sourceSet testInput depends on output of main.
@@ -335,7 +335,7 @@ allprojects {
 }
 allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
-    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
