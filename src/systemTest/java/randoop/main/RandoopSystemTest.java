@@ -262,7 +262,7 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
     // The file is ../../../resources/test-methodspecs/JDKTest.methodspecs .
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 489, "JDKTest.methodspecs");
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.methodspecs");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
