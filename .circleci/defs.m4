@@ -65,7 +65,7 @@ define([systemTest_job], [dnl
       - image: mdernst/randoop-ubuntu-jdk$1
 circleci_boilerplate_pre
       - run:
-          command: ORG_GRADLE_PROJECT_jdkTestVersion=$1 &&./scripts/test-systemTest.sh
+          command: ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 circleci_boilerplate_post
 circleci_test_results
