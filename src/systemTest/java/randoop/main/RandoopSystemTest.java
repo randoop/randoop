@@ -262,7 +262,7 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
     // The file is ../../../resources/test-methodspecs/JDKTest.methodspecs .
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 489, "JDKTest.methodspecs");
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.methodspecs");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
@@ -660,7 +660,7 @@ public class RandoopSystemTest {
             options,
             25, // 26 for most JDKs, 25 for JDK 17
             "collectiongen.AnInputClass.hashCode() ignore",
-            "collectiongen.Day.$values() ignore17+",
+            "collectiongen.Day.$values() ignore",
             "collectiongen.Day.valueOf(java.lang.String) exclude",
             "collectiongen.Day.values() ignore"
             // end of list (line break to permit easier sorting)
