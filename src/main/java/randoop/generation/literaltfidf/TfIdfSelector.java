@@ -50,10 +50,28 @@ public class TfIdfSelector {
       // tf(t, D): numUses of literal t in D
       // |D|: number of classes in D
       // |d \in D : t \in d|: number of classes in the current scope that contain literal t.
+      if (numUses <= 0
+          || numClasses < 0
+          || numClassesWithLiteral < 0
+          || numClassesWithLiteral > numClasses) {
+        // Ignore or log inconsistent statistics rather than create invalid weights.
+        if (DEBUG) {
+          Log.logPrintln(
+              "Skipping sequence with inconsistent stats: uses="
+                  + numUses
+                  + ", classes="
+                  + numClasses
+                  + ", classesWith="
+                  + numClassesWithLiteral);
+        }
+        continue;
+      }
       double tfidf =
           (double) numUses
               * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - numClassesWithLiteral));
-      literalWeight.put(sequence, tfidf);
+      if (tfidf > 0.0 && Double.isFinite(tfidf)) {
+        literalWeight.put(sequence, tfidf);
+      }
       if (DEBUG) {
         Log.logPrintln("Sequence: " + sequence);
         Log.logPrintln("  NumUses: " + numUses);
@@ -74,7 +92,7 @@ public class TfIdfSelector {
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
     // Empty when no literals in scope.
-    if (literalWeight.isEmpty()) {
+    if (literalWeight.isEmpty() || candidates.isEmpty()) {
       if (DEBUG) {
         Log.logPrintf("TfIdfSelector.java: literalWeight map is empty");
       }

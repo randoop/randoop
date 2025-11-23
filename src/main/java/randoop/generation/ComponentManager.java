@@ -78,8 +78,10 @@ public class ComponentManager {
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
    */
-  public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds);
+  public ComponentManager(@Nullable Collection<Sequence> generalSeeds) {
+    Collection<Sequence> seeds =
+        (generalSeeds == null) ? Collections.<Sequence>emptySet() : generalSeeds;
+    Set<Sequence> seedSet = new LinkedHashSet<>(seeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
   }
@@ -150,8 +152,8 @@ public class ComponentManager {
 
   /**
    * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
-   * that produce the required type, followed by literal sequences for the declaring class if
-   * available.
+   * that produce the required type, followed by literal sequences from the appropriate scope
+   * (class, package, or global) depending on the current {@code literals_level} configuration.
    *
    * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
    * skipped for receiver positions.
@@ -166,7 +168,6 @@ public class ComponentManager {
   SIList<Sequence> getSequencesForParam(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
-    ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
 
     if (onlyReceivers && neededType.isNonreceiverType()) {
       throw new RandoopBug(
@@ -194,6 +195,7 @@ public class ComponentManager {
       // The operation is a method call, where the method is defined in class C.
       // Avoid duplication.
       if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
+        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         assert declaringCls != null;
         literals = getLiteralSequences(neededType, declaringCls);
       }
@@ -206,9 +208,14 @@ public class ComponentManager {
    * Returns literal sequences that produce values assignable to {@code neededType}, using a
    * selection strategy determined by the current {@code literals_level} configuration.
    *
+   * <p>Note: the selection *strategy* (how a sequence is chosen) depends on flags such as {@code
+   * --literal-tfidf}. The set of candidate sequences from which the strategy chooses is determined
+   * by the {@code literals_level} configuration: CLASS uses literals from only the declaring class
+   * (not supertypes), PACKAGE uses package-level statistics, and ALL uses the global scope.
+   *
    * @param neededType the returned sequences produce values assignable to this type
    * @param declaringType the class containing the operation being tested
-   * @return sequences from the appropriate scope(s) that create values of the needed type
+   * @return sequences from the appropriate scope that create values of the needed type
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
     if (scopeToLiteralStatistics == null) {
@@ -218,9 +225,14 @@ public class ComponentManager {
       case NONE:
         return SIList.empty();
       case CLASS:
-        return scopeToLiteralStatistics.getSequencesIncludingSupertypes(declaringType, neededType);
       case PACKAGE:
       case ALL:
+        // For all levels, we call getLiteralStatistics(declaringType) which internally uses
+        // getScope() to resolve the appropriate scope based on literals_level:
+        //  - CLASS: getScope() returns the declaringType itself
+        //  - PACKAGE: getScope() returns the package of declaringType (all classes in the package
+        //    share the same LiteralStatistics instance)
+        //  - ALL: getScope() returns the shared ALL_SCOPE key (all types map to global statistics)
         return scopeToLiteralStatistics
             .getLiteralStatistics(declaringType)
             .getSequencesForType(neededType);

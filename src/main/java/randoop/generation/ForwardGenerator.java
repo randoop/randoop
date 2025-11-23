@@ -1055,15 +1055,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return candidates.get(0);
     }
 
-    // literalStats contains all literal-bearing sequences known for the resolved scope,
-    // regardless of the specific needed input type. The candidates passed here are a typed
-    // subset taken from those statistics.
-    LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
-
-    if (literalStats.isEmpty()) {
-      return null;
-    }
-
+    // Resolve the selection scope first.
     @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
 
     if (Log.isLoggingOn()) {
@@ -1072,8 +1064,20 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("Resolved selection scope: %s%n", scope);
     }
 
-    TfIdfSelector tfIdfSelector =
-        scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(literalStats));
+    // If a selector is already cached for this scope, reuse it without computing
+    // the potentially-expensive `LiteralStatistics` snapshot.
+    TfIdfSelector tfIdfSelector = scopeToTfIdfSelectors.get(scope);
+    if (tfIdfSelector == null) {
+      // Only compute literalStats when we actually need to construct a new selector.
+      LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
+      // If the scope has no literals (e.g., the class had no extractable constants from bytecode),
+      // TF-IDF selection is not possible, so return null to fall back to default literal selection.
+      if (literalStats.isEmpty()) {
+        return null;
+      }
+      tfIdfSelector =
+          scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(literalStats));
+    }
     return tfIdfSelector.selectSequence(candidates);
   }
 }

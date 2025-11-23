@@ -3,7 +3,6 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -52,8 +51,11 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      @SuppressWarnings("nullness:assignment") // TODO: how do we know the term value is non-null?
-      @NonNull Object termValue = term.getValue();
+      Object termValue = term.getValue();
+      if (termValue == null) {
+        // Skip constants with null values; they are not useful as mined literals.
+        continue;
+      }
       scopeToLiteralStatistics.incrementNumUses(
           containingType, seq, constantSet.getConstantFrequency(termValue));
       allConstants.add(seq);

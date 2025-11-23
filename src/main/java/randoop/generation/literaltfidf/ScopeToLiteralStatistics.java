@@ -1,21 +1,17 @@
 package randoop.generation.literaltfidf;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.SIList;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.Type;
 
 /** This class stores information about the literals used in the SUT. */
 public class ScopeToLiteralStatistics {
@@ -41,32 +37,6 @@ public class ScopeToLiteralStatistics {
    */
   public LiteralStatistics getLiteralStatistics(ClassOrInterfaceType type) {
     return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
-  }
-
-  /**
-   * Returns literal sequences whose output type is exactly {@code neededType}, by searching the
-   * inheritance hierarchy of {@code type} (including all supertypes). Designed for CLASS-level
-   * literal selection.
-   *
-   * @param type the starting type whose inheritance hierarchy determines which scopes to search
-   * @param neededType the exact output type to filter sequences by
-   * @return concatenated sequences from the type and its supertypes that match the exact type
-   */
-  public SIList<Sequence> getSequencesIncludingSupertypes(
-      ClassOrInterfaceType type, Type neededType) {
-    LinkedHashSet<ClassOrInterfaceType> typesToVisit = new LinkedHashSet<>();
-    typesToVisit.add(type);
-    typesToVisit.addAll(type.getSuperTypes());
-
-    List<SIList<Sequence>> resultLists = new ArrayList<>();
-    for (ClassOrInterfaceType t : typesToVisit) {
-      SIList<Sequence> typeSequences = getLiteralStatistics(t).getSequencesForType(neededType);
-      if (!typeSequences.isEmpty()) {
-        resultLists.add(typeSequences);
-      }
-    }
-
-    return SIList.concat(resultLists);
   }
 
   /**

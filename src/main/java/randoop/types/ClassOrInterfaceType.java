@@ -346,12 +346,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Returns the set of all of the strict supertypes of this type (that is, not including this type
-   * itself). The result is guaranteed not to contain duplicates.
+   * itself). The result is guaranteed not to contain duplicates, even in the presence of diamond
+   * inheritance patterns.
    *
-   * @return the set of all supertypes of this type
+   * @return the set of all supertypes of this type, with no duplicates
    */
   public Collection<ClassOrInterfaceType> getSuperTypes() {
-    Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
+    Collection<ClassOrInterfaceType> supertypes = new LinkedHashSet<>();
     if (this.isObject()) {
       return supertypes;
     }
@@ -360,8 +361,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       supertypes.add(superclass);
       supertypes.addAll(superclass.getSuperTypes());
     }
-    // TODO: Is it necessary to also add interfaces of supertypes?
-    // TODO: I think this can yield duplicates.
     for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
       supertypes.add(interfaceType);
       supertypes.addAll(interfaceType.getSuperTypes());

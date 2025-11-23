@@ -22,10 +22,23 @@ public class LiteralStatistics {
   /**
    * Per-output-type index: for each {@link Type}, a map from {@link Sequence} (a literal producer)
    * to its {@link LiteralUses} within the type's scope.
+   *
+   * <p>Lifecycle: All mutations occur during initialization via incrementNumUses() and
+   * incrementNumClassesWith(), driven by ClassLiteralExtractor (bytecode mining) and
+   * LiteralFileReader (external literals files), orchestrated by OperationModel. Once this
+   * LiteralStatistics is attached to ComponentManager, this map is read-only. It's read once when
+   * TfIdfSelector is created for this scope, then never accessed again for this scope.
    */
   private final Map<Type, Map<Sequence, LiteralUses>> literalUsesByType = new LinkedHashMap<>();
 
-  /** The number of classes in this scope. */
+  /**
+   * The number of classes in this scope.
+   *
+   * <p>This counts how many classes have contributed literals to this statistics object
+   * (incremented once per class by recordSequencesInClass). It is NOT equal to
+   * literalUsesByType.size(), which is the number of output types with any literals. There is no
+   * direct relationship between these two values.
+   */
   private int numClasses = 0;
 
   /** Creates a new empty LiteralStatistics. */
@@ -56,8 +69,20 @@ public class LiteralStatistics {
   /**
    * Return the {@link LiteralUses} for the given sequence.
    *
-   * @param seq a sequence
-   * @return the {@link LiteralUses} for the given sequence
+   * <p>Note: this method is intended for mutation. It will create an entry for the sequence's
+   * output type and a new {@link LiteralUses} if necessary. It is used by the mutator methods
+   * {@link #incrementNumUses} and {@link #incrementNumClassesWith} to ensure an entry exists before
+   * updating counts.
+   *
+   * <p>The method assumes the caller is working with literal-producing sequences (constant
+   * producers). In practice, this method is only called from the mutators, which are invoked during
+   * initialization by {@link ClassLiteralExtractor} (for bytecode constants) and {@link
+   * OperationModel#addClassLiterals()} (for external literals files). Both sources guarantee
+   * literal-producing sequences. However, enforcement is not built into this method: calling it
+   * with a non-literal sequence will still create map entries.
+   *
+   * @param seq a sequence (guaranteed to be a literal producer in normal operation)
+   * @return the {@link LiteralUses} for the given sequence (created if absent)
    */
   private LiteralUses getLiteralUses(Sequence seq) {
     Type outputType = seq.getLastVariable().getType();
