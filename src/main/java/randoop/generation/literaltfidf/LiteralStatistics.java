@@ -76,10 +76,10 @@ public class LiteralStatistics {
    *
    * <p>The method assumes the caller is working with literal-producing sequences (constant
    * producers). In practice, this method is only called from the mutators, which are invoked during
-   * initialization by {@link ClassLiteralExtractor} (for bytecode constants) and {@link
-   * OperationModel#addClassLiterals()} (for external literals files). Both sources guarantee
-   * literal-producing sequences. However, enforcement is not built into this method: calling it
-   * with a non-literal sequence will still create map entries.
+   * initialization by ClassLiteralExtractor (for bytecode constants) and
+   * OperationModel.addClassLiterals() (for external literals files). Both bytecode constants and
+   * external literals files are sources of literal-producing sequences. However, enforcement is not
+   * built into this method: calling it with a non-literal sequence will still create map entries.
    *
    * @param seq a sequence (guaranteed to be a literal producer in normal operation)
    * @return the {@link LiteralUses} for the given sequence (created if absent)

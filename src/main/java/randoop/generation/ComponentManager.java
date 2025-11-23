@@ -193,12 +193,9 @@ public class ComponentManager {
         // Don't add literals for the receiver
         && !onlyReceivers) {
       // The operation is a method call, where the method is defined in class C.
-      // Avoid duplication.
-      if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.ALL) {
-        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        assert declaringCls != null;
-        literals = getLiteralSequences(neededType, declaringCls);
-      }
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      assert declaringCls != null;
+      literals = getLiteralSequences(neededType, declaringCls);
     }
 
     return SIList.concat(result, literals);
