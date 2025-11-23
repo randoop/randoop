@@ -65,7 +65,7 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  /** Create an empty component manager, with an empty seed sequence set. */
+  /** Create an empty component manager, with an immutable empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.<Sequence>emptySet();
