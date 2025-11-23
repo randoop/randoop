@@ -35,7 +35,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    *
-   * <p>Collects class bytecode literals and updates usage counts and per-class sequences.
+   * <p>For each class, add to the literal map a sequence for each literal that the class uses.
    *
    * <p>This method does all the work; there is no {@code visitAfter()} method.
    */
