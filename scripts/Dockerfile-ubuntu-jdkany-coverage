@@ -48,8 +48,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
   pip \
-&& pip install html5validator --break-system-packages \
-&& export PATH="$PATH:/root/.local/bin"
+&& pip install html5validator --break-system-packages
+ENV PATH="$PATH:/root/.local/bin"
 
 # Always install JDK 21 to compile the code, even if tests run under a different JDK.
 RUN export DEBIAN_FRONTEND=noninteractive \
