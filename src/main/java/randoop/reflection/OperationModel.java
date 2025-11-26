@@ -257,7 +257,7 @@ public class OperationModel {
   }
 
   /**
-   * Integrates literal sequences/statistics with the component manager.
+   * Adds literal sequences/statistics to the component manager.
    *
    * <p>Reads external {@code --literals-file} entries (ignoring the token {@code "CLASSES"}) into
    * {@link #scopeToLiteralStatistics}, attaches the statistics to {@code compMgr} when needed, and
@@ -273,9 +273,9 @@ public class OperationModel {
       }
       // Parse external literals file and record the sequences provided by LiteralFileReader in
       // scopeToLiteralStatistics.
-      MultiMap<ClassOrInterfaceType, Sequence> fileMap = LiteralFileReader.parse(literalsFile);
-      for (ClassOrInterfaceType type : fileMap.keySet()) {
-        Collection<Sequence> sequences = fileMap.getValues(type);
+      MultiMap<ClassOrInterfaceType, Sequence> fileToValues = LiteralFileReader.parse(literalsFile);
+      for (ClassOrInterfaceType type : fileToValues.keySet()) {
+        Collection<Sequence> sequences = fileToValues.getValues(type);
         for (Sequence seq : sequences) {
           scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
@@ -297,7 +297,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns whether to mine literals from bytecode for use during generation.
+   * Returns true if Randoop should mine literals from bytecode.
    *
    * @return true if TF-IDF is enabled, or if the special token "CLASSES" appears in {@code
    *     --literals-file}; false otherwise
@@ -307,7 +307,7 @@ public class OperationModel {
   }
 
   /**
-   * Returns whether literal statistics are needed during generation.
+   * Returns true if literal statistics are needed during generation.
    *
    * @return true if literal mining is enabled or any literals file is provided (including
    *     "CLASSES"); false otherwise

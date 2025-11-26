@@ -93,17 +93,17 @@ public class LiteralStatistics {
   }
 
   /**
-   * Returns sequences for a specific type as an SIList for efficient iteration.
+   * Returns sequences for a specific type.
    *
    * @param type the type to get sequences for
    * @return the sequences for the given type
    */
   public SIList<Sequence> getSequencesForType(Type type) {
-    Map<Sequence, LiteralUses> typeMap = literalUsesByType.get(type);
-    if (typeMap == null || typeMap.isEmpty()) {
+    Map<Sequence, LiteralUses> literalToUses = literalUsesByType.get(type);
+    if (literalToUses == null || literalToUses.isEmpty()) {
       return SIList.empty();
     }
-    return SIList.from(typeMap.keySet());
+    return SIList.from(literalToUses.keySet());
   }
 
   /**
@@ -112,8 +112,8 @@ public class LiteralStatistics {
    * @return an {@link Iterable} of entries mapping each {@link Sequence} to its {@link LiteralUses}
    */
   public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
-    return () ->
-        new Iterator<Map.Entry<Sequence, LiteralUses>>() {
+    return () -> // This line makes the method return an Iterable rather than an Iterator.
+    new Iterator<Map.Entry<Sequence, LiteralUses>>() {
           private final Iterator<Map<Sequence, LiteralUses>> outer =
               literalUsesByType.values().iterator();
           private Iterator<Map.Entry<Sequence, LiteralUses>> inner = Collections.emptyIterator();
@@ -172,7 +172,7 @@ public class LiteralStatistics {
   }
 
   // ///////////////////////////////////////////////////////////////////////////
-  // Helper class
+  // Helper class: LiteralUses
   //
 
   /**

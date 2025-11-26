@@ -125,7 +125,7 @@ public class ComponentManager {
   }
 
   /**
-   * Removes any components sequences added so far, except for seed sequences, which are preserved.
+   * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
@@ -152,8 +152,7 @@ public class ComponentManager {
 
   /**
    * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
-   * that produce the required type, followed by literal sequences from the appropriate scope
-   * (class, package, or global) depending on the current {@code literals_level} configuration.
+   * that produce the required type, followed by literal sequences from the appropriate scope.
    *
    * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
    * skipped for receiver positions.
@@ -177,8 +176,8 @@ public class ComponentManager {
     }
 
     // This method appends two lists:
-    //  * determines sequences from the pool (gralComponents)
-    //  * determines literals, which depend on `declaringCls`
+    //  * sequences from the pool (gralComponents)
+    //  * literals, which depend on `declaringCls`
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
@@ -195,6 +194,7 @@ public class ComponentManager {
       // The operation is a method call, where the method is defined in class C.
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
       assert declaringCls != null;
+      // The scope is determined from the class `declaringCls`.
       literals = getLiteralSequences(neededType, declaringCls);
     }
 
@@ -206,9 +206,10 @@ public class ComponentManager {
    * selection strategy determined by the current {@code literals_level} configuration.
    *
    * <p>Note: the selection *strategy* (how a sequence is chosen) depends on flags such as {@code
-   * --literal-tfidf}. The set of candidate sequences from which the strategy chooses is determined
-   * by the {@code literals_level} configuration: CLASS uses literals from only the declaring class
-   * (not supertypes), PACKAGE uses package-level statistics, and ALL uses the global scope.
+   * --literal-tfidf}. The *set* of candidate sequences from which the strategy chooses is
+   * determined by the {@code literals_level} configuration: CLASS uses literals from only the
+   * declaring class (not supertypes), PACKAGE uses package-level statistics, and ALL uses the
+   * global scope.
    *
    * @param neededType the returned sequences produce values assignable to this type
    * @param declaringType the class containing the operation being tested

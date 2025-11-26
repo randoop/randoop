@@ -768,7 +768,7 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
-      // If literal-tf-idf is enabled and we are determining a parameter for a class
+      // If literal-tf-idf is enabled and we are determining an argument for a class
       // operation, use TF-IDF weighted selection for literals under some probability.
       if (GenInputsAbstract.literal_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
@@ -1059,7 +1059,7 @@ public class ForwardGenerator extends AbstractGenerator {
     @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
 
     if (Log.isLoggingOn()) {
-      Log.logPrintf("TF-IDF selecting from candidates: %s%n", candidates);
+      Log.logPrintf("TF-IDF selecting from %d candidates: %s%n", candidates.size(), candidates);
       Log.logPrintf("TF-IDF selector cache (by scope): %s%n", scopeToTfIdfSelectors);
       Log.logPrintf("Resolved selection scope: %s%n", scope);
     }
@@ -1070,7 +1070,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (tfIdfSelector == null) {
       // Only compute literalStats when we actually need to construct a new selector.
       LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
-      // If the scope has no literals (e.g., the class had no extractable constants from bytecode),
+      // If the scope has no literals (i.e., the class had no extractable constants from bytecode),
       // TF-IDF selection is not possible, so return null to fall back to default literal selection.
       if (literalStats.isEmpty()) {
         return null;

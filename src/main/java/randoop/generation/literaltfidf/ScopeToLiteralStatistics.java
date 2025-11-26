@@ -40,9 +40,9 @@ public class ScopeToLiteralStatistics {
   }
 
   /**
-   * Returns all sequences from all scopes.
+   * Returns all literal sequences from all scopes.
    *
-   * @return all sequences from all scopes
+   * @return all literal sequences from all scopes
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new LinkedHashSet<>();
@@ -87,7 +87,9 @@ public class ScopeToLiteralStatistics {
    * @param type a type
    * @return the scope for the given type
    */
-  // This is not static so that the result is @KeyFor("scopeToStatisticsMap").
+  // If this method were `static`, the Nullness Checker would issue a warning because the result
+  // would be @KeyFor("ScopeToLiteralStatistics.scopeToStatisticsMap") rather than
+  // `@KeyFor("scopeToStatisticsMap")` which it needs to be for the Nullness Checker.
   @SuppressWarnings("keyfor:return") // the result will be added to the map as a key
   public @Nullable @KeyFor("scopeToStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
