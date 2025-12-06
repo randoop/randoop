@@ -79,9 +79,13 @@ wheels = [
 name = "randoop-fork-mernst-branch-style-mak"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.dev-dependencies]
+dev = [
     { name = "html5validator" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "html5validator", specifier = ">=0.4.2" }]
+
+[package.metadata.requires-dev]
+dev = [{ name = "html5validator", specifier = ">=0.4.2" }]
