@@ -54,7 +54,7 @@ define([nonSystemTest_job], [dnl
     docker:
       - image: mdernst/randoop-ubuntu-jdk$1
 circleci_boilerplate_pre
-      - run: ./scripts/test-nonSystemTest.sh
+      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-nonSystemTest.sh
 circleci_boilerplate_post
 circleci_test_results
 ])dnl
@@ -65,7 +65,7 @@ define([systemTest_job], [dnl
       - image: mdernst/randoop-ubuntu-jdk$1
 circleci_boilerplate_pre
       - run:
-          command: ./scripts/test-systemTest.sh
+          command: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 circleci_boilerplate_post
 circleci_test_results
