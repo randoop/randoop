@@ -16,7 +16,7 @@ plugins {
 
   id("net.ltgt.errorprone").version("4.3.0")
 
-  id("org.checkerframework").version("0.6.61") apply false
+  id("org.checkerframework").version("1.0.0-SNAPSHOT") apply false
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -107,7 +107,8 @@ allprojects {
   if (testJdkVersion > 8) {
     apply plugin: "org.checkerframework"
 
-    checkerFramework {
+    checkerframework {
+      version = checkerFrameworkVersion
       excludeTests = true
       if (project.hasProperty("cfNullness")) {
         checkers = [
@@ -149,17 +150,12 @@ allprojects {
   }
 
   dependencies {
-    compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
-    // checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
 
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
       testCompileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
-      // checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
+      checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
 
@@ -241,10 +237,6 @@ dependencies {
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
 
-  compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  //  checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
-
   /* Jacoco measures coverage of classes and methods under test. */
   implementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
   implementation("org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
@@ -260,7 +252,6 @@ dependencies {
   /*
    * source set systemTest
    */
-  systemTestImplementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
   systemTestImplementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
   systemTestImplementation("org.jacoco:org.jacoco.report:${jacocoVersion}")
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
@@ -274,7 +265,6 @@ dependencies {
    */
   testInputImplementation(sourceSets.main.output)
   testInputImplementation(configurations.junit.dependencies)
-  testInputCompileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
 
   errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
 }
