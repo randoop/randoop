@@ -10,11 +10,11 @@ endif
 include .plume-scripts/code-style.mak
 
 style-check:
-	sort -c -u src/systemTest/resources/test-methodspecs/CollectionsTest.methodspecs
-	sort -c -u src/systemTest/resources/test-methodspecs/JDKTest.methodspecs
-	sort -c -u src/systemTest/resources/test-methodspecs/NaiveCollectionsTest.methodspecs
+	@sort -c -u src/systemTest/resources/test-methodspecs/CollectionsTest.methodspecs
+	@sort -c -u src/systemTest/resources/test-methodspecs/JDKTest.methodspecs
+	@sort -c -u src/systemTest/resources/test-methodspecs/NaiveCollectionsTest.methodspecs
 
 style-fix:
-	(cd src/systemTest/resources/test-methodspecs/ && sort -u -o CollectionsTest.methodspecs CollectionsTest.methodspecs)
-	(cd src/systemTest/resources/test-methodspecs/ && sort -u -o JDKTest.methodspecs JDKTest.methodspecs)
-	(cd src/systemTest/resources/test-methodspecs/ && sort -u -o NaiveCollectionsTest.methodspecs NaiveCollectionsTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o CollectionsTest.methodspecs CollectionsTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o JDKTest.methodspecs JDKTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o NaiveCollectionsTest.methodspecs NaiveCollectionsTest.methodspecs)
