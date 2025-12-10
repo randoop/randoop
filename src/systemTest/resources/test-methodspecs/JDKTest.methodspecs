@@ -13,7 +13,7 @@ java7.util7.ArrayList.set(int, java.lang.Object) ignore
 java7.util7.ArrayList.subList(int, int) exclude
 java7.util7.ArrayList.subList(int, int) include8
 java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.Arrays.binarySearch(byte[], int, int, byte) exclude11-
+java7.util7.Arrays.binarySearch(byte[], int, int, byte) exclude11
 java7.util7.Arrays.binarySearch(byte[], int, int, byte) include8
 java7.util7.Arrays.binarySearch(char[], int, int, char) ignore
 java7.util7.Arrays.binarySearch(float[], float) ignore
@@ -117,11 +117,12 @@ java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.synchronizedSet(java7.util7.Set) exclude8
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17 # different on Azure vs CircleCI?
+java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) include11
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude17+
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude8
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
 java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude
-java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude11-
+java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude11
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17+
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) include8
 java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore

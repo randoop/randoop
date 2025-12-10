@@ -26,9 +26,9 @@ import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
 import org.plumelib.bcelutil.SimpleLog;
+import org.plumelib.util.ArraysPlume;
 
 /**
  * The {@code CallReplacementTransformer} replaces each call to method m1 by a call to method m2. It
@@ -513,7 +513,7 @@ public class CallReplacementTransformer extends InstructionListUtils
           // array. This argument has already been explicitly pushed onto the stack, so modifying
           // the call signature is enough.
           Type[] arguments =
-              BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
+              ArraysPlume.prepend(instanceType, origInvocation.getArgumentTypes(pool));
           newInvocation =
               ifact.createInvoke(
                   newSig.getClassname(),
