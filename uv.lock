@@ -76,7 +76,7 @@ wheels = [
 ]
 
 [[package]]
-name = "randoop-fork-mernst-branch-style-mak"
+name = "randoop"
 version = "0.1.0"
 source = { virtual = "." }
 
