@@ -9,6 +9,9 @@ ui/
 dist/
 src/docs/api
 TAGS
+.plume-scripts/
+.pymarkdown
+.ruff.toml
 
 # IDE-specific ignores
 # lists comes from import, and running project build
