@@ -378,7 +378,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=24 && ./scripts/test-nonSystemTest.sh
+      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=25 && ./scripts/test-nonSystemTest.sh
 
       - save_cache:
           paths:
@@ -422,7 +422,7 @@ jobs:
             - gradle-v2-
 
       - run:
-          command: export ORG_GRADLE_PROJECT_jdkTestVersion=24 && ./scripts/test-systemTest.sh
+          command: export ORG_GRADLE_PROJECT_jdkTestVersion=25 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 
       - save_cache:
