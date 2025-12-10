@@ -2,6 +2,8 @@
 
 ## Version ?? (?? ??, 2025)
 
+Randoop compiles and runs under Java 8-25.
+
 New command-line argument:
 
 * `--cast-to-run-time-type` enables more methods to be called on a value
