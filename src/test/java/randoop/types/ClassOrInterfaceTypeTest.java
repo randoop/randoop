@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class ClassOrInterfaceTypeTest {
     if (cSupersStrict.size() != 6) {
       throw new Error("Expected size 6: " + cSupersStrict);
     }
-    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupers)));
+    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupersStrict)));
 
     Collection<ClassOrInterfaceType> cSupersNonstrict = cType.getSuperTypesNonstrict();
     if (cSupersNonstrict.size() != 7) {
