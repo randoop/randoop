@@ -107,8 +107,12 @@ allprojects {
   if (testJdkVersion > 8) {
     apply plugin: "org.checkerframework"
 
-    checkerframework {
-      version = checkerFrameworkVersion
+    checkerFramework {
+      if (project.hasProperty("cfLocal")) {
+        version = checkerFrameworkVersion
+      } else {
+        version = checkerFrameworkVersion
+      }
       excludeTests = true
       if (project.hasProperty("cfNullness")) {
         checkers = [
@@ -146,16 +150,6 @@ allprojects {
         // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
         "-Xlint:-processing,-options"
       ]
-    }
-  }
-
-  dependencies {
-
-    if (project.hasProperty("cfLocal")) {
-      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-      compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      testCompileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
 
