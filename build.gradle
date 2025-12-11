@@ -12,12 +12,11 @@ plugins {
   id("idea")
   id("jacoco")
 
-  // Version 6.14 and later requires Java 11+
-  id("com.diffplug.spotless").version("6.13.0") apply false
+  id("com.diffplug.spotless").version("8.1.0") apply false
 
   id("net.ltgt.errorprone").version("4.3.0")
 
-  id("org.checkerframework").version("0.6.61")
+  id("org.checkerframework").version("0.6.61") apply false
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -25,7 +24,7 @@ plugins {
   id("com.dorongold.task-tree").version("4.0.1")
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id("com.gorylenko.gradle-git-properties").version("2.5.3")
+  id("com.gorylenko.gradle-git-properties").version("2.5.4")
 
   id("pmd")
 }
@@ -35,6 +34,10 @@ ext {
   isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17
   isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
   javadocMemberLevel = JavadocMemberLevel.PROTECTED
+
+  // The JDK for running tests: the jdkTestVersion property, or if not set, JavaVersion.current().
+  testJdkVersionString = providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().getMajorVersion())
+  testJdkVersion = Integer.valueOf(testJdkVersionString)
 }
 
 /* Common build configuration for Randoop and agents */
@@ -47,6 +50,20 @@ allprojects {
   java {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(testJdkVersion)
+    }
+  }
+  tasks.withType(JavaExec).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+      languageVersion = JavaLanguageVersion.of(testJdkVersion)
+    }
+  }
+
+  tasks.withType(JavaCompile).configureEach { compilationTask ->
+    javaCompiler = javaToolchains.compilerFor {
+      languageVersion = JavaLanguageVersion.of(JavaVersion.current().getMajorVersion())
+    }
   }
 
   repositories {
@@ -77,7 +94,7 @@ allprojects {
       plumelib("org.plumelib:options:2.0.3")
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib("org.plumelib:plume-util:1.12.2")
+    plumelib("org.plumelib:plume-util:1.12.3")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib("org.plumelib:reflection-util:1.1.5")
   }
@@ -86,60 +103,63 @@ allprojects {
     withSourcesJar()
   }
 
-  apply plugin: "org.checkerframework"
+  // The Checker Framework plugin adds `-Xbootclasspath/p` to the compiler options when it should not. So just skip the Checker Framework when testing JDK 8.
+  if (testJdkVersion > 8) {
+    apply plugin: "org.checkerframework"
 
-  checkerFramework {
-    excludeTests = true
-    if (project.hasProperty("cfNullness")) {
-      checkers = [
-        "org.checkerframework.checker.nullness.NullnessChecker",
-        // These are included to avoid this failure:
-        //   The following options were not recognized by any processor: "[permitStaticOwning]"
-        "org.checkerframework.checker.regex.RegexChecker",
-        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-        "org.checkerframework.checker.signedness.SignednessChecker",
-        "org.checkerframework.checker.signature.SignatureChecker",
-      ]
-    } else {
-      checkers = [
-        // "org.checkerframework.checker.nullness.NullnessChecker",
-        "org.checkerframework.checker.regex.RegexChecker",
-        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-        "org.checkerframework.checker.signedness.SignednessChecker",
-        "org.checkerframework.checker.signature.SignatureChecker",
+    checkerFramework {
+      excludeTests = true
+      if (project.hasProperty("cfNullness")) {
+        checkers = [
+          "org.checkerframework.checker.nullness.NullnessChecker",
+          // These are included to avoid this failure:
+          //   The following options were not recognized by any processor: "[permitStaticOwning]"
+          "org.checkerframework.checker.regex.RegexChecker",
+          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+          "org.checkerframework.checker.signedness.SignednessChecker",
+          "org.checkerframework.checker.signature.SignatureChecker",
+        ]
+      } else {
+        checkers = [
+          // "org.checkerframework.checker.nullness.NullnessChecker",
+          "org.checkerframework.checker.regex.RegexChecker",
+          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+          "org.checkerframework.checker.signedness.SignednessChecker",
+          "org.checkerframework.checker.signature.SignatureChecker",
+        ]
+      }
+      extraJavacArgs = [
+        // Uncomment -proc:none to disable all annotation processing and speed up the build.
+        // "-proc:none",
+
+        "-Werror",
+        "-Awarns",
+        "-Xmaxwarns",
+        "10000",
+        // "-AcheckPurityAnnotations",
+        "-ArequirePrefixInWarningSuppressions",
+        "-AwarnUnneededSuppressions",
+        "-AwarnRedundantAnnotations",
+        "-ApermitStaticOwning",
+        // -processing: suppresses "No processor claimed any of these annotations ..."
+        // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
+        "-Xlint:-processing,-options"
       ]
     }
-    extraJavacArgs = [
-      // Uncomment -proc:none to disable all annotation processing and speed up the build.
-      // "-proc:none",
-
-      "-Werror",
-      "-Awarns",
-      "-Xmaxwarns",
-      "10000",
-      // "-AcheckPurityAnnotations",
-      "-ArequirePrefixInWarningSuppressions",
-      "-AwarnUnneededSuppressions",
-      "-AwarnRedundantAnnotations",
-      "-ApermitStaticOwning",
-      // -processing: suppresses "No processor claimed any of these annotations ..."
-      // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
-      "-Xlint:-processing,-options"
-    ]
   }
 
   dependencies {
     compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
     implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
-  }
+    // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
+    // checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
 
-  dependencies {
     if (project.hasProperty("cfLocal")) {
       def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
       compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
       testCompileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
+      // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
+      // checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
     }
   }
 
@@ -216,14 +236,14 @@ dependencies {
   implementation("com.github.javaparser:javaparser-core:3.27.1")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
-  implementation("org.apache.commons:commons-lang3:3.19.0")
+  implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("commons-io:commons-io:${commonsIoVersion}")
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
 
   compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
   implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
+  //  checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
 
   /* Jacoco measures coverage of classes and methods under test. */
   implementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
@@ -232,8 +252,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation("commons-codec:commons-codec:1.20.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  testImplementation (configurations.junit.dependencies)
-  testImplementation (sourceSets.testInput.output)
+  testImplementation(configurations.junit.dependencies)
+  testImplementation(sourceSets.testInput.output)
 
   jacocoagent("org.jacoco:org.jacoco.agent:${jacocoVersion}")
 
@@ -246,7 +266,7 @@ dependencies {
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   systemTestImplementation("commons-io:commons-io:${commonsIoVersion}")
   systemTestImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
-  systemTestRuntimeOnly (sourceSets.testInput.output)
+  systemTestRuntimeOnly(sourceSets.testInput.output)
 
   /*
    * sourceSet testInput depends on output of main.
@@ -304,7 +324,7 @@ allprojects { subproject ->
 
         // define the steps to apply to those files
         trimTrailingWhitespace()
-        indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
+        leadingTabsToSpaces(2)
         endWithNewline()
       }
       java {
@@ -317,7 +337,7 @@ allprojects { subproject ->
       groovyGradle {
         target("**/*.gradle")
         greclipse()  // which formatter Spotless should use to format .gradle files.
-        indentWithSpaces(2) // in newer Spotless, use: leadingTabsToSpaces(2)
+        leadingTabsToSpaces(2)
         trimTrailingWhitespace()
         // endWithNewline() // Don't want to end empty files with a newline
       }
@@ -335,7 +355,7 @@ allprojects {
 }
 allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
-    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava")) {
+    if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
@@ -376,15 +396,6 @@ artifacts {
  */
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
-
-boolean testOnJdk8 = project.getProperties().getOrDefault("testOnJdk8", false)
-if (testOnJdk8) {
-  tasks.withType(Test).configureEach { testTask ->
-    javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(8)
-    }
-  }
-}
 
 /*
  * Configuration of test task from Java plugin.
@@ -825,29 +836,6 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
   updateUserOptions.enabled = false
 }
 
-
-/* Requires that the html5validator program is installed */
-tasks.register("html5validatorExists", Exec) {
-
-  def command = "command -v html5validator"
-  def stdout = new ByteArrayOutputStream()
-  def stderr = new ByteArrayOutputStream()
-  ignoreExitValue = true
-  executable = "bash"
-  args("-l", "-c", command)
-  standardOutput = stdout
-  errorOutput = stderr
-
-  doLast {
-    if (executionResult.get().exitValue != 0) {
-      println("Command failed: $command")
-      println("Standard output: $stdout")
-      println("Standard error: $stderr")
-      ant.fail("html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .")
-    }
-  }
-}
-html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateUserTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
@@ -859,14 +847,13 @@ tasks.register("manual", Exec) {
       "updateUserOptions",
       "updateUserTOC",
       "updateDevTOC",
-      "html5validatorExists"
       )
 
   group = "Documentation"
   description = "Adds options and TOC to documentation in src/docs"
   onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
   environment("PATH", "${System.env.PATH}")
-  commandLine("html5validator", "--root", file("${projectDir}/src/docs/manual"))
+  commandLine("make", "html-style-check")
 }
 
 // This is cross-platform and pulls in all required dependencies.  However,
@@ -889,14 +876,13 @@ build.dependsOn(manual)
 tasks.register("validateAPI", Exec) {
   dependsOn(
       "javadoc",
-      "html5validatorExists"
       )
   group = "Documentation"
   description = "Run html5validator to find HTML errors in API documentation"
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uv", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
@@ -960,25 +946,13 @@ tasks.register("publishSite", Copy) {
   }
 }
 
-/*
- * Applies HTML5 validator to project site HTML, including the manual
- */
-tasks.register("validateSite", Exec) {
-  dependsOn("html5validatorExists")
-  description = "Run html5validator to find HTML errors in site files (excludes manual and api)"
-  environment("PATH", "$System.env.PATH")
-  commandLine("html5validator", "--root", "src/docs/")
+tasks.register("styleCheck", Exec) {
+  description = "Validate HTML, Markdown, etc. files."
+  commandLine("make", "html-style-check")
 }
-validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+styleCheck.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+check.dependsOn("styleCheck")
 
-/* Validate Markdown files. */
-tasks.register("markdownlint", Exec) {
-  group = "Verification"
-  description = "Run markdownlint-cli2 linter on Markdown files"
-  executable = "markdownlint-cli2"
-  args(".")
-}
-check.dependsOn("markdownlint")
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {
@@ -1004,7 +978,6 @@ tasks.register("buildRelease", DefaultTask) {
       "assembleRelease",
       "check",
       "publishSite",
-      "validateSite",
       "distributionZip"
       )
   group = "Publishing"

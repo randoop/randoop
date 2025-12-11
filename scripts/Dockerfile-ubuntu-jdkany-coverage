@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.authors="Michael Ernst <mernst@cs.washington.edu>
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
-&& apt install -y locales \
+&& apt -qqy install locales \
 && rm -rf /var/lib/apt/lists/* \
 && locale-gen "en_US.UTF-8"
 ENV LANG=en_US.UTF-8 \
@@ -48,8 +48,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
   pip \
-&& pip install html5validator --break-system-packages \
-&& export PATH="$PATH:/root/.local/bin"
+&& pip install html5validator --break-system-packages
+ENV PATH="$PATH:/root/.local/bin"
 
 # Always install JDK 21 to compile the code, even if tests run under a different JDK.
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -91,6 +91,14 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && export TZ=America/Los_Angeles
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& wget -qO- https://astral.sh/uv/install.sh | sh \
+&& chmod +rx /root \
+&& find /root/.local -exec chmod +r {} \; \
+&& find /root/.local -type d -exec chmod +x {} \; \
+&& find /root/.local/bin -type f -exec chmod +x {} \;
+ENV PATH="/root/.local/bin:$PATH"
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt clean \
