@@ -161,7 +161,7 @@ public class SequenceCollection {
       if (sequence.isActive(argument.getDeclIndex())) {
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSuperTypesNonstrict());
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
         } else {
           typesAndSupertypes.add(formalType);
         }

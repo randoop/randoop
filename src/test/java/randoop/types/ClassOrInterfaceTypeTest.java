@@ -29,19 +29,19 @@ public class ClassOrInterfaceTypeTest {
   // public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
   // public abstract ClassOrInterfaceType getSuperclass();
 
-  // public Collection<ClassOrInterfaceType> getSuperTypes() {
+  // public Collection<ClassOrInterfaceType> getSupertypes() {
 
   @Test
-  public void getSuperTypesTest() {
+  public void getSupertypesTest() {
     ClassOrInterfaceType cType = ClassOrInterfaceType.forClass(C.class);
 
-    Collection<ClassOrInterfaceType> cSupersStrict = cType.getSuperTypesStrict();
+    Collection<ClassOrInterfaceType> cSupersStrict = cType.getSupertypesStrict();
     if (cSupersStrict.size() != 6) {
       throw new Error("Expected size 6: " + cSupersStrict);
     }
     assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupersStrict)));
 
-    Collection<ClassOrInterfaceType> cSupersNonstrict = cType.getSuperTypesNonstrict();
+    Collection<ClassOrInterfaceType> cSupersNonstrict = cType.getSupertypesInclusive();
     if (cSupersNonstrict.size() != 7) {
       throw new Error("Expected size 7: " + cSupersNonstrict);
     }
@@ -49,13 +49,13 @@ public class ClassOrInterfaceTypeTest {
 
     ClassOrInterfaceType dType = ClassOrInterfaceType.forClass(D.class);
 
-    Collection<ClassOrInterfaceType> dSupersStrict = dType.getSuperTypesStrict();
+    Collection<ClassOrInterfaceType> dSupersStrict = dType.getSupertypesStrict();
     if (dSupersStrict.size() != 7) {
       throw new Error("Expected size 7: " + dSupersStrict);
     }
     assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(dSupersStrict)));
 
-    Collection<ClassOrInterfaceType> dSupersNonstrict = dType.getSuperTypesNonstrict();
+    Collection<ClassOrInterfaceType> dSupersNonstrict = dType.getSupertypesInclusive();
     if (dSupersNonstrict.size() != 8) {
       throw new Error("Expected size 8: " + dSupersNonstrict);
     }
@@ -63,12 +63,12 @@ public class ClassOrInterfaceTypeTest {
 
     ClassOrInterfaceType objectType = ClassOrInterfaceType.forClass(Object.class);
 
-    assertTrue(objectType.getSuperTypesStrict().isEmpty());
-    assertEquals(1, objectType.getSuperTypesNonstrict().size());
+    assertTrue(objectType.getSupertypesStrict().isEmpty());
+    assertEquals(1, objectType.getSupertypesInclusive().size());
   }
 
   // public List<ClassOrInterfaceType> getImmediateSupertypes() {
-  // public Collection<ClassOrInterfaceType> getAllSupertypesInclusive() {
+  // public Collection<ClassOrInterfaceType> getSupertypesInclusive() {
   // public abstract boolean isAbstract();
   // public boolean isGeneric(boolean ignoreWildcards) {
   // public boolean isInstantiationOf(ReferenceType otherType) {
