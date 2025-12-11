@@ -1,6 +1,5 @@
 package randoop.types;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -34,45 +33,37 @@ public class ClassOrInterfaceTypeTest {
   @Test
   public void getSuperTypesTest() {
     ClassOrInterfaceType cType = ClassOrInterfaceType.forClass(C.class);
-    Collection<ClassOrInterfaceType> cSupers = cType.getSuperTypes();
-    if (cSupers.size() != 6) {
-      throw new Error("Expected size 6: " + cSupers);
+
+    Collection<ClassOrInterfaceType> cSupersStrict = cType.getSuperTypesStrict();
+    if (cSupersStrict.size() != 6) {
+      throw new Error("Expected size 6: " + cSupersStrict);
     }
     assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupers)));
 
-    ClassOrInterfaceType dType = ClassOrInterfaceType.forClass(D.class);
-    Collection<ClassOrInterfaceType> dSupers = dType.getSuperTypes();
-    if (dSupers.size() != 7) {
-      throw new Error("Expected size 7: " + dSupers);
+    Collection<ClassOrInterfaceType> cSupersNonstrict = cType.getSuperTypesNonstrict();
+    if (cSupersNonstrict.size() != 7) {
+      throw new Error("Expected size 7: " + cSupersNonstrict);
     }
-    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(dSupers)));
-
-    ClassOrInterfaceType objectType = ClassOrInterfaceType.forClass(Object.class);
-    assertTrue(objectType.getSuperTypes().isEmpty());
-
-    assertFalse(true); // for testing
-  }
-
-  @Test
-  public void getSuperTypesNonstrictTest() {
-    ClassOrInterfaceType cType = ClassOrInterfaceType.forClass(C.class);
-    Collection<ClassOrInterfaceType> cSupers = cType.getSuperTypesNonstrict();
-    if (cSupers.size() != 7) {
-      throw new Error("Expected size 7: " + cSupers);
-    }
-    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupers)));
+    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(cSupersNonstrict)));
 
     ClassOrInterfaceType dType = ClassOrInterfaceType.forClass(D.class);
-    Collection<ClassOrInterfaceType> dSupers = dType.getSuperTypes();
-    if (dSupers.size() != 8) {
-      throw new Error("Expected size 8: " + dSupers);
+
+    Collection<ClassOrInterfaceType> dSupersStrict = dType.getSuperTypesStrict();
+    if (dSupersStrict.size() != 7) {
+      throw new Error("Expected size 7: " + dSupersStrict);
     }
-    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(dSupers)));
+    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(dSupersStrict)));
+
+    Collection<ClassOrInterfaceType> dSupersNonstrict = dType.getSuperTypesNonstrict();
+    if (dSupersNonstrict.size() != 8) {
+      throw new Error("Expected size 8: " + dSupersNonstrict);
+    }
+    assertTrue(CollectionsPlume.hasNoDuplicates(new ArrayList<>(dSupersNonstrict)));
 
     ClassOrInterfaceType objectType = ClassOrInterfaceType.forClass(Object.class);
-    assertEquals(1, objectType.getSuperTypesNonstrict().size())
 
-    assertFalse(true); // for testing
+    assertTrue(objectType.getSuperTypesStrict().isEmpty());
+    assertEquals(1, objectType.getSuperTypesNonstrict().size());
   }
 
   // public List<ClassOrInterfaceType> getImmediateSupertypes() {
