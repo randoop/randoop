@@ -9,7 +9,10 @@ ui/
 dist/
 src/docs/api
 TAGS
-.plume-scripts/
+
+# For style checking.
+.plume-scripts
+.markdownlint-cli2.yaml
 .pymarkdown
 .ruff.toml
 
