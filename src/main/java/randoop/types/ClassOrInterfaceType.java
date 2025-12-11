@@ -377,7 +377,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns a set containing this type and all its supertypes. The result contains no duplicates.
    *
-   * @return the set of all supertypes of this type
+   * @return this type and all its supertypes
    */
   public Set<ClassOrInterfaceType> getSupertypesInclusive() {
     return getSupertypes(true);
