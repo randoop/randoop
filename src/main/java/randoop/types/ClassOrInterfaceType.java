@@ -375,9 +375,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
     Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
     worklist.add(this);
-    if (includeSelf) {
-      result.add(this);
-    }
     while (!worklist.isEmpty()) {
       ClassOrInterfaceType t = worklist.remove();
       result.add(t);
@@ -386,8 +383,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         worklist.add(superclass);
       }
       for (ClassOrInterfaceType interfaceType : t.getInterfaces()) {
+        // An interface may be added to the worklist multiple times, but it will only appear
+        // once in the result.  It doesn't seem worthwhile to test, here, whether the interface
+        // has already been seen, since adding it to the result set does that same test.
         worklist.add(interfaceType);
       }
+    }
+    if (!includeSelf) {
+      result.remove(this);
     }
     return result;
   }
