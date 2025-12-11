@@ -365,8 +365,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns a set containing all of the strict supertypes of this type. If {@code includeSelf} is
-   * true, the set also contains this type itself. The set contains no duplicates.
+   * Returns a set containing the supertypes of this type. If {@code includeSelf} is true, the set
+   * also contains this type itself; otherwise it contains only the strict supertypes. The set
+   * contains no duplicates.
    *
    * @param includeSelf if true, the result contains this type as well as all supertypes
    * @return the set of all supertypes of this type
