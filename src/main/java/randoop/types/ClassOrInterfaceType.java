@@ -401,7 +401,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         // An interface may be added to the worklist multiple times, but it will only appear
         // once in the result.  It doesn't seem worthwhile to test, here, whether the interface
         // has already been seen, since adding it to the result set does that same test.
-        // Process interfaces before classes to reduce duplication on the worklist.
+        // Processing interfaces before classes does reduce duplication within the worklist.
         worklist.addAll(t.getInterfaces());
         ClassOrInterfaceType superclass = t.getSuperclass();
         if (superclass != null) {
