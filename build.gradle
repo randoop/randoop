@@ -111,7 +111,7 @@ allprojects {
       if (project.hasProperty("cfLocal")) {
         version = checkerFrameworkVersion
       } else {
-        version = checkerFrameworkVersion
+        version = "local"
       }
       excludeTests = true
       if (project.hasProperty("cfNullness")) {
