@@ -283,7 +283,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       if (typeToFuzz instanceof ClassOrInterfaceType) {
         // Include the type itself and all supertypes.
         for (ClassOrInterfaceType ancestor :
-            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
+            ((ClassOrInterfaceType) typeToFuzz).getSupertypesInclusive()) {
           List<TypedOperation> ops = rawTypeToSideEffectingOps.get(ancestor.getRawtype());
           if (ops != null) {
             opsSet.addAll(ops);
