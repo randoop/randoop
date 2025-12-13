@@ -4,9 +4,12 @@
 
 Randoop compiles and runs under Java 8-25.
 
-New command-line argument:
+New command-line arguments:
 
 * `--cast-to-run-time-type` enables more methods to be called on a value
+* `--literal-tfidf` changes which literal values Randoop uses
+* `--literal-tfidf-probability` changes which literal values Randoop uses
+
 
 ## Version 4.3.4 (June 6, 2025)
 
