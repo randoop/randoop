@@ -345,33 +345,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract ClassOrInterfaceType getSuperclass();
 
   /**
-<<<<<<< HEAD
-   * Returns the set of all of the strict supertypes of this type (that is, not including this type
-   * itself). The result is guaranteed not to contain duplicates, even in the presence of diamond
-   * inheritance patterns.
-   *
-   * @return the set of all supertypes of this type, with no duplicates
-   */
-  public Collection<ClassOrInterfaceType> getSuperTypes() {
-    Collection<ClassOrInterfaceType> supertypes = new LinkedHashSet<>();
-    if (this.isObject()) {
-      return supertypes;
-    }
-    ClassOrInterfaceType superclass = this.getSuperclass();
-    if (superclass != null) {
-      supertypes.add(superclass);
-      supertypes.addAll(superclass.getSuperTypes());
-    }
-    for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
-      supertypes.add(interfaceType);
-      supertypes.addAll(interfaceType.getSuperTypes());
-    }
-    return supertypes;
-  }
-
-  /**
-=======
->>>>>>> upstream/master
    * Returns the immediate supertypes of this type.
    *
    * @return the immediate supertypes of this type
