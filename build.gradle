@@ -836,29 +836,6 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
   updateUserOptions.enabled = false
 }
 
-
-/* Requires that the html5validator program is installed */
-tasks.register("html5validatorExists", Exec) {
-
-  def command = "command -v html5validator"
-  def stdout = new ByteArrayOutputStream()
-  def stderr = new ByteArrayOutputStream()
-  ignoreExitValue = true
-  executable = "bash"
-  args("-l", "-c", command)
-  standardOutput = stdout
-  errorOutput = stderr
-
-  doLast {
-    if (executionResult.get().exitValue != 0) {
-      println("Command failed: $command")
-      println("Standard output: $stdout")
-      println("Standard error: $stderr")
-      ant.fail("html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .")
-    }
-  }
-}
-html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateUserTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
@@ -870,14 +847,13 @@ tasks.register("manual", Exec) {
       "updateUserOptions",
       "updateUserTOC",
       "updateDevTOC",
-      "html5validatorExists"
       )
 
   group = "Documentation"
   description = "Adds options and TOC to documentation in src/docs"
   onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
   environment("PATH", "${System.env.PATH}")
-  commandLine("html5validator", "--root", file("${projectDir}/src/docs/manual"))
+  commandLine("make", "html-style-check")
 }
 
 // This is cross-platform and pulls in all required dependencies.  However,
@@ -900,14 +876,13 @@ build.dependsOn(manual)
 tasks.register("validateAPI", Exec) {
   dependsOn(
       "javadoc",
-      "html5validatorExists"
       )
   group = "Documentation"
   description = "Run html5validator to find HTML errors in API documentation"
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uv", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
@@ -971,25 +946,13 @@ tasks.register("publishSite", Copy) {
   }
 }
 
-/*
- * Applies HTML5 validator to project site HTML, including the manual
- */
-tasks.register("validateSite", Exec) {
-  dependsOn("html5validatorExists")
-  description = "Run html5validator to find HTML errors in site files (excludes manual and api)"
-  environment("PATH", "$System.env.PATH")
-  commandLine("html5validator", "--root", "src/docs/")
+tasks.register("styleCheck", Exec) {
+  description = "Validate HTML, Markdown, etc. files."
+  commandLine("make", "html-style-check")
 }
-validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+styleCheck.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+check.dependsOn("styleCheck")
 
-/* Validate Markdown files. */
-tasks.register("markdownlint", Exec) {
-  group = "Verification"
-  description = "Run markdownlint-cli2 linter on Markdown files"
-  executable = "markdownlint-cli2"
-  args(".")
-}
-check.dependsOn("markdownlint")
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {
@@ -1015,7 +978,6 @@ tasks.register("buildRelease", DefaultTask) {
       "assembleRelease",
       "check",
       "publishSite",
-      "validateSite",
       "distributionZip"
       )
   group = "Publishing"
