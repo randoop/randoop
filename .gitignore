@@ -10,11 +10,8 @@ dist/
 src/docs/api
 TAGS
 
-# For style checking.
+# Obtained via Git
 .plume-scripts
-.markdownlint-cli2.yaml
-.pymarkdown
-.ruff.toml
 
 # IDE-specific ignores
 # lists comes from import, and running project build

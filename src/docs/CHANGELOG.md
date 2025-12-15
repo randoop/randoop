@@ -654,8 +654,8 @@ and Randoop may be generating sub-optimal test suites.
 
 Fix bugs, notably:
 
-* #18 Handle non-accessible thrown exceptions
-* #51 Use better variable names in generated tests
+* Bug #18 Handle non-accessible thrown exceptions
+* Bug #51 Use better variable names in generated tests
 * Use equals, not ==, to compare NaN
 
 Many documentation improvements, including clarifications and

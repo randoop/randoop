@@ -35,7 +35,7 @@ echo "---------------- do not cause CI failures ----------------"
 failures=""
 
 ## Code style
-make -C scripts style-check || failures="style-check $failures"
+make style-check || failures="style-check $failures"
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
   echo "Don't use wildcard import"
   failures="wildcard-import $failures"
