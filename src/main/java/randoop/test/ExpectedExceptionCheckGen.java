@@ -65,6 +65,7 @@ public class ExpectedExceptionCheckGen {
     while (!accessibility.isAccessible(c)) {
       c = c.getSuperclass();
     }
+    assert c != null : "@AssumeAssertion(nullness): Object is accessible";
     return c;
   }
 

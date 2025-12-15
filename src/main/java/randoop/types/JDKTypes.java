@@ -316,7 +316,8 @@ public class JDKTypes {
    */
   public static GenericClassType getImplementingTypeForCollection(ParameterizedType type) {
     GenericClassType genericType = type.getGenericClassType();
-    if (!genericType.isSubtypeOf(COLLECTION_TYPE) && !genericType.isSubtypeOf(MAP_TYPE)) {
+    if (!genericType.isSubtypeOfOrEqualTo(COLLECTION_TYPE)
+        && !genericType.isSubtypeOfOrEqualTo(MAP_TYPE)) {
       throw new IllegalArgumentException("type must be a JDK Collections type, got " + type);
     }
 

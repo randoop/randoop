@@ -359,8 +359,7 @@ public class InstantiationTest {
     if (type.isClassOrInterfaceType()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       if (!(classType.isGeneric() || classType.hasWildcard())) {
-        typeSet.add(classType);
-        typeSet.addAll(classType.getSuperTypes());
+        typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
   }

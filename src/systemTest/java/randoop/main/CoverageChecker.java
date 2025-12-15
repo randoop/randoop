@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
@@ -35,11 +36,21 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
+  /** The name of the file that contains the method specs, or null. */
+  private @Nullable String methodSpecsFile;
+
+  /**
+   * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
+   * covered, but this set does not contain them.
+   */
+  // This isn't read; the main purpose of `include()` is to remove from the other two sets.
+  private final Set<String> includedMethodsGoal = new HashSet<>();
+
   /** The methods that must not be covered. */
-  private final Set<String> excludedMethods = new HashSet<>();
+  private final Set<String> excludedMethodsGoal = new HashSet<>();
 
   /** The methods whose coverage should be ignored. */
-  private final Set<String> dontCareMethods = new HashSet<>();
+  private final Set<String> ignoredMethodsGoal = new HashSet<>();
 
   /** The major version number of the Java runtime. */
   public static final int javaVersion = getJavaVersion();
@@ -99,7 +110,7 @@ class CoverageChecker {
 
   /**
    * Create a coverage checker using the classnames from the option set, and the method exclusions
-   * in the given file
+   * in the given file.
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
@@ -109,17 +120,18 @@ class CoverageChecker {
       RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
     // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
-    String resource = "test-methodspecs/" + methodSpecsFile;
-    Class<?> thisClass = MethodHandles.lookup().lookupClass();
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
+    String resourceName = "test-methodspecs/" + methodSpecsFile;
+    result.methodSpecsFile = cloader.getResource(resourceName).getPath();
     List<String> methodSpecs;
-    try (InputStream in = thisClass.getClassLoader().getResourceAsStream(resource)) {
+    try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
-        throw new Error("Resource not found on classpath: " + resource);
+        throw new Error("Resource not found on classpath: " + resourceName);
       }
       methodSpecs =
           new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
-      throw new Error("Problem reading resource " + resource, e);
+      throw new Error("Problem reading resource " + resourceName, e);
     }
     result.methods(methodSpecs.toArray(new String[0]));
     return result;
@@ -139,12 +151,25 @@ class CoverageChecker {
   }
 
   /**
+   * Add a method name to the included method names in this checker.
+   *
+   * @param methodName the name to add
+   */
+  void include(String methodName) {
+    includedMethodsGoal.add(methodName);
+    excludedMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.remove(methodName);
+  }
+
+  /**
    * Add a method name to the excluded method names in this checker.
    *
    * @param methodName the name to add
    */
   void exclude(String methodName) {
-    excludedMethods.add(methodName);
+    includedMethodsGoal.remove(methodName);
+    excludedMethodsGoal.add(methodName);
+    ignoredMethodsGoal.remove(methodName);
   }
 
   /**
@@ -153,21 +178,17 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void ignore(String methodName) {
-    dontCareMethods.add(methodName);
+    includedMethodsGoal.remove(methodName);
+    excludedMethodsGoal.remove(methodName);
+    ignoredMethodsGoal.add(methodName);
   }
 
   /** Matches digits at the end of a string. */
   private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile("^(.*?)([0-9]+)$");
 
   /**
-   * Add method names to be excluded, ignored, or included (included has no effect).
-   *
-   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or &ge; 22.
-   *
-   * <p>This format is intended to make it easy to sort the arguments.
+   * Add method names to be excluded, ignored, or included. For documentation, see {@link
+   * #methods(List)}.
    *
    * @param methodSpecs method specifications
    */
@@ -176,7 +197,8 @@ class CoverageChecker {
   }
 
   /**
-   * Add method names to be excluded, ignored, or included (included has no effect).
+   * Add method names to be excluded, ignored, or included (included has no effect, except to
+   * override/remove a previous exclusion or ignoring).
    *
    * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
    * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
@@ -184,6 +206,10 @@ class CoverageChecker {
    * 21, or &ge; 22.
    *
    * <p>This format is intended to make it easy to sort the arguments.
+   *
+   * <p>When multiple lines apply to a single method, the last one takes precedence. (TODO: Should
+   * this be changed to the most restrictive one taking precedence? That would require a different
+   * implementation.)
    *
    * @param methodSpecs method specifications
    */
@@ -199,20 +225,19 @@ class CoverageChecker {
       }
       int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
-        throw new Error(
-            "Bad method spec, lacks action at end "
-                + "(exclude{,NN,NN+}, ignore{,NN,NN+}, or include): "
-                + s);
+        throw new Error("Bad method spec, lacks action at end: " + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
 
-      boolean plus;
+      boolean orGreater = false;
+      boolean orLess = false;
       if (action.endsWith("+")) {
         action = action.substring(0, action.length() - 1);
-        plus = true;
-      } else {
-        plus = false;
+        orGreater = true;
+      } else if (action.endsWith("-")) {
+        action = action.substring(0, action.length() - 1);
+        orLess = true;
       }
 
       int actionJdk;
@@ -221,12 +246,16 @@ class CoverageChecker {
         action = m.group(1);
         actionJdk = Integer.parseInt(m.group(2));
       } else {
+        if (orGreater || orLess) {
+          throw new Error("Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+        }
         actionJdk = 0;
       }
 
       if (actionJdk == 0
-          || (!plus && javaVersion == actionJdk)
-          || (plus && javaVersion >= actionJdk)) {
+          || (javaVersion == actionJdk)
+          || (orGreater && javaVersion > actionJdk)
+          || (orLess && javaVersion < actionJdk)) {
         switch (action) {
           case "exclude":
             exclude(methodName);
@@ -235,10 +264,9 @@ class CoverageChecker {
             ignore(methodName);
             break;
           case "include":
-            // nothing to do
+            include(methodName);
             break;
           default:
-            // Not RandoopBug because that isn't available here.
             throw new Error("Unrecognized action " + action + " in method spec: " + s);
         }
       }
@@ -280,8 +308,8 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
-          if (excludedMethods.contains(methodname)) {
+        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
+          if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);
             }
@@ -307,16 +335,33 @@ class CoverageChecker {
     if (numCoveredMethods < minMethodsToCover) {
       failureMessage.append(totalCoveredMethodsMsg);
     }
+    String inFileName = "";
+    if (methodSpecsFile != null) {
+      methodSpecsFile =
+          methodSpecsFile.replaceFirst(
+              "/build/resources/systemTest/", "/src/systemTest/resources/");
+      // Special cases for CI (Azure and CircleCI, respectively).
+      if (methodSpecsFile.startsWith("/__w/1/s/")) {
+        methodSpecsFile = methodSpecsFile.substring(9);
+      } else if (methodSpecsFile.startsWith("/root/project/")) {
+        methodSpecsFile = methodSpecsFile.substring(14);
+      }
+      inFileName = String.format(" in%n%s", methodSpecsFile);
+    }
     if (!missingMethods.isEmpty()) {
-      failureMessage.append(String.format("Expected methods not covered:%n"));
+      failureMessage.append(
+          String.format(
+              "Expected methods not covered (given lines adjust goals%s):%n", inFileName));
       for (String name : missingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s exclude%d%n", name, javaVersion));
       }
     }
     if (!shouldBeMissingMethods.isEmpty()) {
-      failureMessage.append(String.format("Excluded methods that are covered:%n"));
+      failureMessage.append(
+          String.format(
+              "Excluded methods that are covered (given lines adjust goals%s):%n", inFileName));
       for (String name : shouldBeMissingMethods) {
-        failureMessage.append(String.format("  %s%n", name));
+        failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
     }
     if (regressionStatus == null) {
@@ -371,7 +416,7 @@ class CoverageChecker {
 
   /**
    * Pattern for excluding method names from coverage checks. Excludes JaCoCo, Java private access
-   * inner class methods, and hashCode().
+   * inner class methods, and {@code hashCode()}.
    */
   private static final Pattern IGNORE_PATTERN =
       Pattern.compile("\\$jacocoInit|access\\$\\d+|(\\.hashCode\\(\\)$)");
