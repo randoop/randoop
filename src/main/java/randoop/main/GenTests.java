@@ -721,7 +721,7 @@ public class GenTests extends GenInputsAbstract {
 
         // Filter visited types down to non-SUT.
         Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
-        Set<Type> nonSutTypes = new LinkedHashSet<>(CollectionsPlume.mapCapacity(visited.size()));
+        Set<Type> nonSutTypes = new LinkedHashSet<>(MapsP.mapCapacity(visited.size()));
         for (Type t : visited) {
           if (!sutRuntime.contains(t.getRuntimeClass())) {
             nonSutTypes.add(t);

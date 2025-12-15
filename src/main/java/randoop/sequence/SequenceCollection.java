@@ -310,7 +310,7 @@ public class SequenceCollection {
         }
         Log.logPrintf(
             "Demand-driven input creation found %s for type %s%n",
-            StringsPlume.nplural(sequencesForType.size(), "sequence"), type);
+            StringsPlume.nPlural(sequencesForType.size(), "sequence"), type);
         if (!sequencesForType.isEmpty()) {
           resultList.add(sequencesForType);
         }

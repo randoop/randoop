@@ -153,7 +153,7 @@ public final class DemandDrivenLog {
     sb.append(
         String.format(
             "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
-            StringsPlume.nplural(uninstantiableTypes.size(), "type")));
+            StringsPlume.nPlural(uninstantiableTypes.size(), "type")));
     for (Type type : uninstantiableTypes) {
       sb.append("- ").append(type.getRuntimeClass().getName()).append("\n");
     }
