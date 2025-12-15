@@ -31,15 +31,11 @@ Some of the (optional) commands below assume:
 
    * You can link `.jar` files from a local version of Randoop:
 
-     <!-- markdownlint-disable line-length -->
-
      ```sh
      (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
      (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
   
-    <!-- markdownlint-enable line-length -->
-
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:
    `(cd $D4J_HOME/framework/test && ln -s $randoop/scripts/defects4j_* .)`
 
