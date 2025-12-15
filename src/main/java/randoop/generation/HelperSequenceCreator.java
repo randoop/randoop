@@ -367,7 +367,7 @@ class HelperSequenceCreator {
    */
   private static InstantiatedType getImplementingTypeForCollection(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
-    if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
+    if (elementType.getGenericClassType().isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
       List<TypeArgument> elementTypeArgs = elementType.getTypeArguments();

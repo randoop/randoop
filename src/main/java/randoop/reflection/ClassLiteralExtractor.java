@@ -34,6 +34,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * {@inheritDoc}
    *
    * <p>For each class, add to the literal map a sequence for each literal that the class uses.
+   *
+   * <p>This method does all the work; there is no {@code visitAfter()} method.
    */
   @Override
   public void visitBefore(Class<?> c) {
