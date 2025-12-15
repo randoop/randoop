@@ -31,11 +31,13 @@ Some of the (optional) commands below assume:
 
    * You can link `.jar` files from a local version of Randoop:
 
-    <!-- markdownlint-disable line-length -->
+     <!-- markdownlint-disable line-length -->
+
      ```sh
      (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
      (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
+  
     <!-- markdownlint-enable line-length -->
 
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:
@@ -62,8 +64,7 @@ Some of the (optional) commands below assume:
 
 5. The end of the defects4j_randoop.sh script invokes `./defects4j_coverage.pl` to
    display the coverage data.  You may rerun this script to review the results.
-    * `./defects4j_coverage.pl`
 
-    The raw coverage data is found at `$TMP_DIR/output/coverage`.
-    This script will accept an optional argument of an alternative file location.
-    Invoke the script with `-help` for a full list of options.
+   The raw coverage data is found at `$TMP_DIR/output/coverage`.
+   This script will accept an optional argument of an alternative file location.
+   Invoke the script with `-help` for a full list of options.
