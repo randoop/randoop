@@ -948,7 +948,7 @@ tasks.register("publishSite", Copy) {
 
 tasks.register("styleCheck", Exec) {
   description = "Validate HTML, Markdown, etc. files."
-  commandLine("make", "html-style-check")
+  commandLine("make", "style-check")
 }
 styleCheck.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 check.dependsOn("styleCheck")

@@ -12,10 +12,10 @@ include .plume-scripts/code-style.mak
 style-check: sorting-style-check
 style-fix: sorting-style-fix
 sorting-style-check:
-	@sort -c -u src/systemTest/resources/test-methodspecs/CollectionsTest.methodspecs
-	@sort -c -u src/systemTest/resources/test-methodspecs/JDKTest.methodspecs
-	@sort -c -u src/systemTest/resources/test-methodspecs/NaiveCollectionsTest.methodspecs
+	@LC_ALL=C sort -c -u src/systemTest/resources/test-methodspecs/CollectionsTest.methodspecs
+	@LC_ALL=C sort -c -u src/systemTest/resources/test-methodspecs/JDKTest.methodspecs
+	@LC_ALL=C sort -c -u src/systemTest/resources/test-methodspecs/NaiveCollectionsTest.methodspecs
 sorting-style-fix:
-	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o CollectionsTest.methodspecs CollectionsTest.methodspecs)
-	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o JDKTest.methodspecs JDKTest.methodspecs)
-	@(cd src/systemTest/resources/test-methodspecs/ && sort -u -o NaiveCollectionsTest.methodspecs NaiveCollectionsTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && LC_ALL=C sort -u -o CollectionsTest.methodspecs CollectionsTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && LC_ALL=C sort -u -o JDKTest.methodspecs JDKTest.methodspecs)
+	@(cd src/systemTest/resources/test-methodspecs/ && LC_ALL=C sort -u -o NaiveCollectionsTest.methodspecs NaiveCollectionsTest.methodspecs)

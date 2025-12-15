@@ -68,7 +68,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
 && apt -qqy install \
   perl \
-  wget
+  wget \
+  yamllint
 
 RUN export DEBIAN_FRONTEND=noninteractive \
 && apt -qqy update \
