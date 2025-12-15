@@ -1,12 +1,14 @@
-Version ?? (?? ??, 2025)
----------------------------
+# Randoop change log
+
+## Version ?? (?? ??, 2025)
+
+Randoop compiles and runs under Java 8-25.
 
 New command-line argument:
 
 * `--cast-to-run-time-type` enables more methods to be called on a value
 
-Version 4.3.4 (June 6, 2025)
----------------------------
+## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
 
@@ -20,8 +22,7 @@ New command-line arguments:
 Method specification JSON uses "pre", "post", and "throws" rather than
 "pre-conditions", "post-conditions", and "throws-conditions".
 
-Version 4.3.3 (May 2, 2024)
--------------------------------
+## Version 4.3.3 (May 2, 2024)
 
 New technique, "Orienteering", favors sequences with lower number of method
 calls and cumulative execution time.  Enable it via
@@ -35,20 +36,17 @@ Randoop supports Java 20 (and still supports Java 8, Java 11, and Java 17).
 
 Minor documentation improvements.
 
-Version 4.3.2 (January 8, 2023)
--------------------------------
+## Version 4.3.2 (January 8, 2023)
 
 Randoop supports Java 19 (and still supports Java 8, Java 11, and Java 17).
 
-Version 4.3.1 (July 13, 2022)
------------------------------
+## Version 4.3.1 (July 13, 2022)
 
 Several bug fixes.
 
 Minor documentation improvements.
 
-Version 4.3.0 (January 31, 2022)
---------------------------------
+## Version 4.3.0 (January 31, 2022)
 
 Randoop supports Java 17 (and still supports Java 8 and Java 11).
 
@@ -57,8 +55,7 @@ which were deprecated two years ago.
 
 Support escaping dollar sign from variable name.
 
-Version 4.2.7 (December 17, 2021)
----------------------------------
+## Version 4.2.7 (December 17, 2021)
 
 New `--test-package` command-line option means to test all classes on the
 classpath within the given.  Thanks to Ivan Kocherhin.
@@ -71,16 +68,14 @@ Bug fixes.
 
 Minor documentation improvements.
 
-Version 4.2.6 (May 3, 2021)
----------------------------
+## Version 4.2.6 (May 3, 2021)
 
 Bug fixes.  The most important are:
 
 * Fix `NullPointerException` that may occur when using JDK 8.
 * Use correct jar path for Windows hosts
 
-Version 4.2.5 (December 2, 2020)
---------------------------------
+## Version 4.2.5 (December 2, 2020)
 
 New command-line options:
 
@@ -93,14 +88,12 @@ Improved documentation about diagnosing when Randoop produces no tests
 
 Better handling of Mockito-generated class files.
 
-Version 4.2.4 (July 14, 2020)
------------------------------
+## Version 4.2.4 (July 14, 2020)
 
 Bug fixes.
 No user-visible behavior changes.
 
-Version 4.2.3 (March 31, 2020)
-------------------------------
+## Version 4.2.3 (March 31, 2020)
 
 In generated tests, Randoop produces fewer verbose comments and uses better
 assertion style (e.g., assertEquals rather than assertTrue).
@@ -108,8 +101,7 @@ assertion style (e.g., assertEquals rather than assertTrue).
 Bug fixes.
 One example is proper treatment of resource paths on Windows.
 
-Version 4.2.2 (February 29, 2020)
----------------------------------
+## Version 4.2.2 (February 29, 2020)
 
 Implemented --omit-classes and --omit-classes-file command-line options.
 
@@ -124,14 +116,12 @@ Reduced default for --string-maxlen to 1000.
 
 Bug fixes.
 
-Version 4.2.1 (October 27, 2019)
---------------------------------
+## Version 4.2.1 (October 27, 2019)
 
 Bug fixes.
 No user-visible behavior changes.
 
-Version 4.2.0 (August 22, 2019)
--------------------------------
+## Version 4.2.0 (August 22, 2019)
 
 Randoop supports Java 11 (and still supports Java 8).
 
@@ -158,19 +148,16 @@ Command-line argument changes:
 * default for --flaky-test-behavior argument changed from HALT to OUTPUT
 * renamed --print-erroneous-file to --print-non-compiling-file
 
-Version 4.1.2 (April 21, 2019)
-------------------------------
+## Version 4.1.2 (April 21, 2019)
 
 Bug fixes, improve documentation and diagnostics.
 No user-visible behavior changes.
 
-Version 4.1.1 (February 3, 2019)
---------------------------------
+## Version 4.1.1 (February 3, 2019)
 
 Minor bug fixes; no user-visible behavior changes.
 
-Version 4.1.0 (September 5, 2018)
----------------------------------
+## Version 4.1.0 (September 5, 2018)
 
 Randoop requires Java 8; it no longer runs on a Java 7 JVM.
 
@@ -183,8 +170,7 @@ Command-line argument changes:
 
 * renamed --small-tests to --input-selection=small-tests
 
-Version 4.0.4 (May 23, 2018)
-----------------------------
+## Version 4.0.4 (May 23, 2018)
 
 Command-line argument changes:
 
@@ -201,13 +187,11 @@ Bug fixes.
 
 Improvements to documentation.
 
-Version 4.0.3 (April 10, 2018)
-------------------------------
+## Version 4.0.3 (April 10, 2018)
 
 Fixed a bug caused by order of execution of variable initializers.
 
-Version 4.0.2 (April 8, 2018)
------------------------------
+## Version 4.0.2 (April 8, 2018)
 
 Adds the contract c.toArray().length == c.size() for Collections c.
 
@@ -215,8 +199,7 @@ Make --omitmethods work for constructors as well as methods.
 
 Minor documentation improvements.
 
-Version 4.0.1 (March 25, 2018)
-------------------------------
+## Version 4.0.1 (March 25, 2018)
 
 This release makes minor documentation fixes.  Two examples are:
 
@@ -225,8 +208,7 @@ This release makes minor documentation fixes.  Two examples are:
 
 There are also code cleanups and minor bug fixes.
 
-Version 4.0.0 (February 28, 2018)
----------------------------------
+## Version 4.0.0 (February 28, 2018)
 
 Many improvements to the manual, including improved instructions about
 debugging when Randoop does not produce good test suites.
@@ -313,8 +295,7 @@ error-revealing sequences.
 Fixes a bug that required input using --testclass or --classlist, preventing
 exclusive use of --methodlist.
 
-Version 3.1.5 (April 28, 2017)
-------------------------------
+## Version 3.1.5 (April 28, 2017)
 
 Fixes a bug where a call to a method with a type variable return type should
 result in a ClassCastException does not throw the exception, but instead leads
@@ -322,28 +303,23 @@ to a later failure when invoking a class member.
 
 Fixes and improves error handling.
 
-Version 3.1.4 (April 11, 2017)
-------------------------------
+## Version 3.1.4 (April 11, 2017)
 
 Fixes a bug uncovered in obscure cases when package accessibility is used.
 
-Version 3.1.3 (April 11, 2017)
-------------------------------
+## Version 3.1.3 (April 11, 2017)
 
 Fixes a bug where package accessibility checks fail to work correctly.
 
-Version 3.1.2 (March 21, 2017)
-------------------------------
+## Version 3.1.2 (March 21, 2017)
 
 The exercised-class jar now includes dependencies.
 
-Version 3.1.1 (March 15, 2017)
-------------------------------
+## Version 3.1.1 (March 15, 2017)
 
 Fix to make the numbering of test classes consistent with previous versions.
 
-Version 3.1.0 (March 14, 2017)
-------------------------------
+## Version 3.1.0 (March 14, 2017)
 
 Filters generated test sequences that don't compile. There are a small number of
 known input cases for which Randoop produces uncompilable tests. This check will
@@ -354,13 +330,11 @@ setting --check-compilable=false.
 Adds new command-line option --sof-exception that controls how Randoop
 classifies a test that throws a StackOverflowError exception.
 
-Version 3.0.10 (March 6, 2017)
-------------------------------
+## Version 3.0.10 (March 6, 2017)
 
 Avoids Randoop failures due to issues that arise during test generation.
 
-Version 3.0.9 (February 22, 2017)
----------------------------------
+## Version 3.0.9 (February 22, 2017)
 
 New command-line option --stop-on-error-test stops test generation once
 an error-revealing test is generated.  This is useful during cycles of
@@ -379,8 +353,7 @@ Fixes
 
 Thanks to Marko Dimjasevic for issue reports.
 
-Version 3.0.8 (December 8, 2016)
---------------------------------
+## Version 3.0.8 (December 8, 2016)
 
 Fixes
 
@@ -402,8 +375,7 @@ Fixes
 
 Thanks to Mark Roberts and Marko Dimjasevic for issue reports.
 
-Version 3.0.7 (November 28, 2016)
----------------------------------
+## Version 3.0.7 (November 28, 2016)
 
 Randoop now
 
@@ -415,8 +387,7 @@ Randoop now
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
 
-Version 3.0.6 (October 14, 2016)
---------------------------------
+## Version 3.0.6 (October 14, 2016)
 
 Randoop now uses an approach to selecting instantiations of generic types (including
 type arguments of generic methods/constructors) that is less likely to lead to
@@ -425,8 +396,7 @@ an OutOfMemoryError.
 Fixed bug that would lead to failure involving a particular case of a static
 member class.
 
-Version 3.0.5 (October 5, 2016)
--------------------------------
+## Version 3.0.5 (October 5, 2016)
 
 Randoop now ignores generic operations or classes for which it is unable to
 assign a type to a type argument. These are included in log output.
@@ -441,8 +411,7 @@ Fixed bugs resulting in run-time failures:
 Fixed bug in which flaky tests could be generated involving NaN. Thanks to
 Naljorpa Chagmed for reporting this issue.
 
-Version 3.0.4 (August 29, 2016)
--------------------------------
+## Version 3.0.4 (August 29, 2016)
 
 Randoop now:
 
@@ -463,8 +432,7 @@ apparent bug in Java reflection classes.)
 Fixed a bug that was preventing contracts over compareTo from being tested.
 Issue thanks to Waylon Huang.
 
-Version 3.0.3 (July 28, 2016)
------------------------------
+## Version 3.0.3 (July 28, 2016)
 
 Fixed bugs that resulted in run-time errors. One involving failure to instantiate
 type parameters with dependencies among type bounds. Another resulting in a
@@ -472,8 +440,7 @@ failure during capture conversion.
 Also, fixed a case where uncompilable tests involving bridge methods could be
 generated.
 
-Version 3.0.2 (July 20, 2016)
------------------------------
+## Version 3.0.2 (July 20, 2016)
 
 Fixed a bug related to recursive type bounds of wildcard arguments. Thanks to
 Huascar Sanchez for reporting this issue.
@@ -485,8 +452,7 @@ Fixed a bug in reading input class names and an empty string was read.
 
 The command-line argument --init-routine has been removed.
 
-Version 3.0.1 (June 16, 2016)
------------------------------
+## Version 3.0.1 (June 16, 2016)
 
 Randoop now includes all of the contracts described in the user manual.
 It also uses a new contract checking heuristic that avoids exhaustive
@@ -494,8 +460,7 @@ enumeration over the new ternary contracts.
 
 Fixed a bug that prevented generation of collections.
 
-Version 3.0.0 (June 6, 2016)
-----------------------------
+## Version 3.0.0 (June 6, 2016)
 
 Randoop now tracks types independently of the Java reflection classes. This
 means for generic classes it will select a type argument for each type parameter
@@ -515,8 +480,7 @@ For developers: Randoop is now built using Gradle (with the Gradle Wrapper).
 File organization has changed to the default used by Gradle Java plugin.
 See the developer manual for details.
 
-Version 2.1.4 (February 24, 2016)
----------------------------------
+## Version 2.1.4 (February 24, 2016)
 
 Fixed a bug in --include-if-class-exercised that was including too many tests.
 The option now requires that Randoop be run with -javaagent:exercised_agent.jar.
@@ -537,8 +501,7 @@ Renamed command-line arguments --{error,regression}-test-filename to
 Documented that Randoop may create dependent tests whose outcome depends
 on the order in which they are run, and what to do about it.
 
-Version 2.1.3 (February 5, 2016)
---------------------------------
+## Version 2.1.3 (February 5, 2016)
 
 Renamed command-line argument --include-only-classes to
 --include-if-classname-appears.  Clarified that a test is output only if
@@ -554,8 +517,7 @@ Changed command-line argument defaults to forbid-null=false and
 Fixed a bug in which a primitive type would be selected as a receiver of a
 method call.
 
-Version 2.1.2 (January 26, 2016)
---------------------------------
+## Version 2.1.2 (January 26, 2016)
 
 Fixed issues related to filtering of classes and members so that Randoop ignores:
 
@@ -564,8 +526,7 @@ Fixed issues related to filtering of classes and members so that Randoop ignores
   private constructor of outer class used by inner class).
 Thanks to Rene Just and Gordon Fraser.
 
-Version 2.1.1 (January 22, 2016)
---------------------------------
+## Version 2.1.1 (January 22, 2016)
 
 Randoop now prints nicer error information when it halts after encountering a
 flaky test (a test in which an exception is thrown elsewhere than at the last
@@ -587,8 +548,7 @@ Fixed issue #80: package access fields can now be set and read.
 Fixed issue where evaluating a contract resulted in an IllegalArgumentException.
 Thanks to Juan Pablo Galeotti, Rene Just, and Gordon Fraser.
 
-Version 2.1.0 (December 30, 2015)
----------------------------------
+## Version 2.1.0 (December 30, 2015)
 
 Randoop now splits generated tests into three categories: error-revealing,
 regression, and invalid. Error-revealing and regression are now output as
@@ -639,8 +599,7 @@ This release fixes a bug in which a public method inherited from a package
 private class was being excluded from testing. (Thanks to Alberto Goffi for
 raising the issue and providing a concise example.)
 
-Version 2.0.1 (November 30, 2015)
----------------------------------
+## Version 2.0.1 (November 30, 2015)
 
 Fixed a bug in the variable names for generated array declarations.
 
@@ -657,8 +616,7 @@ in ascending order by name.
 The Randoop Eclipse plugin has moved into its own repository:
 <https://github.com/randoop/randoop-eclipse-plugin>
 
-Version 2.0 (October 13, 2015)
-------------------------------
+## Version 2.0 (October 13, 2015)
 
 The Randoop homepage is now <http://randoop.github.io/randoop/> .
 Moved the Randoop version control repository to its own GitHub organization:
@@ -678,8 +636,7 @@ Created a new mailing list, <randoop-discuss@googlegroups.com>, for
 discussions with Randoop users.  It is open to join and should be easier to
 search than the existing <randoop-developers@googlegroups.com> mailing list.
 
-Version 1.3.6 (August 10, 2015)
--------------------------------
+## Version 1.3.6 (August 10, 2015)
 
 Command-line-argument --junit-reflection-allowed=false causes Randoop to
 avoid use of JUnit's reflective test invocation.  Use of direct method
@@ -694,8 +651,8 @@ and Randoop may be generating sub-optimal test suites.
 
 Fix bugs, notably:
 
-* #18 Handle non-accessible thrown exceptions
-* #51 Use better variable names in generated tests
+* Bug #18 Handle non-accessible thrown exceptions
+* Bug #51 Use better variable names in generated tests
 * Use equals, not ==, to compare NaN
 
 Many documentation improvements, including clarifications and
@@ -714,8 +671,7 @@ the original version of Randoop.NET from Microsoft Research:
 The Java implementation of Randoop continues to have more features than
 Randoop.NET, but ABB's improvements make the .NET tool more usable.
 
-Version 1.3.5 (May 28, 2015)
-----------------------------
+## Version 1.3.5 (May 28, 2015)
 
 Command-line argument --check-regression-behavior controls whether the tests
 include assertions about the current behavior.
@@ -730,8 +686,7 @@ and from the Mercurial version control system to Git.
 
 Randoop now compiles, and its tests pass, under Java 8.
 
-Version 1.3.4 (January 1, 2014)
--------------------------------
+## Version 1.3.4 (January 1, 2014)
 
 Bug fixes:
 
@@ -746,8 +701,7 @@ Documentation:
 * Tips on reporting a bug
 * Documentation for building a release
 
-Version 1.3.3 (November 21, 2012)
----------------------------------
+## Version 1.3.3 (November 21, 2012)
 
 Bugfixes
 
@@ -765,13 +719,11 @@ Features
 
 Documentation enhanced
 
-Version 1.3.2 (August 22, 2010)
--------------------------------
+## Version 1.3.2 (August 22, 2010)
 
 (No changelog entry available.)
 
-Version 1.3.1
--------------
+## Version 1.3.1
 
 Added @TestValue annotation, allowing users to specify additional
 primitive values to Randoop programmatically.

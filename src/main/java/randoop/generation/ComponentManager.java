@@ -98,7 +98,7 @@ public class ComponentManager {
   private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
 
   /**
-   * Create an empty component manager, with an empty seed sequence set.
+   * Create an empty component manager, with an immutable empty seed sequence set.
    *
    * @param accessibility decides which constructors/methods are callable from the generated test
    *     code. This predicate matches the visibility rules chosen for the overall test package.
