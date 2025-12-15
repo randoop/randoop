@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
-<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="stylesheets/main.css" type="text/css">
+<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png">
 <title>Randoop Manual</title>
 </head>
 <body>
@@ -1253,10 +1253,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Literals in these files are used in addition to all other literals in the pool. For the
  format of this file, see documentation in class <code>randoop.reflection.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under
- test.
+ test; it may be specified in addition to one or more files.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
-             How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. [default: CLASS]
+             Where to use literal values as method arguments. Should a literal be used as an argument to any
+ method, or only to methods defined in the class where the literal appears, or only in the
+ package where the literal appears?
+
+ <p>The literal values might have been obtained from the bytecode and/or from a file provided
+ via the <code>--literals-file</code> command-line option. [default: CLASS]
 <ul>
   <li><b>NONE</b> Do not use literals specified in a literals file.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.

@@ -159,10 +159,11 @@ public class SequenceCollection {
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
-        typesAndSupertypes.add(formalType);
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSuperTypes());
+          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
+        } else {
+          typesAndSupertypes.add(formalType);
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
@@ -219,7 +220,7 @@ public class SequenceCollection {
     if (exactMatch) {
       Collection<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        resultList.add(SIList.fromList(l));
+        resultList.add(SIList.from(l));
       }
     } else {
       for (Type compatibleType : typeSet.getMatches(type)) {
@@ -230,7 +231,7 @@ public class SequenceCollection {
           @SuppressWarnings("nullness:assignment") // map key
           @NonNull Set<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
-          resultList.add(SIList.fromList(newMethods));
+          resultList.add(SIList.from(newMethods));
         }
       }
     }

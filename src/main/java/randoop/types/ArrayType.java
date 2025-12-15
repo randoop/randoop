@@ -216,8 +216,8 @@ public class ArrayType extends ReferenceType {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
-    if (super.isSubtypeOf(otherType)) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
@@ -232,7 +232,7 @@ public class ArrayType extends ReferenceType {
     if (otherType.isArray() && componentType.isReferenceType()) {
       ArrayType otherArrayType = (ArrayType) otherType;
       return otherArrayType.componentType.isReferenceType()
-          && this.componentType.isSubtypeOf(otherArrayType.componentType);
+          && this.componentType.isSubtypeOfOrEqualTo(otherArrayType.componentType);
     }
 
     return false;

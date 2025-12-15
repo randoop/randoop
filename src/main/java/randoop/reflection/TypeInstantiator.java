@@ -77,7 +77,7 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic()
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
-        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+        if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
           substitution = instantiateClass(declaringType);

@@ -47,7 +47,7 @@ public class JDKTypesTest {
       } else if (classType.isInterface() || classType.isAbstract()) {
         assertFalse(implementingType.isInterface());
         assertFalse(implementingType.isAbstract());
-        assertTrue(implementingType.isSubtypeOf(classType));
+        assertTrue(implementingType.isSubtypeOfOrEqualTo(classType));
       } else {
         assertEquals(classType, implementingType);
       }

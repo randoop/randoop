@@ -125,7 +125,7 @@ public class OmitMethodsPredicate {
 
     // Search the type and its supertypes that have the method.
 
-    for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
+    for (ClassOrInterfaceType type : operation.getDeclaringType().getSupertypesInclusive()) {
       if (logOmit) {
         Log.logPrintf("shouldOmit looking in %s for %s%n", type, signature.getName());
       }

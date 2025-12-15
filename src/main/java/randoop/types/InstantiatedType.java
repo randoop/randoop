@@ -400,7 +400,7 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
-    return argType.isSubtypeOf(this);
+    return argType.isSubtypeOfOrEqualTo(this);
   }
 
   @Override
@@ -424,7 +424,7 @@ public class InstantiatedType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType.isParameterized()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
@@ -452,17 +452,17 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
     // wildcard clause
     if (this.hasWildcard()) { // JLS 4.10.2
       // old note says this has to be tested first
-      return this.applyCaptureConversion().isSubtypeOf(otherType);
+      return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
-    return this.getRawtype().isSubtypeOf(otherType);
+    return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
   @Override

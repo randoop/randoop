@@ -45,6 +45,7 @@ import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
@@ -202,6 +203,35 @@ public class GenTests extends GenInputsAbstract {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
 
+  /**
+   * Extract the major version number from the "java.version" system property.
+   *
+   * @return the major version of the Java runtime
+   */
+  private static int getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      // Up to Java 8, from a version string like "1.8.whatever", extract "8".
+      version = version.substring(2, 3);
+    } else {
+      // Since Java 9, from a version string like "11.0.1", extract "11".
+      int i = version.indexOf('.');
+      if (i < 0) {
+        // Some Linux dockerfiles return only the major version number for
+        // the system property "java.version"; i.e., no ".<minor version>".
+        // Return 'version' unchanged in this case.
+      } else {
+        version = version.substring(0, i);
+      }
+    }
+    // Handle version strings like "18-ea".
+    int i = version.indexOf('-');
+    if (i > 0) {
+      version = version.substring(0, i);
+    }
+    return Integer.parseInt(version);
+  }
+
   @Override
   @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
   public boolean handle(String[] args) {
@@ -218,6 +248,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.println("Randoop for Java version " + Globals.getRandoopVersion() + ".");
+      System.out.println("Java version " + getJavaVersion() + ".");
     }
 
     checkOptionsValid();
@@ -419,8 +450,7 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
     Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
     Set<Sequence> components =
-        new LinkedHashSet<>(
-            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+        new LinkedHashSet<>(MapsP.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
@@ -529,7 +559,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
+    Set<Sequence> excludeSet = new LinkedHashSet<>(MapsP.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -742,8 +772,7 @@ public class GenTests extends GenInputsAbstract {
 
     MultiMap<Type, TypedClassOperation> result =
         new MultiMap<>(
-            CollectionsPlume.mapCapacity(
-                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
+            MapsP.mapCapacity(sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;
@@ -930,8 +959,8 @@ public class GenTests extends GenInputsAbstract {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
     SIList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SIList has no iterator
-      TypedOperation to = statements.get(i).getOperation();
+    for (Statement s : statements) {
+      TypedOperation to = s.getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
       }
@@ -984,8 +1013,7 @@ public class GenTests extends GenInputsAbstract {
       String testKind) {
     if (testSequences.isEmpty()) {
       if (GenInputsAbstract.progressdisplay) {
-        System.out.printf(
-            "%nNo " + testKind.toLowerCase(Locale.getDefault()) + " tests to output.%n");
+        System.out.printf("%nNo %s tests to output.%n", testKind.toLowerCase(Locale.getDefault()));
       }
       return;
     }
@@ -1250,9 +1278,8 @@ public class GenTests extends GenInputsAbstract {
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
           SIList<Statement> seqStatements = sequence.statements;
-          int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SIList has no iterator
-            Operation operation = seqStatements.get(i).getOperation();
+          for (Statement s : seqStatements) {
+            Operation operation = s.getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
             }
