@@ -10,7 +10,6 @@ New command-line arguments:
 * `--literal-tfidf` changes which literal values Randoop uses
 * `--literal-tfidf-probability` changes which literal values Randoop uses
 
-
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
