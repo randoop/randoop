@@ -6,9 +6,12 @@ Randoop compiles and runs under Java 8-25.
 
 New command-line arguments:
 
-* `--cast-to-run-time-type` enables more methods to be called on a value
-* `--literal-tfidf` changes which literal values Randoop uses
-* `--literal-tfidf-probability` changes which literal values Randoop uses
+* `--cast-to-run-time-type` declares variables with their exact run-time types instead of compile-time types, allowing Randoop to call more methods on values
+* `--grt-fuzzing` enables fuzzing of primitive and String inputs by applying random mutations (based on the GRT technique)
+* `--grt-fuzzing-stddev` controls the standard deviation for Gaussian distribution used to fuzz numeric values (used with `--grt-fuzzing`)
+* `--literal-tfidf` enables TF-IDF weighted selection of literal values extracted from bytecode
+* `--literal-tfidf-probability` sets the probability of using TF-IDF weighted selection (vs. random selection) when choosing literals
+* `--include-superclass-literals` makes literals from superclasses available when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
 ## Version 4.3.4 (June 6, 2025)
 

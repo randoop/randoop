@@ -775,11 +775,11 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
         // Get the declaring type for literal selection.
         ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
-        Log.logPrintf("tf-idf is selecting a literal of type " + declaringType);
 
         // Get candidate sequences, from the appropriate scope, that create values of type
         // inputTypes[i].
         Type neededType = operation.getInputTypes().get(i);
+        Log.logPrintf("tf-idf is selecting a literal of type %s%n", neededType);
         SIList<Sequence> candidates =
             componentManager.getLiteralSequences(neededType, declaringType);
 
@@ -1064,11 +1064,12 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("Resolved selection scope: %s%n", scope);
     }
 
-    // If a selector is already cached for this scope, reuse it without computing
-    // the potentially-expensive `LiteralStatistics` snapshot.
+    // If a selector is already cached for this scope, reuse it. Otherwise, we need to:
+    // 1. Get literal statistics (potentially expensive with --include-superclass-literals, as it
+    //    merges statistics from the inheritance hierarchy)
+    // 2. Construct a TfIdfSelector (expensive, as it processes statistics for weighted selection)
     TfIdfSelector tfIdfSelector = scopeToTfIdfSelectors.get(scope);
     if (tfIdfSelector == null) {
-      // Only compute literalStats when we actually need to construct a new selector.
       LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
       // If the scope has no literals (i.e., the class had no extractable constants from bytecode),
       // TF-IDF selection is not possible, so return null to fall back to default literal selection.

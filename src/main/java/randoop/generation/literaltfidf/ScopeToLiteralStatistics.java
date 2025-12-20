@@ -33,10 +33,73 @@ public class ScopeToLiteralStatistics {
    * Returns information about literals in a specific scope.
    *
    * @param type the type whose scope to access
-   * @return information about literals in the scope for {@code type}, including superclass literals
+   * @return information about literals in the scope for {@code type}
    */
   public LiteralStatistics getLiteralStatistics(ClassOrInterfaceType type) {
-    return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
+    return getLiteralStatistics(type, GenInputsAbstract.include_superclass_literals);
+  }
+
+  /**
+   * Returns information about literals in a specific scope, optionally including superclass
+   * literals.
+   *
+   * @param type the type whose scope to access
+   * @param includeSuperclassLiterals whether to include literals from superclasses
+   * @return information about literals in the scope for {@code type}, optionally including
+   *     superclass literals
+   */
+  public LiteralStatistics getLiteralStatistics(
+      ClassOrInterfaceType type, boolean includeSuperclassLiterals) {
+    LiteralStatistics baseStats =
+        scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
+
+    // Only aggregate superclass literals when using CLASS level and the option is enabled
+    if (!includeSuperclassLiterals
+        || GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      return baseStats;
+    }
+
+    // Create a merged statistics object that includes superclass literals
+    return createMergedStatistics(type);
+  }
+
+  /**
+   * Creates a merged LiteralStatistics object that includes literals from the given type and all
+   * its superclasses. The merge process aggregates literal counts from the class hierarchy while
+   * preserving TF-IDF semantics: both usage counts (numUses) and class counts (numClassesWith) are
+   * summed across the hierarchy to maintain correct document frequency for TF-IDF calculation. Each
+   * class in the hierarchy is treated as a separate document, so a literal appearing in both a
+   * superclass and subclass contributes to the count from both.
+   *
+   * @param type the type whose literals to merge with its superclass literals
+   * @return a new LiteralStatistics object containing merged literal information
+   */
+  private LiteralStatistics createMergedStatistics(ClassOrInterfaceType type) {
+    LiteralStatistics merged = new LiteralStatistics();
+
+    // Traverse the class hierarchy from current type up to Object
+    for (ClassOrInterfaceType current = type; current != null; current = current.getSuperclass()) {
+      Object scope = getScope(current);
+      LiteralStatistics currentStats = scopeToStatisticsMap.get(scope);
+
+      if (currentStats != null) {
+        // Merge the statistics from this level of the hierarchy
+        for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> entry :
+            currentStats.literalUsesEntries()) {
+          Sequence seq = entry.getKey();
+          LiteralStatistics.LiteralUses uses = entry.getValue();
+
+          // Accumulate usage counts from superclasses
+          merged.incrementNumUses(seq, uses.getNumUses());
+          // Preserve class counts for TF-IDF document frequency
+          merged.incrementNumClassesWith(seq, uses.getNumClassesWith());
+        }
+        // Add the class count from this level
+        merged.incrementNumClasses(currentStats.getNumClasses());
+      }
+    }
+
+    return merged;
   }
 
   /**
@@ -62,7 +125,8 @@ public class ScopeToLiteralStatistics {
    * @param numUses the number of times the {@code seq} is used in {@code usingType}
    */
   public void incrementNumUses(ClassOrInterfaceType usingType, Sequence seq, int numUses) {
-    getLiteralStatistics(usingType).incrementNumUses(seq, numUses);
+    // Don't merge superclass statistics for write operations - only update base stats
+    getLiteralStatistics(usingType, false).incrementNumUses(seq, numUses);
   }
 
   /**
@@ -74,7 +138,8 @@ public class ScopeToLiteralStatistics {
    */
   public void recordSequencesInClass(
       ClassOrInterfaceType usingType, Collection<Sequence> sequences) {
-    LiteralStatistics stats = getLiteralStatistics(usingType);
+    // Don't merge superclass statistics for write operations - only update base stats
+    LiteralStatistics stats = getLiteralStatistics(usingType, false);
     for (Sequence seq : sequences) {
       stats.incrementNumClassesWith(seq, 1);
     }

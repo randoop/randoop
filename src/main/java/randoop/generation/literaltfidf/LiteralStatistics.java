@@ -69,22 +69,17 @@ public class LiteralStatistics {
   /**
    * Return the {@link LiteralUses} for the given sequence.
    *
-   * <p>Note: this method is intended for mutation. It will create an entry for the sequence's
-   * output type and a new {@link LiteralUses} if necessary. It is used by the mutator methods
-   * {@link #incrementNumUses} and {@link #incrementNumClassesWith} to ensure an entry exists before
-   * updating counts.
+   * <p>This method creates an entry for the sequence's output type and a new {@link LiteralUses} if
+   * necessary. It is only called from the mutators of this class, namely ({@link #incrementNumUses}
+   * and {@link #incrementNumClassesWith}) to ensure an entry exists before updating counts.
    *
-   * <p>The method assumes the caller is working with literal-producing sequences (constant
-   * producers). In practice, this method is only called from the mutators, which are invoked during
-   * initialization by ClassLiteralExtractor (for bytecode constants) and
-   * OperationModel.addClassLiterals() (for external literals files). Both bytecode constants and
-   * external literals files are sources of literal-producing sequences. However, enforcement is not
-   * built into this method: calling it with a non-literal sequence will still create map entries.
-   *
-   * @param seq a sequence (guaranteed to be a literal producer in normal operation)
+   * @param seq a literal-producing sequence
    * @return the {@link LiteralUses} for the given sequence (created if absent)
    */
   private LiteralUses getLiteralUses(Sequence seq) {
+    if (!seq.isNonreceiver()) {
+      throw new IllegalArgumentException("sequence must be a literal producer: " + seq);
+    }
     Type outputType = seq.getLastVariable().getType();
     Map<Sequence, LiteralUses> typeMap =
         literalUsesByType.computeIfAbsent(outputType, k -> new LinkedHashMap<>());

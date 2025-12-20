@@ -162,7 +162,9 @@ public final class Randomness {
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
@@ -179,8 +181,13 @@ public final class Randomness {
 
     double totalWeight = 0.0;
     for (T elt : list) {
+      Double weightObj = weights.get(elt);
+      if (weightObj == null) {
+        // Element not in weights map, treat as weight 0.0
+        continue;
+      }
       @SuppressWarnings({"nullness:unboxing.of", "nullness:argument"}) // non-null and a key
-      double weight = weights.get(elt);
+      double weight = weightObj;
       if (weight < 0) {
         throw new RandoopBug("Weight should be positive: " + weight);
       }
@@ -197,7 +204,9 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
@@ -226,10 +235,13 @@ public final class Randomness {
 
     double currentPoint = 0;
     for (int i = 0; i < size; i++) {
-      currentPoint += weights.get(list.get(i));
-      if (currentPoint > chosenPoint) {
-        logSelection(i, "randomMemberWeighted", list);
-        return list.get(i);
+      Double weightObj = weights.get(list.get(i));
+      if (weightObj != null) {
+        currentPoint += weightObj;
+        if (currentPoint > chosenPoint) {
+          logSelection(i, "randomMemberWeighted", list);
+          return list.get(i);
+        }
       }
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
@@ -248,7 +260,9 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
@@ -277,16 +291,13 @@ public final class Randomness {
 
     double currentPoint = 0;
     for (int i = 0; i < size; i++) {
-      @SuppressWarnings({
-        "nullness:argument",
-        "nullness:assignment",
-        "nullness:unboxing.of.nullable"
-      }) // map keys
-      double weight = weights.get(list.get(i));
-      currentPoint += weight;
-      if (currentPoint > chosenPoint) {
-        logSelection(i, "randomMemberWeighted", list);
-        return list.get(i);
+      Double weightObj = weights.get(list.get(i));
+      if (weightObj != null) {
+        currentPoint += weightObj;
+        if (currentPoint > chosenPoint) {
+          logSelection(i, "randomMemberWeighted", list);
+          return list.get(i);
+        }
       }
     }
     System.out.printf("totalWeight=%f%n", totalWeight);

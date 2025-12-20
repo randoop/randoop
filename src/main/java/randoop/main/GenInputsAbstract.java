@@ -668,6 +668,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double literal_tfidf_probability = 0.01;
 
   /**
+   * Whether to include literals from superclasses when computing literal statistics for TF-IDF.
+   * When true, a class's literal statistics will include literals from all of its superclasses.
+   * This option only applies when {@code --literal-tfidf} is set to true and {@code
+   * --literals-level} is set to CLASS.
+   */
+  @Option(
+      "Whether to include literals from superclasses when computing literal statistics for TF-IDF")
+  public static boolean include_superclass_literals = false;
+
+  /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
    */
@@ -1045,6 +1055,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
               + " specified --literal-tfidf and --use-class-literals=NONE");
+    }
+
+    if (include_superclass_literals && !literal_tfidf) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals requires --literal-tfidf to be enabled");
+    }
+
+    if (include_superclass_literals && literals_level != ClassLiteralsMode.CLASS) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals only works with --literals-level=CLASS");
     }
 
     // Allow edge probabilities 0 and 1 for determinism and consistency with
