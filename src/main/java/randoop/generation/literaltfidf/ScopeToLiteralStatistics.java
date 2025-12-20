@@ -19,6 +19,9 @@ public class ScopeToLiteralStatistics {
   /** A special key representing the "all" scope. */
   public static final Object ALL_SCOPE = "ALL_SCOPE";
 
+  /** A special key representing the unnamed (default) package. */
+  public static final Object UNNAMED_PACKAGE = "UNNAMED_PACKAGE";
+
   /**
    * A map from a specific scope to its literal statistics. A null key represents the unnamed
    * package.
@@ -161,7 +164,8 @@ public class ScopeToLiteralStatistics {
       case CLASS:
         return type;
       case PACKAGE:
-        return type.getPackage();
+        Package pkg = type.getPackage();
+        return pkg != null ? pkg : UNNAMED_PACKAGE;
       case ALL:
         return ALL_SCOPE;
       default:

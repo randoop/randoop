@@ -248,7 +248,9 @@ public final class Randomness {
     System.out.printf("currentPoint=%f%n", currentPoint);
     System.out.printf("size=%d%n", size);
     for (int i = 0; i < size; i++) {
-      System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
+      Double weightObj = weights.get(list.get(i));
+      double weight = (weightObj != null) ? weightObj : 0.0;
+      System.out.printf("%d, %f%n", i, weight);
     }
     throw new RandoopBug("Unable to select random member");
   }
@@ -304,12 +306,8 @@ public final class Randomness {
     System.out.printf("currentPoint=%f%n", currentPoint);
     System.out.printf("size=%d%n", size);
     for (int i = 0; i < size; i++) {
-      @SuppressWarnings({
-        "nullness:argument",
-        "nullness:assignment",
-        "nullness:unboxing.of.nullable"
-      }) // map keys
-      double weight = weights.get(list.get(i));
+      Double weightObj = weights.get(list.get(i));
+      double weight = (weightObj != null) ? weightObj : 0.0;
       System.out.printf("%d, %f%n", i, weight);
     }
     throw new RandoopBug("Unable to select random member");
