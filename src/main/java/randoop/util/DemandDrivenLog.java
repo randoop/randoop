@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Set;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import org.plumelib.util.StringsPlume;
@@ -26,8 +25,9 @@ public final class DemandDrivenLog {
    * GenInputsAbstract.demand_driven_log} in the expression of an {@code @EnsuresNonNullIf}
    * annotation.
    */
-  private static final @Nullable FileWriterWithName DEMAND_DRIVEN_LOG_WRITER =
-      GenInputsAbstract.demand_driven_log;
+  private static @Nullable FileWriterWithName logWriter() {
+    return GenInputsAbstract.demand_driven_log;
+  }
 
   /** Do not instantiate. */
   private DemandDrivenLog() {
@@ -39,9 +39,8 @@ public final class DemandDrivenLog {
    *
    * @return true iff logging is enabled
    */
-  @EnsuresNonNullIf(expression = "DEMAND_DRIVEN_LOG_WRITER", result = true)
   public static boolean isLoggingOn() {
-    return DEMAND_DRIVEN_LOG_WRITER != null;
+    return logWriter() != null;
   }
 
   /**
@@ -201,8 +200,14 @@ public final class DemandDrivenLog {
     }
 
     try {
-      DEMAND_DRIVEN_LOG_WRITER.write(msg);
-      DEMAND_DRIVEN_LOG_WRITER.flush();
+      final FileWriterWithName w = logWriter();
+      if (w == null) {
+        return;
+      }
+      synchronized (w) {
+        w.write(msg);
+        w.flush();
+      }
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
     }
@@ -219,9 +224,15 @@ public final class DemandDrivenLog {
     }
 
     try {
-      DEMAND_DRIVEN_LOG_WRITER.write(msg);
-      DEMAND_DRIVEN_LOG_WRITER.write(System.lineSeparator());
-      DEMAND_DRIVEN_LOG_WRITER.flush();
+      final FileWriterWithName w = logWriter();
+      if (w == null) {
+        return;
+      }
+      synchronized (w) {
+        w.write(msg);
+        w.write(System.lineSeparator());
+        w.flush();
+      }
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to demand-driven log file.", e);
     }
@@ -238,10 +249,16 @@ public final class DemandDrivenLog {
     }
 
     try {
-      PrintWriter pw = new PrintWriter(DEMAND_DRIVEN_LOG_WRITER);
-      t.printStackTrace(pw);
-      pw.flush();
-      DEMAND_DRIVEN_LOG_WRITER.flush();
+      final FileWriterWithName w = logWriter();
+      if (w == null) {
+        return;
+      }
+      synchronized (w) {
+        PrintWriter pw = new PrintWriter(w);
+        t.printStackTrace(pw);
+        pw.flush();
+        w.flush();
+      }
     } catch (IOException e) {
       throw new RandoopBug("Exception while writing to log", e);
     }

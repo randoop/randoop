@@ -104,6 +104,9 @@ public class ComponentManager {
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public ComponentManager(AccessibilityPredicate accessibility) {
+    if (accessiblity == null) {
+      throw new IllegalArgumentException("accessibility must be non-null");
+    }
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
     this.accessibility = accessibility;
@@ -191,6 +194,9 @@ public class ComponentManager {
    * @param types a set of types that are SUT-parameters but not SUT-returned
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
+    if (types == null || types.isEmpty()) {
+      return;
+    }
     gralComponents.addSutParameterOnlyTypes(types);
     this.sutParameterOnlyTypes.addAll(types);
   }
@@ -201,8 +207,15 @@ public class ComponentManager {
    *
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
+   * @throws IllegalStateException if demand-driven input generation is not enabled (i.e., {@code
+   *     GenInputsAbstract.demand_driven} is false)
    */
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    if (GenInputsAbstract.demand_driven == false) {
+      throw new IllegalStateException(
+          "getDemandDrivenInputCreator() called when demand-driven input generation is disabled. "
+              + "Enable it with --demand-driven=true.");
+    }
     return gralComponents.getDemandDrivenInputCreator();
   }
 
@@ -220,14 +233,9 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
-    if (GenInputsAbstract.demand_driven) {
-      DemandDrivenInputCreator ddic =
-          new DemandDrivenInputCreator(
-              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
-      gralComponents.setDemandDrivenInputCreator(ddic);
-      if (!sutParameterOnlyTypes.isEmpty()) {
-        gralComponents.addSutParameterOnlyTypes(sutParameterOnlyTypes);
-      }
+    initDemandDrivenIfEnabled();
+    if (!sutParameterOnlyTypes.isEmpty()) {
+      gralComponents.addSutParameterOnlyTypes(sutParameterOnlyTypes);
     }
   }
 

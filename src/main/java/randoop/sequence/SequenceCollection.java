@@ -120,7 +120,7 @@ public class SequenceCollection {
   }
 
   /**
-   * All all the given sequences to this collection.
+   * Add all the given sequences to this collection.
    *
    * @param col the sequences to add
    */
@@ -131,7 +131,7 @@ public class SequenceCollection {
   }
 
   /**
-   * All all the given sequences to this collection.
+   * Add all the given sequences to this collection.
    *
    * @param col the sequences to add
    */
@@ -203,6 +203,9 @@ public class SequenceCollection {
    * @param types types that are not returned from SUT operations
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
+    if (types == null) {
+      throw new IllegalArgumentException("given SUT-parameter-only types are null.");
+    }
     sutParameterOnlyTypes.addAll(types);
   }
 
@@ -247,7 +250,7 @@ public class SequenceCollection {
    *     missing types. Otherwise, only return sequences that are already available in the
    *     collection.
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
-   *     by nullOk
+   *     by the parameters
    */
   public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers, boolean useDemandDriven) {
@@ -256,7 +259,9 @@ public class SequenceCollection {
       throw new IllegalArgumentException("type cannot be null.");
     }
 
-    Log.logPrintf("getSequencesForType(%s, %s, %s)%n", type, exactMatch, onlyReceivers);
+    Log.logPrintf(
+        "getSequencesForType(%s, %s, %s, useDemandDriven=%s)%n",
+        type, exactMatch, onlyReceivers, useDemandDriven);
 
     List<SIList<Sequence>> resultList = new ArrayList<>();
 
@@ -285,6 +290,11 @@ public class SequenceCollection {
           : "@AssumeAssertion(nullness)"; // useDemandDriven==true
       if (demandDrivenInputCreator.isUninstantiableType(type)) {
         Log.logPrintf("Skipping demand-driven input creation for uninstantiable type %s%n", type);
+        return SIList.empty();
+      }
+
+      if (type.isNonreceiverType()) {
+        Log.logPrintf("Skipping demand-driven creation for nonreceiver type %s%n", type);
         return SIList.empty();
       }
 

@@ -723,7 +723,11 @@ public class GenTests extends GenInputsAbstract {
         Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
         Set<Type> nonSutTypes = new LinkedHashSet<>(MapsP.mapCapacity(visited.size()));
         for (Type t : visited) {
-          if (!sutRuntime.contains(t.getRuntimeClass())) {
+          Class<?> rc = t.getRuntimeClass();
+          if (rc == null || t.isPrimitive() || t.isVoid()) {
+            continue; // skip unsupported/nonreceiver types
+          }
+          if (!sutRuntime.contains(rc)) {
             nonSutTypes.add(t);
           }
         }

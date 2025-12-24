@@ -112,18 +112,15 @@ public class OperationModel {
    * constructors in the SUT return these types. {@link randoop.generation.DemandDrivenInputCreator}
    * tries to create values of these types.
    *
-   * <p>This is set by {@link #setSutParameterOnlyTypes}.
+   * <p>This is populated by {@link #setSutParameterOnlyTypes}.
    */
-  private Set<Type> sutParameterOnlyTypes;
+  private Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
 
   /**
    * Create an empty model of test context.
    *
    * @param omitMethods the patterns for operations that should be omitted
    */
-  @SuppressWarnings(
-      "nullness:initialization.fields.uninitialized" // createModel() sets sutParameterOnlyTypes
-  )
   private OperationModel(List<Pattern> omitMethods) {
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
@@ -848,7 +845,9 @@ public class OperationModel {
     }
 
     // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
-    sutParameterOnlyTypes = new LinkedHashSet<>(filteredInputTypes);
-    sutParameterOnlyTypes.removeAll(outputTypes);
+    Set<Type> computed = new LinkedHashSet<>(filteredInputTypes);
+    computed.removeAll(outputTypes);
+    sutParameterOnlyTypes.clear();
+    sutParameterOnlyTypes.addAll(computed);
   }
 }

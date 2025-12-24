@@ -159,7 +159,7 @@ public abstract class AbstractGenerator {
   protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
+      @Nullable ComponentManager componentManager,
       IStopper stopper) {
     assert operations != null;
 
