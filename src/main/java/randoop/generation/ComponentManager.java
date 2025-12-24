@@ -104,7 +104,7 @@ public class ComponentManager {
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public ComponentManager(AccessibilityPredicate accessibility) {
-    if (accessiblity == null) {
+    if (accessibility == null) {
       throw new IllegalArgumentException("accessibility must be non-null");
     }
     gralComponents = new SequenceCollection();
