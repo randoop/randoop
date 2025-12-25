@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Set;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.mustcall.qual.NotOwning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import org.plumelib.util.StringsPlume;
@@ -18,13 +19,16 @@ import randoop.types.Type;
 public final class DemandDrivenLog {
 
   /**
-   * The demand-driven log, if logging is enabled. If this is null, then logging is disabled.
+   * Returns the demand-driven log writer if logging is enabled, or null if logging is disabled.
    *
-   * <p>This field was introduced even though {@code GenInputsAbstract.demand_driven_log} already
-   * exists, because the Checker Framework does not permit referencing {@code
-   * GenInputsAbstract.demand_driven_log} in the expression of an {@code @EnsuresNonNullIf}
-   * annotation.
+   * <p>This method provides access to {@code GenInputsAbstract.demand_driven_log} without taking
+   * ownership of the resource. It exists because the Checker Framework does not permit referencing
+   * {@code GenInputsAbstract.demand_driven_log} directly in the expression of an
+   * {@code @EnsuresNonNullIf} annotation.
+   *
+   * @return the log writer if logging is enabled, null otherwise
    */
+  @NotOwning
   private static @Nullable FileWriterWithName logWriter() {
     return GenInputsAbstract.demand_driven_log;
   }
