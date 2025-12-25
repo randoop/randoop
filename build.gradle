@@ -700,6 +700,9 @@ tasks.register("clonePlumeScripts", CloneTask) {
   outputs.upToDateWhen { false }
 }
 
+tasks.withType(Javadoc) {
+  options.noTimestamp = true
+}
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
  * main sourceSet.
