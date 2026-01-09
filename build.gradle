@@ -14,7 +14,7 @@ plugins {
 
   id("com.diffplug.spotless").version("8.1.0") apply false
 
-  id("net.ltgt.errorprone").version("4.3.0")
+  id("net.ltgt.errorprone").version("4.4.0")
 
   id("org.checkerframework").version("0.6.61") apply false
 
@@ -359,9 +359,6 @@ allprojects { subproject ->
       options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
-      if (JavaVersion.current() == JavaVersion.VERSION_21) {
-        options.compilerArgs << "-XDaddTypeAnnotationsToSymbol=true"
-      }
 
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
