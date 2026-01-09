@@ -359,6 +359,9 @@ allprojects { subproject ->
       options.errorprone.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
+      if (JavaVersion.current() == JavaVersion.VERSION_21) {
+        options.compilerArgs << "-XDaddTypeAnnotationsToSymbol=true"
+      }
 
       options.errorprone {
         enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
