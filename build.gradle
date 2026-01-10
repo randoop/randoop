@@ -233,7 +233,7 @@ dependencies {
   junit("junit:junit:4.+")
 
   implementation(files(project(":replacecall").sourceSets.main.output))
-  implementation("com.github.javaparser:javaparser-core:3.27.1")
+  implementation("com.github.javaparser:javaparser-core:3.28.0")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   implementation("org.apache.commons:commons-lang3:3.20.0")
