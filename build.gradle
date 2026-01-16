@@ -16,7 +16,7 @@ plugins {
 
   id("net.ltgt.errorprone").version("4.3.0")
 
-  id("org.checkerframework").version("1.0.0-SNAPSHOT") apply false
+  id("org.checkerframework").version("0.9.0-SNAPSHOT") apply false
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -108,11 +108,7 @@ allprojects {
     apply plugin: "org.checkerframework"
 
     checkerFramework {
-      if (project.hasProperty("cfLocal")) {
-        version = checkerFrameworkVersion
-      } else {
-        version = "local"
-      }
+      version = libs.checker.get().version
       excludeTests = true
       if (project.hasProperty("cfNullness")) {
         checkers = [
