@@ -1303,7 +1303,7 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
-            "java7.util7.ArrayList.fastRemove(int) exclude",
+            "java7.util7.ArrayList.fastRemove(int) exclude17",
             "java7.util7.ArrayList.get(int) exclude",
             "java7.util7.ArrayList.get(int) include11",
             "java7.util7.ArrayList.get(int) include8",
@@ -1477,13 +1477,13 @@ public class RandoopSystemTest {
 
     String packageName = options.getPackageName();
 
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(environment, options, expectedRegression, runStatus, packageName);
 
-    TestRunStatus errorRunDesc =
+    TestRunStatus errorRunStatus =
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
-    coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
+    coverageChecker.checkCoverage(regressionRunStatus, errorRunStatus);
   }
 
   /**
@@ -1559,24 +1559,24 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus errorRunDesc = null;
+    TestRunStatus errorRunStatus = null;
     String errorBasename = options.getErrorBasename();
     switch (expectedError) {
       case SOME:
         assertNotEquals("Test suite should have error tests", 0, runStatus.errorTestCount);
         try {
-          errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
+          errorRunStatus = TestRunStatus.runTests(environment, packageName, errorBasename);
         } catch (IOException e) {
           fail("Exception collecting coverage from error tests: " + e.getMessage());
         }
-        assertTrue("JUnit should exit with error", errorRunDesc.processStatus.exitStatus != 0);
-        if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
-          for (String line : errorRunDesc.processStatus.outputLines) {
+        assertTrue("JUnit should exit with error", errorRunStatus.processStatus.exitStatus != 0);
+        if (errorRunStatus.testsFail != errorRunStatus.testsRun) {
+          for (String line : errorRunStatus.processStatus.outputLines) {
             System.err.println(line);
           }
           fail(
               "All error tests should fail, but "
-                  + errorRunDesc.testsSucceed
+                  + errorRunStatus.testsSucceed
                   + " error tests passed");
         }
         break;
@@ -1609,7 +1609,7 @@ public class RandoopSystemTest {
       case DONT_CARE:
         break;
     }
-    return errorRunDesc;
+    return errorRunStatus;
   }
 
   /**
@@ -1630,7 +1630,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus regressionRunDesc = null;
+    TestRunStatus regressionRunStatus = null;
     if (expectedRegression == ExpectedTests.NONE) {
       if (runStatus.regressionTestCount != 0) {
         fail(
@@ -1641,12 +1641,12 @@ public class RandoopSystemTest {
       assertNotEquals("...has regression tests", 0, runStatus.regressionTestCount);
       String regressionBasename = options.getRegressionBasename();
       try {
-        regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
+        regressionRunStatus = TestRunStatus.runTests(environment, packageName, regressionBasename);
       } catch (IOException e) {
         fail("Exception collecting coverage from regression tests: " + e.getMessage());
       }
-      if (regressionRunDesc.processStatus.exitStatus != 0) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.processStatus.exitStatus != 0) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         System.err.printf("environment = %s%n", environment);
@@ -1656,13 +1656,13 @@ public class RandoopSystemTest {
         System.err.printf("packageName = %s%n", packageName);
         fail("JUnit should exit properly, see diagnostics above");
       }
-      if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.testsSucceed != regressionRunStatus.testsRun) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         fail(
             "All regression tests should pass, but "
-                + regressionRunDesc.testsFail
+                + regressionRunStatus.testsFail
                 + " regression tests failed");
       }
     } else if (expectedRegression == ExpectedTests.DONT_CARE
@@ -1671,7 +1671,7 @@ public class RandoopSystemTest {
     } else {
       throw new Error("Unexpected fallthrough");
     }
-    return regressionRunDesc;
+    return regressionRunStatus;
   }
 
   /**

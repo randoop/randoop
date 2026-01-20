@@ -364,6 +364,13 @@ class CoverageChecker {
         failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
     }
+    if (regressionStatus == null) {
+      System.out.printf("No regression tests.%n");
+    } else {
+      System.out.printf(
+          "Ran %d tests, %d succeeded.%n",
+          regressionStatus.testsRun, regressionStatus.testsSucceed);
+    }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
       fail(msg);
