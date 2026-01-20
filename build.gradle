@@ -992,7 +992,7 @@ tasks.register("buildRelease", DefaultTask) {
 tasks.register("tags", Exec) {
   dependsOn("cloneLibs")
   description = "Run etags to create an Emacs TAGS table"
-  commandLine("bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags")
+  commandLine("bash", "-c", "find src/ covered-class/src/ replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags")
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
