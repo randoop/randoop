@@ -250,7 +250,7 @@ dependencies {
   implementation("org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation("commons-codec:commons-codec:1.20.0")
+  testImplementation("commons-codec:commons-codec:1.21.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation(configurations.junit.dependencies)
   testImplementation(sourceSets.testInput.output)
