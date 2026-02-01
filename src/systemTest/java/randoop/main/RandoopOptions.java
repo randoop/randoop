@@ -272,7 +272,7 @@ class RandoopOptions {
    * @param classListFilename the class list filename
    */
   private void loadClassNames(String classListFilename) {
-    try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
+    try (EntryReader er = new EntryReader(classListFilename, false, "^#.*", null)) {
       for (String line : er) {
         @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String name = line.trim();
