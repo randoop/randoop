@@ -97,7 +97,7 @@ public class SpecialCoveredClassTest {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
     operationModel.addClassLiterals(componentMgr);
 
     Set<TypedOperation> sideEffectFreeMethods = new LinkedHashSet<>(0);
