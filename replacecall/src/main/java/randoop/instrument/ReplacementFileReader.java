@@ -113,7 +113,7 @@ public class ReplacementFileReader {
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
-    try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
+    try (EntryReader reader = new EntryReader(in, filename, false, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
