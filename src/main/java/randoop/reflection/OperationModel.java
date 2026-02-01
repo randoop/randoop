@@ -325,7 +325,7 @@ public class OperationModel {
   public static MultiMap<Type, TypedClassOperation> readOperations(
       @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
-      try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
+      try (EntryReader er = new EntryReader(file, false, "(//|#).*$", null)) {
         return OperationModel.readOperations(er, ignoreParseError);
       } catch (IOException e) {
         String message =
@@ -400,7 +400,7 @@ public class OperationModel {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
-    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+    try (EntryReader er = new EntryReader(is, "UTF-8", filename, false, "^#.*", null)) {
       return OperationModel.readOperations(er, ignoreParseError);
     } catch (IOException e) {
       String message =
@@ -727,7 +727,7 @@ public class OperationModel {
     if (methodSignatures_file == null) {
       return result;
     }
-    try (EntryReader reader = new EntryReader(methodSignatures_file, "(//|#).*$", null)) {
+    try (EntryReader reader = new EntryReader(methodSignatures_file, false, "(//|#).*$", null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
