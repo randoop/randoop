@@ -1446,7 +1446,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       @Regex(1) String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
-      try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
+      try (EntryReader er = new EntryReader(listFile, false, commentRegex, includeRegex)) {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {

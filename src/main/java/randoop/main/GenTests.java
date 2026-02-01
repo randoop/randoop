@@ -1175,7 +1175,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private List<Pattern> readPatterns(Path path) {
     if (path != null) {
-      try (EntryReader er = new EntryReader(path.toFile(), "^#.*", null)) {
+      try (EntryReader er = new EntryReader(path, false, "^#.*", null)) {
         return readPatterns(er);
       } catch (IOException e) {
         throw new RandoopUsageError("Error reading file " + Util.pathAndAbsolute(path) + ":", e);
@@ -1207,7 +1207,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private List<Pattern> readPatterns(InputStream is, String filename) {
     // Read method omissions from user-provided file
-    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
+    try (EntryReader er = new EntryReader(is, "UTF-8", filename, false, "^#.*", null)) {
       return readPatterns(er);
     } catch (IOException e) {
       throw new RandoopBug("Error reading from " + Util.filenameAndAbsolute(filename), e);
