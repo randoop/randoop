@@ -584,7 +584,7 @@ public final class Sequence {
       verifyDifferentToString("size", other);
       return false;
     }
-    if (this.hashCode != o.hashCode) {
+    if (this.hashCode != other.hashCode) {
       return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
