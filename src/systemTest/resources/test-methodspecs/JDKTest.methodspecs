@@ -129,8 +129,6 @@ java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, 
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection) exclude
-java7.util7.Collections.max(java7.util7.Collection) exclude8
-java7.util7.Collections.max(java7.util7.Collection) include8
 java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude8
 java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) include8
@@ -239,8 +237,6 @@ java7.util7.TreeMap.ceilingEntry(java.lang.Object) exclude8
 java7.util7.TreeMap.ceilingEntry(java.lang.Object) include8
 java7.util7.TreeMap.colorOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) exclude
-java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) exclude11
-java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) include11
 java7.util7.TreeMap.containsKey(java.lang.Object) exclude11-
 java7.util7.TreeMap.containsKey(java.lang.Object) include11
 java7.util7.TreeMap.containsKey(java.lang.Object) include8
@@ -259,8 +255,6 @@ java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) include8
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
-java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude11
-java7.util7.TreeMap.headMap(java.lang.Object, boolean) include11
 java7.util7.TreeMap.higherEntry(java.lang.Object) exclude8
 java7.util7.TreeMap.higherEntry(java.lang.Object) include8
 java7.util7.TreeMap.keySet() exclude11
@@ -280,36 +274,24 @@ java7.util7.TreeMap.setColor(java7.util7.TreeMap.Entry, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude
-java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude11
-java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) include11
 java7.util7.TreeMap.tailMap(java.lang.Object) exclude
 java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude
-java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude11
-java7.util7.TreeMap.tailMap(java.lang.Object, boolean) include11
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
-java7.util7.TreeSet.add(java.lang.Object) exclude11
-java7.util7.TreeSet.add(java.lang.Object) include11
 java7.util7.TreeSet.contains(java.lang.Object) exclude11-
 java7.util7.TreeSet.contains(java.lang.Object) include11
 java7.util7.TreeSet.contains(java.lang.Object) include8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.headSet(java.lang.Object) exclude
 java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude
-java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude11
-java7.util7.TreeSet.headSet(java.lang.Object, boolean) include11
 java7.util7.TreeSet.last() ignore
 java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeSet.remove(java.lang.Object) ignore17+
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeSet.tailSet(java.lang.Object) exclude
-java7.util7.TreeSet.tailSet(java.lang.Object) exclude11
-java7.util7.TreeSet.tailSet(java.lang.Object) include11
 java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude
-java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude11
-java7.util7.TreeSet.tailSet(java.lang.Object, boolean) include11
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Vector.add(int, java.lang.Object) exclude17
 java7.util7.Vector.add(int, java.lang.Object) exclude21
