@@ -191,7 +191,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("output_limit", "1000");
+    options.setOption("output_limit", "5000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
@@ -216,7 +216,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("output_limit", "2000");
+    options.setOption("output_limit", "10000");
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
@@ -1293,8 +1293,8 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "800");
-    options.setOption("generated_limit", "1600");
+    options.setOption("output_limit", "2000");
+    options.setOption("generated_limit", "5000");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
