@@ -110,7 +110,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param stopper determines when the test generation process should conclude. Can be null.
    * @param classesUnderTest the classes that are under test
    */
-  @SuppressWarnings("allcheckers:redundant.anno")
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> sideEffectFreeMethods,
