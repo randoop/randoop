@@ -1314,7 +1314,8 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.subList(int, int) exclude11",
             "java7.util7.ArrayList.subList(int, int) exclude25",
             "java7.util7.ArrayList.subList(int, int) exclude8",
-            "java7.util7.ArrayList.subList(int, int) include17+",
+            "java7.util7.ArrayList.subList(int, int) include17",
+            "java7.util7.ArrayList.subList(int, int) include21",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );

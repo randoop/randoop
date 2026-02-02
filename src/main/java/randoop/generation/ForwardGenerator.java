@@ -379,7 +379,6 @@ public class ForwardGenerator extends AbstractGenerator {
           runtimeValue = Float.NaN; // canonicalize NaN value
         }
         if (!looksLikeObjToString && !tooLongString) {
-          // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
         continue;
