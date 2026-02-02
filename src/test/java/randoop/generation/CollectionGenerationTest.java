@@ -253,21 +253,28 @@ public class CollectionGenerationTest {
    */
   @Test
   public void testInterfaceArray() {
+    Randomness.setSeed(931979);
+
     ComponentManager componentManager = setupComponentManager();
     ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    SIList<Sequence> sequenceList =
-        HelperSequenceCreator.createArraySequence(componentManager, arrayType);
-    Sequence firstSequence = sequenceList.get(0);
-    assertNotNull(firstSequence);
+
+    SIList<Sequence> sequenceList;
+    Sequence firstSequence;
+    // Don't generate an empty array.
+    do {
+      sequenceList = HelperSequenceCreator.createArraySequence(componentManager, arrayType);
+      firstSequence = sequenceList.get(0);
+      assertNotNull(firstSequence);
+    } while (firstSequence.isEmpty());
 
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < firstSequence.size(); i++) {
       Type outputType = firstSequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should be one of two types, got " + outputType,
+          "statement type should be String or String[], got " + outputType,
           !outputType.equals(elementType)
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));
