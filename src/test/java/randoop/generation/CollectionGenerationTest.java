@@ -257,10 +257,15 @@ public class CollectionGenerationTest {
     ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    SIList<Sequence> sequenceList =
-        HelperSequenceCreator.createArraySequence(componentManager, arrayType);
-    Sequence firstSequence = sequenceList.get(0);
-    assertNotNull(firstSequence);
+
+    SIList<Sequence> sequenceList;
+    Sequence firstSequence;
+    // Don't generate an empty array.
+    do {
+      sequenceList = HelperSequenceCreator.createArraySequence(componentManager, arrayType);
+      firstSequence = sequenceList.get(0);
+      assertNotNull(firstSequence);
+    } while (firstSequence.size() <= 1);
 
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < firstSequence.size(); i++) {
@@ -272,6 +277,7 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));
     }
+    // The two types are String and String[].
     assertEquals(2, outputTypeSet.size());
   }
 }
