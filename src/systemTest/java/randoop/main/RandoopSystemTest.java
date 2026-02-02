@@ -1306,11 +1306,13 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.fastRemove(int) exclude17",
             "java7.util7.ArrayList.get(int) exclude",
             "java7.util7.ArrayList.get(int) include11",
+            "java7.util7.ArrayList.get(int) include25",
             "java7.util7.ArrayList.get(int) include8",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.subList(int, int) exclude11",
+            "java7.util7.ArrayList.subList(int, int) exclude25",
             "java7.util7.ArrayList.subList(int, int) exclude8",
             "java7.util7.ArrayList.subList(int, int) include17+",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
