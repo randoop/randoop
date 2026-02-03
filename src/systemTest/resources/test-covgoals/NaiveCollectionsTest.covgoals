@@ -18,7 +18,6 @@ java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
-java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude8
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include11
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include8
@@ -75,7 +74,6 @@ java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.TreeSet.add(java.lang.Object) exclude11
 java7.util7.TreeSet.add(java.lang.Object) ignore17+
 java7.util7.TreeSet.add(java.lang.Object) include11
 java7.util7.TreeSet.add(java.lang.Object) include8
