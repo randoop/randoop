@@ -12,11 +12,11 @@ plugins {
   id("idea")
   id("jacoco")
 
-  id("com.diffplug.spotless").version("8.1.0") apply false
+  id("com.diffplug.spotless").version("8.2.1") apply false
 
-  id("net.ltgt.errorprone").version("4.3.0")
+  id("net.ltgt.errorprone").version("5.0.0")
 
-  id("org.checkerframework").version("1.0.0-SNAPSHOT") apply false
+  id("org.checkerframework").version("1.0.0")
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -94,7 +94,7 @@ allprojects {
       plumelib("org.plumelib:options:2.0.3")
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib("org.plumelib:plume-util:1.12.3")
+    plumelib("org.plumelib:plume-util:1.13.0")
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
     plumelib("org.plumelib:reflection-util:1.1.5")
   }
@@ -219,7 +219,7 @@ dependencies {
   junit("junit:junit:4.+")
 
   implementation(files(project(":replacecall").sourceSets.main.output))
-  implementation("com.github.javaparser:javaparser-core:3.27.1")
+  implementation("com.github.javaparser:javaparser-core:3.28.0")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("org.apache.commons:commons-exec:${commonsExecVersion}")
   implementation("org.apache.commons:commons-lang3:3.20.0")
@@ -232,7 +232,7 @@ dependencies {
   implementation("org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testImplementation("commons-codec:commons-codec:1.20.0")
+  testImplementation("commons-codec:commons-codec:1.21.0")
   testImplementation("org.hamcrest:hamcrest-all:${hamcrestAllVersion}")
   testImplementation(configurations.junit.dependencies)
   testImplementation(sourceSets.testInput.output)
@@ -680,6 +680,9 @@ tasks.register("clonePlumeScripts", CloneTask) {
   outputs.upToDateWhen { false }
 }
 
+tasks.withType(Javadoc) {
+  options.noTimestamp = true
+}
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
  * main sourceSet.
@@ -816,29 +819,6 @@ if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
   updateUserOptions.enabled = false
 }
 
-
-/* Requires that the html5validator program is installed */
-tasks.register("html5validatorExists", Exec) {
-
-  def command = "command -v html5validator"
-  def stdout = new ByteArrayOutputStream()
-  def stderr = new ByteArrayOutputStream()
-  ignoreExitValue = true
-  executable = "bash"
-  args("-l", "-c", command)
-  standardOutput = stdout
-  errorOutput = stderr
-
-  doLast {
-    if (executionResult.get().exitValue != 0) {
-      println("Command failed: $command")
-      println("Standard output: $stdout")
-      println("Standard error: $stderr")
-      ant.fail("html5validator is not installed.  See https://randoop.github.io/randoop/manual/dev.html#prerequisites .")
-    }
-  }
-}
-html5validatorExists.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateUserTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
 
@@ -850,14 +830,13 @@ tasks.register("manual", Exec) {
       "updateUserOptions",
       "updateUserTOC",
       "updateDevTOC",
-      "html5validatorExists"
       )
 
   group = "Documentation"
   description = "Adds options and TOC to documentation in src/docs"
   onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
   environment("PATH", "${System.env.PATH}")
-  commandLine("html5validator", "--root", file("${projectDir}/src/docs/manual"))
+  commandLine("make", "html-style-check")
 }
 
 // This is cross-platform and pulls in all required dependencies.  However,
@@ -880,14 +859,13 @@ build.dependsOn(manual)
 tasks.register("validateAPI", Exec) {
   dependsOn(
       "javadoc",
-      "html5validatorExists"
       )
   group = "Documentation"
   description = "Run html5validator to find HTML errors in API documentation"
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uv", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
@@ -951,25 +929,13 @@ tasks.register("publishSite", Copy) {
   }
 }
 
-/*
- * Applies HTML5 validator to project site HTML, including the manual
- */
-tasks.register("validateSite", Exec) {
-  dependsOn("html5validatorExists")
-  description = "Run html5validator to find HTML errors in site files (excludes manual and api)"
-  environment("PATH", "$System.env.PATH")
-  commandLine("html5validator", "--root", "src/docs/")
+tasks.register("styleCheck", Exec) {
+  description = "Validate HTML, Markdown, etc. files."
+  commandLine("make", "style-check")
 }
-validateSite.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+styleCheck.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
+check.dependsOn("styleCheck")
 
-/* Validate Markdown files. */
-tasks.register("markdownlint", Exec) {
-  group = "Verification"
-  description = "Run markdownlint-cli2 linter on Markdown files"
-  executable = "markdownlint-cli2"
-  args(".")
-}
-check.dependsOn("markdownlint")
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {
@@ -995,7 +961,6 @@ tasks.register("buildRelease", DefaultTask) {
       "assembleRelease",
       "check",
       "publishSite",
-      "validateSite",
       "distributionZip"
       )
   group = "Publishing"
@@ -1007,7 +972,7 @@ tasks.register("buildRelease", DefaultTask) {
 tasks.register("tags", Exec) {
   dependsOn("cloneLibs")
   description = "Run etags to create an Emacs TAGS table"
-  commandLine("bash", "-c", "find src/ agent/covered-class/src/ agent/replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags")
+  commandLine("bash", "-c", "find src/ covered-class/src/ replacecall/src/ -name '*.java' | grep -v src/testInput | ${layout.buildDirectory.get()}/utils/plume-scripts/sort-directory-order | xargs etags")
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */

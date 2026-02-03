@@ -18,8 +18,9 @@ java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
-java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude8
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+
+java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include11
+java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include8
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
@@ -71,29 +72,26 @@ java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.TreeSet.add(java.lang.Object) exclude8
 java7.util7.TreeSet.add(java.lang.Object) ignore17+
+java7.util7.TreeSet.first() exclude11
 java7.util7.TreeSet.first() exclude8
 java7.util7.TreeSet.first() ignore17+
+java7.util7.TreeSet.headSet(java.lang.Object) exclude11
 java7.util7.TreeSet.headSet(java.lang.Object) exclude8
 java7.util7.TreeSet.headSet(java.lang.Object) ignore17+
 java7.util7.TreeSet.headSet(java.lang.Object, boolean) ignore
+java7.util7.TreeSet.last() exclude11
 java7.util7.TreeSet.last() exclude8
 java7.util7.TreeSet.last() ignore17+
 java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude
+java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude11
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude8
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) ignore17+
+java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude11
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude8
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore17+
+java7.util7.TreeSet.tailSet(java.lang.Object) exclude11
 java7.util7.TreeSet.tailSet(java.lang.Object) exclude8
 java7.util7.TreeSet.tailSet(java.lang.Object) ignore17+
 java7.util7.TreeSet.tailSet(java.lang.Object, boolean) ignore
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude11
-java7.util7.TreeSet.add(java.lang.Object) exclude11
-java7.util7.TreeSet.first() exclude11
-java7.util7.TreeSet.headSet(java.lang.Object) exclude11
-java7.util7.TreeSet.last() exclude11
-java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude11
-java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) exclude11
-java7.util7.TreeSet.tailSet(java.lang.Object) exclude11

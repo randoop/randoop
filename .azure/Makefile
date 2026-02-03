@@ -5,6 +5,9 @@ all default: azure-pipelines.yml
 azure-pipelines.yml: azure-pipelines.yml.m4 defs.m4 jobs.m4
 	@chmod -f +w $@ || true
 	m4 $< > $@
+# Remove leading blank lines.
+	sed '/[^[:blank:]]/,$$!d' $@ > $@.tmp
+	mv -f $@.tmp $@
 	@chmod -w $@
 
 clean:

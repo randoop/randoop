@@ -1,4 +1,3 @@
-  
 version: 2.1
 
 jobs:
@@ -354,9 +353,9 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  nonSystemTest-jdk24:
+  nonSystemTest-jdk25:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk24
+      - image: mdernst/randoop-ubuntu-jdk25
     resource_class: large
 
     steps:
@@ -378,7 +377,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=24 && ./scripts/test-nonSystemTest.sh
+      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=25 && ./scripts/test-nonSystemTest.sh
 
       - save_cache:
           paths:
@@ -397,9 +396,9 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  systemTest-jdk24:
+  systemTest-jdk25:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk24
+      - image: mdernst/randoop-ubuntu-jdk25
     resource_class: large
 
     steps:
@@ -422,7 +421,7 @@ jobs:
             - gradle-v2-
 
       - run:
-          command: export ORG_GRADLE_PROJECT_jdkTestVersion=24 && ./scripts/test-systemTest.sh
+          command: export ORG_GRADLE_PROJECT_jdkTestVersion=25 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 
       - save_cache:
@@ -481,35 +480,35 @@ workflows:
       - nonSystemTest-jdk8:
           requires:
             - misc
-            - nonSystemTest-jdk24
+            - nonSystemTest-jdk25
       - systemTest-jdk8:
           requires:
             - misc
-            - systemTest-jdk24
+            - systemTest-jdk25
       - nonSystemTest-jdk11:
           requires:
             - misc
-            - nonSystemTest-jdk24
+            - nonSystemTest-jdk25
       - systemTest-jdk11:
           requires:
             - misc
-            - systemTest-jdk24
+            - systemTest-jdk25
       - nonSystemTest-jdk17:
           requires:
             - misc
-            - nonSystemTest-jdk24
+            - nonSystemTest-jdk25
       - systemTest-jdk17:
           requires:
             - misc
-            - systemTest-jdk24
+            - systemTest-jdk25
       - nonSystemTest-jdk21:
           requires:
             - misc
-            - nonSystemTest-jdk24
+            - nonSystemTest-jdk25
       - systemTest-jdk21:
           requires:
             - misc
-            - systemTest-jdk24
-      - nonSystemTest-jdk24
-      - systemTest-jdk24
+            - systemTest-jdk25
+      - nonSystemTest-jdk25
+      - systemTest-jdk25
       - misc

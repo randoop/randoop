@@ -650,7 +650,7 @@ public final class Sequence {
   /**
    * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
    * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
-   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
+   * each sequence's hashCode). Otherwise, hashCode computation used to be a hotspot.
    *
    * @param statements the list of statements over which to compute the hash code
    * @return the sum of the hash codes of the statements in the sequence

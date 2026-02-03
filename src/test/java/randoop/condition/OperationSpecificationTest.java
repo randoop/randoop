@@ -43,7 +43,7 @@ public class OperationSpecificationTest {
   public void conditionTest() throws NoSuchMethodException {
     Class<?> c = ClassWithConditions.class;
     Method method = c.getDeclaredMethod("category", int.class);
-    ExecutableSpecification execSpec = getMethodSpecification(method);
+    ExecutableSpecification execSpec = getCoverageGoal(method);
 
     ClassWithConditions receiver = new ClassWithConditions(5);
 
@@ -193,7 +193,7 @@ public class OperationSpecificationTest {
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
     Method method = c.getDeclaredMethod("category", int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
-    methodOp.setExecutableSpecification(getMethodSpecification(method));
+    methodOp.setExecutableSpecification(getCoverageGoal(method));
 
     Sequence sequence = new Sequence();
     sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 5));
@@ -237,7 +237,7 @@ public class OperationSpecificationTest {
    *     ClassWithConditions#category(int)}
    * @param method the method for which to get the specification
    */
-  private ExecutableSpecification getMethodSpecification(Method method) {
+  private ExecutableSpecification getCoverageGoal(Method method) {
     List<String> paramNames = Collections.singletonList("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));

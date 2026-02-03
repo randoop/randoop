@@ -11,8 +11,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -36,8 +38,8 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
-  /** The name of the file that contains the method specs, or null. */
-  private @Nullable String methodSpecsFile;
+  /** The name of the file that contains the method coverage goals, or null. */
+  private @Nullable String covGoalsFile;
 
   /**
    * The methods that must be covered, as explicitly stated. All unmentioned methods must also be
@@ -114,26 +116,26 @@ class CoverageChecker {
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
-   * @param methodSpecsFile which methods should be covered; see {@link #methods}
+   * @param covGoalsFile which methods should be covered; see {@link #methods}
    */
   static CoverageChecker fromFile(
-      RandoopOptions options, int minMethodsToCover, String methodSpecsFile) {
-    // Load from classpath: src/systemTest/resources/test-methodspecs/<file>
+      RandoopOptions options, int minMethodsToCover, String covGoalsFile) {
+    // Load from classpath: src/systemTest/resources/test-covgoals/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
     ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
-    String resourceName = "test-methodspecs/" + methodSpecsFile;
-    result.methodSpecsFile = cloader.getResource(resourceName).getPath();
-    List<String> methodSpecs;
+    String resourceName = "test-covgoals/" + covGoalsFile;
+    result.covGoalsFile = cloader.getResource(resourceName).getPath();
+    List<String> covGoals;
     try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
         throw new Error("Resource not found on classpath: " + resourceName);
       }
-      methodSpecs =
+      covGoals =
           new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
     } catch (IOException e) {
       throw new Error("Problem reading resource " + resourceName, e);
     }
-    result.methods(methodSpecs.toArray(new String[0]));
+    result.methods(covGoals.toArray(new String[0]));
     return result;
   }
 
@@ -143,11 +145,11 @@ class CoverageChecker {
    *
    * @param options the test generation options
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
-   * @param methodSpecs which methods should be covered; see {@link #methods}
+   * @param covGoals which methods should be covered; see {@link #methods}
    */
-  CoverageChecker(RandoopOptions options, int minMethodsToCover, String... methodSpecs) {
+  CoverageChecker(RandoopOptions options, int minMethodsToCover, String... covGoals) {
     this(options.getClassnames(), minMethodsToCover);
-    methods(methodSpecs);
+    methods(covGoals);
   }
 
   /**
@@ -190,10 +192,10 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included. For documentation, see {@link
    * #methods(List)}.
    *
-   * @param methodSpecs method specifications
+   * @param covGoals method coverage goals
    */
-  void methods(String... methodSpecs) {
-    methods(Arrays.asList(methodSpecs));
+  void methods(String... covGoals) {
+    methods(Arrays.asList(covGoals));
   }
 
   /**
@@ -211,10 +213,22 @@ class CoverageChecker {
    * this be changed to the most restrictive one taking precedence? That would require a different
    * implementation.)
    *
-   * @param methodSpecs method specifications
+   * @param covGoals method coverage goals
    */
-  void methods(List<String> methodSpecs) {
-    for (String s : methodSpecs) {
+  void methods(List<String> covGoals) {
+    // Each method in `covGoals` is either:
+    // * individually specified by "include", "exclude", or "ignore"
+    // * not individually specified
+    // The same goes for inclusion by range and for overall inclusion (without a JDK number).
+
+    // Key is "overall" or "range" or "individual".
+    // In value, key is methodName and value is "include", "exclude", "ignore", or missing (no key).
+    Map<String, Map<String, String>> covGoalsMaps = new HashMap<>();
+    covGoalsMaps.put("overall", new HashMap<>());
+    covGoalsMaps.put("range", new HashMap<>());
+    covGoalsMaps.put("individual", new HashMap<>());
+
+    for (String s : covGoals) {
       int hashPos = s.indexOf('#');
       if (hashPos != -1) {
         s = s.substring(0, hashPos);
@@ -225,7 +239,7 @@ class CoverageChecker {
       }
       int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
-        throw new Error("Bad method spec, lacks action at end: " + s);
+        throw new Error("Bad coverage goal, lacks action at end: " + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
@@ -247,15 +261,36 @@ class CoverageChecker {
         actionJdk = Integer.parseInt(m.group(2));
       } else {
         if (orGreater || orLess) {
-          throw new Error("Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+          throw new Error("Bad coverage goal, \"+\" and \"-\" may only follow a JDK number: " + s);
         }
         actionJdk = 0;
       }
+
+      String scope;
+      if (actionJdk == 0) {
+        scope = "overall";
+      } else if (orGreater || orLess) {
+        scope = "range";
+      } else {
+        scope = "individual";
+      }
+
+      Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
           || (javaVersion == actionJdk)
           || (orGreater && javaVersion > actionJdk)
           || (orLess && javaVersion < actionJdk)) {
+
+        String oldAction = thisCovGoals.get(methodName);
+        if (oldAction != null) {
+          throw new Error(
+              String.format(
+                  "Duplicate %s coverage goal %sfor %s",
+                  scope, (actionJdk == 0 ? "" : "for JDK " + actionJdk + " "), methodName));
+        }
+        thisCovGoals.put(methodName, action);
+
         switch (action) {
           case "exclude":
             exclude(methodName);
@@ -267,7 +302,7 @@ class CoverageChecker {
             include(methodName);
             break;
           default:
-            throw new Error("Unrecognized action " + action + " in method spec: " + s);
+            throw new Error("Unrecognized action " + action + " in coverage goal");
         }
       }
     }
@@ -336,17 +371,16 @@ class CoverageChecker {
       failureMessage.append(totalCoveredMethodsMsg);
     }
     String inFileName = "";
-    if (methodSpecsFile != null) {
-      methodSpecsFile =
-          methodSpecsFile.replaceFirst(
-              "/build/resources/systemTest/", "/src/systemTest/resources/");
+    if (covGoalsFile != null) {
+      covGoalsFile =
+          covGoalsFile.replaceFirst("/build/resources/systemTest/", "/src/systemTest/resources/");
       // Special cases for CI (Azure and CircleCI, respectively).
-      if (methodSpecsFile.startsWith("/__w/1/s/")) {
-        methodSpecsFile = methodSpecsFile.substring(9);
-      } else if (methodSpecsFile.startsWith("/root/project/")) {
-        methodSpecsFile = methodSpecsFile.substring(14);
+      if (covGoalsFile.startsWith("/__w/1/s/")) {
+        covGoalsFile = covGoalsFile.substring(9);
+      } else if (covGoalsFile.startsWith("/root/project/")) {
+        covGoalsFile = covGoalsFile.substring(14);
       }
-      inFileName = String.format(" in%n%s", methodSpecsFile);
+      inFileName = String.format(" in%n%s", covGoalsFile);
     }
     if (!missingMethods.isEmpty()) {
       failureMessage.append(
