@@ -307,18 +307,18 @@ class CoverageChecker {
     }
 
     // Apply goals from most general to most specific.
-    applyCoverageGoal(specs.get("overall"));
-    applyCoverageGoal(specs.get("range"));
-    applyCoverageGoal(specs.get("individual"));
+    applyCoverageGoal(covGoalsMaps.get("overall"));
+    applyCoverageGoal(covGoalsMaps.get("range"));
+    applyCoverageGoal(covGoalsMaps.get("individual"));
   }
 
   /**
    * Apply the coverage goals specified in {@code m}.
    *
-   * @param specs coverage goals
+   * @param covGoals coverage goals
    */
-  void applyCoverageGoal(Map<String, String> specs) {
-    for (Map.Entry<String, String> entry : specs.entrySet()) {
+  void applyCoverageGoal(Map<String, String> covGoals) {
+    for (Map.Entry<String, String> entry : covGoals.entrySet()) {
       String methodName = entry.getKey();
       String action = entry.getValue();
       switch (action) {
