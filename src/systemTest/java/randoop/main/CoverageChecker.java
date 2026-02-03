@@ -307,7 +307,7 @@ class CoverageChecker {
    * @param specs coverage goals
    */
   void applyCoverageGoal(Map<String, String> specs) {
-    for (Map.Entry<String, String> entry : specs.get("overall")) {
+    for (Map.Entry<String, String> entry : specs.entrySet()) {
       String methodName = entry.getKey();
       String action = entry.getValue();
       switch (action) {
