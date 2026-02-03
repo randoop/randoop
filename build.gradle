@@ -132,6 +132,7 @@ allprojects {
         // Uncomment -proc:none to disable all annotation processing and speed up the build.
         // "-proc:none",
 
+        "-Aversion",
         "-Werror",
         "-Awarns",
         "-Xmaxwarns",

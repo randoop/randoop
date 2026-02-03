@@ -18,9 +18,9 @@ java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
-java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude11
-java7.util7.Collections.fill(java7.util7.List, java.lang.Object) exclude8
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+
+java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include11
+java7.util7.Collections.fill(java7.util7.List, java.lang.Object) include8
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
@@ -53,6 +53,8 @@ java7.util7.LinkedList.addAll(java7.util7.Collection) ignore
 java7.util7.LinkedList.addLast(java.lang.Object) ignore17+
 java7.util7.LinkedList.contains(java.lang.Object) ignore17+
 java7.util7.LinkedList.element() ignore17+
+java7.util7.LinkedList.get(int) exclude11
+java7.util7.LinkedList.get(int) exclude8
 java7.util7.LinkedList.get(int) ignore17+
 java7.util7.LinkedList.indexOf(java.lang.Object) ignore17+
 java7.util7.LinkedList.lastIndexOf(java.lang.Object) ignore17+
@@ -72,9 +74,9 @@ java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.TreeSet.add(java.lang.Object) exclude11
-java7.util7.TreeSet.add(java.lang.Object) exclude8
 java7.util7.TreeSet.add(java.lang.Object) ignore17+
+java7.util7.TreeSet.add(java.lang.Object) include11
+java7.util7.TreeSet.add(java.lang.Object) include8
 java7.util7.TreeSet.first() exclude11
 java7.util7.TreeSet.first() exclude8
 java7.util7.TreeSet.first() ignore17+
