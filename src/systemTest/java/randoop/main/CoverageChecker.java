@@ -158,9 +158,16 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void include(String methodName) {
+    if (includedMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "include coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.add(methodName);
-    excludedMethodsGoal.remove(methodName);
-    ignoredMethodsGoal.remove(methodName);
+    boolean wasExcluded = excludedMethodsGoal.remove(methodName);
+    boolean wasIgnored = ignoredMethodsGoal.remove(methodName);
+    if (!wasExcluded && !wasIgnored) {
+      throw new Error("include coverage goal is unneeded (it's the default) for " + methodName);
+    }
   }
 
   /**
@@ -169,6 +176,10 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void exclude(String methodName) {
+    if (excludedMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "exclude coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.add(methodName);
     ignoredMethodsGoal.remove(methodName);
@@ -180,6 +191,10 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void ignore(String methodName) {
+    if (ignoredMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "ignore coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.remove(methodName);
     ignoredMethodsGoal.add(methodName);
