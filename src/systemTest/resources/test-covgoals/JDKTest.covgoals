@@ -16,12 +16,7 @@ java7.util7.ArrayList.remove(int) include21
 java7.util7.ArrayList.remove(int) include25
 java7.util7.ArrayList.removeRange(int, int) exclude
 java7.util7.ArrayList.set(int, java.lang.Object) ignore
-java7.util7.ArrayList.subList(int, int) exclude
-java7.util7.ArrayList.subList(int, int) include11
-java7.util7.ArrayList.subList(int, int) include17
-java7.util7.ArrayList.subList(int, int) include21
-java7.util7.ArrayList.subList(int, int) include25
-java7.util7.ArrayList.subList(int, int) include8
+java7.util7.ArrayList.subList(int, int) include
 java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Arrays.binarySearch(byte[], int, int, byte) exclude11
 java7.util7.Arrays.binarySearch(byte[], int, int, byte) include11
@@ -41,8 +36,8 @@ java7.util7.Arrays.binarySearch(long[], int, int, long) include11
 java7.util7.Arrays.binarySearch(long[], int, int, long) include8
 java7.util7.Arrays.binarySearch(short[], int, int, short) exclude17
 java7.util7.Arrays.binarySearch(short[], int, int, short) exclude21
-java7.util7.Arrays.binarySearch(short[], int, int, short) exclude25
 java7.util7.Arrays.binarySearch(short[], int, int, short) exclude8
+java7.util7.Arrays.binarySearch(short[], int, int, short) include25
 java7.util7.Arrays.binarySearch0(float[], int, int, float) ignore
 java7.util7.Arrays.binarySearch0(java.lang.Object[], int, int, java.lang.Object, java7.util7.Comparator) ignore
 java7.util7.Arrays.copyOf(float[], int) ignore
@@ -58,7 +53,7 @@ java7.util7.Arrays.fill(long[], int, int, long) exclude11
 java7.util7.Arrays.fill(long[], int, int, long) exclude8
 java7.util7.Arrays.fill(short[], int, int, short) exclude17
 java7.util7.Arrays.fill(short[], int, int, short) exclude21
-java7.util7.Arrays.fill(short[], int, int, short) exclude25
+java7.util7.Arrays.fill(short[], int, int, short) include25
 java7.util7.Arrays.hashCode(boolean[]) exclude
 java7.util7.Arrays.hashCode(byte[]) exclude
 java7.util7.Arrays.hashCode(char[]) exclude
@@ -82,15 +77,17 @@ java7.util7.Arrays.med3(short[], int, int, int) exclude
 java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int) exclude
 java7.util7.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java7.util7.Comparator) exclude
 java7.util7.Arrays.sort(char[], int, int) exclude17+
+java7.util7.Arrays.sort(char[], int, int) include25
 java7.util7.Arrays.sort(double[], int, int) exclude17
 java7.util7.Arrays.sort(double[], int, int) exclude21
-java7.util7.Arrays.sort(double[], int, int) exclude25
+java7.util7.Arrays.sort(double[], int, int) include25
 java7.util7.Arrays.sort(float[]) ignore
 java7.util7.Arrays.sort(float[], int, int) ignore
 java7.util7.Arrays.sort(java.lang.Object[], int, int, java7.util7.Comparator) ignore
 java7.util7.Arrays.sort(java.lang.Object[], java7.util7.Comparator) ignore17+
 java7.util7.Arrays.sort(long[], int, int) exclude17+
 java7.util7.Arrays.sort(long[], int, int) exclude8
+java7.util7.Arrays.sort(long[], int, int) include25
 java7.util7.Arrays.swap(java.lang.Object[], int, int) exclude
 java7.util7.Arrays.vecswap(byte[], int, int, int) exclude
 java7.util7.Arrays.vecswap(char[], int, int, int) exclude
@@ -155,6 +152,7 @@ java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) include11
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude11
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude17+
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude8
+java7.util7.Collections.unmodifiableList(java7.util7.List) include25
 java7.util7.Collections.unmodifiableList(java7.util7.List) include8
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
 java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude
@@ -181,6 +179,7 @@ java7.util7.Hashtable.rehash() exclude25
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
 java7.util7.LinkedList.add(int, java.lang.Object) exclude11
+java7.util7.LinkedList.add(int, java.lang.Object) exclude25
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) exclude
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) include11
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) include8
@@ -198,10 +197,10 @@ java7.util7.LinkedList.peekLast() exclude8
 java7.util7.LinkedList.peekLast() include8
 java7.util7.LinkedList.pollLast() exclude11
 java7.util7.LinkedList.pop() exclude
+java7.util7.LinkedList.pop() exclude25
 java7.util7.LinkedList.pop() include11
 java7.util7.LinkedList.pop() include17
 java7.util7.LinkedList.pop() include21
-java7.util7.LinkedList.pop() include25
 java7.util7.LinkedList.pop() include8
 java7.util7.LinkedList.push(java.lang.Object) exclude8
 java7.util7.LinkedList.push(java.lang.Object) include8
@@ -210,9 +209,9 @@ java7.util7.LinkedList.remove() exclude11
 java7.util7.LinkedList.remove() include11
 java7.util7.LinkedList.remove() include8
 java7.util7.LinkedList.remove(int) exclude
+java7.util7.LinkedList.remove(int) exclude25
 java7.util7.LinkedList.remove(int) include17
 java7.util7.LinkedList.remove(int) include21
-java7.util7.LinkedList.remove(int) include25
 java7.util7.LinkedList.removeFirstOccurrence(java.lang.Object) exclude11
 java7.util7.LinkedList.set(int, java.lang.Object) exclude11-
 java7.util7.LinkedList.set(int, java.lang.Object) ignore17+
@@ -267,6 +266,7 @@ java7.util7.TreeMap.predecessor(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.putAll(java7.util7.Map) exclude
 java7.util7.TreeMap.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object) exclude
+java7.util7.TreeMap.remove(java.lang.Object) exclude25
 java7.util7.TreeMap.rightOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude
@@ -279,7 +279,8 @@ java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
-java7.util7.TreeSet.contains(java.lang.Object) exclude11-
+java7.util7.TreeSet.addAll(java7.util7.Collection) exclude25
+java7.util7.TreeSet.contains(java.lang.Object) exclude25
 java7.util7.TreeSet.contains(java.lang.Object) include11
 java7.util7.TreeSet.contains(java.lang.Object) include8
 java7.util7.TreeSet.first() ignore
@@ -297,12 +298,13 @@ java7.util7.Vector.add(int, java.lang.Object) exclude17
 java7.util7.Vector.add(int, java.lang.Object) exclude21
 java7.util7.Vector.add(int, java.lang.Object) exclude25
 java7.util7.Vector.add(int, java.lang.Object) exclude8
+java7.util7.Vector.add(int, java.lang.Object) include25
 java7.util7.Vector.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.Vector.addAll(java7.util7.Collection) ignore17+
 java7.util7.Vector.hugeCapacity(int) exclude
 java7.util7.Vector.removeRange(int, int) exclude
 java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude
-java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude11-
+java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude11
 java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude17
 java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude21
 java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude25
@@ -313,9 +315,11 @@ java7.util7.WeakHashMap.put(java.lang.Object, java.lang.Object) include8
 java7.util7.WeakHashMap.putAll(java7.util7.Map) exclude
 java7.util7.WeakHashMap.removeMapping(java.lang.Object) exclude
 java7.util7.WeakHashMap.resize(int) exclude11
+java7.util7.WeakHashMap.resize(int) exclude25
 java7.util7.WeakHashMap.resize(int) exclude8
 java7.util7.WeakHashMap.resize(int) include8
 java7.util7.WeakHashMap.transfer(java7.util7.WeakHashMap.Entry[], java7.util7.WeakHashMap.Entry[]) exclude11
+java7.util7.WeakHashMap.transfer(java7.util7.WeakHashMap.Entry[], java7.util7.WeakHashMap.Entry[]) exclude25
 java7.util7.WeakHashMap.transfer(java7.util7.WeakHashMap.Entry[], java7.util7.WeakHashMap.Entry[]) exclude8
 java7.util7.WeakHashMap.transfer(java7.util7.WeakHashMap.Entry[], java7.util7.WeakHashMap.Entry[]) include8
 java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore
