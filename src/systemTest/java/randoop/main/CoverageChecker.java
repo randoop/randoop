@@ -38,7 +38,7 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
-  /** The name of the file that contains the method specs, or null. */
+  /** The name of the file that contains the method coverage goals, or null. */
   private @Nullable String covGoalsFile;
 
   /**
@@ -239,7 +239,7 @@ class CoverageChecker {
       }
       int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
-        throw new Error("Bad method spec, lacks action at end: " + s);
+        throw new Error("Bad coverage goal, lacks action at end: " + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
@@ -261,7 +261,7 @@ class CoverageChecker {
         actionJdk = Integer.parseInt(m.group(2));
       } else {
         if (orGreater || orLess) {
-          throw new Error("Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+          throw new Error("Bad coverage goal, \"+\" and \"-\" may only follow a JDK number: " + s);
         }
         actionJdk = 0;
       }
@@ -292,20 +292,36 @@ class CoverageChecker {
                   methodName));
         }
         thisSpec.put(methodName, action);
+      }
+    }
 
-        switch (action) {
-          case "exclude":
-            exclude(methodName);
-            break;
-          case "ignore":
-            ignore(methodName);
-            break;
-          case "include":
-            include(methodName);
-            break;
-          default:
-            throw new Error("Unrecognized action " + action + " in method spec: " + s);
-        }
+    // Apply goals from most general to most specific.
+    applyCoverageGoal(specs.get("overall"));
+    applyCoverageGoal(specs.get("range"));
+    applyCoverageGoal(specs.get("individual"));
+  }
+
+  /**
+   * Apply the coverage goals specified in {@code m}.
+   *
+   * @param specs coverage goals
+   */
+  void applyCoverageGoal(Map<String, String> specs) {
+    for (Map.Entry<String, String> entry : specs.entrySet()) {
+      String methodName = entry.getKey();
+      String action = entry.getValue();
+      switch (action) {
+        case "exclude":
+          exclude(methodName);
+          break;
+        case "ignore":
+          ignore(methodName);
+          break;
+        case "include":
+          include(methodName);
+          break;
+        default:
+          throw new Error("Unrecognized action " + action + " in coverage goal");
       }
     }
   }
@@ -399,6 +415,13 @@ class CoverageChecker {
       for (String name : shouldBeMissingMethods) {
         failureMessage.append(String.format("  %s include%d%n", name, javaVersion));
       }
+    }
+    if (regressionStatus == null) {
+      System.out.printf("No regression tests.%n");
+    } else {
+      System.out.printf(
+          "Ran %d tests, %d succeeded.%n",
+          regressionStatus.testsRun, regressionStatus.testsSucceed);
     }
     String msg = failureMessage.toString();
     if (!msg.isEmpty()) {
