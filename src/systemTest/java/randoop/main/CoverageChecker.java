@@ -223,10 +223,10 @@ class CoverageChecker {
 
     // Key is "overall" or "range" or "individual".
     // In value, key is methodName and value is "include", "exclude", "ignore", or missing (no key).
-    Map<String, Map<String, String>> covGoals = new HashMap<>();
-    covGoals.put("overall", new HashMap<>());
-    covGoals.put("range", new HashMap<>());
-    covGoals.put("individual", new HashMap<>());
+    Map<String, Map<String, String>> covGoalsMaps = new HashMap<>();
+    covGoalsMaps.put("overall", new HashMap<>());
+    covGoalsMaps.put("range", new HashMap<>());
+    covGoalsMaps.put("individual", new HashMap<>());
 
     for (String s : covGoals) {
       int hashPos = s.indexOf('#');
@@ -275,7 +275,7 @@ class CoverageChecker {
         scope = "individual";
       }
 
-      Map<String, String> thisCovGoals = covGoals.get(scope);
+      Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
           || (javaVersion == actionJdk)
