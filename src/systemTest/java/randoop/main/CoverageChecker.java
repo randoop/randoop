@@ -192,7 +192,7 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included. For documentation, see {@link
    * #methods(List)}.
    *
-   * @param covGoals method specifications
+   * @param covGoals method coverage goals
    */
   void methods(String... covGoals) {
     methods(Arrays.asList(covGoals));
@@ -213,7 +213,7 @@ class CoverageChecker {
    * this be changed to the most restrictive one taking precedence? That would require a different
    * implementation.)
    *
-   * @param covGoals method specifications
+   * @param covGoals method coverage goals
    */
   void methods(List<String> covGoals) {
     // Each method in `covGoals` is either:
@@ -223,10 +223,10 @@ class CoverageChecker {
 
     // Key is "overall" or "range" or "individual".
     // In value, key is methodName and value is "include", "exclude", "ignore", or missing (no key).
-    Map<String, Map<String, String>> specs = new HashMap<>();
-    specs.put("overall", new HashMap<>());
-    specs.put("range", new HashMap<>());
-    specs.put("individual", new HashMap<>());
+    Map<String, Map<String, String>> covGoalsMaps = new HashMap<>();
+    covGoalsMaps.put("overall", new HashMap<>());
+    covGoalsMaps.put("range", new HashMap<>());
+    covGoalsMaps.put("individual", new HashMap<>());
 
     for (String s : covGoals) {
       int hashPos = s.indexOf('#');
@@ -266,32 +266,30 @@ class CoverageChecker {
         actionJdk = 0;
       }
 
-      String specNumberType;
+      String scope;
       if (actionJdk == 0) {
-        specNumberType = "overall";
+        scope = "overall";
       } else if (orGreater || orLess) {
-        specNumberType = "range";
+        scope = "range";
       } else {
-        specNumberType = "individual";
+        scope = "individual";
       }
 
-      Map<String, String> thisSpec = specs.get(specNumberType);
+      Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
           || (javaVersion == actionJdk)
           || (orGreater && javaVersion > actionJdk)
           || (orLess && javaVersion < actionJdk)) {
 
-        String oldAction = thisSpec.get(methodName);
+        String oldAction = thisCovGoals.get(methodName);
         if (oldAction != null) {
           throw new Error(
               String.format(
-                  "Duplicate %s spec %sfor %s",
-                  specNumberType,
-                  (actionJdk == 0 ? "" : "for JDK " + actionJdk + " "),
-                  methodName));
+                  "Duplicate %s coverage goal %sfor %s",
+                  scope, (actionJdk == 0 ? "" : "for JDK " + actionJdk + " "), methodName));
         }
-        thisSpec.put(methodName, action);
+        thisCovGoals.put(methodName, action);
 
         switch (action) {
           case "exclude":
