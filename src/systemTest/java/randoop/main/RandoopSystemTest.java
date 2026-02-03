@@ -445,10 +445,10 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.LinkedList");
     options.setOption("progressdisplay", "false");
 
-    RandoopRunStatus randoopRunDesc =
+    RandoopRunStatus randoopRunStatus =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    List<String> outputLines = randoopRunDesc.processStatus.outputLines;
+    List<String> outputLines = randoopRunStatus.processStatus.outputLines;
     // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
     // it does not support remove().
     List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
@@ -1477,10 +1477,10 @@ public class RandoopSystemTest {
     TestRunStatus regressionRunStatus =
         runRegressionTests(environment, options, expectedRegression, runStatus, packageName);
 
-    TestRunStatus errorRunDesc =
+    TestRunStatus errorRunStatus =
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
-    coverageChecker.checkCoverage(regressionRunStatus, errorRunDesc);
+    coverageChecker.checkCoverage(regressionRunStatus, errorRunStatus);
   }
 
   /**
@@ -1556,24 +1556,24 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus errorRunDesc = null;
+    TestRunStatus errorRunStatus = null;
     String errorBasename = options.getErrorBasename();
     switch (expectedError) {
       case SOME:
         assertNotEquals("Test suite should have error tests", 0, runStatus.errorTestCount);
         try {
-          errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
+          errorRunStatus = TestRunStatus.runTests(environment, packageName, errorBasename);
         } catch (IOException e) {
           fail("Exception collecting coverage from error tests: " + e.getMessage());
         }
-        assertTrue("JUnit should exit with error", errorRunDesc.processStatus.exitStatus != 0);
-        if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
-          for (String line : errorRunDesc.processStatus.outputLines) {
+        assertTrue("JUnit should exit with error", errorRunStatus.processStatus.exitStatus != 0);
+        if (errorRunStatus.testsFail != errorRunStatus.testsRun) {
+          for (String line : errorRunStatus.processStatus.outputLines) {
             System.err.println(line);
           }
           fail(
               "All error tests should fail, but "
-                  + errorRunDesc.testsSucceed
+                  + errorRunStatus.testsSucceed
                   + " error tests passed");
         }
         break;
@@ -1606,7 +1606,7 @@ public class RandoopSystemTest {
       case DONT_CARE:
         break;
     }
-    return errorRunDesc;
+    return errorRunStatus;
   }
 
   /**
