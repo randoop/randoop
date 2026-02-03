@@ -1,2 +1,2 @@
 [libraries]
-checker = "org.checkerframework:checker:3.53.1"
+checker = "org.checkerframework:checker:3.53.1-SNAPSHOT"
