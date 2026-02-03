@@ -147,7 +147,7 @@ allprojects {
       ]
     }
     tasks.withType(JavaCompile).configureEach {
-      if (name.equals("compileJavaTest")) {
+      if (name.equals("compileTestJava")) {
         checkerFramework {
           enabled = false
         }
