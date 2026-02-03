@@ -191,7 +191,7 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("output_limit", "1000");
+    options.setOption("output_limit", "5000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
@@ -216,7 +216,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("output_limit", "2000");
+    options.setOption("output_limit", "10000");
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
@@ -248,14 +248,14 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "6000");
+    options.setOption("generated_limit", "20000");
     // Using these values instead slightly reduced coverage:
     // options.setOption("null-ratio", "0.1");
     // options.setOption("alias-ratio", "0.2");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
-    options.setFlag("clear=2000");
+    options.setOption("clear", "2500");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -1293,8 +1293,8 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "800");
-    options.setOption("generated_limit", "1600");
+    options.setOption("output_limit", "2000");
+    options.setOption("generated_limit", "5000");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
