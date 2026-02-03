@@ -302,7 +302,6 @@ java7.util7.TreeSet.tailSet(java.lang.Object) exclude
 java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Vector.add(int, java.lang.Object) exclude17
-java7.util7.Vector.add(int, java.lang.Object) exclude25
 java7.util7.Vector.add(int, java.lang.Object) exclude8
 java7.util7.Vector.add(int, java.lang.Object) include21
 java7.util7.Vector.add(int, java.lang.Object) include25

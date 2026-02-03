@@ -158,9 +158,16 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void include(String methodName) {
+    if (includedMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "include coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.add(methodName);
-    excludedMethodsGoal.remove(methodName);
-    ignoredMethodsGoal.remove(methodName);
+    boolean wasExcluded = excludedMethodsGoal.remove(methodName);
+    boolean wasIgnored = ignoredMethodsGoal.remove(methodName);
+    if (!wasExcluded && !wasIgnored) {
+      throw new Error("include coverage goal is unneeded (it's the default) for " + methodName);
+    }
   }
 
   /**
@@ -169,6 +176,10 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void exclude(String methodName) {
+    if (excludedMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "exclude coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.add(methodName);
     ignoredMethodsGoal.remove(methodName);
@@ -180,6 +191,10 @@ class CoverageChecker {
    * @param methodName the name to add
    */
   void ignore(String methodName) {
+    if (ignoredMethodsGoal.contains(methodName)) {
+      throw new Error(
+          "ignore coverage goal is redundant (exists for broader scope) for " + methodName);
+    }
     includedMethodsGoal.remove(methodName);
     excludedMethodsGoal.remove(methodName);
     ignoredMethodsGoal.add(methodName);
@@ -209,9 +224,7 @@ class CoverageChecker {
    *
    * <p>This format is intended to make it easy to sort the arguments.
    *
-   * <p>When multiple lines apply to a single method, the last one takes precedence. (TODO: Should
-   * this be changed to the most restrictive one taking precedence? That would require a different
-   * implementation.)
+   * <p>When multiple lines apply to a single method, the most specific one takes precedence.
    *
    * @param covGoals method specifications
    */
@@ -321,7 +334,7 @@ class CoverageChecker {
           include(methodName);
           break;
         default:
-          throw new Error("Unrecognized action " + action + " in coverage goal");
+          throw new Error("Unrecognized action " + action + " in coverage goal for " + methodName);
       }
     }
   }
