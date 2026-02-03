@@ -253,6 +253,8 @@ public class CollectionGenerationTest {
    */
   @Test
   public void testInterfaceArray() {
+    Randomness.setSeed(931979);
+
     ComponentManager componentManager = setupComponentManager();
     ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
@@ -272,7 +274,7 @@ public class CollectionGenerationTest {
       Type outputType = firstSequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should be one of two types, got " + outputType,
+          "statement type should be String or String[], got " + outputType,
           !outputType.equals(elementType)
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));

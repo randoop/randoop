@@ -11,8 +11,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -214,6 +216,18 @@ class CoverageChecker {
    * @param methodSpecs method specifications
    */
   void methods(List<String> methodSpecs) {
+    // Each method in `methodSpecs` is either:
+    // * individually specified by "include", "exclude", or "ignore"
+    // * not individually specified
+    // The same goes for inclusion by range and for overall inclusion (without a JDK number).
+
+    // Key is "overall" or "range" or "individual".
+    // In value, key is methodName and value is "include", "exclude", "ignore", or missing (no key).
+    Map<String, Map<String, String>> specs = new HashMap<>();
+    specs.put("overall", new HashMap<>());
+    specs.put("range", new HashMap<>());
+    specs.put("individual", new HashMap<>());
+
     for (String s : methodSpecs) {
       int hashPos = s.indexOf('#');
       if (hashPos != -1) {
@@ -252,10 +266,33 @@ class CoverageChecker {
         actionJdk = 0;
       }
 
+      String specNumberType;
+      if (actionJdk == 0) {
+        specNumberType = "overall";
+      } else if (orGreater || orLess) {
+        specNumberType = "range";
+      } else {
+        specNumberType = "individual";
+      }
+
+      Map<String, String> thisSpec = specs.get(specNumberType);
+
       if (actionJdk == 0
           || (javaVersion == actionJdk)
           || (orGreater && javaVersion > actionJdk)
           || (orLess && javaVersion < actionJdk)) {
+
+        String oldAction = thisSpec.get(methodName);
+        if (oldAction != null) {
+          throw new Error(
+              String.format(
+                  "Duplicate %s spec %sfor %s",
+                  specNumberType,
+                  (actionJdk == 0 ? "" : "for JDK " + actionJdk + " "),
+                  methodName));
+        }
+        thisSpec.put(methodName, action);
+
         switch (action) {
           case "exclude":
             exclude(methodName);
