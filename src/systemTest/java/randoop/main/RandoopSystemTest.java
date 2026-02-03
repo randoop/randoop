@@ -826,14 +826,14 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String packageName = options.getPackageName();
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(testEnvironment, options, ExpectedTests.SOME, runStatus, packageName);
 
     int beforeAllCount = 0;
     int beforeEachCount = 0;
     int afterAllCount = 0;
     int afterEachCount = 0;
-    for (String line : regressionRunDesc.processStatus.outputLines) {
+    for (String line : regressionRunStatus.processStatus.outputLines) {
       if (line.contains("Before All")) {
         beforeAllCount++;
       }
@@ -850,8 +850,8 @@ public class RandoopSystemTest {
 
     assertEquals(1, beforeAllCount);
     assertEquals(1, afterAllCount);
-    assertEquals(regressionRunDesc.testsRun, beforeEachCount);
-    assertEquals(regressionRunDesc.testsRun, afterEachCount);
+    assertEquals(regressionRunStatus.testsRun, beforeEachCount);
+    assertEquals(regressionRunStatus.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
@@ -1477,13 +1477,13 @@ public class RandoopSystemTest {
 
     String packageName = options.getPackageName();
 
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(environment, options, expectedRegression, runStatus, packageName);
 
     TestRunStatus errorRunDesc =
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
-    coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
+    coverageChecker.checkCoverage(regressionRunStatus, errorRunDesc);
   }
 
   /**
@@ -1630,7 +1630,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus regressionRunDesc = null;
+    TestRunStatus regressionRunStatus = null;
     if (expectedRegression == ExpectedTests.NONE) {
       if (runStatus.regressionTestCount != 0) {
         fail(
@@ -1641,12 +1641,12 @@ public class RandoopSystemTest {
       assertNotEquals("...has regression tests", 0, runStatus.regressionTestCount);
       String regressionBasename = options.getRegressionBasename();
       try {
-        regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
+        regressionRunStatus = TestRunStatus.runTests(environment, packageName, regressionBasename);
       } catch (IOException e) {
         fail("Exception collecting coverage from regression tests: " + e.getMessage());
       }
-      if (regressionRunDesc.processStatus.exitStatus != 0) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.processStatus.exitStatus != 0) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         System.err.printf("environment = %s%n", environment);
@@ -1656,13 +1656,13 @@ public class RandoopSystemTest {
         System.err.printf("packageName = %s%n", packageName);
         fail("JUnit should exit properly, see diagnostics above");
       }
-      if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.testsSucceed != regressionRunStatus.testsRun) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         fail(
             "All regression tests should pass, but "
-                + regressionRunDesc.testsFail
+                + regressionRunStatus.testsFail
                 + " regression tests failed");
       }
     } else if (expectedRegression == ExpectedTests.DONT_CARE
@@ -1671,7 +1671,7 @@ public class RandoopSystemTest {
     } else {
       throw new Error("Unexpected fallthrough");
     }
-    return regressionRunDesc;
+    return regressionRunStatus;
   }
 
   /**
