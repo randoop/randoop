@@ -279,6 +279,7 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));
     }
+    // The two types are String and String[].
     assertEquals(2, outputTypeSet.size());
   }
 }

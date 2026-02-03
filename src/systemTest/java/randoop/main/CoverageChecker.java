@@ -38,7 +38,7 @@ class CoverageChecker {
   /** The number of methods that must be covered. */
   private final int minMethodsToCover;
 
-  /** The name of the file that contains the method specs, or null. */
+  /** The name of the file that contains the method coverage goals, or null. */
   private @Nullable String covGoalsFile;
 
   /**
@@ -239,7 +239,7 @@ class CoverageChecker {
       }
       int spacepos = s.lastIndexOf(' ');
       if (spacepos == -1) {
-        throw new Error("Bad method spec, lacks action at end: " + s);
+        throw new Error("Bad coverage goal, lacks action at end: " + s);
       }
       String methodName = s.substring(0, spacepos);
       String action = s.substring(spacepos + 1);
@@ -261,7 +261,7 @@ class CoverageChecker {
         actionJdk = Integer.parseInt(m.group(2));
       } else {
         if (orGreater || orLess) {
-          throw new Error("Bad method spec, \"+\" and \"-\" may only follow a JDK number: " + s);
+          throw new Error("Bad coverage goal, \"+\" and \"-\" may only follow a JDK number: " + s);
         }
         actionJdk = 0;
       }
@@ -304,7 +304,7 @@ class CoverageChecker {
             include(methodName);
             break;
           default:
-            throw new Error("Unrecognized action " + action + " in method spec: " + s);
+            throw new Error("Unrecognized action " + action + " in coverage goal");
         }
       }
     }
