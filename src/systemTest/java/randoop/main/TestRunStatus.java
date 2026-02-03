@@ -49,7 +49,7 @@ class TestRunStatus {
   }
 
   /**
-   * Runs the tests with the given basename, and captures and returns a description of the results.
+   * Runs the tests with the given basename, and returns a description of the results.
    *
    * @param testEnvironment the environment for this test run
    * @param packageName the package name of the JUnit tests, null if default package
@@ -108,6 +108,7 @@ class TestRunStatus {
    * adding information about the number of passing and failing tests.
    *
    * @param ps the {@link ProcessStatus} of the run of the JUnit test suite
+   * @param coverageMap the coverage map
    * @return the run description for the given process results
    */
   private static TestRunStatus getTestRunStatus(ProcessStatus ps, MethodCoverageMap coverageMap) {
