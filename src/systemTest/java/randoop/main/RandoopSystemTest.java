@@ -1313,7 +1313,6 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.subList(int, int) exclude11",
             "java7.util7.ArrayList.subList(int, int) exclude17",
-            "java7.util7.ArrayList.subList(int, int) exclude21",
             "java7.util7.ArrayList.subList(int, int) exclude25",
             "java7.util7.ArrayList.subList(int, int) exclude8",
             "java7.util7.ArrayList.subList(int, int) include17",
