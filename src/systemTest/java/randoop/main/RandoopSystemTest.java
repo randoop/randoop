@@ -196,9 +196,9 @@ public class RandoopSystemTest {
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
-    // The file is ../../../resources/test-methodspecs/CollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/CollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 57, "CollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 57, "CollectionsTest.covgoals");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
@@ -224,9 +224,9 @@ public class RandoopSystemTest {
     options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
-    // The file is ../../../resources/test-methodspecs/NaiveCollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/NaiveCollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.covgoals");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -261,8 +261,8 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // The file is ../../../resources/test-methodspecs/JDKTest.methodspecs .
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.methodspecs");
+    // The file is ../../../resources/test-covgoals/JDKTest.covgoals .
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.covgoals");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
