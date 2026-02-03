@@ -196,9 +196,9 @@ public class RandoopSystemTest {
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
-    // The file is ../../../resources/test-methodspecs/CollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/CollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 57, "CollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 57, "CollectionsTest.covgoals");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
@@ -224,9 +224,9 @@ public class RandoopSystemTest {
     options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
-    // The file is ../../../resources/test-methodspecs/NaiveCollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/NaiveCollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.covgoals");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -261,8 +261,8 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // The file is ../../../resources/test-methodspecs/JDKTest.methodspecs .
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.methodspecs");
+    // The file is ../../../resources/test-covgoals/JDKTest.covgoals .
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.covgoals");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
@@ -445,10 +445,10 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.LinkedList");
     options.setOption("progressdisplay", "false");
 
-    RandoopRunStatus randoopRunDesc =
+    RandoopRunStatus randoopRunStatus =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    List<String> outputLines = randoopRunDesc.processStatus.outputLines;
+    List<String> outputLines = randoopRunStatus.processStatus.outputLines;
     // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
     // it does not support remove().
     List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
@@ -826,14 +826,14 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String packageName = options.getPackageName();
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(testEnvironment, options, ExpectedTests.SOME, runStatus, packageName);
 
     int beforeAllCount = 0;
     int beforeEachCount = 0;
     int afterAllCount = 0;
     int afterEachCount = 0;
-    for (String line : regressionRunDesc.processStatus.outputLines) {
+    for (String line : regressionRunStatus.processStatus.outputLines) {
       if (line.contains("Before All")) {
         beforeAllCount++;
       }
@@ -850,8 +850,8 @@ public class RandoopSystemTest {
 
     assertEquals(1, beforeAllCount);
     assertEquals(1, afterAllCount);
-    assertEquals(regressionRunDesc.testsRun, beforeEachCount);
-    assertEquals(regressionRunDesc.testsRun, afterEachCount);
+    assertEquals(regressionRunStatus.testsRun, beforeEachCount);
+    assertEquals(regressionRunStatus.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
