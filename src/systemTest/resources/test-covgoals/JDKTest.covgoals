@@ -111,7 +111,6 @@ java7.util7.Collections.shuffle(java7.util7.List) exclude
 java7.util7.Collections.singletonIterator(java.lang.Object) ignore
 java7.util7.Collections.sort(java7.util7.List) exclude
 java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude17+
-java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) include11-
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.synchronizedSet(java7.util7.Set) exclude8
