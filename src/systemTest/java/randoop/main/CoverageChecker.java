@@ -321,7 +321,7 @@ class CoverageChecker {
           include(methodName);
           break;
         default:
-          throw new Error("Unrecognized action " + action + " in method spec");
+          throw new Error("Unrecognized action " + action + " in coverage goal");
       }
     }
   }
