@@ -73,8 +73,6 @@ java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) ignore17+
-java7.util7.TreeSet.add(java.lang.Object) include11
-java7.util7.TreeSet.add(java.lang.Object) include8
 java7.util7.TreeSet.first() exclude11
 java7.util7.TreeSet.first() exclude8
 java7.util7.TreeSet.first() ignore17+
