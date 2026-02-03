@@ -304,9 +304,9 @@ class CoverageChecker {
   /**
    * Apply the coverage goals specified in {@code m}.
    *
-   * @param m coverage goals
+   * @param specs coverage goals
    */
-  void applyCoverageGoal(Map<String, String> m) {
+  void applyCoverageGoal(Map<String, String> specs) {
     for (Map.Entry<String, String> entry : specs.get("overall")) {
       String methodName = entry.getKey();
       String action = entry.getValue();
