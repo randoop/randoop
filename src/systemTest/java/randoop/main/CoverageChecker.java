@@ -292,20 +292,36 @@ class CoverageChecker {
                   methodName));
         }
         thisSpec.put(methodName, action);
+      }
+    }
 
-        switch (action) {
-          case "exclude":
-            exclude(methodName);
-            break;
-          case "ignore":
-            ignore(methodName);
-            break;
-          case "include":
-            include(methodName);
-            break;
-          default:
-            throw new Error("Unrecognized action " + action + " in method spec: " + s);
-        }
+    // Apply goals from most general to most specific.
+    applyCoverageGoal(specs.get("overall"));
+    applyCoverageGoal(specs.get("range"));
+    applyCoverageGoal(specs.get("individual"));
+  }
+
+  /**
+   * Apply the coverage goals specified in {@code m}.
+   *
+   * @param m coverage goals
+   */
+  void applyCoverageGoal(Map<String, String> m) {
+    for (Map.Entry<String, String> entry : specs.get("overall")) {
+      String methodName = entry.getKey();
+      String action = entry.getValue();
+      switch (action) {
+        case "exclude":
+          exclude(methodName);
+          break;
+        case "ignore":
+          ignore(methodName);
+          break;
+        case "include":
+          include(methodName);
+          break;
+        default:
+          throw new Error("Unrecognized action " + action + " in method spec: " + s);
       }
     }
   }
