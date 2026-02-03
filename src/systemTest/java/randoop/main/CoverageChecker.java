@@ -209,9 +209,7 @@ class CoverageChecker {
    *
    * <p>This format is intended to make it easy to sort the arguments.
    *
-   * <p>When multiple lines apply to a single method, the last one takes precedence. (TODO: Should
-   * this be changed to the most restrictive one taking precedence? That would require a different
-   * implementation.)
+   * <p>When multiple lines apply to a single method, the most specific one takes precedence.
    *
    * @param covGoals method specifications
    */
@@ -321,7 +319,7 @@ class CoverageChecker {
           include(methodName);
           break;
         default:
-          throw new Error("Unrecognized action " + action + " in coverage goal");
+          throw new Error("Unrecognized action " + action + " in coverage goal for " + methodName);
       }
     }
   }
