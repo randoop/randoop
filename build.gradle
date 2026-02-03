@@ -106,7 +106,11 @@ allprojects {
   // The Checker Framework plugin adds `-Xbootclasspath/p` to the compiler options when it should not. So just skip the Checker Framework when testing JDK 8.
   if (testJdkVersion > 8) {
     apply plugin: "org.checkerframework"
-
+    compileTestJava {
+      checkerFramework {
+        enabled = false
+      }
+    }
     checkerFramework {
       version = libs.checker.get().version
       excludeTests = true
