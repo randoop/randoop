@@ -84,6 +84,7 @@ allprojects {
     fatJar
   }
 
+
   dependencies {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib("org.plumelib:bcel-util:1.2.3")
@@ -106,7 +107,6 @@ allprojects {
   apply plugin: "org.checkerframework"
   checkerFramework {
     version = libs.checker.get().version
-    excludeTests = true
     if (project.hasProperty("cfNullness")) {
       checkers = [
         "org.checkerframework.checker.nullness.NullnessChecker",
@@ -251,8 +251,6 @@ dependencies {
    */
   testInputImplementation(sourceSets.main.output)
   testInputImplementation(configurations.junit.dependencies)
-  //The Checker Framework is not run on testInput, but it does use qualifiers.
-  testInputImplementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
 
   errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
 }
@@ -335,6 +333,7 @@ allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
+      options.checkerFrameworkCompile.enabled =false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
 
