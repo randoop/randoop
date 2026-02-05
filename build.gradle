@@ -333,7 +333,7 @@ allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
-      options.checkerFrameworkCompile.enabled =false
+      options.checkerFrameworkCompile.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
 
