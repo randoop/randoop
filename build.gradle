@@ -84,7 +84,6 @@ allprojects {
     fatJar
   }
 
-
   dependencies {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
     plumelib("org.plumelib:bcel-util:1.2.3")
