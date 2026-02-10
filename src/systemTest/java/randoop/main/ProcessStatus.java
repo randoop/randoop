@@ -127,7 +127,7 @@ class ProcessStatus {
     }
 
     if (timedOut) {
-      String msg = "Process timed out after " + (timeoutMillis / 1000.0) + " secs";
+      String msg = "Process timed out after " + (timeoutMillis / 1000.0) + " secs: " + command;
       // TODO: Where does this output appear?
       // TODO: Also print the log?
       System.out.println(msg);
