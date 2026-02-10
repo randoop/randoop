@@ -2,7 +2,7 @@
 
 ## Version ?? (?? ??, 2025)
 
-Randoop compiles and runs under Java 8-25.
+Randoop compiles under Java 21-25 and runs under Java 8-25.
 
 New command-line argument:
 
