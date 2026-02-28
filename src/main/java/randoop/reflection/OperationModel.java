@@ -464,10 +464,10 @@ public class OperationModel {
   }
 
   /**
-   * Returns the (non-null) set of SUT-parameter-only types. Maybe empty. Demand-driven input
+   * Returns the (non-null) set of SUT-parameter-only types. May be empty. Demand-driven input
    * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
    *
-   * @return the set of SUT-parameter-only types
+   * @return the SUT-parameter-only types
    */
   public Set<Type> getSutParameterOnlyTypes() {
     return sutParameterOnlyTypes;
@@ -822,12 +822,7 @@ public class OperationModel {
    * SUT-return types.
    */
   private void setSutParameterOnlyTypes() {
-    // This is a single-pass heuristic:
-    //  * Set local variable `outputTypes` to all return types of all SUT operations.
-    //  * Filter the input types (field `inputTypes`) by removing non-receivers (primitives, arrays)
-    //    and Object.
-    //  * Set field `sutParameterOnlyTypes` = remaining inputs - `outputTypes`.
-
+    // `outputTypes` is all return types of all SUT operations.
     Set<Type> outputTypes = new LinkedHashSet<>();
     for (TypedOperation operation : operations) {
       Type outputType = operation.getOutputType();
@@ -844,7 +839,7 @@ public class OperationModel {
       }
     }
 
-    // Compute the sutParameterOnlyTypes as the input types that are not in the output types.
+    // Compute field `sutParameterOnlyTypes` as the input types that are not in the output types.
     Set<Type> computed = new LinkedHashSet<>(filteredInputTypes);
     computed.removeAll(outputTypes);
     sutParameterOnlyTypes.clear();

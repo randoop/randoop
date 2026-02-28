@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Set;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
-import org.checkerframework.checker.mustcall.qual.NotOwning;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
@@ -17,21 +15,6 @@ import randoop.types.Type;
  * This class contains static methods for logging messages related to demand-driven input creation.
  */
 public final class DemandDrivenLog {
-
-  /**
-   * Returns the demand-driven log writer if logging is enabled, or null if logging is disabled.
-   *
-   * <p>This method provides access to {@code GenInputsAbstract.demand_driven_log} without taking
-   * ownership of the resource. It exists because the Checker Framework does not permit referencing
-   * {@code GenInputsAbstract.demand_driven_log} directly in the expression of an
-   * {@code @EnsuresNonNullIf} annotation.
-   *
-   * @return the log writer if logging is enabled, null otherwise
-   */
-  @NotOwning
-  private static @Nullable FileWriterWithName logWriter() {
-    return GenInputsAbstract.demand_driven_log;
-  }
 
   /** Do not instantiate. */
   private DemandDrivenLog() {
@@ -44,12 +27,12 @@ public final class DemandDrivenLog {
    * @return true iff logging is enabled
    */
   public static boolean isLoggingOn() {
-    return logWriter() != null;
+    return GenInputsAbstract.demand_driven_log != null;
   }
 
   /**
    * Prints classes that are not part of the software under test (SUT) but are used by demand-driven
-   * input creation to the console.
+   * input creation.
    *
    * @param nonSutClasses classes that are not part of the SUT but are used by demand-driven input
    *     creation
@@ -114,8 +97,7 @@ public final class DemandDrivenLog {
   /**
    * Prints uninstantiable types to the console.
    *
-   * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input
-   *     creation.
+   * @param uninstantiableTypes types that could not be instantiated by demand-driven input creation
    */
   public static void printUninstantiableTypes(Set<Type> uninstantiableTypes) {
     if (uninstantiableTypes.isEmpty()) {
@@ -128,8 +110,7 @@ public final class DemandDrivenLog {
   /**
    * Logs uninstantiable types to the demand-driven log file.
    *
-   * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input
-   *     creation.
+   * @param uninstantiableTypes types that could not be instantiated by demand-driven input creation
    */
   public static void logUninstantiableTypes(Set<Type> uninstantiableTypes) {
     if (uninstantiableTypes.isEmpty()) {
@@ -143,8 +124,7 @@ public final class DemandDrivenLog {
    * Generates a message listing types that could not be instantiated by demand-driven input
    * creation.
    *
-   * @param uninstantiableTypes Set of types that could not be instantiated by demand-driven input
-   *     creation.
+   * @param uninstantiableTypes types that could not be instantiated by demand-driven input creation
    * @return a formatted message listing the uninstantiable types
    */
   private static String generateUninstantiableTypesMessage(Set<Type> uninstantiableTypes) {
@@ -203,11 +183,11 @@ public final class DemandDrivenLog {
       return;
     }
 
+    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    if (w == null) {
+      return;
+    }
     try {
-      final FileWriterWithName w = logWriter();
-      if (w == null) {
-        return;
-      }
       synchronized (w) {
         w.write(msg);
         w.flush();
@@ -227,11 +207,11 @@ public final class DemandDrivenLog {
       return;
     }
 
+    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    if (w == null) {
+      return;
+    }
     try {
-      final FileWriterWithName w = logWriter();
-      if (w == null) {
-        return;
-      }
       synchronized (w) {
         w.write(msg);
         w.write(System.lineSeparator());
@@ -252,11 +232,11 @@ public final class DemandDrivenLog {
       return;
     }
 
+    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    if (w == null) {
+      return;
+    }
     try {
-      final FileWriterWithName w = logWriter();
-      if (w == null) {
-        return;
-      }
       synchronized (w) {
         PrintWriter pw = new PrintWriter(w);
         t.printStackTrace(pw);

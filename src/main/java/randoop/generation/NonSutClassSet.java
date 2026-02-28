@@ -9,8 +9,7 @@ import randoop.types.Type;
 /**
  * The set of classes visited during demand-driven input creation that are not part of the software
  * under test (SUT), i.e., not explicitly specified by the user via {@code --classlist} or {@code
- * --testjar}. This class maintains both all visited non-SUT classes and the subset that are not
- * part of the JDK.
+ * --testjar}. This class also records which visited non-SUT classes are not part of the JDK.
  *
  * <p>A class is visited if we inspected its constructors or static methods as potential producers
  * during producer discovery, or if it appeared as a parameter type of such a producer. A producer

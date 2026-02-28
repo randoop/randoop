@@ -81,8 +81,8 @@ public class ComponentManager {
 
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
-   * matches the visibility rules chosen for the overall test package. This is kept so that if the
-   * user calls {@link #clearGeneratedSequences}, we can create a new {@link
+   * matches the visibility rules chosen for the overall test package. This field exists so that if
+   * the user calls {@link #clearGeneratedSequences}, we can create a new {@link
    * DemandDrivenInputCreator} with the same accessibility rules.
    */
   private final AccessibilityPredicate accessibility;
@@ -94,6 +94,8 @@ public class ComponentManager {
    * when no existing instances are available. This set is kept so that if the user calls {@link
    * #clearGeneratedSequences}, we can re-add these types to the {@link DemandDrivenInputCreator}
    * associated with {@link #gralComponents}.
+   *
+   * <p>This variable is used only by {@link #clearGeneratedSequences}.
    */
   private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
 
@@ -104,13 +106,7 @@ public class ComponentManager {
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public ComponentManager(AccessibilityPredicate accessibility) {
-    if (accessibility == null) {
-      throw new IllegalArgumentException("accessibility must be non-null");
-    }
-    gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
-    this.accessibility = accessibility;
-    initDemandDrivenIfEnabled();
+    this(Collections.emptySet(), accessibility);
   }
 
   /**
@@ -123,8 +119,8 @@ public class ComponentManager {
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
   public ComponentManager(Collection<Sequence> generalSeeds, AccessibilityPredicate accessibility) {
-    if (generalSeeds == null) {
-      generalSeeds = Collections.emptySet();
+    if (accessibility == null) {
+      throw new IllegalArgumentException("accessibility must be non-null");
     }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);

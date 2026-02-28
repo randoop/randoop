@@ -301,7 +301,7 @@ public class SequenceCollection {
       // If the type is a SUT-parameter-only type, and demand-driven input
       // creation is enabled, attempt to find a sequence for it.
       if (GenInputsAbstract.demand_driven && sutParameterOnlyTypes.contains(type)) {
-        Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s%n", type);
+        Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s.%n", type);
         SIList<Sequence> sequencesForType;
         try {
           @SuppressWarnings(
@@ -336,7 +336,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Returns all sequences whose types match with the parameter type.
+   * Returns all sequences whose types match the parameter type, per {@code exactMatch}.
    *
    * <p>Like {@code #getSequencesForType(Type,boolean,boolean,boolean)}, with {@code
    * useDemandDriven} set to true.
@@ -344,8 +344,8 @@ public class SequenceCollection {
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
    * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
-   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
-   *     by nullOk
+   * @return list of sequence objects that are of type {@code type} and abide by the constraints
+   *     defined by nullOk
    */
   public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {

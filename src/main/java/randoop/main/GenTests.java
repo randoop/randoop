@@ -36,7 +36,6 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -706,50 +705,42 @@ public class GenTests extends GenInputsAbstract {
       }
     } // if (!GenInputsAbstract.no_regression_tests)
 
-    if (GenInputsAbstract.progressdisplay) {
-      if (GenInputsAbstract.demand_driven) {
-        DemandDrivenInputCreator demandDrivenInputCreator =
-            componentMgr.getDemandDrivenInputCreator();
+    // Diagnostic output for demand-driven test generation.
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          componentMgr.getDemandDrivenInputCreator();
 
-        // Build an SUT runtime-class set.
-        Set<Class<?>> sutRuntime =
-            operationModel
-                .getClassTypes() // Set<ClassOrInterfaceType>
-                .stream()
-                .map(ClassOrInterfaceType::getRuntimeClass)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+      // Build an SUT runtime-class set.
+      Set<Class<?>> sutRuntimeClasses =
+          new LinkedHashSet(
+              CollectionsPlume.mapList(
+                  ClassOrInterfaceType::getRuntimeClass, operationModel.getClassTypes()));
 
-        // Filter visited types down to non-SUT.
-        Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
-        Set<Type> nonSutTypes = new LinkedHashSet<>(MapsP.mapCapacity(visited.size()));
-        for (Type t : visited) {
-          Class<?> rc = t.getRuntimeClass();
-          if (rc == null || t.isPrimitive() || t.isVoid()) {
-            continue; // skip unsupported/nonreceiver types
-          }
-          if (!sutRuntime.contains(rc)) {
-            nonSutTypes.add(t);
-          }
+      // `nonSutTypes` are a subset of visited types.
+      Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
+      Set<Type> nonSutTypes = new LinkedHashSet<>(MapsP.mapCapacity(visited.size()));
+      for (Type t : visited) {
+        Class<?> rc = t.getRuntimeClass();
+        if (rc == null || t.isPrimitive() || t.isVoid()) {
+          continue; // skip unsupported/nonreceiver types
         }
-
-        // Build the reporting helper and log.
-        NonSutClassSet nonSutClassSet = new NonSutClassSet(nonSutTypes);
-        DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
-
-        // Print classes that could not be instantiated by demand-driven.
-        Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
-        DemandDrivenLog.printUninstantiableTypes(uninstantiableTypes);
-
-        if (DemandDrivenLog.isLoggingOn()) {
-          // Log all non-SUT classes, including those in the JDK that were not specified
-          DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
-          // Log all uninstantiable types
-          DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+        if (!sutRuntimeClasses.contains(rc)) {
+          nonSutTypes.add(t);
         }
       }
-      System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
-      System.out.flush();
+
+      NonSutClassSet nonSutClassSet = new NonSutClassSet(nonSutTypes);
+      DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
+      Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
+      DemandDrivenLog.printUninstantiableTypes(uninstantiableTypes);
+      if (DemandDrivenLog.isLoggingOn()) {
+        // Log all non-SUT classes, including those in the JDK that were not specified.
+        DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+      }
     }
+    System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
+    System.out.flush();
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
