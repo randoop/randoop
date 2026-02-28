@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id("com.gradleup.shadow").version("8.3.9")
+  id("com.gradleup.shadow").version("8.3.10")
   id("java")
   id("eclipse")
   id("idea")
@@ -16,7 +16,7 @@ plugins {
 
   id("net.ltgt.errorprone").version("5.0.0")
 
-  id("org.checkerframework").version("0.6.61") apply false
+  id("org.checkerframework").version("1.0.2")
 
   id("org.aim42.htmlSanityCheck").version("1.1.6")
 
@@ -24,7 +24,7 @@ plugins {
   id("com.dorongold.task-tree").version("4.0.1")
 
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
-  id("com.gorylenko.gradle-git-properties").version("2.5.4")
+  id("com.gorylenko.gradle-git-properties").version("2.5.7")
 
   id("pmd")
 }
@@ -103,64 +103,45 @@ allprojects {
     withSourcesJar()
   }
 
-  // The Checker Framework plugin adds `-Xbootclasspath/p` to the compiler options when it should not. So just skip the Checker Framework when testing JDK 8.
-  if (testJdkVersion > 8) {
-    apply plugin: "org.checkerframework"
-
-    checkerFramework {
-      excludeTests = true
-      if (project.hasProperty("cfNullness")) {
-        checkers = [
-          "org.checkerframework.checker.nullness.NullnessChecker",
-          // These are included to avoid this failure:
-          //   The following options were not recognized by any processor: "[permitStaticOwning]"
-          "org.checkerframework.checker.regex.RegexChecker",
-          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-          "org.checkerframework.checker.signedness.SignednessChecker",
-          "org.checkerframework.checker.signature.SignatureChecker",
-        ]
-      } else {
-        checkers = [
-          // "org.checkerframework.checker.nullness.NullnessChecker",
-          "org.checkerframework.checker.regex.RegexChecker",
-          "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-          "org.checkerframework.checker.signedness.SignednessChecker",
-          "org.checkerframework.checker.signature.SignatureChecker",
-        ]
-      }
-      extraJavacArgs = [
-        // Uncomment -proc:none to disable all annotation processing and speed up the build.
-        // "-proc:none",
-
-        "-Werror",
-        "-Awarns",
-        "-Xmaxwarns",
-        "10000",
-        // "-AcheckPurityAnnotations",
-        "-ArequirePrefixInWarningSuppressions",
-        "-AwarnUnneededSuppressions",
-        "-AwarnRedundantAnnotations",
-        "-ApermitStaticOwning",
-        // -processing: suppresses "No processor claimed any of these annotations ..."
-        // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
-        "-Xlint:-processing,-options"
+  apply plugin: "org.checkerframework"
+  checkerFramework {
+    version = libs.checker.get().version
+    if (project.hasProperty("cfNullness")) {
+      checkers = [
+        "org.checkerframework.checker.nullness.NullnessChecker",
+        // These are included to avoid this failure:
+        //   The following options were not recognized by any processor: "[permitStaticOwning]"
+        "org.checkerframework.checker.regex.RegexChecker",
+        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+        "org.checkerframework.checker.signedness.SignednessChecker",
+        "org.checkerframework.checker.signature.SignatureChecker",
+      ]
+    } else {
+      checkers = [
+        // "org.checkerframework.checker.nullness.NullnessChecker",
+        "org.checkerframework.checker.regex.RegexChecker",
+        "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+        "org.checkerframework.checker.signedness.SignednessChecker",
+        "org.checkerframework.checker.signature.SignatureChecker",
       ]
     }
-  }
+    extraJavacArgs = [
+      // Uncomment -proc:none to disable all annotation processing and speed up the build.
+      // "-proc:none",
 
-  dependencies {
-    compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-    // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
-    // checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
-
-    if (project.hasProperty("cfLocal")) {
-      def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
-      compileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      testCompileOnly(files(cfHome + "/checker/dist/checker-qual.jar"))
-      // This no longer works with Gradle 9. Its a bug in the CF Gradle plugin.
-      // checkerFramework(files(cfHome + "/checker/dist/checker.jar"))
-    }
+      "-Werror",
+      "-Awarns",
+      "-Xmaxwarns",
+      "10000",
+      // "-AcheckPurityAnnotations",
+      "-ArequirePrefixInWarningSuppressions",
+      "-AwarnUnneededSuppressions",
+      "-AwarnRedundantAnnotations",
+      "-ApermitStaticOwning",
+      // -processing: suppresses "No processor claimed any of these annotations ..."
+      // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
+      "-Xlint:-processing,-options"
+    ]
   }
 
   jacoco {
@@ -241,10 +222,6 @@ dependencies {
 
   compileOnly("org.plumelib:require-javadoc:1.0.9")
 
-  compileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  implementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
-  //  checkerFramework("org.checkerframework:checker:${checkerFrameworkVersion}")
-
   /* Jacoco measures coverage of classes and methods under test. */
   implementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
   implementation("org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
@@ -260,7 +237,6 @@ dependencies {
   /*
    * source set systemTest
    */
-  systemTestImplementation("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
   systemTestImplementation("org.jacoco:org.jacoco.core:${jacocoVersion}")
   systemTestImplementation("org.jacoco:org.jacoco.report:${jacocoVersion}")
   systemTestImplementation("org.apache.commons:commons-exec:${commonsExecVersion}")
@@ -274,7 +250,6 @@ dependencies {
    */
   testInputImplementation(sourceSets.main.output)
   testInputImplementation(configurations.junit.dependencies)
-  testInputCompileOnly("org.checkerframework:checker-qual:${checkerFrameworkVersion}")
 
   errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
 }
@@ -357,6 +332,7 @@ allprojects { subproject ->
   tasks.withType(JavaCompile).configureEach { t ->
     if (t.name.equals("compileTestInputJava") || t.name.equals("compileTestJava") || t.name.equals("compileSystemTestJava")) {
       options.errorprone.enabled = false
+      options.checkerFrameworkCompile.enabled = false
     } else {
       options.compilerArgs << "-Xlint:all,-processing" << "-Werror" << "-Xlint:-options"
 
