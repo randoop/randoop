@@ -733,7 +733,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * demand-driven input creation.
    */
   @Option("Log information about demand-driven input creation")
-  public static @Nullable FileWriterWithName demand_driven_log = null;
+  public static @MonotonicNonNull FileWriterWithName demand_driven_log = null;
 
   /**
    * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
@@ -421,9 +422,7 @@ public class DemandDrivenInputCreator {
     List<Sequence> compatible =
         CollectionsPlume.filter(
             candidates,
-            (Sequence s) -> {
-              inputType.isAssignableFrom(s.getLastStatement().getOutputType());
-            });
+            (Sequence s) -> inputType.isAssignableFrom(s.getLastStatement().getOutputType()));
     if (compatible.isEmpty()) {
       return null;
     }

@@ -712,7 +712,7 @@ public class GenTests extends GenInputsAbstract {
 
       // Build an SUT runtime-class set.
       Set<Class<?>> sutRuntimeClasses =
-          new LinkedHashSet(
+          new LinkedHashSet<>(
               CollectionsPlume.mapList(
                   ClassOrInterfaceType::getRuntimeClass, operationModel.getClassTypes()));
 
@@ -776,6 +776,14 @@ public class GenTests extends GenInputsAbstract {
       } catch (IOException e) {
         throw new RandoopBug(
             "Error closing " + GenInputsAbstract.operation_history_log.getFileName(), e);
+      }
+    }
+    if (GenInputsAbstract.demand_driven_log != null) {
+      try {
+        GenInputsAbstract.demand_driven_log.close();
+      } catch (IOException e) {
+        throw new RandoopBug(
+            "Error closing " + GenInputsAbstract.demand_driven_log.getFileName(), e);
       }
     }
 

@@ -307,7 +307,7 @@ public final class Sequence {
    *
    * @return the last statement of this sequence
    */
-  public Variable getLastStatement() {
+  public Statement getLastStatement() {
     return getStatement(this.statements.size() - 1);
   }
 
