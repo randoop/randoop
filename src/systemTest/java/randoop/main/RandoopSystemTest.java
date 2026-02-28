@@ -191,14 +191,14 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("output_limit", "1000");
+    options.setOption("output_limit", "5000");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
 
-    // The file is ../../../resources/test-methodspecs/CollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/CollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 57, "CollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 57, "CollectionsTest.covgoals");
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
@@ -216,7 +216,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("output_limit", "2000");
+    options.setOption("output_limit", "10000");
     options.addTestClass("java7.util7.TreeSet");
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedList");
@@ -224,9 +224,9 @@ public class RandoopSystemTest {
     options.setOption("omit-field-file", "resources/systemTest/naiveomitfields.txt");
     options.setOption("operation-history-log", "operation-log.txt");
 
-    // The file is ../../../resources/test-methodspecs/NaiveCollectionsTest.methodspecs .
+    // The file is ../../../resources/test-covgoals/NaiveCollectionsTest.covgoals .
     CoverageChecker coverageChecker =
-        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.methodspecs");
+        CoverageChecker.fromFile(options, 126, "NaiveCollectionsTest.covgoals");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -248,21 +248,21 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("generated_limit", "6000");
+    options.setOption("generated_limit", "20000");
     // Using these values instead slightly reduced coverage:
     // options.setOption("null-ratio", "0.1");
     // options.setOption("alias-ratio", "0.2");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setOption("input-selection", "small-tests");
-    options.setFlag("clear=2000");
+    options.setOption("clear", "2500");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // The file is ../../../resources/test-methodspecs/JDKTest.methodspecs .
-    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.methodspecs");
+    // The file is ../../../resources/test-covgoals/JDKTest.covgoals .
+    CoverageChecker coverageChecker = CoverageChecker.fromFile(options, 476, "JDKTest.covgoals");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
@@ -445,10 +445,10 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.LinkedList");
     options.setOption("progressdisplay", "false");
 
-    RandoopRunStatus randoopRunDesc =
+    RandoopRunStatus randoopRunStatus =
         RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
-    List<String> outputLines = randoopRunDesc.processStatus.outputLines;
+    List<String> outputLines = randoopRunStatus.processStatus.outputLines;
     // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
     // it does not support remove().
     List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
@@ -754,12 +754,11 @@ public class RandoopSystemTest {
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
-            options,
-            5,
-            "flaky.FlakyClass.flakyDefaultHashCode() ignore",
-            "flaky.FlakyClass.getThree() include",
-            "flaky.FlakyClass.getTwo() include",
-            "flaky.FlakyClass.multiply(int, int) include"
+            options, 5, "flaky.FlakyClass.flakyDefaultHashCode() ignore"
+            // "include" is the default.
+            // "flaky.FlakyClass.getThree() include",
+            // "flaky.FlakyClass.getTwo() include",
+            // "flaky.FlakyClass.multiply(int, int) include"
             // end of list (line break to permit easier sorting)
             );
 
@@ -789,12 +788,11 @@ public class RandoopSystemTest {
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
-            options,
-            4,
-            "flaky.FlakyClass.flakyDefaultHashCode() ignore",
-            "flaky.FlakyClass.getThree() include",
-            "flaky.FlakyClass.getTwo() include",
-            "flaky.FlakyClass.multiply(int, int) include"
+            options, 4, "flaky.FlakyClass.flakyDefaultHashCode() ignore"
+            // "include" is the default.
+            // "flaky.FlakyClass.getThree() include",
+            // "flaky.FlakyClass.getTwo() include",
+            // "flaky.FlakyClass.multiply(int, int) include"
             // end of list (line break to permit easier sorting)
             );
 
@@ -826,14 +824,14 @@ public class RandoopSystemTest {
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String packageName = options.getPackageName();
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(testEnvironment, options, ExpectedTests.SOME, runStatus, packageName);
 
     int beforeAllCount = 0;
     int beforeEachCount = 0;
     int afterAllCount = 0;
     int afterEachCount = 0;
-    for (String line : regressionRunDesc.processStatus.outputLines) {
+    for (String line : regressionRunStatus.processStatus.outputLines) {
       if (line.contains("Before All")) {
         beforeAllCount++;
       }
@@ -850,8 +848,8 @@ public class RandoopSystemTest {
 
     assertEquals(1, beforeAllCount);
     assertEquals(1, afterAllCount);
-    assertEquals(regressionRunDesc.testsRun, beforeEachCount);
-    assertEquals(regressionRunDesc.testsRun, afterEachCount);
+    assertEquals(regressionRunStatus.testsRun, beforeEachCount);
+    assertEquals(regressionRunStatus.testsRun, afterEachCount);
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
@@ -1293,8 +1291,8 @@ public class RandoopSystemTest {
     options.addTestClass("java7.util7.ArrayList");
     options.addTestClass("java7.util7.LinkedHashSet");
     options.setFlag("use-jdk-specifications");
-    options.setOption("output_limit", "800");
-    options.setOption("generated_limit", "1600");
+    options.setOption("output_limit", "2000");
+    options.setOption("generated_limit", "5000");
 
     CoverageChecker coverageChecker =
         new CoverageChecker(
@@ -1304,15 +1302,11 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
             "java7.util7.ArrayList.fastRemove(int) exclude",
-            "java7.util7.ArrayList.get(int) exclude",
-            "java7.util7.ArrayList.get(int) include11",
-            "java7.util7.ArrayList.get(int) include8",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.subList(int, int) exclude11",
             "java7.util7.ArrayList.subList(int, int) exclude8",
-            "java7.util7.ArrayList.subList(int, int) include17+",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
@@ -1332,7 +1326,9 @@ public class RandoopSystemTest {
     options.setOption("grt_fuzzing_stddev", "10000");
     CoverageChecker coverageChecker =
         new CoverageChecker(
-            options, 3, "collections.SeedIntegerCollection.handleSeedNotFound() include");
+            options, 3
+            // , "collections.SeedIntegerCollection.handleSeedNotFound() include"
+            );
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1355,8 +1351,9 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             12,
-            "misc.elephantbrain.ElephantBrainTest.testA() include",
-            "misc.elephantbrain.ElephantBrainTest.testB() include",
+            // "include" is the default.
+            // "misc.elephantbrain.ElephantBrainTest.testA() include",
+            // "misc.elephantbrain.ElephantBrainTest.testB() include",
             "misc.elephantbrain.ElephantBrainTest.testP() exclude",
             "misc.elephantbrain.GrandParent.toString() ignore");
     generateAndTest(
@@ -1408,7 +1405,8 @@ public class RandoopSystemTest {
             options,
             1,
             // Include only the one impure method
-            "misc.impurity.PureAndImpure.doImpure(int) include",
+            // "include" is the default.
+            // "misc.impurity.PureAndImpure.doImpure(int) include",
             // Ignore every other method in PureAndImpure
             "misc.impurity.PureAndImpure.getConstant0() ignore",
             "misc.impurity.PureAndImpure.getConstant1() ignore",
@@ -1491,13 +1489,13 @@ public class RandoopSystemTest {
 
     String packageName = options.getPackageName();
 
-    TestRunStatus regressionRunDesc =
+    TestRunStatus regressionRunStatus =
         runRegressionTests(environment, options, expectedRegression, runStatus, packageName);
 
-    TestRunStatus errorRunDesc =
+    TestRunStatus errorRunStatus =
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
-    coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
+    coverageChecker.checkCoverage(regressionRunStatus, errorRunStatus);
   }
 
   /**
@@ -1573,24 +1571,24 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus errorRunDesc = null;
+    TestRunStatus errorRunStatus = null;
     String errorBasename = options.getErrorBasename();
     switch (expectedError) {
       case SOME:
         assertNotEquals("Test suite should have error tests", 0, runStatus.errorTestCount);
         try {
-          errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
+          errorRunStatus = TestRunStatus.runTests(environment, packageName, errorBasename);
         } catch (IOException e) {
           fail("Exception collecting coverage from error tests: " + e.getMessage());
         }
-        assertTrue("JUnit should exit with error", errorRunDesc.processStatus.exitStatus != 0);
-        if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
-          for (String line : errorRunDesc.processStatus.outputLines) {
+        assertTrue("JUnit should exit with error", errorRunStatus.processStatus.exitStatus != 0);
+        if (errorRunStatus.testsFail != errorRunStatus.testsRun) {
+          for (String line : errorRunStatus.processStatus.outputLines) {
             System.err.println(line);
           }
           fail(
               "All error tests should fail, but "
-                  + errorRunDesc.testsSucceed
+                  + errorRunStatus.testsSucceed
                   + " error tests passed");
         }
         break;
@@ -1623,7 +1621,7 @@ public class RandoopSystemTest {
       case DONT_CARE:
         break;
     }
-    return errorRunDesc;
+    return errorRunStatus;
   }
 
   /**
@@ -1644,7 +1642,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       RandoopRunStatus runStatus,
       String packageName) {
-    TestRunStatus regressionRunDesc = null;
+    TestRunStatus regressionRunStatus = null;
     if (expectedRegression == ExpectedTests.NONE) {
       if (runStatus.regressionTestCount != 0) {
         fail(
@@ -1655,12 +1653,12 @@ public class RandoopSystemTest {
       assertNotEquals("...has regression tests", 0, runStatus.regressionTestCount);
       String regressionBasename = options.getRegressionBasename();
       try {
-        regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
+        regressionRunStatus = TestRunStatus.runTests(environment, packageName, regressionBasename);
       } catch (IOException e) {
         fail("Exception collecting coverage from regression tests: " + e.getMessage());
       }
-      if (regressionRunDesc.processStatus.exitStatus != 0) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.processStatus.exitStatus != 0) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         System.err.printf("environment = %s%n", environment);
@@ -1670,13 +1668,13 @@ public class RandoopSystemTest {
         System.err.printf("packageName = %s%n", packageName);
         fail("JUnit should exit properly, see diagnostics above");
       }
-      if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (regressionRunStatus.testsSucceed != regressionRunStatus.testsRun) {
+        for (String line : regressionRunStatus.processStatus.outputLines) {
           System.err.println(line);
         }
         fail(
             "All regression tests should pass, but "
-                + regressionRunDesc.testsFail
+                + regressionRunStatus.testsFail
                 + " regression tests failed");
       }
     } else if (expectedRegression == ExpectedTests.DONT_CARE
@@ -1685,7 +1683,7 @@ public class RandoopSystemTest {
     } else {
       throw new Error("Unexpected fallthrough");
     }
-    return regressionRunDesc;
+    return regressionRunStatus;
   }
 
   /**
