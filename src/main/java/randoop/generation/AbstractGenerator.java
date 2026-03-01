@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -151,13 +153,13 @@ public abstract class AbstractGenerator {
    * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
-   *     {@code new ComponentManager()}.
+   *     {@code new ComponentManager(IS_PUBLIC)}.
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
    */
   protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
+      @Nullable ComponentManager componentManager,
       IStopper stopper) {
     assert operations != null;
 
@@ -168,7 +170,7 @@ public abstract class AbstractGenerator {
     this.outputTest = new AlwaysFalse<>();
 
     if (componentManager == null) {
-      this.componentManager = new ComponentManager();
+      this.componentManager = new ComponentManager(IS_PUBLIC);
     } else {
       this.componentManager = componentManager;
     }

@@ -14,7 +14,7 @@ plugins {
 
   id("com.diffplug.spotless").version("8.2.1") apply false
 
-  id("net.ltgt.errorprone").version("5.0.0")
+  id("net.ltgt.errorprone").version("5.1.0")
 
   id("org.checkerframework").version("1.0.2")
 

@@ -303,6 +303,15 @@ public final class Sequence {
   }
 
   /**
+   * The last statement in the sequence.
+   *
+   * @return the last statement of this sequence
+   */
+  public Statement getLastStatement() {
+    return getStatement(this.statements.size() - 1);
+  }
+
+  /**
    * The value created by the last statement in the sequence.
    *
    * @return the variable assigned to by the last statement of this sequence

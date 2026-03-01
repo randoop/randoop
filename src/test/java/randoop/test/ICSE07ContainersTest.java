@@ -29,6 +29,7 @@ import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.sequence.Sequence;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -100,8 +101,9 @@ public class ICSE07ContainersTest {
     assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
-    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, accessibility);
+    assertEquals(seeds.size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,

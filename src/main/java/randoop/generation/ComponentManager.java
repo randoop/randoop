@@ -12,6 +12,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -65,10 +66,34 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  /** Create an empty component manager, with an immutable empty seed sequence set. */
-  public ComponentManager() {
-    gralComponents = new SequenceCollection();
-    gralSeeds = Collections.<Sequence>emptySet();
+  /**
+   * Decides which constructors/methods are callable from the generated test code. This predicate
+   * matches the visibility rules chosen for the overall test package. This field exists so that if
+   * the user calls {@link #clearGeneratedSequences}, we can create a new {@link
+   * DemandDrivenInputCreator} with the same accessibility rules.
+   */
+  private final AccessibilityPredicate accessibility;
+
+  /**
+   * Types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available. This set is kept so that if the user calls {@link
+   * #clearGeneratedSequences}, we can re-add these types to the {@link DemandDrivenInputCreator}
+   * associated with {@link #gralComponents}.
+   *
+   * <p>This variable is used only by {@link #clearGeneratedSequences}.
+   */
+  private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
+
+  /**
+   * Create an empty component manager, with an immutable empty seed sequence set.
+   *
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
+   */
+  public ComponentManager(AccessibilityPredicate accessibility) {
+    this(Collections.emptySet(), accessibility);
   }
 
   /**
@@ -77,13 +102,32 @@ public class ComponentManager {
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
+   * @param accessibility decides which constructors/methods are callable from the generated test
+   *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
-  public ComponentManager(@Nullable Collection<Sequence> generalSeeds) {
-    Collection<Sequence> seeds =
-        (generalSeeds == null) ? Collections.<Sequence>emptySet() : generalSeeds;
-    Set<Sequence> seedSet = new LinkedHashSet<>(seeds);
+  public ComponentManager(Collection<Sequence> generalSeeds, AccessibilityPredicate accessibility) {
+    if (accessibility == null) {
+      throw new IllegalArgumentException("accessibility must be non-null");
+    }
+    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
+    seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    this.accessibility = accessibility;
+    initDemandDrivenIfEnabled();
+  }
+
+  /**
+   * If demand-driven input generation is enabled, set up the demand-driven input creator for the
+   * component manager.
+   */
+  private void initDemandDrivenIfEnabled() {
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator ddic =
+          new DemandDrivenInputCreator(
+              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      gralComponents.setDemandDrivenInputCreator(ddic);
+    }
   }
 
   /**
@@ -97,7 +141,41 @@ public class ComponentManager {
   }
 
   /**
-   * Adds a component sequence.
+   * Register types that are SUT-parameters but not SUT-returned.
+   *
+   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
+   * when no existing instances are available.
+   *
+   * @param types a set of types that are SUT-parameters but not SUT-returned
+   */
+  public void addSutParameterOnlyTypes(Set<Type> types) {
+    if (types == null || types.isEmpty()) {
+      return;
+    }
+    gralComponents.addSutParameterOnlyTypes(types);
+    this.sutParameterOnlyTypes.addAll(types);
+  }
+
+  /**
+   * Return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   * SUT-parameters but not SUT-returned.
+   *
+   * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   *     SUT-parameters but not SUT-returned
+   * @throws IllegalStateException if demand-driven input generation is not enabled (i.e., {@code
+   *     GenInputsAbstract.demand_driven} is false)
+   */
+  public DemandDrivenInputCreator getDemandDrivenInputCreator() {
+    if (GenInputsAbstract.demand_driven == false) {
+      throw new IllegalStateException(
+          "getDemandDrivenInputCreator() called when demand-driven input generation is disabled. "
+              + "Enable it with --demand-driven=true.");
+    }
+    return gralComponents.getDemandDrivenInputCreator();
+  }
+
+  /**
+   * Add a component sequence.
    *
    * @param sequence the sequence
    */
@@ -129,6 +207,10 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+    initDemandDrivenIfEnabled();
+    if (!sutParameterOnlyTypes.isEmpty()) {
+      gralComponents.addSutParameterOnlyTypes(sutParameterOnlyTypes);
+    }
   }
 
   /**

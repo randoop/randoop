@@ -440,6 +440,6 @@ public class TestClassificationTest {
   private ComponentManager getComponentManager() {
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
-    return new ComponentManager(components);
+    return new ComponentManager(components, IS_PUBLIC);
   }
 }
