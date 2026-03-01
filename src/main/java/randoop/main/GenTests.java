@@ -739,8 +739,10 @@ public class GenTests extends GenInputsAbstract {
         DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
       }
     }
-    System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
-    System.out.flush();
+    if (explorer.invalidSequenceCount > 0) {
+      System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
+      System.out.flush();
+    }
 
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
