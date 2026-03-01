@@ -3,6 +3,7 @@ package randoop.generation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -41,7 +42,7 @@ public class CollectionGenerationTest {
           new TypedClassOperation(new EnumConstant(e), enumType, new TypeTuple(), enumType);
       components.add(new Sequence().extend(op));
     }
-    return new ComponentManager(components);
+    return new ComponentManager(components, IS_PUBLIC);
   }
 
   @Test
