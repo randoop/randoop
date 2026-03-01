@@ -1071,13 +1071,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified a class literal file and --use-class-literals=NONE");
+              + " specified a class literal file and --literals-level=NONE");
     }
 
     if (literal_tfidf && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified --literal-tfidf and --use-class-literals=NONE");
+              + " specified --literal-tfidf and --literals-level=NONE");
     }
 
     if (include_superclass_literals && !literal_tfidf) {
