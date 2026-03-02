@@ -57,7 +57,9 @@ import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DemandDrivenInputCreator;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.NonSutClassSet;
 import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.SeedSequences;
@@ -105,6 +107,7 @@ import randoop.test.ValidityCheckingGenerator;
 import randoop.test.ValueSizePredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -454,7 +457,11 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr = new ComponentManager(components, accessibility);
+
+    if (GenInputsAbstract.demand_driven) {
+      componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
+    }
     operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
@@ -698,6 +705,40 @@ public class GenTests extends GenInputsAbstract {
       }
     } // if (!GenInputsAbstract.no_regression_tests)
 
+    // Diagnostic output for demand-driven test generation.
+    if (GenInputsAbstract.demand_driven) {
+      DemandDrivenInputCreator demandDrivenInputCreator =
+          componentMgr.getDemandDrivenInputCreator();
+
+      // Build an SUT runtime-class set.
+      Set<Class<?>> sutRuntimeClasses =
+          new LinkedHashSet<>(
+              CollectionsPlume.mapList(
+                  ClassOrInterfaceType::getRuntimeClass, operationModel.getClassTypes()));
+
+      // `nonSutTypes` are a subset of visited types.
+      Set<Type> visited = demandDrivenInputCreator.getVisitedTypes();
+      Set<Type> nonSutTypes = new LinkedHashSet<>(MapsP.mapCapacity(visited.size()));
+      for (Type t : visited) {
+        Class<?> rc = t.getRuntimeClass();
+        if (rc == null || t.isPrimitive() || t.isVoid()) {
+          continue; // skip unsupported/nonreceiver types
+        }
+        if (!sutRuntimeClasses.contains(rc)) {
+          nonSutTypes.add(t);
+        }
+      }
+
+      NonSutClassSet nonSutClassSet = new NonSutClassSet(nonSutTypes);
+      DemandDrivenLog.printNonSutClasses(nonSutClassSet.getNonJdkNonSutClasses());
+      Set<Type> uninstantiableTypes = demandDrivenInputCreator.getUninstantiableTypes();
+      DemandDrivenLog.printUninstantiableTypes(uninstantiableTypes);
+      if (DemandDrivenLog.isLoggingOn()) {
+        // Log all non-SUT classes, including those in the JDK that were not specified.
+        DemandDrivenLog.logNonSutClasses(nonSutClassSet.getNonSutClasses());
+        DemandDrivenLog.logUninstantiableTypes(uninstantiableTypes);
+      }
+    }
     if (explorer.invalidSequenceCount > 0) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
@@ -737,6 +778,14 @@ public class GenTests extends GenInputsAbstract {
       } catch (IOException e) {
         throw new RandoopBug(
             "Error closing " + GenInputsAbstract.operation_history_log.getFileName(), e);
+      }
+    }
+    if (GenInputsAbstract.demand_driven_log != null) {
+      try {
+        GenInputsAbstract.demand_driven_log.close();
+      } catch (IOException e) {
+        throw new RandoopBug(
+            "Error closing " + GenInputsAbstract.demand_driven_log.getFileName(), e);
       }
     }
 
