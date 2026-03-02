@@ -6,16 +6,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.plumelib.util.SIList;
+import randoop.generation.ComponentManager;
+import randoop.reflection.LiteralFileReader;
+import randoop.reflection.OperationModel;
 import randoop.sequence.Sequence;
 import randoop.types.Type;
 
 /**
- * This class stores information about literals used in one "scope" of the SUT, where a scope is a
- * class, a package, or the entire SUT.
+ * This mutable class stores information about literals used in one "scope" of the SUT, where a
+ * scope is a class, a package, or the entire SUT.
  *
- * <p>For each literal (represented as a sequence), it stores the number of uses of the sequence and
- * the number of classes that contain the sequence. It also stores the number of classes in the
- * scope. Literals are segregated by their output type.
+ * <p>For each literal (represented as a {@link Sequence}), it stores the number of uses of the
+ * sequence and the number of classes that contain the sequence. It also stores the number of
+ * classes in the scope. Literals are segregated by their output type.
+ *
+ * <p>LiteralStatistics uses reference equality.
  */
 public class LiteralStatistics {
 
@@ -23,11 +28,12 @@ public class LiteralStatistics {
    * Per-output-type index: for each {@link Type}, a map from {@link Sequence} (a literal producer)
    * to its {@link LiteralUses} within the type's scope.
    *
-   * <p>Lifecycle: All mutations occur during initialization via incrementNumUses() and
-   * incrementNumClassesWith(), driven by ClassLiteralExtractor (bytecode mining) and
-   * LiteralFileReader (external literals files), orchestrated by OperationModel. Once this
-   * LiteralStatistics is attached to ComponentManager, this map is read-only. It's read once when
-   * TfIdfSelector is created for this scope, then never accessed again for this scope.
+   * <p>Lifecycle: All mutations occur during initialization via {@link #incrementNumUses} and
+   * {@link incrementNumClassesWith}, driven by {@code randoop.reflection.ClassLiteralExtractor}
+   * (bytecode mining) and {@link LiteralFileReader} (external literals files), orchestrated by
+   * {@link OperationModel}. Once the containing LiteralStatistics is attached to {@link
+   * ComponentManager}, this map is read-only. It's read once when {@link TfIdfSelector} is created
+   * for this scope, then never accessed again for this scope.
    */
   private final Map<Type, Map<Sequence, LiteralUses>> literalUsesByType = new LinkedHashMap<>();
 
@@ -35,9 +41,9 @@ public class LiteralStatistics {
    * The number of classes in this scope.
    *
    * <p>This counts how many classes have contributed literals to this statistics object
-   * (incremented once per class by recordSequencesInClass). It is NOT equal to
-   * literalUsesByType.size(), which is the number of output types with any literals. There is no
-   * direct relationship between these two values.
+   * (incremented once per class by {@link ScopeToLiteralStatistics#recordSequencesInClass}). It is
+   * NOT equal to {@link #literalUsesByType}{@code ().size()}, which is the number of output types
+   * with any literals. There is no direct relationship between these two values.
    */
   private int numClasses = 0;
 
@@ -69,9 +75,10 @@ public class LiteralStatistics {
   /**
    * Return the {@link LiteralUses} for the given sequence.
    *
-   * <p>This method creates an entry for the sequence's output type and a new {@link LiteralUses} if
-   * necessary. It is only called from the mutators of this class, namely ({@link #incrementNumUses}
-   * and {@link #incrementNumClassesWith}) to ensure an entry exists before updating counts.
+   * <p>If necessary, this method creates an entry for the sequence's output type and a new empty
+   * {@link LiteralUses}. It is only called from the mutators of this class ({@link
+   * #incrementNumUses} and {@link #incrementNumClassesWith}) to ensure an entry exists before
+   * updating counts.
    *
    * @param seq a literal-producing sequence
    * @return the {@link LiteralUses} for the given sequence (created if absent)
@@ -82,8 +89,8 @@ public class LiteralStatistics {
     }
     Type outputType = seq.getLastVariable().getType();
     Map<Sequence, LiteralUses> typeMap =
-        literalUsesByType.computeIfAbsent(outputType, k -> new LinkedHashMap<>());
-    LiteralUses currentUses = typeMap.computeIfAbsent(seq, k -> new LiteralUses());
+        literalUsesByType.computeIfAbsent(outputType, __ -> new LinkedHashMap<>());
+    LiteralUses currentUses = typeMap.computeIfAbsent(seq, __ -> new LiteralUses());
     return currentUses;
   }
 
@@ -104,11 +111,12 @@ public class LiteralStatistics {
   /**
    * Returns an iterable over all literal-to-usage entries across all output.
    *
-   * @return an {@link Iterable} of entries mapping each {@link Sequence} to its {@link LiteralUses}
+   * @return all pairs of ({@link Sequence}, {@link LiteralUses})
    */
   public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
     return () -> // This line makes the method return an Iterable rather than an Iterator.
-    new Iterator<Map.Entry<Sequence, LiteralUses>>() {
+        // An Iterable can be used in a foreach loop, but an Iterator cannot.
+        new Iterator<Map.Entry<Sequence, LiteralUses>>() {
           private final Iterator<Map<Sequence, LiteralUses>> outer =
               literalUsesByType.values().iterator();
           private Iterator<Map.Entry<Sequence, LiteralUses>> inner = Collections.emptyIterator();
@@ -166,6 +174,21 @@ public class LiteralStatistics {
     currentUses.incrementNumClassesWith(num);
   }
 
+  /**
+   * Merge all of {@code other} into this, side-effecting this but not {@code other}.
+   *
+   * @param other the data to add to this
+   */
+  public void addAll(LiteralStatistics other) {
+    for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> entry : other.literalUsesEntries()) {
+      Sequence seq = entry.getKey();
+      LiteralStatistics.LiteralUses uses = entry.getValue();
+      incrementNumUses(seq, uses.getNumUses());
+      incrementNumClassesWith(seq, uses.getNumClassesWith());
+    }
+    incrementNumClasses(other.getNumClasses());
+  }
+
   // ///////////////////////////////////////////////////////////////////////////
   // Helper class: LiteralUses
   //
@@ -176,7 +199,7 @@ public class LiteralStatistics {
    *
    * <p>A LiteralUses is mutable.
    */
-  public static class LiteralUses {
+  /*package-private*/ static class LiteralUses {
     /** The number of uses of the literal. */
     private int numUses;
 

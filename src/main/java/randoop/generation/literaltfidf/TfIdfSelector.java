@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
+import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -50,17 +51,10 @@ public class TfIdfSelector {
           || numClasses < 0
           || numClassesWithLiteral < 0
           || numClassesWithLiteral > numClasses) {
-        // Ignore or log inconsistent statistics rather than create invalid weights.
-        if (DEBUG) {
-          Log.logPrintln(
-              "Skipping sequence with inconsistent stats: uses="
-                  + numUses
-                  + ", classes="
-                  + numClasses
-                  + ", classesWith="
-                  + numClassesWithLiteral);
-        }
-        continue;
+        throw new RandoopBug(
+            String.format(
+                "Inconsistent stats: uses=%s, classes=%s, classesWith=%s",
+                numUses, numClasses, numClassesWithLiteral));
       }
 
       // TF-IDF formula: tf(t, D) * log((|D| + 1) / (|D| + 1 - |d \in D : t \in d|))
@@ -71,7 +65,13 @@ public class TfIdfSelector {
       double tfidf =
           (double) numUses
               * Math.log((numClasses + 1.0) / ((numClasses + 1.0) - numClassesWithLiteral));
-      if (tfidf > 0.0 && Double.isFinite(tfidf)) {
+      if (tfidf < 0.0) {
+        throw new RandoopBug(
+            String.format(
+                "Negative tfidf=%s: uses=%s, classes=%s, classesWith=%s",
+                tfidf, numUses, numClasses, numClassesWithLiteral));
+      }
+      if (tfidf != 0.0 && Double.isFinite(tfidf)) {
         literalWeight.put(sequence, tfidf);
       }
       if (DEBUG) {

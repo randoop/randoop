@@ -174,6 +174,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.literal_tfidf) {
+      assert scopeToTfIdfSelectors == null;
       scopeToTfIdfSelectors = new HashMap<>();
     }
 
@@ -773,7 +774,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.literal_tfidf
           && (operation instanceof TypedClassOperation && !isReceiver)
           && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
-        // Get the declaring type for literal selection.
+
         ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
 
         // Get candidate sequences, from the appropriate scope, that create values of type
@@ -787,18 +788,16 @@ public class ForwardGenerator extends AbstractGenerator {
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
         assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
-        Sequence seq = null;
         if (componentManager.scopeToLiteralStatistics != null) {
-          seq =
+          Sequence seq =
               selectTfidfSequence(
                   candidates, declaringType, componentManager.scopeToLiteralStatistics);
-        }
-
-        if (seq != null) {
-          inputVars.add(totStatements);
-          sequences.add(seq);
-          totStatements += seq.size();
-          continue;
+          if (seq != null) {
+            inputVars.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
         }
       }
 
@@ -1064,12 +1063,13 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logPrintf("Resolved selection scope: %s%n", scope);
     }
 
-    // If a selector is already cached for this scope, reuse it. Otherwise, we need to:
-    // 1. Get literal statistics (potentially expensive with --include-superclass-literals, as it
-    //    merges statistics from the inheritance hierarchy)
-    // 2. Construct a TfIdfSelector (expensive, as it processes statistics for weighted selection)
     TfIdfSelector tfIdfSelector = scopeToTfIdfSelectors.get(scope);
     if (tfIdfSelector == null) {
+      // No selector is cached for this scope. We need to:
+      // 1. Get literal statistics.
+      // 2. Construct a TfIdfSelector (expensive, because it processes statistics for weighted
+      //    selection).
+
       LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
       // If the scope has no literals (i.e., the class had no extractable constants from bytecode),
       // TF-IDF selection is not possible, so return null to fall back to default literal selection.

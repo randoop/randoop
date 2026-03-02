@@ -52,8 +52,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
       Object termValue = term.getValue();
+      // Skip constants with null values; they are not useful as mined literals.
       if (termValue == null) {
-        // Skip constants with null values; they are not useful as mined literals.
         continue;
       }
       scopeToLiteralStatistics.incrementNumUses(
@@ -61,7 +61,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       allConstants.add(seq);
     }
 
-    // Record class-level statistics once per class after processing all sequences
+    // Record scope-level statistics for this class after processing all sequences.
     scopeToLiteralStatistics.recordSequencesInClass(containingType, allConstants);
   }
 }

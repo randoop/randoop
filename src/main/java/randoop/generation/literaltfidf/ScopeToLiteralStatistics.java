@@ -1,6 +1,8 @@
 package randoop.generation.literaltfidf;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -23,8 +25,8 @@ public class ScopeToLiteralStatistics {
   public static final Object UNNAMED_PACKAGE = "UNNAMED_PACKAGE";
 
   /**
-   * A map from a specific scope to its literal statistics. A null key represents the unnamed
-   * package.
+   * A map from a specific scope to its literal statistics. The constant {@link UNNAMED_PACKAGE}
+   * represents the unnamed package.
    */
   private LinkedHashMap<@Nullable Object, LiteralStatistics> scopeToStatisticsMap =
       new LinkedHashMap<>();
@@ -33,7 +35,8 @@ public class ScopeToLiteralStatistics {
   public ScopeToLiteralStatistics() {}
 
   /**
-   * Returns information about literals in a specific scope.
+   * Returns information about literals in the scope for {@code type}. Includes superclass literals
+   * if {@link GenInputsAbstract#include_superclass_literals} is true.
    *
    * @param type the type whose scope to access
    * @return information about literals in the scope for {@code type}
@@ -51,68 +54,99 @@ public class ScopeToLiteralStatistics {
    * @return information about literals in the scope for {@code type}, optionally including
    *     superclass literals
    */
-  public LiteralStatistics getLiteralStatistics(
+  private LiteralStatistics getLiteralStatistics(
       ClassOrInterfaceType type, boolean includeSuperclassLiterals) {
-    LiteralStatistics baseStats =
-        scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
-
-    // Only aggregate superclass literals when using CLASS level and the option is enabled
-    if (!includeSuperclassLiterals
-        || GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.CLASS) {
-      return baseStats;
+    // Only aggregate superclass literals when using CLASS level and the option is enabled.
+    if (includeSuperclassLiterals
+        && GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      return createStatisticsWithSuperclasses(type);
+    } else {
+      return getLiteralStatisticsNoSuperclass(type);
     }
-
-    // Create a merged statistics object that includes superclass literals
-    return createMergedStatistics(type);
   }
 
   /**
-   * Creates a merged LiteralStatistics object that includes literals from the given type and all
-   * its superclasses. The merge process aggregates literal counts from the class hierarchy while
-   * preserving TF-IDF semantics: both usage counts (numUses) and class counts (numClassesWith) are
-   * summed across the hierarchy to maintain correct document frequency for TF-IDF calculation. Each
-   * class in the hierarchy is treated as a separate document, so a literal appearing in both a
-   * superclass and subclass contributes to the count from both.
+   * Returns information about literals in the scope for {@code type}, without any superclass
+   * literals.
    *
-   * @param type the type whose literals to merge with its superclass literals
-   * @return a new LiteralStatistics object containing merged literal information
+   * @param type the type whose scope to access
+   * @return information about literals in the scope for {@code type}
    */
-  private LiteralStatistics createMergedStatistics(ClassOrInterfaceType type) {
-    LiteralStatistics merged = new LiteralStatistics();
+  public LiteralStatistics getLiteralStatisticsNoSuperclass(ClassOrInterfaceType type) {
+    return scopeToStatisticsMap.computeIfAbsent(getScope(type), __ -> new LiteralStatistics());
+  }
 
-    // Traverse the class hierarchy from current type up to Object
-    for (ClassOrInterfaceType current = type; current != null; current = current.getSuperclass()) {
-      Object scope = getScope(current);
-      LiteralStatistics currentStats = scopeToStatisticsMap.get(scope);
+  /** A cache to speed up {@link #createStatisticsWithSuperclasses}. */
+  private HashMap<ClassOrInterfaceType, LiteralStatistics> createStatisticsWithSuperclassesCache =
+      new HashMap<>();
 
-      if (currentStats != null) {
-        // Merge the statistics from this level of the hierarchy
-        for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> entry :
-            currentStats.literalUsesEntries()) {
-          Sequence seq = entry.getKey();
-          LiteralStatistics.LiteralUses uses = entry.getValue();
+  /**
+   * Creates a LiteralStatistics object that includes literals from the given type and all its
+   * superclasses. Each class in the hierarchy is treated as a separate document: if a literal
+   * appears in both a superclass and subclass, it contributes to the count from both.
+   *
+   * @param type the type whose literals and superclass literals to return
+   * @return a new LiteralStatistics object containing literals from {@code type} and its
+   *     superclasses. The client should not modify this object, because it may be reused from call
+   *     to call.
+   */
+  private LiteralStatistics createStatisticsWithSuperclasses(ClassOrInterfaceType type) {
 
-          // Accumulate usage counts from superclasses
-          merged.incrementNumUses(seq, uses.getNumUses());
-          // Preserve class counts for TF-IDF document frequency
-          merged.incrementNumClassesWith(seq, uses.getNumClassesWith());
-        }
-        // Add the class count from this level
-        merged.incrementNumClasses(currentStats.getNumClasses());
-      }
+    LiteralStatistics cached = createStatisticsWithSuperclassesCache.get(type);
+    if (cached != null) {
+      return cached;
     }
 
-    return merged;
+    LiteralStatistics result;
+
+    switch (GenInputsAbstract.literals_level) {
+      case CLASS:
+        result = new LiteralStatistics();
+        result.addAll(getLiteralStatisticsNoSuperclass(type));
+        ClassOrInterfaceType supertype = type.getSuperclass();
+        if (supertype != null) {
+          result.addAll(createStatisticsWithSuperclasses(supertype));
+        }
+        break;
+
+      case PACKAGE:
+        result = new LiteralStatistics();
+        // The algorithm walks all the superclasses, but it only calls addAll for a given
+        // LiteralStatistics once.  We could track that in terms of LiteralStatistics or scopes.
+        HashSet<LiteralStatistics> visitedStats = new HashSet<>();
+        // Traverse the class hierarchy from current type up to Object.
+        for (ClassOrInterfaceType current = type;
+            current != null;
+            current = current.getSuperclass()) {
+          LiteralStatistics currentStats = getLiteralStatisticsNoSuperclass(type);
+          if (visitedStats.add(currentStats)) {
+            result.addAll(currentStats);
+          }
+        }
+        break;
+
+      case ALL:
+        result = getLiteralStatisticsNoSuperclass(type);
+        break;
+
+      default:
+        throw new RandoopBug("Bad literal level: " + GenInputsAbstract.literals_level);
+    }
+
+    createStatisticsWithSuperclassesCache.put(type, result);
+
+    return result;
   }
 
   /**
-   * Returns all literal sequences from all scopes.
+   * Returns all literal sequences from all scopes, without duplicates.
    *
    * @return all literal sequences from all scopes
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> allSequences = new LinkedHashSet<>();
     for (LiteralStatistics stats : scopeToStatisticsMap.values()) {
+      // Cannot use `keySet()` because `stats.literalUsesEntries()` is not a `Map`.
       for (Map.Entry<Sequence, LiteralStatistics.LiteralUses> e : stats.literalUsesEntries()) {
         allSequences.add(e.getKey());
       }
@@ -128,8 +162,7 @@ public class ScopeToLiteralStatistics {
    * @param numUses the number of times the {@code seq} is used in {@code usingType}
    */
   public void incrementNumUses(ClassOrInterfaceType usingType, Sequence seq, int numUses) {
-    // Don't merge superclass statistics for write operations - only update base stats
-    getLiteralStatistics(usingType, false).incrementNumUses(seq, numUses);
+    getLiteralStatisticsNoSuperclass(usingType).incrementNumUses(seq, numUses);
   }
 
   /**
@@ -141,8 +174,7 @@ public class ScopeToLiteralStatistics {
    */
   public void recordSequencesInClass(
       ClassOrInterfaceType usingType, Collection<Sequence> sequences) {
-    // Don't merge superclass statistics for write operations - only update base stats
-    LiteralStatistics stats = getLiteralStatistics(usingType, false);
+    LiteralStatistics stats = getLiteralStatisticsNoSuperclass(usingType);
     for (Sequence seq : sequences) {
       stats.incrementNumClassesWith(seq, 1);
     }

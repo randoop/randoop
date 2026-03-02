@@ -274,8 +274,7 @@ public class OperationModel {
    * Adds literal sequences/statistics to the component manager.
    *
    * <p>Reads external {@code --literals-file} entries (ignoring the token {@code "CLASSES"}) into
-   * {@link #scopeToLiteralStatistics}, attaches the statistics to {@code compMgr} when needed, and
-   * seeds all known sequences when {@code --literals-level=ALL}.
+   * {@link #scopeToLiteralStatistics}, and attaches the statistics to {@code compMgr} when needed.
    *
    * @param compMgr the component manager
    */
@@ -302,12 +301,8 @@ public class OperationModel {
       compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
     }
 
-    // Seed all sequences when requested.
-    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL) {
-      for (Sequence s : scopeToLiteralStatistics.getAllSequences()) {
-        compMgr.addGeneratedSequence(s);
-      }
-    }
+    // Do not add literals to the pool (even if literals_level == ALL), because they will be added
+    // later, on demand, by `ComponentManager.getSequencesForParam()`.
   }
 
   /**
@@ -316,7 +311,7 @@ public class OperationModel {
    * @return true if TF-IDF is enabled, or if the special token "CLASSES" appears in {@code
    *     --literals-file}; false otherwise
    */
-  private boolean shouldMineLiterals() {
+  private boolean shouldMineLiteralsFromBytecode() {
     return GenInputsAbstract.literal_tfidf || GenInputsAbstract.literals_file.contains("CLASSES");
   }
 
@@ -327,7 +322,7 @@ public class OperationModel {
    *     "CLASSES"); false otherwise
    */
   private boolean shouldUseLiteralStatistics() {
-    return shouldMineLiterals() || !GenInputsAbstract.literals_file.isEmpty();
+    return shouldMineLiteralsFromBytecode() || !GenInputsAbstract.literals_file.isEmpty();
   }
 
   /**
@@ -623,7 +618,7 @@ public class OperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
 
     // Mine literals only when requested via flags or CLASSES.
-    if (shouldMineLiterals()) {
+    if (shouldMineLiteralsFromBytecode()) {
       mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
     }
 

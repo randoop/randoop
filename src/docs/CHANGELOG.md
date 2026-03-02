@@ -1,6 +1,6 @@
 # Randoop change log
 
-## Version ?? (?? ??, 2025)
+## Version ?? (?? ??, 2026)
 
 Randoop compiles under Java 21-25 and runs under Java 8-25.
 
