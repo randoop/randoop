@@ -43,6 +43,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -88,8 +89,8 @@ public class OperationModel {
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
-  /** Map from a class to the literals that occur in it. */
-  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap = new MultiMap<>();
+  /** The storage for constant information. */
+  private ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
@@ -270,48 +271,58 @@ public class OperationModel {
   }
 
   /**
-   * Adds literals to the component manager, by parsing any literals files specified by the user.
+   * Adds literal sequences/statistics to the component manager.
    *
-   * <p>Note: Literals from classes under test are automatically extracted by ClassLiteralExtractor
-   * and stored in scopeToConstantStatistics. This method only processes external literals files.
+   * <p>Reads external {@code --literals-file} entries (ignoring the token {@code "CLASSES"}) into
+   * {@link #scopeToLiteralStatistics}, and attaches the statistics to {@code compMgr} when needed.
    *
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
     // Add sequences from external literals files (ignore "CLASSES").
     for (String literalsFile : GenInputsAbstract.literals_file) {
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap;
       if (literalsFile.equals("CLASSES")) {
-        literalMap = classLiteralMap;
-      } else {
-        literalMap = LiteralFileReader.parse(literalsFile);
+        continue;
       }
-
-      // `literalMap` does not have the `entrySet()` method.
-      for (ClassOrInterfaceType type : literalMap.keySet()) {
-        for (Sequence seq : literalMap.getValues(type)) {
-          switch (GenInputsAbstract.literals_level) {
-            case CLASS:
-              compMgr.addClassLevelLiteral(type, seq);
-              break;
-            case PACKAGE:
-              Package pkg = type.getPackage();
-              assert pkg != null;
-              compMgr.addPackageLevelLiteral(pkg, seq);
-              break;
-            case ALL:
-              compMgr.addGeneratedSequence(seq);
-              break;
-            default:
-              throw new Error(
-                  "Unexpected error in GenTests.  Please report at"
-                      + " https://github.com/randoop/randoop/issues , providing the information"
-                      + " requested at"
-                      + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
-          }
+      // Parse external literals file and record the sequences provided by LiteralFileReader in
+      // scopeToLiteralStatistics.
+      MultiMap<ClassOrInterfaceType, Sequence> fileToValues = LiteralFileReader.parse(literalsFile);
+      for (ClassOrInterfaceType type : fileToValues.keySet()) {
+        Collection<Sequence> sequences = fileToValues.getValues(type);
+        for (Sequence seq : sequences) {
+          scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
+        scopeToLiteralStatistics.recordSequencesInClass(type, sequences);
       }
     }
+
+    // Attach statistics to the component manager only when they will be used.
+    if (shouldUseLiteralStatistics()) {
+      compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
+    }
+
+    // Do not add literals to the pool (even if literals_level == ALL), because they will be added
+    // later, on demand, by `ComponentManager.getSequencesForParam()`.
+  }
+
+  /**
+   * Returns true if Randoop should mine literals from bytecode.
+   *
+   * @return true if TF-IDF is enabled, or if the special token "CLASSES" appears in {@code
+   *     --literals-file}; false otherwise
+   */
+  private boolean shouldMineLiteralsFromBytecode() {
+    return GenInputsAbstract.literal_tfidf || GenInputsAbstract.literals_file.contains("CLASSES");
+  }
+
+  /**
+   * Returns true if literal statistics are needed during generation.
+   *
+   * @return true if literal mining is enabled or any literals file is provided (including
+   *     "CLASSES"); false otherwise
+   */
+  private boolean shouldUseLiteralStatistics() {
+    return shouldMineLiteralsFromBytecode() || !GenInputsAbstract.literals_file.isEmpty();
   }
 
   /**
@@ -562,7 +573,7 @@ public class OperationModel {
       out.write(String.format("  classTypes = %s%n", classTypes));
       out.write(String.format("  inputTypes = %s%n", inputTypes));
       out.write(String.format("  coveredClassesGoal = %s%n", coveredClassesGoal));
-      out.write(String.format("  classLiteralMap = %s%n", classLiteralMap));
+      out.write(String.format("  scopeToLiteralStatistics = %s%n", scopeToLiteralStatistics));
       out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
       out.write(String.format("  contracts = %s%n", contracts));
       out.write(String.format("  omitMethods = [%n"));
@@ -592,6 +603,7 @@ public class OperationModel {
    * @param errorHandler the handler for bad class names
    * @param literalsFileList the list of literals file names
    */
+  @SuppressWarnings("UnusedVariable") // literalsFileList is kept for API compatibility
   private void addClassTypes(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
@@ -604,8 +616,10 @@ public class OperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+
+    // Mine literals only when requested via flags or CLASSES.
+    if (shouldMineLiteralsFromBytecode()) {
+      mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
     }
 
     // Collect classes under test

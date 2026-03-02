@@ -656,6 +656,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
+  /** Whether to use Literal-TF-IDF for selecting constants as procedure inputs. */
+  @Option("Whether to use Literal-TF-IDF for selecting constants as procedure inputs")
+  public static boolean literal_tfidf = false;
+
+  /**
+   * The probability of using a constant value as an input to a method under test. This option is
+   * only used when {@code --literal-tfidf} is set to true.
+   */
+  @Option("The probability to use Literal-TF-IDF")
+  public static double literal_tfidf_probability = 0.01;
+
+  /**
+   * Whether to include literals from superclasses when computing literal statistics for TF-IDF.
+   * When true, a class's literal statistics will include literals from all of its superclasses.
+   * This option only applies when {@code --literal-tfidf} is set to true and {@code
+   * --literals-level} is set to CLASS.
+   */
+  @Option(
+      "Whether to include literals from superclasses when computing literal statistics for TF-IDF")
+  public static boolean include_superclass_literals = false;
+
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
    * next method is chosen, from among all methods under test.
@@ -1050,7 +1071,34 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified a class literal file and --use-class-literals=NONE");
+              + " specified a class literal file and --literals-level=NONE");
+    }
+
+    if (literal_tfidf && literals_level == ClassLiteralsMode.NONE) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --literal-tfidf and --literals-level=NONE");
+    }
+
+    if (include_superclass_literals && !literal_tfidf) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals requires --literal-tfidf to be enabled");
+    }
+
+    if (include_superclass_literals && literals_level != ClassLiteralsMode.CLASS) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals only works with --literals-level=CLASS");
+    }
+
+    // Allow edge probabilities 0 and 1 for determinism and consistency with
+    // Randomness.weightedCoinFlip(), which accepts values in [0, 1].
+    if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
+      throw new RandoopUsageError(
+          "Probability --literal-tfidf-probability="
+              + literal_tfidf_probability
+              + " must be in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

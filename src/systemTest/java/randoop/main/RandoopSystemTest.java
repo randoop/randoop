@@ -371,6 +371,34 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, 14, expectedRegressionTests, expectedErrorTests);
   }
 
+  @Test
+  public void runLiteralTfIdfTest() {
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment("literal-tfidf-test"); // temp directory
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.setPackageName(null);
+    options.setRegressionBasename("LiteralTfIdfTest");
+    options.setErrorBasename("ConstantTfIdfErr");
+
+    options.setOption("attempted_limit", "1000");
+    options.setOption("generated_limit", "100");
+    options.addTestClass("literaltfidf.hospital.Doctor");
+    options.addTestClass("literaltfidf.hospital.Patient");
+    options.addTestClass("literaltfidf.hospital.AgeConstants");
+    options.addTestClass("literaltfidf.pharmacy.MedicationConstants");
+    options.addTestClass("literaltfidf.pharmacy.Pharmacist");
+    options.addTestClass("literaltfidf.pharmacy.Prescription");
+
+    options.setOption("literals-level", "ALL");
+    options.setOption("literal-tfidf", "true");
+    options.setOption("literal-tfidf-probability", "1");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTest(
+        testEnvironment, options, /*TODO*/ 0, expectedRegressionTests, expectedErrorTests);
+  }
+
   /**
    * Test formerly known as randoop-long-string. Previously performed a diff on generated test and
    * goal file.
