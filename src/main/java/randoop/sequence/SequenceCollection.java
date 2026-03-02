@@ -299,9 +299,9 @@ public class SequenceCollection {
         return SIList.empty();
       }
 
-      // If the type is a SUT-parameter-only type, and demand-driven input
-      // creation is enabled, attempt to find a sequence for it.
-      if (GenInputsAbstract.call_non_sut_methods && sutParameterOnlyTypes.contains(type)) {
+      // We know that demand-driven input creation is enabled.
+      // If the type is a SUT-parameter-only type, attempt to find a sequence for it.
+      if (sutParameterOnlyTypes.contains(type)) {
         Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s.%n", type);
         SIList<Sequence> sequencesForType;
         try {
