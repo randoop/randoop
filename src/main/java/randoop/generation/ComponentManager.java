@@ -135,7 +135,7 @@ public class ComponentManager {
    * component manager.
    */
   private void initDemandDrivenIfEnabled() {
-    if (GenInputsAbstract.demand_driven) {
+    if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator ddic =
           new DemandDrivenInputCreator(
               gralComponents, gralComponents.getTypeInstantiator(), accessibility);
@@ -204,13 +204,13 @@ public class ComponentManager {
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
    * @throws IllegalStateException if demand-driven input generation is not enabled (i.e., {@code
-   *     GenInputsAbstract.demand_driven} is false)
+   *     GenInputsAbstract.call_non_sut_methods} is false)
    */
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
-    if (GenInputsAbstract.demand_driven == false) {
+    if (GenInputsAbstract.call_non_sut_methods == false) {
       throw new IllegalStateException(
           "getDemandDrivenInputCreator() called when demand-driven input generation is disabled. "
-              + "Enable it with --demand-driven=true.");
+              + "Enable it with --call-non-sut-methods=true.");
     }
     return gralComponents.getDemandDrivenInputCreator();
   }

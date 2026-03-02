@@ -190,7 +190,7 @@ public class OperationModel {
     // Add the constructor "Object()".
     model.addObjectConstructor();
 
-    if (GenInputsAbstract.demand_driven) {
+    if (GenInputsAbstract.call_non_sut_methods) {
       model.setSutParameterOnlyTypes();
     }
 

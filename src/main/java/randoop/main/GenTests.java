@@ -459,7 +459,7 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = new ComponentManager(components, accessibility);
 
-    if (GenInputsAbstract.demand_driven) {
+    if (GenInputsAbstract.call_non_sut_methods) {
       componentMgr.addSutParameterOnlyTypes(operationModel.getSutParameterOnlyTypes());
     }
     operationModel.addClassLiterals(componentMgr);
@@ -706,7 +706,7 @@ public class GenTests extends GenInputsAbstract {
     } // if (!GenInputsAbstract.no_regression_tests)
 
     // Diagnostic output for demand-driven test generation.
-    if (GenInputsAbstract.demand_driven) {
+    if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator demandDrivenInputCreator =
           componentMgr.getDemandDrivenInputCreator();
 
@@ -780,12 +780,12 @@ public class GenTests extends GenInputsAbstract {
             "Error closing " + GenInputsAbstract.operation_history_log.getFileName(), e);
       }
     }
-    if (GenInputsAbstract.demand_driven_log != null) {
+    if (GenInputsAbstract.call_non_sut_methods_log != null) {
       try {
-        GenInputsAbstract.demand_driven_log.close();
+        GenInputsAbstract.call_non_sut_methods_log.close();
       } catch (IOException e) {
         throw new RandoopBug(
-            "Error closing " + GenInputsAbstract.demand_driven_log.getFileName(), e);
+            "Error closing " + GenInputsAbstract.call_non_sut_methods_log.getFileName(), e);
       }
     }
 
