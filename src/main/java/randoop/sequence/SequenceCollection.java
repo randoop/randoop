@@ -227,10 +227,11 @@ public class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
+    List<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
-        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
-    boolean added = set.add(sequence);
+        "Adding sequence #%d of type %s of length %d%n",
+        sequences.size() + 1, type, sequence.size());
+    boolean added = sequences.add(sequence);
     assert added;
     sequenceCount++;
   }
