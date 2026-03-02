@@ -1027,7 +1027,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified a class literal file and --use-class-literals=NONE");
+              + " specified a class literal file and --literals-level=NONE");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {

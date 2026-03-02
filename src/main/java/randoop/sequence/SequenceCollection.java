@@ -106,11 +106,22 @@ public class SequenceCollection {
   }
 
   /**
-   * All all the given sequences to this collection.
+   * Add all the given sequences to this collection.
    *
    * @param col the sequences to add
    */
   public void addAll(Collection<? extends Sequence> col) {
+    for (Sequence s : col) {
+      add(s);
+    }
+  }
+
+  /**
+   * Add all the given sequences to this collection.
+   *
+   * @param col the sequences to add
+   */
+  public void addAll(SIList<Sequence> col) {
     for (Sequence s : col) {
       add(s);
     }
@@ -181,10 +192,11 @@ public class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   private void updateCompatibleMap(Sequence sequence, Type type) {
-    List<Sequence> set = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
+    List<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
     Log.logPrintf(
-        "Adding sequence #%d of type %s of length %d%n", set.size() + 1, type, sequence.size());
-    boolean added = set.add(sequence);
+        "Adding sequence #%d of type %s of length %d%n",
+        sequences.size() + 1, type, sequence.size());
+    boolean added = sequences.add(sequence);
     assert added;
     sequenceCount++;
   }
@@ -198,9 +210,10 @@ public class SequenceCollection {
    *
    * @param type the type desired for the sequences being sought
    * @param exactMatch the flag to indicate whether an exact type match is required
-   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver
+   * @param onlyReceivers if true, only return sequences that can be used as a method call receiver.
+   *     Otherwise, return all sequences.
    * @return list of sequence objects that are of type 'type' and abide by the constraints defined
-   *     by nullOk
+   *     by the parameters
    */
   public SIList<Sequence> getSequencesForType(
       Type type, boolean exactMatch, boolean onlyReceivers) {

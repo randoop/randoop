@@ -698,7 +698,7 @@ public class GenTests extends GenInputsAbstract {
       }
     } // if (!GenInputsAbstract.no_regression_tests)
 
-    if (GenInputsAbstract.progressdisplay) {
+    if (explorer.invalidSequenceCount > 0) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
       System.out.flush();
     }

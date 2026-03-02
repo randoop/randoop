@@ -1,12 +1,14 @@
 # Randoop change log
 
-## Version ?? (?? ??, 2025)
+## Version ?? (?? ??, 2026)
 
 Randoop compiles under Java 21-25 and runs under Java 8-25.
 
-New command-line argument:
+New command-line arguments:
 
-* `--cast-to-run-time-type` enables more methods to be called on a value
+* `--cast-to-run-time-type` declares variables with their exact run-time types instead of compile-time types, allowing Randoop to call more methods on values
+* `--grt-fuzzing` enables fuzzing of primitive and String inputs by applying random mutations (based on the GRT technique)
+* `--grt-fuzzing-stddev` controls the standard deviation for Gaussian distribution used to fuzz numeric values (used with `--grt-fuzzing`)
 
 ## Version 4.3.4 (June 6, 2025)
 

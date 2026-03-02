@@ -80,7 +80,7 @@ public class ComponentManager {
   /** Create an empty component manager, with an immutable empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = Collections.<Sequence>emptySet();
   }
 
   /**
@@ -145,7 +145,7 @@ public class ComponentManager {
   }
 
   /**
-   * Removes any components sequences added so far, except for seed sequences, which are preserved.
+   * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
@@ -195,8 +195,8 @@ public class ComponentManager {
     }
 
     // This method appends two lists:
-    //  * determines sequences from the pool (gralComponents)
-    //  * determines literals, which depend on `declaringCls`
+    //  * sequences from the pool (gralComponents)
+    //  * literals, which depend on `declaringCls` (defined below)
 
     SIList<Sequence> result = gralComponents.getSequencesForType(neededType, false, onlyReceivers);
 
