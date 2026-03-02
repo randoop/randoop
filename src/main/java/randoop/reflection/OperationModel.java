@@ -286,6 +286,8 @@ public class OperationModel {
       }
       // Parse external literals file and record the sequences provided by LiteralFileReader in
       // scopeToLiteralStatistics.
+      // If a class appears multiple times (or is also mined from bytecode),
+      // numClasses/numClassesWith become inflated, which distorts TF-IDF.
       MultiMap<ClassOrInterfaceType, Sequence> fileToValues = LiteralFileReader.parse(literalsFile);
       for (ClassOrInterfaceType type : fileToValues.keySet()) {
         Collection<Sequence> sequences = fileToValues.getValues(type);

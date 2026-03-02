@@ -118,7 +118,7 @@ public class ScopeToLiteralStatistics {
         for (ClassOrInterfaceType current = type;
             current != null;
             current = current.getSuperclass()) {
-          LiteralStatistics currentStats = getLiteralStatisticsNoSuperclass(type);
+          LiteralStatistics currentStats = getLiteralStatisticsNoSuperclass(current);
           if (visitedStats.add(currentStats)) {
             result.addAll(currentStats);
           }

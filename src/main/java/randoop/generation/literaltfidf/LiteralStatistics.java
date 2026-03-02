@@ -29,7 +29,7 @@ public class LiteralStatistics {
    * to its {@link LiteralUses} within the type's scope.
    *
    * <p>Lifecycle: All mutations occur during initialization via {@link #incrementNumUses} and
-   * {@link incrementNumClassesWith}, driven by {@code randoop.reflection.ClassLiteralExtractor}
+   * {@link #incrementNumClassesWith}, driven by {@code randoop.reflection.ClassLiteralExtractor}
    * (bytecode mining) and {@link LiteralFileReader} (external literals files), orchestrated by
    * {@link OperationModel}. Once the containing LiteralStatistics is attached to {@link
    * ComponentManager}, this map is read-only. It's read once when {@link TfIdfSelector} is created
