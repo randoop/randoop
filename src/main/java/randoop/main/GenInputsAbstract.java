@@ -733,28 +733,29 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
 
+  // This enables Randoop's "demand-driven" strategy.
   /**
    * Constructs missing method inputs on demand.
    *
    * <p>Normally, Randoop selects method inputs from values already present in the sequence
    * collection. Thus, Randoop cannot test a method until the required input types have themselves
    * been generated. If no method in the software under test (SUT) returns the required type, then
-   * Randoop can never generate or select objects of that type. With demand-driven input creation
-   * enabled, Randoop attempts to generate instances of types it cannot construct normally.
+   * Randoop can never generate or select objects of that type. With this option enabled, Randoop
+   * attempts to generate instances of types it cannot construct normally.
    *
    * <p>Enabling this option may violate the guarantee that Randoop's tests only use classes that
    * the user specified. Any violation of this guarantee will be reported as part of the console
    * output.
    */
-  @Option("Construct method inputs on demand if the SUT cannot produce them directly")
-  public static boolean demand_driven = false;
+  @Option("Call non-SUT methods if needed to create method inputs for SUT methods")
+  public static boolean call_non_sut_methods = false;
 
   /**
-   * Log information about the classes used and the uninstantiable types encountered in
-   * demand-driven input creation.
+   * Log information about the classes used and the uninstantiable types encountered when creating
+   * values by calling non-SUT methods.
    */
   @Option("Log information about demand-driven input creation")
-  public static @MonotonicNonNull FileWriterWithName demand_driven_log = null;
+  public static @MonotonicNonNull FileWriterWithName call_non_sut_methods_log = null;
 
   /**
    * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.

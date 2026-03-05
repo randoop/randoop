@@ -287,7 +287,7 @@ public class SequenceCollection {
       }
     }
 
-    if (useDemandDriven && GenInputsAbstract.demand_driven && resultList.isEmpty()) {
+    if (useDemandDriven && GenInputsAbstract.call_non_sut_methods && resultList.isEmpty()) {
 
       assert demandDrivenInputCreator != null
           : "@AssumeAssertion(nullness)"; // useDemandDriven==true
@@ -301,14 +301,14 @@ public class SequenceCollection {
         return SIList.empty();
       }
 
-      // If the type is a SUT-parameter-only type, and demand-driven input
-      // creation is enabled, attempt to find a sequence for it.
-      if (GenInputsAbstract.demand_driven && sutParameterOnlyTypes.contains(type)) {
+      // We know that demand-driven input creation is enabled.
+      // If the type is a SUT-parameter-only type, attempt to find a sequence for it.
+      if (sutParameterOnlyTypes.contains(type)) {
         Log.logPrintf("DemandDrivenInputCreator will try to find a sequence for type %s.%n", type);
         SIList<Sequence> sequencesForType;
         try {
           @SuppressWarnings(
-              "nullness:contracts.precondition") // demandDrivenInputCreator.secondarySequenceCollection.sequenceMap is non-null because GenInputsAbstract.demand_driven is true
+              "nullness:contracts.precondition") // demandDrivenInputCreator.secondarySequenceCollection.sequenceMap is non-null because GenInputsAbstract.call_non_sut_methods is true
           SIList<Sequence> sequencesForTypeTmp =
               demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
           sequencesForType = sequencesForTypeTmp;
@@ -379,7 +379,8 @@ public class SequenceCollection {
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
    */
-  @SuppressWarnings("nullness:return") // only called when GenInputsAbstract.demand_driven==true
+  @SuppressWarnings(
+      "nullness:return") // only called when GenInputsAbstract.call_non_sut_methods==true
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
     return demandDrivenInputCreator;
   }

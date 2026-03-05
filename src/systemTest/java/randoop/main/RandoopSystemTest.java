@@ -1459,7 +1459,7 @@ public class RandoopSystemTest {
         systemTestEnvironmentManager.createTestEnvironment("demand-driven-test");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("randoop.test.A");
-    options.setOption("demand_driven", "true");
+    options.setOption("call_non_sut_methods", "true");
     options.setOption("output_limit", "100");
     options.setOption("generated_limit", "200");
 

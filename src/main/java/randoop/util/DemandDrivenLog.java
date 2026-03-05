@@ -27,7 +27,7 @@ public final class DemandDrivenLog {
    * @return true iff logging is enabled
    */
   public static boolean isLoggingOn() {
-    return GenInputsAbstract.demand_driven_log != null;
+    return GenInputsAbstract.call_non_sut_methods_log != null;
   }
 
   /**
@@ -45,7 +45,7 @@ public final class DemandDrivenLog {
     System.out.println(generateNonSutClassesMessage(nonSutClasses));
     System.out.println(
         "\nNote: This list omits JDK classes. To see the full set of visited non-SUT classes, "
-            + "use --demand-driven-log=<file>.");
+            + "use --call-non-sut-methods-log=<file>.");
   }
 
   /**
@@ -157,7 +157,8 @@ public final class DemandDrivenLog {
   }
 
   /**
-   * Log using {@code String.format} to GenInputsAbstract.demand_driven_log, if that is non-null.
+   * Log using {@code String.format} to GenInputsAbstract.call_non_sut_methods_log, if that is
+   * non-null.
    *
    * @param fmt the format string
    * @param args arguments to the format string
@@ -183,7 +184,7 @@ public final class DemandDrivenLog {
       return;
     }
 
-    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    final FileWriterWithName w = GenInputsAbstract.call_non_sut_methods_log;
     if (w == null) {
       return;
     }
@@ -207,7 +208,7 @@ public final class DemandDrivenLog {
       return;
     }
 
-    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    final FileWriterWithName w = GenInputsAbstract.call_non_sut_methods_log;
     if (w == null) {
       return;
     }
@@ -223,7 +224,7 @@ public final class DemandDrivenLog {
   }
 
   /**
-   * Log to GenInputsAbstract.demand_driven_log, if logging is enabled.
+   * Log to GenInputsAbstract.call_non_sut_methods_log, if logging is enabled.
    *
    * @param t the Throwable whose stack trace to log
    */
@@ -232,7 +233,7 @@ public final class DemandDrivenLog {
       return;
     }
 
-    final FileWriterWithName w = GenInputsAbstract.demand_driven_log;
+    final FileWriterWithName w = GenInputsAbstract.call_non_sut_methods_log;
     if (w == null) {
       return;
     }
