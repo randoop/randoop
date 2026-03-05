@@ -280,6 +280,7 @@ public class OperationModel {
    */
   public void addClassLiterals(ComponentManager compMgr) {
     // Add sequences from external literals files (ignore "CLASSES").
+    Map<ClassOrInterfaceType, Set<Sequence>> sequencesPerType = new LinkedHashMap<>();
     for (String literalsFile : GenInputsAbstract.literals_file) {
       if (literalsFile.equals("CLASSES")) {
         continue;
@@ -291,10 +292,13 @@ public class OperationModel {
       MultiMap<ClassOrInterfaceType, Sequence> fileToValues = LiteralFileReader.parse(literalsFile);
       for (ClassOrInterfaceType type : fileToValues.keySet()) {
         Collection<Sequence> sequences = fileToValues.getValues(type);
+        sequencesPerType.computeIfAbsent(type, __ -> new LinkedHashSet<>()).addAll(sequences);
         for (Sequence seq : sequences) {
           scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
-        scopeToLiteralStatistics.recordSequencesInClass(type, sequences);
+      }
+      for (Map.Entry<ClassOrInterfaceType, Set<Sequence>> e : sequencesPerType.entrySet()) {
+        scopeToLiteralStatistics.recordSequencesInClass(e.getKey(), e.getValue());
       }
     }
 

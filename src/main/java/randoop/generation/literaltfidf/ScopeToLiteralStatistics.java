@@ -28,7 +28,7 @@ public class ScopeToLiteralStatistics {
    * A map from a specific scope to its literal statistics. The constant {@link UNNAMED_PACKAGE}
    * represents the unnamed package.
    */
-  private LinkedHashMap<@Nullable Object, LiteralStatistics> scopeToStatisticsMap =
+  private LinkedHashMap<Object, LiteralStatistics> scopeToStatisticsMap =
       new LinkedHashMap<>();
 
   /** Creates a ScopeToLiteralStatistics. */
@@ -191,7 +191,7 @@ public class ScopeToLiteralStatistics {
   // would be @KeyFor("ScopeToLiteralStatistics.scopeToStatisticsMap") rather than
   // `@KeyFor("scopeToStatisticsMap")` which it needs to be for the Nullness Checker.
   @SuppressWarnings("keyfor:return") // the result will be added to the map as a key
-  public @Nullable @KeyFor("scopeToStatisticsMap") Object getScope(ClassOrInterfaceType type) {
+  public @KeyFor("scopeToStatisticsMap") Object getScope(ClassOrInterfaceType type) {
     switch (GenInputsAbstract.literals_level) {
       case CLASS:
         return type;
@@ -209,7 +209,7 @@ public class ScopeToLiteralStatistics {
   public String toString() {
     StringJoiner sj = new StringJoiner(System.lineSeparator());
 
-    for (Map.Entry<@Nullable Object, LiteralStatistics> scopeEntry :
+    for (Map.Entry<Object, LiteralStatistics> scopeEntry :
         scopeToStatisticsMap.entrySet()) {
       Object scope = scopeEntry.getKey();
       LiteralStatistics stats = scopeEntry.getValue();

@@ -109,7 +109,7 @@ public class LiteralStatistics {
   }
 
   /**
-   * Returns an iterable over all literal-to-usage entries across all output.
+   * Returns an iterable over all literal-to-usage entries across all output types.
    *
    * @return all pairs of ({@link Sequence}, {@link LiteralUses})
    */

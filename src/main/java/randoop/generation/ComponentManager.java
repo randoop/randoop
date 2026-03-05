@@ -333,7 +333,12 @@ public class ComponentManager {
     // Include literal-derived primitive sequences unless disabled.
     if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
         && scopeToLiteralStatistics != null) {
-      result.addAll(scopeToLiteralStatistics.getAllSequences());
+      for (Sequence seq : scopeToLiteralStatistics.getAllSequences()) {
+        Type outType = seq.getLastVariable().getType();
+        if (outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE)) {
+          result.add(seq);
+        }
+      }
     }
 
     // Add primitive sequences from general components.
