@@ -289,9 +289,9 @@ public class ComponentManager {
    *
    * <p>The selection *strategy* (how a sequence is chosen) depends on flags such as {@code
    * --literal-tfidf}. The *set* of candidate sequences from which the strategy chooses is
-   * determined by the {@code literals_level} configuration: CLASS uses literals from only the
-   * declaring class (not supertypes), PACKAGE uses literals from the package, and ALL uses the
-   * global scope.
+   * determined by the {`@code` literals_level} configuration: CLASS uses literals from the
+   * declaring class (and includes superclass literals when --include-superclass-literals=true),
+   * PACKAGE uses literals from the package, and ALL uses the global scope.
    *
    * @param neededType the returned sequences produce values assignable to this type
    * @param declaringType the class containing the operation being tested

@@ -281,6 +281,9 @@ public class OperationModel {
    * @param compMgr the component manager
    */
   public void addClassLiterals(ComponentManager compMgr) {
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
+      return;
+    }
     // Add sequences from external literals files (ignore "CLASSES").
     Map<ClassOrInterfaceType, Set<Sequence>> sequencesPerType = new LinkedHashMap<>();
     for (String literalsFile : GenInputsAbstract.literals_file) {
@@ -299,9 +302,9 @@ public class OperationModel {
           scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
       }
-      for (Map.Entry<ClassOrInterfaceType, Set<Sequence>> e : sequencesPerType.entrySet()) {
-        scopeToLiteralStatistics.recordSequencesInClass(e.getKey(), e.getValue());
-      }
+    }
+    for (Map.Entry<ClassOrInterfaceType, Set<Sequence>> e : sequencesPerType.entrySet()) {
+      scopeToLiteralStatistics.recordSequencesInClass(e.getKey(), e.getValue());
     }
 
     // Attach statistics to the component manager only when they will be used.
@@ -330,7 +333,8 @@ public class OperationModel {
    *     "CLASSES"); false otherwise
    */
   private boolean shouldUseLiteralStatistics() {
-    return shouldMineLiteralsFromBytecode() || !GenInputsAbstract.literals_file.isEmpty();
+    return GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
+        && (shouldMineLiteralsFromBytecode() || !GenInputsAbstract.literals_file.isEmpty());
   }
 
   /**

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.KeyFor;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.sequence.Sequence;
@@ -28,8 +27,7 @@ public class ScopeToLiteralStatistics {
    * A map from a specific scope to its literal statistics. The constant {@link UNNAMED_PACKAGE}
    * represents the unnamed package.
    */
-  private LinkedHashMap<Object, LiteralStatistics> scopeToStatisticsMap =
-      new LinkedHashMap<>();
+  private LinkedHashMap<Object, LiteralStatistics> scopeToStatisticsMap = new LinkedHashMap<>();
 
   /** Creates a ScopeToLiteralStatistics. */
   public ScopeToLiteralStatistics() {}
@@ -209,8 +207,7 @@ public class ScopeToLiteralStatistics {
   public String toString() {
     StringJoiner sj = new StringJoiner(System.lineSeparator());
 
-    for (Map.Entry<Object, LiteralStatistics> scopeEntry :
-        scopeToStatisticsMap.entrySet()) {
+    for (Map.Entry<Object, LiteralStatistics> scopeEntry : scopeToStatisticsMap.entrySet()) {
       Object scope = scopeEntry.getKey();
       LiteralStatistics stats = scopeEntry.getValue();
 
