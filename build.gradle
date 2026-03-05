@@ -145,7 +145,7 @@ allprojects {
   }
 
   jacoco {
-    toolVersion = libs.versions.jacoco
+    toolVersion = libs.versions.jacoco.get()
   }
 
   jacocoTestReport {
