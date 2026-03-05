@@ -20,7 +20,7 @@ dependencies {
 }
 
 javadoc {
-  options.addStringOption("Xwerror", "-Xdoclint:all:_")
+  options.addStringOption("Xwerror", "-Xdoclint:all")
 }
 
 jar {
