@@ -86,7 +86,7 @@ allprojects {
 
   dependencies {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib("org.plumelib:bcel-util:1.2.3")
+    plumelib("org.plumelib:bcel-util:1.2.4")
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib("org.plumelib:options:1.0.6")
