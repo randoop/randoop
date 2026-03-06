@@ -1,33 +1,35 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.ClassFileConstants;
-import randoop.util.MultiMap;
 
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
- * of each class visited, adding a sequence for each to a map associating a sequence with a type.
+ * of each class visited, recording constant statistics including usage frequency and the classes
+ * that contain each constant.
  *
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
-  /** Map from a class under test to the literal sequences that appear in it. */
-  private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
+  /** The storage for constant information. */
+  private ScopeToLiteralStatistics scopeToLiteralStatistics;
 
   /**
-   * Creates a visitor that adds discovered literals to the given map.
+   * Creates a visitor that records constant statistics.
    *
-   * @param literalMap a map from types to sequences in them that yield a literal
+   * @param scopeToLiteralStatistics a map from types to sequences in them that yield a literal
    */
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
-    this.literalMap = literalMap;
+  ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 
   /**
@@ -39,6 +41,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visitBefore(Class<?> c) {
+    Set<Sequence> allConstants = new HashSet<>();
     ClassOrInterfaceType containingType = ClassOrInterfaceType.forClass(c);
     ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
     Set<NonreceiverTerm> nonreceiverTerms =
@@ -48,7 +51,17 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
           new Sequence()
               .extend(
                   TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
-      literalMap.add(containingType, seq);
+      Object termValue = term.getValue();
+      // Skip constants with null values; they are not useful as mined literals.
+      if (termValue == null) {
+        continue;
+      }
+      scopeToLiteralStatistics.incrementNumUses(
+          containingType, seq, constantSet.getConstantFrequency(termValue));
+      allConstants.add(seq);
     }
+
+    // Record scope-level statistics for this class after processing all sequences.
+    scopeToLiteralStatistics.recordSequencesInClass(containingType, allConstants);
   }
 }
