@@ -247,7 +247,7 @@ public class ReplaceCallAgent {
   private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
+    try (EntryReader reader = new EntryReader(exclusionReader, filename, false, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (!trimmed.isEmpty()) {

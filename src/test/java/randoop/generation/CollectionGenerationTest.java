@@ -3,6 +3,7 @@ package randoop.generation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -41,7 +42,7 @@ public class CollectionGenerationTest {
           new TypedClassOperation(new EnumConstant(e), enumType, new TypeTuple(), enumType);
       components.add(new Sequence().extend(op));
     }
-    return new ComponentManager(components);
+    return new ComponentManager(components, IS_PUBLIC);
   }
 
   @Test
@@ -253,25 +254,33 @@ public class CollectionGenerationTest {
    */
   @Test
   public void testInterfaceArray() {
+    Randomness.setSeed(931979);
+
     ComponentManager componentManager = setupComponentManager();
     ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     ArrayType strArrayType = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    SIList<Sequence> sequenceList =
-        HelperSequenceCreator.createArraySequence(componentManager, arrayType);
-    Sequence firstSequence = sequenceList.get(0);
-    assertNotNull(firstSequence);
+
+    SIList<Sequence> sequenceList;
+    Sequence firstSequence;
+    // Don't generate an empty array.
+    do {
+      sequenceList = HelperSequenceCreator.createArraySequence(componentManager, arrayType);
+      firstSequence = sequenceList.get(0);
+      assertNotNull(firstSequence);
+    } while (firstSequence.isEmpty());
 
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < firstSequence.size(); i++) {
       Type outputType = firstSequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should be one of two types, got " + outputType,
+          "statement type should be String or String[], got " + outputType,
           !outputType.equals(elementType)
               || outputType.equals(JavaTypes.STRING_TYPE)
               || outputType.equals(strArrayType));
     }
+    // The two types are String and String[].
     assertEquals(2, outputTypeSet.size());
   }
 }

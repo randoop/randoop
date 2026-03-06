@@ -60,6 +60,7 @@ class HelperSequenceCreator {
    */
   static SIList<Sequence> createArraySequence(ComponentManager components, Type collectionType) {
 
+    // The returned sequence has length less than this.
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {

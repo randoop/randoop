@@ -113,7 +113,7 @@ public class ReplacementFileReader {
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
-    try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
+    try (EntryReader reader = new EntryReader(in, filename, false, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
@@ -418,7 +418,9 @@ public class ReplacementFileReader {
     } else if (protocol.equals("file")) {
       Path path = null;
       try {
-        path = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+        @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
+        Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+        path = pathTmp;
       } catch (Exception e) {
         throw new ReplacementException("Unable to extract Path from URL: " + url, e);
       }

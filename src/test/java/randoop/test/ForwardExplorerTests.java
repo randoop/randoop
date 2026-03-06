@@ -83,7 +83,7 @@ public class ForwardExplorerTests {
     ReflectionExecutor.call_timeout_millis = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     GenInputsAbstract.progressintervalsteps = 100;
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =
@@ -140,7 +140,7 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =
