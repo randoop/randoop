@@ -50,13 +50,13 @@ org-jacoco-agent = { group = "org.jacoco", name = "org.jacoco.agent", version.re
 
 org-jacoco-report = { group = "org.jacoco", name = "org.jacoco.report", version.ref = "jacoco" }
 
-bcel-util = "org.plumelib:bcel-util:1.2.3"
+bcel-util = "org.plumelib:bcel-util:1.2.4"
 
 options = "org.plumelib:options:2.0.3"
 
 plume-util = "org.plumelib:plume-util:1.13.0"
 
-reflection-util = "org.plumelib:reflection-util:1.1.5"
+reflection-util = "org.plumelib:reflection-util:1.1.6"
 
 junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 
