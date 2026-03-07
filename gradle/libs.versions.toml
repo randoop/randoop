@@ -1,0 +1,2 @@
+[libraries]
+checker = "org.checkerframework:checker:3.54.0"

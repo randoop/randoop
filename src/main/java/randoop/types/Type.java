@@ -429,6 +429,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true iff this type is primitive, boxed primitive, {@code String}, or {@code Class}
    */
+  // TODO: Should this also exclude Object.class?
   public boolean isNonreceiverType() {
     return isPrimitive()
         || isBoxedPrimitive()

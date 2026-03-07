@@ -90,7 +90,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
         Type type = inputTypes.get(i).getRawtype();
-        rawTypeToSideEffectingOps.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+        rawTypeToSideEffectingOps.computeIfAbsent(type, __ -> new ArrayList<>()).add(op);
       }
     }
     this.componentManager = cm;

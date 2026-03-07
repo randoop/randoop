@@ -41,7 +41,8 @@ public class JavaFileWriter implements CodeWriter {
     Path dir = createOutputDir(packageName);
     Path file = new java.io.File(dir.toFile(), className + ".java").toPath();
 
-    try (PrintWriter out = new PrintWriter(file.toFile(), UTF_8.name())) {
+    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+        PrintWriter out = new PrintWriter(file.toFile(), UTF_8.name())) {
       out.println(classCode);
     } catch (IOException e) {
       String message = "Exception creating print writer for file " + file.toString();

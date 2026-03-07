@@ -141,7 +141,8 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try (PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
+    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+        PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
       setOperationLog(pw, generator);
     } catch (IOException e) {
       throw new Error("problem creating operation log " + Util.filenameAndAbsolute(filename), e);

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,8 +24,9 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     List<Class<?>> classes = new ArrayList<>();
-    try (EntryReader er =
-        new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+    try (InputStream resourceStream =
+            ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
+        EntryReader er = new EntryReader(resourceStream)) {
       for (String entryLine : er) {
         @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
