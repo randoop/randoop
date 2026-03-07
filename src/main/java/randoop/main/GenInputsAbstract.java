@@ -28,6 +28,8 @@ import org.plumelib.options.Unpublicized;
 import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.reflection.AccessibilityPredicate;
@@ -1446,7 +1448,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       @Regex(1) String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
-      try (EntryReader er = new EntryReader(listFile, false, commentRegex, includeRegex)) {
+      try (EntryReader er =
+          new EntryReader(
+              listFile, EntryFormat.DEFAULT, new CommentFormat(commentRegex), includeRegex)) {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {

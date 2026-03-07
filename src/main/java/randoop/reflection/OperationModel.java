@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
@@ -339,7 +341,8 @@ public class OperationModel {
   public static MultiMap<Type, TypedClassOperation> readOperations(
       @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
-      try (EntryReader er = new EntryReader(file, false, "(//|#).*$", null)) {
+      try (EntryReader er =
+          new EntryReader(file, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
         return OperationModel.readOperations(er, ignoreParseError);
       } catch (IOException e) {
         String message =
@@ -414,7 +417,8 @@ public class OperationModel {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
-    try (EntryReader er = new EntryReader(is, "UTF-8", filename, false, "^#.*", null)) {
+    try (EntryReader er =
+        new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
       return OperationModel.readOperations(er, ignoreParseError);
     } catch (IOException e) {
       String message =
@@ -751,7 +755,9 @@ public class OperationModel {
     if (methodSignatures_file == null) {
       return result;
     }
-    try (EntryReader reader = new EntryReader(methodSignatures_file, false, "(//|#).*$", null)) {
+    try (EntryReader reader =
+        new EntryReader(
+            methodSignatures_file, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
