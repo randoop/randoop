@@ -477,38 +477,14 @@ jobs:
 workflows:
   build:
     jobs:
-      - nonSystemTest-jdk8:
-          requires:
-            - misc
-            - nonSystemTest-jdk25
-      - systemTest-jdk8:
-          requires:
-            - misc
-            - systemTest-jdk25
-      - nonSystemTest-jdk11:
-          requires:
-            - misc
-            - nonSystemTest-jdk25
-      - systemTest-jdk11:
-          requires:
-            - misc
-            - systemTest-jdk25
-      - nonSystemTest-jdk17:
-          requires:
-            - misc
-            - nonSystemTest-jdk25
-      - systemTest-jdk17:
-          requires:
-            - misc
-            - systemTest-jdk25
-      - nonSystemTest-jdk21:
-          requires:
-            - misc
-            - nonSystemTest-jdk25
-      - systemTest-jdk21:
-          requires:
-            - misc
-            - systemTest-jdk25
+      - nonSystemTest-jdk8
+      - systemTest-jdk8
+      - nonSystemTest-jdk11
+      - systemTest-jdk11
+      - nonSystemTest-jdk17
+      - systemTest-jdk17
+      - nonSystemTest-jdk21
+      - systemTest-jdk21
       - nonSystemTest-jdk25
       - systemTest-jdk25
       - misc
