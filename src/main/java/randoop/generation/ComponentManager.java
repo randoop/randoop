@@ -298,27 +298,18 @@ public class ComponentManager {
    * @return sequences from the appropriate scope that create values of the needed type
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    if (scopeToLiteralStatistics == null) {
+    if (scopeToLiteralStatistics == null || GenInputsAbstract.literals_level == NONE) {
       return SIList.empty();
     }
-    switch (GenInputsAbstract.literals_level) {
-      case NONE:
-        return SIList.empty();
-      case CLASS:
-      case PACKAGE:
-      case ALL:
-        // For all levels, we call getLiteralStatistics(declaringType) which internally uses
-        // getScope() to resolve the appropriate scope based on literals_level:
-        //  - CLASS: getScope() returns the declaringType itself
-        //  - PACKAGE: getScope() returns the package of declaringType (all classes in the package
-        //    share the same LiteralStatistics instance)
-        //  - ALL: getScope() returns the shared ALL_SCOPE key (all types map to global statistics)
-        return scopeToLiteralStatistics
-            .getLiteralStatistics(declaringType)
-            .getSequencesForType(neededType);
-      default:
-        throw new RandoopBug("Unexpected literals level: " + GenInputsAbstract.literals_level);
-    }
+    // For all levels, we call getLiteralStatistics(declaringType) which internally uses
+    // getScope() to resolve the appropriate scope based on literals_level:
+    //  - CLASS: getScope() returns the declaringType itself
+    //  - PACKAGE: getScope() returns the package of declaringType (all classes in the package
+    //    share the same LiteralStatistics instance)
+    //  - ALL: getScope() returns the shared ALL_SCOPE key (all types map to global statistics)
+    return scopeToLiteralStatistics
+        .getLiteralStatistics(declaringType)
+        .getSequencesForType(neededType);
   }
 
   /**
@@ -342,6 +333,7 @@ public class ComponentManager {
     }
 
     // Add primitive sequences from general components.
+    // This uses CollectionsPlume.addAll() because Collection.addAll() can't take an Iterable.
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
     }
