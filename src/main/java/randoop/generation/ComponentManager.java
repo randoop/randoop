@@ -298,7 +298,8 @@ public class ComponentManager {
    * @return sequences from the appropriate scope that create values of the needed type
    */
   SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
-    if (scopeToLiteralStatistics == null || GenInputsAbstract.literals_level == NONE) {
+    if (scopeToLiteralStatistics == null
+        || GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
       return SIList.empty();
     }
     // For all levels, we call getLiteralStatistics(declaringType) which internally uses
