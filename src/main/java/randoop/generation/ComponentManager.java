@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.GenInputsAbstract;
@@ -35,14 +36,13 @@ import randoop.util.Log;
  * </ul>
  *
  * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
- * Literals are not stored in the general pool; instead, they are consulted on demand (for example,
- * by {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}) and combined with
- * pool sequences when returning candidates for a parameter. The reason is that which literals are
- * candidates depends on the method being called. (More precisely, on the class and package in which
- * the method is defined.)
+ * Queries such as {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}
+ * return both literals and non-literals. However, literals are not stored in the general pool. The
+ * reason is that which literals are candidates depends on the method being called. (More precisely,
+ * on the class and package in which the method is defined.)
  *
- * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed sequences, restoring the pool
- * to the original seeds.
+ * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed, non-literal sequences,
+ * restoring the pool to the original seeds.
  */
 public class ComponentManager {
 
@@ -54,17 +54,18 @@ public class ComponentManager {
   // "gral" probably stands for "general".
   private SequenceCollection gralComponents;
 
+  /** For each scope in the SUT, statistics about its literals (if available). */
+  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
+
+  // The next three variables are only for the use of method clearGeneratedSequences().
+
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
-   * (Does not include literals, I think?)
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
    * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
-
-  /** For each scope in the SUT, statistics about its literals (if available). */
-  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
@@ -84,7 +85,7 @@ public class ComponentManager {
    *
    * <p>This variable is used only by {@link #clearGeneratedSequences}.
    */
-  private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
+  private final Set<Type> sutParameterNeverReturnedTypes = new LinkedHashSet<>();
 
   /**
    * Create an empty component manager, with an immutable empty seed sequence set.
@@ -100,8 +101,7 @@ public class ComponentManager {
    * Create a component manager, initially populated with the given sequences, which are considered
    * seed sequences.
    *
-   * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
-   *     considered empty.
+   * @param generalSeeds seed sequences. May be empty.
    * @param accessibility decides which constructors/methods are callable from the generated test
    *     code. This predicate matches the visibility rules chosen for the overall test package.
    */
@@ -109,10 +109,10 @@ public class ComponentManager {
     if (accessibility == null) {
       throw new IllegalArgumentException("accessibility must be non-null");
     }
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
-    seedSet.addAll(generalSeeds);
-    this.gralSeeds = Collections.unmodifiableSet(seedSet);
-    gralComponents = new SequenceCollection(seedSet);
+    Set<Sequence> seedSequences = new LinkedHashSet<>(MapsP.mapCapacity(generalSeeds));
+    seedSequences.addAll(generalSeeds);
+    this.gralSeeds = Collections.unmodifiableSet(seedSequences);
+    gralComponents = new SequenceCollection(seedSequences);
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
   }
@@ -153,7 +153,7 @@ public class ComponentManager {
       return;
     }
     gralComponents.addSutParameterOnlyTypes(types);
-    this.sutParameterOnlyTypes.addAll(types);
+    this.sutParameterNeverReturnedTypes.addAll(types);
   }
 
   /**
@@ -208,8 +208,8 @@ public class ComponentManager {
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
     initDemandDrivenIfEnabled();
-    if (!sutParameterOnlyTypes.isEmpty()) {
-      gralComponents.addSutParameterOnlyTypes(sutParameterOnlyTypes);
+    if (!sutParameterNeverReturnedTypes.isEmpty()) {
+      gralComponents.addSutParameterOnlyTypes(sutParameterNeverReturnedTypes);
     }
   }
 
