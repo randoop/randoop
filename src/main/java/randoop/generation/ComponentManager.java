@@ -131,7 +131,7 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences stored by the manager.
+   * Returns the number of sequences stored by this manager.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
@@ -149,7 +149,7 @@ public class ComponentManager {
    * @param types a set of types that are SUT-parameters but not SUT-returned
    */
   public void addSutParameterOnlyTypes(Set<Type> types) {
-    if (types == null || types.isEmpty()) {
+    if (types.isEmpty()) {
       return;
     }
     gralComponents.addSutParameterOnlyTypes(types);
@@ -162,8 +162,8 @@ public class ComponentManager {
    *
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
    *     SUT-parameters but not SUT-returned
-   * @throws IllegalStateException if demand-driven input generation is not enabled (i.e., {@code
-   *     GenInputsAbstract.call_non_sut_methods} is false)
+   * @throws IllegalStateException if demand-driven input generation is not enabled (i.e., {@link
+   *     GenInputsAbstract#call_non_sut_methods} is false)
    */
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
     if (GenInputsAbstract.call_non_sut_methods == false) {
@@ -223,7 +223,7 @@ public class ComponentManager {
   }
 
   /**
-   * Returns all the general component sequences that create values of the given class.
+   * Returns all the general component sequences that create values of the given type.
    *
    * @param cls the query type
    * @return the sequences that create values of the given type
