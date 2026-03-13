@@ -101,8 +101,7 @@ public final class Sequence {
    */
   public static Sequence zero(Type c) {
     return new Sequence()
-        .extend(
-            TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>(0));
+        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<>(0));
   }
 
   /**

@@ -229,7 +229,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     }
   }
 
-  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<NewInstInfo>();
+  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<>();
 
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are

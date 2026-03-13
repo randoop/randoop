@@ -451,7 +451,7 @@ public class RandoopSystemTest {
     List<String> outputLines = randoopRunStatus.processStatus.outputLines;
     // outputLines is a java.util.Arrays$ArrayList (not a java.util.ArrayList) and an iterator over
     // it does not support remove().
-    List<String> outputLinesFiltered = new ArrayList<String>(outputLines.size());
+    List<String> outputLinesFiltered = new ArrayList<>(outputLines.size());
     for (String line : outputLines) {
       if (!isIllegalReflectiveAccessWarning(line)) {
         outputLinesFiltered.add(line);

@@ -517,7 +517,7 @@ public class ReplacementFileReader {
     }
   }
 
-  private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<String, JavaClass>();
+  private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<>();
 
   /**
    * Returns a JavaClass object for the given class name. Works by trying to find a class file and

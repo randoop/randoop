@@ -57,7 +57,7 @@ import randoop.util.Log;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>(0));
+    this(new ArrayList<>(0));
   }
 
   /**
@@ -168,7 +168,7 @@ import randoop.util.Log;
     sources.add(source);
     JavaCompiler.CompilationTask task =
         compiler.getTask(
-            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
+            null, fileManager, diagnostics, new ArrayList<>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
 
     // Write the diagnostics to log if compilation failed

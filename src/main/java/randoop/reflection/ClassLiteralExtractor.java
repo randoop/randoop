@@ -5,7 +5,6 @@ import java.util.Set;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
@@ -46,8 +45,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()
-              .extend(
-                  TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
+              .extend(TypedOperation.createNonreceiverInitialization(term), new ArrayList<>(0));
       literalMap.add(containingType, seq);
     }
   }
