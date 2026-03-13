@@ -123,6 +123,7 @@ public abstract class ObjectContract {
     }
 
     if (outcome instanceof NormalExecution) {
+      @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
       boolean result = ((Boolean) ((NormalExecution) outcome).getRuntimeValue()).booleanValue();
       if (result) {
         return null;
