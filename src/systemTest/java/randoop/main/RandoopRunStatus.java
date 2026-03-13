@@ -277,7 +277,7 @@ class RandoopRunStatus {
       if (line.startsWith(POSSIBLY_FLAKY_PREFIX)) {
         suspectedFlakyMethodNames.add(line.substring(POSSIBLY_FLAKY_PREFIX.length()));
       } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
-        int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
+        int count = Integer.parseInt(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {
           operatorCount = count;
         } else if (line.contains("Regression")) {
