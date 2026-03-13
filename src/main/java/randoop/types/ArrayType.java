@@ -161,7 +161,8 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public @Pure Class<?> getRuntimeClass() {
+  @Pure
+  public Class<?> getRuntimeClass() {
     return runtimeClass;
   }
 

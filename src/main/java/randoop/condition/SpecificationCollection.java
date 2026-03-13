@@ -74,6 +74,7 @@ import randoop.util.Util;
   private final Map<AccessibleObject, Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning SequenceCompiler compiler;
 
   /**
