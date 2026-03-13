@@ -984,6 +984,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
    * logs slows down Randoop.
    */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   @Option("<filename> Log lots of information to this file")
   public static @Owning @MonotonicNonNull FileWriterWithName log = null;
 

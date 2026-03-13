@@ -53,6 +53,7 @@ import randoop.util.Log;
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
