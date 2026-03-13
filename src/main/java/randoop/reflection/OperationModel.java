@@ -226,7 +226,7 @@ public class OperationModel {
     return createModel(
         accessibility,
         reflectionPredicate,
-        new ArrayList<Pattern>(0),
+        new ArrayList<>(0),
         classnames,
         coveredClassnames,
         errorHandler,

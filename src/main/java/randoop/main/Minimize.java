@@ -217,6 +217,7 @@ public class Minimize extends CommandHandler {
     final Path originalFile = Paths.get(suitepath);
 
     ExecutorService executor = Executors.newFixedThreadPool(1);
+    @SuppressWarnings("PMD.UseDiamondOperator") // Java 9 feature
     Future<Boolean> future =
         executor.submit(
             new Callable<Boolean>() {

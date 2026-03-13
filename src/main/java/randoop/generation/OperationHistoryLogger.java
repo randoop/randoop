@@ -70,8 +70,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
-        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
+    Map<OperationOutcome, String> formatMap = new EnumMap<>(OperationOutcome.class);
     writer.format("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {
       writer.format("\t%" + outcome.name().length() + "s", outcome);
