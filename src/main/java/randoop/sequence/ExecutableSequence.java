@@ -479,7 +479,7 @@ public class ExecutableSequence {
       // For a getClass() call, the index of receiver is 1 since the lastValues will always
       // be [output, receiver].
       ReferenceType elemType = lastValues.get(1).getType();
-      if (elemType.isGeneric()) {
+      if (elemType.isGeneric() && elemType instanceof GenericClassType) {
         GenericClassType g = (GenericClassType) elemType;
         elemType =
             g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
