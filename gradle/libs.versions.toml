@@ -1,6 +1,6 @@
 [plugins]
 
-com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.0" }
+com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
 
 com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.4.0" }
 
