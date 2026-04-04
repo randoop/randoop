@@ -20,7 +20,7 @@ junit-junit = "4.+"
 
 hamcrest = "1.3"
 
-checker = "3.54.1"
+checker = "3.55.1"
 
 jacoco = "0.8.14"
 
