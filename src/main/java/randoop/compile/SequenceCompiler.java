@@ -53,11 +53,12 @@ import randoop.util.Log;
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>(0));
+    this(new ArrayList<>(0));
   }
 
   /**
@@ -168,7 +169,7 @@ import randoop.util.Log;
     sources.add(source);
     JavaCompiler.CompilationTask task =
         compiler.getTask(
-            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
+            null, fileManager, diagnostics, new ArrayList<>(compilerOptions), null, sources);
     Boolean succeeded = task.call();
 
     // Write the diagnostics to log if compilation failed

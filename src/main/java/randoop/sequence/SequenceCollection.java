@@ -99,7 +99,7 @@ public class SequenceCollection {
 
   /** Create a new, empty collection. */
   public SequenceCollection() {
-    this(new ArrayList<Sequence>(0));
+    this(new ArrayList<>(0));
   }
 
   /**

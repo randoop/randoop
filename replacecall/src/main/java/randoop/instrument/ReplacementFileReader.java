@@ -30,6 +30,8 @@ import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
@@ -113,7 +115,8 @@ public class ReplacementFileReader {
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
-    try (EntryReader reader = new EntryReader(in, filename, false, "//.*$", null)) {
+    try (EntryReader reader =
+        new EntryReader(in, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
@@ -514,7 +517,7 @@ public class ReplacementFileReader {
     }
   }
 
-  private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<String, JavaClass>();
+  private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<>();
 
   /**
    * Returns a JavaClass object for the given class name. Works by trying to find a class file and

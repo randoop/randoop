@@ -223,10 +223,11 @@ public class ComponentManager {
   }
 
   /**
-   * Returns all the general component sequences that create values of the given type.
+   * Returns all general component sequences whose output type is assignable to {@code cls}
+   * (including subtypes).
    *
    * @param cls the query type
-   * @return the sequences that create values of the given type
+   * @return the sequences whose output type is assignable to {@code cls}
    */
   SIList<Sequence> getSequencesForType(Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
@@ -234,7 +235,8 @@ public class ComponentManager {
 
   /**
    * Returns candidate sequences for the {@code i}-th input of {@code operation}: pool sequences
-   * that produce the required type, followed by literal sequences from the appropriate scope.
+   * whose output type is assignable to the required type (including subtypes), followed by literal
+   * sequences from the appropriate scope (looked up for the exact required type).
    *
    * <p>Literals are used only if {@link GenInputsAbstract#literals_level} != {@code NONE} and are
    * skipped for receiver positions.
@@ -291,7 +293,8 @@ public class ComponentManager {
    * --literal-tfidf}. The *set* of candidate sequences from which the strategy chooses is
    * determined by the {`@code` literals_level} configuration: CLASS uses literals from the
    * declaring class (and includes superclass literals when --include-superclass-literals=true),
-   * PACKAGE uses literals from the package, and ALL uses the global scope.
+   * PACKAGE uses literals from the declaring type's package (superclass option does not apply), and
+   * ALL uses the global scope.
    *
    * @param neededType the returned sequences produce values assignable to this type
    * @param declaringType the class containing the operation being tested

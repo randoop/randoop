@@ -74,6 +74,7 @@ import randoop.util.Util;
   private final Map<AccessibleObject, Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning SequenceCompiler compiler;
 
   /**
@@ -244,6 +245,7 @@ import randoop.util.Util;
 
   // Can't store an object of type {@code Type}, because the
   /** The type of {@code List<OperationSpecification>>}. */
+  @SuppressWarnings("PMD.UseDiamondOperator") // Java 9 feature
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
       new TypeToken<List<OperationSpecification>>() {};
 

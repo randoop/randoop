@@ -264,7 +264,7 @@ public class ClassFileConstants {
             case Const.IFLE:
               {
                 // If no instruction is followed by those instructions, then it is comparing to 0.
-                registerIntegerConstant(Integer.valueOf(0), result);
+                registerIntegerConstant(0, result);
                 break;
               }
 
@@ -507,25 +507,25 @@ public class ClassFileConstants {
               registerFloatConstant(Float.valueOf(2), result);
               break;
             case Const.ICONST_0:
-              registerIntegerConstant(Integer.valueOf(0), result);
+              registerIntegerConstant(0, result);
               break;
             case Const.ICONST_1:
-              registerIntegerConstant(Integer.valueOf(1), result);
+              registerIntegerConstant(1, result);
               break;
             case Const.ICONST_2:
-              registerIntegerConstant(Integer.valueOf(2), result);
+              registerIntegerConstant(2, result);
               break;
             case Const.ICONST_3:
-              registerIntegerConstant(Integer.valueOf(3), result);
+              registerIntegerConstant(3, result);
               break;
             case Const.ICONST_4:
-              registerIntegerConstant(Integer.valueOf(4), result);
+              registerIntegerConstant(4, result);
               break;
             case Const.ICONST_5:
-              registerIntegerConstant(Integer.valueOf(5), result);
+              registerIntegerConstant(5, result);
               break;
             case Const.ICONST_M1:
-              registerIntegerConstant(Integer.valueOf(-1), result);
+              registerIntegerConstant(-1, result);
               break;
             case Const.LCONST_0:
               registerLongConstant(Long.valueOf(0), result);

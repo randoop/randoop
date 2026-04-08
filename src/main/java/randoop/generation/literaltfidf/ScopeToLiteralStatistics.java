@@ -2,7 +2,6 @@ package randoop.generation.literaltfidf;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -90,45 +89,22 @@ public class ScopeToLiteralStatistics {
    */
   private LiteralStatistics createStatisticsWithSuperclasses(ClassOrInterfaceType type) {
 
+    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      throw new RandoopBug(
+          "createStatisticsWithSuperclasses called when literals_level="
+              + GenInputsAbstract.literals_level);
+    }
+
     LiteralStatistics cached = createStatisticsWithSuperclassesCache.get(type);
     if (cached != null) {
       return cached;
     }
 
-    LiteralStatistics result;
-
-    switch (GenInputsAbstract.literals_level) {
-      case CLASS:
-        result = new LiteralStatistics();
-        result.addAll(getLiteralStatisticsNoSuperclass(type));
-        ClassOrInterfaceType supertype = type.getSuperclass();
-        if (supertype != null) {
-          result.addAll(createStatisticsWithSuperclasses(supertype));
-        }
-        break;
-
-      case PACKAGE:
-        result = new LiteralStatistics();
-        // The algorithm walks all the superclasses, but it only calls addAll for a given
-        // LiteralStatistics once.  We could track that in terms of LiteralStatistics or scopes.
-        HashSet<LiteralStatistics> visitedStats = new HashSet<>();
-        // Traverse the class hierarchy from current type up to Object.
-        for (ClassOrInterfaceType current = type;
-            current != null;
-            current = current.getSuperclass()) {
-          LiteralStatistics currentStats = getLiteralStatisticsNoSuperclass(current);
-          if (visitedStats.add(currentStats)) {
-            result.addAll(currentStats);
-          }
-        }
-        break;
-
-      case ALL:
-        result = getLiteralStatisticsNoSuperclass(type);
-        break;
-
-      default:
-        throw new RandoopBug("Bad literal level: " + GenInputsAbstract.literals_level);
+    LiteralStatistics result = new LiteralStatistics();
+    result.addAll(getLiteralStatisticsNoSuperclass(type));
+    ClassOrInterfaceType supertype = type.getSuperclass();
+    if (supertype != null) {
+      result.addAll(createStatisticsWithSuperclasses(supertype));
     }
 
     createStatisticsWithSuperclassesCache.put(type, result);

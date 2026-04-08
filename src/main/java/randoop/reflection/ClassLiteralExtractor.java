@@ -7,7 +7,6 @@ import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.ClassFileConstants;
 
@@ -49,8 +48,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     for (NonreceiverTerm term : nonreceiverTerms) {
       Sequence seq =
           new Sequence()
-              .extend(
-                  TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>(0));
+              .extend(TypedOperation.createNonreceiverInitialization(term), new ArrayList<>(0));
       Object termValue = term.getValue();
       // Skip constants with null values; they are not useful as mined literals.
       if (termValue == null) {

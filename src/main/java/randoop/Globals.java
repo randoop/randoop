@@ -18,10 +18,10 @@ public class Globals {
   public static final String RANDOOP_VERSION = "4.3.4";
 
   /** The system-specific line separator string. */
-  @SuppressWarnings("regex:assignment") // needed with CF 3.49.4 and earlier
   public static final @Regex(0) String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */

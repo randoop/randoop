@@ -118,13 +118,13 @@ class TestRunStatus {
 
     for (String line : ps.outputLines) {
       if (line.contains("OK (")) {
-        testsSucceed = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
+        testsSucceed = Integer.parseInt(line.replaceFirst("\\D*(\\d*).*", "$1"));
         testsRun = testsSucceed;
       } else if (line.contains("Failures:")) {
         String[] toks = line.split(",");
         assertEquals(toks.length, 2);
-        testsRun = Integer.valueOf(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
-        testsFail = Integer.valueOf(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
+        testsRun = Integer.parseInt(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
+        testsFail = Integer.parseInt(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
         testsSucceed = testsRun - testsFail;
       }
     }
