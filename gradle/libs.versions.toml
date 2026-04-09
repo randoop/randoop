@@ -28,7 +28,7 @@ jacoco = "0.8.14"
 
 checker = { group = "org.checkerframework", name="checker", version.ref="checker" }
 
-error-prone-core = "com.google.errorprone:error_prone_core:2.48.0"
+error-prone-core = "com.google.errorprone:error_prone_core:2.49.0"
 
 require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
