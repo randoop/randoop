@@ -47,7 +47,7 @@ public class ScopeToLiteralStatistics {
    * literals.
    *
    * @param type the type whose scope to access
-   * @param includeSuperclassLiterals whether to include literals from superclasses
+   * @param includeSuperclassLiterals if true, include literals from superclasses
    * @return information about literals in the scope for {@code type}, optionally including
    *     superclass literals
    */
