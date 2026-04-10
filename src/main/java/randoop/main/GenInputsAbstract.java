@@ -658,7 +658,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /** Whether to use Literal-TF-IDF for selecting constants as procedure inputs. */
+  /** If true, use Literal-TF-IDF for selecting constants as procedure inputs. */
   @Option("Whether to use Literal-TF-IDF for selecting constants as procedure inputs")
   public static boolean literal_tfidf = false;
 
@@ -670,10 +670,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double literal_tfidf_probability = 0.01;
 
   /**
-   * Whether to include literals from superclasses when computing literal statistics for TF-IDF.
-   * When true, a class's literal statistics will include literals from all of its superclasses.
-   * This option only applies when {@code --literal-tfidf} is set to true and {@code
-   * --literals-level} is set to CLASS.
+   * If true, include literals from superclasses when computing literal statistics for TF-IDF. When
+   * true, a class's literal statistics will include literals from all of its superclasses. This
+   * option only applies when {@code --literal-tfidf} is set to true and {@code --literals-level} is
+   * set to CLASS.
    */
   @Option(
       "Whether to include literals from superclasses when computing literal statistics for TF-IDF")

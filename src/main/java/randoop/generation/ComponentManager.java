@@ -157,7 +157,7 @@ public class ComponentManager {
   }
 
   /**
-   * Return the {@link DemandDrivenInputCreator} that creates sequences for types that are
+   * Returns the {@link DemandDrivenInputCreator} that creates sequences for types that are
    * SUT-parameters but not SUT-returned.
    *
    * @return the {@link DemandDrivenInputCreator} that creates sequences for types that are
