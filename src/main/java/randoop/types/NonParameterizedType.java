@@ -109,6 +109,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType getRawtype() {
+    if (this.isMemberClass()) {
+      // Special case: non-parameterized member classes can still carry type variables from
+      // their enclosing type. Rawifying only the member class is not enough.
+      NonParameterizedType rawEnclosingType = enclosingType.getRawtype();
+      if (!enclosingType.equals(rawEnclosingType)) {
+        NonParameterizedType rawType = new NonParameterizedType(runtimeType);
+        rawType.enclosingType = rawEnclosingType;
+        return rawType;
+      }
+    }
     return this;
   }
 
