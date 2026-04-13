@@ -32,7 +32,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** Creates an empty type tuple. */
   public TypeTuple() {
-    this(new ArrayList<Type>(0));
+    this(new ArrayList<>(0));
   }
 
   @Override

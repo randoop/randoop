@@ -21,6 +21,7 @@ public class Globals {
   public static final @Regex(0) String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */

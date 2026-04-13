@@ -318,6 +318,7 @@ public class Bloodhound implements TypedOperationSelector {
     Integer succM = methodInvocationCounts.getOrDefault(operation, 0);
 
     // Corresponds to w(m, 0) in the GRT paper.
+    @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD: needed for floating-point divide
     double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
 
     // Corresponds to w(m, k) in the GRT paper.

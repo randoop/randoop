@@ -58,7 +58,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   private @MonotonicNonNull InputSequenceSelector inputSequenceSelector;
 
   /**
-   * Get the singleton instance of {@link GrtObjectFuzzer}.
+   * Returns the singleton instance of {@link GrtObjectFuzzer}.
    *
    * @return the singleton instance
    */

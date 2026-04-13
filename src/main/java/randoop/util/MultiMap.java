@@ -50,7 +50,7 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
    */
   public void put(K key, Collection<? extends V> values) {
     if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<V>(values));
+    map.put(key, new LinkedHashSet<>(values));
   }
 
   public void addAll(Map<? extends K, ? extends V> m) {
@@ -142,7 +142,7 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
 
     /** The canonical EmptyMultiMap. */
     @SuppressWarnings({"rawtypes"})
-    public static EmptyMultiMap instance = new EmptyMultiMap();
+    public static EmptyMultiMap instance = new EmptyMultiMap<>();
 
     /**
      * Creates an immutable, empty multimap. Should only be called once, because all EmptyMultiMaps

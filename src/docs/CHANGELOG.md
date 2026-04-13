@@ -2,7 +2,7 @@
 
 ## Version ?? (?? ??, 2026)
 
-Randoop compiles under Java 21-25 and runs under Java 8-25.
+Randoop compiles under Java 21-26 and runs under Java 8-26.
 
 New command-line arguments:
 
@@ -17,6 +17,9 @@ New command-line arguments:
   applying random mutations (based on the GRT technique)
 * `--grt-fuzzing-stddev` controls the standard deviation for Gaussian
   distribution used to fuzz numeric values (used with `--grt-fuzzing`)
+* `--literal-tfidf` enables TF-IDF weighted selection of literal values extracted from bytecode
+* `--literal-tfidf-probability` sets the probability of using TF-IDF weighted selection (vs. random selection) when choosing literals
+* `--include-superclass-literals` makes literals from superclasses available when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
 ## Version 4.3.4 (June 6, 2025)
 

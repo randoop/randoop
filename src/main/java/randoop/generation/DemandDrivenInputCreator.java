@@ -186,7 +186,7 @@ public class DemandDrivenInputCreator {
    *
    * <p>TODO: Later, producer methods for this type that are defined by a different type.
    *
-   * @return a set of uninstantiable types.
+   * @return a set of uninstantiable types
    */
   public Set<Type> getUninstantiableTypesSet() {
     return uninstantiableTypes;

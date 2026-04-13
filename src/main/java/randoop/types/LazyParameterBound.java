@@ -158,8 +158,7 @@ class LazyParameterBound extends ParameterBound {
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
       ParameterBound bound =
-          ParameterBound.forTypes(
-              new HashSet<java.lang.reflect.TypeVariable<?>>(0), wildcardType.getUpperBounds());
+          ParameterBound.forTypes(new HashSet<>(0), wildcardType.getUpperBounds());
       bound = bound.substitute(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }

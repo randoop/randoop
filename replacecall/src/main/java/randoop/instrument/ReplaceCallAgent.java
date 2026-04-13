@@ -27,6 +27,8 @@ import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import randoop.MethodReplacements;
 
 /**
@@ -247,7 +249,8 @@ public class ReplaceCallAgent {
   private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader = new EntryReader(exclusionReader, filename, false, "//.*$", null)) {
+    try (EntryReader reader =
+        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
       for (String line : reader) {
         String trimmed = line.trim();
         if (!trimmed.isEmpty()) {

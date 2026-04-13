@@ -27,7 +27,7 @@ class TypeTupleSet {
   /** Creates a tuple set with a single empty tuple. */
   TypeTupleSet() {
     this.typeTuples = new ArrayList<>(1);
-    this.typeTuples.add(new ArrayList<ReferenceType>(0));
+    this.typeTuples.add(new ArrayList<>(0));
     this.tupleLength = 0;
   }
 

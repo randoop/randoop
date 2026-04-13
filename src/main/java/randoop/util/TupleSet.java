@@ -22,7 +22,7 @@ public class TupleSet<E> {
   /** Creates a tuple set with a single empty tuple. */
   public TupleSet() {
     this.tuples = new ArrayList<>(1);
-    this.tuples.add(new ArrayList<E>(0));
+    this.tuples.add(new ArrayList<>(0));
     this.tupleLength = 0;
   }
 

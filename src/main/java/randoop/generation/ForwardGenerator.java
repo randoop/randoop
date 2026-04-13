@@ -2,11 +2,13 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
@@ -16,6 +18,9 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.generation.literaltfidf.LiteralStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
+import randoop.generation.literaltfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -77,6 +82,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  /**
+   * If {@link GenInputsAbstract#literal_tfidf} is true, this map stores TfIdfSelectors for each
+   * scope, used to select literals from the component manager's literal statistics. A scope is a
+   * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
+   */
+  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -159,6 +171,11 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.literal_tfidf) {
+      assert scopeToTfIdfSelectors == null;
+      scopeToTfIdfSelectors = new HashMap<>();
     }
 
     if (GenInputsAbstract.grt_fuzzing) {
@@ -752,6 +769,38 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
 
+      // If literal-tf-idf is enabled and we are determining an argument for a class
+      // operation, use TF-IDF weighted selection for literals under some probability.
+      if (GenInputsAbstract.literal_tfidf
+          && (operation instanceof TypedClassOperation && !isReceiver)
+          && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
+
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
+
+        // Get candidate sequences, from the appropriate scope, that create values of type
+        // inputTypes[i].
+        Type neededType = operation.getInputTypes().get(i);
+        Log.logPrintf("tf-idf is selecting a literal of type %s%n", neededType);
+        SIList<Sequence> candidates =
+            componentManager.getLiteralSequences(neededType, declaringType);
+
+        // `selectTfidfSequence()` requires `scopeToTfIdfSelectors` to be non-null.
+        // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
+        // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
+        assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
+        if (componentManager.scopeToLiteralStatistics != null) {
+          Sequence seq =
+              selectTfidfSequence(
+                  candidates, declaringType, componentManager.scopeToLiteralStatistics);
+          if (seq != null) {
+            inputVars.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
+        }
+      }
+
       // If we got here, it means we will not attempt to use null or a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences (stored in the list declared
@@ -980,5 +1029,56 @@ public class ForwardGenerator extends AbstractGenerator {
                 "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
                 "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
+  }
+
+  /**
+   * Selects one sequence from {@code candidates} using TF-IDF weights computed for the scope
+   * associated with {@code type}. Returns {@code null} if {@code candidates} is empty or the scope
+   * has no literal statistics.
+   *
+   * @param candidates candidate sequences that produce values of the needed type
+   * @param type the type whose scope determines the TF-IDF statistics
+   * @param scopeToLiteralStatistics provider of literal statistics and scope resolution
+   * @return the TF-IDF-weighted choice, or {@code null} if unavailable
+   */
+  private @Nullable Sequence selectTfidfSequence(
+      SIList<Sequence> candidates,
+      ClassOrInterfaceType type,
+      ScopeToLiteralStatistics scopeToLiteralStatistics) {
+
+    int numCandidates = candidates.size();
+    if (numCandidates == 0) {
+      return null;
+    }
+    if (numCandidates == 1) {
+      return candidates.get(0);
+    }
+
+    // Resolve the selection scope first.
+    @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
+
+    if (Log.isLoggingOn()) {
+      Log.logPrintf("TF-IDF selecting from %d candidates: %s%n", candidates.size(), candidates);
+      Log.logPrintf("TF-IDF selector cache (by scope): %s%n", scopeToTfIdfSelectors);
+      Log.logPrintf("Resolved selection scope: %s%n", scope);
+    }
+
+    TfIdfSelector tfIdfSelector = scopeToTfIdfSelectors.get(scope);
+    if (tfIdfSelector == null) {
+      // No selector is cached for this scope. We need to:
+      // 1. Get literal statistics.
+      // 2. Construct a TfIdfSelector (expensive, because it processes statistics for weighted
+      //    selection).
+
+      LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
+      // If the scope has no literals (i.e., the class had no extractable constants from bytecode),
+      // TF-IDF selection is not possible, so return null to fall back to default literal selection.
+      if (literalStats.isEmpty()) {
+        return null;
+      }
+      tfIdfSelector =
+          scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(literalStats));
+    }
+    return tfIdfSelector.selectSequence(candidates);
   }
 }
