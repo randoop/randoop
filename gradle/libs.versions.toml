@@ -34,7 +34,7 @@ require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
 javaparser-core = "com.github.javaparser:javaparser-core:3.28.0"
 
-gson = "com.google.code.gson:gson:2.13.2"
+gson = "com.google.code.gson:gson:2.14.0"
 
 commons-exec = "org.apache.commons:commons-exec:1.6.0"
 
