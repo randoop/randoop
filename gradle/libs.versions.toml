@@ -60,6 +60,6 @@ junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 
 hamcrest-all = { group = "org.hamcrest", name = "hamcrest-all", version.ref = "hamcrest" }
 
-commons-codec = "commons-codec:commons-codec:1.21.0"
+commons-codec = "commons-codec:commons-codec:1.22.0"
 
 javassist = "org.javassist:javassist:3.+"
