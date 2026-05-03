@@ -205,12 +205,12 @@ public class Minimize extends CommandHandler {
 
     if (Minimize.testsuitetimeout <= 0) {
       throw new RandoopCommandError(
-          "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
+          "Timeout must be positive, was given as " + Minimize.testsuitetimeout + ".");
     }
 
     if (Minimize.minimizetimeout <= 0) {
       throw new RandoopCommandError(
-          "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
+          "Minimizer timeout must be positive, was given as " + Minimize.minimizetimeout + ".");
     }
 
     // File object pointing to the file to be minimized.

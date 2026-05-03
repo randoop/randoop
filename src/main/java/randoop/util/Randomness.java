@@ -345,7 +345,7 @@ public final class Randomness {
   }
 
   /**
-   * Returns true or false with the given relative probabilites, which need not add to 1.
+   * Returns true or false with the given relative probabilities, which need not add to 1.
    *
    * @param falseProb the likelihood that true is returned; an arbitrary non-negative number
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number

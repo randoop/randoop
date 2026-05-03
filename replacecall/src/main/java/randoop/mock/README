@@ -7,7 +7,7 @@ The goal of these mocks in to avoid the following AWT/Swing behaviors:
  - having windowing system threads run a long time and cause a timeout
    which makes generation very slow.
 
-These replacements are "good enough", but don't acheive all of these goals in
+These replacements are "good enough", but don't achieve all of these goals in
 all environments:
  - Display of windows/dialogs is suppressed, but, at least on macOS, focus can
    be taken.

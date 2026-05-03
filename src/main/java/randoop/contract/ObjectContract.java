@@ -162,7 +162,7 @@ public abstract class ObjectContract {
           // method that throws an exception; for example, the method might throw
           // NullPointerException or ConcurrentModificationException.
 
-          // This is wrong:  it attaches an expected exeption to the method call that
+          // This is wrong:  it attaches an expected exception to the method call that
           // created the object, not to the contract check that comes afterward.
           // return new ExpectedExceptionCheck(
           //     e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));

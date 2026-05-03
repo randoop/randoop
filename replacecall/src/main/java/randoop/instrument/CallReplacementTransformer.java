@@ -479,7 +479,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       }
       // verify the next instruction after the new is a dup
       if (top.new_inst.getNext().getInstruction().getOpcode() != Const.DUP) {
-        // oops; we expect NEW to be immediatly followed by DUP
+        // oops; we expect NEW to be immediately followed by DUP
         throw new IllegalClassFormatException("Unable to find NEW DUP pair.");
       }
       delete_instructions(mg, top.new_inst, top.new_inst.getNext());

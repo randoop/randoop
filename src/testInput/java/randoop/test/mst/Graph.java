@@ -5,7 +5,7 @@ public class Graph {
   /** List of vertices in the graph. */
   private Vertex[] nodes;
 
-  // parameters for the random number generater
+  // parameters for the random number generator
   private static final int CONST_m1 = 10000;
   private static final int CONST_b = 31415821;
   private static final int RANGE = 2048;

@@ -205,7 +205,7 @@ public class ExecutableSpecification {
 
   /**
    * Returns true if the full specification is empty: this {@link ExecutableSpecification}, and any
-   * member of the parent list, has no guard expresions, no property pairs, and no throws pairs.
+   * member of the parent list, has no guard expressions, no property pairs, and no throws pairs.
    *
    * @return true if there are no guard expressions, or property or throws pairs in this or the
    *     parent list, false otherwise

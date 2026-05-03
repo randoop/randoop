@@ -529,7 +529,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * smaller than this limit. One reason is that Randoop does not output subsumed tests, which
    * appear as a subsequence of some longer test.
    */
-  @Option("Maximum number of tests to ouput")
+  @Option("Maximum number of tests to output")
   public static int output_limit = LIMIT_DEFAULT;
 
   /**
@@ -931,7 +931,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
-  // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
+  // This list enables Randoop to pass these properties to other JVMs, which would not be easy if
+  // the
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
   @Option("-D Specify system properties to be set; similar to {@code java -Dx=y}.")
   public static List<String> system_props = new ArrayList<>();

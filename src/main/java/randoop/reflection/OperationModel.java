@@ -766,7 +766,7 @@ public class OperationModel {
   /**
    * Constructs an operation from every method signature in the given file.
    *
-   * @param methodSignatures_file the file containing the signatures; if null, return the emply list
+   * @param methodSignatures_file the file containing the signatures; if null, return the empty list
    * @param accessibility the accessibility predicate
    * @param reflectionPredicate the reflection predicate
    * @return operations read from the file

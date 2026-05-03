@@ -129,7 +129,7 @@ public class IconDemoApp extends JFrame {
         photographLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         // We add two glue components. Later in process() we will add thumbnail buttons
-        // to the toolbar inbetween thease glue compoents. This will center the
+        // to the toolbar in between these glue components. This will center the
         // buttons in the toolbar.
         buttonBar.add(Box.createGlue());
         buttonBar.add(Box.createGlue());

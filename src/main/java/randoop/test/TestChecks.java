@@ -4,7 +4,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck.
+ * A TestChecks represents a set of Checks, and possibly a single ExceptionCheck.
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks

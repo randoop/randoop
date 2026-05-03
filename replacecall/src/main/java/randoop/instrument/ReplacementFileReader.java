@@ -396,7 +396,7 @@ public class ReplacementFileReader {
       System.err.println("classpath: " + System.getProperty("java.class.path"));
     }
 
-    // We will only process the first occurance found; the boot classpath
+    // We will only process the first occurrence found; the boot classpath
     // is searched prior to the system classpath.
     String replacementPackagePath = replacementPackage.replace('.', '/');
     URL url = ClassLoader.getSystemResource(replacementPackagePath);

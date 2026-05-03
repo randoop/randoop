@@ -69,7 +69,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param clazz the declaring class for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
@@ -105,7 +105,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classTypes the declaring classes for collected operations
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
@@ -126,7 +126,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
@@ -143,7 +143,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
@@ -160,7 +160,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
@@ -179,7 +179,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     null
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
@@ -204,7 +204,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     null
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
@@ -233,7 +233,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     null
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
-   * @return the operations in the class that sastisfy the given predicates
+   * @return the operations in the class that satisfy the given predicates
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,

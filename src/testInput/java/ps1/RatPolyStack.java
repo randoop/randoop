@@ -47,7 +47,7 @@ public class RatPolyStack {
   //
   // (These are helper functions that will make it easier for us
   // to write the remainder of the specifications.  They are
-  // seperated out because the nature of this representation lends
+  // separated out because the nature of this representation lends
   // itself to analysis by recursive functions.)
 
   // Abstraction Function:

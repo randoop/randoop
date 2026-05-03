@@ -688,7 +688,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than to repeatedly
     // extend S.)
 
-    // This might be shorter than inputTypes if some value is re-used as two inputs.
+    // This might be shorter than inputTypes if some value is reused as two inputs.
     List<Sequence> sequences = new ArrayList<>();
 
     // The total size of S

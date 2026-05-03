@@ -554,7 +554,7 @@ public class RatPoly {
         }
 
         // at this point, coeff and expt are initialized.
-        // Need to fix coeff if it was preceeded by a '-'
+        // Need to fix coeff if it was preceded by a '-'
         if (nextTermIsNegative) {
           coeff = coeff.negate();
         }

@@ -100,7 +100,7 @@ package java7.util7;
  * unequal hash codes cannot be equal.)  More generally, implementations of
  * the various Collections Framework interfaces are free to take advantage of
  * the specified behavior of underlying {@link Object} methods wherever the
- * implementor deems it appropriate.
+ * implementer deems it appropriate.
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values

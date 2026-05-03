@@ -26,7 +26,7 @@ import randoop.reflection.OperationExtractor;
 public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;
-  // Minimum numbre of expected tests generated.
+  // Minimum number of expected tests generated.
   private static final long EXPECTED_MIN = 18000000 / performanceMultiplierMillis();
 
   private static OptionsCache optionsCache;

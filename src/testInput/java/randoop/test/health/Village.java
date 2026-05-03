@@ -36,7 +36,7 @@ public class Village {
   }
 
   /**
-   * Add a connection from this village to the specifed village. Each village contains connections
+   * Add a connection from this village to the specified village. Each village contains connections
    * to four other ones.
    *
    * @param i the village number
@@ -83,10 +83,10 @@ public class Village {
   /**
    * Simulate the Columbian health care system for a village.
    *
-   * @return a list of patients refered to the next village
+   * @return a list of patients referred to the next village
    */
   public List simulate() {
-    // the list of patients refered from each child village
+    // the list of patients referred from each child village
     List[] val = new List[4];
 
     for (int i = 3; i >= 0; i--) {

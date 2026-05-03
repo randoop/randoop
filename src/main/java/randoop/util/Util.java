@@ -22,7 +22,7 @@ public final class Util {
    * Returns true if a and b are equal (both true or both false).
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second object to test
    * @return true if a and b are equal
    */
   public static boolean iff(boolean a, boolean b) {
@@ -33,7 +33,7 @@ public final class Util {
    * Returns true if a is false or b is true.
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second object to test
    * @return true if a is false or b is true
    */
   public static boolean implies(boolean a, boolean b) {

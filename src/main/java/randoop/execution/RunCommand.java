@@ -155,7 +155,7 @@ public class RunCommand {
      *
      * @param source the source of the lines, such as "stdout" or "stderr"
      * @param lines the lines
-     * @param sb where to print the represenation
+     * @param sb where to print the representation
      */
     private void describeLines(String source, List<String> lines, StringBuilder sb) {
       if (lines.size() <= 2) {
@@ -175,7 +175,7 @@ public class RunCommand {
   }
 
   /**
-   * Exception representing an error that occured while running a process with {@link
+   * Exception representing an error that occurred while running a process with {@link
    * RunCommand#run(List, Path, long)}.
    */
   public static class CommandException extends Throwable {
