@@ -150,7 +150,7 @@ public class IconDemoApp extends JFrame {
      * SwingWorker class that loads the images a background thread and calls publish
      * when a new one is ready to be displayed.
      *
-     * We use Void as the first SwingWroker param as we do not need to return
+     * We use Void as the first SwingWorker param as we do not need to return
      * anything from doInBackground().
      */
     private SwingWorker<Void, ThumbnailAction> loadimages = new SwingWorker<Void, ThumbnailAction>() {
