@@ -32,7 +32,7 @@ error-prone-core = "com.google.errorprone:error_prone_core:2.49.0"
 
 require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
-javaparser-core = "com.github.javaparser:javaparser-core:3.28.0"
+javaparser-core = "com.github.javaparser:javaparser-core:3.28.1"
 
 gson = "com.google.code.gson:gson:2.14.0"
 
