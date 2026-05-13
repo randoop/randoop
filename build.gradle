@@ -213,7 +213,7 @@ configurations {
 dependencies {
   junit(libs.junit)
 
-  implementation(files(project(":replacecall").sourceSets.main.output))
+  implementation(project(":replacecall"))
   implementation(libs.javaparser.core)
   implementation(libs.gson)
   implementation(libs.commons.exec)
@@ -290,6 +290,8 @@ assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
 allprojects { subproject ->
+  apply plugin: "maven-publish"
+  apply plugin: "signing"
   if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
@@ -373,11 +375,15 @@ artifacts {
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
 
+compileTestJava {
+  dependsOn(":replacecall:shadowJar")
+}
 /*
  * Configuration of test task from Java plugin.
  * Runs all tests in test sourceSet except those excluded below.
  */
 test {
+  dependsOn(":replacecall:shadowJar")
 
   /*
    * Set the working directory for JUnit tests to the resources directory
@@ -571,6 +577,7 @@ tasks.register("copyJars", Copy) {
 assemble.dependsOn(copyJars)
 
 shadowJar {
+  dependsOn(":replacecall:shadowJar")
   // The jar file name is randoop-all-$version.jar
   archiveBaseName = "randoop-all"
   archiveClassifier = ""
@@ -684,6 +691,8 @@ tasks.withType(Javadoc) {
  * main sourceSet.
  */
 javadoc {
+  dependsOn(":replacecall:shadowJar")
+
   destinationDir = file(layout.buildDirectory.file("docs/api"))
   source(sourceSets.main.allJava)
   options.memberLevel = JavadocMemberLevel.PRIVATE
