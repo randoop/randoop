@@ -254,14 +254,6 @@ dependencies {
   errorprone(libs.error.prone.core)
 }
 
-javadoc{
-  dependsOn(":replacecall:shadowJar")
-}
-
-test{
-  dependsOn(":replacecall:shadowJar")
-}
-
 /*
  * Configuration for compilation.
  */
@@ -388,6 +380,7 @@ clean.dependsOn(":covered-class:clean")
  * Runs all tests in test sourceSet except those excluded below.
  */
 test {
+  dependsOn(":replacecall:shadowJar")
 
   /*
    * Set the working directory for JUnit tests to the resources directory
@@ -581,6 +574,7 @@ tasks.register("copyJars", Copy) {
 assemble.dependsOn(copyJars)
 
 shadowJar {
+  dependsOn(":replacecall:shadowJar")
   // The jar file name is randoop-all-$version.jar
   archiveBaseName = "randoop-all"
   archiveClassifier = ""
@@ -694,6 +688,8 @@ tasks.withType(Javadoc) {
  * main sourceSet.
  */
 javadoc {
+  dependsOn(":replacecall:shadowJar")
+
   destinationDir = file(layout.buildDirectory.file("docs/api"))
   source(sourceSets.main.allJava)
   options.memberLevel = JavadocMemberLevel.PRIVATE
