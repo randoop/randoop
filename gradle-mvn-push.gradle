@@ -1,6 +1,3 @@
-apply plugin: "maven-publish"
-apply plugin: "signing"
-
 final isSnapshot = version.contains("SNAPSHOT")
 
 final sharedPublicationConfiguration(publication) {

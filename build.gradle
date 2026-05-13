@@ -213,7 +213,7 @@ configurations {
 dependencies {
   junit(libs.junit)
 
-  implementation(files(project(":replacecall").sourceSets.main.output))
+  implementation(project(":replacecall"))
   implementation(libs.javaparser.core)
   implementation(libs.gson)
   implementation(libs.commons.exec)
@@ -254,6 +254,14 @@ dependencies {
   errorprone(libs.error.prone.core)
 }
 
+javadoc{
+  dependsOn(":replacecall:shadowJar")
+}
+
+test{
+  dependsOn(":replacecall:shadowJar")
+}
+
 /*
  * Configuration for compilation.
  */
@@ -290,6 +298,8 @@ assemble.mustRunAfter(compileAll)
 build.dependsOn(compileAll)
 
 allprojects { subproject ->
+  apply plugin: "maven-publish"
+  apply plugin: "signing"
   if (isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
