@@ -375,6 +375,9 @@ artifacts {
 clean.dependsOn(":replacecall:clean")
 clean.dependsOn(":covered-class:clean")
 
+compileTestJava {
+  dependsOn(":replacecall:shadowJar")
+}
 /*
  * Configuration of test task from Java plugin.
  * Runs all tests in test sourceSet except those excluded below.
