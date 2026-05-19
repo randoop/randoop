@@ -61,8 +61,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       if (frequency <= 0) {
         continue;
       }
-      scopeToLiteralStatistics.incrementNumUses(
-          containingType, seq, frequency);
+      scopeToLiteralStatistics.incrementNumUses(containingType, seq, frequency);
       allConstants.add(seq);
     }
 
