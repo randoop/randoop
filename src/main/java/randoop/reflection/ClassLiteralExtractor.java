@@ -54,8 +54,14 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
       if (termValue == null) {
         continue;
       }
-      scopeToLiteralStatistics.incrementNumUses(
-          containingType, seq, constantSet.getConstantFrequency(termValue));
+      int frequency = constantSet.getConstantFrequency(termValue);
+      // Skip constants with zero or negative frequency. These appear in the constant pool
+      // (e.g., for static final field initializers) but have zero usage in executable bytecode
+      // Including these would create inconsistent statistics where numUses=0 but numClassesWith>0.
+      if (frequency <= 0) {
+        continue;
+      }
+      scopeToLiteralStatistics.incrementNumUses(containingType, seq, frequency);
       allConstants.add(seq);
     }
 
