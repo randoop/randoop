@@ -177,7 +177,6 @@ public class SequenceCollection {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
-    int lastStatementIndex = sequence.size() - 1;
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
       Type formalType = formalTypes.get(i);
@@ -185,10 +184,9 @@ public class SequenceCollection {
           : formalType.getBinaryName()
               + " should be assignable from "
               + argument.getType().getBinaryName();
-      // Only index sequences by their OUTPUT types (variables created by the last statement),
-      // not by their INPUT parameter types (variables that were already created earlier).
-      if (sequence.isActive(argument.getDeclIndex())
-          && argument.getDeclIndex() == lastStatementIndex) {
+      // Only index sequences by their OUTPUT types (index 0 is the output if non-void),
+      // not by their INPUT parameter types (indices 1+ are input parameters).
+      if (sequence.isActive(argument.getDeclIndex()) && i == 0) {
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
           typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
