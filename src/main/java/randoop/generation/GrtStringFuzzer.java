@@ -49,7 +49,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     Sequence fuzzedSeq =
         Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(mutated));
     return new VarAndSeq(
-        sequence.getLastVariable(), fuzzedSeq); // The last variable is the mutated String.
+        fuzzedSeq.getLastVariable(), fuzzedSeq); // The last variable is the mutated String.
   }
 
   /* ------------------------- Helper methods ------------------------------ */
