@@ -184,9 +184,7 @@ public class SequenceCollection {
           : formalType.getBinaryName()
               + " should be assignable from "
               + argument.getType().getBinaryName();
-      // Only index sequences by their OUTPUT types (index 0 is the output if non-void),
-      // not by their INPUT parameter types (indices 1+ are input parameters).
-      if (sequence.isActive(argument.getDeclIndex()) && i == 0) {
+      if (sequence.isActive(argument.getDeclIndex())) {
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
           typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
