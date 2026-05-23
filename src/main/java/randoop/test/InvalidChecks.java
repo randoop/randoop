@@ -2,7 +2,6 @@ package randoop.test;
 
 import java.util.Collections;
 import java.util.Set;
-import randoop.main.RandoopBug;
 
 /**
  * An empty or singleton set. It contains at most one InvalidExceptionCheck or InvalidValueCheck,
@@ -67,21 +66,6 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
     } else {
       return null;
     }
-  }
-
-  @Override
-  public void add(Check check) {
-    if (this == EMPTY) {
-      throw new RandoopBug("Don't add to InvalidChecks.EMPTY");
-    }
-    if (this.check != null) {
-      throw new RandoopBug(
-          String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
-    }
-    if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
-      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
-    }
-    this.check = check;
   }
 
   @Override

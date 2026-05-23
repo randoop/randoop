@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -15,18 +14,14 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   /** An empty, immutable set of error-revealing checks. */
-  public static final ErrorRevealingChecks EMPTY;
+  public static final ErrorRevealingChecks EMPTY = new ErrorRevealingChecks();
 
-  static {
-    EMPTY = new ErrorRevealingChecks();
-    EMPTY.checks = Collections.emptySet(); // make immutable
-  }
-
-  private Set<Check> checks;
+  /** The checks that this {@code ErrorRevealingChecks} represents. */
+  private final Set<Check> checks;
 
   /** Create an empty set of error checks. */
-  public ErrorRevealingChecks() {
-    this.checks = new LinkedHashSet<>();
+  private ErrorRevealingChecks() {
+    this.checks = Collections.emptySet();
   }
 
   /**
@@ -97,17 +92,6 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
   @Override
   public @Nullable ExceptionCheck getExceptionCheck() {
     return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @throws Error if {@code check} is an exception check
-   */
-  @Override
-  public void add(Check check) {
-    validateCheck(check);
-    checks.add(check);
   }
 
   @Override
