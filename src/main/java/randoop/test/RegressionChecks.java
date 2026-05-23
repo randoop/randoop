@@ -21,7 +21,7 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
 
   /** Create an empty set of regression checks. */
   public RegressionChecks() {
-    this.checks = new LinkedHashSet<>();
+    this.checks = Collections.emptySet();
     this.exceptionCheck = null;
   }
 
