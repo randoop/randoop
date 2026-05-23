@@ -130,20 +130,6 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
     return Objects.hash(checks, exceptionCheck);
   }
 
-  @Override
-  public RegressionChecks commonChecks(RegressionChecks other) {
-    RegressionChecks common = new RegressionChecks();
-    for (Check ck : checks) {
-      if (other.checks.contains(ck)) {
-        common.add(ck);
-      }
-    }
-    if (exceptionCheck.equals(other.exceptionCheck)) {
-      common.add(exceptionCheck);
-    }
-    return common;
-  }
-
   /**
    * {@inheritDoc}
    *

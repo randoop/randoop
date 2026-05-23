@@ -61,12 +61,4 @@ public interface TestChecks<T extends TestChecks<T>> {
    * @return the expected exception check, null otherwise
    */
   @Nullable ExceptionCheck getExceptionCheck();
-
-  /**
-   * Returns the intersection of checks in this set and another set.
-   *
-   * @param other the {@code TestChecks} to compare with
-   * @return the checks common to this set of checks and those in {@code other}
-   */
-  T commonChecks(T other);
 }

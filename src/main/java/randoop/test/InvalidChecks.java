@@ -85,15 +85,6 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   }
 
   @Override
-  public InvalidChecks commonChecks(InvalidChecks other) {
-    InvalidChecks common = new InvalidChecks();
-    if (this.check != null && check.equals(other.check)) {
-      common.add(check);
-    }
-    return common;
-  }
-
-  @Override
   public boolean hasInvalidBehavior() {
     return check != null;
   }
