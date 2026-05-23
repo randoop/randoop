@@ -93,9 +93,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * @return the ErrorRevealingChecks object
    */
   private ErrorRevealingChecks getMissingExceptionTestChecks(int finalIndex) {
-    ErrorRevealingChecks checks = new ErrorRevealingChecks();
-    checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
-    return checks;
+    return new ErrorRevealingChecks(new MissingExceptionCheck(exceptionSets, finalIndex));
   }
 
   /**
