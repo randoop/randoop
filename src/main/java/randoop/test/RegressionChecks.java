@@ -13,8 +13,11 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   /** An empty, immutable set of regression checks. */
   public static RegressionChecks EMPTY = new RegressionChecks();
 
-  private Set<Check> checks;
-  private @Nullable ExceptionCheck exceptionCheck;
+  /** The non-exception checks that this {@code RegressionChecks} represents. */
+  private final Set<Check> checks;
+
+  /** The exception check that this {@code RegressionChecks} represents, or null. */
+  private final @Nullable ExceptionCheck exceptionCheck;
 
   /** Create an empty set of regression checks. */
   public RegressionChecks() {

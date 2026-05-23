@@ -17,7 +17,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
   public static final ErrorRevealingChecks EMPTY = new ErrorRevealingChecks();
 
   /** The checks that this {@code ErrorRevealingChecks} represents. */
-  private Set<Check> checks;
+  private final Set<Check> checks;
 
   /** Create an empty set of error checks. */
   private ErrorRevealingChecks() {
