@@ -99,17 +99,6 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @throws Error if {@code check} is an exception check
-   */
-  @Override
-  public void add(Check check) {
-    validateCheck(check);
-    checks.add(check);
-  }
-
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {

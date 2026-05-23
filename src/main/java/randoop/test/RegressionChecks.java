@@ -53,7 +53,6 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
    *     already contains such a check
    */
   @SuppressWarnings("ReferenceEquality")
-  @Override
   public void add(Check check) {
     if (this == EMPTY) {
       throw new RandoopBug("Don't add to EMPTY");

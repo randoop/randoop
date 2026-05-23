@@ -27,13 +27,6 @@ public interface TestChecks<T extends TestChecks<T>> {
   Set<Check> checks();
 
   /**
-   * Add a check to this set.
-   *
-   * @param ck the check object to add to this set of checks
-   */
-  void add(Check ck);
-
-  /**
    * Returns true if this object has checks.
    *
    * @return true if this object has checks, false otherwise
