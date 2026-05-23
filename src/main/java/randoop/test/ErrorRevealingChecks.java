@@ -127,17 +127,6 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
     return Objects.hash(checks);
   }
 
-  @Override
-  public ErrorRevealingChecks commonChecks(ErrorRevealingChecks other) {
-    ErrorRevealingChecks common = new ErrorRevealingChecks();
-    for (Check ck : checks) {
-      if (other.checks.contains(ck)) {
-        common.add(ck);
-      }
-    }
-    return common;
-  }
-
   /**
    * {@inheritDoc}
    *
