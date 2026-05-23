@@ -47,12 +47,12 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
    * @param exceptionCheck the exception check, or null
    */
   public RegressionChecks(Collection<Check> checks, @Nullable ExceptionCheck exceptionCheck) {
-    this.checks = Collections.unmodifiableSet(new LinkedHashSet<>(checks));
-    this.exceptionCheck = exceptionCheck;
-
     if (checks.stream().anyMatch(ExceptionCheck.class::isInstance)) {
       throw new IllegalArgumentException("checks must not contain ExceptionCheck instances");
     }
+
+    this.checks = Collections.unmodifiableSet(new LinkedHashSet<>(checks));
+    this.exceptionCheck = exceptionCheck;
   }
 
   @Override
