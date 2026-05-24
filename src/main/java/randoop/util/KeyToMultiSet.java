@@ -79,7 +79,7 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     return map.containsKey(obj);
   }
 
-  // Removes all keys with an empty set
+  /** Removes all keys that map to an empty set. */
   public void clean() {
     for (Iterator<Map.Entry<K, MultiSet<V>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
       Map.Entry<K, MultiSet<V>> element = iter.next();
