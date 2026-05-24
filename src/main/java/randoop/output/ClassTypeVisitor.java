@@ -25,8 +25,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
   @Override
   public void visit(ClassOrInterfaceType n, Set<ClassOrInterfaceType> params) {
 
-    // If the class type is a generic types, visit each one of the
-    // parameter types as well.
+    // If the class type is a generic type, visit each type argument.
 
     if (n.getTypeArguments().isPresent()) {
       for (Type argType : n.getTypeArguments().get()) {
