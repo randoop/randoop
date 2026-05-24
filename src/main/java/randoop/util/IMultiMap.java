@@ -31,6 +31,10 @@ public interface IMultiMap<K, V> {
   /**
    * Returns the values that the given key maps to.
    *
+   * <p>For efficiency, this is permitted to be (but is not guaranteed to be) part of the internal
+   * representation. Clients must not modify the return value (but may make a copy and modify the
+   * copy).
+   *
    * @param key cannot be null
    * @return the set of values for the given key
    */
