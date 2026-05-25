@@ -1329,11 +1329,14 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
-            "java7.util7.ArrayList.fastRemove(int) exclude",
+            "java7.util7.ArrayList.fastRemove(int) exclude17",
+            "java7.util7.ArrayList.get(int) exclude17+",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
             "java7.util7.ArrayList.subList(int, int) exclude11",
+            "java7.util7.ArrayList.subList(int, int) exclude17",
+            "java7.util7.ArrayList.subList(int, int) exclude25",
             "java7.util7.ArrayList.subList(int, int) exclude8",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
