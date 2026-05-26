@@ -1,13 +1,10 @@
 package randoop.util;
 
-import java.util.Collection;
+import java.util.AbstractSet;
 import java.util.Iterator;
-import java.util.Set;
 import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
-import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.Signed;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * A Set that supports settingcheckpoints (also called "marks") and restoring the data structure's
@@ -15,7 +12,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  *
  * @param <E> the type of elements
  */
-public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
+public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
   // This uses a MultiMap just because that is an existing checkpointing data structure.
   // The value is always true in this mapping, never false.
@@ -57,6 +54,35 @@ public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
     return map.size();
   }
 
+  @Override
+  public Iterator<E> iterator() {
+    Iterator<E> underlying = map.keySet().iterator();
+    return new Iterator<E>() {
+      private E current;
+
+      @Override
+      public boolean hasNext() {
+        return underlying.hasNext();
+      }
+
+      @Override
+      public E next() {
+        current = underlying.next();
+        return current;
+      }
+
+      @Override
+      public void remove() {
+        // Delegate to CheckpointingSet.remove() to preserve checkpointing
+        if (current == null) {
+          throw new IllegalStateException();
+        }
+        CheckpointingSet.this.remove(current);
+        current = null;
+      }
+    };
+  }
+
   /** Checkpoint the state of the data structure, for use by {@link #undoToLastMark()}. */
   public void mark() {
     map.mark();
@@ -70,52 +96,5 @@ public class CheckpointingSet<E extends @Signed Object> implements Set<E> {
   @Override
   public String toString() {
     return map.keySet().toString();
-  }
-
-  @Override
-  public void clear() {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public boolean addAll(Collection<? extends E> c) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public boolean removeAll(Collection<?> c) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public boolean retainAll(Collection<?> c) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public boolean containsAll(Collection<?> c) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  @SideEffectFree
-  public <T> T[] toArray(T[] a) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public @PolySigned Object[] toArray() {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public Iterator<E> iterator() {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
-
-  @Override
-  public boolean isEmpty() {
-    // return map.isEmpty();
-    throw new UnsupportedOperationException("not yet implemented");
   }
 }
