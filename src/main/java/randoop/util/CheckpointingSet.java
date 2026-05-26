@@ -56,10 +56,8 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
   @Override
   public Iterator<E> iterator() {
-    /** The underlying iterator. */
     Iterator<E> underlying = map.keySet().iterator();
     return new Iterator<E>() {
-      /** The current element. */
       private E current;
 
       @Override
