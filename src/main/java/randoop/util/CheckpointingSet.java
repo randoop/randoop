@@ -56,7 +56,33 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
   @Override
   public Iterator<E> iterator() {
-    return map.keySet().iterator();
+    /** The underlying iterator. */
+    Iterator<E> underlying = map.keySet().iterator();
+    return new Iterator<E>() {
+      /** The current element. */
+      private E current;
+
+      @Override
+      public boolean hasNext() {
+        return underlying.hasNext();
+      }
+
+      @Override
+      public E next() {
+        current = underlying.next();
+        return current;
+      }
+
+      @Override
+      public void remove() {
+        // Delegate to CheckpointingSet.remove() to preserve checkpointing
+        if (current == null) {
+          throw new IllegalStateException();
+        }
+        CheckpointingSet.this.remove(current);
+        current = null;
+      }
+    };
   }
 
   /** Checkpoint the state of the data structure, for use by {@link #undoToLastMark()}. */
