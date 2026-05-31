@@ -85,8 +85,8 @@ public class RawSignature {
    */
   public static RawSignature of(Method executable) {
     Class<?> declaringClass = executable.getDeclaringClass();
-    Package classPackage = declaringClass.getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = RawSignature.getPackageName(declaringPackage);
     String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
@@ -103,8 +103,8 @@ public class RawSignature {
    */
   public static RawSignature of(Constructor<?> executable) {
     Class<?> declaringClass = executable.getDeclaringClass();
-    Package classPackage = declaringClass.getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = RawSignature.getPackageName(declaringPackage);
     String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
