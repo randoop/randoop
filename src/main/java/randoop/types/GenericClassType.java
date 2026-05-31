@@ -179,11 +179,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
-    if (typeArguments.length != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.length != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -204,11 +205,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
-    if (typeArguments.size() != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.size() != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(

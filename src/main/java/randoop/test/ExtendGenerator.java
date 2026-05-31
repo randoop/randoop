@@ -40,7 +40,7 @@ public class ExtendGenerator extends TestCheckGenerator {
     } else {
       TestChecks<?> secondChecks = secondGenerator.generateTestChecks(eseq);
       if (secondChecks.hasChecks()) {
-        return secondGenerator.generateTestChecks(eseq);
+        return secondChecks;
       }
       return checks;
     }

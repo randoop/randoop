@@ -60,6 +60,7 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Util;
@@ -405,8 +406,9 @@ public class OperationModel {
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
       }
-      if (!operation.getInputTypes().isEmpty()) {
-        operationsMap.add(operation.getInputTypes().get(0), operation);
+      TypeTuple inputTypes = operation.getInputTypes();
+      if (!inputTypes.isEmpty()) {
+        operationsMap.add(inputTypes.get(0), operation);
       }
     }
     return operationsMap;
