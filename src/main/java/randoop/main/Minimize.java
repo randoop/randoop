@@ -683,13 +683,12 @@ public class Minimize extends CommandHandler {
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
     List<Statement> resultList = new ArrayList<>(3);
 
-    NodeList<VariableDeclarator> variables = vdExpr.getVariables();
-    if (variables.size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
       return resultList;
     }
 
-    Type type = variables.get(0).getType();
+    Type type = vdExpr.getVariables().get(0).getType();
     if (type instanceof PrimitiveType) {
       // Replacement with zero value on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
@@ -726,12 +725,11 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
-    NodeList<VariableDeclarator> variables = vdExpr.getVariables();
-    if (variables.size() != 1) {
+    if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not one.
       return null;
     }
-    VariableDeclarator vDecl = variables.get(0);
+    VariableDeclarator vDecl = vdExpr.getVariables().get(0);
     // Get the name of the variable being declared.
     String varName = vDecl.getName().toString();
 
@@ -1018,9 +1016,8 @@ public class Minimize extends CommandHandler {
 
     // Directory path for the classpath.
     String dirPath = ".";
-    Path fileParent = file.getParent();
-    if (fileParent != null) {
-      dirPath += PATH_SEPARATOR + fileParent;
+    if (file.getParent() != null) {
+      dirPath += PATH_SEPARATOR + file.getParent();
     }
 
     // Classpath for running the Java file.
