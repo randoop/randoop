@@ -666,7 +666,7 @@ public class ExecutableSequence {
    */
   public List<ReferenceValue> getAllValues() {
     Set<ReferenceValue> values = new LinkedHashSet<>();
-    for (int i = 0; i < sequence.size() - 1; i++) {
+    for (int i = 0; i < sequence.size(); i++) {
       // TODO: Should this be only reference values, not all values?
       Object value = getValue(i);
       if (value != null) {
