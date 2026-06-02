@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import randoop.types.Type;
 
@@ -52,11 +53,10 @@ class TypeArguments {
    * @param params the array of {@link Class} objects representing the types of signature arguments
    */
   static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1)) {
-        sb.append(",");
-      }
+    StringJoiner sj = new StringJoiner(",");
+    for (Class<?> param : params) {
+      sj.add(param.getName());
     }
+    sb.append(sj);
   }
 }
