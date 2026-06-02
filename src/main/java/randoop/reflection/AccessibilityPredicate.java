@@ -96,7 +96,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 
@@ -232,7 +233,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 

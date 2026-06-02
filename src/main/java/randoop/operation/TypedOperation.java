@@ -113,8 +113,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Method method, @ClassGetName String className) {
     String methodName = method.getName();
     Parameter[] parameters = method.getParameters();
-    List<String> parameterNames =
-        CollectionsPlume.mapList(Parameter::getName, method.getParameters());
+    List<String> parameterNames = CollectionsPlume.mapList(Parameter::getName, parameters);
     List<@ClassGetName String> parameterTypes =
         CollectionsPlume.mapList(Class::getName, method.getParameterTypes());
 
@@ -470,11 +469,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
 
     Class<?> declaringClass = method.getDeclaringClass();
-    if (declaringClass.isAnonymousClass()
-        && declaringClass.getEnclosingClass() != null
-        && declaringClass.getEnclosingClass().isEnum()) {
-      // is a method in anonymous class for enum constant
-      return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
+    if (declaringClass.isAnonymousClass()) {
+      Class<?> enclosingClass = declaringClass.getEnclosingClass();
+      if (enclosingClass != null && enclosingClass.isEnum()) {
+        // is a method in anonymous class for enum constant
+        return getAnonEnumOperation(method, methodParamTypes, enclosingClass);
+      }
     }
 
     List<Type> paramTypes = new ArrayList<>(methodParamTypes.size() + 1);
@@ -691,13 +691,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return an operation that
    */
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
+    Type componentType = arrayType.getComponentType();
     List<Type> typeList = new ArrayList<>(3);
     typeList.add(arrayType);
     typeList.add(JavaTypes.INT_TYPE);
-    typeList.add(arrayType.getComponentType());
+    typeList.add(componentType);
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
-        new ArrayElementSet(arrayType.getComponentType()), inputTypes, JavaTypes.VOID_TYPE);
+        new ArrayElementSet(componentType), inputTypes, JavaTypes.VOID_TYPE);
   }
 
   @Override
