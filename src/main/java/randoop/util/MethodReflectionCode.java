@@ -77,10 +77,14 @@ public final class MethodReflectionCode extends ReflectionCode {
           String.format(
               "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument")));
       if (receiver != null) {
-        sb.append(lineSep + "  receiver: " + StringsPlume.toStringAndClass(receiver));
+        sb.append(lineSep);
+        sb.append("  receiver: ");
+        sb.append(StringsPlume.toStringAndClass(receiver));
       }
       for (Object input : inputs) {
-        sb.append(lineSep + "  " + StringsPlume.toStringAndClass(input));
+        sb.append(lineSep);
+        sb.append("  ");
+        sb.append(StringsPlume.toStringAndClass(input));
       }
       throw new ReflectionCodeException(sb.toString(), e);
     }
