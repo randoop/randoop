@@ -1043,6 +1043,7 @@ generateGitProperties.dependsOn(":installGitHooks")
 gitProperties {
   dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
 }
+sourcesJar.dependsOn(generateGitProperties)
 
 apply from: rootProject.file("gradle-mvn-push.gradle")
 
