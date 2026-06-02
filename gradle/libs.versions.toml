@@ -12,7 +12,7 @@ org-aim42-htmlSanityCheck = { id = "org.aim42.htmlSanityCheck", version = "1.1.6
 
 com-dorongold-task-tree = { id = "com.dorongold.task-tree", version = "4.0.1" }
 
-com-gorylenko-gradle-git-properties = { id = "com.gorylenko.gradle-git-properties", version = "3.0.3" }
+com-gorylenko-gradle-git-properties = { id = "com.gorylenko.gradle-git-properties", version = "4.0.1" }
 
 [versions]
 
