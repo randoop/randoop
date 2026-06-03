@@ -384,9 +384,10 @@ public class DemandDrivenInputCreator {
     // TODO: Permit using earlier statements in each input sequence, not just the last one.
     int stmtOffset = 0;
     for (Sequence seq : inputSequences) {
-      int stmtInSeq = seq.size() - 1;
+      int size = seq.size();
+      int stmtInSeq = size - 1;
       inputIndices.add(stmtOffset + stmtInSeq);
-      stmtOffset += seq.size();
+      stmtOffset += size;
     }
 
     // Create a sequence that calls `typedOperation` on the given inputs.

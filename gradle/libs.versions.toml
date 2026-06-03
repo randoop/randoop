@@ -1,8 +1,8 @@
 [plugins]
 
-com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
+com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.4.2" }
 
-com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.5.1" }
+com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.6.0" }
 
 net-ltgt-errorprone = { id = "net.ltgt.errorprone", version = "5.1.0" }
 
@@ -12,7 +12,7 @@ org-aim42-htmlSanityCheck = { id = "org.aim42.htmlSanityCheck", version = "1.1.6
 
 com-dorongold-task-tree = { id = "com.dorongold.task-tree", version = "4.0.1" }
 
-com-gorylenko-gradle-git-properties = { id = "com.gorylenko.gradle-git-properties", version = "3.0.2" }
+com-gorylenko-gradle-git-properties = { id = "com.gorylenko.gradle-git-properties", version = "4.0.1" }
 
 [versions]
 
@@ -32,7 +32,7 @@ error-prone-core = "com.google.errorprone:error_prone_core:2.49.0"
 
 require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
-javaparser-core = "com.github.javaparser:javaparser-core:3.28.1"
+javaparser-core = "com.github.javaparser:javaparser-core:3.28.2"
 
 gson = "com.google.code.gson:gson:2.14.0"
 

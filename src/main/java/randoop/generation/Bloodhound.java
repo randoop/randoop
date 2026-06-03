@@ -286,9 +286,9 @@ public class Bloodhound implements TypedOperationSelector {
         Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
         isSyntheticMethod = method.isSynthetic();
-        isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
-        isClassUnderTest =
-            coverageTracker.classesUnderTest.contains(method.getDeclaringClass().getName());
+        Class<?> declaringClass = method.getDeclaringClass();
+        isFromAbstractClass = Modifier.isAbstract(declaringClass.getModifiers());
+        isClassUnderTest = coverageTracker.classesUnderTest.contains(declaringClass.getName());
       }
 
       boolean isGetterMethod = callableOperation instanceof FieldGet;

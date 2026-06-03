@@ -17,7 +17,8 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
  * @param <K> the type of keys
  * @param <V> the type of values
  */
-// @Signed so the values can be printed
+// @Signed so the values can be printed.
+// Cannot do `extends AbstractMap<K, Set<V>>` because its `remove()` has a different signature.
 public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed Object>
     implements IMultiMap<K, V> {
 

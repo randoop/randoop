@@ -72,16 +72,21 @@ public final class MethodReflectionCode extends ReflectionCode {
     } catch (Throwable e) {
       // Any other exception indicates Randoop should not have called the method in this way.
       int numArgs = (receiver == null ? 0 : 1) + inputs.length;
-      String message =
+      StringBuilder sb = new StringBuilder();
+      sb.append(
           String.format(
-              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument"));
+              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument")));
       if (receiver != null) {
-        message += lineSep + "  receiver: " + StringsPlume.toStringAndClass(receiver);
+        sb.append(lineSep);
+        sb.append("  receiver: ");
+        sb.append(StringsPlume.toStringAndClass(receiver));
       }
       for (Object input : inputs) {
-        message += lineSep + "  " + StringsPlume.toStringAndClass(input);
+        sb.append(lineSep);
+        sb.append("  ");
+        sb.append(StringsPlume.toStringAndClass(input));
       }
-      throw new ReflectionCodeException(message, e);
+      throw new ReflectionCodeException(sb.toString(), e);
     }
   }
 

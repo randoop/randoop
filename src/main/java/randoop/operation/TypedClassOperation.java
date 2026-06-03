@@ -212,10 +212,8 @@ public class TypedClassOperation extends TypedOperation {
     Package classPackage = this.declaringType.getPackage();
     String packageName = RawSignature.getPackageName(classPackage);
     String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
-    String name =
-        this.getUnqualifiedBinaryName().equals("<init>")
-            ? classname
-            : this.getUnqualifiedBinaryName();
+    String unqualifiedBinaryName = this.getUnqualifiedBinaryName();
+    String name = unqualifiedBinaryName.equals("<init>") ? classname : unqualifiedBinaryName;
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
     List<String> typeNames = new ArrayList<>(inputTypes.size());

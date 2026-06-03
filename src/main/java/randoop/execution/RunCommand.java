@@ -151,7 +151,7 @@ public class RunCommand {
     }
 
     /**
-     * Print to sb the lines, or say how many lines there were.
+     * Print to {@code sb} the lines, or say how many lines there were.
      *
      * @param source the source of the lines, such as "stdout" or "stderr"
      * @param lines the lines
