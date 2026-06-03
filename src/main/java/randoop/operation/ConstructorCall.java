@@ -99,23 +99,22 @@ public final class ConstructorCall extends CallableOperation {
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
     b.append(isMemberClass ? inputVars.get(0) + "." : "")
         .append("new ")
-        .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getFqName())
-        .append("(");
+        .append(
+            isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getFqName());
 
+    StringJoiner arguments = new StringJoiner(", ", "(", ")");
     for (int i = (isMemberClass ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isMemberClass ? 1 : 0)) {
-        b.append(", ");
-      }
-
       // We cast whenever the variable and input types are not identical.
-      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        b.append("(").append(inputTypes.get(i).getFqName()).append(")");
+      String cast;
+      if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
+        cast = "";
+      } else {
+        cast = "(" + inputTypes.get(i).getFqName() + ")";
       }
-
       String param = getArgumentString(inputVars.get(i));
-      b.append(param);
+      arguments.add(cast + param);
     }
-    b.append(")");
+    b.append(arguments.toString());
   }
 
   /**
