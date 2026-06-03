@@ -76,15 +76,11 @@ public abstract class ParameterType extends ReferenceType {
         String.format("no run-time class for a type variable %s [%s]", this, this.getClass()));
   }
 
-  /**
-   * Returns false: type variables are never primitive, boxed primitive, {@code String}, or {@code
-   * Class}, and calling the default implementation would invoke {@link #getRuntimeClass()} which
-   * throws for type variables.
-   *
-   * @return false
-   */
   @Override
   public boolean isNonreceiverType() {
+    // Returns false: type variables are never primitive, boxed primitive, {@code String}, or {@code
+    // Class}, and calling the default implementation would invoke {@link #getRuntimeClass()} which
+    // throws for type variables.
     return false;
   }
 
