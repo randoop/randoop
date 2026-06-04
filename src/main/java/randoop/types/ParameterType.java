@@ -76,10 +76,32 @@ public abstract class ParameterType extends ReferenceType {
         String.format("no run-time class for a type variable %s [%s]", this, this.getClass()));
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false: type variables are never primitive, boxed primitive, {@code String}, or
+   * {@code Class}, and calling the default implementation would invoke {@link #getRuntimeClass()}
+   * which throws for type variables.
+   */
+  @Override
+  public boolean isNonreceiverType() {
+    return false;
+  }
+
+  /**
+   * Sets the upper bound of this type parameter.
+   *
+   * @param upperBound the new upper bound
+   */
   void setUpperBound(ParameterBound upperBound) {
     this.upperBound = upperBound;
   }
 
+  /**
+   * Sets the lower bound of this type parameter.
+   *
+   * @param lowerBound the new lower bound
+   */
   void setLowerBound(ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
   }
