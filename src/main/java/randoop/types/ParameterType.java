@@ -84,10 +84,20 @@ public abstract class ParameterType extends ReferenceType {
     return false;
   }
 
+  /**
+   * Sets the upper bound of this type parameter.
+   *
+   * @param upperBound the upper bound to set
+   */
   void setUpperBound(ParameterBound upperBound) {
     this.upperBound = upperBound;
   }
 
+  /**
+   * Sets the lower bound of this type parameter.
+   *
+   * @param lowerBound the lower bound to set
+   */
   void setLowerBound(ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
   }
