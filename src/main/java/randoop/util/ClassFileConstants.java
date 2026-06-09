@@ -159,7 +159,7 @@ public class ClassFileConstants {
   }
 
   /** Do not instantiate. */
-  public ClassFileConstants() {
+  private ClassFileConstants() {
     throw new Error("Do not instantiate");
   }
 
