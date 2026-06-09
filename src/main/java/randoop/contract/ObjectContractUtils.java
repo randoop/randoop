@@ -11,6 +11,7 @@ import randoop.util.ReflectionExecutor;
 /** Utility methods for safely executing and printing {@link ObjectContract} code. */
 public final class ObjectContractUtils {
 
+  /** Do not instantiate. */
   private ObjectContractUtils() {
     throw new Error("Do not instantiate");
   }

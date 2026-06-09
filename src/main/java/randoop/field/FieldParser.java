@@ -13,6 +13,7 @@ import randoop.types.Type;
  */
 public final class FieldParser {
 
+  /** Do not instantiate. */
   private FieldParser() {
     throw new Error("Do not instantiate");
   }

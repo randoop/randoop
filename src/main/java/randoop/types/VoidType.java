@@ -12,10 +12,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public final class VoidType extends Type {
 
+  /** The single canonical instance of this class. */
   private static final VoidType value = new VoidType();
 
+  /** Creates a new VoidType. */
   private VoidType() {}
 
+  /** Returns a VoidType. Actually, always returns the single canonical VoidType. */
   public static VoidType getVoidType() {
     return value;
   }

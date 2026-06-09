@@ -8,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 final class NullReferenceType extends ReferenceType {
 
+  /** The single canonical instance of this class. */
   private static final NullReferenceType value = new NullReferenceType();
 
   private NullReferenceType() {}

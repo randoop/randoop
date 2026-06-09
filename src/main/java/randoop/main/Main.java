@@ -29,7 +29,13 @@ public final class Main {
     // Nothing to do.
   }
 
-  // The main method simply calls nonStaticMain.
+  /**
+   * The entry point.
+   *
+   * <p>This method simply calls {@link #nonStaticMain}.
+   *
+   * @param args the command-line arguments
+   */
   public static void main(String[] args) {
 
     Main main = new Main();

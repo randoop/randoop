@@ -10,8 +10,10 @@ import java.util.jar.JarInputStream;
 
 public final class JarReader {
 
+  /** If true, output debugging diagnostics. */
   private static boolean debug = false;
 
+  /** Do not instantiate. */
   private JarReader() {
     throw new Error("Do not instantiate");
   }

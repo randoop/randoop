@@ -43,6 +43,7 @@ import randoop.util.Randomness;
  */
 final class HelperSequenceCreator {
 
+  /** Do not instantiate. */
   private HelperSequenceCreator() {
     throw new Error("Do not instantiate");
   }
