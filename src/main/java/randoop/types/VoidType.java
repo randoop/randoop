@@ -18,7 +18,11 @@ public final class VoidType extends Type {
   /** Creates a new VoidType. */
   private VoidType() {}
 
-  /** Returns a VoidType. Actually, always returns the single canonical VoidType. */
+  /**
+   * Returns a VoidType. Actually, always returns the single canonical VoidType.
+   *
+   * @return a VoidType
+   */
   public static VoidType getVoidType() {
     return value;
   }
