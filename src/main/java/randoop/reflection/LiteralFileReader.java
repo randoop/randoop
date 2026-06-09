@@ -123,7 +123,7 @@ public final class LiteralFileReader {
   }
 
   private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());

@@ -44,7 +44,9 @@ public final class Main {
    */
   public void nonStaticMain(String[] args) {
 
-    if (args.length == 0) args = new String[] {"help"};
+    if (args.length == 0) {
+      args = new String[] {"help"};
+    }
 
     String command = args[0];
     String[] args2 = new String[args.length - 1];

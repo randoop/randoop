@@ -235,8 +235,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         && mClass.getCanonicalName().equals("java.lang.Enum")
         && mName == "compareTo" // interned
         && m.getParameterTypes().length == 1
-        && m.getParameterTypes()[0].equals(Enum.class))
+        && m.getParameterTypes()[0].equals(Enum.class)) {
       return "Enum compareTo method has restrictions on argument types";
+    }
 
     // Special case 2: Nondeterminism
     if (mName == "randomUUID") { // interned

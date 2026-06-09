@@ -1,9 +1,9 @@
 package randoop.main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1260,7 +1260,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
       Path jarFile, AccessibilityPredicate accessibility) {
-    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+    try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarFile))) {
       Set<@ClassGetName String> classNames = new TreeSet<>();
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
@@ -1417,7 +1417,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       File jarFile, String packageName, AccessibilityPredicate accessibility) {
     List<@ClassGetName String> classnames = new ArrayList<>();
     String classname = ""; // Declared here to be able to use variable in catch block
-    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+    try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarFile.toPath()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
           classname =

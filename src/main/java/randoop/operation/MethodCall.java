@@ -108,15 +108,15 @@ public final class MethodCall extends CallableOperation {
       if (receiverFormalType.isPrimitive()) {
         sb.append("((")
             .append(receiverFormalType.getFqName())
-            .append(")")
+            .append(')')
             .append(receiverVar)
-            .append(")");
+            .append(')');
       } else {
         sb.append(receiverVar);
       }
     }
 
-    sb.append(".");
+    sb.append('.');
     sb.append(methodName);
 
     StringJoiner arguments = new StringJoiner(", ", "(", ")");
@@ -201,11 +201,11 @@ public final class MethodCall extends CallableOperation {
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
-    sb.append(method.getDeclaringClass().getName()).append(".");
-    sb.append(method.getName()).append("(");
+    sb.append(method.getDeclaringClass().getName()).append('.');
+    sb.append(method.getName()).append('(');
     Class<?>[] params = method.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
-    sb.append(")");
+    sb.append(')');
     return sb.toString();
   }
 

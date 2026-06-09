@@ -15,8 +15,12 @@ public final class CollectionsExt {
   }
 
   static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
-    if (s == null) throw new IllegalArgumentException("s cannot be null.");
-    if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
+    if (s == null) {
+      throw new IllegalArgumentException("s cannot be null.");
+    }
+    if (s.isEmpty()) {
+      throw new IllegalArgumentException("s cannot be empty.");
+    }
     if (index >= s.size()) {
       throw new IllegalArgumentException(
           "Index " + index + " out of bounds for set of size " + s.size());
@@ -25,7 +29,9 @@ public final class CollectionsExt {
   }
 
   private static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
-    if (index < 0) throw new IllegalArgumentException("Index " + index + " out of bounds");
+    if (index < 0) {
+      throw new IllegalArgumentException("Index " + index + " out of bounds");
+    }
     int counter = 0;
     while (iter.hasNext()) {
       if (counter == index) {

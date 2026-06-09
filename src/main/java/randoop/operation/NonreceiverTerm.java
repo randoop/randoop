@@ -205,13 +205,27 @@ public final class NonreceiverTerm extends CallableOperation {
     if (type.equals(JavaTypes.CHAR_TYPE)) {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
     }
-    if (type.equals(JavaTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
-    if (type.equals(JavaTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
-    if (type.equals(JavaTypes.INT_TYPE)) return new NonreceiverTerm(type, 0);
-    if (type.equals(JavaTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
-    if (type.equals(JavaTypes.FLOAT_TYPE)) return new NonreceiverTerm(type, 0f);
-    if (type.equals(JavaTypes.DOUBLE_TYPE)) return new NonreceiverTerm(type, 0d);
-    if (type.equals(JavaTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
+    if (type.equals(JavaTypes.BYTE_TYPE)) {
+      return new NonreceiverTerm(type, (byte) 0);
+    }
+    if (type.equals(JavaTypes.SHORT_TYPE)) {
+      return new NonreceiverTerm(type, (short) 0);
+    }
+    if (type.equals(JavaTypes.INT_TYPE)) {
+      return new NonreceiverTerm(type, 0);
+    }
+    if (type.equals(JavaTypes.LONG_TYPE)) {
+      return new NonreceiverTerm(type, 0L);
+    }
+    if (type.equals(JavaTypes.FLOAT_TYPE)) {
+      return new NonreceiverTerm(type, 0f);
+    }
+    if (type.equals(JavaTypes.DOUBLE_TYPE)) {
+      return new NonreceiverTerm(type, 0d);
+    }
+    if (type.equals(JavaTypes.BOOLEAN_TYPE)) {
+      return new NonreceiverTerm(type, false);
+    }
     return new NonreceiverTerm(type, null);
   }
 
@@ -275,7 +289,9 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   @SuppressWarnings("signature") // parsing
   public static TypedOperation parse(String s) throws OperationParseException {
-    if (s == null) throw new IllegalArgumentException("s cannot be null.");
+    if (s == null) {
+      throw new IllegalArgumentException("s cannot be null.");
+    }
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
       String msg =

@@ -57,14 +57,13 @@ public final class EqualsTransitive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(Globals.lineSep);
     b.append("// Transitivity of equals");
     b.append(Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2)");
-    b.append(");");
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2));");
     return b.toString();
   }
 }

@@ -205,7 +205,9 @@ public class ProgressDisplay extends Thread {
 
   /** Clear the display; good to do before printing to System.out. */
   public void clear() {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
     System.out.print("\r" + StringsPlume.rpad("", 199)); // erase about 200 characters of text
@@ -220,7 +222,9 @@ public class ProgressDisplay extends Thread {
    * @param withTime if true, print time and memory usage
    */
   public void display(boolean withTime) {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     display(message(withTime));
   }
 
@@ -230,7 +234,9 @@ public class ProgressDisplay extends Thread {
    * @param message the message to display
    */
   private void display(String message) {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     synchronized (print_synchro) {
       System.out.print(
           (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + message);

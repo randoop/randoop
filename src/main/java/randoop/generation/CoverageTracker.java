@@ -72,9 +72,24 @@ public class CoverageTracker {
   private void collectCoverageInformation() {
     try {
       // Retrieve the execution data from the Jacoco Java agent.
-      final InputStream execDataStream;
-      try {
-        execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+
+      try (InputStream execDataStream =
+          new ByteArrayInputStream(RT.getAgent().getExecutionData(false))) {
+
+        final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
+
+        // The reader requires a session info visitor, however we do not need any information from
+        // it.
+        reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
+        reader.setExecutionDataVisitor(
+            new IExecutionDataVisitor() {
+              @Override
+              public void visitClassExecution(final ExecutionData data) {
+                // Add the execution data for each class into the execution data store.
+                executionData.put(data);
+              }
+            });
+        reader.read();
       } catch (IllegalStateException e) {
         System.out.println(
             "If the error notes: 'JaCoCo agent not started', the issue is likely "
@@ -85,21 +100,6 @@ public class CoverageTracker {
                 + " -javaagent:/path/to/jacocoagent.jar' to the command line argument.");
         throw e;
       }
-
-      final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
-
-      // The reader requires a session info visitor, however we do not need any information from it.
-      reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
-      reader.setExecutionDataVisitor(
-          new IExecutionDataVisitor() {
-            @Override
-            public void visitClassExecution(final ExecutionData data) {
-              // Add the execution data for each class into the execution data store.
-              executionData.put(data);
-            }
-          });
-      reader.read();
-      execDataStream.close();
     } catch (IOException e) {
       System.err.println("Error in Coverage Tracker in collecting coverage information.");
       e.printStackTrace(System.err);

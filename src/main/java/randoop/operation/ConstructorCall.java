@@ -41,7 +41,9 @@ public final class ConstructorCall extends CallableOperation {
    * @param constructor reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
-    if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
+    if (constructor == null) {
+      throw new IllegalArgumentException("constructor should not be null.");
+    }
     this.constructor = constructor;
     this.constructor.setAccessible(true);
   }
@@ -100,7 +102,7 @@ public final class ConstructorCall extends CallableOperation {
     b.append(isMemberClass ? inputVars.get(0) + "." : "")
         .append("new ")
         .append(isMemberClass ? declaringClassType.getSimpleName() : declaringClassType.getFqName())
-        .append("(");
+        .append('(');
 
     for (int i = (isMemberClass ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isMemberClass ? 1 : 0)) {
@@ -109,13 +111,13 @@ public final class ConstructorCall extends CallableOperation {
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        b.append("(").append(inputTypes.get(i).getFqName()).append(")");
+        b.append('(').append(inputTypes.get(i).getFqName()).append(')');
       }
 
       String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }
-    b.append(")");
+    b.append(')');
   }
 
   /**
@@ -197,7 +199,7 @@ public final class ConstructorCall extends CallableOperation {
     sb.append(constructor.getName()).append(".<init>(");
     Class<?>[] params = constructor.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
-    sb.append(")");
+    sb.append(')');
     return sb.toString();
   }
 

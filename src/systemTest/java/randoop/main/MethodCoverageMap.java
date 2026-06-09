@@ -50,7 +50,7 @@ class MethodCoverageMap {
       throws IOException {
     MethodCoverageMap coverageMap = new MethodCoverageMap();
     ExecFileLoader fileLoader = new ExecFileLoader();
-    try (FileInputStream in = new FileInputStream(execFile)) {
+    try (FileInputStream in = Files.newInputStream(Paths.get(execFile))) {
       fileLoader.load(in);
     }
 

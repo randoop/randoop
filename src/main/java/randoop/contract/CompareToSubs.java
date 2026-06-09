@@ -70,13 +70,12 @@ public final class CompareToSubs extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
+    StringBuilder b = new StringBuilder(256);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
     b.append(
-        "!(x0.compareTo(x1) == 0)"
-            + " || (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))");
-    b.append(");");
+        "\", !(x0.compareTo(x1) == 0) || (Math.signum(x0.compareTo(x2)) =="
+            + " Math.signum(x1.compareTo(x2))));");
     return b.toString();
   }
 }

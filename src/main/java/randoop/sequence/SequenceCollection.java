@@ -112,7 +112,9 @@ public class SequenceCollection {
     "nullness:method.invocation" // sufficiently initialized for addAll()
   })
   public SequenceCollection(Collection<Sequence> initialSequences) {
-    if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
+    if (initialSequences == null) {
+      throw new IllegalArgumentException("initialSequences is null.");
+    }
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.sequenceCount = 0;

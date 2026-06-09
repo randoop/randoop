@@ -24,14 +24,20 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
   @Override
   public boolean add(E elt) {
-    if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
-    if (contains(elt)) throw new IllegalArgumentException("set already contains elt " + elt);
+    if (elt == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
+    if (contains(elt)) {
+      throw new IllegalArgumentException("set already contains elt " + elt);
+    }
     return map.add(elt, true);
   }
 
   @Override
   public boolean contains(@MustCallUnknown @UnknownSignedness Object elt) {
-    if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (elt == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
     return map.containsKey(elt);
   }
 

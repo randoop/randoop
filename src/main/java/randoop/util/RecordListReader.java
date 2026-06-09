@@ -42,7 +42,9 @@ public class RecordListReader {
       throw new IllegalArgumentException(
           "No record type given: " + (recordType == null ? "null" : "\"\""));
     }
-    if (proc == null) throw new IllegalArgumentException("proc cannot be null.");
+    if (proc == null) {
+      throw new IllegalArgumentException("proc cannot be null.");
+    }
     this.processor = proc;
     this.startMarker = "START " + recordType;
     this.endMarker = "END " + recordType;
@@ -96,7 +98,9 @@ public class RecordListReader {
     List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
-      if (line.length() == 0 || line.charAt(0) == '#') continue;
+      if (line.length() == 0 || line.charAt(0) == '#') {
+        continue;
+      }
       ret.add(line);
       line = nextNWCLine(reader);
     }
@@ -105,10 +109,14 @@ public class RecordListReader {
 
   private static @Nullable String nextNWCLine(BufferedReader reader) throws IOException {
     String line = reader.readLine();
-    if (line != null) line = line.trim();
+    if (line != null) {
+      line = line.trim();
+    }
     while (line != null && (line.length() == 0 || line.indexOf('#') == 0)) {
       line = reader.readLine();
-      if (line != null) line = line.trim();
+      if (line != null) {
+        line = line.trim();
+      }
     }
     return line;
   }

@@ -89,7 +89,7 @@ public class EnumConstant extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append(declaringType.getFqName()).append(".").append(this.value.name());
+    b.append(declaringType.getFqName()).append('.').append(this.value.name());
   }
 
   /**

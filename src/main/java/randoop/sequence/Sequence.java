@@ -111,7 +111,9 @@ public final class Sequence {
    * @return a {@link Sequence} consisting of a statement created with the object
    */
   public static Sequence createSequenceForPrimitive(Object value) {
-    if (value == null) throw new IllegalArgumentException("value is null");
+    if (value == null) {
+      throw new IllegalArgumentException("value is null");
+    }
     Type type = Type.forValue(value);
 
     if (!type.isNonreceiverType()) {
@@ -327,7 +329,9 @@ public final class Sequence {
    */
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
-    if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
+    if (value.sequence != this) {
+      throw new IllegalArgumentException("value.owner != this");
+    }
     return statements.get(value.index);
   }
 
@@ -430,7 +434,9 @@ public final class Sequence {
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
       int statementPosition, Variable v) {
-    if (v.index >= statementPosition) throw new IllegalArgumentException();
+    if (v.index >= statementPosition) {
+      throw new IllegalArgumentException();
+    }
     return new RelativeNegativeIndex(-(statementPosition - v.index));
   }
 
@@ -1113,7 +1119,7 @@ public final class Sequence {
     } catch (RuntimeException e) {
       // Saw some other exception that is not a parse error.
       // Throw an error, giving information on the problem.
-      StringBuilder b = new StringBuilder();
+      StringBuilder b = new StringBuilder(128);
       b.append(
               "Error while parsing the following list of strings as a sequence (error was at"
                   + " index ")

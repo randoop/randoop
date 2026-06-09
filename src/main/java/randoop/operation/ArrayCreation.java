@@ -84,7 +84,7 @@ public class ArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
-    b.append("new").append(" ").append(this.elementType.getFqName());
+    b.append("new").append(' ').append(this.elementType.getFqName());
     b.append("[ ");
     String param = getArgumentString(inputVar);
     b.append(param).append(" ]");

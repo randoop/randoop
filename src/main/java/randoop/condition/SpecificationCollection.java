@@ -319,10 +319,8 @@ import randoop.util.Util;
       final Map<AccessibleObject, OperationSpecification> specificationMap,
       final MultiMap<OperationSignature, Method> signatureToMethods) {
     Map<String, ?> myEmptyMap = Collections.emptyMap();
-    FileSystem zipFS;
-    try {
-      URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
-      zipFS = FileSystems.newFileSystem(uri, myEmptyMap);
+    URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
+    try (FileSystem zipFS = FileSystems.newFileSystem(uri, myEmptyMap)) {
       for (Path root : zipFS.getRootDirectories()) {
         Files.walkFileTree(
             root,

@@ -61,7 +61,7 @@ class UncheckedCast extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append("(").append(type.getFqName()).append(")");
+    b.append('(').append(type.getFqName()).append(')');
     int i = 0;
     String param = getArgumentString(inputVars.get(i));
     b.append(param);

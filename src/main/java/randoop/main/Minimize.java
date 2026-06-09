@@ -40,8 +40,8 @@ import com.github.javaparser.ast.visitor.CloneVisitor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -292,7 +292,7 @@ public class Minimize extends CommandHandler {
 
     // Read and parse input Java file.
     CompilationUnit compilationUnit;
-    try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
+    try (InputStream inputStream = Files.newInputStream(file)) {
       ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
       if (parseCompilationUnit.isSuccessful()) {
         compilationUnit = parseCompilationUnit.getResult().get();
@@ -1497,7 +1497,9 @@ public class Minimize extends CommandHandler {
     }
     int positionOfPreviousChild = -1;
     for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
-      if (!(everything.get(i) instanceof Comment)) positionOfPreviousChild = i;
+      if (!(everything.get(i) instanceof Comment)) {
+        positionOfPreviousChild = i;
+      }
     }
     for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
       Node nodeToPrint = everything.get(i);

@@ -168,7 +168,7 @@ public final class RunCommand {
         sb.append(source);
         sb.append("=\"");
         sb.append(StringsPlume.joinLines(lines));
-        sb.append("\"");
+        sb.append('\"');
         sb.append(Globals.lineSep);
       } else {
         sb.append(", ");

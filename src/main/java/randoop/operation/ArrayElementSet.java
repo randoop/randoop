@@ -46,10 +46,10 @@ class ArrayElementSet extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
 
-    b.append(inputVars.get(ARRAY).getName()).append("[");
+    b.append(inputVars.get(ARRAY).getName()).append('[');
     Variable indexVariable = inputVars.get(INDEX);
     String index = getArgumentString(indexVariable);
-    b.append(index).append("]").append(" = ");
+    b.append(index).append(']').append(" = ");
     String value = getArgumentString(inputVars.get(VALUE));
     b.append(value);
   }

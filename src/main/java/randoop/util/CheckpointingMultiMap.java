@@ -147,7 +147,9 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
   }
 
   private void undoLastOp() {
-    if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
+    if (ops.isEmpty()) {
+      throw new IllegalStateException("ops empty.");
+    }
     OpKeyVal last = ops.remove(ops.size() - 1);
     Ops op = last.op;
     K key = last.key;
@@ -169,7 +171,9 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
 
   @Override
   public Set<V> getValues(K key) {
-    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (key == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
     return map.getOrDefault(key, Collections.emptySet());
   }
 
@@ -180,7 +184,9 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
    * @return true if this map contains the given key
    */
   public boolean containsKey(@UnknownSignedness Object key) {
-    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (key == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
     return map.containsKey(key);
   }
 

@@ -203,7 +203,7 @@ public class SequenceTests {
   private static String failureMessage(
       String testId, String msg, List<String> expected, List<String> actual) {
     StringBuilder b = new StringBuilder();
-    b.append("Failure in test ").append(testId).append(": ").append(msg).append(".");
+    b.append("Failure in test ").append(testId).append(": ").append(msg).append('.');
     b.append("").append(Globals.lineSep).append("Expected:").append(Globals.lineSep).append("");
     for (int i = 0; i < expected.size(); i++) {
       b.append(i).append(": ").append(expected.get(i)).append(Globals.lineSep);

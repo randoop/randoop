@@ -564,11 +564,11 @@ public final class JUnitCreator {
       return null;
     }
     StringBuilder blockText = new StringBuilder();
-    blockText.append("{").append(Globals.lineSep);
+    blockText.append('{').append(Globals.lineSep);
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append("}");
+    blockText.append(Globals.lineSep).append('}');
     return javaParser.parseBlock(blockText.toString()).getResult().get();
   }
 }

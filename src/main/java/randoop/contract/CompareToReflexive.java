@@ -56,9 +56,11 @@ public final class CompareToReflexive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(128);
     b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
+    b.append("\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", ");
     b.append("x0.compareTo(x0) == 0");
     b.append(");");
     return b.toString();
