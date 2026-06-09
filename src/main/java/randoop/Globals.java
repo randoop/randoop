@@ -12,7 +12,12 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
-public class Globals {
+public final class Globals {
+
+  /** Do not instantiate. */
+  private Globals() {
+    throw new Error("Do not instantiate");
+  }
 
   /** The version number for Randoop. */
   public static final String RANDOOP_VERSION = "4.3.4";
@@ -25,7 +30,10 @@ public class Globals {
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */
-  private static class NullOutputStream extends OutputStream {
+  private static final class NullOutputStream extends OutputStream {
+    /** Creates a new NullOutputStream. */
+    public NullOutputStream() {}
+
     @Override
     public void write(@PolySigned int b) throws IOException {}
   }

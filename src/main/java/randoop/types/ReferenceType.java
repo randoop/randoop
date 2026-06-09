@@ -19,6 +19,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class ReferenceType extends Type {
 
+  /** Creates a ReferenceType. */
+  public ReferenceType() {}
+
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object. Creates arrays,
    * classes, and interfaces. For arrays, calls {@link ArrayType#forClass(Class)}. For other

@@ -10,7 +10,8 @@ import randoop.types.TypeTuple;
  * <pre>(x0.compareTo(x1) == 0)
  * &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))</pre>
  */
-public class CompareToSubs extends ObjectContract {
+public final class CompareToSubs extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToSubs instance = new CompareToSubs();
 
   private CompareToSubs() {}

@@ -321,6 +321,10 @@ class LazyParameterBound extends ParameterBound {
 
   /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
+    /** Creates a new LazyBoundException. */
+    public LazyBoundException() {}
+
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 20190508;
   }
 }

@@ -9,7 +9,8 @@ import randoop.types.TypeTuple;
  * The contract: Checks the transitivity of equals for an object {@code (x0.equals(x1) &&
  * x1.equals(x2)) ==> x0.equals(x2)}.
  */
-public class EqualsTransitive extends ObjectContract {
+public final class EqualsTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsTransitive instance = new EqualsTransitive();
 
   private EqualsTransitive() {}

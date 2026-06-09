@@ -17,7 +17,12 @@ import randoop.types.Type;
  *   <li>{@code randoop.operation.Operation}
  * </ul>
  */
-class TypeArguments {
+final class TypeArguments {
+
+  /** Do not instantiate. */
+  private TypeArguments() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Parses comma-no-space-delimited type argument string and returns a list of types.

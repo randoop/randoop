@@ -12,7 +12,7 @@ import randoop.sequence.Sequence;
  * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
  * user, and passes control to whoever does.
  */
-public class Main {
+public final class Main {
 
   // Handlers for user-visible commands.
   public static List<CommandHandler> handlers;
@@ -24,7 +24,18 @@ public class Main {
     handlers.add(new Minimize());
   }
 
-  // The main method simply calls nonStaticMain.
+  /** Creates a new Main. */
+  private Main() {
+    // Nothing to do.
+  }
+
+  /**
+   * The entry point.
+   *
+   * <p>This method simply calls {@link #nonStaticMain}.
+   *
+   * @param args the command-line arguments
+   */
   public static void main(String[] args) {
 
     Main main = new Main();

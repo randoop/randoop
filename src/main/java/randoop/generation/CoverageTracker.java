@@ -186,7 +186,7 @@ public class CoverageTracker {
   }
 
   /** An {@link ISessionInfoVisitor} that does nothing. */
-  private static class DummySessionInfoVisitor implements ISessionInfoVisitor {
+  private static final class DummySessionInfoVisitor implements ISessionInfoVisitor {
     /** The singleton instance of this class. */
     public static final DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
 

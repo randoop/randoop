@@ -23,7 +23,7 @@ import org.plumelib.util.StringsPlume;
  * <p>Note: this is similar to the Randoop {@code randoop.reflection.RawSignature} class, but uses
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
-public class MethodSignature implements Comparable<MethodSignature> {
+public final class MethodSignature implements Comparable<MethodSignature> {
 
   /** The fully-qualified class name. */
   private final String classname;

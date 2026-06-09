@@ -1,10 +1,19 @@
 package randoop.util;
 
-public class CountDownTimer {
+/** A countdown timer. */
+public final class CountDownTimer {
 
+  /** The total time spent. */
   private long totalTime;
+
+  /** The start time. */
   private long startTime;
 
+  /**
+   * Creates a new countdown timer that lasts the given number of milliseconds.
+   *
+   * @param timeMillis the duration of the timer in milliseconds
+   */
   private CountDownTimer(long timeMillis) {
     this.totalTime = timeMillis;
     this.startTime = System.currentTimeMillis();

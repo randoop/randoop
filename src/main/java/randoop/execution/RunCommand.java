@@ -19,7 +19,12 @@ import randoop.util.Log;
  * Class providing the {@link #run(List, Path, long)} method to run a command in a separate process
  * with a timeout.
  */
-public class RunCommand {
+public final class RunCommand {
+
+  /** Do not instantiate. */
+  private RunCommand() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Runs the given command synchronously in the given directory using the given timeout. If the
@@ -180,6 +185,7 @@ public class RunCommand {
    */
   public static class CommandException extends Throwable {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;
 
     /**

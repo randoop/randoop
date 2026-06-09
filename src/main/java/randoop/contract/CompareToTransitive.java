@@ -12,7 +12,8 @@ import randoop.types.TypeTuple;
  *  => (x0.compareTo(x2) > 0)
  * }</pre>
  */
-public class CompareToTransitive extends ObjectContract {
+public final class CompareToTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToTransitive instance = new CompareToTransitive();
 
   private CompareToTransitive() {}

@@ -8,6 +8,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class ThrowClassNameError implements ClassNameErrorHandler {
 
+  /** Creates a ThrowClassNameError. */
+  public ThrowClassNameError() {}
+
   @Override
   public void handle(String className) {
     handle(className, null);

@@ -38,6 +38,9 @@ import org.plumelib.reflection.Signatures;
  */
 public abstract class Type implements Comparable<Type> {
 
+  /** Creates a Type. */
+  public Type() {}
+
   /**
    * Translates a {@code Class} into a {@link Type} object. For primitive types, creates a {@link
    * PrimitiveType} object. For reference types, delegates to {@link ReferenceType#forClass(Class)}.

@@ -18,6 +18,9 @@ public abstract class AccessibilityPredicate {
   /** A predicate that always returns true. */
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 
+  /** Creates a AccessibilityPredicate. */
+  public AccessibilityPredicate() {}
+
   /**
    * Returns true if this AccessibilityPredicate considers a {@link Class} accessible.
    *
@@ -45,7 +48,10 @@ public abstract class AccessibilityPredicate {
   public abstract boolean isAccessible(Field f);
 
   /** AnyAccessibilityPredicate is a {@link AccessibilityPredicate} that always returns true. */
-  private static class AnyAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new AnyAccessibilityPredicate. */
+    public AnyAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -87,7 +93,10 @@ public abstract class AccessibilityPredicate {
    * PublicAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is public.
    */
-  private static class PublicAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new PublicAccessibilityPredicate. */
+    public PublicAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -121,8 +130,11 @@ public abstract class AccessibilityPredicate {
       return isAccessible(f.getModifiers() & Modifier.fieldModifiers());
     }
 
-    /*
+    /**
      * Returns true if the provided modifiers indicate public bit is set.
+     *
+     * @param mods Java modifier bits
+     * @return true if the public bit is set
      */
     private boolean isAccessible(int mods) {
       return Modifier.isPublic(mods);
@@ -224,7 +236,10 @@ public abstract class AccessibilityPredicate {
    * NotPrivateAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the
    * case that the class/method/constructor/field is not declared to be private.
    */
-  private static class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new NotPrivateAccessibilityPredicate. */
+    public NotPrivateAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}

@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * A TestChecks represents a set of Checks, and possibly a single ExceptionCheck.
  *
+ * @param <T> the type of checks in this
  * @see RegressionChecks
  * @see ErrorRevealingChecks
  * @see InvalidChecks

@@ -15,6 +15,9 @@ import randoop.types.TypeTuple;
  */
 public final class IsNotNull extends ObjectContract {
 
+  /** Creates a IsNotNull. */
+  public IsNotNull() {}
+
   @Override
   public boolean equals(@Nullable Object o) {
     if (o == this) {

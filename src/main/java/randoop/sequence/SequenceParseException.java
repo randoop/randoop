@@ -4,9 +4,13 @@ import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 
+/** Exception thrown when a sequence cannot be parsed. */
 public class SequenceParseException extends Exception {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
+
+  /** The error message for the parse exception. */
   private final String message;
 
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {

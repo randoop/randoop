@@ -15,6 +15,9 @@ import randoop.types.TypeTuple;
  */
 public abstract class CallableOperation implements Operation {
 
+  /** Creates a CallableOperation. */
+  public CallableOperation() {}
+
   @Override
   public boolean isStatic() {
     return false;

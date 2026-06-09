@@ -14,7 +14,7 @@ import java.util.List;
  * <p>This class is for convenience: its field are an efficient and concise way to obtain well-known
  * types.
  */
-public class JavaTypes {
+public final class JavaTypes {
   /** The {@code boolean} type. */
   public static final PrimitiveType BOOLEAN_TYPE = PrimitiveType.forClass(boolean.class);
 
@@ -89,6 +89,11 @@ public class JavaTypes {
     types.add(LONG_TYPE);
     types.add(SHORT_TYPE);
     PRIMITIVE_TYPES = Collections.unmodifiableList(types);
+  }
+
+  /** Do not instantiate. */
+  private JavaTypes() {
+    throw new Error("Do not instantiate");
   }
 
   /**

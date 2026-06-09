@@ -29,7 +29,7 @@ import randoop.util.Util;
  * (which has preconditions, postconditions, and throws conditions) to its executable version,
  * {@link ExecutableSpecification}.
  */
-public class SpecificationTranslator {
+public final class SpecificationTranslator {
 
   /** The base name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_BASE_NAME = "x";
