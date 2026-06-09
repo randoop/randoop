@@ -1276,7 +1276,7 @@ public class Minimize extends CommandHandler {
   /** Sorts ImportDeclaration objects by their name. */
   private static final class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
     /** Creates a new ImportDeclaration. */
-    public ImportDeclaration() {}
+    public ImportDeclarationComparator() {}
 
     @Override
     public int compare(ImportDeclaration o1, ImportDeclaration o2) {
