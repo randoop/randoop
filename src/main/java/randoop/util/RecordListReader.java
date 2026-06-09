@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FilesPlume;
+import randoop.main.RandoopBug;
 
 /**
  * Reads a list of records from a text file, where a record is partially specified by the client of
