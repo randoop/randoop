@@ -15,10 +15,15 @@ import randoop.util.Util;
  * Utility methods for setting up selection and operation-history logging in integration tests that
  * use a generator.
  */
-public class TestUtils {
+public final class TestUtils {
 
-  // Setting to true causes system test runNoOutputTest to fail.
+  /** Setting to true causes system test runNoOutputTest to fail. */
   static boolean debug = false;
+
+  /** Do not instantiate. */
+  private TestUtils() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Use system properties to set command-line arguments for logging.

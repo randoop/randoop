@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-PrimitiveType">section
  * 4.2</a>.
  */
-public class PrimitiveType extends Type {
+public final class PrimitiveType extends Type {
 
   /** The runtime class of the primitive type. */
   private final Class<?> runtimeClass;

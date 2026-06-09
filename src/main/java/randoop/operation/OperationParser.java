@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @see randoop.sequence.Sequence#parse(List)
  */
-public class OperationParser {
+public final class OperationParser {
 
   private OperationParser() {
     throw new Error("Do not instantiate");

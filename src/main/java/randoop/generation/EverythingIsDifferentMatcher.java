@@ -4,6 +4,9 @@ public class EverythingIsDifferentMatcher implements StateMatcher {
 
   private int size = 0;
 
+  /** Creates a EverythingIsDifferentMatcher. */
+  public EverythingIsDifferentMatcher() {}
+
   @Override
   public boolean add(Object object) {
     size++;

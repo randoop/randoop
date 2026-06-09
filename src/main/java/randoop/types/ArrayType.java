@@ -21,7 +21,7 @@ import org.checkerframework.dataflow.qual.Pure;
  * The type preceding the rightmost set of brackets is the <i>component</i> type, while the type
  * preceding the brackets is the <i>element</i> type. An array may have components of any type.
  */
-public class ArrayType extends ReferenceType {
+public final class ArrayType extends ReferenceType {
 
   /** The type of components in this array. */
   private final Type componentType;

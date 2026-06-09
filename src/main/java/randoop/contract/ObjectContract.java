@@ -39,6 +39,9 @@ import randoop.util.Log;
  */
 public abstract class ObjectContract {
 
+  /** Creates a ObjectContract. */
+  public ObjectContract() {}
+
   /**
    * The number of values that this contract is over.
    *

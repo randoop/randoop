@@ -10,7 +10,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>The decision to have {@code void} be a separate "type" is counter to the fact that the
  * reflection method {@code Class.isPrimitive()} returns true for {@code void}.
  */
-public class VoidType extends Type {
+public final class VoidType extends Type {
 
   private static final VoidType value = new VoidType();
 

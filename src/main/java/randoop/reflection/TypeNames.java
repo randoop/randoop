@@ -11,7 +11,12 @@ import randoop.types.PrimitiveTypes;
  *   <li>get the {@link Class} object for a string representing a class or primitive type.
  * </ul>
  */
-public class TypeNames {
+public final class TypeNames {
+
+  /** Do not instantiate. */
+  private TypeNames() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Returns {@link Class} object for a fully-qualified class name or primitive type name.

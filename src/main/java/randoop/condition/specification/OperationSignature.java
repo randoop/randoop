@@ -36,7 +36,7 @@ import org.plumelib.util.CollectionsPlume;
  * declaring class of the method, the method will not be found, and the enclosing specification will
  * not be used.
  */
-public class OperationSignature {
+public final class OperationSignature {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools

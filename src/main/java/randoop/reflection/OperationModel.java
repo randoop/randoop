@@ -78,7 +78,7 @@ import randoop.util.Util;
  * <p>This class manages all information about generic classes internally, and instantiates any type
  * variables in operations before returning them.
  */
-public class OperationModel {
+public final class OperationModel {
 
   /** The set of class declaration types for this model. */
   // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()

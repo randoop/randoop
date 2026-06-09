@@ -36,6 +36,9 @@ import org.plumelib.util.CollectionsPlume;
  */
 public abstract class ParameterBound {
 
+  /** Creates a ParameterBound. */
+  public ParameterBound() {}
+
   /**
    * Constructs a parameter bound given a {@link ReferenceType}.
    *

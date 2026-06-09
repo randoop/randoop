@@ -9,6 +9,9 @@ import java.util.function.Predicate;
  */
 public class AlwaysFalse<T> implements Predicate<T> {
 
+  /** Creates a AlwaysFalse. */
+  public AlwaysFalse() {}
+
   /**
    * {@inheritDoc}
    *

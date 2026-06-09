@@ -48,7 +48,7 @@ import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 @SuppressWarnings("deprecation") // TODO: fix. "new ClassOrInterfaceType()" does not handle generics
-public class JUnitCreator {
+public final class JUnitCreator {
 
   /** An instance of a Java parser. */
   static JavaParser javaParser = new JavaParser();

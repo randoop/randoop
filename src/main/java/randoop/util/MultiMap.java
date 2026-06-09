@@ -137,7 +137,7 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
    * @param <K> the type of keys
    * @param <V> the type of values
    */
-  private static class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
+  private static final class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
       extends MultiMap<K, V> {
 
     /** The canonical EmptyMultiMap. */

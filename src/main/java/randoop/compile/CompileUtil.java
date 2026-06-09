@@ -8,7 +8,12 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 /** Utilities for compiler classes. */
-class CompileUtil {
+final class CompileUtil {
+
+  /** Do not instantiate. */
+  private CompileUtil() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Converts the path string to a URI for use by the file manager of the compiler.

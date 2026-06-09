@@ -11,7 +11,7 @@ import randoop.types.Type;
  * randoop.operation.Operation} that is a {@link randoop.operation.FieldGet} or {@link
  * randoop.operation.FieldSet} operation.
  */
-public class FieldParser {
+public final class FieldParser {
 
   private FieldParser() {
     throw new Error("Do not instantiate");

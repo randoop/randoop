@@ -863,7 +863,8 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts a type by its simple name. */
-  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+  private static final class ClassOrInterfaceTypeComparator
+      implements Comparator<ClassOrInterfaceType> {
     @Override
     public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
       return o1.toString().compareTo(o2.toString());
@@ -1270,7 +1271,7 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts ImportDeclaration objects by their name. */
-  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+  private static final class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
     @Override
     public int compare(ImportDeclaration o1, ImportDeclaration o2) {
       return o1.getName().toString().compareTo(o2.getName().toString());

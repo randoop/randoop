@@ -5,6 +5,9 @@ import randoop.sequence.ExecutableSequence;
 /** A visitor that does nothing and adds no checks. */
 public final class DummyVisitor implements ExecutionVisitor {
 
+  /** Creates a DummyVisitor. */
+  public DummyVisitor() {}
+
   @Override
   public void initialize(ExecutableSequence eseq) {
     // do nothing.

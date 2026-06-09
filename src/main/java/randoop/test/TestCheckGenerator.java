@@ -12,6 +12,9 @@ import randoop.sequence.ExecutableSequence;
 // Abstract class instead of an interface to permit default implementation of hasGenerator().
 public abstract class TestCheckGenerator {
 
+  /** Creates a TestCheckGenerator. */
+  public TestCheckGenerator() {}
+
   /**
    * Generate a {@link TestChecks} object for the executed sequence {@code eseq} based on the
    * criteria of this generator.

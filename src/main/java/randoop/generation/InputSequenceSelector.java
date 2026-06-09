@@ -6,6 +6,10 @@ import randoop.sequence.Sequence;
 
 /** Interface for selecting sequences as input for creating new sequences. */
 public abstract class InputSequenceSelector {
+
+  /** Creates a InputSequenceSelector. */
+  public InputSequenceSelector() {}
+
   /**
    * Choose a sequence used as input for creating a new sequence.
    *
