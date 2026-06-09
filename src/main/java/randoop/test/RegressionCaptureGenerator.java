@@ -116,11 +116,12 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     List<Check> checks = new ArrayList<>();
     ExceptionCheck exceptionCheck = null;
 
-    int finalIndex = eseq.sequence.size() - 1;
+    int size = eseq.sequence.size();
+    int finalIndex = size - 1;
 
     // Capture checks for each value created/returned by a statement.
     // Does not currently capture checks for values side-effected by a statement.
-    for (int i = 0; i < eseq.sequence.size(); i++) {
+    for (int i = 0; i < size; i++) {
 
       Statement statement = eseq.sequence.getStatement(i);
       ExecutionOutcome result = eseq.getResult(i);
@@ -315,11 +316,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     }
 
     // Must return non-void.
-    if (m.getOutputType().isVoid()) {
+    Type outputType = m.getOutputType();
+    if (outputType.isVoid()) {
       return false;
     }
-
-    Type outputType = m.getOutputType();
 
     Class<?> outputClass;
     try {

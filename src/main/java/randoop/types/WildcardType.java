@@ -48,17 +48,15 @@ class WildcardType extends ParameterType {
    */
   public static WildcardType forType(java.lang.reflect.WildcardType type) {
     // Note: every wildcard has an upper bound, so need to check lower first
-    if (type.getLowerBounds().length > 0) {
-      assert type.getLowerBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(
-          ParameterBound.forTypes(new HashSet<>(0), type.getLowerBounds()), false);
+    java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
+    if (lowerBounds.length > 0) {
+      assert lowerBounds.length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      return new WildcardType(ParameterBound.forTypes(new HashSet<>(0), lowerBounds), false);
     }
-    if (type.getUpperBounds().length > 0) {
-      assert type.getUpperBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(
-          ParameterBound.forTypes(new HashSet<>(0), type.getUpperBounds()), true);
+    java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
+    if (upperBounds.length > 0) {
+      assert upperBounds.length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      return new WildcardType(ParameterBound.forTypes(new HashSet<>(0), upperBounds), true);
     }
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }

@@ -6,7 +6,9 @@ import randoop.Globals;
 
 public class SequenceParseException extends Exception {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
+
   private final String message;
 
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {

@@ -958,19 +958,20 @@ public class ForwardGenerator extends AbstractGenerator {
       if (isReceiver
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
+        Type randomVariableType = randomVariable.getType();
+        Statement creatingStatement = chosenSeq.getCreatingStatement(randomVariable);
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);
         System.out.printf("  isReceiver = %s%n", isReceiver);
         System.out.printf("  randomVariable = %s%n", randomVariable);
-        System.out.printf("    getType() = %s%n", randomVariable.getType());
-        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
+        System.out.printf("    getType() = %s%n", randomVariableType);
+        System.out.printf("    isPrimitive = %s%n", randomVariableType.isPrimitive());
         System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
-        System.out.printf(
-            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf("    getCreatingStatement = %s%n", creatingStatement);
         System.out.printf(
             "    isNonreceivingInitialization = %s%n",
-            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+            creatingStatement.isNonreceivingInitialization());
         continue;
         // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");

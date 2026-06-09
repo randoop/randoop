@@ -5,6 +5,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.condition.ExecutableSpecification;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.ParameterType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -69,6 +70,11 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;
+      // If the output type is an uninstantiated type variable, getRuntimeClass() would throw.
+      // In that case, skip the cast and return the value as-is.
+      if (getOutputType() instanceof ParameterType) {
+        return outcome;
+      }
       Object result;
       try {
         result = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());

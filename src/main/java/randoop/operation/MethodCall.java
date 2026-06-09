@@ -251,12 +251,13 @@ public final class MethodCall extends CallableOperation {
     } catch (OperationParseException e) {
       throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
     }
+    Class<?> runtimeClass = classType.getRuntimeClass();
     Method m = null;
     try {
-      m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
+      m = runtimeClass.getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
       try {
-        m = classType.getRuntimeClass().getMethod(opname, typeArguments);
+        m = runtimeClass.getMethod(opname, typeArguments);
       } catch (NoSuchMethodException e2) {
         String msg =
             "Method "

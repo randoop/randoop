@@ -6,6 +6,7 @@ import randoop.Globals;
 
 /** Exception for classname errors. */
 public class RandoopClassNameError extends Error {
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -3625971508842588810L;
 
   /** The erroneous class name. */

@@ -40,12 +40,14 @@ final class CompileUtil {
       PrintWriter out, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
-        if (diag.getSource() != null) {
-          String sourceName = diag.getSource().toUri().toString();
-          if (diag.getLineNumber() >= 0) {
+        JavaFileObject source = diag.getSource();
+        if (source != null) {
+          String sourceName = source.toUri().toString();
+          long lineNumber = diag.getLineNumber();
+          if (lineNumber >= 0) {
             out.printf(
                 "Error on line %d, col %d of %s%n%s%n",
-                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
+                lineNumber, diag.getColumnNumber(), sourceName, diag.getMessage(null));
           } else {
             out.printf("%s%n", diag.getMessage(null));
           }

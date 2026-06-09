@@ -9,6 +9,7 @@ import java.nio.file.Path;
  */
 public class RandoopSpecificationError extends Error {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 3517219213949862963L;
 
   /** Which file was being read when the error occurred. */

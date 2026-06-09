@@ -86,6 +86,7 @@ public class FileCompiler {
   /** Exception for errors during compilation using {@link FileCompiler}. */
   public static class FileCompilerException extends Throwable {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 8362158619216912395L;
 
     /** The list of source files for the compilation. */

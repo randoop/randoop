@@ -156,7 +156,7 @@ public final class RunCommand {
     }
 
     /**
-     * Print to sb the lines, or say how many lines there were.
+     * Print to {@code sb} the lines, or say how many lines there were.
      *
      * @param source the source of the lines, such as "stdout" or "stderr"
      * @param lines the lines
@@ -185,6 +185,7 @@ public final class RunCommand {
    */
   public static class CommandException extends Throwable {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;
 
     /**
