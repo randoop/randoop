@@ -29,8 +29,7 @@ fi
 
 ./gradlew assemble
 ./gradlew javadoc
-echo "----------------  Javadoc warnings above  ----------------"
-echo "---------------- do not cause CI failures ----------------"
+echo "------------  Javadoc warnings above do not cause CI failures  ------------"
 
 failures=""
 

@@ -50,6 +50,9 @@ public abstract class AccessibilityPredicate {
   /** AnyAccessibilityPredicate is a {@link AccessibilityPredicate} that always returns true. */
   private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
 
+    /** Creates a new AnyAccessibilityPredicate. */
+    public AnyAccessibilityPredicate() {}
+
     /**
      * {@inheritDoc}
      *
@@ -91,6 +94,9 @@ public abstract class AccessibilityPredicate {
    * that the class/method/constructor/field is public.
    */
   private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new PublicAccessibilityPredicate. */
+    public PublicAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -228,6 +234,9 @@ public abstract class AccessibilityPredicate {
    * case that the class/method/constructor/field is not declared to be private.
    */
   private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new NotPrivateAccessibilityPredicate. */
+    public NotPrivateAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}

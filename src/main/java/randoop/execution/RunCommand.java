@@ -185,6 +185,7 @@ public final class RunCommand {
    */
   public static class CommandException extends Throwable {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;
 
     /**

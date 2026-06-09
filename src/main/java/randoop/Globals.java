@@ -31,6 +31,9 @@ public final class Globals {
 
   /** Discards anything written to it. */
   private static final class NullOutputStream extends OutputStream {
+    /** Creates a new NullOutputStream. */
+    public NullOutputStream() {}
+
     @Override
     public void write(@PolySigned int b) throws IOException {}
   }

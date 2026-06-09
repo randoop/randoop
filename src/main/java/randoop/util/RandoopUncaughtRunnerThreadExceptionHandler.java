@@ -4,6 +4,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 
 public final class RandoopUncaughtRunnerThreadExceptionHandler implements UncaughtExceptionHandler {
 
+  /** The singleton instance of this class. */
   private static RandoopUncaughtRunnerThreadExceptionHandler singleInstance =
       new RandoopUncaughtRunnerThreadExceptionHandler();
 

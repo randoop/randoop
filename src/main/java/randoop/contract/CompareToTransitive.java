@@ -13,6 +13,7 @@ import randoop.types.TypeTuple;
  * }</pre>
  */
 public final class CompareToTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToTransitive instance = new CompareToTransitive();
 
   private CompareToTransitive() {}

@@ -5,6 +5,7 @@ import randoop.main.RandoopBug;
 /** An exception indicating a string is too long. */
 public class StringTooLongException extends RandoopBug {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 20200205;
 
   /**
