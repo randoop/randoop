@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-public class JarReader {
+public final class JarReader {
 
   private static boolean debug = false;
 

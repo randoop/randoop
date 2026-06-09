@@ -13,6 +13,10 @@ import java.util.Set;
  * are either primitive or wrapped types.
  */
 public class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Set<String>> {
+
+  /** Creates a PrimitiveAndWrappedTypeVarNameCollector. */
+  public PrimitiveAndWrappedTypeVarNameCollector() {}
+
   /**
    * Visit every variable declaration.
    *

@@ -41,7 +41,7 @@ import randoop.util.Randomness;
  * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
  * {@link #createCollection}.
  */
-class HelperSequenceCreator {
+final class HelperSequenceCreator {
 
   private HelperSequenceCreator() {
     throw new Error("Do not instantiate");

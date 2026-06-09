@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
  * 4.5.1</a>.)
  */
-public class ReferenceArgument extends TypeArgument {
+public final class ReferenceArgument extends TypeArgument {
 
   /** The reference type for this argument. */
   private final ReferenceType referenceType;

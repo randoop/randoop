@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
  * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
  * {@link GenInputsAbstract.BehaviorType} command-line arguments.
  */
-public class ExceptionBehaviorClassifier {
+public final class ExceptionBehaviorClassifier {
 
   private ExceptionBehaviorClassifier() {
     throw new Error("Do not instantiate");

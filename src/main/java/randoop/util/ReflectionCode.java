@@ -26,6 +26,9 @@ public abstract class ReflectionCode {
   /** The exception thrown by execution. */
   protected @Nullable Throwable exceptionThrown;
 
+  /** Creates a ReflectionCode. */
+  public ReflectionCode() {}
+
   public final boolean hasStarted() {
     return hasStarted;
   }

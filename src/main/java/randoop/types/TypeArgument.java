@@ -21,6 +21,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class TypeArgument {
 
+  /** Creates a TypeArgument. */
+  public TypeArgument() {}
+
   /**
    * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument} object.
    *

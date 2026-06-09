@@ -6,6 +6,9 @@ import java.lang.reflect.Method;
 
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
+  /** Creates a EverythingAllowedPredicate. */
+  public EverythingAllowedPredicate() {}
+
   @Override
   public boolean test(Class<?> c) {
     return true;

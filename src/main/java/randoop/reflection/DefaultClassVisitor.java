@@ -7,6 +7,9 @@ import java.lang.reflect.Method;
 /** Default implementation of the {@code ClassVisitor} class. All methods do nothing. */
 public class DefaultClassVisitor implements ClassVisitor {
 
+  /** Creates a DefaultClassVisitor. */
+  public DefaultClassVisitor() {}
+
   @Override
   public void visit(Class<?> c, ReflectionManager reflectionManager) {
     // default is to do nothing

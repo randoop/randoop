@@ -15,6 +15,9 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
   /** Map from a sequence to its weight. */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
+  /** Creates a SmallTestsSequenceSelection. */
+  public SmallTestsSequenceSelection() {}
+
   /**
    * Pick a sequence from the candidate list using a weighting that favors shorter sequences.
    *

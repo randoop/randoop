@@ -50,7 +50,7 @@ import randoop.util.RecordProcessor;
  * to specify literals that are not related to any class in particular, or literals that are related
  * to only specific methods within a class.
  */
-public class LiteralFileReader {
+public final class LiteralFileReader {
 
   private LiteralFileReader() {
     throw new Error("Do not instantiate");

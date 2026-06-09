@@ -28,10 +28,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omit-methods}
  * patterns before starting generation.
  */
-public class MethodReplacements {
+public final class MethodReplacements {
 
   /** Do not Create a MethodReplacements. */
-  public MethodReplacements() {
+  private MethodReplacements() {
     throw new Error("do not instantiate");
   }
 

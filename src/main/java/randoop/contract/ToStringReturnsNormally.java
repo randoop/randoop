@@ -8,6 +8,9 @@ import randoop.types.TypeTuple;
 /** Checks that calling toString() on an object does not throw an exception. */
 public final class ToStringReturnsNormally extends ObjectContract {
 
+  /** Creates a ToStringReturnsNormally. */
+  public ToStringReturnsNormally() {}
+
   @Override
   public boolean equals(@Nullable Object o) {
     if (o == this) {

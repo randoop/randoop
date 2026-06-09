@@ -1,6 +1,6 @@
 package randoop.util;
 
-public class CountDownTimer {
+public final class CountDownTimer {
 
   private long totalTime;
   private long startTime;

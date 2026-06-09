@@ -40,7 +40,7 @@ import org.plumelib.util.EntryReader.EntryFormat;
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
  */
-public class ReplacementFileReader {
+public final class ReplacementFileReader {
 
   /** Regex for Java identifiers. */
   public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
@@ -77,6 +77,11 @@ public class ReplacementFileReader {
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
+
+  /** Do not instantiate. */
+  private ReplacementFileReader() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Reads the given replacement file specifying method calls that should be replaced by other
@@ -527,7 +532,7 @@ public class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  protected static @Nullable JavaClass getJavaClassFromClassname(String classname)
+  /*package-protected*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);

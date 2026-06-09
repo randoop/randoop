@@ -16,7 +16,12 @@ import randoop.types.Type;
 import randoop.util.Log;
 
 /** Utility methods to work with values in test sequences. */
-public class Value {
+public final class Value {
+
+  /** Do not instantiate. */
+  private Value() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Given a primitive, boxed primitive, String, Enum, or Class, or the value {@code null}, returns

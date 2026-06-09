@@ -58,7 +58,7 @@ import randoop.main.RandoopBug;
  * <p>These types should be maintained as new JDK versions are released. They have been updated for
  * JDK 8.
  */
-public class JDKTypes {
+public final class JDKTypes {
 
   /** Do not instantiate. */
   private JDKTypes() {

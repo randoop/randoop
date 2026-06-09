@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
  * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
  */
-class NullReferenceType extends ReferenceType {
+final class NullReferenceType extends ReferenceType {
 
   private static final NullReferenceType value = new NullReferenceType();
 

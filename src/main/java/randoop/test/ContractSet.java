@@ -14,6 +14,9 @@ public class ContractSet {
    */
   private final List<List<ObjectContract>> contractMap = new ArrayList<>(1);
 
+  /** Creates a ContractSet. */
+  public ContractSet() {}
+
   /**
    * Returns the list of contracts with the given arity.
    *
