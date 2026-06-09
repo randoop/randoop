@@ -130,8 +130,11 @@ public abstract class AccessibilityPredicate {
       return isAccessible(f.getModifiers() & Modifier.fieldModifiers());
     }
 
-    /*
+    /**
      * Returns true if the provided modifiers indicate public bit is set.
+     *
+     * @param mods Java modifier bits
+     * @return true if the public bit is set
      */
     private boolean isAccessible(int mods) {
       return Modifier.isPublic(mods);

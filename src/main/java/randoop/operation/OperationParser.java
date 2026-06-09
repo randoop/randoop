@@ -10,6 +10,7 @@ import java.util.List;
  */
 public final class OperationParser {
 
+  /** Do not instantiate. */
   private OperationParser() {
     throw new Error("Do not instantiate");
   }

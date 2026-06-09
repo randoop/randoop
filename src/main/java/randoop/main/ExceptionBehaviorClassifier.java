@@ -12,6 +12,7 @@ import randoop.sequence.ExecutableSequence;
  */
 public final class ExceptionBehaviorClassifier {
 
+  /** Do not instantiate. */
   private ExceptionBehaviorClassifier() {
     throw new Error("Do not instantiate");
   }

@@ -3,6 +3,7 @@ package randoop;
 /** Means that the statement that this outcome represents was not executed. */
 public final class NotExecuted extends ExecutionOutcome {
 
+  /** The single canonical instance of this class. */
   private static NotExecuted notExecutedSingleton = new NotExecuted();
 
   private NotExecuted() {

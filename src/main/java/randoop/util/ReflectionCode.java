@@ -29,10 +29,20 @@ public abstract class ReflectionCode {
   /** Creates a ReflectionCode. */
   public ReflectionCode() {}
 
+  /**
+   * Returns true if this code has started execution.
+   *
+   * @return true if this code has started execution
+   */
   public final boolean hasStarted() {
     return hasStarted;
   }
 
+  /**
+   * Returns true if this code has completed execution.
+   *
+   * @return true if this code has completed execution
+   */
   public final boolean hasRun() {
     return hasRun;
   }
