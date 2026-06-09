@@ -54,10 +54,6 @@ public final class EqualsReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder(128);
-    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
-    b.append(toCommentString());
-    b.append("\", x0.equals());");
-    return b.toString();
+    return "x0.equals(x0);";
   }
 }

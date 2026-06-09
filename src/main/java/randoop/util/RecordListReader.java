@@ -99,7 +99,7 @@ public class RecordListReader {
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
       if (line.length() == 0 || line.charAt(0) == '#') {
-        continue;
+        throw new RandoopBug("Empty or comment line encountered: " + line);
       }
       ret.add(line);
       line = nextNWCLine(reader);

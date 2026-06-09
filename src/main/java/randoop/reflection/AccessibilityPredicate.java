@@ -51,7 +51,7 @@ public abstract class AccessibilityPredicate {
   private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new AnyAccessibilityPredicate. */
-    public AnyAccessibilityPredicate() {}
+    private AnyAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -96,7 +96,7 @@ public abstract class AccessibilityPredicate {
   private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new PublicAccessibilityPredicate. */
-    public PublicAccessibilityPredicate() {}
+    private PublicAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -161,7 +161,7 @@ public abstract class AccessibilityPredicate {
    * in the given package. So, this class does not implement Java's full accessibility rules; those
    * for subclasses and default-accessibility are not relevant to this predicate.
    */
-  public static class PackageAccessibilityPredicate extends AccessibilityPredicate {
+  public static final class PackageAccessibilityPredicate extends AccessibilityPredicate {
 
     /** The package name from which to test accessibility of elements. */
     private final String packageName;
@@ -239,7 +239,7 @@ public abstract class AccessibilityPredicate {
   private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new NotPrivateAccessibilityPredicate. */
-    public NotPrivateAccessibilityPredicate() {}
+    private NotPrivateAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
