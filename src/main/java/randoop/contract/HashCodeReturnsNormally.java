@@ -53,6 +53,6 @@ public final class HashCodeReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    return "x0.hashCode());";
+    return "x0.hashCode();";
   }
 }
