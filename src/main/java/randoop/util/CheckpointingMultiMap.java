@@ -135,6 +135,7 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
+  @SuppressWarnings("ListRemoveAmbiguous")
   public void undoToLastMark() {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
@@ -143,7 +144,8 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    steps = marks.remove(marks.size() - 1);
+    // On Java 11+, use: steps = marks.removeLast();
+    steps = marks.remove(marks.size() - 1); // index-based removal: remove the last element
   }
 
   private void undoLastOp() {
