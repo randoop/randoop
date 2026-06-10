@@ -143,7 +143,7 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    steps = marks.remove(marks.size() - 1);
+    steps = marks.removeLast();
   }
 
   private void undoLastOp() {
