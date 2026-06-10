@@ -15,7 +15,7 @@ public class SequenceParseException extends Exception {
 
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
 
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(
         "Error while parsing the following list of strings as a sequence (error was at index "
             + statementCount
@@ -27,9 +27,11 @@ public class SequenceParseException extends Exception {
     b.append(" While parsing the following sequence:").append(Globals.lineSep);
     for (int i = 0; i < statements.size(); i++) {
       if (i == statementCount) {
-        b.append(">> " + statements.get(i) + "").append(Globals.lineSep);
+        b.append(">> ");
+        b.append(statements.get(i)).append(Globals.lineSep);
       } else {
-        b.append("   " + statements.get(i) + "").append(Globals.lineSep);
+        b.append("   ");
+        b.append(statements.get(i)).append(Globals.lineSep);
       }
     }
     b.append("").append(Globals.lineSep).append(Globals.lineSep);

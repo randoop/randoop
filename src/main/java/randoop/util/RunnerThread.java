@@ -34,15 +34,21 @@ public class RunnerThread extends Thread {
   }
 
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP) throw new IllegalStateException();
-    if (code == null) throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP) {
+      throw new IllegalStateException();
+    }
+    if (code == null) {
+      throw new IllegalArgumentException("code cannot be null.");
+    }
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN) throw new IllegalStateException();
+    if (state != NextCallMustBe.RUN) {
+      throw new IllegalStateException();
+    }
     runFinished = false;
     executeReflectionCode();
     runFinished = true;

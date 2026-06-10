@@ -76,7 +76,7 @@ public final class DemandDrivenLog {
       return "";
     }
 
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(512);
     int numClasses = nonSutClasses.size();
     sb.append("NOTE: ")
         .append(numClasses == 1 ? "1 class was" : numClasses + " classes were")
@@ -132,13 +132,13 @@ public final class DemandDrivenLog {
       return "";
     }
 
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(1024);
     sb.append(
         String.format(
             "%nNOTE: %s could not be instantiated by Randoop demand-driven input creation:%n",
             StringsPlume.nPlural(uninstantiableTypes.size(), "type")));
     for (Type type : uninstantiableTypes) {
-      sb.append("- ").append(type.getRuntimeClass().getName()).append("\n");
+      sb.append("- ").append(type.getRuntimeClass().getName()).append('\n');
     }
     sb.append("As a result, certain sequences requiring these types may not be generated.\n");
     sb.append("Optional: To enable test generation for these types, you may:\n");

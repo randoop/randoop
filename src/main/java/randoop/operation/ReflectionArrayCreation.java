@@ -48,7 +48,7 @@ public class ReflectionArrayCreation extends CallableOperation {
         .append(elementType.getCanonicalName())
         .append(", ")
         .append(length)
-        .append(")");
+        .append(')');
   }
 
   @Override

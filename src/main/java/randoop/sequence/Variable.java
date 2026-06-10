@@ -13,7 +13,9 @@ public class Variable implements Comparable<Variable> {
   public final Sequence sequence;
 
   public Variable(Sequence owner, int i) {
-    if (owner == null) throw new IllegalArgumentException("missing owner");
+    if (owner == null) {
+      throw new IllegalArgumentException("missing owner");
+    }
     if (i < 0) {
       throw new IllegalArgumentException("negative index: " + i);
     }
@@ -114,8 +116,12 @@ public class Variable implements Comparable<Variable> {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public int compareTo(Variable o) {
-    if (o == null) throw new IllegalArgumentException();
-    if (o.sequence != this.sequence) throw new IllegalArgumentException();
+    if (o == null) {
+      throw new IllegalArgumentException();
+    }
+    if (o.sequence != this.sequence) {
+      throw new IllegalArgumentException();
+    }
     return Integer.valueOf(this.index).compareTo(o.index);
   }
 

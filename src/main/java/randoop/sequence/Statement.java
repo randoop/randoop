@@ -109,10 +109,10 @@ public final class Statement {
       }
       String typeName = type.getFqName();
       b.append(typeName);
-      b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
+      b.append(' ').append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
-    b.append(";");
+    b.append(';');
   }
 
   public String toParsableString(String variableName, List<Variable> inputs) {
@@ -125,7 +125,7 @@ public final class Statement {
     b.append(" : ");
     for (Variable v : inputs) {
       b.append(v.toString());
-      b.append(" ");
+      b.append(' ');
     }
     return b.toString();
   }

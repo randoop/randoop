@@ -41,7 +41,9 @@ public final class ConstructorCall extends CallableOperation {
    * @param constructor reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
-    if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
+    if (constructor == null) {
+      throw new IllegalArgumentException("constructor should not be null.");
+    }
     this.constructor = constructor;
     this.constructor.setAccessible(true);
   }
@@ -196,7 +198,7 @@ public final class ConstructorCall extends CallableOperation {
     sb.append(constructor.getName()).append(".<init>(");
     Class<?>[] params = constructor.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
-    sb.append(")");
+    sb.append(')');
     return sb.toString();
   }
 

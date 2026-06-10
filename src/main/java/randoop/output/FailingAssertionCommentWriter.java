@@ -440,7 +440,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                   + "Please correct the classpath and re-run Randoop.");
         }
       }
-      StringBuilder errorMessage = new StringBuilder();
+      StringBuilder errorMessage = new StringBuilder(256);
       if (status.exitStatus == 137) {
         errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
         errorMessage.append(Globals.lineSep);

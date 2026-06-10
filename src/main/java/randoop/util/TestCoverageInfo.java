@@ -25,14 +25,16 @@ public class TestCoverageInfo {
   }
 
   public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
-    if (totalBranches < 0) throw new IllegalArgumentException();
+    if (totalBranches < 0) {
+      throw new IllegalArgumentException();
+    }
     branchTrue = new int[totalBranches];
     branchFalse = new int[totalBranches];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 
   private String getCoverageInfo() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     int totalBranchesCovered = 0;
     int totalBranches = 0;
     for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {

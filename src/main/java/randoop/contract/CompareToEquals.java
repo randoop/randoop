@@ -68,11 +68,11 @@ public final class CompareToEquals extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("(x0.compareTo(x1) == 0) == x0.equals(x1)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append(
+        "org.junit.Assert.assertTrue(\"Contract failed: "
+            + toCommentString()
+            + "\", (x0.compareTo(x1) == 0) == x0.equals(x1));");
     return b.toString();
   }
 }

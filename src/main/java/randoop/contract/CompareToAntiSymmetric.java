@@ -63,7 +63,7 @@ public final class CompareToAntiSymmetric extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))");

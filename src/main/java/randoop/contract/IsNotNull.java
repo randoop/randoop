@@ -52,9 +52,7 @@ public final class IsNotNull extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertNotNull(x0);");
-    return b.toString();
+    return "org.junit.Assert.assertNotNull(x0);";
   }
 
   @Override

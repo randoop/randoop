@@ -53,11 +53,6 @@ public final class HashCodeReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.hashCode()");
-    b.append(");");
-    return b.toString();
+    return "x0.hashCode();";
   }
 }

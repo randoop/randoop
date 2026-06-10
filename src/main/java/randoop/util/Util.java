@@ -70,10 +70,18 @@ public final class Util {
     for (int i = 0; i < chars.length; i++) {
       output.append("\\u");
       String hex = Integer.toHexString(chars[i]);
-      if (hex.length() < 4) output.append("0");
-      if (hex.length() < 3) output.append("0");
-      if (hex.length() < 2) output.append("0");
-      if (hex.length() < 1) output.append("0");
+      if (hex.length() < 4) {
+        output.append('0');
+      }
+      if (hex.length() < 3) {
+        output.append('0');
+      }
+      if (hex.length() < 2) {
+        output.append('0');
+      }
+      if (hex.length() < 1) {
+        output.append('0');
+      }
 
       output.append(hex);
     }
@@ -88,7 +96,9 @@ public final class Util {
    * @return the number of times the pattern appears in the text
    */
   public static int occurCount(StringBuilder text, String pattern) {
-    if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
+    if (pattern.length() == 0) {
+      throw new IllegalArgumentException("empty pattern");
+    }
     int i = 0;
     int currIdx = text.indexOf(pattern);
     while (currIdx != -1) {
@@ -109,7 +119,9 @@ public final class Util {
    * @return a string representation of the formatted paragraph, include line separators
    */
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
-    if (string == null) throw new IllegalArgumentException("string cannot be null.");
+    if (string == null) {
+      throw new IllegalArgumentException("string cannot be null.");
+    }
     if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }

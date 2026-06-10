@@ -101,7 +101,7 @@ public abstract class ExceptionCheck implements Check {
    */
   @Override
   public final String toCodeStringPostStatement() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     if (catchClassName == null) {
       catchClassName = "Exception";
     }
@@ -109,7 +109,7 @@ public abstract class ExceptionCheck implements Check {
     b.append("} catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
     b.append("  // Expected exception.").append(Globals.lineSep);
     appendCatchBehavior(b);
-    b.append("}").append(Globals.lineSep);
+    b.append('}').append(Globals.lineSep);
     return b.toString();
   }
 

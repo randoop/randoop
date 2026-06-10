@@ -52,11 +52,10 @@ public final class EqualsHashcode extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
-    b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ")
+        .append(toCommentString())
+        .append("\", x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true);");
     return b.toString();
   }
 }

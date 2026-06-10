@@ -377,11 +377,19 @@ allprojects { subproject ->
   }
 }
 
-allprojects {
-  pmd {
-    consoleOutput = true
-  }
-}
+// allprojects {
+//   apply plugin: "pmd"
+//   pmd {
+//     toolVersion = "7.25.0"
+//     consoleOutput = true
+//     ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
+//     ruleSets = []
+//   }
+//   tasks.withType(Pmd) {
+//     // Exclude an entire generated folder path
+//     exclude('**/mock/**')
+//   }
+// }
 
 tasks.register("testInputJar", Jar) {
   from sourceSets.testInput.output

@@ -70,7 +70,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * @return the string converted to ASCII
    */
   private @PolyNull String toAscii(@PolyNull String str) {
-    if (str == null) return null;
+    if (str == null) {
+      return null;
+    }
     String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
     String ascii = normalized.replaceAll("[^ -~]", "?");
     return ascii;

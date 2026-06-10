@@ -110,25 +110,21 @@ public final class PrimValue extends ObjectContract {
     }
 
     if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
-      StringBuilder b = new StringBuilder();
-      b.append("org.junit.Assert.assertEquals(");
+      StringBuilder b = new StringBuilder(128);
       // First add a message
-      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+      b.append("org.junit.Assert.assertEquals(\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
-          .append("+ \"'\", ");
-      b.append("x0");
-      b.append(", ");
+          .append("+ \"'\", x0, ");
       b.append(Value.toCodeString(value));
       // Close assert.
       b.append(");");
       return b.toString();
     } else if (equalityMode.equals(EqualityMode.EQUALSEQUALS)) {
-      StringBuilder b = new StringBuilder();
-      b.append("org.junit.Assert.assertTrue(");
-      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+      StringBuilder b = new StringBuilder(128);
+      b.append("org.junit.Assert.assertTrue(\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
-          .append("+ \"'\", ");
-      b.append("x0 == ").append(Value.toCodeString(value));
+          .append("+ \"'\", x0 == ")
+          .append(Value.toCodeString(value));
       b.append(");");
       return b.toString();
     } else {

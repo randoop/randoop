@@ -113,14 +113,12 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(128);
     b.append(Globals.lineSep);
     b.append("// Check representation invariant.").append(Globals.lineSep);
     if (returnsBoolean) {
-      b.append("org.junit.Assert.assertTrue(");
-      b.append("\"Representation invariant failed: ").append(toCommentString()).append("\", ");
-      b.append("x0.").append(checkRepMethod.getName()).append("()");
-      b.append(");");
+      b.append("org.junit.Assert.assertTrue(\"Representation invariant failed: ");
+      b.append(toCommentString()).append("\", x0.").append(checkRepMethod.getName()).append("());");
     } else {
       b.append("x0.").append(checkRepMethod.getName()).append("();");
     }

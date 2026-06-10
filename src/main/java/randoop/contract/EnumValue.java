@@ -75,7 +75,7 @@ public final class EnumValue extends ObjectContract {
   @Override
   public String toCodeString() {
     String valueName = getValueName();
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(128);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"'\" + " + "x0" + " + \"' != '\" + ").append(valueName).append(" + \"'\", ");
     b.append("x0");

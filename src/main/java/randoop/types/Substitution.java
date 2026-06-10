@@ -139,9 +139,15 @@ public class Substitution {
   /** Throws an exception if its arguments are different non-null values. */
   private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
       (v1, v2) -> {
-        if (v1 == null) return v2;
-        if (v2 == null) return v1;
-        if (v1.equals(v2)) return v1;
+        if (v1 == null) {
+          return v2;
+        }
+        if (v2 == null) {
+          return v1;
+        }
+        if (v1.equals(v2)) {
+          return v1;
+        }
         throw new IllegalArgumentException(
             String.format("Substitutions map a key to distinct types %s and %s", v1, v2));
       };

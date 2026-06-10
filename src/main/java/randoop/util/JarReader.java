@@ -1,7 +1,9 @@
 package randoop.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +35,7 @@ public final class JarReader {
       System.out.println("Jar " + jarName + " looking for " + packageName);
     }
 
-    try (FileInputStream fis = new FileInputStream(jarName);
+    try (InputStream fis = Files.newInputStream(Paths.get(jarName));
         JarInputStream jarFile = new JarInputStream(fis)) {
       JarEntry jarEntry;
 
@@ -43,7 +45,9 @@ public final class JarReader {
           break;
         }
         if (jarEntry.getName().startsWith(packageName) && jarEntry.getName().endsWith(".class")) {
-          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          if (debug) {
+            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          }
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
@@ -58,7 +62,7 @@ public final class JarReader {
       System.out.println("Jar " + jarName);
     }
 
-    try (FileInputStream fis = new FileInputStream(jarName);
+    try (InputStream fis = Files.newInputStream(Paths.get(jarName));
         JarInputStream jarFile = new JarInputStream(fis)) {
       JarEntry jarEntry;
 
@@ -68,7 +72,9 @@ public final class JarReader {
           break;
         }
         if (jarEntry.getName().endsWith(".class")) {
-          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          if (debug) {
+            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          }
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
