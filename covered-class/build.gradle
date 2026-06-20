@@ -26,9 +26,9 @@ javadoc {
 jar {
   manifest {
     attributes(
-        "Premain-Class": "randoop.instrument.CoveredClassAgent",
-        "Can-Redefine-Classes": "true"
-        )
+    "Premain-Class": "randoop.instrument.CoveredClassAgent",
+    "Can-Redefine-Classes": "true"
+    )
   }
 }
 
@@ -62,9 +62,9 @@ shadowJar {
 
 compileTestJava {
   dependsOn(
-      ":shadowJar",
-      ":copyJars",
-      )
+  ":shadowJar",
+  ":copyJars",
+  )
 }
 
 test {

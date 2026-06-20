@@ -504,10 +504,10 @@ tasks.register("extractJacocoAgent", Copy) {
  */
 tasks.register("systemTest", Test) {
   dependsOn(
-      "extractJacocoAgent",
-      "generateWorkingDirs",
-      "assemble"
-      )
+  "extractJacocoAgent",
+  "generateWorkingDirs",
+  "assemble"
+  )
   group = "Verification"
   description = "Run system tests"
 
@@ -645,11 +645,11 @@ assemble.dependsOn(shadowJar)
 
 tasks.register("distributionZip", Zip) {
   dependsOn(
-      "shadowJar",
-      "copyJars",
-      "manual",
-      "extractJacocoAgent"
-      )
+  "shadowJar",
+  "copyJars",
+  "manual",
+  "extractJacocoAgent"
+  )
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
   def dirName = "${base.archivesName.get()}-${version}"
@@ -690,10 +690,10 @@ tasks.register("distributionZip", Zip) {
  */
 tasks.register("cloneLibs") {
   dependsOn(
-      "cloneChecklink",
-      "cloneHtmlTools",
-      "clonePlumeScripts"
-      )
+  "cloneChecklink",
+  "cloneHtmlTools",
+  "clonePlumeScripts"
+  )
 }
 
 tasks.register("cloneChecklink", CloneTask) {
@@ -863,10 +863,10 @@ updateDevTOC.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
  */
 tasks.register("manual", Exec) {
   dependsOn(
-      "updateUserOptions",
-      "updateUserTOC",
-      "updateDevTOC",
-      )
+  "updateUserOptions",
+  "updateUserTOC",
+  "updateDevTOC",
+  )
 
   group = "Documentation"
   description = "Adds options and TOC to documentation in src/docs"
@@ -894,8 +894,8 @@ build.dependsOn(manual)
  */
 tasks.register("validateAPI", Exec) {
   dependsOn(
-      "javadoc",
-      )
+  "javadoc",
+  )
   group = "Documentation"
   description = "Run html5validator to find HTML errors in API documentation"
   // Prior to Java 9, javadoc does not comply with HTML5.
@@ -940,11 +940,11 @@ tasks.register("cleanSite") {
  */
 tasks.register("publishSite", Copy) {
   dependsOn(
-      "cleanSite",
-      "javadoc",
-      "validateAPI",
-      "manual"
-      )
+  "cleanSite",
+  "javadoc",
+  "validateAPI",
+  "manual"
+  )
   group = "Publishing"
   description = "Publish changes to site files and javadoc to the project pages directory"
   def siteDir = file("${projectDir}/../randoop-branch-gh-pages")
@@ -982,9 +982,9 @@ tasks.register("thisIsReleaseFile") {
 }
 tasks.register("assembleRelease") {
   dependsOn(
-      "thisIsReleaseFile",
-      "assemble"
-      )
+  "thisIsReleaseFile",
+  "assemble"
+  )
   doLast {
     delete(thisIsReleaseFilename)
   }
@@ -994,11 +994,11 @@ assemble.mustRunAfter(thisIsReleaseFile)
 
 tasks.register("buildRelease", DefaultTask) {
   dependsOn(
-      "assembleRelease",
-      "check",
-      "publishSite",
-      "distributionZip"
-      )
+  "assembleRelease",
+  "check",
+  "publishSite",
+  "distributionZip"
+  )
   group = "Publishing"
   description = "Builds system and documentation, validates HTML, and publishes site"
 }

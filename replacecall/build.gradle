@@ -32,9 +32,9 @@ javadoc {
 jar {
   manifest {
     attributes(
-        "Premain-Class": "randoop.instrument.ReplaceCallAgent",
-        "Can-Redefine-Classes": "true"
-        )
+    "Premain-Class": "randoop.instrument.ReplaceCallAgent",
+    "Can-Redefine-Classes": "true"
+    )
   }
 }
 
