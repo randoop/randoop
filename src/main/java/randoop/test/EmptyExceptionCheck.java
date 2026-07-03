@@ -37,7 +37,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
   /**
    * {@inheritDoc}
    *
-   * <p>Appends comment indicating that failure to throw exception being ignored.
+   * <p>Appends comment indicating that failure to throw exception is being ignored.
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {

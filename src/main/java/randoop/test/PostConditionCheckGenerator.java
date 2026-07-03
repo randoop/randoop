@@ -35,7 +35,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
    *
    * @param eseq the sequence for which checks are generated
    * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the
-   *     post-condition fails on the sequence, an {@code null} otherwise
+   *     post-condition fails on the sequence, a {@code null} otherwise
    */
   @Override
   public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {

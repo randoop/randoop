@@ -18,7 +18,7 @@ import randoop.util.Util;
 
 /** JavaParser visitor to rename classes. */
 public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
-  /** The new name. */
+  /** The old name. */
   private final String oldName;
 
   /** The new name. */

@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /** A predicate that allows everything. */
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
-  /** Creates a EverythingAllowedPredicate. */
+  /** Creates an EverythingAllowedPredicate. */
   public EverythingAllowedPredicate() {}
 
   @Override

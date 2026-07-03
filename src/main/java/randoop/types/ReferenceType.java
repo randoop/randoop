@@ -153,8 +153,8 @@ public abstract class ReferenceType extends Type {
 
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type. The
-   * substitution will unify this type or a supertype of this type with the given goal type.
+   * instantiate operations of this type, possibly inherited from the goal type. The substitution
+   * will unify this type or a supertype of this type with the given goal type.
    *
    * <p>If there is no unifying substitution, returns {@code null}.
    *

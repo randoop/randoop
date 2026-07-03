@@ -25,7 +25,7 @@ import randoop.util.Log;
  * contract holds. Any sequence of method calls that leads to a failing contract is outputted by
  * Randoop as an error-revealing test case.
  *
- * <p>Implementing classes provide two key pieces functionality:
+ * <p>Implementing classes provide two key pieces of functionality:
  *
  * <ul>
  *   <li>A method {@link #evaluate}{@code (Object... objects)} that determines if the given
@@ -39,7 +39,7 @@ import randoop.util.Log;
  */
 public abstract class ObjectContract {
 
-  /** Creates a ObjectContract. */
+  /** Creates an ObjectContract. */
   public ObjectContract() {}
 
   /**

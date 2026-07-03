@@ -92,7 +92,7 @@ public class InstantiationTest {
    * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
    * C_BST<String>}.
    *
-   * <p>it should be possible for it to pass with {@code B_BST}.
+   * <p>It should be possible for it to pass with {@code B_BST}.
    */
   /*
   @Test

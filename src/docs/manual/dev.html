@@ -200,7 +200,7 @@ Gradle allows you to run multiple tasks.  For instance, for a clean build,
 The tasks <code>cleanSite</code>, <code>publishSite</code>, and <code>buildRelease</code>
 should not be run except while making a release, and so should never be run
 within a branch other than master.
-These tasks will delete and/or replace the GitHub pages site located in the <code>gh-pages</code> branch of the repository, which is checked out in a directory <code>randoop-branch-gh-pages</code> that is a sibling of <code>randoop</code>
+These tasks will delete and/or replace the GitHub pages site located in the <code>gh-pages</code> branch of the repository, which is checked out in a directory <code>randoop-branch-gh-pages</code> that is a sibling of <code>randoop</code>.
 </p>
 
 <p>
@@ -635,7 +635,7 @@ since the test run method only looks for JUnit suite classes.
   run the
   <a href="https://github.com/google/google-java-format">google-java-format</a>
   tool.
-  The Randoop Gradle build script is setup to allow this tool to be applied using
+  The Randoop Gradle build script is set up to allow this tool to be applied using
   the following commands:
 </p>
 <ul>
@@ -888,7 +888,7 @@ It is helpful to think of a unit test as consisting of <i>two</i> things:
 </p>
 <ul>
 <li><b>A test input</b>:  the portions of the code that call
-constructors and method of the classes under test; this is sometimes called the setup code.</li>
+constructors and methods of the classes under test; this is sometimes called the setup code.</li>
 <li><b>Checks</b> or assertions: the
 portion of the code that <i>checks</i> that the test input behaves as
 expected.</li>
@@ -924,7 +924,7 @@ Each sequence is made up of one or more
 </p>
 
 <p>
-Randoop's generation algorithms creates Sequences, adding the appropriate Checks
+Randoop's generation algorithms create Sequences, adding the appropriate Checks
 to each, and output the results to the user as unit tests.
 </p>
 
@@ -1194,7 +1194,7 @@ An <a href="../api/randoop/sequence/ExecutableSequence.html">ExecutableSequence<
 <li> <b>An <code>ExecutableSequence</code> can be augmented with
 checks of expected properties.</b>  A <a href="#checks">Check</a> is
 an object that represents some <i>expected property</i> of a sequence;
-for a example, that a specific method call in the sequence returns
+for an example, that a specific method call in the sequence returns
 normally. When an executable sequence is executed, any checks that are
 present in the sequence are checked at runtime, and the
 passing/failing status of the checks is available for the client to
@@ -1212,7 +1212,7 @@ them.
 <h3 id="executing-a-sequence">Executing a sequence</h3>
 
 <p>
-Suppose we have created a Sequence <code>s</code> The following two
+Suppose we have created a Sequence <code>s</code>. The following two
 lines will execute the sequence:
 </p>
 <pre class="code">
@@ -1254,7 +1254,7 @@ to standard out. Capturing this output is possible via
 the method
 <code>ExecutableSequence.executeStatement</code>.  This is
 accomplished by changing stdout and stderr to a memory-based
-PrintSteam and recording the results.
+PrintStream and recording the results.
 </li>
 </ul>
 

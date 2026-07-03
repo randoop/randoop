@@ -24,7 +24,7 @@ import org.plumelib.util.StringsPlume;
  * </pre>
  *
  * InterfaceType is syntactically the same as ClassType. Therefore, {@code ClassType} and {@code
- * InterfaceType} do not exist as subclasses of this class, Rather, the subclasses of this type
+ * InterfaceType} do not exist as subclasses of this class. Rather, the subclasses of this type
  * distinguish between types with parameters ({@link ParameterizedType}), and types without ({@link
  * NonParameterizedType}).
  */
@@ -463,7 +463,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if this class is a member of another class. (see <a
+   * Returns true if this class is a member of another class. (See <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *

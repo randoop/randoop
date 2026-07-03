@@ -435,7 +435,7 @@ public class GenTests extends GenInputsAbstract {
     if (operations.size() <= 1) {
       System.out.println("You provided no methods to test, so no tests for them can be generated.");
       System.out.println();
-      System.out.println("Additional diagnostis appear below.");
+      System.out.println("Additional diagnostics appear below.");
       operationModel.dumpModel(System.out);
       System.out.println();
       System.out.println(NO_OPERATIONS_TO_TEST);

@@ -248,7 +248,7 @@ public class CollectionGenerationTest {
   }
 
   /**
-   * inspired by jfreechart case in Defects4J where Randoop trying to create an array of type
+   * Inspired by jfreechart case in Defects4J where Randoop is trying to create an array of type
    * Comparable<org.jfree.chart.plot.PlotOrientation>[]. Tests that Comparable<String>[] is replaced
    * with String[]
    */

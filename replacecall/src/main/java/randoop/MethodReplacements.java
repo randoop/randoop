@@ -30,7 +30,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public final class MethodReplacements {
 
-  /** Do not Create a MethodReplacements. */
+  /** Do not create a MethodReplacements. */
   private MethodReplacements() {
     throw new Error("do not instantiate");
   }

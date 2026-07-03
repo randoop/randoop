@@ -29,7 +29,7 @@ abstract class CloneTask extends DefaultTask {
   }
 
   void cloneAndUpdate(String url, File directory) {
-    // Gradle creates the directory if it does not exist, so check to see if the director has a .git directory.
+    // Gradle creates the directory if it does not exist, so check to see if the directory has a .git directory.
     if (new File(directory, ".git").exists()) {
       execOperations.exec {
         workingDir directory

@@ -1,6 +1,6 @@
 # Contributing to Randoop
 
-Thank you for contributing to the Randoop!  This project is a
+Thank you for contributing to Randoop!  This project is a
 community effort of [more than 20
 developers](https://checkerframework.org/manual/#credits), plus countless
 more people who have contributed bug reports and feature suggestions.  We

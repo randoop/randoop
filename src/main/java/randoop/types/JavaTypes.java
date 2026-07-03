@@ -11,8 +11,8 @@ import java.util.List;
  * {@code Cloneable}, {@code Comparable}, {@code Serializable}, {@code String}, the null type, and
  * {@code void}.
  *
- * <p>This class is for convenience: its field are an efficient and concise way to obtain well-known
- * types.
+ * <p>This class is for convenience: its fields are an efficient and concise way to obtain
+ * well-known types.
  */
 public final class JavaTypes {
   /** The {@code boolean} type. */
@@ -47,7 +47,7 @@ public final class JavaTypes {
   // To ensure order, could put all initialization in a static initializer block.
   /**
    * The Null type is the lower bound of reference types and is only used in {@link
-   * randoop.types.CaptureTypeVariable}
+   * randoop.types.CaptureTypeVariable}.
    */
   public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 
@@ -68,11 +68,11 @@ public final class JavaTypes {
   /** The {@code java.lang.Cloneable} type. */
   public static final ReferenceType CLONEABLE_TYPE = NonParameterizedType.forClass(Cloneable.class);
 
-  /** The {@code java.lang Serializable} type. */
+  /** The {@code java.lang.Serializable} type. */
   public static final ReferenceType SERIALIZABLE_TYPE =
       NonParameterizedType.forClass(Serializable.class);
 
-  /** The void {@link VoidType} */
+  /** The void {@link VoidType}. */
   public static final VoidType VOID_TYPE = VoidType.getVoidType();
 
   /** The list of primitive types. */

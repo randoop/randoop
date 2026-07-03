@@ -389,8 +389,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
 
   /**
-   * Performs this operation using the array of input values. Returns the results of execution as an
-   * ResultOrException object and can output results to specified PrintStream.
+   * Performs this operation using the array of input values.
    *
    * @param input array containing appropriate inputs to operation
    * @return results of executing this statement

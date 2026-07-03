@@ -48,7 +48,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to a {@code
-   * ParameterizedType} .
+   * ParameterizedType}.
    *
    * @param type the reflective type object
    * @return an object of type {@code ParameterizedType}

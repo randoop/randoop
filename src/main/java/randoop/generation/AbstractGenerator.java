@@ -31,8 +31,8 @@ import randoop.util.predicate.AlwaysFalse;
  * Algorithm template for implementing a test generator.
  *
  * <p>The main generation loop is defined in method {@code createAndClassifySequences()}, which
- * repeatedly generates a new sequence, determines if it a failing sequence, and stops the process
- * when the time or sequence limit expires. The process of generating a new sequences is left
+ * repeatedly generates a new sequence, determines if it is a failing sequence, and stops the
+ * process when the time or sequence limit expires. The process of generating a new sequence is left
  * abstract.
  *
  * @see ForwardGenerator

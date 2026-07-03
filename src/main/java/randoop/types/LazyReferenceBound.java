@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds, that would
+ * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
  * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
  *
  * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when

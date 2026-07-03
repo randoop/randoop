@@ -177,7 +177,7 @@ type <code>T1</code>.  Currently, Randoop selects an object of type <code>T1</co
 Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
-Randoop could determine what fields a method will read, and then chose an
+Randoop could determine what fields a method will read, and then choose an
 object for which those fields have been recently side-effected.  As an
 example, when obtaining a <code>Point</code> to pass to
 the <code>getX()</code> method, a <code>Point</code> produced by
@@ -288,7 +288,7 @@ Could use it in conjunction with other resources (eg, the bug report).
 Is it good or bad to add more regression tests to a test suite before APR?
 Here is a paper that did this evaluation, for plausible patches but not for correct patches:
 &ldquo;Alleviating patch overfitting with automatic test generation: a study of feasibility and effectiveness for the Nopol repair system&rdquo;
-https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its absract:
+https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its abstract:
 &ldquo;The main result is that automatic test
 generation is effective in alleviating one kind of overfitting, issue–regression introduction,
 but due to oracle problem, has minimal positive impact on alleviating the other kind of
@@ -490,7 +490,7 @@ the Randoop output, which is currently a set of interdependent tests, into a
 set of independent tests.</p>
 
 <p>Suppose Randoop outputs 100 small unit tests.
-An idea is to split each tests into the part that depends on other tests,
+An idea is to split each test into the part that depends on other tests,
 and the independent part.  Now move  the dependent parts into a new test.
 The result is 101 tests:  100 of them are even smaller than before, but are
 completely independent of one another, and the last one is relatively large
@@ -583,7 +583,7 @@ Approach #2 would avoid the need for a dedicated runtime library.
 <p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
 
 <p>
-One approach is to create a wrapper around Randoop: a process that that
+One approach is to create a wrapper around Randoop: a process that
 monitors test generation and can terminate/restart the generator if it
 fails to make progress or aborts unexpectedly. For more details on the
 wrapper idea, see

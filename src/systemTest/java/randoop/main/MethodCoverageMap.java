@@ -45,7 +45,7 @@ class MethodCoverageMap {
    *
    * @param execFile the output of the JaCoCo javaagent
    * @param classesDirectory the root directory for the class files
-   * @return the method coverage map for
+   * @return the method coverage map
    * @throws IOException if unable to load the exec file
    */
   static MethodCoverageMap collectCoverage(String execFile, Path classesDirectory)

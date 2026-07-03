@@ -25,7 +25,7 @@ import randoop.main.RandoopBug;
  * Any lines within and between records, that are only whitespace or start with "#", are skipped.
  *
  * <p>This class's built-in functionality extracts records from a file. It then parses and processes
- * each record, using the RecordProcessor provided by the client. .
+ * each record, using the RecordProcessor provided by the client.
  */
 public class RecordListReader {
 

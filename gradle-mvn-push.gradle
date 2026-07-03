@@ -71,7 +71,7 @@ signing {
   // unsigned artifacts.
   required = true
 
-  // Only sign publications sent to remote repositories; local install installations are unsigned.
+  // Only sign publications sent to remote repositories; local installations are unsigned.
   // The `sign` invocation below causes eager creation of three tasks per subproject:
   // `signRemotePublication` is created immediately and `generateMetadataFileForRemotePublication`
   // and `generatePomFileForRemotePublication` are created during configuration.  Creating these

@@ -103,7 +103,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Create a new collection and adds the given initial sequences.
+   * Create a new collection and add the given initial sequences.
    *
    * @param initialSequences the initial collection of sequences
    */
@@ -157,7 +157,7 @@ public class SequenceCollection {
 
   /**
    * Add a sequence to this collection. This method takes into account the active indices in the
-   * sequence. If sequence[i] creates a values of type T, and sequence[i].isActive==true, then the
+   * sequence. If sequence[i] creates a value of type T, and sequence[i].isActive==true, then the
    * sequence is seen as creating a useful value at index i. More precisely, the method/constructor
    * at that index is said to produce a useful value (and if the user later queries for all
    * sequences that create a T, the sequence will be in the collection returned by the query). How a

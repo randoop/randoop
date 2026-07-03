@@ -495,7 +495,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true, since all of objects are non-receivers
+   * @return true, since all of these objects are non-receivers
    */
   @Override
   public boolean isNonreceivingValue() {

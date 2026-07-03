@@ -10,7 +10,7 @@ public class ExplicitTypeVariable extends TypeVariable {
   private final java.lang.reflect.TypeVariable<?> variable;
 
   /**
-   * Create a {@code ExplicitTypeVariable} for the given type parameter.
+   * Create an {@code ExplicitTypeVariable} for the given type parameter.
    *
    * @param variable the type parameter
    * @param bound the upper bound on the parameter

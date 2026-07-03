@@ -132,7 +132,7 @@ public final class Util {
 
     boolean firstLine = true;
     while (true) {
-      // Determine line's length (exclusive of intent if any)
+      // Determine line's length (exclusive of indent if any)
       int lineLength = firstLine ? colWidth : colWidth - indentWidth;
 
       if (lineLength > string.length()) {

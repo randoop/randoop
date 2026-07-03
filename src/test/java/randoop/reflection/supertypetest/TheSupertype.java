@@ -1,7 +1,7 @@
 package randoop.reflection.supertypetest;
 
 /**
- * Supertype class for an enum with overloaded method with different argument type to mess with
+ * Supertype class for an enum with overloaded methods with different argument types to mess with
  * reflection.
  */
 public interface TheSupertype {

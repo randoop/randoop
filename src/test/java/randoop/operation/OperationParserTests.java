@@ -173,7 +173,7 @@ public class OperationParserTests {
    * </ul>
    *
    * @param st an operation
-   * @param the stStr printed representation of st
+   * @param stStr the printed representation of st
    * @param stOp the TypedOperation version of st
    */
   private void checkOp(CallableOperation st, String stStr, TypedOperation stOp) {

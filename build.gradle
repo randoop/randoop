@@ -1039,7 +1039,7 @@ tasks.register("installGitHooks", Copy) {
 }
 /* Always run this task. */
 gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
-// It's not clear why this dependencies exists, but Gradle issues the following warning:
+// It's not clear why this dependency exists, but Gradle issues the following warning:
 //   - Gradle detected a problem with the following location:
 //   '/Users/smillst/jsr308/checker-framework/.git'.
 //   Reason: Task ':checker:generateGitProperties' uses this output of task ':installGitHooks'

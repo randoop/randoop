@@ -5,7 +5,7 @@ public class EverythingIsDifferentMatcher implements StateMatcher {
   /** The number of calls to {@link #add} on this matcher. */
   private int size = 0;
 
-  /** Creates a EverythingIsDifferentMatcher. */
+  /** Creates an EverythingIsDifferentMatcher. */
   public EverythingIsDifferentMatcher() {}
 
   @Override

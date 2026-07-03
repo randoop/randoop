@@ -32,7 +32,7 @@ import org.plumelib.util.CollectionsPlume;
  * </pre>
  *
  * <p>The {@code classname} must be the declaring class of the method. (For a constructor, the
- * {@code classname} and operation {@code name} will be identical.) If named class is not the
+ * {@code classname} and operation {@code name} will be identical.) If the named class is not the
  * declaring class of the method, the method will not be found, and the enclosing specification will
  * not be used.
  */

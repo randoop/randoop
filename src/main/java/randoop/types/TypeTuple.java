@@ -79,8 +79,8 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Applies a capture conversion to each component of this type type tuple. Returns a new
-   * TypeTuple; the receiver is not side-effected.
+   * Applies a capture conversion to each component of this type tuple. Returns a new TypeTuple; the
+   * receiver is not side-effected.
    *
    * @return a new type tuple after performing a capture conversion
    */

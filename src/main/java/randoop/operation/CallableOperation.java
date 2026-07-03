@@ -59,8 +59,8 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Returns true if reflective object contained in an {@link Operation} satisfies the predicate.
-   * Since there is no reflective object in an {@code CallableOperation}, returns false.
+   * Returns true if the reflective object contained in an {@link Operation} satisfies the
+   * predicate. Since there is no reflective object in a {@code CallableOperation}, returns false.
    *
    * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked
    * @return false as there is no object to check
@@ -71,7 +71,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Performs this operation using the array of input values. Returns the results of execution as an
+   * Performs this operation using the array of input values. Returns the results of execution as a
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation

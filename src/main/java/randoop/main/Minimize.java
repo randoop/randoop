@@ -586,7 +586,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * If one of the arguments is a NameExpr and the other is a LiteralExpr, put them in {@code
    * primitiveValues}.
    *
    * @param exp1 the first expression
@@ -1377,7 +1377,7 @@ public class Minimize extends CommandHandler {
     /**
      * Verbose toString().
      *
-     * @return a verbose multi-line string representation of this object, for dbugging
+     * @return a verbose multi-line string representation of this object, for debugging
      */
     public String diagnostics() {
       return String.join(

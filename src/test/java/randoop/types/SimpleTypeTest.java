@@ -133,7 +133,7 @@ public class SimpleTypeTest {
   }
 
   /**
-   * For some reason the names of types is a royal pain, though SimpleType names should be
+   * For some reason the names of types are a royal pain, though SimpleType names should be
    * straightforward. These are tests to make sure that what we are getting looks like what we
    * expect.
    */

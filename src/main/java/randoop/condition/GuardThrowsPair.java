@@ -1,7 +1,7 @@
 package randoop.condition;
 
 /**
- * Represents a pair of a an executable guard expression and an executable throws clause.
+ * Represents a pair of an executable guard expression and an executable throws clause.
  *
  * <p>Corresponds to a {@link randoop.condition.specification.ThrowsCondition}.
  */

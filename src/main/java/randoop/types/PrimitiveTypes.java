@@ -117,7 +117,7 @@ public final class PrimitiveTypes {
       throw new IllegalArgumentException("types must be primitive");
     }
 
-    // check identity and primitive  widening
+    // check identity and primitive widening
     return source.equals(target) || isSubtype(source, target);
   }
 
