@@ -147,7 +147,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
   //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
   //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain curcimstances and may be be added in the future,
+  //  behaviors may be desirable in certain circumstances and may be added in the future,
   //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
@@ -321,7 +321,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
    * This check is useful because the assumptions in Randoop generation heuristics are sometimes
    * violated by input methods, and, as a result, a generated test may not compile. This check does
-   * increases the runtime by approximately 50%.
+   * increase the runtime by approximately 50%.
    */
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
@@ -413,7 +413,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * If a test that passes {@code null} as an argument throws a {@code NullPointerException}, should
-   * the test be be included in the error-revealing test suite (value: ERROR), regression test suite
+   * the test be included in the error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
    */
   @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")

@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The {@code null} type is the type of the value {@code null}. As the subtype of all reference
- * types, it is the default lowerbound of a {@link CaptureTypeVariable}.
+ * types, it is the default lower bound of a {@link CaptureTypeVariable}.
  */
 final class NullReferenceType extends ReferenceType {
 
@@ -42,7 +42,7 @@ final class NullReferenceType extends ReferenceType {
    * {@inheritDoc}
    *
    * <p>This method returns null since the {@link NullReferenceType} does not have a runtime
-   * representation
+   * representation.
    */
   @Override
   public Class<?> getRuntimeClass() {

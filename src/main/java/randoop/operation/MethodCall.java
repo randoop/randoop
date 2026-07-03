@@ -20,10 +20,10 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper for a
+ * MethodCall is an {@link Operation} that represents a call to a method. It is a wrapper for a
  * reflective Method object, and caches values of computed reflective calls.
  *
- * <p>An an {@link Operation}, a call to a non-static method<br>
+ * <p>As an {@link Operation}, a call to a non-static method<br>
  * {@code T mname (T1,...,Tn)}<br>
  * of class C can be represented formally as an operation<br>
  * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.<br>

@@ -3,7 +3,7 @@ package randoop.util.predicate;
 import java.util.function.Predicate;
 
 /**
- * A predicate that always return false.
+ * A predicate that always returns false.
  *
  * @param <T> the type of the object to test
  */

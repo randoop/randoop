@@ -32,7 +32,7 @@ public final class OperationParser {
    *
    * A class implementing Operation should define a static field named ID that corresponds to the ID
    * string used when parsing. The way this parse method works is by using the ID string to
-   * determine the specific Operation class C, and the calling C.parse(String) on the DESCRIPTION
+   * determine the specific Operation class C, and then calling C.parse(String) on the DESCRIPTION
    * String.
    *
    * <p>For more details on the exact form of DESCRIPTION, see the different classes implementing

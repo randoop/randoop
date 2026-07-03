@@ -279,7 +279,7 @@ public class ClassFileConstants {
             // InstanceOf pushes either 0 or 1 on the stack depending on
             // whether
             // the object on top of stack is of the specified type.
-            // If were interested in class literals, this would be interesting
+            // If we're interested in class literals, this would be interesting
             case Const.INSTANCEOF:
               break;
 

@@ -14,7 +14,7 @@ import randoop.types.Type;
 public final class SignatureParser {
 
   // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
-  // module) so that it can also be used in javagents. The patterns are duplicated from {@code
+  // module) so that it can also be used in javaagents. The patterns are duplicated from {@code
   // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers. */

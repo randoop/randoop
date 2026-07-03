@@ -63,7 +63,7 @@ public final class ReplacementFileReader {
       DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
 
   /**
-   * Unanchored pattern to match of method replacements consisting of a pair of signatures. Uses the
+   * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
    * naive signature pattern separated by one or more spaces or tabs. Can be used to decide whether
    * a replacement file line indicates a method replacement. Groups 1 and 2 correspond to each of
    * the signature strings. (Use with {@code matches}.)
@@ -333,7 +333,7 @@ public final class ReplacementFileReader {
 
     for (Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>")) {
-        // Do not to replace the original class constructor with the replacement class constructor.
+        // Do not replace the original class constructor with the replacement class constructor.
         continue;
       }
       if (m.isPrivate()) {

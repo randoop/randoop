@@ -7,7 +7,7 @@ public class EqualsMethodMatcher implements StateMatcher {
 
   private final Set<Object> cache = new LinkedHashSet<>();
 
-  /** Creates a EqualsMethodMatcher. */
+  /** Creates an EqualsMethodMatcher. */
   public EqualsMethodMatcher() {}
 
   @Override

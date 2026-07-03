@@ -22,7 +22,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 
 // DEPRECATED. Will delete after testing other performance tests
-// in different machines.
+// on different machines.
 public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;

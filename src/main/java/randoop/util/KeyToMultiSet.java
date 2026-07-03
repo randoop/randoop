@@ -12,7 +12,7 @@ import org.checkerframework.checker.signedness.qual.Signed;
  * A map from a key to a multi-set.
  *
  * @param <K> the type of the keys
- * @param <V> the types of the elements of the value mulit-sets
+ * @param <V> the types of the elements of the value multi-sets
  */
 // @Signed so that the values can be printed.
 public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {

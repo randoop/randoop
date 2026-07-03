@@ -313,7 +313,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply a visitor to a enum value.
+   * Apply a visitor to an enum value.
    *
    * @param v the {@link ClassVisitor}
    * @param e the enum value to be visited
@@ -392,8 +392,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Returns true if a {@code java.lang.reflect.Type} is a type accessible by to the generated
-   * tests.
+   * Returns true if a {@code java.lang.reflect.Type} is a type accessible to the generated tests.
    *
    * @param type the type to check
    * @return true if the type is accessible, false otherwise

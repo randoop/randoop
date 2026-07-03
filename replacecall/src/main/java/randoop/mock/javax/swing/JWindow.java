@@ -51,7 +51,7 @@ public class JWindow {
 
   /**
    * Mock of {@code javax.swing.JWindow.toFront()} to avoid scenario where a dialog could assume
-   * focus by moving to the front (this only applies to some dialoging systems).
+   * focus by moving to the front (this only applies to some windowing systems).
    *
    * @param window the window that shouldn't assume focus
    */

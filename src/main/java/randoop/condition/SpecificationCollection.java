@@ -84,7 +84,7 @@ import randoop.util.Util;
    * testing. Clients should use {@link #create(List)} instead.
    *
    * @param specificationMap the map from method or constructor to {@link OperationSpecification}
-   * @param signatureToMethods the multimap from a signature to methods with with the signature
+   * @param signatureToMethods the multimap from a signature to methods with the signature
    * @param overridden the map from a method to methods that it overrides and that have a
    *     specification
    */

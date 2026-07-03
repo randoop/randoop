@@ -17,7 +17,7 @@ public interface TypedOperationSelector {
   public abstract TypedOperation selectOperation();
 
   /**
-   * Take action based on the given {@link Sequence} was classified as a regression test.
+   * Take action based on the given {@link Sequence} that was classified as a regression test.
    *
    * @param sequence newly created sequence that was classified as a regression test
    */

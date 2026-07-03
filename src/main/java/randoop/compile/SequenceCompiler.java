@@ -205,7 +205,7 @@ import randoop.util.Log;
   }
 
   /**
-   * Compiles the given class, leads it, and returns the Class object. If this method returns
+   * Compiles the given class, loads it, and returns the Class object. If this method returns
    * normally, compilation was successful.
    *
    * @param packageName the package of the class, null if default package

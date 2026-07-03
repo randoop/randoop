@@ -596,7 +596,7 @@ response to the values that it was passed.
 <h2 id="error_revealing_tests">Error-revealing tests</h2>
 
 <p>
-When Randoop includes a error-revealing test in file <code>ErrorTest.java</code>,
+When Randoop includes an error-revealing test in file <code>ErrorTest.java</code>,
 the test shows that the code
 violates its specification or contract.  For example, the test shown in
 the <a href="#Introduction">Introduction</a>
@@ -1501,7 +1501,7 @@ where <code>package-name</code> is a period-separated list of identifiers,
 and <code>argument-list</code> is a comma-separated list of fully-qualified
 Java raw types, without spaces.  Recall that a raw type does not contain
 type parameters.  Compared to a regular type, it removes type parameter
-declarations such as <code>&lt;T&gt;</code>, and it and replaces any
+declarations such as <code>&lt;T&gt;</code>, and it replaces any
 use of a type parameter by its upper bound.
 </p>
 
@@ -2007,7 +2007,7 @@ Randoop classifies a test sequence according to its last method call.
     as error-revealing.
   </li>
   <li>
-    If the guard of a normal-precondition is satisfied before the call, the
+    If the guard of a normal-postcondition is satisfied before the call, the
     property for the first satisfied guard is checked after the call.
     If the call terminates normally, the sequence is classified as having
     expected behavior if the property is satisfied.
@@ -2330,13 +2330,13 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
   <li>
     Hashing.  Even if your code does not call <code>hashCode()</code>
     directly, it may be nondeterministic if some <code>hashCode()</code>
-    method is deterministic.
+    method is nondeterministic.
     <ul>
       <li>
         <code>Object.hashCode()</code> depends on where the object is laid
         out in memory, which depends on the operating system and on when
         the garbage collector runs.  Most classes
-        should <code>equals()</code> (the default is reference equality),
+        should override <code>equals()</code> (the default is reference equality),
         and any class that overrides <code>equals()</code> must
         override <code>hashCode()</code>, for consistency
         with <code>equals()</code>.
@@ -2348,7 +2348,7 @@ Here are some ways to eliminate nondeterminism in a sequential Java program:
         output (and usually not to depend on the hash code).
       </li>
       <li>
-        <code>Arrays.deepHashCode()</code> depends on
+        <code>Arrays.deepHashCode()</code> depends
         on <code>Object.hashCode()</code>.
       </li>
       <li>
@@ -2407,7 +2407,7 @@ Use the
 command-line argument.
 This is a last resort because Randoop may output a small test suite due to
 discarding many of the generated tests.
-When possible, is better to avoid generating flaky tests
+When possible, it is better to avoid generating flaky tests
 rather than discarding them after generating them.
 </li>
 </ol>
@@ -2422,7 +2422,7 @@ You can also see the techniques suggested in the paper
 
 <p>
 If the program or its environment changed between runs, Randoop may produce
-different test suites..
+different test suites.
 </p>
 
 <p>
@@ -2597,7 +2597,7 @@ MyClass was read from myjar.jar but was not found on classpath.  Ensure that myj
 <h3 id="not-enough-tests-created">Randoop does not create enough tests, or creates no tests</h3>
 
 <p>
-if Randoop's generated tests do not cover some part of your code (or if
+If Randoop's generated tests do not cover some part of your code (or if
 Randoop outputs "No tests were created. No JUnit class created."), then you
 need to change Randoop's parameters and re-run it.  Spending just a little
 bit of effort may have a big impact on the quality of Randoop's output.
@@ -2759,7 +2759,7 @@ Randoop-generated test might call a method that sets a static field or
 creates/deletes a file.  (Calling Randoop on a method that side-effects
 local state, such as a field of the receiver or of an argument, is fine.)
 Another reason is nondeterminism:  the program under test might behave
-differently on different runs.  Such behaviors are not appropriate for in
+differently on different runs.  Such behaviors are not appropriate for
 unit tests, so you should not call Randoop on such methods.
 </p>
 

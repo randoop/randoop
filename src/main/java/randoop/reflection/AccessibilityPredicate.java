@@ -18,7 +18,7 @@ public abstract class AccessibilityPredicate {
   /** A predicate that always returns true. */
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 
-  /** Creates a AccessibilityPredicate. */
+  /** Creates an AccessibilityPredicate. */
   public AccessibilityPredicate() {}
 
   /**
@@ -47,7 +47,7 @@ public abstract class AccessibilityPredicate {
    */
   public abstract boolean isAccessible(Field f);
 
-  /** AnyAccessibilityPredicate is a {@link AccessibilityPredicate} that always returns true. */
+  /** AnyAccessibilityPredicate is an {@link AccessibilityPredicate} that always returns true. */
   private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new AnyAccessibilityPredicate. */
@@ -90,7 +90,7 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * PublicAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the case
+   * PublicAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is public.
    */
   private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
@@ -233,7 +233,7 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * NotPrivateAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the
+   * NotPrivateAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the
    * case that the class/method/constructor/field is not declared to be private.
    */
   private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {

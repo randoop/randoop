@@ -146,7 +146,7 @@ public final class Randomness {
    * @param <T> the type of elements in the iterable
    * @param ible an iterable that has at least {@code n}+1 elements
    * @param n the 0-based index of the member to return
-   * @return the the nth element (0-indexed) from the iterable
+   * @return the nth element (0-indexed) from the iterable
    */
   public static <T> T nthMember(Iterable<T> ible, int n) {
     Iterator<T> itor = ible.iterator();

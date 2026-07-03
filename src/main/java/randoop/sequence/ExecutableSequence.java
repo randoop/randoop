@@ -254,7 +254,7 @@ public class ExecutableSequence {
     // TODO: Setting the third argument to false would mask fewer errors.  Doing so causes 3 Randoop
     // system tests to fail (because some sequence throws an exception before the last statement).
     // One is innocuous:  java.lang.OutOfMemoryError due to creation of a very large object --
-    // repeated executions evenutally exhaust memory.  Two others are odd: failures in
+    // repeated executions eventually exhaust memory.  Two others are odd: failures in
     // sun.reflect.DelegatingMethodAccessorImpl.invoke called by java.lang.reflect.Method.invoke.
     execute(visitor, gen, true);
   }

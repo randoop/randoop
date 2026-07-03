@@ -15,7 +15,7 @@ Some of the (optional) commands below assume:
    in the Defects4j README.
    Note the Perl dependencies section.  If you are using a UW machine for which you
    do not have super user access, you will need to set up a cpan local lib to
-   install any missing perl modules.
+   install any missing Perl modules.
 
 2. Optionally, use a different version of Randoop.
 

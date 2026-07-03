@@ -294,7 +294,7 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Returns true if this type is an instantiation of the given instantiated type. This is only
    * possible if this type is {@code A<T1,...,Tk>} where all {@code Ti} are instantiated by ground
-   * types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
+   * types (i.e., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
    * {@code Ti} matches {@code Si} for {@code i = 1,...,k} as follows:
    *
    * <ol>
@@ -338,7 +338,7 @@ public class InstantiatedType extends ParameterizedType {
       // isInstantiationOf("foo(Integer, String)", "foo(T,T)").
       return true;
     } else {
-      // otherType is not a ParameterizedType (not a InstantiatedType or GenericClassType)
+      // otherType is not a ParameterizedType (not an InstantiatedType or GenericClassType)
       if (super.isInstantiationOf(otherType)) {
         return true;
       }

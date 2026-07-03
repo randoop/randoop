@@ -57,7 +57,7 @@ public class ExpectedExceptionCheckGen {
    * Returns the nearest accessible superclass -- usually the argument itself.
    *
    * @param c the class for which superclass is needed
-   * @param accessibility only superclasess satisfying this predicate may be returned
+   * @param accessibility only superclasses satisfying this predicate may be returned
    * @return the nearest public class that is the argument or a superclass
    */
   private static Class<?> nearestAccessibleSuperclass(
@@ -74,7 +74,7 @@ public class ExpectedExceptionCheckGen {
    * the given class.
    *
    * @param c the exception class
-   * @param accessibility only superclasess satisfying this predicate may be returned
+   * @param accessibility only superclasses satisfying this predicate may be returned
    * @return the nearest public accessible, c or a superclass of c
    */
   @SuppressWarnings("nullness:return") // a catch class always has a name

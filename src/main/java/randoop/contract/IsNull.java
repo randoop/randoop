@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
  */
 public final class IsNull extends ObjectContract {
 
-  /** Creates a IsNull. */
+  /** Creates an IsNull. */
   public IsNull() {}
 
   @Override

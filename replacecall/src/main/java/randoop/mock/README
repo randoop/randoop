@@ -1,6 +1,6 @@
 This directory contains pre-defined mocks.
 
-The goal of these mocks in to avoid the following AWT/Swing behaviors:
+The goal of these mocks is to avoid the following AWT/Swing behaviors:
  - having dialogs (and other components/containers) display themselves,
  - having windowing system focus taken,
  - getting headless exceptions in headless environment,
@@ -16,7 +16,7 @@ all environments:
    distribution).
  - AWT/Swing threads are still started that have to be stopped. This can result
    in platform-dependent exceptions, and delay while waiting for Randoop to
-   apply the timeout.  The solution for this may be to Prevent AWT/Swing
+   apply the timeout.  The solution for this may be to prevent AWT/Swing
    components from starting threads.  Threads are managed by an AppContext in
    java.awt.Component. So, we want to replace the call to
    sun.awt.AppContext.getAppContext() in the constructor of java.awt.Component

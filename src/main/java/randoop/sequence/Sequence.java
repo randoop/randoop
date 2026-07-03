@@ -349,7 +349,7 @@ public final class Sequence {
 
   /**
    * Returns the Java source code representation of this sequence with values substituted for simple
-   * initializations. Similar to * {@link ExecutableSequence#toCodeString()} except does not include
+   * initializations. Similar to {@link ExecutableSequence#toCodeString()} except does not include
    * checks.
    *
    * @return a string containing Java code for this sequence
@@ -688,7 +688,7 @@ public final class Sequence {
   }
 
   /**
-   * An list of all the statements in this sequence.
+   * A list of all the statements in this sequence.
    *
    * @return the list of all statements in this sequence
    */
@@ -804,7 +804,7 @@ public final class Sequence {
   }
 
   /**
-   * Choose one of the statements that produces a values of type {@code type}.
+   * Choose one of the statements that produces a value of type {@code type}.
    *
    * @param type return a sequence of this type
    * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
@@ -1245,7 +1245,7 @@ public final class Sequence {
 
   /**
    * Returns the operation from which this sequence was constructed. (Also known as the operation in
-   * the last statement of this sequence.
+   * the last statement of this sequence.)
    *
    * @return the last operation of this sequence
    */
@@ -1260,8 +1260,8 @@ public final class Sequence {
    * a statement are values created by earlier statements. Instead of using a Variable to represent
    * such inputs, we use a RelativeNegativeIndex, which is just a wrapper for an integer. The
    * integer represents a negative offset from the statement index in which this
-   * RelativeNegativeIndex lives, and the offset points to the statement that created the values
-   * that is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
+   * RelativeNegativeIndex lives, and the offset points to the statement that created the value that
+   * is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
    * created by the N-th statement above me".
    *
    * <p>For example, the sequence

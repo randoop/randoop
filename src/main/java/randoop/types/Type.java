@@ -99,8 +99,8 @@ public abstract class Type implements Comparable<Type> {
    * Returns the Class for a fully-qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses uses "$" rather
-   *     than "." to indicate a nested class
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses "$" rather than
+   *     "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -132,8 +132,8 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the Class for a class name. Does not support arrays.
    *
-   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses uses
-   *     "$" rather than "." to indicate a nested class
+   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses "$"
+   *     rather than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -248,7 +248,7 @@ public abstract class Type implements Comparable<Type> {
    * Identical to {@link #getFqName()} except for types with type arguments. For {@code
    * java.util.List<T>} returns {@code "java.util.List"}. Returns {@code null} when {@code
    * Class<?>.getCanonicalName()} does for the underlying {@code Class<?>} object (e.g., the type is
-   * a local or anonymous class, or array type where the component type that has no canonical name).
+   * a local or anonymous class, or array type where the component type has no canonical name).
    *
    * @return the fully-qualified canonical name of this type
    */
@@ -471,7 +471,7 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns the type created by instantiating the type parameters of this type with {@link
-   * ReferenceType} objects. Simply returns this type if it has no type parameters. In otherwords,
+   * ReferenceType} objects. Simply returns this type if it has no type parameters. In other words,
    * this type is not a {@link ParameterizedType}, which includes {@link GenericClassType}.
    *
    * <p>There are contexts in which it is necessary to apply a substitution to a {@link Type} and it

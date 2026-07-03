@@ -36,7 +36,7 @@ public final class Statement {
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
-   * @param inputVariables the variable that are used in this statement
+   * @param inputVariables the variables that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;

@@ -438,8 +438,6 @@ public final class SpecificationTranslator {
   /**
    * Returns the compiler from this object.
    *
-   * <p>Only used for testing. ||||||| merged common ancestors
-   *
    * <p>Only used for testing.
    *
    * @return the compiler for this object

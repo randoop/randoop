@@ -23,7 +23,7 @@ import randoop.util.Randomness;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
- * Random Testing" by Ma et. al (appears in ASE 2015):
+ * Random Testing" by Ma et al. (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of
@@ -168,7 +168,7 @@ public class Bloodhound implements TypedOperationSelector {
    *       branch coverage was last updated. This is GRT's approach and is the default. It makes
    *       Randoop non-deterministic.
    *   <li>Count of successful invocations: branch coverage is updated after every {@code
-   *       branchCoverageInteral} successful invocations (of any method under test).
+   *       branchCoverageInterval} successful invocations (of any method under test).
    * </ul>
    */
   private void updateBranchCoverageMaybe() {

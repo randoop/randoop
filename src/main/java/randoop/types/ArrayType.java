@@ -57,7 +57,7 @@ public final class ArrayType extends ReferenceType {
 
   /**
    * Creates an {@code ArrayType} from a {@code java.lang.reflect.Type} reference. First checks
-   * whether reference has type {@code java.lang.reflectGenericArrayType}, and if so performs the
+   * whether reference has type {@code java.lang.reflect.GenericArrayType}, and if so performs the
    * conversion. If the reference is to a {@code Class} object, then delegates to {@link
    * #forClass(Class)}.
    *
@@ -186,7 +186,7 @@ public final class ArrayType extends ReferenceType {
    *
    * <p>For an array type, check for assignability by reference widening. If not otherwise
    * assignable, check for unchecked conversion, which occurs when this type is {@code
-   * C<T1,...,Tk>[]} and other type is {@code C[]} (e.g., the component type is the rawtype {@code
+   * C<T1,...,Tk>[]} and other type is {@code C[]} (i.e., the component type is the rawtype {@code
    * C}).
    */
   @Override
