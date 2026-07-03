@@ -5,10 +5,9 @@ import java.util.Set;
 
 public class EqualsMethodMatcher implements StateMatcher {
 
-  /** A cache. */
   private final Set<Object> cache = new LinkedHashSet<>();
 
-  /** Creates an EqualsMethodMatcher. */
+  /** Creates a EqualsMethodMatcher. */
   public EqualsMethodMatcher() {}
 
   @Override
