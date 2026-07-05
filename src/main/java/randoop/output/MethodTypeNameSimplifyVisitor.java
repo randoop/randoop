@@ -6,6 +6,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.Optional;
 
 /** JavaParser visitor to simplify type names in method calls. */
 public class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
@@ -24,9 +25,13 @@ public class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInt
    */
   @Override
   public void visit(MethodCallExpr methodCallExpr, ClassOrInterfaceType type) {
-    if (methodCallExpr.getScope() != null
-        && type.getScope() != null
-        && methodCallExpr.getScope().toString().equals(type.getScope() + "." + type.getName())) {
+    // In JavaParser, MethodCallExpr.getScope() and ClassOrInterfaceType.getScope() both return an
+    // Optional, so their presence must be tested and their contents unwrapped before comparison.
+    Optional<Expression> callScope = methodCallExpr.getScope();
+    Optional<ClassOrInterfaceType> typeScope = type.getScope();
+    if (callScope.isPresent()
+        && typeScope.isPresent()
+        && callScope.get().toString().equals(typeScope.get() + "." + type.getName())) {
       String typeName = type.getName().toString();
       ParseResult<Expression> parseExpression = javaParser.parseExpression(typeName);
       if (!parseExpression.isSuccessful()) {

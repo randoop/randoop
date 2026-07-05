@@ -92,7 +92,7 @@ public class Postcondition extends SpecificationClause {
         + getDescription()
         + "\", \"guard\": \""
         + getGuard()
-        + ", \"property\": "
+        + "\", \"property\": \""
         + property
         + "\" }";
   }

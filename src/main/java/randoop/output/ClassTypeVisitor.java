@@ -47,7 +47,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
     }
 
     // Add the type to the set if it's not a visible type by default.
-    if (n.getScope() != null) {
+    if (n.getScope().isPresent()) {
       // Add a copy, so that removing the scope later won't
       // affect this instance which is used for comparisons only.
       params.add(n.clone());

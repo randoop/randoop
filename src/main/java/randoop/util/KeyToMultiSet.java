@@ -39,7 +39,7 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
 
   public void add(K key, V value) {
     MultiSet<V> values = map.computeIfAbsent(key, __ -> new MultiSet<>());
-    map.put(key, values);
+    values.add(value);
   }
 
   public void remove(K key, V value) {

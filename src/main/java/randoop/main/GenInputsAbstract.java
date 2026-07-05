@@ -1014,8 +1014,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism (randomness). If not
    * specified, no logging is done.
    */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   @Option("<filename> Log each random selection to this file")
-  public static @MonotonicNonNull FileWriterWithName selection_log = null;
+  public static @Owning @MonotonicNonNull FileWriterWithName selection_log = null;
 
   /** A file to which to write operation usage, when Randoop exits. */
   @Option("<filename> Write operation usage counts to this file")

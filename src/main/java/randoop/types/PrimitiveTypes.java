@@ -140,7 +140,7 @@ public final class PrimitiveTypes {
    * @return true if the first type is a subtype of the second type
    */
   public static boolean isSubtype(Class<?> first, Class<?> second) {
-    if (!first.isPrimitive() && !second.isPrimitive()) {
+    if (!first.isPrimitive() || !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
     Set<Class<?>> superTypes = wideningTable.get(first);
