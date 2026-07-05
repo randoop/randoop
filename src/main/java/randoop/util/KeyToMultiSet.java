@@ -37,6 +37,11 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     }
   }
 
+  /**
+   * Map the key to the value (along with any other keys it already maps to).
+   *
+   * @param key the key @4aram value the value
+   */
   public void add(K key, V value) {
     MultiSet<V> values = map.computeIfAbsent(key, __ -> new MultiSet<>());
     values.add(value);
