@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
@@ -100,8 +101,11 @@ public final class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try (FileWriterWithName fw = new FileWriterWithName(filename)) {
-      setSelectionLog(fw);
+    // Do not use a try-with-resources statement: the writer must stay open for the whole run, so
+    // that Randomness can write to GenInputsAbstract.selection_log during generation. The writer is
+    // closed in GenTests after generation completes.
+    try {
+      setSelectionLog(new FileWriterWithName(filename));
     } catch (IOException e) {
       throw new Error("problem creating selection log " + Util.filenameAndAbsolute(filename), e);
     }
@@ -112,7 +116,7 @@ public final class TestUtils {
    *
    * @param fw the FileWriter to write the log to; does nothing if fw is null
    */
-  public static void setSelectionLog(FileWriterWithName fw) {
+  public static void setSelectionLog(@Owning FileWriterWithName fw) {
     if (debug) {
       System.out.println("setSelectionLog(" + fw + ")");
     }

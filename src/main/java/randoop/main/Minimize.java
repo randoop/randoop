@@ -551,7 +551,8 @@ public class Minimize extends CommandHandler {
           Expression mExp;
           if (mArgs.size() == 1) {
             mExp = mArgs.get(0);
-          } else if (mArgs.size() == 1) {
+          } else if (mArgs.size() == 2) {
+            // First argument is a string explanation; the condition is the second argument.
             mExp = mArgs.get(1);
           } else {
             return;
@@ -1141,7 +1142,7 @@ public class Minimize extends CommandHandler {
 
     try {
       @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
-      String errOutputStringTmp = outStream.toString();
+      String errOutputStringTmp = errStream.toString();
       errOutputString = errOutputStringTmp;
     } catch (RuntimeException e) {
       return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());

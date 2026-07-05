@@ -116,7 +116,7 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getFqName() + ".<set>(" + field.getName() + ")";
+    return declaringType.getBinaryName() + ".<set>(" + field.getName() + ")";
   }
 
   /**

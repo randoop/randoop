@@ -135,7 +135,7 @@ public final class Util {
       // Determine line's length (exclusive of indent if any)
       int lineLength = firstLine ? colWidth : colWidth - indentWidth;
 
-      if (lineLength > string.length()) {
+      if (lineLength >= string.length()) {
         if (!firstLine) {
           b.append(indentString);
         }

@@ -1070,7 +1070,6 @@ public final class Sequence {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        System.out.println("operation string: " + opStr);
         // Parse operation.
         TypedOperation operation;
         try {
@@ -1105,7 +1104,7 @@ public final class Sequence {
                 "(Statement "
                     + statementCount
                     + ") input variable name "
-                    + newVar
+                    + inVar
                     + " is not declared by a previous statement.";
             throw new IllegalArgumentException(msg);
           }
