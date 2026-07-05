@@ -10,7 +10,6 @@ plugins {
   id("java")
   id("eclipse")
   id("idea")
-  id("jacoco")
 
   alias(libs.plugins.com.diffplug.spotless) apply false
 
@@ -46,17 +45,18 @@ allprojects {
   apply plugin: "java"
   apply plugin: "com.gradleup.shadow"
   apply plugin: "net.ltgt.errorprone"
+  apply plugin: "jacoco"
 
   java {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     toolchain {
-      languageVersion = JavaLanguageVersion.of(testJdkVersion)
+      languageVersion = JavaLanguageVersion.of(rootProject.ext.testJdkVersion)
     }
   }
   tasks.withType(JavaExec).configureEach {
     javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(testJdkVersion)
+      languageVersion = JavaLanguageVersion.of(rootProject.ext.testJdkVersion)
     }
   }
 
@@ -86,17 +86,17 @@ allprojects {
 
   dependencies {
     // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    plumelib(libs.bcel.util)
+    plumelib(rootProject.libs.bcel.util)
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
       plumelib("org.plumelib:options:1.0.6")
     } else {
-      plumelib(libs.options)
+      plumelib(rootProject.libs.options)
     }
     // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    plumelib(libs.plume.util)
+    plumelib(rootProject.libs.plume.util)
     // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    plumelib(libs.reflection.util)
+    plumelib(rootProject.libs.reflection.util)
   }
   java {
     withJavadocJar()
@@ -105,7 +105,7 @@ allprojects {
 
   apply plugin: "org.checkerframework"
   checkerFramework {
-    version = libs.versions.checker.get()
+    version = rootProject.libs.versions.checker.get()
     if (project.hasProperty("cfNullness")) {
       checkers = [
         "org.checkerframework.checker.nullness.NullnessChecker",
@@ -145,7 +145,7 @@ allprojects {
   }
 
   jacoco {
-    toolVersion = libs.versions.jacoco.get()
+    toolVersion = rootProject.libs.versions.jacoco.get()
   }
 
   jacocoTestReport {
@@ -292,7 +292,7 @@ build.dependsOn(compileAll)
 allprojects { subproject ->
   apply plugin: "maven-publish"
   apply plugin: "signing"
-  if (isJava21orHigher) {
+  if (rootProject.ext.isJava21orHigher) {
     apply plugin: "com.diffplug.spotless"
     spotless {
       format "misc", {
@@ -353,7 +353,7 @@ allprojects { subproject ->
 
 allprojects {
   dependencies {
-    errorprone(libs.error.prone.core)
+    errorprone(rootProject.libs.error.prone.core)
   }
 }
 allprojects { subproject ->
@@ -375,7 +375,7 @@ allprojects { subproject ->
 
         excludedPaths = ".*/testInput/.*"
       }
-      options.errorprone.enabled = isJava17orHigher
+      options.errorprone.enabled = rootProject.ext.isJava17orHigher
     }
   }
 }
