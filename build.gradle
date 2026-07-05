@@ -334,12 +334,15 @@ allprojects { subproject ->
             .addTypeAnnotation("Unreplaceable")
             .addTypeAnnotation("Unshrinkable")
       }
-      groovyGradle {
-        target("**/*.gradle")
-        greclipse()  // which formatter Spotless should use to format .gradle files.
-        leadingTabsToSpaces(2)
-        trimTrailingWhitespace()
-        // endWithNewline() // Don't want to end empty files with a newline
+      // eclipse.org flakiness leads to "Failed to provision P2 dependencies".
+      if (false) {
+        groovyGradle {
+          target("**/*.gradle")
+          greclipse()  // which formatter Spotless should use to format .gradle files.
+          leadingTabsToSpaces(2)
+          trimTrailingWhitespace()
+          // endWithNewline() // Don't want to end empty files with a newline
+        }
       }
     }
   }
