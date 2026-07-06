@@ -179,13 +179,6 @@ import randoop.util.Log;
       String sourceUri = source.toUri().toString();
       for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
         int lineNumber = (int) diagnostic.getLineNumber();
-
-        // Ignore diagnostics that don't have a line number.
-        // Often times, these are notes about the compilation process.
-        if (lineNumber == Diagnostic.NOPOS) {
-          continue;
-        }
-
         if (!headerPrinted) {
           Log.logPrintf("%nCompilation failed, see below for details:%n");
           headerPrinted = true;
@@ -199,8 +192,11 @@ import randoop.util.Log;
         } catch (Throwable t) {
           message = diagnostic.toString();
         }
-
-        Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+        if (lineNumber == Diagnostic.NOPOS) {
+          Log.logPrintf("Error in %s: %s%n", sourceUri, message);
+        } else {
+          Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+        }
       }
     }
 
