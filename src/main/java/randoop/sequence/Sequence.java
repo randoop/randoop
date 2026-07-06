@@ -1106,7 +1106,7 @@ public final class Sequence {
                     + ") input variable name "
                     + inVar
                     + " is not declared by a previous statement.";
-            throw new IllegalArgumentException(msg);
+            throw new SequenceParseException(msg, statements, statementCount);
           }
           inputs.add(sequence.getVariable(index));
         }
