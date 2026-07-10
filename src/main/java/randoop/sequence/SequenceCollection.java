@@ -169,8 +169,8 @@ public class SequenceCollection {
    *
    * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
    * as well. That alternative is not implemented. It would probably be faster, but it would not
-   * handle the case of a method side-effecting a variable that that was not explicitly passed to
-   * it. That case probably isn't important/common.)
+   * handle the case of a method side-effecting a variable that was not explicitly passed to it.
+   * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
    */

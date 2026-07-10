@@ -1,5 +1,8 @@
 package randoop.condition;
 
+import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Represents a pair of an executable guard and an executable property.
  *
@@ -29,7 +32,24 @@ public class GuardPropertyPair {
   }
 
   @Override
+  public boolean equals(@Nullable Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (!(object instanceof GuardPropertyPair)) {
+      return false;
+    }
+    GuardPropertyPair other = (GuardPropertyPair) object;
+    return this.guard.equals(other.guard) && this.property.equals(other.property);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(guard, property);
+  }
+
+  @Override
   public String toString() {
-    return String.format("GuardPropertyPair{guard=%s, property=%s)", guard, property);
+    return String.format("GuardPropertyPair{guard=%s, property=%s}", guard, property);
   }
 }

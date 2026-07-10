@@ -184,7 +184,7 @@ public class ReflectionManager {
 
       // member types
       for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(c.getModifiers()))) {
+        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(ic.getModifiers()))) {
           applyTo(visitor, ic);
         }
       }
