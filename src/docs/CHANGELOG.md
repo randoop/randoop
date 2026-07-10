@@ -273,7 +273,7 @@ Some command-line options have been renamed:
 * --timelimit => --time-limit
 * --inputlimit => --generated-limit
 * --outputlimit => --output-limit
-* --timeout => --call-timout.
+* --timeout => --call-timeout.
 * --include-if-classname-appears => --require-classname-in-test.
 * --include-if-class-exercised => --require-covered-classes.
      File "exercised-class.jar" is now "covered-class.jar".

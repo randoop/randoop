@@ -290,7 +290,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int nondeterministic_methods_to_output = 10;
 
   /**
-   * If true, output error-revealing tests. Disables all output when used with {@code
+   * If true, do not output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -300,7 +300,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_error_revealing_tests = false;
 
   /**
-   * If true, output regression tests. Disables all output when used with {@code
+   * If true, do not output regression tests. Disables all output when used with {@code
    * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
    * of {@code --generated-limit} and {@code --time-limit} are used.
    */
