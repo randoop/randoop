@@ -1038,7 +1038,10 @@ tasks.register("checklink", Exec) {
 tasks.register("installGitHooks", Copy) {
   description = "Installs git hooks for pre-commit"
   from("scripts/")
-  into(".git/hooks")
+  into(providers.exec {
+    workingDir(project.rootDir)
+    commandLine("git", "rev-parse", "--git-path", "hooks")
+  }.standardOutput.asText.map { it.trim() })
 }
 /* Always run this task. */
 gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
@@ -1052,7 +1055,22 @@ gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.t
 //   details about this problem.
 generateGitProperties.dependsOn(":installGitHooks")
 gitProperties {
-  dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
+  // Handle submodules/worktrees where .git is a pointer file, not a directory.
+  dotGitDirectory = providers.exec {
+    workingDir(project.rootDir)
+    commandLine("git", "rev-parse", "--absolute-git-dir")
+    // Fallback keeps behavior in unusual non-git contexts.
+    ignoreExitValue = true
+  }.result.map { execResult ->
+    if (execResult.exitValue == 0) {
+      file(providers.exec {
+        workingDir(project.rootDir)
+        commandLine("git", "rev-parse", "--absolute-git-dir")
+      }.standardOutput.asText.get().trim())
+    } else {
+      file(".git")
+    }
+  }.get()
 }
 sourcesJar.dependsOn(generateGitProperties)
 
