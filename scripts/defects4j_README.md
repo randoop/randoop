@@ -20,7 +20,7 @@ Some of the (optional) commands below assume:
 2. Optionally, use a different version of Randoop.
 
    By default, the system uses the version of Randoop at
-   $D4J_HOME/framework/lib/test_generation/generation/randooop-current.jar.
+   $D4J_HOME/framework/lib/test_generation/generation/randoop-current.jar.
 
    * You can indicate a different directory that contains Randoop (note
      that the `.jar` files must be suffixed `-current.jar`):
