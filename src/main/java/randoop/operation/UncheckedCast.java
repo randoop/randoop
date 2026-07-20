@@ -33,12 +33,12 @@ class UncheckedCast extends CallableOperation {
    *
    * <p>Performs this cast on the first value of the input array.
    *
-   * <p>The cast can legitimately fail at run time: this operation is used (in particular, by
-   * "GRT Elephant-Brain" run-time-type casting, see {@link
-   * randoop.sequence.ExecutableSequence#castToRunTimeType}) to cast a value to a concrete type
-   * that was observed on a previous execution. If the value comes from a call whose result depends
-   * on mutable state (for example a getter for a mutable static field), a later execution of the
-   * same generated code may produce a value of a different, incompatible runtime type. Rather than
+   * <p>The cast can legitimately fail at run time: this operation is used (in particular, by "GRT
+   * Elephant-Brain" run-time-type casting, see {@link
+   * randoop.sequence.ExecutableSequence#castToRunTimeType}) to cast a value to a concrete type that
+   * was observed on a previous execution. If the value comes from a call whose result depends on
+   * mutable state (for example a getter for a mutable static field), a later execution of the same
+   * generated code may produce a value of a different, incompatible runtime type. Rather than
    * letting {@link ClassCastException} propagate (which would abort test generation entirely),
    * report it the same way other operations report failures: as an {@link ExceptionalExecution}.
    *
