@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.List;
 import org.checkerframework.checker.signedness.qual.Signed;
+import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -32,14 +33,28 @@ class UncheckedCast extends CallableOperation {
    *
    * <p>Performs this cast on the first value of the input array.
    *
+   * <p>The cast can legitimately fail at run time: this operation is used (in particular, by
+   * "GRT Elephant-Brain" run-time-type casting, see {@link
+   * randoop.sequence.ExecutableSequence#castToRunTimeType}) to cast a value to a concrete type
+   * that was observed on a previous execution. If the value comes from a call whose result depends
+   * on mutable state (for example a getter for a mutable static field), a later execution of the
+   * same generated code may produce a value of a different, incompatible runtime type. Rather than
+   * letting {@link ClassCastException} propagate (which would abort test generation entirely),
+   * report it the same way other operations report failures: as an {@link ExceptionalExecution}.
+   *
    * @param input array containing appropriate inputs to operation
-   * @return the value cast to the type of this cast
+   * @return the value cast to the type of this cast, or an {@link ExceptionalExecution} if the cast
+   *     fails
    */
   @Override
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "cast only takes one input";
-    @Signed Object result = type.getRuntimeClass().cast(input[0]);
-    return new NormalExecution(result, 0);
+    try {
+      @Signed Object result = type.getRuntimeClass().cast(input[0]);
+      return new NormalExecution(result, 0);
+    } catch (ClassCastException e) {
+      return new ExceptionalExecution(e, 0);
+    }
   }
 
   /**
