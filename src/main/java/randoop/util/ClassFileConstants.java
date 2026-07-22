@@ -255,455 +255,466 @@ public class ClassFileConstants {
       InstructionList il = mg.getInstructionList();
       if (il != null) {
         for (Instruction inst : il.getInstructions()) {
-          switch (inst.getOpcode()) {
-
-            // Compare two objects, no literals
-            case Const.IF_ACMPEQ:
-            case Const.IF_ACMPNE:
-              break;
-
-            // These instructions compare the integer on the top of the stack
-            // to zero. There are no literals here (except 0).
-            case Const.IFEQ:
-            case Const.IFNE:
-            case Const.IFLT:
-            case Const.IFGE:
-            case Const.IFGT:
-            case Const.IFLE:
-              {
-                // If no instruction is followed by those instructions, then it is comparing to 0.
-                registerIntegerConstant(0, result);
-                break;
-              }
-
-            // InstanceOf pushes either 0 or 1 on the stack depending on
-            // whether
-            // the object on top of stack is of the specified type.
-            // If we're interested in class literals, this would be interesting
-            case Const.INSTANCEOF:
-              break;
-
-            // Duplicates the item on the top of stack. No literal.
-            case Const.DUP:
-              {
-                break;
-              }
-
-            // Duplicates the item on the top of the stack and inserts it 2
-            // values down in the stack. No literals
-            case Const.DUP_X1:
-              {
-                break;
-              }
-
-            // Duplicates either the top 2 category 1 values or a single
-            // category 2 value and inserts it 2 or 3 values down on the
-            // stack.
-            case Const.DUP2_X1:
-              {
-                break;
-              }
-
-            // Duplicate either one category 2 value or two category 1 values.
-            case Const.DUP2:
-              {
-                break;
-              }
-
-            // Dup the category 1 value on the top of the stack and insert it
-            // either
-            // two or three values down on the stack.
-            case Const.DUP_X2:
-              {
-                break;
-              }
-
-            case Const.DUP2_X2:
-              {
-                break;
-              }
-
-            // Pop instructions discard the top of the stack.
-            case Const.POP:
-              {
-                break;
-              }
-
-            // Pops either the top 2 category 1 values or a single category 2
-            // value
-            // from the top of the stack.
-            case Const.POP2:
-              {
-                break;
-              }
-
-            // Swaps the two category 1 types on the top of the stack.
-            case Const.SWAP:
-              {
-                break;
-              }
-
-            // Compares two integers on the stack
-            case Const.IF_ICMPEQ:
-            case Const.IF_ICMPGE:
-            case Const.IF_ICMPGT:
-            case Const.IF_ICMPLE:
-            case Const.IF_ICMPLT:
-            case Const.IF_ICMPNE:
-              {
-                break;
-              }
-
-            // Get the value of a field
-            case Const.GETFIELD:
-              {
-                break;
-              }
-
-            // stores the top of stack into a field
-            case Const.PUTFIELD:
-              {
-                break;
-              }
-
-            // Pushes the value of a static field on the stack
-            case Const.GETSTATIC:
-              {
-                FieldInstruction fieldInstruction = (FieldInstruction) inst;
-                // Get the name of the referenced type that the instruction refers to
-                String referencedTypeName = fieldInstruction.getReferenceType(pool).toString();
-
-                if (!referencedTypeName.contains("$")) {
-                  break; // out of `case Const.GETSTATIC:`
-                }
-                // It is a nested class, and it might be an enum.
-
-                try {
-                  Class<?> enumClass = Class.forName((@ClassGetName String) referencedTypeName);
-
-                  // Example of how enum value can be extracted
-                  // @SuppressWarnings("unchecked")
-                  // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
-
-                  if (enumClass.isEnum()) {
-                    @SuppressWarnings("unchecked")
-                    Class<Enum> enumType = (Class<Enum>) enumClass;
-
-                    String fieldName = fieldInstruction.getFieldName(pool);
-
-                    // TODO: Use the more specific enumType in the valueOf call to avoid unchecked
-                    // warning
-                    @SuppressWarnings("unchecked")
-                    Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
-
-                    result.enums.add(enumConstant);
-                    result.constantFrequency.put(
-                        enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
-                  }
-
-                } catch (ClassNotFoundException e) {
-                  throw new RuntimeException(e);
-                }
-                break; // out of `case Const.GETSTATIC:`
-              }
-
-            // Pops a value off of the stack into a static field
-            case Const.PUTSTATIC:
-              {
-                break;
-              }
-
-            // pushes a local onto the stack
-            case Const.DLOAD:
-            case Const.DLOAD_0:
-            case Const.DLOAD_1:
-            case Const.DLOAD_2:
-            case Const.DLOAD_3:
-            case Const.FLOAD:
-            case Const.FLOAD_0:
-            case Const.FLOAD_1:
-            case Const.FLOAD_2:
-            case Const.FLOAD_3:
-            case Const.ILOAD:
-            case Const.ILOAD_0:
-            case Const.ILOAD_1:
-            case Const.ILOAD_2:
-            case Const.ILOAD_3:
-            case Const.LLOAD:
-            case Const.LLOAD_0:
-            case Const.LLOAD_1:
-            case Const.LLOAD_2:
-            case Const.LLOAD_3:
-              {
-                break;
-              }
-
-            // Pops a value off of the stack into a local
-            case Const.DSTORE:
-            case Const.DSTORE_0:
-            case Const.DSTORE_1:
-            case Const.DSTORE_2:
-            case Const.DSTORE_3:
-            case Const.FSTORE:
-            case Const.FSTORE_0:
-            case Const.FSTORE_1:
-            case Const.FSTORE_2:
-            case Const.FSTORE_3:
-            case Const.ISTORE:
-            case Const.ISTORE_0:
-            case Const.ISTORE_1:
-            case Const.ISTORE_2:
-            case Const.ISTORE_3:
-            case Const.LSTORE:
-            case Const.LSTORE_0:
-            case Const.LSTORE_1:
-            case Const.LSTORE_2:
-            case Const.LSTORE_3:
-              {
-                break;
-              }
-
-            // Push a value from the constant pool. We'll get these
-            // values when processing the constant pool itself.
-            case Const.LDC:
-              {
-                LDC ldcInstruction = (LDC) inst;
-                int index = ldcInstruction.getIndex();
-                Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, constant_pool, result);
-                break;
-              }
-            case Const.LDC_W:
-              // TODO: Could be redundant
-              {
-                LDC_W ldc_w = (LDC_W) inst;
-                int index = ldc_w.getIndex();
-                Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, constant_pool, result);
-                break;
-              }
-            case Const.LDC2_W:
-              {
-                // Like the LDC, but for longs and doubles
-                LDC2_W ldc2_w = (LDC2_W) inst;
-                int index = ldc2_w.getIndex();
-                Constant constant = constant_pool.getConstant(index);
-                registerConstant(constant, constant_pool, result);
-                break;
-              }
-
-            // Push the length of an array on the stack
-            case Const.ARRAYLENGTH:
-              {
-                break;
-              }
-
-            // Push small constants (-1..5) on the stack.
-            case Const.DCONST_0:
-              registerDoubleConstant(Double.valueOf(0), result);
-              break;
-            case Const.DCONST_1:
-              registerDoubleConstant(Double.valueOf(1), result);
-              break;
-            case Const.FCONST_0:
-              registerFloatConstant(Float.valueOf(0), result);
-              break;
-            case Const.FCONST_1:
-              registerFloatConstant(Float.valueOf(1), result);
-              break;
-            case Const.FCONST_2:
-              registerFloatConstant(Float.valueOf(2), result);
-              break;
-            case Const.ICONST_0:
-              registerIntegerConstant(0, result);
-              break;
-            case Const.ICONST_1:
-              registerIntegerConstant(1, result);
-              break;
-            case Const.ICONST_2:
-              registerIntegerConstant(2, result);
-              break;
-            case Const.ICONST_3:
-              registerIntegerConstant(3, result);
-              break;
-            case Const.ICONST_4:
-              registerIntegerConstant(4, result);
-              break;
-            case Const.ICONST_5:
-              registerIntegerConstant(5, result);
-              break;
-            case Const.ICONST_M1:
-              registerIntegerConstant(-1, result);
-              break;
-            case Const.LCONST_0:
-              registerLongConstant(Long.valueOf(0), result);
-              break;
-            case Const.LCONST_1:
-              registerLongConstant(Long.valueOf(1), result);
-              break;
-
-            case Const.BIPUSH:
-            case Const.SIPUSH:
-              ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-              registerIntegerConstant((Integer) cpi.getValue(), result);
-              break;
-
-            // Primitive Binary operators.
-            case Const.DADD:
-            case Const.DCMPG:
-            case Const.DCMPL:
-            case Const.DDIV:
-            case Const.DMUL:
-            case Const.DREM:
-            case Const.DSUB:
-            case Const.FADD:
-            case Const.FCMPG:
-            case Const.FCMPL:
-            case Const.FDIV:
-            case Const.FMUL:
-            case Const.FREM:
-            case Const.FSUB:
-            case Const.IADD:
-            case Const.IAND:
-            case Const.IDIV:
-            case Const.IMUL:
-            case Const.IOR:
-            case Const.IREM:
-            case Const.ISHL:
-            case Const.ISHR:
-            case Const.ISUB:
-            case Const.IUSHR:
-            case Const.IXOR:
-            case Const.LADD:
-            case Const.LAND:
-            case Const.LCMP:
-            case Const.LDIV:
-            case Const.LMUL:
-            case Const.LOR:
-            case Const.LREM:
-            case Const.LSHL:
-            case Const.LSHR:
-            case Const.LSUB:
-            case Const.LUSHR:
-            case Const.LXOR:
-              break;
-
-            case Const.LOOKUPSWITCH:
-            case Const.TABLESWITCH:
-              break;
-
-            case Const.ANEWARRAY:
-            case Const.NEWARRAY:
-              {
-                break;
-              }
-
-            case Const.MULTIANEWARRAY:
-              {
-                break;
-              }
-
-            // push the value at an index in an array
-            case Const.AALOAD:
-            case Const.BALOAD:
-            case Const.CALOAD:
-            case Const.DALOAD:
-            case Const.FALOAD:
-            case Const.IALOAD:
-            case Const.LALOAD:
-            case Const.SALOAD:
-              {
-                break;
-              }
-
-            // Pop the top of stack into an array location
-            case Const.AASTORE:
-            case Const.BASTORE:
-            case Const.CASTORE:
-            case Const.DASTORE:
-            case Const.FASTORE:
-            case Const.IASTORE:
-            case Const.LASTORE:
-            case Const.SASTORE:
-              break;
-
-            case Const.ARETURN:
-            case Const.DRETURN:
-            case Const.FRETURN:
-            case Const.IRETURN:
-            case Const.LRETURN:
-            case Const.RETURN:
-              {
-                break;
-              }
-
-            // subroutine calls.
-            case Const.INVOKESTATIC:
-            case Const.INVOKEVIRTUAL:
-            case Const.INVOKESPECIAL:
-            case Const.INVOKEINTERFACE:
-            case Const.INVOKEDYNAMIC:
-              break;
-
-            // Throws an exception.
-            case Const.ATHROW:
-              break;
-
-            // Opcodes that don't need any modifications. Here for reference.
-            case Const.ACONST_NULL:
-            case Const.ALOAD:
-            case Const.ALOAD_0:
-            case Const.ALOAD_1:
-            case Const.ALOAD_2:
-            case Const.ALOAD_3:
-            case Const.ASTORE:
-            case Const.ASTORE_0:
-            case Const.ASTORE_1:
-            case Const.ASTORE_2:
-            case Const.ASTORE_3:
-            case Const.CHECKCAST:
-            case Const.D2F: // double to float
-            case Const.D2I: // double to integer
-            case Const.D2L: // double to long
-            case Const.DNEG: // Negate double on top of stack
-            case Const.F2D: // float to double
-            case Const.F2I: // float to integer
-            case Const.F2L: // float to long
-            case Const.FNEG: // Negate float on top of stack
-            case Const.GOTO:
-            case Const.GOTO_W:
-            case Const.I2B: // integer to byte
-            case Const.I2C: // integer to char
-            case Const.I2D: // integer to double
-            case Const.I2F: // integer to float
-            case Const.I2L: // integer to long
-            case Const.I2S: // integer to short
-            case Const.IFNONNULL:
-            case Const.IFNULL:
-            case Const.IINC: // increment local variable by a constant
-            case Const.INEG: // negate integer on top of stack
-            case Const.JSR: // pushes return address on the stack,
-            case Const.JSR_W:
-            case Const.L2D: // long to double
-            case Const.L2F: // long to float
-            case Const.L2I: // long to int
-            case Const.LNEG: // negate long on top of stack
-            case Const.MONITORENTER:
-            case Const.MONITOREXIT:
-            case Const.NEW:
-            case Const.NOP:
-            case Const.RET: // this is the internal JSR return
-            case Const.WIDE:
-              break;
-
-            // Make sure we didn't miss anything
-            default:
-              throw new RandoopBug("instruction " + inst + " unsupported");
-          }
+          registerConstantFromInstruction(result, inst, pool, constant_pool);
         }
       }
     }
     return result;
+  }
+
+  /**
+   * Register constants from {@code inst} in the given ConstantSet.
+   *
+   * @param result the set of constants to which constants are added
+   * @param inst Instruction from which to register constants
+   * @param pool the ConstantPoolGen used to create the instruction
+   * @param constant_pool a constant pool that is used if the constant is a String, Class, or Enum
+   */
+  private static void registerConstantFromInstruction(
+      ConstantSet result, Instruction inst, ConstantPoolGen pool, ConstantPool constant_pool) {
+    switch (inst.getOpcode()) {
+
+      // Compare two objects, no literals
+      case Const.IF_ACMPEQ:
+      case Const.IF_ACMPNE:
+        break;
+
+      // These instructions compare the integer on the top of the stack
+      // to zero. There are no literals here (except 0).
+      case Const.IFEQ:
+      case Const.IFNE:
+      case Const.IFLT:
+      case Const.IFGE:
+      case Const.IFGT:
+      case Const.IFLE:
+        {
+          // If no instruction is followed by those instructions, then it is comparing to 0.
+          registerIntegerConstant(0, result);
+          break;
+        }
+
+      // InstanceOf pushes either 0 or 1 on the stack depending on
+      // whether
+      // the object on top of stack is of the specified type.
+      // If we're interested in class literals, this would be interesting
+      case Const.INSTANCEOF:
+        break;
+
+      // Duplicates the item on the top of stack. No literal.
+      case Const.DUP:
+        {
+          break;
+        }
+
+      // Duplicates the item on the top of the stack and inserts it 2
+      // values down in the stack. No literals
+      case Const.DUP_X1:
+        {
+          break;
+        }
+
+      // Duplicates either the top 2 category 1 values or a single
+      // category 2 value and inserts it 2 or 3 values down on the
+      // stack.
+      case Const.DUP2_X1:
+        {
+          break;
+        }
+
+      // Duplicate either one category 2 value or two category 1 values.
+      case Const.DUP2:
+        {
+          break;
+        }
+
+      // Dup the category 1 value on the top of the stack and insert it
+      // either
+      // two or three values down on the stack.
+      case Const.DUP_X2:
+        {
+          break;
+        }
+
+      case Const.DUP2_X2:
+        {
+          break;
+        }
+
+      // Pop instructions discard the top of the stack.
+      case Const.POP:
+        {
+          break;
+        }
+
+      // Pops either the top 2 category 1 values or a single category 2
+      // value
+      // from the top of the stack.
+      case Const.POP2:
+        {
+          break;
+        }
+
+      // Swaps the two category 1 types on the top of the stack.
+      case Const.SWAP:
+        {
+          break;
+        }
+
+      // Compares two integers on the stack
+      case Const.IF_ICMPEQ:
+      case Const.IF_ICMPGE:
+      case Const.IF_ICMPGT:
+      case Const.IF_ICMPLE:
+      case Const.IF_ICMPLT:
+      case Const.IF_ICMPNE:
+        {
+          break;
+        }
+
+      // Get the value of a field
+      case Const.GETFIELD:
+        {
+          break;
+        }
+
+      // stores the top of stack into a field
+      case Const.PUTFIELD:
+        {
+          break;
+        }
+
+      // Pushes the value of a static field on the stack
+      case Const.GETSTATIC:
+        {
+          FieldInstruction fieldInstruction = (FieldInstruction) inst;
+          // Get the name of the referenced type that the instruction refers to
+          String referencedTypeName = fieldInstruction.getReferenceType(pool).toString();
+
+          if (!referencedTypeName.contains("$")) {
+            break; // out of `case Const.GETSTATIC:`
+          }
+          // It is a nested class, and it might be an enum.
+
+          try {
+            Class<?> enumClass = Class.forName((@ClassGetName String) referencedTypeName);
+
+            // Example of how enum value can be registerConstantFromInstruction
+            // @SuppressWarnings("unchecked")
+            // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
+
+            if (enumClass.isEnum()) {
+              Enum<?> enumConstant = null;
+              String fieldName = fieldInstruction.getFieldName(pool);
+              for (Enum<?> maybeConstant : (Enum<?>[]) enumClass.getEnumConstants()) {
+                if (maybeConstant.name().equals(fieldName)) {
+                  enumConstant = maybeConstant;
+                }
+              }
+
+              result.enums.add(enumConstant);
+              result.constantFrequency.put(
+                  enumConstant, result.constantFrequency.getOrDefault(enumConstant, 0) + 1);
+            }
+
+          } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+          }
+          break; // out of `case Const.GETSTATIC:`
+        }
+
+      // Pops a value off of the stack into a static field
+      case Const.PUTSTATIC:
+        {
+          break;
+        }
+
+      // pushes a local onto the stack
+      case Const.DLOAD:
+      case Const.DLOAD_0:
+      case Const.DLOAD_1:
+      case Const.DLOAD_2:
+      case Const.DLOAD_3:
+      case Const.FLOAD:
+      case Const.FLOAD_0:
+      case Const.FLOAD_1:
+      case Const.FLOAD_2:
+      case Const.FLOAD_3:
+      case Const.ILOAD:
+      case Const.ILOAD_0:
+      case Const.ILOAD_1:
+      case Const.ILOAD_2:
+      case Const.ILOAD_3:
+      case Const.LLOAD:
+      case Const.LLOAD_0:
+      case Const.LLOAD_1:
+      case Const.LLOAD_2:
+      case Const.LLOAD_3:
+        {
+          break;
+        }
+
+      // Pops a value off of the stack into a local
+      case Const.DSTORE:
+      case Const.DSTORE_0:
+      case Const.DSTORE_1:
+      case Const.DSTORE_2:
+      case Const.DSTORE_3:
+      case Const.FSTORE:
+      case Const.FSTORE_0:
+      case Const.FSTORE_1:
+      case Const.FSTORE_2:
+      case Const.FSTORE_3:
+      case Const.ISTORE:
+      case Const.ISTORE_0:
+      case Const.ISTORE_1:
+      case Const.ISTORE_2:
+      case Const.ISTORE_3:
+      case Const.LSTORE:
+      case Const.LSTORE_0:
+      case Const.LSTORE_1:
+      case Const.LSTORE_2:
+      case Const.LSTORE_3:
+        {
+          break;
+        }
+
+      // Push a value from the constant pool. We'll get these
+      // values when processing the constant pool itself.
+      case Const.LDC:
+        {
+          LDC ldcInstruction = (LDC) inst;
+          int index = ldcInstruction.getIndex();
+          Constant constant = constant_pool.getConstant(index);
+          registerConstant(constant, constant_pool, result);
+          break;
+        }
+      case Const.LDC_W:
+        // TODO: Could be redundant
+        {
+          LDC_W ldc_w = (LDC_W) inst;
+          int index = ldc_w.getIndex();
+          Constant constant = constant_pool.getConstant(index);
+          registerConstant(constant, constant_pool, result);
+          break;
+        }
+      case Const.LDC2_W:
+        {
+          // Like the LDC, but for longs and doubles
+          LDC2_W ldc2_w = (LDC2_W) inst;
+          int index = ldc2_w.getIndex();
+          Constant constant = constant_pool.getConstant(index);
+          registerConstant(constant, constant_pool, result);
+          break;
+        }
+
+      // Push the length of an array on the stack
+      case Const.ARRAYLENGTH:
+        {
+          break;
+        }
+
+      // Push small constants (-1..5) on the stack.
+      case Const.DCONST_0:
+        registerDoubleConstant(Double.valueOf(0), result);
+        break;
+      case Const.DCONST_1:
+        registerDoubleConstant(Double.valueOf(1), result);
+        break;
+      case Const.FCONST_0:
+        registerFloatConstant(Float.valueOf(0), result);
+        break;
+      case Const.FCONST_1:
+        registerFloatConstant(Float.valueOf(1), result);
+        break;
+      case Const.FCONST_2:
+        registerFloatConstant(Float.valueOf(2), result);
+        break;
+      case Const.ICONST_0:
+        registerIntegerConstant(0, result);
+        break;
+      case Const.ICONST_1:
+        registerIntegerConstant(1, result);
+        break;
+      case Const.ICONST_2:
+        registerIntegerConstant(2, result);
+        break;
+      case Const.ICONST_3:
+        registerIntegerConstant(3, result);
+        break;
+      case Const.ICONST_4:
+        registerIntegerConstant(4, result);
+        break;
+      case Const.ICONST_5:
+        registerIntegerConstant(5, result);
+        break;
+      case Const.ICONST_M1:
+        registerIntegerConstant(-1, result);
+        break;
+      case Const.LCONST_0:
+        registerLongConstant(Long.valueOf(0), result);
+        break;
+      case Const.LCONST_1:
+        registerLongConstant(Long.valueOf(1), result);
+        break;
+
+      case Const.BIPUSH:
+      case Const.SIPUSH:
+        ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
+        registerIntegerConstant((Integer) cpi.getValue(), result);
+        break;
+
+      // Primitive Binary operators.
+      case Const.DADD:
+      case Const.DCMPG:
+      case Const.DCMPL:
+      case Const.DDIV:
+      case Const.DMUL:
+      case Const.DREM:
+      case Const.DSUB:
+      case Const.FADD:
+      case Const.FCMPG:
+      case Const.FCMPL:
+      case Const.FDIV:
+      case Const.FMUL:
+      case Const.FREM:
+      case Const.FSUB:
+      case Const.IADD:
+      case Const.IAND:
+      case Const.IDIV:
+      case Const.IMUL:
+      case Const.IOR:
+      case Const.IREM:
+      case Const.ISHL:
+      case Const.ISHR:
+      case Const.ISUB:
+      case Const.IUSHR:
+      case Const.IXOR:
+      case Const.LADD:
+      case Const.LAND:
+      case Const.LCMP:
+      case Const.LDIV:
+      case Const.LMUL:
+      case Const.LOR:
+      case Const.LREM:
+      case Const.LSHL:
+      case Const.LSHR:
+      case Const.LSUB:
+      case Const.LUSHR:
+      case Const.LXOR:
+        break;
+
+      case Const.LOOKUPSWITCH:
+      case Const.TABLESWITCH:
+        break;
+
+      case Const.ANEWARRAY:
+      case Const.NEWARRAY:
+        {
+          break;
+        }
+
+      case Const.MULTIANEWARRAY:
+        {
+          break;
+        }
+
+      // push the value at an index in an array
+      case Const.AALOAD:
+      case Const.BALOAD:
+      case Const.CALOAD:
+      case Const.DALOAD:
+      case Const.FALOAD:
+      case Const.IALOAD:
+      case Const.LALOAD:
+      case Const.SALOAD:
+        {
+          break;
+        }
+
+      // Pop the top of stack into an array location
+      case Const.AASTORE:
+      case Const.BASTORE:
+      case Const.CASTORE:
+      case Const.DASTORE:
+      case Const.FASTORE:
+      case Const.IASTORE:
+      case Const.LASTORE:
+      case Const.SASTORE:
+        break;
+
+      case Const.ARETURN:
+      case Const.DRETURN:
+      case Const.FRETURN:
+      case Const.IRETURN:
+      case Const.LRETURN:
+      case Const.RETURN:
+        {
+          break;
+        }
+
+      // subroutine calls.
+      case Const.INVOKESTATIC:
+      case Const.INVOKEVIRTUAL:
+      case Const.INVOKESPECIAL:
+      case Const.INVOKEINTERFACE:
+      case Const.INVOKEDYNAMIC:
+        break;
+
+      // Throws an exception.
+      case Const.ATHROW:
+        break;
+
+      // Opcodes that don't need any modifications. Here for reference.
+      case Const.ACONST_NULL:
+      case Const.ALOAD:
+      case Const.ALOAD_0:
+      case Const.ALOAD_1:
+      case Const.ALOAD_2:
+      case Const.ALOAD_3:
+      case Const.ASTORE:
+      case Const.ASTORE_0:
+      case Const.ASTORE_1:
+      case Const.ASTORE_2:
+      case Const.ASTORE_3:
+      case Const.CHECKCAST:
+      case Const.D2F: // double to float
+      case Const.D2I: // double to integer
+      case Const.D2L: // double to long
+      case Const.DNEG: // Negate double on top of stack
+      case Const.F2D: // float to double
+      case Const.F2I: // float to integer
+      case Const.F2L: // float to long
+      case Const.FNEG: // Negate float on top of stack
+      case Const.GOTO:
+      case Const.GOTO_W:
+      case Const.I2B: // integer to byte
+      case Const.I2C: // integer to char
+      case Const.I2D: // integer to double
+      case Const.I2F: // integer to float
+      case Const.I2L: // integer to long
+      case Const.I2S: // integer to short
+      case Const.IFNONNULL:
+      case Const.IFNULL:
+      case Const.IINC: // increment local variable by a constant
+      case Const.INEG: // negate integer on top of stack
+      case Const.JSR: // pushes return address on the stack,
+      case Const.JSR_W:
+      case Const.L2D: // long to double
+      case Const.L2F: // long to float
+      case Const.L2I: // long to int
+      case Const.LNEG: // negate long on top of stack
+      case Const.MONITORENTER:
+      case Const.MONITOREXIT:
+      case Const.NEW:
+      case Const.NOP:
+      case Const.RET: // this is the internal JSR return
+      case Const.WIDE:
+        break;
+
+      // Make sure we didn't miss anything
+      default:
+        throw new RandoopBug("instruction " + inst + " unsupported");
+    }
   }
 
   /**
