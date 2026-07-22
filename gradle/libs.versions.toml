@@ -26,7 +26,7 @@ jacoco = "0.8.15"
 
 [libraries]
 
-checker = { group = "org.checkerframework", name="checker", version.ref="checker" }
+checker = { group = "org.checkerframework", name = "checker", version.ref = "checker" }
 
 error-prone-core = "com.google.errorprone:error_prone_core:2.50.0"
 
