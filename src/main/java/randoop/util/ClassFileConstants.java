@@ -398,18 +398,20 @@ public class ClassFileConstants {
           try {
             Class<?> enumClass = Class.forName((@ClassGetName String) referencedTypeName);
 
-            // Example of how enum value can be registerConstantFromInstruction
+            // Example of how enum value can be extracted
             // @SuppressWarnings("unchecked")
             // Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, "ENUM_ONE");
 
             if (enumClass.isEnum()) {
-              Enum<?> enumConstant = null;
+              @SuppressWarnings("unchecked")
+              Class<Enum> enumType = (Class<Enum>) enumClass;
+
               String fieldName = fieldInstruction.getFieldName(pool);
-              for (Enum<?> maybeConstant : (Enum<?>[]) enumClass.getEnumConstants()) {
-                if (maybeConstant.name().equals(fieldName)) {
-                  enumConstant = maybeConstant;
-                }
-              }
+
+              // TODO: Use the more specific enumType in the valueOf call to avoid unchecked
+              // warning
+              @SuppressWarnings("unchecked")
+              Enum<?> enumConstant = Enum.valueOf(enumType, fieldName);
 
               result.enums.add(enumConstant);
               result.constantFrequency.put(
