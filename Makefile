@@ -1,13 +1,7 @@
-.PHONY: all default
+.PHONY: all clean test default
 
 default: style-check
 all: style-fix style-check
-
-# Code style; defines `style-check` and `style-fix`.
-ifeq (,$(wildcard .plume-scripts))
-dummy := $(shell git clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git .plume-scripts)
-endif
-include .plume-scripts/code-style.mak
 
 style-check: sorting-style-check
 style-fix: sorting-style-fix
