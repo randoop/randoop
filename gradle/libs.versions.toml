@@ -24,6 +24,8 @@ checker = "3.55.1"
 
 jacoco = "0.8.15"
 
+pmd = "7.25.0"
+
 [libraries]
 
 checker = { group = "org.checkerframework", name = "checker", version.ref = "checker" }

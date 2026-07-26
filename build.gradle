@@ -380,19 +380,33 @@ allprojects { subproject ->
   }
 }
 
-// allprojects {
-//   apply plugin: "pmd"
-//   pmd {
-//     toolVersion = "7.25.0"
-//     consoleOutput = true
-//     ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
-//     ruleSets = []
-//   }
-//   tasks.withType(Pmd) {
-//     // Exclude an entire generated folder path
-//     exclude('**/mock/**')
-//   }
-// }
+// PMD linter
+
+allprojects {
+  apply plugin: "pmd"
+  pmd {
+    toolVersion = rootProject.libs.versions.pmd.get()
+    // Violations are written to build/reports/pmd/*.html rather than to the console,
+    // because there are currently too many of them to be readable there.
+    consoleOutput = false
+    ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
+    // Use only the rules in .pmd-ruleset.xml, not PMD's built-in default rule set.
+    ruleSets = []
+    // This doesn't yet pass.  TODO: make it pass, then remove this line so that PMD
+    // violations fail the build.  (We are incrementally approaching that goal.)
+    ignoreFailures = true
+  }
+  tasks.withType(Pmd).configureEach {
+    // Exclude an entire generated folder path
+    exclude("**/mock/**")
+  }
+}
+
+/*
+ * Don't run PMD over source set testInput, which is input to Randoop's system tests
+ * rather than production code.  Spotless and Error Prone skip it for the same reason.
+ */
+pmdTestInput.enabled = false
 
 tasks.register("testInputJar", Jar) {
   from sourceSets.testInput.output
