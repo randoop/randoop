@@ -23,7 +23,15 @@ javadoc {
   options.addStringOption("Xwerror", "-Xdoclint:all")
 }
 
+/*
+ * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
+ */
 jar {
+  // The fat jar (shadowJar) is named covered-class-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
     "Premain-Class": "randoop.instrument.CoveredClassAgent",
@@ -68,7 +76,7 @@ compileTestJava {
 }
 
 test {
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
+  dependsOn(shadowJar)
 
   // Show as much as possible to console.
   testLogging {
@@ -83,6 +91,10 @@ test {
     // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
     workingDir = sourceSets.test.output.resourcesDir
+
+    // Compute the jar file name in doFirst, because shadowJar's archive name is not
+    // final until the whole build file has been evaluated.
+    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
   }
 }
 

@@ -495,10 +495,16 @@ tasks.register("extractJacocoAgent", Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into(layout.buildDirectory.dir("jacocoagent"))
-  copy {
-    from("${layout.buildDirectory.get()}/jacocoagent/jacocoagent.jar")
-    into(layout.buildDirectory.dir("libs"))
-  }
+}
+
+/*
+ * Copies the extracted JaCoCo javaagent into build/libs, so that it is included
+ * in the distribution zip file.
+ */
+tasks.register("copyJacocoAgent", Copy) {
+  dependsOn("extractJacocoAgent")
+  from(layout.buildDirectory.file("jacocoagent/jacocoagent.jar"))
+  into(layout.buildDirectory.dir("libs"))
 }
 
 /*
@@ -602,9 +608,13 @@ jar {
   from(sourceSets.main.output)
 }
 
+/*
+ * Copies the agents' fat jar files into build/libs, for the distribution zip file.
+ * Copy the fat jars (shadowJar), not the thin ones (jar), because the agents must
+ * be self-contained: the user passes them to the JVM's -javaagent command-line option.
+ */
 tasks.register("copyJars", Copy) {
-  dependsOn(":covered-class:jar", ":replacecall:jar")
-  from(subprojects.collect { it.tasks.withType(Jar) })
+  from(subprojects.collect { it.tasks.named("shadowJar") })
   into(layout.buildDirectory.dir("libs"))
 }
 
@@ -651,7 +661,7 @@ tasks.register("distributionZip", Zip) {
   "shadowJar",
   "copyJars",
   "manual",
-  "extractJacocoAgent"
+  "copyJacocoAgent"
   )
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
@@ -823,7 +833,7 @@ build.dependsOn(javadoc)
 /* Update the table-of-contents for the user documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register("updateUserTOC", Exec) {
-  dependsOn["cloneLibs"]
+  dependsOn("cloneLibs")
   executable = file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args(file("${projectDir}/src/docs/manual/index.html"))
   environment("PATH", "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools")
@@ -832,7 +842,7 @@ tasks.register("updateUserTOC", Exec) {
 /* Update table of contents in developer documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register("updateDevTOC", Exec) {
-  dependsOn["cloneLibs"]
+  dependsOn("cloneLibs")
   executable = file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args(file("${projectDir}/src/docs/manual/dev.html"))
   environment("PATH", "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools")
@@ -904,7 +914,7 @@ tasks.register("validateAPI", Exec) {
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("uv", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uv", "tool", "run", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }

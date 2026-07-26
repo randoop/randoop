@@ -27,9 +27,14 @@ javadoc {
 }
 
 /*
- * Jar needs to be executable as a javaagent.
+ * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
  */
 jar {
+  // The fat jar (shadowJar) is named replacecall-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
     "Premain-Class": "randoop.instrument.ReplaceCallAgent",
@@ -49,14 +54,19 @@ compileAgentTestJava {
   dependsOn(":copyJars")
 }
 tasks.register("replacecallAgentTest", Test) {
+  dependsOn(shadowJar)
   description = "Run replace-call tests"
 
   workingDir = sourceSets.agentTest.output.resourcesDir
   testClassesDirs = sourceSets.agentTest.output.classesDirs
-  classpath = sourceSets.agentTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
-  // use the replacecall agent using the exclusions file from agentTest/resources
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
+  classpath = sourceSets.agentTest.runtimeClasspath + files(shadowJar.archiveFile)
+  // Compute the jar file name in doFirst, because shadowJar's archive name is not
+  // final until the whole build file has been evaluated.
+  doFirst {
+    // use the replacecall agent using the exclusions file from agentTest/resources
+    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
+    jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
+  }
   testLogging {
     showStandardStreams = true
     exceptionFormat = "full"
