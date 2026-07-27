@@ -89,8 +89,9 @@ test {
     // instead of the project directory.
     workingDir = sourceSets.test.output.resourcesDir
 
-    // Compute the jar file name in doFirst, because shadowJar's archive name is not
-    // final until the whole build file has been evaluated.
+    // shadowJar's archive file name depends on `archiveClassifier`, which is set in the
+    // `shadowJar` block.  Resolving the name here, at execution time rather than at
+    // configuration time, makes this line independent of the order of blocks in this file.
     jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
   }
 }

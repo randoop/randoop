@@ -388,7 +388,7 @@ allprojects { subproject ->
 allprojects {
   apply plugin: "pmd"
   pmd {
-    toolVersion = libs.versions.pmd.get()
+    toolVersion = rootProject.libs.versions.pmd.get()
     // Violations are written to build/reports/pmd/*.html rather than to the console,
     // because there are currently too many of them to be readable on the console.
     consoleOutput = false
@@ -400,7 +400,6 @@ allprojects {
     ignoreFailures = true
   }
   tasks.withType(Pmd).configureEach {
-    // Exclude an entire generated folder path
     exclude("**/mock/**")
   }
 }
@@ -514,17 +513,6 @@ tasks.register("extractJacocoAgent", Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into(layout.buildDirectory.dir("jacocoagent"))
-}
-
-/*
- * Copies the extracted JaCoCo javaagent into build/distjacoco, so that it is included
- * in the distribution zip file.  The destination is not build/distlibs, because the
- * `copyJars` task owns build/distlibs and deletes any file that it did not write there.
- */
-tasks.register("copyJacocoAgent", Copy) {
-  dependsOn("extractJacocoAgent")
-  from(layout.buildDirectory.file("jacocoagent/jacocoagent.jar"))
-  into(layout.buildDirectory.dir("distjacoco"))
 }
 
 /*
@@ -698,8 +686,11 @@ tasks.register("distributionZip", Zip) {
   from(tasks.named("shadowJar"))
   // The agent jars.
   from(tasks.named("copyJars"))
-  // jacocoagent.jar.
-  from(tasks.named("copyJacocoAgent"))
+  // jacocoagent.jar, which `extractJacocoAgent` unpacks alongside the rest of the
+  // contents of the org.jacoco.agent artifact.
+  from(tasks.named("extractJacocoAgent")) {
+    include("jacocoagent.jar")
+  }
   from("src/docs/manual/index.html") {
     into("doc/manual")
   }

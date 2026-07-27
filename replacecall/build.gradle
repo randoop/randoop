@@ -58,8 +58,9 @@ tasks.register("replacecallAgentTest", Test) {
   testClassesDirs = sourceSets.agentTest.output.classesDirs
   classpath = sourceSets.agentTest.runtimeClasspath + files(shadowJar.archiveFile)
   doFirst {
-    // Compute the jar file name in doFirst, because shadowJar's archive name is not
-    // final until the whole build file has been evaluated.
+    // shadowJar's archive file name depends on `archiveClassifier`, which is set in the
+    // `shadowJar` block below.  Resolving the name here, at execution time rather than at
+    // configuration time, makes these lines independent of the order of blocks in this file.
     // Use the replacecall agent using the exclusions file from agentTest/resources.
     jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
     jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
