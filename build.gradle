@@ -609,16 +609,15 @@ jar {
 }
 
 /*
- * Copies the agents' fat jar files into build/distlibs, for the distribution zip file.
- * Copy the fat jars (shadowJar), not the thin ones (jar), because the agents must
- * be self-contained: the user passes them to the JVM's -javaagent command-line option.
+ * Copies the agents' fat jar files into build/distlibs, for the distribution
+ * zip file.  Copy the fat jars (shadowJar), not the thin ones (jar), because
+ * the agents must be self-contained: the user passes them to the JVM's
+ * -javaagent command-line option.
  *
- * The destination is build/distlibs rather than build/libs, because build/libs is the
- * output directory of the `jar`, `shadowJar`, `javadocJar`, and `sourcesJar` tasks.
- * Gradle treats every file in a task's output directory as that task's output, so
- * copying into build/libs makes Gradle report an "implicit dependency" failure for
- * every task that reads a jar from build/libs (such as `:covered-class:javadoc`,
- * whose compile classpath contains build/libs/randoop-all-${version}.jar).
+ * The destination is build/distlibs because Gradle treats every file in
+ * build/libs as an output of tasks that write to it, leading to "implicit
+ * dependency" failures for any task that reads a jar from build/libs (such as
+ * `:covered-class:javadoc`).
  */
 tasks.register("copyJars", Copy) {
   from(subprojects.collect { it.tasks.named("shadowJar") })
@@ -920,7 +919,7 @@ tasks.register("validateAPI", Exec) {
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("uv", "tool", "run", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uvx", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
