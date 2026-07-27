@@ -600,7 +600,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
    * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless {@code --forbid_null} is supplied, a {@code null} value will still be used if no
+   * <p>Unless {@code --forbid-null} is supplied, a {@code null} value will still be used if no
    * other value can be passed as an argument even if {@code --null-ratio=0}.
    *
    * <p>Randoop never uses {@code null} for receiver values.
