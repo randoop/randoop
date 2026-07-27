@@ -22,20 +22,27 @@ else
   mv -f "covered-class${SUFFIX}.jar" "covered-class${SUFFIX}.jar-ORIG" 2> /dev/null || true
 fi
 
-# Outputs the most recently built jar file matching $1, which is a glob.
-# Sorts by modification time rather than by name, because name order is not
-# version order: "randoop-all-4.3.9.jar" sorts after "randoop-all-4.3.10.jar".
+# Outputs the most recently built of the arguments, which are the expansion of a glob.
+# Compares modification times rather than names, because name order is not version
+# order: "randoop-all-4.3.9.jar" sorts after "randoop-all-4.3.10.jar".
+# The caller passes the glob unquoted, so that the shell expands it.  This works even
+# if a directory or file name contains a space; parsing the output of `ls` would not,
+# because `ls` may escape a space in a file name.
 newest_jar() {
-  local result
-  # shellcheck disable=SC2012 # `ls -t` sorts by modification time; `find` does not.
-  # shellcheck disable=SC2086 # $1 is a glob that must be expanded.
-  result="$(ls -t $1 2> /dev/null | head -n1)"
-  if [ -z "${result}" ]; then
+  # If the glob matched no file, then the shell passes the glob itself, unexpanded.
+  if [ ! -e "$1" ]; then
     echo "$0: no file matches $1" >&2
     echo "$0: run \`./gradlew assemble\` in ${RANDOOP_DIR}" >&2
     exit 1
   fi
-  echo "${result}"
+  local newest="$1"
+  local file
+  for file in "$@"; do
+    if [ "${file}" -nt "${newest}" ]; then
+      newest="${file}"
+    fi
+  done
+  printf '%s\n' "${newest}"
 }
 
 # Read every jar file from build/distlibs, which is written by Gradle's `copyJars`
@@ -46,9 +53,9 @@ newest_jar() {
 DISTLIBS_DIR="${RANDOOP_DIR}/build/distlibs"
 # Each call to `newest_jar` runs in a subshell, so the `exit` in `newest_jar` exits
 # only that subshell.  Each `|| exit 1` propagates the failure to this script.
-RANDOOP_ALL_JAR="$(newest_jar "${DISTLIBS_DIR}/randoop-all*.jar")" || exit 1
-REPLACECALL_JAR="$(newest_jar "${DISTLIBS_DIR}/replacecall*.jar")" || exit 1
-COVERED_CLASS_JAR="$(newest_jar "${DISTLIBS_DIR}/covered-class*.jar")" || exit 1
+RANDOOP_ALL_JAR="$(newest_jar "${DISTLIBS_DIR}"/randoop-all*.jar)" || exit 1
+REPLACECALL_JAR="$(newest_jar "${DISTLIBS_DIR}"/replacecall*.jar)" || exit 1
+COVERED_CLASS_JAR="$(newest_jar "${DISTLIBS_DIR}"/covered-class*.jar)" || exit 1
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .

@@ -25,10 +25,8 @@ plugins {
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   alias(libs.plugins.com.gorylenko.gradle.git.properties)
 
-  // The `allprojects` block below applies the PMD plugin to every project, including
-  // this one.  This line is also needed, so that the `Pmd` task type resolves in this
-  // build script.
-  id("pmd")
+  // The PMD plugin is not applied here.  The `allprojects` block below applies it to
+  // every project, including this one.
 }
 
 ext {

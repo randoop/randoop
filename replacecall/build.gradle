@@ -74,11 +74,6 @@ test {
   }
 }
 
-/*
- * The `replacecallAgentTest` task must appear after the `shadowJar` block, because the
- * `shadowJar` block sets `archiveClassifier`, which determines shadowJar's archive file
- * name.
- */
 tasks.register("replacecallAgentTest", Test) {
   description = "Run replace-call tests"
 
@@ -88,9 +83,16 @@ tasks.register("replacecallAgentTest", Test) {
   // carries the dependency on shadowJar.
   classpath = sourceSets.agentTest.runtimeClasspath + files(shadowJar.archiveFile)
 
-  // Use the replacecall agent using the exclusions file from agentTest/resources.
-  jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
+  doFirst {
+    // Compute shadowJar's archive file name when this task runs, rather than when this
+    // build script is evaluated.  Otherwise, this block would have to appear textually
+    // after the `shadowJar` block, which sets `archiveClassifier` and thereby determines
+    // shadowJar's archive file name.
+
+    // Use the replacecall agent using the exclusions file from agentTest/resources.
+    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
+    jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
+  }
 
   testLogging {
     showStandardStreams = true
