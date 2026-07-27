@@ -25,6 +25,9 @@ fi
 # multiple versions).  Sort by modification time rather than by name, because
 # name order is not version order: "randoop-all-4.3.9.jar" sorts after
 # "randoop-all-4.3.10.jar".
+# Directory build/libs accumulates the jar files of every version that has been
+# built.  Directory build/distlibs is written by Gradle's `copyJars` task, which
+# is a Sync task, so build/distlibs holds only the current version's jar files.
 RANDOOP_ALL_JAR="$(ls -t "${RANDOOP_DIR}"/build/libs/randoop-all*.jar | head -n1)"
 REPLACECALL_JAR="$(ls -t "${RANDOOP_DIR}"/build/distlibs/replacecall*.jar | head -n1)"
 COVERED_CLASS_JAR="$(ls -t "${RANDOOP_DIR}"/build/distlibs/covered-class*.jar | head -n1)"

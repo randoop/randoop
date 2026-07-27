@@ -68,15 +68,12 @@ shadowJar {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
-compileTestJava {
-  dependsOn(
-  ":shadowJar",
-  ":copyJars",
-  )
-}
-
 test {
-  dependsOn(shadowJar)
+  // The agent jar is passed via -javaagent below, not via the test classpath, so it is
+  // not otherwise an input to this task; without this line, a change that affects only
+  // shadowJar's output would leave this task UP-TO-DATE.  Naming shadowJar's output
+  // file also carries the dependency on shadowJar.
+  inputs.file(shadowJar.archiveFile).withPropertyName("coveredClassAgent")
 
   // Show as much as possible to console.
   testLogging {
