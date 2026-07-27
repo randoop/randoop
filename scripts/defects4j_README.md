@@ -32,7 +32,7 @@ Some of the (optional) commands below assume:
    * You can link `.jar` files from a local version of Randoop:
 
      ```sh
-     (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
+     (cd $randoop && ./gradlew assemble) && \
      (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
   

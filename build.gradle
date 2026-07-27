@@ -617,10 +617,11 @@ jar {
 }
 
 /*
- * Copies the agents' fat jar files into build/distlibs, for the distribution
- * zip file.  Copy the fat jars (shadowJar), not the thin ones (jar), because
- * the agents must be self-contained: the user passes them to the JVM's
- * -javaagent command-line option.
+ * Copies the distribution's jar files -- Randoop's fat jar and the agents' fat jars --
+ * into build/distlibs.  Copy the fat jars (shadowJar), not the thin ones (jar),
+ * because each jar file must be self-contained: the user puts Randoop's jar file on
+ * the classpath, and the user passes each agent's jar file to the JVM's -javaagent
+ * command-line option.
  *
  * The destination is build/distlibs because Gradle treats every file in
  * build/libs as an output of tasks that write to it, leading to "implicit
@@ -629,9 +630,12 @@ jar {
  *
  * This is a Sync rather than a Copy task so that build/distlibs contains only
  * the current build's jar files.  A Copy task would leave behind jar files
- * from previously-built versions.
+ * from previously-built versions.  Because build/distlibs holds exactly the
+ * distribution's jar files and nothing else, it is the directory that
+ * scripts/replace-randoop-jars.sh and the release instructions read from.
  */
 tasks.register("copyJars", Sync) {
+  from(tasks.named("shadowJar"))
   from(subprojects.collect { it.tasks.named("shadowJar") })
   into(layout.buildDirectory.dir("distlibs"))
 }
@@ -682,9 +686,7 @@ tasks.register("distributionZip", Zip) {
   // Naming a task in `from` carries the dependency on that task, and copies the
   // task's output files (for a Copy or Sync task, the contents of its destination
   // directory).
-  // The fat jar randoop-all-${version}.jar.
-  from(tasks.named("shadowJar"))
-  // The agent jars.
+  // The fat jar randoop-all-${version}.jar and the agents' fat jars.
   from(tasks.named("copyJars"))
   // jacocoagent.jar, which `extractJacocoAgent` unpacks alongside the rest of the
   // contents of the org.jacoco.agent artifact.

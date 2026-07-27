@@ -68,12 +68,18 @@ shadowJar {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
+/*
+ * The `test` task must appear after the `shadowJar` block, because the `shadowJar`
+ * block sets `archiveClassifier`, which determines shadowJar's archive file name.
+ */
 test {
-  // The agent jar is passed via -javaagent below, not via the test classpath, so it is
-  // not otherwise an input to this task; without this line, a change that affects only
-  // shadowJar's output would leave this task UP-TO-DATE.  Naming shadowJar's output
-  // file also carries the dependency on shadowJar.
+  // The agent jar file is passed via -javaagent below, not via the test classpath, so
+  // the agent jar file is not otherwise an input to this task; without this line, a
+  // change that affects only shadowJar's output would leave this task UP-TO-DATE.
+  // Naming shadowJar's output file also carries the dependency on shadowJar.
   inputs.file(shadowJar.archiveFile).withPropertyName("coveredClassAgent")
+
+  jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
 
   // Show as much as possible to console.
   testLogging {
@@ -88,11 +94,6 @@ test {
     // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
     workingDir = sourceSets.test.output.resourcesDir
-
-    // shadowJar's archive file name depends on `archiveClassifier`, which is set in the
-    // `shadowJar` block.  Resolving the name here, at execution time rather than at
-    // configuration time, makes this line independent of the order of blocks in this file.
-    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
   }
 }
 

@@ -38,12 +38,17 @@ newest_jar() {
   echo "${result}"
 }
 
-# Directory build/libs accumulates the jar files of every version that has been
-# built.  Directory build/distlibs is written by Gradle's `copyJars` task, which
-# is a Sync task, so build/distlibs holds only the current version's jar files.
-RANDOOP_ALL_JAR="$(newest_jar "${RANDOOP_DIR}/build/libs/randoop-all*.jar")"
-REPLACECALL_JAR="$(newest_jar "${RANDOOP_DIR}/build/distlibs/replacecall*.jar")"
-COVERED_CLASS_JAR="$(newest_jar "${RANDOOP_DIR}/build/distlibs/covered-class*.jar")"
+# Read every jar file from build/distlibs, which is written by Gradle's `copyJars`
+# task.  Because `copyJars` is a Sync task, build/distlibs holds only the current
+# version's jar files.  (By contrast, build/libs accumulates the jar files of every
+# version that has been built, and build/libs also holds the agents' "-thin" jar
+# files, which do not work as Java agents.)
+DISTLIBS_DIR="${RANDOOP_DIR}/build/distlibs"
+# Each call to `newest_jar` runs in a subshell, so the `exit` in `newest_jar` exits
+# only that subshell.  Each `|| exit 1` propagates the failure to this script.
+RANDOOP_ALL_JAR="$(newest_jar "${DISTLIBS_DIR}/randoop-all*.jar")" || exit 1
+REPLACECALL_JAR="$(newest_jar "${DISTLIBS_DIR}/replacecall*.jar")" || exit 1
+COVERED_CLASS_JAR="$(newest_jar "${DISTLIBS_DIR}/covered-class*.jar")" || exit 1
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .
