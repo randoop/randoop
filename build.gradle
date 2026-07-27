@@ -823,7 +823,7 @@ build.dependsOn(javadoc)
 /* Update the table-of-contents for the user documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register("updateUserTOC", Exec) {
-  dependsOn["cloneLibs"]
+  dependsOn("cloneLibs")
   executable = file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args(file("${projectDir}/src/docs/manual/index.html"))
   environment("PATH", "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools")
@@ -832,7 +832,7 @@ tasks.register("updateUserTOC", Exec) {
 /* Update table of contents in developer documentation. */
 // No group so it doesn't show up in `./gradlew tasks`
 tasks.register("updateDevTOC", Exec) {
-  dependsOn["cloneLibs"]
+  dependsOn("cloneLibs")
   executable = file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc")
   args(file("${projectDir}/src/docs/manual/dev.html"))
   environment("PATH", "${System.env.PATH}:${layout.buildDirectory.get()}/utils/html-tools")
@@ -904,7 +904,7 @@ tasks.register("validateAPI", Exec) {
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("uv", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uvx", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
