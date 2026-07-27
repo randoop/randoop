@@ -28,8 +28,7 @@ jobs:
       - name: PR Review with Progress Tracking
         uses: anthropics/claude-code-action@v1
         with:
-          # The review comes out of your subscription rather than being metered.
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
           # Enable progress tracking
           # When track_progress is enabled:
