@@ -145,7 +145,8 @@
   each of the agent subdirectories.
   Jar files are placed in directory <code>build/libs</code> of each project.
   In addition, the Randoop project's <code>build/distlibs</code> directory holds
-  copies of the agents' jar files, for inclusion in the distribution.
+  copies of exactly the jar files that make up the distribution:
+  <code>randoop-all-<em>X.Y.Z</em>.jar</code> and the agents' jar files.
 </p>
 
 <p>
@@ -283,6 +284,13 @@ So, for instance, either of the following will work to run the <code>covered-cla
 </p>
 <pre><code>-javaagent:&lt;randoop-path&gt;/covered-class/build/libs/covered-class-4.3.4.jar
 -javaagent:&lt;randoop-path&gt;/build/distlibs/covered-class-4.3.4.jar</code></pre>
+
+<p>
+Directory <code>build/libs</code> of an agent project also contains a file whose
+name ends in <code>-thin.jar</code>.  That file contains only the agent's own
+class files, without the agent's dependencies, so that file does not work as a
+Java agent.
+</p>
 
 
 
@@ -834,8 +842,7 @@ NEXTVERSION=<em>4.3.6</em></pre>
     use the changelog entry as the description
     (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the zip file from <code>build/distributions</code>,
-    upload <code>build/libs/randoop-all-<em>4.3.4</em>.jar</code>
-    and the agents' jar files from <code>build/distlibs</code>,
+    upload the jar files from <code>build/distlibs</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com
