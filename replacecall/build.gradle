@@ -50,9 +50,6 @@ test {
     exceptionFormat = "full"
   }
 }
-compileAgentTestJava {
-  dependsOn(":copyJars")
-}
 tasks.register("replacecallAgentTest", Test) {
   dependsOn(shadowJar)
   description = "Run replace-call tests"
@@ -60,10 +57,10 @@ tasks.register("replacecallAgentTest", Test) {
   workingDir = sourceSets.agentTest.output.resourcesDir
   testClassesDirs = sourceSets.agentTest.output.classesDirs
   classpath = sourceSets.agentTest.runtimeClasspath + files(shadowJar.archiveFile)
-  // Compute the jar file name in doFirst, because shadowJar's archive name is not
-  // final until the whole build file has been evaluated.
   doFirst {
-    // use the replacecall agent using the exclusions file from agentTest/resources
+    // Compute the jar file name in doFirst, because shadowJar's archive name is not
+    // final until the whole build file has been evaluated.
+    // Use the replacecall agent using the exclusions file from agentTest/resources.
     jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
     jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
   }
