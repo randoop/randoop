@@ -512,13 +512,14 @@ tasks.register("extractJacocoAgent", Copy) {
 }
 
 /*
- * Copies the extracted JaCoCo javaagent into build/distlibs, so that it is included
- * in the distribution zip file.
+ * Copies the extracted JaCoCo javaagent into build/distjacoco, so that it is included
+ * in the distribution zip file.  The destination is not build/distlibs, because the
+ * `copyJars` task owns build/distlibs and deletes any file that it did not write there.
  */
 tasks.register("copyJacocoAgent", Copy) {
   dependsOn("extractJacocoAgent")
   from(layout.buildDirectory.file("jacocoagent/jacocoagent.jar"))
-  into(layout.buildDirectory.dir("distlibs"))
+  into(layout.buildDirectory.dir("distjacoco"))
 }
 
 /*
@@ -632,8 +633,12 @@ jar {
  * build/libs as an output of tasks that write to it, leading to "implicit
  * dependency" failures for any task that reads a jar from build/libs (such as
  * `:covered-class:javadoc`).
+ *
+ * This is a Sync rather than a Copy task so that build/distlibs contains only
+ * the current build's jar files.  A Copy task would leave behind jar files
+ * from previously-built versions.
  */
-tasks.register("copyJars", Copy) {
+tasks.register("copyJars", Sync) {
   from(subprojects.collect { it.tasks.named("shadowJar") })
   into(layout.buildDirectory.dir("distlibs"))
 }
@@ -687,8 +692,10 @@ tasks.register("distributionZip", Zip) {
   def dirName = "${base.archivesName.get()}-${version}"
   // The fat jar randoop-all-${version}.jar; `from` carries the dependency on shadowJar.
   from(tasks.named("shadowJar"))
-  // The agent jars and jacocoagent.jar.
+  // The agent jars.
   from(layout.buildDirectory.dir("distlibs"))
+  // jacocoagent.jar.
+  from(layout.buildDirectory.dir("distjacoco"))
   from("src/docs/manual/index.html") {
     into("doc/manual")
   }

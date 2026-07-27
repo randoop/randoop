@@ -21,10 +21,13 @@ else
   mv -f "covered-class${SUFFIX}.jar" "covered-class${SUFFIX}.jar-ORIG" 2> /dev/null
 fi
 
-# Get the most recent version of each file (a directory might hold multiple versions).
-RANDOOP_ALL_JAR="$(ls "${RANDOOP_DIR}"/build/libs/randoop-all*.jar | tail -n1)"
-REPLACECALL_JAR="$(ls "${RANDOOP_DIR}"/build/distlibs/replacecall*.jar | tail -n1)"
-COVERED_CLASS_JAR="$(ls "${RANDOOP_DIR}"/build/distlibs/covered-class*.jar | tail -n1)"
+# Get the most recently built version of each file (a directory might hold
+# multiple versions).  Sort by modification time rather than by name, because
+# name order is not version order: "randoop-all-4.3.9.jar" sorts after
+# "randoop-all-4.3.10.jar".
+RANDOOP_ALL_JAR="$(ls -t "${RANDOOP_DIR}"/build/libs/randoop-all*.jar | head -n1)"
+REPLACECALL_JAR="$(ls -t "${RANDOOP_DIR}"/build/distlibs/replacecall*.jar | head -n1)"
+COVERED_CLASS_JAR="$(ls -t "${RANDOOP_DIR}"/build/distlibs/covered-class*.jar | head -n1)"
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .
