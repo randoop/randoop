@@ -904,7 +904,7 @@ tasks.register("validateAPI", Exec) {
   // Prior to Java 9, javadoc does not comply with HTML5.
   if (JavaVersion.current().isJava9Compatible()) {
     environment("PATH", "$System.env.PATH")
-    commandLine("uv", "tool", "run", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
+    commandLine("uvx", "html5validator", "--root", file("${layout.buildDirectory.get()}/docs/api"))
   } else {
     commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
   }
