@@ -1063,7 +1063,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
     if (forbid_null) {
       if (null_ratio != 0 && null_ratio != null_ratio_default) {
-        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+        throw new RandoopUsageError("Both --forbid-null and --null-ratio were provided");
       } else {
         null_ratio = 0;
       }
