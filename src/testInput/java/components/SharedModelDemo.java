@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -41,7 +41,7 @@ import java.awt.event.*;
 
 public class SharedModelDemo extends JPanel {
     JTextArea output;
-    JList list; 
+    JList list;
     JTable table;
     String newline = "\n";
     ListSelectionModel listSelectionModel;
@@ -71,7 +71,7 @@ public class SharedModelDemo extends JPanel {
 
         list = new JList(dataModel);
         list.setCellRenderer(new DefaultListCellRenderer() {
-            public Component getListCellRendererComponent(JList l, 
+            public Component getListCellRendererComponent(JList l,
                                                           Object value,
                                                           int i,
                                                           boolean s,
@@ -191,12 +191,12 @@ public class SharedModelDemo extends JPanel {
     }
 
     class SharedListSelectionHandler implements ListSelectionListener {
-        public void valueChanged(ListSelectionEvent e) { 
+        public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = (ListSelectionModel)e.getSource();
 
             int firstIndex = e.getFirstIndex();
             int lastIndex = e.getLastIndex();
-            boolean isAdjusting = e.getValueIsAdjusting(); 
+            boolean isAdjusting = e.getValueIsAdjusting();
             output.append("Event for indexes "
                           + firstIndex + " - " + lastIndex
                           + "; isAdjusting is " + isAdjusting
@@ -228,14 +228,14 @@ public class SharedModelDemo extends JPanel {
         }
 
         public void rowChanged(int row) {
-            fireContentsChanged(this, row, row); 
+            fireContentsChanged(this, row, row);
         }
 
         private TableModel tableModel = new AbstractTableModel() {
             public String getColumnName(int column) {
                 return columnNames[column];
             }
-            public int getRowCount() { 
+            public int getRowCount() {
                 return size();
             }
             public int getColumnCount() {
