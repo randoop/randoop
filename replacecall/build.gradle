@@ -27,9 +27,14 @@ javadoc {
 }
 
 /*
- * Jar needs to be executable as a javaagent.
+ * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
  */
 jar {
+  // The fat jar (shadowJar) is named replacecall-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
     "Premain-Class": "randoop.instrument.ReplaceCallAgent",
@@ -37,36 +42,6 @@ jar {
     )
   }
 }
-
-test {
-  testLogging {
-    events("started", "passed")
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-}
-compileAgentTestJava {
-  dependsOn(":copyJars")
-}
-tasks.register("replacecallAgentTest", Test) {
-  description = "Run replace-call tests"
-
-  workingDir = sourceSets.agentTest.output.resourcesDir
-  testClassesDirs = sourceSets.agentTest.output.classesDirs
-  classpath = sourceSets.agentTest.runtimeClasspath +(files("${layout.buildDirectory.get()}/libs/replacecall-${version}.jar"))
-  // use the replacecall agent using the exclusions file from agentTest/resources
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar=--dont-transform=replacecall-exclusions.txt")
-  jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-${version}.jar")
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = "full"
-  }
-
-  // Turn off HTML reports -- handled by testReport task.
-  reports.html.required = false
-}
-jacocoTestReport.dependsOn(replacecallAgentTest)
-check.dependsOn(replacecallAgentTest)
 
 shadowJar {
   // We want the jar to be named replacecall-version.jar
@@ -90,6 +65,45 @@ shadowJar {
   relocate("org.tigris.subversion", "replacecall.org.tigris.subversion")
   relocate("org.tmatesoft", "replacecall.org.tmatesoft")
 }
+
+test {
+  testLogging {
+    events("started", "passed")
+    showStandardStreams = true
+    exceptionFormat = "full"
+  }
+}
+
+tasks.register("replacecallAgentTest", Test) {
+  description = "Run replace-call tests"
+
+  workingDir = sourceSets.agentTest.output.resourcesDir
+  testClassesDirs = sourceSets.agentTest.output.classesDirs
+  // Naming shadowJar's output file makes the agent jar file an input to this task and
+  // carries the dependency on shadowJar.
+  classpath = sourceSets.agentTest.runtimeClasspath + files(shadowJar.archiveFile)
+
+  doFirst {
+    // Compute shadowJar's archive file name when this task runs, rather than when this
+    // build script is evaluated.  Otherwise, this block would have to appear textually
+    // after the `shadowJar` block, which sets `archiveClassifier` and thereby determines
+    // shadowJar's archive file name.
+
+    // Use the replacecall agent using the exclusions file from agentTest/resources.
+    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}=--dont-transform=replacecall-exclusions.txt")
+    jvmArgs("-Xbootclasspath/a:${shadowJar.archiveFile.get()}")
+  }
+
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = "full"
+  }
+
+  // Turn off HTML reports -- handled by testReport task.
+  reports.html.required = false
+}
+jacocoTestReport.dependsOn(replacecallAgentTest)
+check.dependsOn(replacecallAgentTest)
 
 apply from: rootProject.file("gradle-mvn-push.gradle")
 

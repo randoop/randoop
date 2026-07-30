@@ -23,7 +23,15 @@ javadoc {
   options.addStringOption("Xwerror", "-Xdoclint:all")
 }
 
+/*
+ * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
+ */
 jar {
+  // The fat jar (shadowJar) is named covered-class-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
     "Premain-Class": "randoop.instrument.CoveredClassAgent",
@@ -60,15 +68,12 @@ shadowJar {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
-compileTestJava {
-  dependsOn(
-  ":shadowJar",
-  ":copyJars",
-  )
-}
-
 test {
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-${version}.jar")
+  // The agent jar file is passed via -javaagent below, not via the test classpath, so
+  // the agent jar file is not otherwise an input to this task; without this line, a
+  // change that affects only shadowJar's output would leave this task UP-TO-DATE.
+  // Naming shadowJar's output file also carries the dependency on shadowJar.
+  inputs.file(shadowJar.archiveFile).withPropertyName("coveredClassAgent")
 
   // Show as much as possible to console.
   testLogging {
@@ -83,6 +88,12 @@ test {
     // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
     workingDir = sourceSets.test.output.resourcesDir
+
+    // Compute shadowJar's archive file name when this task runs, rather than when this
+    // build script is evaluated.  Otherwise, this block would have to appear textually
+    // after the `shadowJar` block, which sets `archiveClassifier` and thereby determines
+    // shadowJar's archive file name.
+    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
   }
 }
 
