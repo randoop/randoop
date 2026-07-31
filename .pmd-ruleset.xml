@@ -123,7 +123,7 @@
 
     <!-- code style rules that seem to be broken
     <rule ref="category/java/codestyle.xml/UnnecessaryCast" />  This is issued even if there is a type qualifier in the cast.
-    <rule ref="category/java/codestyle.xml/UnnecessaryConstructor" />  This is issued even though doclint requires there is no default constructor (it must be explicit).
+    <rule ref="category/java/codestyle.xml/UnnecessaryConstructor" />  This is issued even though doclint requires that there be no default constructor (it must be explicit).
     <rule ref="category/java/codestyle.xml/IdenticalCatchBranches" />
      -->
 
@@ -355,7 +355,7 @@
     <!-- performance rules we are not using
     <rule ref="category/java/performance.xml/AvoidInstantiatingObjectsInLoops" />      Blanket prohibition on `new` in loops is too broad.
     <rule ref="category/java/performance.xml/ConsecutiveAppendsShouldReuse" />      It's not clear this helps, and "fluent" appends are harder to read.
-    <rule ref="category/java/performance.xml/RedundantFieldInitializer" />  Explicit initializers are better style
+    <rule ref="category/java/performance.xml/RedundantFieldInitializer" />  Explicit initializers are better style.
     <rule ref="category/java/performance.xml/TooFewBranchesForSwitch" />
     <rule ref="category/java/performance.xml/UseStringBufferForStringAppends" />
      -->

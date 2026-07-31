@@ -4,6 +4,7 @@ changecom([], [disable comments, that is, expand within them])dnl
 include([defs.m4])dnl
 
 trigger:
+  batch: true
   branches:
     include:
       - '*'
