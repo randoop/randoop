@@ -18,6 +18,7 @@ exclude = { glob = [
   "**/*.ps-*",
   "**/*.svg",
   "src/main/resources/specifications/jdk/*",
+  "**/COPYING",
 ] }
 
 
