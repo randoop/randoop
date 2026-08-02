@@ -34,7 +34,7 @@ echo "------------  Javadoc warnings above do not cause CI failures  -----------
 failures=""
 
 ## Linting and code style
-prek -q run --all-files || failures="prek $failures"
+# `prek` is run elsewhere, not by this script.
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
   echo "Don't use wildcard import"
   failures="wildcard-import $failures"
