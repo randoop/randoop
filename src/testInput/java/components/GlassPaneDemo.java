@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -56,7 +56,7 @@ public class GlassPaneDemo {
         JCheckBox changeButton =
                 new JCheckBox("Glass pane \"visible\"");
         changeButton.setSelected(false);
-        
+
         //Set up the content pane, where the "main GUI" lives.
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new FlowLayout());
@@ -186,25 +186,25 @@ class CBListener extends MouseInputAdapter {
                                         glassPanePoint,
                                         contentPane);
         if (containerPoint.y < 0) { //we're not in the content pane
-            if (containerPoint.y + menuBar.getHeight() >= 0) { 
+            if (containerPoint.y + menuBar.getHeight() >= 0) {
                 //The mouse event is over the menu bar.
                 //Could handle specially.
-            } else { 
-                //The mouse event is over non-system window 
+            } else {
+                //The mouse event is over non-system window
                 //decorations, such as the ones provided by
                 //the Java look and feel.
                 //Could handle specially.
             }
         } else {
             //The mouse event is probably over the content pane.
-            //Find out exactly which component it's over.  
-            Component component = 
+            //Find out exactly which component it's over.
+            Component component =
                 SwingUtilities.getDeepestComponentAt(
                                         container,
                                         containerPoint.x,
                                         containerPoint.y);
-                            
-            if ((component != null) 
+
+            if ((component != null)
                 && (component.equals(liveButton))) {
                 //Forward events over the check box.
                 Point componentPoint = SwingUtilities.convertPoint(
@@ -221,7 +221,7 @@ class CBListener extends MouseInputAdapter {
                                                      e.isPopupTrigger()));
             }
         }
-        
+
         //Update the glass pane if requested.
         if (repaint) {
             glassPane.setPoint(glassPanePoint);

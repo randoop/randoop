@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -48,8 +48,8 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/** 
- * SimpleTableSelectionDemo is just like SimpleTableDemo, 
+/**
+ * SimpleTableSelectionDemo is just like SimpleTableDemo,
  * except that it detects selections, printing information
  * about the current selection to standard output.
  */

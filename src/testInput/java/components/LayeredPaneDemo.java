@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -38,9 +38,9 @@ import javax.accessibility.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/* 
+/*
  * LayeredPaneDemo.java requires
- * images/dukeWaveRed.gif. 
+ * images/dukeWaveRed.gif.
  */
 public class LayeredPaneDemo extends JPanel
                              implements ActionListener,

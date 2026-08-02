@@ -3,7 +3,7 @@ ifeq (,$(wildcard ${PLUME_SCRIPTS}))
 dummy := $(shell git clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git ${PLUME_SCRIPTS})
 endif
 
-.PHONY: all default clean
+.PHONY: all test default clean
 
 all default: azure-pipelines.yml
 
@@ -12,6 +12,8 @@ all default: azure-pipelines.yml
 	m4 $< > $@
 	${PLUME_SCRIPTS}/squeeze-blank-lines $@
 	@chmod -w $@
+
+test:
 
 clean:
 	rm -f azure-pipelines.yml
