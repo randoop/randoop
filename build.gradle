@@ -875,7 +875,7 @@ tasks.register("manual", Exec) {
   description = "Adds options and TOC to documentation in src/docs"
   onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
   environment("PATH", "${System.env.PATH}")
-  commandLine("make", "html-style-check")
+  commandLine("true")
 }
 
 // This is cross-platform and pulls in all required dependencies.  However,
@@ -967,14 +967,6 @@ tasks.register("publishSite", Copy) {
     other.read = true; other.write = false; other.execute = false
   }
 }
-
-tasks.register("styleCheck", Exec) {
-  description = "Validate HTML, Markdown, etc. files."
-  commandLine("make", "style-check")
-}
-styleCheck.onlyIf { !Os.isFamily(Os.FAMILY_WINDOWS) }
-check.dependsOn("styleCheck")
-
 
 def thisIsReleaseFilename = "$projectDir/src/main/resources/this-is-a-randoop-release"
 tasks.register("thisIsReleaseFile") {

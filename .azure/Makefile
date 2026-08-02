@@ -13,6 +13,8 @@ all default: azure-pipelines.yml
 	${PLUME_SCRIPTS}/squeeze-blank-lines $@
 	@chmod -w $@
 
+test:
+
 clean:
 	rm -f azure-pipelines.yml
 

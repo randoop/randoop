@@ -33,7 +33,8 @@ Some of the (optional) commands below assume:
 
      ```sh
      (cd $randoop && rm -rf build/libs/ && ./gradlew assemble) && \
-     (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
+     (cd $D4J_HOME/framework/lib/test_generation/generation && \
+      $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
 
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:

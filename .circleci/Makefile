@@ -16,5 +16,7 @@ all default: config.yml
 test: config.yml
 	cd .. && circleci config validate
 
+test:
+
 clean:
 	rm -f config.yml

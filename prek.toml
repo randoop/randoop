@@ -6,6 +6,7 @@ exclude = { glob = [
   "**/*.diff",
   "**/*.diff3",
   "**/*.goal",
+  "**/*.goal.*",
   "**/*.graffle",
   "**/*.ics",
   "**/*.key",
@@ -17,8 +18,10 @@ exclude = { glob = [
   "**/*.ps",
   "**/*.ps-*",
   "**/*.svg",
-  "src/main/resources/specifications/jdk/*",
+  "**/*expected*",
   "**/COPYING",
+  "src/main/resources/specifications/jdk/*",
+  "tests/kvasir-tests/povray/*",
 ] }
 
 [[repos]]
@@ -34,9 +37,7 @@ hooks = [
   ] } },
   { id = "check-json" },
   { id = "check-merge-conflict" },
-  { id = "check-shebang-scripts-are-executable", exclude = { glob = [
-    "tests/kvasir-tests/povray/source/**",
-  ] } },
+  { id = "check-shebang-scripts-are-executable" },
   { id = "check-symlinks", exclude = { glob = [
     ".subversion/auth",
     "dots/.subversion/auth",
@@ -52,13 +53,11 @@ hooks = [
   { id = "detect-private-key" },
   { id = "end-of-file-fixer", exclude = { glob = [
     "**/.vscode/settings.json",
-    "**/expected*",
     "**/native-image/**",
     "**/non-conflicted-file-without-terminator.txt",
     "**/tests/squeeze-blank-lines-test/**",
     "bugs/jikes-patches/*",
     "java/jtb/**",
-    "src/main/resources/specifications/jdk",
     "tests/kvasir-tests/**",
   ] } },
   { id = "file-contents-sorter", files = { glob = [
@@ -68,7 +67,6 @@ hooks = [
   { id = "forbid-new-submodules" },
   { id = "mixed-line-ending" },
   { id = "trailing-whitespace", exclude = { glob = [
-    "**/expected*",
     "**/tests/squeeze-blank-lines-test/**",
     ".aspell.en.prepl",
     ".aspell.en.pws",
@@ -112,23 +110,24 @@ hooks = [
 
 ## Java
 
+# https://github.com/ORCID/pre-commit-spotless requires use of a spotless.xml file.
+
 [[repos]]
 repo = "local"
 hooks = [
-  { id = "spotless", name = "spotless formatting", language = "unsupported", entry = "./gradlew spotlessApply", files = "\\.java$", pass_filenames = false },
+  { id = "gradle-spotless", name = "spotless formatting", language = "unsupported", entry = "bash -c 'if [ -f ./gradlew ] ; then ./gradlew spotlessApply; fi'", files = "\\.java$", pass_filenames = false },
 ]
 
 ## Makefiles
 
 [[repos]]
-repo = "https://github.com/checkmake/checkmake.git"
+repo = "https://github.com/checkmake/checkmake"
 rev = "0.2.2"
 hooks = [
   { id = "checkmake", args = [
     "--format={{.FileName}}:{{.LineNumber}}:0: {{.Rule}}: {{.Violation}}\n",
   ], exclude = { glob = [
     "code-style.Makefile",
-    "tests/kvasir-tests/povray/*",
   ] } },
 ]
 
@@ -212,7 +211,6 @@ hooks = [
     "tests/kvasir-tests/tot_info/tests.sh",
     "cronic-orig",
     "classfile_check_version",
-    "tests/kvasir-tests/povray/**/*",
   ] } },
 ]
 
@@ -319,6 +317,18 @@ hooks = [
 ]
 
 [[repos]]
-repo = "https://github.com/adrienverge/yamllint.git"
-rev = "v1.29.0"
+repo = "https://github.com/adrienverge/yamllint"
+rev = "v1.38.0"
 hooks = [{ id = "yamllint" }]
+
+[[repos]]
+repo = "https://github.com/rhysd/actionlint"
+rev = "v1.7.12"
+hooks = [{ id = "actionlint" }]
+
+# This doesn't install the tool!  It fails with "Circleci CLI could
+# not be found." unless you have done `sudo snap install circleci`.
+[[repos]]
+repo = "https://github.com/zahorniak/pre-commit-circleci"
+rev = "v1.3.0"
+hooks = [{ id = "circleci_validate" }]
