@@ -28,7 +28,7 @@ public class SubjectTest{
  }
 
 //Call to Subject.get()
- private boolean call_0() throws Throwable{ 
+ private boolean call_0() throws Throwable{
     List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
     if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
       return false;
@@ -38,11 +38,11 @@ public class SubjectTest{
     Verify.beginAtomic();
       int result = input0.get();
   values.add(Integer.valueOf(result));
-  Verify.endAtomic(); 
+  Verify.endAtomic();
   return true;
   }
 //Call to Subject.set(int)
- private boolean call_1() throws Throwable{ 
+ private boolean call_1() throws Throwable{
     List possibleInputs_palulu_UniversalJPFDriverTest_Subject = findValues(palulu.UniversalJPFDriverTest.Subject.class);
     if (possibleInputs_palulu_UniversalJPFDriverTest_Subject.isEmpty()) {
       return false;
@@ -57,29 +57,29 @@ public class SubjectTest{
 
     Verify.beginAtomic();
       input0.set((int)input1.intValue());
-  Verify.endAtomic(); 
+  Verify.endAtomic();
   return true;
   }
 //Call to Subject.<init>()
- private boolean call_2() throws Throwable{ 
+ private boolean call_2() throws Throwable{
     Verify.beginAtomic();
       palulu.UniversalJPFDriverTest.Subject result = new palulu.UniversalJPFDriverTest.Subject();
   values.add(result);
-  Verify.endAtomic(); 
+  Verify.endAtomic();
   return true;
   }
-public static void main(String[] args) throws Throwable{ 
+public static void main(String[] args) throws Throwable{
   SubjectTest me = new SubjectTest();
   for (int i = 0 ; i < 10; i++) {
     int nextMethod = Verify.random(3-1);
     switch(nextMethod) {
-      case 0 : 
+      case 0 :
         if (!me.call_0()) { return; }
         break;
-      case 1 : 
+      case 1 :
         if (!me.call_1()) { return; }
         break;
-      case 2 : 
+      case 2 :
         if (!me.call_2()) { return; }
         break;
       default : throw new IllegalStateException("Execution shouldn't have reached here. This is a bug in the driver.");

@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 
-/* 
+/*
  * ButtonHtmlDemo.java uses the following files:
  *   images/right.gif
  *   images/middle.gif
@@ -53,9 +53,9 @@ public class ButtonHtmlDemo extends JPanel
         ImageIcon leftButtonIcon = createImageIcon("images/right.gif");
         ImageIcon middleButtonIcon = createImageIcon("images/middle.gif");
         ImageIcon rightButtonIcon = createImageIcon("images/left.gif");
-        
+
         b1 = new JButton("<html><center><b><u>D</u>isable</b><br>"
-                         + "<font color=#ffffdd>middle button</font>", 
+                         + "<font color=#ffffdd>middle button</font>",
                          leftButtonIcon);
         Font font = b1.getFont().deriveFont(Font.PLAIN);
         b1.setFont(font);
@@ -72,7 +72,7 @@ public class ButtonHtmlDemo extends JPanel
         b2.setMnemonic(KeyEvent.VK_M);
 
         b3 = new JButton("<html><center><b><u>E</u>nable</b><br>"
-                         + "<font color=#ffffdd>middle button</font>", 
+                         + "<font color=#ffffdd>middle button</font>",
                          rightButtonIcon);
         b3.setFont(font);
         //Use the default text position of CENTER, TRAILING (RIGHT).

@@ -27,20 +27,20 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.BorderFactory; 
+import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
-import javax.swing.JPanel; 
+import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -191,7 +191,7 @@ public class BorderDemo extends JPanel {
                                   compound, "title",
                                   TitledBorder.CENTER,
                                   TitledBorder.BELOW_BOTTOM);
-        addCompForBorder(titled, 
+        addCompForBorder(titled,
                          "titled compound border"
                          + " (centered, below bottom)",
                          compoundBorders);
@@ -246,7 +246,7 @@ public class BorderDemo extends JPanel {
 
     /**
      * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the 
+     * this method should be invoked from the
      * event-dispatching thread.
      */
     private static void createAndShowGUI() {

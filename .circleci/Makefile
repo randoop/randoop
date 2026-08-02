@@ -3,7 +3,7 @@ ifeq (,$(wildcard ${PLUME_SCRIPTS}))
 dummy := $(shell git clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git ${PLUME_SCRIPTS})
 endif
 
-.PHONY: all default clean
+.PHONY: all test clean default
 
 all default: config.yml
 
@@ -13,7 +13,7 @@ all default: config.yml
 	${PLUME_SCRIPTS}/squeeze-blank-lines $@
 	@chmod -w $@
 
-validate: config.yml
+test: config.yml
 	cd .. && circleci config validate
 
 clean:

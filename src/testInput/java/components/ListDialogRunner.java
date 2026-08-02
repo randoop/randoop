@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -133,7 +133,7 @@ public class ListDialogRunner {
                 while ((fontName == null) && (j < existingFamilyNames.length)) {
                     if (existingFamilyNames[j].startsWith(desiredFonts[i])) {
 
-                        //We've found a match.  Test whether it can display 
+                        //We've found a match.  Test whether it can display
                         //the Latin character 'A'.  (You might test for
                         //a different character if you're using a different
                         //language.)
