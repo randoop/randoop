@@ -11,4 +11,5 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
           cache: 'gradle'
+      - run: sudo snap install circleci
       - uses: j178/prek-action@v3.0.0

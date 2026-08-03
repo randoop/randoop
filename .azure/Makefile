@@ -3,7 +3,7 @@ ifeq (,$(wildcard ${PLUME_SCRIPTS}))
 dummy := $(shell git clone --depth=1 -q https://github.com/plume-lib/plume-scripts.git ${PLUME_SCRIPTS})
 endif
 
-.PHONY: all test default clean
+.PHONY: all test clean default
 
 all default: azure-pipelines.yml
 
