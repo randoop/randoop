@@ -17,5 +17,3 @@ test:
 
 clean:
 	rm -f azure-pipelines.yml
-
-test:
