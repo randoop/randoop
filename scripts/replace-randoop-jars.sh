@@ -23,8 +23,8 @@ fi
 
 # Get the most recent version of each file (a directory might hold multiple versions).
 RANDOOP_ALL_JAR="$(ls "${RANDOOP_DIR}"/build/libs/randoop-all*.jar | tail -n1)"
-REPLACECALL_JAR="$(ls "${RANDOOP_DIR}"/build/libs/replacecall*.jar | tail -n1)"
-COVERED_CLASS_JAR="$(ls "${RANDOOP_DIR}"/build/libs/covered-class*.jar | tail -n1)"
+REPLACECALL_JAR="$(ls "${RANDOOP_DIR}"/build/distlibs/replacecall*.jar | tail -n1)"
+COVERED_CLASS_JAR="$(ls "${RANDOOP_DIR}"/build/distlibs/covered-class*.jar | tail -n1)"
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .

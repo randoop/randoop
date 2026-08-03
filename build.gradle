@@ -495,10 +495,16 @@ tasks.register("extractJacocoAgent", Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into(layout.buildDirectory.dir("jacocoagent"))
-  copy {
-    from("${layout.buildDirectory.get()}/jacocoagent/jacocoagent.jar")
-    into(layout.buildDirectory.dir("libs"))
-  }
+}
+
+/*
+ * Copies the extracted JaCoCo javaagent into build/distlibs, so that it is included
+ * in the distribution zip file.
+ */
+tasks.register("copyJacocoAgent", Copy) {
+  dependsOn("extractJacocoAgent")
+  from(layout.buildDirectory.file("jacocoagent/jacocoagent.jar"))
+  into(layout.buildDirectory.dir("distlibs"))
 }
 
 /*
@@ -602,10 +608,20 @@ jar {
   from(sourceSets.main.output)
 }
 
+/*
+ * Copies the agents' fat jar files into build/distlibs, for the distribution
+ * zip file.  Copy the fat jars (shadowJar), not the thin ones (jar), because
+ * the agents must be self-contained: the user passes them to the JVM's
+ * -javaagent command-line option.
+ *
+ * The destination is build/distlibs because Gradle treats every file in
+ * build/libs as an output of tasks that write to it, leading to "implicit
+ * dependency" failures for any task that reads a jar from build/libs (such as
+ * `:covered-class:javadoc`).
+ */
 tasks.register("copyJars", Copy) {
-  dependsOn(":covered-class:jar", ":replacecall:jar")
-  from(subprojects.collect { it.tasks.withType(Jar) })
-  into(layout.buildDirectory.dir("libs"))
+  from(subprojects.collect { it.tasks.named("shadowJar") })
+  into(layout.buildDirectory.dir("distlibs"))
 }
 
 assemble.dependsOn(copyJars)
@@ -648,15 +664,17 @@ assemble.dependsOn(shadowJar)
 
 tasks.register("distributionZip", Zip) {
   dependsOn(
-  "shadowJar",
   "copyJars",
   "manual",
-  "extractJacocoAgent"
+  "copyJacocoAgent"
   )
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
   def dirName = "${base.archivesName.get()}-${version}"
-  from("build/libs/")
+  // The fat jar randoop-all-${version}.jar; `from` carries the dependency on shadowJar.
+  from(tasks.named("shadowJar"))
+  // The agent jars and jacocoagent.jar.
+  from(layout.buildDirectory.dir("distlibs"))
   from("src/docs/manual/index.html") {
     into("doc/manual")
   }
@@ -665,9 +683,6 @@ tasks.register("distributionZip", Zip) {
   }
   from("src/distribution/resources/README.txt")
   into(dirName)
-  exclude { details ->
-    details.file.name.contains("randoop") && !details.file.name.contains("-all-")
-  }
 }
 
 /********************* Building manual *******************/
