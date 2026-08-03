@@ -8,15 +8,13 @@ config:
   line-length: false
   no-trailing-punctuation:
     punctuation: ".,;:"
-  ## TODO: replace by the below
-  no-inline-html: false
-  # no-inline-html:
-  #   allowed_elements:
-  #     - details
-  #     - kbd
-  #     - sub
-  #     - span
-  #     - summary
+  no-inline-html:
+    allowed_elements:
+      - details
+      - kbd
+      - sub
+      - span
+      - summary
   single-title:
     front_matter_title: ""
   table-pipe-style: false
