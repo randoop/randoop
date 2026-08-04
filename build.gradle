@@ -25,7 +25,8 @@ plugins {
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   alias(libs.plugins.com.gorylenko.gradle.git.properties)
 
-  id("pmd")
+  // The PMD plugin is not applied here.  The `allprojects` block below applies it to
+  // every project, including this one.
 }
 
 ext {
@@ -380,19 +381,34 @@ allprojects { subproject ->
   }
 }
 
-// allprojects {
-//   apply plugin: "pmd"
-//   pmd {
-//     toolVersion = "7.25.0"
-//     consoleOutput = true
-//     ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
-//     ruleSets = []
-//   }
-//   tasks.withType(Pmd) {
-//     // Exclude an entire generated folder path
-//     exclude('**/mock/**')
-//   }
-// }
+// PMD linter
+
+allprojects {
+  apply plugin: "pmd"
+  pmd {
+    toolVersion = rootProject.libs.versions.pmd.get()
+    // Violations are written to build/reports/pmd/*.html rather than to the console,
+    // because there are currently too many of them to be readable on the console.
+    consoleOutput = false
+    ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
+    // Use only the rules in .pmd-ruleset.xml, not PMD's built-in default rule set.
+    ruleSets = []
+    // This doesn't yet pass.  TODO: make it pass, then remove this line so that PMD
+    // violations fail the build.  (We are incrementally approaching that goal.)
+    ignoreFailures = true
+  }
+  tasks.withType(Pmd).configureEach {
+    exclude("**/mock/**")
+  }
+}
+
+/*
+ * Don't run PMD over source set testInput, which is input to Randoop's system tests
+ * rather than production code.  Spotless and Error Prone skip it for the same reason.
+ */
+tasks.named("pmdTestInput") {
+  enabled = false
+}
 
 tasks.register("testInputJar", Jar) {
   from sourceSets.testInput.output
@@ -495,10 +511,6 @@ tasks.register("extractJacocoAgent", Copy) {
     configurations.jacocoagent.collect { zipTree(it) }
   }
   into(layout.buildDirectory.dir("jacocoagent"))
-  copy {
-    from("${layout.buildDirectory.get()}/jacocoagent/jacocoagent.jar")
-    into(layout.buildDirectory.dir("libs"))
-  }
 }
 
 /*
@@ -602,10 +614,28 @@ jar {
   from(sourceSets.main.output)
 }
 
-tasks.register("copyJars", Copy) {
-  dependsOn(":covered-class:jar", ":replacecall:jar")
-  from(subprojects.collect { it.tasks.withType(Jar) })
-  into(layout.buildDirectory.dir("libs"))
+/*
+ * Copies the distribution's jar files -- Randoop's fat jar and the agents' fat jars --
+ * into build/distlibs.  Copy the fat jars (shadowJar), not the thin ones (jar),
+ * because each jar file must be self-contained: the user puts Randoop's jar file on
+ * the classpath, and the user passes each agent's jar file to the JVM's -javaagent
+ * command-line option.
+ *
+ * The destination is build/distlibs because Gradle treats every file in
+ * build/libs as an output of tasks that write to it, leading to "implicit
+ * dependency" failures for any task that reads a jar from build/libs (such as
+ * `:covered-class:javadoc`).
+ *
+ * This is a Sync rather than a Copy task so that build/distlibs contains only
+ * the current build's jar files.  A Copy task would leave behind jar files
+ * from previously-built versions.  Because build/distlibs holds exactly the
+ * distribution's jar files and nothing else, it is the directory that
+ * scripts/replace-randoop-jars.sh and the release instructions read from.
+ */
+tasks.register("copyJars", Sync) {
+  from(tasks.named("shadowJar"))
+  from(subprojects.collect { it.tasks.named("shadowJar") })
+  into(layout.buildDirectory.dir("distlibs"))
 }
 
 assemble.dependsOn(copyJars)
@@ -647,16 +677,20 @@ shadowJar {
 assemble.dependsOn(shadowJar)
 
 tasks.register("distributionZip", Zip) {
-  dependsOn(
-  "shadowJar",
-  "copyJars",
-  "manual",
-  "extractJacocoAgent"
-  )
+  dependsOn("manual")
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
   def dirName = "${base.archivesName.get()}-${version}"
-  from("build/libs/")
+  // Naming a task in `from` carries the dependency on that task, and copies the
+  // task's output files (for a Copy or Sync task, the contents of its destination
+  // directory).
+  // The fat jar randoop-all-${version}.jar and the agents' fat jars.
+  from(tasks.named("copyJars"))
+  // jacocoagent.jar, which `extractJacocoAgent` unpacks alongside the rest of the
+  // contents of the org.jacoco.agent artifact.
+  from(tasks.named("extractJacocoAgent")) {
+    include("jacocoagent.jar")
+  }
   from("src/docs/manual/index.html") {
     into("doc/manual")
   }
@@ -665,9 +699,6 @@ tasks.register("distributionZip", Zip) {
   }
   from("src/distribution/resources/README.txt")
   into(dirName)
-  exclude { details ->
-    details.file.name.contains("randoop") && !details.file.name.contains("-all-")
-  }
 }
 
 /********************* Building manual *******************/

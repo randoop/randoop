@@ -46,9 +46,13 @@ abstract class CloneTask extends DefaultTask {
         t.printStackTrace()
       }
       if (!new File(directory, ".git").exists()) {
-        println "Cloning failed, will try again in 1 minute: clone(${url}, ${directory}, true, ${extraArgs})"
+        println "Cloning failed, will try again in 1 minute: clone(${url}, ${directory})"
         sleep(60000) // wait 1 minute, then try again
-        clone(urlS, getDirectory(), false)
+        // The failed clone may have left files in the directory, and `git clone` fails if
+        // the destination directory is non-empty.
+        directory.deleteDir()
+        // Pass false for ignoreError, so that a second failure fails the build.
+        clone(url, directory.toString(), false)
       }
     }
   }
