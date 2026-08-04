@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -38,7 +38,7 @@ import java.beans.*;
 import java.util.Random;
 
 public class ProgressBarDemo extends JPanel
-                             implements ActionListener, 
+                             implements ActionListener,
                                         PropertyChangeListener {
 
     private JProgressBar progressBar;
@@ -128,7 +128,7 @@ public class ProgressBarDemo extends JPanel
             progressBar.setValue(progress);
             taskOutput.append(String.format(
                     "Completed %d%% of task.\n", task.getProgress()));
-        } 
+        }
     }
 
 

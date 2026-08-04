@@ -13,9 +13,9 @@ Some of the (optional) commands below assume:
 1. Follow steps 1-4 under [Steps to set up
    Defects4J](https://github.com/rjust/defects4j/blob/master/README.md#steps-to-set-up-defects4j)
    in the Defects4j README.
-   Note the Perl dependencies section.  If you are using a UW machine for which you
-   do not have super user access, you will need to set up a cpan local lib to
-   install any missing Perl modules.
+   Note the Perl dependencies section.  If you are using a UW machine for which
+   you do not have super user access, you will need to set up a cpan local lib
+   to install any missing Perl modules.
 
 2. Optionally, use a different version of Randoop.
 
@@ -33,9 +33,10 @@ Some of the (optional) commands below assume:
 
      ```sh
      (cd $randoop && ./gradlew assemble) && \
-     (cd $D4J_HOME/framework/lib/test_generation/generation && $randoop/scripts/replace-randoop-jars.sh "-current")
+     (cd $D4J_HOME/framework/lib/test_generation/generation && \
+      $randoop/scripts/replace-randoop-jars.sh "-current")
      ```
-  
+
 3. Link the defect4j testing scripts from this directory to the defects4j test directory:
    `(cd $D4J_HOME/framework/test && ln -s $randoop/scripts/defects4j_* .)`
 
@@ -58,8 +59,9 @@ Some of the (optional) commands below assume:
     (`test/`), based on the project name and current time.
     To change `TMP_DIR`, you will need to modify `defects4j_randoop.sh`.
 
-5. The end of the defects4j_randoop.sh script invokes `./defects4j_coverage.pl` to
-   display the coverage data.  You may rerun this script to review the results.
+5. The end of the defects4j_randoop.sh script invokes `./defects4j_coverage.pl`
+   to display the coverage data.  You may rerun this script to review the
+   results.
 
    The raw coverage data is found at `$TMP_DIR/output/coverage`.
    This script will accept an optional argument of an alternative file location.
