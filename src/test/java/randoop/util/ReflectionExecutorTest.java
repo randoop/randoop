@@ -52,9 +52,9 @@ public class ReflectionExecutorTest {
 
   /**
    * With {@code --usethreads}, a call that exceeds the timeout is reported as an {@link
-   * ExceptionalExecution} that holds a {@code TimeoutException}, on every JDK version. (As of JDK
-   * 20, {@code Thread.stop()} throws {@code UnsupportedOperationException} rather than stopping the
-   * thread.)
+   * ExceptionalExecution} that holds a {@code TimeoutException}, on every JDK version. (In JDK 20
+   * through JDK 25, {@code Thread.stop()} throws {@code UnsupportedOperationException} rather than
+   * stopping the thread, and as of JDK 26 {@code Thread.stop()} does not exist.)
    */
   @Test
   public void testTimeoutIsReportedAsTimeoutException() {
