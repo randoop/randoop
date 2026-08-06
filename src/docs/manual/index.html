@@ -1476,7 +1476,11 @@ in this manner are not reported to the user, but are recorded in Randoop's log. 
 <p>Use this option if Randoop does not terminate, which is usually due to execution of code
 under test that results in an infinite loop or that waits for user input. The downside of this
 option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
-parallel, but not in isolation. [default: false]
+parallel, but not in isolation.
+
+<p>As of JDK 20, a test that exceeds the timeout cannot be killed, because <code>
+Thread.stop()</code> no longer works and has no replacement. Such a test is still discarded, but it
+keeps running in the background until it terminates on its own. [default: false]
             <li id="option:timed-out-tests"><b>--timed-out-tests=</b><i>filename</i>.
              If specified, Randoop logs timed-out tests to the specified file. Has no effect unless the
 <code>--usethreads</code> command-line option is given.

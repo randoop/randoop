@@ -34,6 +34,10 @@ public final class ReflectionExecutor {
    * under test that results in an infinite loop or that waits for user input. The downside of this
    * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
    * parallel, but not in isolation.
+   *
+   * <p>As of JDK 20, a test that exceeds the timeout cannot be killed, because {@code
+   * Thread.stop()} no longer works and has no replacement. Such a test is still discarded, but it
+   * keeps running in the background until it terminates on its own.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -58,6 +62,13 @@ public final class ReflectionExecutor {
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout_millis = CALL_TIMEOUT_MILLIS_DEFAULT;
+
+  /**
+   * True if {@code Thread.stop()} might work on this JVM. It is set to false the first time that
+   * {@code Thread.stop()} throws {@code UnsupportedOperationException}, which it always does as of
+   * JDK 20.
+   */
+  private static boolean threadStopWorks = true;
 
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
@@ -161,7 +172,6 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutException if execution times out
    */
-  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
 
     RunnerThread runnerThread = new RunnerThread(null);
@@ -180,9 +190,7 @@ public final class ReflectionExecutor {
         // TODO: is it possible to log the test being executed?
         // (Maybe not here, but it has been previously logged.)
 
-        // We use this deprecated method because it's the only way to
-        // stop a thread no matter what it's doing.
-        runnerThread.stop();
+        stopThread(runnerThread);
 
         throw new TimeoutException();
       }
@@ -194,6 +202,38 @@ public final class ReflectionExecutor {
               + " providing the information requested at"
               + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
     }
+  }
+
+  /**
+   * Stops a thread that has exceeded its timeout, if this JVM permits it.
+   *
+   * <p>Through JDK 19, {@code Thread.stop()} stops a thread no matter what it is doing. As of JDK
+   * 20, {@code Thread.stop()} always throws {@code UnsupportedOperationException} and there is no
+   * replacement for it. In that case, this method only interrupts the thread, which stops it only
+   * if it is blocked in an interruptible operation. A thread that ignores the interrupt keeps
+   * running, but it is a daemon thread, so it does not prevent the JVM from exiting.
+   *
+   * @param runnerThread the thread to stop
+   */
+  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
+  private static void stopThread(RunnerThread runnerThread) {
+    if (threadStopWorks) {
+      try {
+        runnerThread.stop();
+        return;
+      } catch (UnsupportedOperationException e) {
+        threadStopWorks = false;
+        String message =
+            String.format(
+                "Warning: Thread.stop() is unsupported as of JDK 20, so a test that runs for more"
+                    + " than --call-timeout-millis=%d cannot be killed.  Such a test is discarded,"
+                    + " but it keeps running in the background.",
+                call_timeout_millis);
+        System.out.println(message);
+        Log.logPrintln(message);
+      }
+    }
+    runnerThread.interrupt();
   }
 
   /**
