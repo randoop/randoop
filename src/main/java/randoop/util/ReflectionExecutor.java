@@ -1,8 +1,11 @@
 package randoop.util;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeoutException;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.util.FileWriterWithName;
@@ -34,6 +37,11 @@ public final class ReflectionExecutor {
    * under test that results in an infinite loop or that waits for user input. The downside of this
    * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are run in
    * parallel, but not in isolation.
+   *
+   * <p>As of JDK 20, a test that exceeds the timeout cannot be killed, because {@code
+   * Thread.stop()} no longer works (and, as of JDK 26, no longer exists) and has no replacement.
+   * Such a test is still discarded, but it keeps running in the background until it terminates on
+   * its own.
    */
   @OptionGroup("Threading")
   @Option("Execute each test in a separate thread, with timeout")
@@ -58,6 +66,34 @@ public final class ReflectionExecutor {
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int call_timeout_millis = CALL_TIMEOUT_MILLIS_DEFAULT;
+
+  /**
+   * The {@code Thread.stop()} method, or null if calling {@code Thread.stop()} cannot stop a thread
+   * on this JVM. This field is looked up reflectively because {@code Thread.stop()} does not exist
+   * as of JDK 26.
+   *
+   * <p>The field is null from the outset if this JVM does not declare {@code Thread.stop()}. It is
+   * set to null the first time that {@code Thread.stop()} throws {@code
+   * UnsupportedOperationException}, which it always does in JDK 20 through JDK 25.
+   */
+  private static @Nullable Method threadStopMethod = getThreadStopMethod();
+
+  /** True if the warning that a timed-out test cannot be killed has been issued. */
+  private static boolean warnedThreadStopFails = false;
+
+  /**
+   * Returns the {@code Thread.stop()} method, or null if this JVM does not declare it.
+   *
+   * @return the {@code Thread.stop()} method, or null if this JVM does not declare it
+   */
+  private static @Nullable Method getThreadStopMethod() {
+    try {
+      return Thread.class.getMethod("stop");
+    } catch (NoSuchMethodException e) {
+      // Thread.stop() was removed in JDK 26.
+      return null;
+    }
+  }
 
   // Execution statistics.
   /** The sum of durations for normal executions, in nanoseconds. */
@@ -161,7 +197,6 @@ public final class ReflectionExecutor {
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutException if execution times out
    */
-  @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
 
     RunnerThread runnerThread = new RunnerThread(null);
@@ -180,9 +215,7 @@ public final class ReflectionExecutor {
         // TODO: is it possible to log the test being executed?
         // (Maybe not here, but it has been previously logged.)
 
-        // We use this deprecated method because it's the only way to
-        // stop a thread no matter what it's doing.
-        runnerThread.stop();
+        stopThread(runnerThread);
 
         throw new TimeoutException();
       }
@@ -194,6 +227,54 @@ public final class ReflectionExecutor {
               + " providing the information requested at"
               + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
     }
+  }
+
+  /**
+   * Stops a thread that has exceeded its timeout, if this JVM permits it.
+   *
+   * <p>Through JDK 19, {@code Thread.stop()} stops a thread no matter what it is doing. In JDK 20
+   * through JDK 25, {@code Thread.stop()} always throws {@code UnsupportedOperationException}, and
+   * as of JDK 26 it does not exist; there is no replacement for it. In those cases, this method
+   * only interrupts the thread, which stops it only if it is blocked in an interruptible operation.
+   * A thread that ignores the interrupt keeps running, but it is a daemon thread, so it does not
+   * prevent the JVM from exiting.
+   *
+   * @param runnerThread the thread to stop
+   */
+  private static void stopThread(RunnerThread runnerThread) {
+    Method stopMethod = threadStopMethod;
+    if (stopMethod != null) {
+      try {
+        stopMethod.invoke(runnerThread);
+        return;
+      } catch (InvocationTargetException e) {
+        Throwable cause = e.getCause();
+        if (!(cause instanceof UnsupportedOperationException)) {
+          throw new RandoopBug("Problem calling Thread.stop()", cause);
+        }
+        threadStopMethod = null;
+      } catch (IllegalAccessException e) {
+        throw new RandoopBug("Problem calling Thread.stop()", e);
+      }
+    }
+    warnThreadStopFails();
+    runnerThread.interrupt();
+  }
+
+  /** Warns, at most once, that a test that exceeds the timeout cannot be killed. */
+  private static void warnThreadStopFails() {
+    if (warnedThreadStopFails) {
+      return;
+    }
+    warnedThreadStopFails = true;
+    String message =
+        String.format(
+            "Warning: Thread.stop() does not work as of JDK 20, so a test that runs for more than"
+                + " --call-timeout-millis=%d cannot be killed.  Such a test is discarded, but it"
+                + " keeps running in the background.",
+            call_timeout_millis);
+    System.out.println(message);
+    Log.logPrintln(message);
   }
 
   /**
@@ -212,7 +293,7 @@ public final class ReflectionExecutor {
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw new RandoopBug("code=" + code, e);
     } catch (Throwable e) {
-      if (e instanceof java.lang.reflect.InvocationTargetException) {
+      if (e instanceof InvocationTargetException) {
         throw new RandoopBug("Unexpected InvocationTargetException", e);
       }
 
