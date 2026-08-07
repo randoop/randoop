@@ -89,7 +89,7 @@ allprojects {
     plumelib(rootProject.libs.bcel.util)
     // https://mvnrepository.com/artifact/org.plumelib/options
     if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
-      plumelib("org.plumelib:options:1.0.6")
+      plumelib("org.plumelib:options:3.0.0")
     } else {
       plumelib(rootProject.libs.options)
     }
