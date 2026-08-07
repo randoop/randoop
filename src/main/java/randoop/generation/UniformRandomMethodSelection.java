@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.util.ArrayList;
 import java.util.List;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -17,11 +18,7 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
    * @param operations methods under test
    */
   public UniformRandomMethodSelection(List<TypedOperation> operations) {
-    // Temporary implementation note:  a copy is not made.
-    // Doing so causes various system tests to fail due to changes in coverage. We discovered that
-    // this was caused by {@link ForwardGenerator} which was removing parameter-less operations
-    // after testing them once.
-    this.operations = operations;
+    this.operations = new ArrayList<>(operations);
   }
 
   /**
@@ -42,4 +39,15 @@ public class UniformRandomMethodSelection implements TypedOperationSelector {
    */
   @Override
   public void newRegressionTestHook(Sequence sequence) {}
+
+  /**
+   * Stops considering the given operation, by removing it from the list that {@link
+   * #selectOperation} chooses from.
+   *
+   * @param operation the operation that is no longer under test
+   */
+  @Override
+  public void removeOperation(TypedOperation operation) {
+    operations.remove(operation);
+  }
 }

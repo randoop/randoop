@@ -22,4 +22,13 @@ public interface TypedOperationSelector {
    * @param sequence newly created sequence that was classified as a regression test
    */
   public abstract void newRegressionTestHook(Sequence sequence);
+
+  /**
+   * Stop considering the given operation. The {@link ForwardGenerator} calls this when it removes
+   * an operation from the set of methods under test, so that this selector never selects the
+   * operation again.
+   *
+   * @param operation the operation that is no longer under test
+   */
+  public abstract void removeOperation(TypedOperation operation);
 }

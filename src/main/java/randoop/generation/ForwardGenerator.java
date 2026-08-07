@@ -539,6 +539,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
       operations.remove(operation);
+      operationSelector.removeOperation(operation);
     }
 
     // Discard if sequence is larger than size limit
