@@ -370,4 +370,23 @@ public class Bloodhound implements TypedOperationSelector {
   public void newRegressionTestHook(Sequence sequence) {
     incrementSuccessfulInvocationCount(sequence.getOperation());
   }
+
+  /**
+   * Stops considering the given operation, by removing it from the list that {@link
+   * #selectOperation} chooses from and discarding its contribution to {@code
+   * totalWeightOfMethodsUnderTest}.
+   *
+   * @param operation the operation that is no longer under test
+   */
+  @Override
+  public void removeOperation(TypedOperation operation) {
+    if (!operationList.remove(operation)) {
+      return;
+    }
+    Double weight = methodWeights.remove(operation);
+    if (weight != null) {
+      totalWeightOfMethodsUnderTest -= weight;
+    }
+    methodSelectionCounts.remove(operation);
+  }
 }
