@@ -1,6 +1,6 @@
 package randoop.output;
 
-/** Partial test -- disabled in build.gradle */
+/** Partial test -- disabled in build.gradle.kts */
 public class JUnitCreatorTest {
   /*
     @Test
