@@ -14,7 +14,7 @@ import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** These tests are disabled in build.gradle */
+/** These tests are disabled in build.gradle.kts */
 public class OperationParserTests {
 
   @Test
