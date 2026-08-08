@@ -3,6 +3,7 @@ name: Prek checks
 jobs:
   prek:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK 25
@@ -11,5 +12,5 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
           cache: 'gradle'
-      - run: sudo snap install circleci
+      - run: curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/main/install.sh | sudo bash
       - uses: j178/prek-action@v3.0.0

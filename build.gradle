@@ -1059,25 +1059,6 @@ tasks.register("checklink", Exec) {
   }
 }
 
-tasks.register("installGitHooks", Copy) {
-  description = "Installs git hooks for pre-commit"
-  from("scripts/")
-  into(providers.exec {
-    workingDir(project.rootDir)
-    commandLine("git", "rev-parse", "--git-path", "hooks")
-  }.standardOutput.asText.map { it.trim() })
-}
-/* Always run this task. */
-gradle.startParameter.taskNames = [":installGitHooks"] + gradle.startParameter.taskNames
-// It's not clear why this dependency exists, but Gradle issues the following warning:
-//   - Gradle detected a problem with the following location:
-//   '/Users/smillst/jsr308/checker-framework/.git'.
-//   Reason: Task ':checker:generateGitProperties' uses this output of task ':installGitHooks'
-//   without declaring an explicit or implicit dependency. This can lead to incorrect results being
-//   produced, depending on what order the tasks are executed. Please refer to
-//   https://docs.gradle.org/7.1/userguide/validation_problems.html#implicit_dependency for more
-//   details about this problem.
-generateGitProperties.dependsOn(":installGitHooks")
 gitProperties {
   // Handle submodules/worktrees where .git is a pointer file, not a directory.
   dotGitDirectory = providers.exec {
