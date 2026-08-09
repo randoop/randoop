@@ -565,7 +565,7 @@ public final class ReplacementFileReader {
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  static class ReplacementException extends Throwable {
+  static class ReplacementException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 

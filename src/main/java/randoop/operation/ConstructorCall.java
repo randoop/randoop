@@ -243,7 +243,7 @@ public final class ConstructorCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Constructor<?> con;
     try {

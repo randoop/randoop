@@ -249,7 +249,7 @@ public final class MethodCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Class<?> runtimeClass = classType.getRuntimeClass();
     Method m = null;

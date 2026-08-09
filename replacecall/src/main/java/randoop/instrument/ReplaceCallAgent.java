@@ -333,7 +333,7 @@ public class ReplaceCallAgent {
    *
    * <p>Analogous to {@code RandoopBug}, but that class is not available within the agent.
    */
-  private static class BugInAgentException extends Throwable {
+  private static class BugInAgentException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 

@@ -251,9 +251,11 @@ public final class SpecificationTranslator {
    * @param specification the specification to translate
    * @param compiler the sequence compiler to use to create expression methods
    * @return the {@link ExecutableSpecification} for the given specification
+   * @throws RandoopSpecificationError if an expression in the specification does not compile
    */
   public static ExecutableSpecification createExecutableSpecification(
-      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),
@@ -269,8 +271,10 @@ public final class SpecificationTranslator {
    *     ExecutableBooleanExpression}
    * @return the list of {@link ExecutableBooleanExpression} objects obtained by converting each
    *     {@link Precondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
+  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions)
+      throws RandoopSpecificationError {
     List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>(preconditions.size());
     for (Precondition precondition : preconditions) {
       try {
@@ -294,8 +298,10 @@ public final class SpecificationTranslator {
    *     GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     Postcondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private List<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
+  private List<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions)
+      throws RandoopSpecificationError {
     List<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
     for (Postcondition postcondition : postconditions) {
       try {
@@ -322,8 +328,10 @@ public final class SpecificationTranslator {
    *     GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     ThrowsCondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private List<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
+  private List<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions)
+      throws RandoopSpecificationError {
     List<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
@@ -369,8 +377,9 @@ public final class SpecificationTranslator {
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
-  private ExecutableBooleanExpression create(Guard expression) {
+  private ExecutableBooleanExpression create(Guard expression) throws RandoopSpecificationError {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         prestateExpressionSignature,
@@ -389,8 +398,9 @@ public final class SpecificationTranslator {
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
-  public ExecutableBooleanExpression create(Property expression) {
+  public ExecutableBooleanExpression create(Property expression) throws RandoopSpecificationError {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         poststateExpressionSignature,

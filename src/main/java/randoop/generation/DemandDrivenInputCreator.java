@@ -15,6 +15,8 @@ import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
+import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
@@ -294,9 +296,15 @@ public class DemandDrivenInputCreator {
       // and are accessible to Randoop.
 
       // Iterate over the operations and check if they can produce the target type.
-      List<TypedOperation> operations =
-          OperationExtractor.operations(
-              currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+      List<TypedOperation> operations;
+      try {
+        operations =
+            OperationExtractor.operations(
+                currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+      } catch (RandoopSpecificationError e) {
+        // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
+        throw new RandoopBug("specification error for type " + currentType, e);
+      }
       for (TypedOperation op : operations) {
         Type opOutputType = op.getOutputType();
 

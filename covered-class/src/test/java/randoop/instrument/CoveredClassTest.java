@@ -18,6 +18,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -26,6 +27,7 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -82,7 +84,7 @@ public class CoveredClassTest {
   }
 
   @Test
-  public void testNoFilter() {
+  public void testNoFilter() throws RandoopClassNameError, RandoopSpecificationError {
     System.out.println("running testNoFilter");
 
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
@@ -123,7 +125,7 @@ public class CoveredClassTest {
   }
 
   @Test
-  public void testNameFilter() {
+  public void testNameFilter() throws RandoopClassNameError, RandoopSpecificationError {
     System.out.println("running testNameFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); // null;
@@ -164,7 +166,7 @@ public class CoveredClassTest {
   }
 
   @Test
-  public void testCoverageFilter() {
+  public void testCoverageFilter() throws RandoopClassNameError, RandoopSpecificationError {
     System.out.println("running testCoverageFilter");
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/allclasses.txt");
     require_classname_in_test = null;
@@ -203,7 +205,7 @@ public class CoveredClassTest {
     }
   }
 
-  private ForwardGenerator getGeneratorForTest() {
+  private ForwardGenerator getGeneratorForTest() throws RandoopClassNameError {
     AccessibilityPredicate accessibility = IS_PUBLIC;
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
     Set<@ClassGetName String> coveredClassnames =

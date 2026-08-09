@@ -17,6 +17,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
@@ -57,7 +58,7 @@ public class TestFilteringTest {
    * Make sure that we are getting both regression and error tests with default filtering settings.
    */
   @Test
-  public void nonemptyOutputTest() {
+  public void nonemptyOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -89,7 +90,7 @@ public class TestFilteringTest {
    * Make sure there is no output when dont-output-tests is set. Need to set an input limit here.
    */
   @Test
-  public void noOutputTest() {
+  public void noOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -120,7 +121,7 @@ public class TestFilteringTest {
 
   /** Make sure get no error test output when no-error-revealing-tests is set. */
   @Test
-  public void noErrorOutputTest() {
+  public void noErrorOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -153,7 +154,7 @@ public class TestFilteringTest {
    * generated_limit here since most tests are regression tests.
    */
   @Test
-  public void noRegressionOutputTest() {
+  public void noRegressionOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -184,7 +185,7 @@ public class TestFilteringTest {
 
   /** Having both Error and Regression tests turned off should give nothing. Set generated_limit. */
   @Test
-  public void noErrorOrRegressionOutputTest() {
+  public void noErrorOrRegressionOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -215,7 +216,7 @@ public class TestFilteringTest {
 
   /** Filtering tests matching CUT should produce output tests. */
   @Test
-  public void matchOutputTest() {
+  public void matchOutputTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -244,7 +245,7 @@ public class TestFilteringTest {
     assertFalse(eTests.isEmpty());
   }
 
-  private ForwardGenerator buildAndRunGenerator(Class<?> c) {
+  private ForwardGenerator buildAndRunGenerator(Class<?> c) throws RandoopSpecificationError {
     Set<String> omitfields = new HashSet<>();
     AccessibilityPredicate accessibility = IS_PUBLIC;
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitfields);

@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
@@ -70,11 +71,13 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(
         clazz, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate, null);
   }
@@ -86,11 +89,13 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(
         classType,
         reflectionPredicate,
@@ -106,11 +111,13 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param reflectionPredicate the reflection predicate
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(
         classTypes,
         reflectionPredicate,
@@ -127,12 +134,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(clazz, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
@@ -144,12 +153,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(classType, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
@@ -161,12 +172,14 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param omitPredicate the list of {@code Pattern} objects for omitting methods, may be null
    * @param accessibilityPredicate the predicate for test accessibility
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return operations(classTypes, reflectionPredicate, omitPredicate, accessibilityPredicate, null);
   }
 
@@ -180,13 +193,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Class<?> clazz,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
       AccessibilityPredicate accessibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
     return operations(
         ClassOrInterfaceType.forClass(clazz),
         reflectionPredicate,
@@ -205,13 +220,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       ClassOrInterfaceType classType,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
       AccessibilityPredicate accessibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
     ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     OperationExtractor extractor =
         new OperationExtractor(
@@ -234,13 +251,15 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param accessibilityPredicate the predicate for test accessibility
    * @param operationSpecifications the specifications (pre/post/throws-conditions)
    * @return the operations in the class that satisfy the given predicates
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(
       Collection<ClassOrInterfaceType> classTypes,
       ReflectionPredicate reflectionPredicate,
       OmitMethodsPredicate omitMethodsPredicate,
       AccessibilityPredicate accessibilityPredicate,
-      SpecificationCollection operationSpecifications) {
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
     Collection<TypedOperation> result = new TreeSet<>();
     ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     for (ClassOrInterfaceType classType : classTypes) {
@@ -398,9 +417,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
    * @param constructor a {@link Constructor} object to be represented as an {@link Operation}
+   * @throws RandoopSpecificationError if a specification for the constructor is malformed
    */
   @Override
-  public void visit(Constructor<?> constructor) {
+  public void visit(Constructor<?> constructor) throws RandoopSpecificationError {
     if (debug) {
       Log.logPrintln("OperationExtractor.visit: constructor=" + constructor);
     }
@@ -450,9 +470,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * #classType} is used as the declaring class.
    *
    * @param method a {@link Method} object to be represented as an {@link Operation}
+   * @throws RandoopSpecificationError if a specification for the method is malformed
    */
   @Override
-  public void visit(Method method) {
+  public void visit(Method method) throws RandoopSpecificationError {
     if (debug) {
       Log.logPrintln("OperationExtractor.visit: method=" + method);
     }

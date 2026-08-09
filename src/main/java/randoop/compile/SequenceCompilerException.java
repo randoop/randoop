@@ -4,7 +4,7 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
 /** Exception for compilation of Java classes given as {@code String}. */
-public class SequenceCompilerException extends Throwable {
+public class SequenceCompilerException extends RuntimeException {
 
   /** ID for serializing this class. */
   private static final long serialVersionUID = -1901576275093767250L;

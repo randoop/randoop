@@ -20,6 +20,7 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationTranslator;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -713,8 +714,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values the argument values
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] values) {
+  public ExpectedOutcomeTable checkPrestate(Object[] values) throws RandoopSpecificationError {
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }

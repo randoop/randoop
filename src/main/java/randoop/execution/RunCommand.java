@@ -183,7 +183,7 @@ public final class RunCommand {
    * Exception representing an error that occurred while running a process with {@link
    * RunCommand#run(List, Path, long)}.
    */
-  public static class CommandException extends Throwable {
+  public static class CommandException extends RuntimeException {
 
     /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;

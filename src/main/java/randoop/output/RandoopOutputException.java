@@ -3,7 +3,7 @@ package randoop.output;
 import java.io.IOException;
 
 /** An exception (usually an IOException) occurred while writing tests to a file. */
-public class RandoopOutputException extends Throwable {
+public class RandoopOutputException extends RuntimeException {
 
   /** ID for serializing this class. */
   private static final long serialVersionUID = -9104568425559719500L;

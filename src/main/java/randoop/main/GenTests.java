@@ -239,7 +239,7 @@ public class GenTests extends GenInputsAbstract {
 
   @Override
   @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
-  public boolean handle(String[] args) {
+  public boolean handle(String[] args) throws RandoopClassNameError, RandoopSpecificationError {
 
     try {
       String[] nonargs = options.parse(args);

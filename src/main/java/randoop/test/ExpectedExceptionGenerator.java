@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.ThrowsClause;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
@@ -42,7 +43,8 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
