@@ -48,7 +48,7 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
       if (!File(directory, ".git").exists()) {
         println(
           "Cloning failed, will try again in ${RETRY_DELAY.toSeconds()} seconds:" +
-            " clone($url, $directory, true)"
+            " clone($url, $directory, false)"
         )
         Thread.sleep(RETRY_DELAY.toMillis())
         clone(url, directory, false)
