@@ -274,20 +274,22 @@ dependencies {
  */
 tasks.withType<JavaCompile>().configureEach {
   if (name == "compileTestInputJava") {
-    options.compilerArgs =
-      mutableListOf(
+    options.compilerArgs.addAll(
+      listOf(
         "-g",
         "-nowarn",
         "-Xlint:-classfile,-options",
       )
+    )
   } else {
-    options.compilerArgs =
-      mutableListOf(
+    options.compilerArgs.addAll(
+      listOf(
         "-g",
         "-Werror",
         "-Xlint",
         "-Xlint:-classfile,-options",
       )
+    )
   }
 }
 
@@ -364,6 +366,8 @@ if (isJava21orHigher) {
   configure<SpotlessExtension> {
     kotlinGradle {
       target("**/*.gradle.kts")
+      // Don't reformat cloned or generated files.
+      targetExclude("**/build/**")
       ktfmt().googleStyle()
       leadingTabsToSpaces(2)
       trimTrailingWhitespace()
@@ -372,6 +376,8 @@ if (isJava21orHigher) {
     kotlin {
       // The custom task classes used by the build scripts.
       target("buildSrc/src/main/kotlin/**/*.kt")
+      // Don't reformat cloned or generated files.
+      targetExclude("**/build/**")
       ktfmt().googleStyle()
       leadingTabsToSpaces(2)
       trimTrailingWhitespace()
@@ -401,7 +407,7 @@ allprojects {
       options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror", "-Xlint:-options"))
 
       options.errorprone {
-        enabled = isJava21orHigher
+        enabled = isJava17orHigher
         // TODO: uncomment once we run the Interning Checker on Randoop.
         // disable("ReferenceEquality") // Use Interning Checker instead.
         disable("StringSplitter") // Obscure case isn't likely.
@@ -541,6 +547,16 @@ val extractJacocoAgent =
 val jacocoAgentJar = extractJacocoAgent.map { it.destinationDir.resolve("jacocoagent.jar") }
 
 /*
+ * The jar files that the system tests run.  These providers are created during configuration, so
+ * that the task action does not reach into the task graph or into other projects.
+ */
+val randoopJar = tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
+val replacecallAgentJar =
+  project(":replacecall").tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
+val coveredClassAgentJar =
+  project(":covered-class").tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
+
+/*
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
@@ -558,15 +574,9 @@ val systemTest =
      * Set system properties for jar paths, used by randoop.main.SystemTestEnvironment
      */
     doFirst {
-      systemProperty("jar.randoop", tasks.named<ShadowJar>("shadowJar").get().archiveFile.get())
-      systemProperty(
-        "jar.replacecall.agent",
-        project(":replacecall").tasks.named<ShadowJar>("shadowJar").get().archiveFile.get(),
-      )
-      systemProperty(
-        "jar.covered.class.agent",
-        project(":covered-class").tasks.named<ShadowJar>("shadowJar").get().archiveFile.get(),
-      )
+      systemProperty("jar.randoop", randoopJar.get())
+      systemProperty("jar.replacecall.agent", replacecallAgentJar.get())
+      systemProperty("jar.covered.class.agent", coveredClassAgentJar.get())
     }
 
     setWorkingDir(layout.buildDirectory)
@@ -599,7 +609,7 @@ tasks.withType<Test>().configureEach {
   /*
    * Set the destination directory for JUnit XML output files
    */
-  reports.junitXml.outputLocation = file("${layout.buildDirectory.get()}/test-results/$name")
+  reports.junitXml.outputLocation = layout.buildDirectory.dir("test-results/$name")
   /*
    * Set the heap size and GC for running tests.
    */
@@ -627,7 +637,7 @@ tasks.withType<Test>().configureEach {
 tasks.register<TestReport>("testReport") {
   group = "Report"
   description = "Creates HTML reports for tests results"
-  destinationDirectory = file("${layout.buildDirectory.get()}/reports/allTests")
+  destinationDirectory = layout.buildDirectory.dir("reports/allTests")
 
   // The Callable defers realizing the Test tasks, so tasks registered after this one are included.
   testResults.from(Callable { tasks.withType<Test>().map { it.binaryResultsDirectory } })
@@ -702,7 +712,7 @@ tasks.register<Zip>("distributionZip") {
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
   val dirName = "${base.archivesName.get()}-$version"
-  from("build/libs/")
+  from(copyJars)
   from(jacocoAgentJar)
   from("src/docs/manual/index.html") {
     into("doc/manual")
@@ -749,19 +759,19 @@ val cloneLibs =
 
 tasks.register<CloneTask>("cloneChecklink") {
   url.set("https://github.com/plume-lib/checklink.git")
-  directory.set(file("${layout.buildDirectory.get()}/utils/checklink"))
+  directory.set(layout.buildDirectory.dir("utils/checklink"))
   outputs.upToDateWhen { false }
 }
 
 tasks.register<CloneTask>("cloneHtmlTools") {
   url.set("https://github.com/plume-lib/html-tools.git")
-  directory.set(file("${layout.buildDirectory.get()}/utils/html-tools"))
+  directory.set(layout.buildDirectory.dir("utils/html-tools"))
   outputs.upToDateWhen { false }
 }
 
 tasks.register<CloneTask>("clonePlumeScripts") {
   url.set("https://github.com/plume-lib/plume-scripts.git")
-  directory.set(file("${layout.buildDirectory.get()}/utils/plume-scripts"))
+  directory.set(layout.buildDirectory.dir("utils/plume-scripts"))
   outputs.upToDateWhen { false }
 }
 
@@ -893,6 +903,9 @@ tasks.javadoc { dependsOn(cloneLibs) }
 
 val preplacePerl =
   tasks.register<PreplaceTask>("preplacePerl") {
+    // preplaceScript is produced by clonePlumeScripts, which cloneLibs depends on.
+    dependsOn(cloneLibs)
+    preplaceScript = layout.buildDirectory.file("utils/plume-scripts/preplace")
     outputs.upToDateWhen { false }
   }
 
@@ -907,7 +920,7 @@ tasks.build { dependsOn(tasks.javadoc) }
 val updateUserTOC =
   tasks.register<Exec>("updateUserTOC") {
     dependsOn("cloneLibs")
-    setExecutable(file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc"))
+    setExecutable(file(layout.buildDirectory.file("utils/html-tools/html-update-toc")))
     args(file("$projectDir/src/docs/manual/index.html"))
     environment("PATH", "${System.getenv("PATH")}:${layout.buildDirectory.get()}/utils/html-tools")
   }
@@ -917,7 +930,7 @@ val updateUserTOC =
 val updateDevTOC =
   tasks.register<Exec>("updateDevTOC") {
     dependsOn("cloneLibs")
-    setExecutable(file("${layout.buildDirectory.get()}/utils/html-tools/html-update-toc"))
+    setExecutable(file(layout.buildDirectory.file("utils/html-tools/html-update-toc")))
     args(file("$projectDir/src/docs/manual/dev.html"))
     environment("PATH", "${System.getenv("PATH")}:${layout.buildDirectory.get()}/utils/html-tools")
   }
@@ -1004,7 +1017,7 @@ val validateAPI =
         "uvx",
         "html5validator",
         "--root",
-        file("${layout.buildDirectory.get()}/docs/api"),
+        file(layout.buildDirectory.dir("docs/api")),
       )
     } else {
       commandLine("echo", "WARNING: HTML validation of API is only run in Java 9+.")
@@ -1037,9 +1050,9 @@ tasks.register("cleanSite") {
  * documentation is generated, the manual is updated, and the HTML has been
  * validated.
  *
- * Note that the contents of any subdirectory of build/docs will be included in
- * the site. Currently, this is only the api directory generated by the javadoc
- * task.
+ * Note that the contents of any subdirectory of build/docs, other than the
+ * explicitly excluded api-private, will be included in the site. Currently,
+ * this is only the api directory generated by the javadoc task.
  *
  * All site files will be read-only.
  */
@@ -1053,7 +1066,7 @@ tasks.register<Copy>("publishSite") {
   group = "Publishing"
   description = "Publish changes to site files and javadoc to the project pages directory"
   val siteDir = file("$projectDir/../randoop-branch-gh-pages")
-  val buildDocsDir = file("${layout.buildDirectory.get()}/docs")
+  val buildDocsDir = file(layout.buildDirectory.dir("docs"))
   // include any built docs (e.g., api)
   val newSiteFiles =
     fileTree("$projectDir/src/docs") {
@@ -1061,7 +1074,11 @@ tasks.register<Copy>("publishSite") {
       exclude("api")
     }
 
-  from(buildDocsDir)
+  from(buildDocsDir) {
+    // javadocPrivate writes here.  Its output documents private program elements, so it is for
+    // Randoop developers rather than for the public website.
+    exclude("api-private")
+  }
   from(newSiteFiles)
   into(siteDir)
   filePermissions {
@@ -1150,7 +1167,7 @@ tasks.register<Exec>("checklink") {
   val checklinkLog = layout.projectDirectory.file("checklink-log.txt").asFile
   doLast {
     if (checklinkLog.length() > 0) {
-      ant.withGroovyBuilder { "fail"("See link-checking failures in file checklink-log.txt") }
+      throw GradleException("See link-checking failures in file checklink-log.txt")
     }
   }
 }
