@@ -1040,7 +1040,7 @@ public final class Sequence {
 
         // Find input variables from their names.
         String[] inVars = new String[0];
-        if (!inVarsStr.isBlank()) {
+        if (!inVarsStr.isEmpty()) {
           // One or more input vars.
           inVars = inVarsStr.split("\\s");
         }

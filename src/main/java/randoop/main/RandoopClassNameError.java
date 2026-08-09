@@ -5,7 +5,7 @@ import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 
 /** Exception for classname errors. */
-public class RandoopClassNameError extends RuntimeException {
+public class RandoopClassNameError extends Exception {
   /** ID for serializing this class. */
   private static final long serialVersionUID = -3625971508842588810L;
 

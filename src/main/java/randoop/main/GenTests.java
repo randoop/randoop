@@ -243,7 +243,7 @@ public class GenTests extends GenInputsAbstract {
 
   @Override
   @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
-  public boolean handle(String[] args) {
+  public boolean handle(String[] args) throws RandoopClassNameError, RandoopSpecificationError {
 
     {
       String[] nonargs;
@@ -255,7 +255,7 @@ public class GenTests extends GenInputsAbstract {
         throw new Error("unreachable");
       }
       if (nonargs.length > 0) {
-        usage("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
+        usage("Unrecognized command-line arguments: %s", Arrays.toString(nonargs));
       }
     }
 

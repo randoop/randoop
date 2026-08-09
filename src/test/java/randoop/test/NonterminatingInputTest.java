@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import randoop.DummyVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -24,7 +25,7 @@ import randoop.util.ReflectionExecutor;
 public class NonterminatingInputTest {
 
   @Test
-  public void test() throws SecurityException, NoSuchMethodException {
+  public void test() throws SecurityException, NoSuchMethodException, RandoopSpecificationError {
 
     Sequence s = new Sequence();
     TypedOperation con = null;

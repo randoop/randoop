@@ -47,7 +47,7 @@ package java7.util7;
  * @since  JDK1.1
  */
 
-public class TooManyListenersException extends RuntimeException {
+public class TooManyListenersException extends Exception {
     private static final long serialVersionUID = 5074640544770687831L;
 
     /**

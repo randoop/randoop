@@ -18,8 +18,8 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * Represents a call to a method. It holds a reflective {@link java.lang.reflect.Constructor}
- * object. It caches values of computed reflective calls.
+ * Represents a call to a method. It holds a reflective {@link java.lang.reflect.Method} object. It
+ * caches values of computed reflective calls.
  *
  * <p>As an {@link Operation}, a call to a non-static method<br>
  * {@code T mname (T1,...,Tn)}<br>
@@ -270,9 +270,7 @@ public final class MethodCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      OperationParseException eWithBetterMessage =
-          new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
-      throw eWithBetterMessage;
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Class<?> runtimeClass = classType.getRuntimeClass();
     Method m;

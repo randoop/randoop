@@ -22,6 +22,7 @@ import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
 import randoop.operation.TypedClassOperation;
@@ -55,6 +56,8 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -103,6 +106,8 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
     }
     assertNotNull(model);
     assertEquals(3, model.getClassTypes().size());
@@ -166,6 +171,8 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -345,6 +352,8 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
     }
     return model;
   }

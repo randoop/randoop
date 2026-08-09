@@ -427,7 +427,7 @@ public final class ReplacementFileReader {
       Path path;
       try {
         @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
-        Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8));
+        Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
         path = pathTmp;
       } catch (Exception e) {
         throw new ReplacementException("Unable to extract Path from URL: " + url, e);
@@ -565,7 +565,7 @@ public final class ReplacementFileReader {
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  static class ReplacementException extends RuntimeException {
+  static class ReplacementException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 

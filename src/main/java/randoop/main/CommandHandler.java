@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import org.plumelib.options.Options;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.util.Util;
 
 /**
@@ -81,7 +82,16 @@ public abstract class CommandHandler {
             .equals(fcommand.toUpperCase(Locale.getDefault()));
   }
 
-  public abstract boolean handle(String[] args);
+  /**
+   * Executes the command with the given arguments.
+   *
+   * @param args the command-line arguments, not including the command itself
+   * @return true if the command succeeded
+   * @throws RandoopClassNameError if a class named by an argument cannot be loaded
+   * @throws RandoopSpecificationError if a specification is malformed or cannot be evaluated
+   */
+  public abstract boolean handle(String[] args)
+      throws RandoopClassNameError, RandoopSpecificationError;
 
   /**
    * Prints out formatted text in (google code) Wiki format.

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
@@ -39,7 +40,7 @@ public class FieldReflectionTest {
    * basicFields tests that all of the expected fields are collected for the ClassWithFields class.
    */
   @Test
-  public void basicFields() {
+  public void basicFields() throws RandoopSpecificationError {
     Class<?> c = ClassWithFields.class;
 
     @SuppressWarnings("unchecked")
@@ -82,14 +83,15 @@ public class FieldReflectionTest {
     }
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     return new LinkedHashSet<>(
         OperationExtractor.operations(
             c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate));
@@ -100,7 +102,7 @@ public class FieldReflectionTest {
    * we cannot get to them without reflection.
    */
   @Test
-  public void inheritedFields() {
+  public void inheritedFields() throws RandoopSpecificationError {
     Class<?> c = SubclassWithFields.class;
 
     List<Field> expected = new ArrayList<>();
@@ -146,7 +148,7 @@ public class FieldReflectionTest {
 
   /** This method checks to ensure we don't get any fields that should be removed. */
   @Test
-  public void filteredFields() {
+  public void filteredFields() throws RandoopSpecificationError {
     Class<?> c = ClassWithFields.class;
 
     // let's exclude every field

@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
@@ -33,7 +34,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testGM1Match() {
+  public void testGM1Match() throws RandoopSpecificationError {
 
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m1\\(\\)");
@@ -50,7 +51,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testM1NameMatch() {
+  public void testM1NameMatch() throws RandoopSpecificationError {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("m1\\(\\)");
     operations = getOperations(gType, omitpattern);
@@ -66,7 +67,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testGM2Match() {
+  public void testGM2Match() throws RandoopSpecificationError {
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m2\\(\\)");
     operations = getOperations(gType, omitpattern);
@@ -82,7 +83,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testPM1Match() {
+  public void testPM1Match() throws RandoopSpecificationError {
 
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.P\\.m1\\(\\)");
@@ -99,7 +100,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testCM1Match() {
+  public void testCM1Match() throws RandoopSpecificationError {
 
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.C\\.m1\\(\\)");
@@ -116,7 +117,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testM1InterfaceMatch() {
+  public void testM1InterfaceMatch() throws RandoopSpecificationError {
 
     Set<TypedOperation> operations;
     Pattern omitpattern =
@@ -134,7 +135,7 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testDM1Match() {
+  public void testDM1Match() throws RandoopSpecificationError {
 
     Set<TypedOperation> operations;
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.q\\.D\\.m1\\(\\)");
@@ -159,7 +160,8 @@ public class OmitMethodsTest {
     return false;
   }
 
-  private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern) {
+  private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern)
+      throws RandoopSpecificationError {
     List<Pattern> omitList = Collections.singletonList(omitpattern);
     OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
     AccessibilityPredicate accessibility =

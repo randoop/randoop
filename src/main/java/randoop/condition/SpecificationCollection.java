@@ -105,8 +105,10 @@ import randoop.util.Util;
    * @param specificationFiles files containing serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
+   * @throws RandoopSpecificationError if a specification file is malformed
    */
-  public static SpecificationCollection create(List<Path> specificationFiles) {
+  public static SpecificationCollection create(List<Path> specificationFiles)
+      throws RandoopSpecificationError {
     if (specificationFiles == null) {
       return null;
     }
@@ -178,8 +180,10 @@ import randoop.util.Util;
    *
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
+   * @throws RandoopSpecificationError if the operation's class or signature cannot be loaded
    */
-  private static AccessibleObject getAccessibleObject(OperationSignature operation) {
+  private static AccessibleObject getAccessibleObject(OperationSignature operation)
+      throws RandoopSpecificationError {
     if (operation.isValid()) {
       List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
@@ -255,6 +259,7 @@ import randoop.util.Util;
    * @param specificationFile the JSON file of {@link OperationSpecification} objects
    * @param specificationMap side-effected by this method
    * @param signatureToMethods side-effected by this method
+   * @throws RandoopSpecificationError if the file is malformed
    */
   @SuppressWarnings({
     "unchecked",
@@ -263,7 +268,8 @@ import randoop.util.Util;
   private static void readSpecificationFile(
       Path specificationFile,
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods) {
+      MultiMap<OperationSignature, Method> signatureToMethods)
+      throws RandoopSpecificationError {
     if (specificationFile.toString().toLowerCase(Locale.getDefault()).endsWith(".zip")) {
       readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
@@ -315,14 +321,19 @@ import randoop.util.Util;
    *     OperationSpecification} objects
    * @param specificationMap side-effected by this method
    * @param signatureToMethods side-effected by this method
+   * @throws RandoopSpecificationError if a subfile of the zip file is malformed
    */
   @SuppressWarnings("PMD.UseDiamondOperator") // Java can't infer SimpleFileVisitor<Path>.
   private static void readSpecificationZipFile(
       Path specificationZipFile,
       final Map<AccessibleObject, OperationSpecification> specificationMap,
-      final MultiMap<OperationSignature, Method> signatureToMethods) {
+      final MultiMap<OperationSignature, Method> signatureToMethods)
+      throws RandoopSpecificationError {
     Map<String, ?> myEmptyMap = Collections.emptyMap();
     URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
+    // A file visitor cannot throw RandoopSpecificationError, so the visitor stores the first error
+    // here and terminates the walk; this method throws the error after the walk.
+    RandoopSpecificationError[] specificationError = new RandoopSpecificationError[1];
     try (FileSystem zipFS = FileSystems.newFileSystem(uri, myEmptyMap)) {
       for (Path root : zipFS.getRootDirectories()) {
         Files.walkFileTree(
@@ -332,7 +343,12 @@ import randoop.util.Util;
               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                   throws IOException {
                 // You can do anything you want with the path here
-                readSpecificationFile(file, specificationMap, signatureToMethods);
+                try {
+                  readSpecificationFile(file, specificationMap, signatureToMethods);
+                } catch (RandoopSpecificationError e) {
+                  specificationError[0] = e;
+                  return FileVisitResult.TERMINATE;
+                }
                 return FileVisitResult.CONTINUE;
               }
 
@@ -349,6 +365,9 @@ import randoop.util.Util;
     } catch (IOException e) {
       throw new RandoopSpecificationError(
           "Unable to read specification file " + Util.pathAndAbsolute(specificationZipFile), e);
+    }
+    if (specificationError[0] != null) {
+      throw specificationError[0];
     }
   }
 
@@ -373,8 +392,10 @@ import randoop.util.Util;
    * @param executable the reflection object for a constructor or method
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
+   * @throws RandoopSpecificationError if an expression in the specification does not compile
    */
-  public ExecutableSpecification getExecutableSpecification(Executable executable) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable)
+      throws RandoopSpecificationError {
 
     // Check if executable already has an ExecutableSpecification object
     ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);

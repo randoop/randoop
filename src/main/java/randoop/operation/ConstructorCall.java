@@ -58,7 +58,8 @@ public final class ConstructorCall extends CallableOperation {
     return this.constructor;
   }
 
-  // TODO: Why isn't `isMessage()` overridden to return true?
+  // `isMessage()` is not overridden: it returns false, because a constructor call has no receiver
+  // argument and is not a method-call-like operation.
 
   @Override
   public boolean isConstructorCall() {
@@ -249,9 +250,7 @@ public final class ConstructorCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      OperationParseException eWithBetterMessage =
-          new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
-      throw eWithBetterMessage;
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Constructor<?> con;
     try {

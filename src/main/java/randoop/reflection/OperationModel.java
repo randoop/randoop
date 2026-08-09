@@ -165,6 +165,7 @@ public final class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -175,17 +176,12 @@ public final class OperationModel {
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationSpecifications)
-      throws SignatureParseException, NoSuchMethodException {
+      throws SignatureParseException, NoSuchMethodException, RandoopClassNameError {
 
     OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
-        accessibility,
-        reflectionPredicate,
-        classnames,
-        coveredClassesGoalNames,
-        errorHandler,
-        literalsFileList);
+        accessibility, reflectionPredicate, classnames, coveredClassesGoalNames, errorHandler);
 
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
@@ -218,6 +214,7 @@ public final class OperationModel {
    * @return the operation model for the parameters
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -226,7 +223,7 @@ public final class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException, SignatureParseException, RandoopClassNameError {
     return createModel(
         accessibility,
         reflectionPredicate,
@@ -254,6 +251,7 @@ public final class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -263,7 +261,7 @@ public final class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException, SignatureParseException, RandoopClassNameError {
     return createModel(
         accessibility,
         reflectionPredicate,
@@ -619,19 +617,15 @@ public final class OperationModel {
    * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
    *     heuristic
    * @param errorHandler the handler for bad class names
-   * @param literalsFileList the list of literals file names
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
-  @SuppressWarnings({
-    "UnusedVariable",
-    "PMD.UnusedFormalParameter"
-  }) // literalsFileList is kept for API compatibility
   private void addClassTypes(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) {
+      ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError {
     ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
@@ -712,9 +706,11 @@ public final class OperationModel {
    * @param errorHandler is called if no such class exists
    * @return the Class whose name is {@code classname}. May return null if {@code errorHandler} just
    *     warns on bad names.
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   private static @Nullable Class<?> getClass(
-      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
+      @ClassGetName String classname, ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {

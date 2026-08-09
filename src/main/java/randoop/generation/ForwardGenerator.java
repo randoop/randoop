@@ -18,6 +18,7 @@ import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.literaltfidf.LiteralStatistics;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.generation.literaltfidf.TfIdfSelector;
@@ -207,7 +208,12 @@ public class ForwardGenerator extends AbstractGenerator {
   private void initializeRuntimePrimitivesSeen() {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
-      es.execute(new DummyVisitor(), new DummyCheckGenerator());
+      try {
+        es.execute(new DummyVisitor(), new DummyCheckGenerator());
+      } catch (RandoopSpecificationError e) {
+        // A primitive sequence contains no call that has a specification.
+        throw new RandoopBug("specification error for primitive sequence " + s, e);
+      }
       NormalExecution e = (NormalExecution) es.getResult(0);
       Object runtimeValue = e.getRuntimeValue();
       runtimePrimitivesSeen.add(runtimeValue);
@@ -215,7 +221,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public @Nullable ExecutableSequence step() {
+  public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
     final int nanoPerMilli = 1_000_000;
     final long nanoPerOne = 1_000_000_000L;
