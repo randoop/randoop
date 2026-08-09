@@ -45,6 +45,7 @@ import org.plumelib.util.MapsP;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
 import randoop.reflection.TypeNames;
+import randoop.sequence.StringTooLongException;
 import randoop.types.JavaTypes;
 
 // Implementation notes:  All string, float, and double constants are in
@@ -877,7 +878,11 @@ public final class ClassFileConstants {
       result.add(new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
     }
     for (String x : cs.strings) {
-      result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+      try {
+        result.add(new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+      } catch (StringTooLongException e) {
+        System.out.println("Ignoring String constant value: " + e.getMessage());
+      }
     }
     for (Class<?> x : cs.classes) {
       result.add(new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
