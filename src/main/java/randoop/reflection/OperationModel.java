@@ -634,6 +634,8 @@ public final class OperationModel {
    *     heuristic
    * @param errorHandler the handler for bad class names
    * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for a member of one of the classes is
+   *     malformed
    */
   private void addClassTypes(
       AccessibilityPredicate accessibility,
@@ -641,7 +643,7 @@ public final class OperationModel {
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
       ClassNameErrorHandler errorHandler)
-      throws RandoopClassNameError {
+      throws RandoopClassNameError, RandoopSpecificationError {
     ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
@@ -687,6 +689,9 @@ public final class OperationModel {
           try {
             mgr.apply(c);
             succeeded++;
+          } catch (RandoopSpecificationError e) {
+            // A malformed specification is a user error; do not silently ignore the class.
+            throw e;
           } catch (Throwable e) {
             System.out.printf(
                 "Cannot get methods for %s specified via "
