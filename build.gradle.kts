@@ -38,7 +38,7 @@ plugins {
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   alias(libs.plugins.com.gorylenko.gradle.git.properties)
 
-  id("pmd")
+  // The `pmd` plugin is applied to all projects, including this one, below.
 }
 
 val isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
@@ -415,19 +415,24 @@ allprojects {
   }
 }
 
-// allprojects {
-//   apply(plugin = "pmd")
-//   pmd {
-//     toolVersion = "7.25.0"
-//     consoleOutput = true
-//     ruleSetFiles = files("$rootDir/.pmd-ruleset.xml")
-//     ruleSets = listOf()
-//   }
-//   tasks.withType<Pmd>().configureEach {
-//     // Exclude an entire generated folder path
-//     exclude("**/mock/**")
-//   }
-// }
+// The classes in these source sets are inputs to, or harnesses for, Randoop's own tests.  Some of
+// them are deliberately odd, so linting them is not useful.
+val pmdDisabledTasks = listOf("pmdTestInput", "pmdSystemTest", "pmdAgentTest")
+
+allprojects {
+  apply(plugin = "pmd")
+  configure<PmdExtension> {
+    toolVersion = rootProject.libs.versions.pmd.get()
+    isConsoleOutput = true
+    ruleSetFiles = files("$rootDir/.pmd-ruleset.xml")
+    ruleSets = listOf()
+  }
+  tasks.withType<Pmd>().configureEach {
+    // Exclude an entire generated folder path
+    exclude("**/mock/**")
+    isEnabled = name !in pmdDisabledTasks
+  }
+}
 
 val testInputJar =
   tasks.register<Jar>("testInputJar") {

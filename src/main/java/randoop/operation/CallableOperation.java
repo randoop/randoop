@@ -131,6 +131,7 @@ public abstract class CallableOperation implements Operation {
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
 
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
   public @Nullable AccessibleObject getReflectionObject() {
     return null;
   }

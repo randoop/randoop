@@ -20,7 +20,10 @@ public final class HashCodeReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      @SuppressWarnings("UnusedVariable") // Execute hashCode() but ignore its value.
+      @SuppressWarnings({
+        "UnusedVariable",
+        "PMD.UnusedLocalVariable"
+      }) // Execute hashCode() but ignore its value.
       int ignore = o.hashCode();
     } catch (Exception e) {
       return false;

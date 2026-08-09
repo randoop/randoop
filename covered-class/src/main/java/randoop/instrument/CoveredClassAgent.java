@@ -7,10 +7,12 @@ import java.lang.instrument.Instrumentation;
  * Instrumentation} for JVM so that bytecode first passed through an {@link CoveredClassTransformer}
  * that performs instrumentation.
  */
-public class CoveredClassAgent {
+public final class CoveredClassAgent {
 
-  /** Creates a CoveredClassAgent. */
-  public CoveredClassAgent() {}
+  /** Do not instantiate. */
+  private CoveredClassAgent() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * The premain method that instruments classes.

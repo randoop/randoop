@@ -76,7 +76,7 @@ public abstract class Type implements Comparable<Type> {
     if (c == null) {
       c = Class.forName(typeName);
     }
-    return Type.forClass(c);
+    return forClass(c);
   }
 
   /**
@@ -92,7 +92,7 @@ public abstract class Type implements Comparable<Type> {
   public static Type getTypeforFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
-    return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
+    return className.isArray() ? ArrayType.forClass(className) : forClass(className);
   }
 
   /**
@@ -172,7 +172,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} for the given value
    */
   public static Type forValue(Object value) {
-    return Type.forClass(value.getClass());
+    return forClass(value.getClass());
   }
 
   /**
@@ -195,7 +195,7 @@ public abstract class Type implements Comparable<Type> {
     }
 
     if ((type instanceof Class) && ((Class<?>) type).isPrimitive()) {
-      return Type.forClass((Class<?>) type);
+      return forClass((Class<?>) type);
     }
 
     return ReferenceType.forType(type);
@@ -543,7 +543,7 @@ public abstract class Type implements Comparable<Type> {
     if (value == null) {
       return !this.isPrimitive();
     }
-    Type type = Type.forClass(value.getClass());
+    Type type = forClass(value.getClass());
     return this.isAssignableFrom(type);
   }
 
@@ -588,4 +588,10 @@ public abstract class Type implements Comparable<Type> {
       return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
     }
   }
+
+  @Override
+  public abstract boolean equals(@Nullable Object obj);
+
+  @Override
+  public abstract int hashCode();
 }

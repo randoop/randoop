@@ -249,7 +249,6 @@ import randoop.util.Util;
 
   // Can't store an object of type {@code Type}, because the
   /** The type of {@code List<OperationSpecification>>}. */
-  @SuppressWarnings("PMD.UseDiamondOperator") // Java 9 feature
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
       new TypeToken<List<OperationSpecification>>() {};
 
@@ -262,7 +261,10 @@ import randoop.util.Util;
    * @param signatureToMethods side-effected by this method
    * @throws RandoopSpecificationError if the file is malformed
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({
+    "unchecked",
+    "PMD.ExceptionAsFlowControl" // call `e.setFile()`
+  })
   private static void readSpecificationFile(
       Path specificationFile,
       Map<AccessibleObject, OperationSpecification> specificationMap,
@@ -321,6 +323,7 @@ import randoop.util.Util;
    * @param signatureToMethods side-effected by this method
    * @throws RandoopSpecificationError if a subfile of the zip file is malformed
    */
+  @SuppressWarnings("PMD.UseDiamondOperator") // Java can't infer SimpleFileVisitor<Path>.
   private static void readSpecificationZipFile(
       Path specificationZipFile,
       final Map<AccessibleObject, OperationSpecification> specificationMap,

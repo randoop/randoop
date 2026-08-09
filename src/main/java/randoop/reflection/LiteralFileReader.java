@@ -9,7 +9,6 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -77,7 +76,7 @@ public final class LiteralFileReader {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
 
-            if (!(lines.size() >= 2)) {
+            if (lines.size() < 2) {
               throwRecordSyntaxError("class name missing", lines, 1);
             }
 
@@ -100,7 +99,7 @@ public final class LiteralFileReader {
             for (int i = 3; i < lines.size(); i++) {
               try {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
-                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>(0)));
+                map.add(classType, new Sequence().extend(operation, new ArrayList<>(0)));
               } catch (OperationParseException e) {
                 throwRecordSyntaxError(e);
               }

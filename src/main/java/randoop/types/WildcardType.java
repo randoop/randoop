@@ -27,6 +27,7 @@ class WildcardType extends ParameterType {
     this.hasUpperBound = false;
   }
 
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   WildcardType(ParameterBound bound, boolean hasUpperBound) {
     super();
     this.hasUpperBound = hasUpperBound;

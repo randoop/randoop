@@ -77,8 +77,7 @@ public class TestEnvironment {
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
    */
-  public RunCommand.Status runTest(String testClassName, Path workingDirectory)
-      throws CommandException {
+  public RunCommand.Status runTest(String testClassName, Path workingDirectory) {
     List<String> command = commandPrefix();
     command.add(testClassName);
     return RunCommand.run(command, workingDirectory, timeoutMillis);

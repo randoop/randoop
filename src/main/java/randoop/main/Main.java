@@ -1,6 +1,7 @@
 package randoop.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.plumelib.util.SystemPlume;
 import randoop.Globals;
@@ -55,10 +56,7 @@ public final class Main {
     }
 
     String command = args[0];
-    String[] args2 = new String[args.length - 1];
-    for (int i = 1; i < args.length; i++) {
-      args2[i - 1] = args[i];
-    }
+    String[] args2 = Arrays.copyOfRange(args, 1, args.length);
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
@@ -85,15 +83,21 @@ public final class Main {
         System.err.println("The Randoop command " + handler.fcommand + " failed.");
       }
 
-    } catch (RandoopUsageError e) {
+    } catch (RandoopCommandError e) {
 
       System.out.println();
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      if (e instanceof RandoopCommandError) {
-        System.out.println(
-            "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      System.out.println(
+          "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      System.exit(1);
+
+    } catch (RandoopUsageError e) {
+
+      System.out.println();
+      if (e.getMessage() != null) {
+        System.out.println(e.getMessage());
       }
       System.exit(1);
 

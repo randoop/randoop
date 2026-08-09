@@ -64,7 +64,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
-      type.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+      type.enclosingType = forClass(enclosingClass);
     }
     return type;
   }
@@ -86,7 +86,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // treat these as Class<?>
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        return ClassOrInterfaceType.forClass(rawType);
+        return forClass(rawType);
       }
       return ParameterizedType.forType(t);
     }
@@ -310,8 +310,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }

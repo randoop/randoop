@@ -424,7 +424,7 @@ public final class ReplacementFileReader {
         throw new ReplacementException("Error reading jar file " + file, e);
       }
     } else if (protocol.equals("file")) {
-      Path path = null;
+      Path path;
       try {
         @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
         Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));

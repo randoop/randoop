@@ -41,6 +41,7 @@ import randoop.util.Util;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
       String pitch,
@@ -510,7 +511,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of seconds to spend generating tests")
   public static int time_limit = 100;
 
-  private static int LIMIT_DEFAULT = 100000000;
+  private static int LIMIT_DEFAULT = 100_000_000;
 
   /** Maximum number of attempts to generate a test method candidate. */
   @Option("Maximum number of attempts to generate a candidate test")
@@ -553,6 +554,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
+    @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
     public Limits() {
       this(
           GenInputsAbstract.time_limit,
@@ -824,7 +826,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * tests generated during a single run.
    */
   @Option("Clear the component set when it gets this big")
-  public static int clear = 100000000;
+  public static int clear = 100_000_000;
 
   /**
    * Clear the component set each time Randoop uses this much memory.
@@ -833,7 +835,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * that is slow due to thrashing and garbage collection.
    */
   @Option("Clear the component set when Randoop uses this much memory")
-  public static long clear_memory = 4000000000L; // default: 4G
+  public static long clear_memory = 4_000_000_000L; // default: 4G
 
   /** Maximum number of tests to write to each JUnit file. */
   // ///////////////////////////////////////////////////////////////////
@@ -984,7 +986,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean progressdisplay = true;
 
   /** Default value for progressintervalmillis; helps to see if user has set it. */
-  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
+  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60_000;
 
   /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
   @Option("Display progress message every <int> milliseconds; -1 means no display.")
@@ -1038,7 +1040,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   // ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value = "Advanced extension points")
+  @OptionGroup("Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
@@ -1127,7 +1129,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
-    if (deterministic && GenInputsAbstract.input_selection == InputSelectionMode.ORIENTEERING) {
+    if (deterministic && input_selection == InputSelectionMode.ORIENTEERING) {
       throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic with --input-selection==orienteering");
     }

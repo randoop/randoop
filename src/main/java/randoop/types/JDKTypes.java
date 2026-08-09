@@ -159,6 +159,7 @@ public final class JDKTypes {
   public static final GenericClassType HASH_SET_TYPE = GenericClassType.forClass(HashSet.class);
 
   /** The {@link GenericClassType} for {@code Hashtable}. */
+  @SuppressWarnings("PMD.ReplaceHashtableWithMap") // silly false positive
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
 
   /** The {@link GenericClassType} for {@code IdentityHashMap}. */
@@ -250,6 +251,7 @@ public final class JDKTypes {
   public static final GenericClassType TREE_SET_TYPE = GenericClassType.forClass(TreeSet.class);
 
   /** The {@link GenericClassType} for {@code Vector}. */
+  @SuppressWarnings("PMD.ReplaceVectorWithList") // silly false positive
   public static final GenericClassType VECTOR_TYPE = GenericClassType.forClass(Vector.class);
 
   /** The {@link GenericClassType} for {@code WeakHashMap}. */
