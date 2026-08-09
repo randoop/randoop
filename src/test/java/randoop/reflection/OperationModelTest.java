@@ -58,6 +58,8 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     } catch (RandoopClassNameError e) {
       fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -108,6 +110,8 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     } catch (RandoopClassNameError e) {
       fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     assertEquals(3, model.getClassTypes().size());
@@ -173,6 +177,8 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (RandoopClassNameError e) {
       fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -354,6 +360,8 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     } catch (RandoopClassNameError e) {
       fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     return model;
   }
