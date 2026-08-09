@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -57,7 +58,8 @@ public class SignatureParserTest {
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, izBadType)");
   }
 
-  private void checkParse(String inputString) throws SignatureParseException {
+  private void checkParse(String inputString)
+      throws SignatureParseException, RandoopSpecificationError {
 
     AccessibleObject accessibleObject;
     try {

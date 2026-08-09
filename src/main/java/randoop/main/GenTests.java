@@ -483,7 +483,12 @@ public class GenTests extends GenInputsAbstract {
             // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
-            sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
+            try {
+              sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
+            } catch (RandoopSpecificationError e) {
+              System.out.printf("Specification Error: %s%n", e.getMessage());
+              System.exit(1);
+            }
             break;
           }
         }
