@@ -32,7 +32,7 @@ import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 
 /**
- * This test is disabled in build.gradle.
+ * This test is disabled in build.gradle.kts.
  *
  * <p>It has a sporadic Java heap space exception caught by the Throwable clause of the try block
  * for the call to exp.createAndClassifySequences() in test5().
