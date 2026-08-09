@@ -21,6 +21,7 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;

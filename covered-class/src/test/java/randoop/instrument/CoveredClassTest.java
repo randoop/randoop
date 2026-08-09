@@ -233,6 +233,9 @@ public class CoveredClassTest {
     } catch (NoSuchMethodException e) {
       fail("Method not found: " + e);
       throw new Error("dead code");
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e);
+      throw new Error("dead code");
     }
     assertNotNull(operationModel);
 
