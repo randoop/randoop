@@ -21,6 +21,7 @@ abstract class PreplaceTask @Inject constructor(private val execOperations: Exec
         errorOutput = myErrorOutput
       }
     } catch (ex: Exception) {
+      logger.warn("perl is not installed; skipping Javadoc postprocessing", ex)
       isPerlInstalled = false
     }
     if (isPerlInstalled) {

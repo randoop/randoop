@@ -382,6 +382,7 @@ public class ExecutableSequence {
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
+        break;
       }
     }
     return ros;

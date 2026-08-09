@@ -7,7 +7,7 @@ import java.nio.file.Path;
  * condition text) or an exception thrown when evaluating it. This is a user error, not a bug in
  * Randoop.
  */
-public class RandoopSpecificationError extends Error {
+public class RandoopSpecificationError extends RuntimeException {
 
   /** ID for serializing this class. */
   private static final long serialVersionUID = 3517219213949862963L;

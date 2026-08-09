@@ -475,7 +475,10 @@ public final class JUnitCreator {
 
       String testVariable = instanceNameGen.next();
       ClassOrInterfaceType testClassType = new ClassOrInterfaceType(testClass);
-      @SuppressWarnings("deprecation") // "new ClassOrInterfaceType()" does not handle generics
+      @SuppressWarnings({
+        "deprecation", // "new ClassOrInterfaceType()" does not handle generics
+        "PMD.UseDiamondOperator" // cannot infer for an empty list
+      })
       VariableDeclarator variableDecl =
           new VariableDeclarator(
               testClassType,

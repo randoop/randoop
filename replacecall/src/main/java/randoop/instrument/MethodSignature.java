@@ -58,10 +58,10 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * Creates a {@link MethodSignature} object for a {@code org.apache.bcel.classfile.Method} object.
    *
    * @param classname the class containing the method
-   * @param method the Method object
+   * @param method the BCEL Method object
    * @return the {@link MethodSignature} representation of the Method object
    */
-  public static MethodSignature of(String classname, org.apache.bcel.classfile.Method method) {
+  public static MethodSignature of(String classname, Method method) {
     return new MethodSignature(classname, method.getName(), method.getArgumentTypes());
   }
 
@@ -138,7 +138,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
             "Bad parameter type \"" + parameter + "\" in signature: " + signature);
       }
     }
-    return MethodSignature.of(fullMethodName, parameters);
+    return of(fullMethodName, parameters);
   }
 
   @Override
@@ -216,6 +216,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return the parameter types for this {@link MethodSignature}
    */
+  @SuppressWarnings("PMD.MethodReturnsInternalArray")
   Type[] getParameterTypes() {
     return paramTypes;
   }

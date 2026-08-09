@@ -17,9 +17,9 @@ public class SequenceParseException extends Exception {
 
     StringBuilder b = new StringBuilder(256);
     b.append(
-        "Error while parsing the following list of strings as a sequence (error was at index "
-            + statementCount
-            + "): ");
+        "Error while parsing the following list of strings as a sequence (error was at index ");
+    b.append(statementCount);
+    b.append("): ");
     if (msg != null) {
       b.append(msg);
     }

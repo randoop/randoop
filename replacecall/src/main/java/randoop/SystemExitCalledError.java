@@ -5,7 +5,7 @@ package randoop;
  *
  * @see randoop.mock.java.lang.System
  */
-public class SystemExitCalledError extends Error {
+public class SystemExitCalledError extends RuntimeException {
 
   private static final long serialVersionUID = 20250811;
 

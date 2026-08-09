@@ -34,7 +34,7 @@ import randoop.util.Log;
  * SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
  * (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
  */
-public class SequenceCollection {
+public final class SequenceCollection {
 
   /** The demand-driven input creator that finds sequences for types not in this collection. */
   private @MonotonicNonNull DemandDrivenInputCreator demandDrivenInputCreator = null;

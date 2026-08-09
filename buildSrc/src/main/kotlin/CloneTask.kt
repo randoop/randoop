@@ -17,8 +17,9 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
   @get:OutputDirectory abstract val directory: Property<File>
 
   init {
-    // A `git` invocation that hangs should not hang the build.
-    timeout.set(Duration.ofMinutes(1))
+    // A `git` invocation that hangs should not hang the build.  The budget covers two clone
+    // attempts plus the RETRY_DELAY between them.
+    timeout.set(RETRY_DELAY.multipliedBy(3))
   }
 
   @TaskAction
@@ -44,8 +45,11 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
         t.printStackTrace()
       }
       if (!File(directory, ".git").exists()) {
-        println("Cloning failed, will try again in 1 minute: clone($url, $directory, true)")
-        Thread.sleep(60000) // wait 1 minute, then try again
+        println(
+          "Cloning failed, will try again in ${RETRY_DELAY.toSeconds()} seconds:" +
+            " clone($url, $directory, true)"
+        )
+        Thread.sleep(RETRY_DELAY.toMillis())
         clone(url, directory, false)
       }
     }
@@ -72,5 +76,10 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
       args(extraArgs)
       isIgnoreExitValue = ignoreError
     }
+  }
+
+  companion object {
+    /** How long to wait after a failed clone, before trying again. */
+    private val RETRY_DELAY: Duration = Duration.ofMinutes(1)
   }
 }

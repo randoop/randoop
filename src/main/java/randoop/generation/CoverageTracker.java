@@ -200,6 +200,8 @@ public class CoverageTracker {
      * @param info session information
      */
     @Override
-    public void visitSessionInfo(final SessionInfo info) {}
+    public void visitSessionInfo(final SessionInfo info) {
+      // The session information is not used by this class.
+    }
   }
 }

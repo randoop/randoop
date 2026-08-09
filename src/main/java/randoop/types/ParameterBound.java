@@ -67,11 +67,11 @@ public abstract class ParameterBound {
     }
 
     if (bounds.length == 1) {
-      return ParameterBound.forType(variableSet, bounds[0]);
+      return forType(variableSet, bounds[0]);
     } else {
       List<ParameterBound> boundList =
           CollectionsPlume.mapList(
-              (java.lang.reflect.Type type) -> ParameterBound.forType(variableSet, type), bounds);
+              (java.lang.reflect.Type type) -> forType(variableSet, type), bounds);
       return new IntersectionTypeBound(boundList);
     }
   }

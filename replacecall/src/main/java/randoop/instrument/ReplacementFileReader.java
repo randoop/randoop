@@ -424,10 +424,10 @@ public final class ReplacementFileReader {
         throw new ReplacementException("Error reading jar file " + file, e);
       }
     } else if (protocol.equals("file")) {
-      Path path = null;
+      Path path;
       try {
         @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
-        Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
+        Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8));
         path = pathTmp;
       } catch (Exception e) {
         throw new ReplacementException("Unable to extract Path from URL: " + url, e);
@@ -565,7 +565,7 @@ public final class ReplacementFileReader {
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  static class ReplacementException extends Throwable {
+  static class ReplacementException extends RuntimeException {
 
     private static final long serialVersionUID = 20250811;
 

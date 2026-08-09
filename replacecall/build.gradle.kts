@@ -66,6 +66,8 @@ tasks.named("compileAgentTestJava") {
 val replacecallAgentTest =
   tasks.register<Test>("replacecallAgentTest") {
     description = "Run replace-call tests"
+    // The classpath and the javaagent below use the jar that shadowJar produces.
+    dependsOn(tasks.named<ShadowJar>("shadowJar"))
 
     workingDir = sourceSets["agentTest"].output.resourcesDir!!
     testClassesDirs = sourceSets["agentTest"].output.classesDirs

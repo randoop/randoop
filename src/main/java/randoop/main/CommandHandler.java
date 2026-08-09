@@ -39,6 +39,7 @@ public abstract class CommandHandler {
    * @param example the usage example
    * @param options the command line arguments
    */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   protected CommandHandler(
       String command,
       String pitch,

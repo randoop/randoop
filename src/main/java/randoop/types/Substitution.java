@@ -26,7 +26,7 @@ public class Substitution {
    * Map on reflection types - used for testing bounds. Its keys are a subset of the keys of {@link
    * #map}: those that are type parameters as opposed to other type variables such as wildcards.
    */
-  private Map<java.lang.reflect.Type, ReferenceType> rawMap;
+  private Map<Type, ReferenceType> rawMap;
 
   /** Create an empty substitution. */
   public Substitution() {
@@ -127,8 +127,8 @@ public class Substitution {
         return false;
       }
     }
-    for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      java.lang.reflect.Type key = entry.getKey();
+    for (Map.Entry<Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
+      Type key = entry.getKey();
       if (this.rawMap.containsKey(key) && !this.get(key).equals(entry.getValue())) {
         return false;
       }
@@ -177,7 +177,7 @@ public class Substitution {
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
       result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
-    for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : other.rawMap.entrySet()) {
+    for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
@@ -209,13 +209,13 @@ public class Substitution {
   }
 
   /**
-   * Returns the value for the given {@link java.lang.reflect.Type}
+   * Returns the value for the given type.
    *
-   * @param parameter the type variable
+   * @param type the type variable
    * @return the value for the type variable, or null if there is none
    */
-  public @Nullable ReferenceType get(Type parameter) {
-    return rawMap.get(parameter);
+  public @Nullable ReferenceType get(Type type) {
+    return rawMap.get(type);
   }
 
   /**

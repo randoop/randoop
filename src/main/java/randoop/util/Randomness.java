@@ -72,7 +72,7 @@ public final class Randomness {
       return 0;
     }
     incrementCallsToRandom("nextRandomInt");
-    int value = Randomness.random.nextInt(i);
+    int value = random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
     return value;
   }
@@ -86,7 +86,7 @@ public final class Randomness {
    */
   public static double nextRandomGaussian(double mean, double stdDev) {
     incrementCallsToRandom("nextRandomGaussian");
-    double value = stdDev * Randomness.random.nextGaussian() + mean;
+    double value = stdDev * random.nextGaussian() + mean;
     logSelection(value, "nextRandomGaussian", "mean=" + mean + ", stdDev=" + stdDev);
     return value;
   }
@@ -224,7 +224,7 @@ public final class Randomness {
 
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SIList)");
-    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
+    double chosenPoint = random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
@@ -282,7 +282,7 @@ public final class Randomness {
 
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(List)");
-    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
+    double chosenPoint = random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
@@ -322,7 +322,7 @@ public final class Randomness {
    */
   public static <T> T randomSetMember(Collection<T> set) {
     int setSize = set.size();
-    int randIndex = Randomness.nextRandomInt(setSize);
+    int randIndex = nextRandomInt(setSize);
     logSelection(randIndex, "randomSetMember", set);
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
@@ -339,7 +339,7 @@ public final class Randomness {
     }
     double falseProb = 1 - trueProb;
     incrementCallsToRandom("weightedCoinFlip");
-    boolean result = Randomness.random.nextDouble() >= falseProb;
+    boolean result = random.nextDouble() >= falseProb;
     logSelection(result, "weightedCoinFlip", trueProb);
     return result;
   }
@@ -364,7 +364,7 @@ public final class Randomness {
     }
     double falseProbNormalized = falseProb / totalProb;
     incrementCallsToRandom("randomBoolFromDistribution");
-    boolean result = Randomness.random.nextDouble() >= falseProbNormalized;
+    boolean result = random.nextDouble() >= falseProbNormalized;
     logSelection(result, "randomBoolFromDistribution", falseProb + ", " + trueProb);
     return result;
   }

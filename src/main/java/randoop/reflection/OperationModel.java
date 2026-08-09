@@ -367,7 +367,7 @@ public final class OperationModel {
     if (file != null) {
       try (EntryReader er =
           new EntryReader(file, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
-        return OperationModel.readOperations(er, ignoreParseError);
+        return readOperations(er, ignoreParseError);
       } catch (IOException e) {
         String message =
             String.format(
@@ -444,7 +444,7 @@ public final class OperationModel {
     // Read method omissions from user-provided file
     try (EntryReader er =
         new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
-      return OperationModel.readOperations(er, ignoreParseError);
+      return readOperations(er, ignoreParseError);
     } catch (IOException e) {
       String message =
           String.format(
@@ -621,7 +621,10 @@ public final class OperationModel {
    * @param errorHandler the handler for bad class names
    * @param literalsFileList the list of literals file names
    */
-  @SuppressWarnings("UnusedVariable") // literalsFileList is kept for API compatibility
+  @SuppressWarnings({
+    "UnusedVariable",
+    "PMD.UnusedFormalParameter"
+  }) // literalsFileList is kept for API compatibility
   private void addClassTypes(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,

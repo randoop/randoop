@@ -38,13 +38,12 @@ plugins {
   // https://github.com/n0mer/gradle-git-properties ; target is: generateGitProperties
   alias(libs.plugins.com.gorylenko.gradle.git.properties)
 
-  id("pmd")
+  // The `pmd` plugin is applied to all projects, including this one, below.
 }
 
 val isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 val isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17
 val isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
-var javadocMemberLevel = JavadocMemberLevel.PROTECTED
 
 // The JDK for running tests: the jdkTestVersion property, or if not set, JavaVersion.current().
 val testJdkVersionString =
@@ -402,7 +401,7 @@ allprojects {
       options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror", "-Xlint:-options"))
 
       options.errorprone {
-        enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
+        enabled = isJava21orHigher
         // TODO: uncomment once we run the Interning Checker on Randoop.
         // disable("ReferenceEquality") // Use Interning Checker instead.
         disable("StringSplitter") // Obscure case isn't likely.
@@ -412,24 +411,28 @@ allprojects {
 
         excludedPaths = ".*/testInput/.*"
       }
-      options.errorprone.enabled = isJava17orHigher
     }
   }
 }
 
-// allprojects {
-//   apply(plugin = "pmd")
-//   pmd {
-//     toolVersion = "7.25.0"
-//     consoleOutput = true
-//     ruleSetFiles = files("$rootDir/.pmd-ruleset.xml")
-//     ruleSets = listOf()
-//   }
-//   tasks.withType<Pmd>().configureEach {
-//     // Exclude an entire generated folder path
-//     exclude("**/mock/**")
-//   }
-// }
+// The classes in these source sets are inputs to, or harnesses for, Randoop's own tests.  Some of
+// them are deliberately odd, so linting them is not useful.
+val pmdDisabledTasks = listOf("pmdTestInput", "pmdSystemTest", "pmdAgentTest")
+
+allprojects {
+  apply(plugin = "pmd")
+  configure<PmdExtension> {
+    toolVersion = rootProject.libs.versions.pmd.get()
+    isConsoleOutput = true
+    ruleSetFiles = files("$rootDir/.pmd-ruleset.xml")
+    ruleSets = listOf()
+  }
+  tasks.withType<Pmd>().configureEach {
+    // Exclude an entire generated folder path
+    exclude("**/mock/**")
+    isEnabled = name !in pmdDisabledTasks
+  }
+}
 
 val testInputJar =
   tasks.register<Jar>("testInputJar") {
@@ -516,7 +519,7 @@ tasks.register("generateWorkingDirs") {
   doLast {
     val generated = file(workingDirectories)
     if (!generated.exists()) {
-      generated.mkdir()
+      generated.mkdirs()
     } else {
       val workingFiles =
         fileTree(workingDirectories) {
@@ -533,14 +536,14 @@ tasks.register("generateWorkingDirs") {
 /*
  * Extracts JaCoCo javaagent into build/jacocoagent
  */
-tasks.register<Copy>("extractJacocoAgent") {
-  from(Callable { configurations["jacocoagent"].map { zipTree(it) } })
-  into(layout.buildDirectory.dir("jacocoagent"))
-  project.copy {
-    from("${layout.buildDirectory.get()}/jacocoagent/jacocoagent.jar")
-    into(layout.buildDirectory.dir("libs"))
+val extractJacocoAgent =
+  tasks.register<Copy>("extractJacocoAgent") {
+    from(Callable { configurations["jacocoagent"].map { zipTree(it) } })
+    into(layout.buildDirectory.dir("jacocoagent"))
   }
-}
+
+/** The JaCoCo javaagent jar file, which distributionZip includes. */
+val jacocoAgentJar = extractJacocoAgent.map { it.destinationDir.resolve("jacocoagent.jar") }
 
 /*
  * Runs JUnit over all classes in systemTest sourceSet.
@@ -631,9 +634,8 @@ tasks.register<TestReport>("testReport") {
   description = "Creates HTML reports for tests results"
   destinationDirectory = file("${layout.buildDirectory.get()}/reports/allTests")
 
-  for (t in tasks.withType<Test>()) {
-    testResults.from(t.binaryResultsDirectory)
-  }
+  // The Callable defers realizing the Test tasks, so tasks registered after this one are included.
+  testResults.from(Callable { tasks.withType<Test>().map { it.binaryResultsDirectory } })
 }
 
 tasks.register("printJunitJarPath") {
@@ -701,12 +703,12 @@ tasks.register<Zip>("distributionZip") {
     "shadowJar",
     "copyJars",
     "manual",
-    "extractJacocoAgent",
   )
   group = "Publishing"
   description = "Assemble a zip file with jar files and user documentation"
   val dirName = "${base.archivesName.get()}-$version"
   from("build/libs/")
+  from(jacocoAgentJar)
   from("src/docs/manual/index.html") {
     into("doc/manual")
   }
@@ -796,6 +798,15 @@ tasks.javadoc {
     )
   }
 
+  // Make Javadoc fail on most warnings.
+  // From https://stackoverflow.com/a/49544352/173852
+  //
+  // These options are set here rather than in
+  //   tasks.withType<Javadoc> { ... }
+  // because that passes the options to OptionsDoclet which cannot interpret them.
+  // How can I apply the options only to Javadoc invocations that use the standard doclet?
+  //
+  // Add -Werror once Javadoc warnings are resolved.
   (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:all", "-quiet")
   (options as StandardJavadocDocletOptions).addStringOption("Xmaxwarns", "99999")
   isFailOnError = true // does not fail on warnings
@@ -823,30 +834,42 @@ tasks.javadoc {
   }
 }
 
-tasks.register("javadocPrivate") {
-  dependsOn(tasks.javadoc)
-  doFirst {
-    javadocMemberLevel = JavadocMemberLevel.PRIVATE
+/*
+ * Strictly lints the Javadoc of every class, field, and method, including private ones.
+ * Unlike the `javadoc` task, any Javadoc warning fails this task.  Its output is written to
+ * build/docs/api-private, so that it does not overwrite the published documentation in
+ * build/docs/api, which omits private program elements' documentation.
+ */
+tasks.register<Javadoc>("javadocPrivate") {
+  dependsOn(":replacecall:shadowJar")
+  group = "Documentation"
+  description = "Strictly lints the Javadoc of all classes, fields, and methods, even private ones"
+
+  destinationDir = file(layout.buildDirectory.file("docs/api-private"))
+  source(sourceSets["main"].allJava)
+  classpath = sourceSets["main"].output + sourceSets["main"].compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
+  // much faster, especially in CI.
+  if (JavaVersion.current().isJava11) {
+    (options as StandardJavadocDocletOptions).linksOffline(
+      "https://docs.oracle.com/en/java/javase/11/docs/api/",
+      "https://docs.oracle.com/en/java/javase/11/docs/api/",
+    )
+  } else if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    (options as StandardJavadocDocletOptions).linksOffline(
+      "https://docs.oracle.com/en/java/javase/17/docs/api/",
+      "https://docs.oracle.com/en/java/javase/17/docs/api/",
+    )
   }
-  doLast {
-    javadocMemberLevel = JavadocMemberLevel.PROTECTED
-  }
+
+  (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:all", "-quiet")
+  (options as StandardJavadocDocletOptions).addStringOption("Xmaxwarns", "99999")
+  (options as StandardJavadocDocletOptions).addBooleanOption("Xwerror", true)
+  isFailOnError = true
 }
 
 tasks.check { dependsOn(tasks.javadoc) }
-
-// Make Javadoc fail on most warnings
-// From https://stackoverflow.com/a/49544352/173852
-//
-// This used to be
-//   tasks.withType<Javadoc> { ... }
-// but that passes the options to OptionsDoclet which cannot interpret them.
-// How can I apply the options only to Javadoc invocations that use the standard doclet?
-tasks.javadoc {
-  // Add -Werror once Javadoc warnings are resolved.
-  (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:all", "-quiet")
-  (options as StandardJavadocDocletOptions).addStringOption("Xmaxwarns", "10000")
-}
 
 allprojects {
   tasks.register<JavaExec>("requireJavadoc") {
@@ -1127,8 +1150,11 @@ tasks.register<Exec>("checklink") {
     "-c",
     "checklink -q -r `grep -v '^#' build/utils/checklink/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt",
   )
+  // The command above writes the log into the task's working directory, which is the project
+  // directory.  Resolve it here rather than against the Gradle daemon's working directory.
+  val checklinkLog = layout.projectDirectory.file("checklink-log.txt").asFile
   doLast {
-    if (File("checklink-log.txt").length() > 0) {
+    if (checklinkLog.length() > 0) {
       ant.withGroovyBuilder { "fail"("See link-checking failures in file checklink-log.txt") }
     }
   }
@@ -1136,33 +1162,18 @@ tasks.register<Exec>("checklink") {
 
 gitProperties {
   // Handle submodules/worktrees where .git is a pointer file, not a directory.
+  val absoluteGitDir = providers.exec {
+    workingDir(project.rootDir)
+    commandLine("git", "rev-parse", "--absolute-git-dir")
+    // Fallback keeps behavior in unusual non-git contexts.
+    isIgnoreExitValue = true
+  }
   dotGitDirectory =
-    providers
-      .exec {
-        workingDir(project.rootDir)
-        commandLine("git", "rev-parse", "--absolute-git-dir")
-        // Fallback keeps behavior in unusual non-git contexts.
-        isIgnoreExitValue = true
-      }
-      .result
-      .map { execResult ->
-        if (execResult.exitValue == 0) {
-          file(
-            providers
-              .exec {
-                workingDir(project.rootDir)
-                commandLine("git", "rev-parse", "--absolute-git-dir")
-              }
-              .standardOutput
-              .asText
-              .get()
-              .trim()
-          )
-        } else {
-          file(".git")
-        }
-      }
-      .get()
+    if (absoluteGitDir.result.get().exitValue == 0) {
+      file(absoluteGitDir.standardOutput.asText.get().trim())
+    } else {
+      file(".git")
+    }
 }
 
 tasks.named("sourcesJar") { dependsOn(tasks.named("generateGitProperties")) }

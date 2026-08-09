@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -30,6 +31,18 @@ class LazyReferenceBound extends ReferenceBound {
   @Override
   public int hashCode() {
     return Objects.hash(this.toString());
+  }
+
+  @Override
+  public boolean equals(@Nullable Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof LazyReferenceBound)) {
+      return false;
+    }
+    LazyReferenceBound that = (LazyReferenceBound) obj;
+    return this.toString().equals(that.toString());
   }
 
   @Override

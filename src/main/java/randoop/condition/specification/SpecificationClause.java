@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * <p>Every specification clause has at least a guard (which this class provides). Some clauses have
  * more parts, so subclasses of this class can add fields.
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class SpecificationClause {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other

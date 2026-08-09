@@ -119,6 +119,10 @@ import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
+@SuppressWarnings({
+  "PMD.UnnecessaryFullyQualifiedName",
+  "PMD.AvoidFileStream" // Fix after Java 8 is no longer supported
+})
 public class GenTests extends GenInputsAbstract {
 
   /** The prefix for Randoop annotations. */
@@ -241,14 +245,18 @@ public class GenTests extends GenInputsAbstract {
   @SuppressWarnings("builder:required.method.not.called") // these few logs are closed upon exit
   public boolean handle(String[] args) {
 
-    try {
-      String[] nonargs = options.parse(args);
-      if (nonargs.length > 0) {
-        throw new ArgException("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
+    {
+      String[] nonargs;
+      try {
+        nonargs = options.parse(args);
+      } catch (ArgException ae) {
+        // usage() exits the program by calling System.exit().
+        usage("While parsing command-line arguments: %s", ae.getMessage());
+        throw new Error("unreachable");
       }
-    } catch (ArgException ae) {
-      // usage() exits the program by calling System.exit().
-      usage("While parsing command-line arguments: %s", ae.getMessage());
+      if (nonargs.length > 0) {
+        usage("Unrecognized command-line arguments: " + Arrays.toString(nonargs));
+      }
     }
 
     if (GenInputsAbstract.progressdisplay) {
@@ -280,7 +288,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * If there is fixture code check that it can be parsed first
      */
-    if (!getFixtureCode()) {
+    if (!createFixtureCode()) {
       System.exit(1);
     }
 
@@ -1136,7 +1144,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @return true if all fixtures were read without error, false, otherwise
    */
-  private boolean getFixtureCode() {
+  private boolean createFixtureCode() {
     boolean badFixtureText = false;
 
     try {

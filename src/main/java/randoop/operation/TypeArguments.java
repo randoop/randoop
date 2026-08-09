@@ -34,7 +34,7 @@ final class TypeArguments {
    */
   static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
     Class<?>[] argTypes = new Class<?>[0];
-    if (argStr.trim().length() > 0) {
+    if (argStr.isBlank()) {
       String[] argsStrs = argStr.split(",");
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {

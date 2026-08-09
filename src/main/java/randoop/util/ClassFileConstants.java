@@ -56,10 +56,10 @@ import randoop.types.JavaTypes;
 // wanted finer-grained information about where the constants were used.
 
 /**
- * Reads literals from a class file, including from the constant pool and from bytecodes that take
- * immediate arguments.
+ * A collection of static methods that read literals from a class file, including from the constant
+ * pool and from bytecodes that take immediate arguments.
  */
-public class ClassFileConstants {
+public final class ClassFileConstants {
 
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
@@ -76,10 +76,10 @@ public class ClassFileConstants {
   static int ii = 20;
 
   /** A long value for testing. */
-  static long ll = 200000;
+  static long ll = 200_000;
 
   /** A short value for testing. */
-  static short s = 32000;
+  static short s = 32_000;
 
   /** A char value for testing. */
   static char c = 'a';
@@ -207,7 +207,7 @@ public class ClassFileConstants {
     try (InputStream is = ClassPath.SYSTEM_CLASS_PATH.getInputStream(classfileBase, ".class")) {
       cp = new ClassParser(is, classname);
       jc = cp.parse();
-    } catch (java.io.IOException e) {
+    } catch (IOException e) {
       throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
     @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
