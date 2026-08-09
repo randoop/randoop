@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -20,7 +21,7 @@ public class SignatureParserTest {
   @Rule public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
-  public void testParse() throws SignatureParseException {
+  public void testParse() throws SignatureParseException, RandoopSpecificationError {
     checkParse("java.util.ArrayList()");
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, int, int, int)");
     checkParse("randoop.reflection.ConcreteClass.<init>(java.lang.String, int, int, int)");
@@ -30,34 +31,35 @@ public class SignatureParserTest {
   }
 
   @Test
-  public void testBadNameParse() throws SignatureParseException {
+  public void testBadNameParse() throws SignatureParseException, RandoopSpecificationError {
     thrown.expect(SignatureParseException.class);
     thrown.expectMessage(startsWith("Expected fully-qualified name but got "));
     checkParse("ConcreteClass(java.lang.String, int, int, int)");
   }
 
   @Test
-  public void testBadClassParse() throws SignatureParseException {
+  public void testBadClassParse() throws SignatureParseException, RandoopSpecificationError {
     thrown.expect(SignatureParseException.class);
     thrown.expectMessage(startsWith("Class not found for method or constructor"));
     checkParse("randoop.reflection.TheConcreteClass(java.lang.String, int, int, int)");
   }
 
   @Test
-  public void testBadConstructorParse() throws SignatureParseException {
+  public void testBadConstructorParse() throws SignatureParseException, RandoopSpecificationError {
     thrown.expect(SignatureParseException.class);
     thrown.expectMessage(containsString("constructor not found for signature"));
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, double)");
   }
 
   @Test
-  public void testBadArgumentParse() throws SignatureParseException {
+  public void testBadArgumentParse() throws SignatureParseException, RandoopSpecificationError {
     thrown.expect(SignatureParseException.class);
     thrown.expectMessage(startsWith("Argument type \"izBadType\" not recognized"));
     checkParse("randoop.reflection.ConcreteClass(java.lang.String, izBadType)");
   }
 
-  private void checkParse(String inputString) throws SignatureParseException {
+  private void checkParse(String inputString)
+      throws SignatureParseException, RandoopSpecificationError {
 
     AccessibleObject accessibleObject;
     try {

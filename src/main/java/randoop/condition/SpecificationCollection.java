@@ -191,7 +191,7 @@ import randoop.util.Util;
         String typeName = paramTypeNames.get(i);
         try {
           argTypes[i] = TypeNames.getTypeForName(typeName);
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException | LinkageError e) {
           throw new RandoopSpecificationError(
               "Could not load parameter type #"
                   + i
@@ -206,7 +206,7 @@ import randoop.util.Util;
       Class<?> declaringClass;
       try {
         declaringClass = TypeNames.getTypeForName(classname);
-      } catch (Throwable e) {
+      } catch (ClassNotFoundException | LinkageError e) {
         throw new RandoopSpecificationError(
             "Could not load declaring class "
                 + classname
@@ -217,7 +217,7 @@ import randoop.util.Util;
       if (operation.isConstructor()) {
         try {
           return declaringClass.getDeclaredConstructor(argTypes);
-        } catch (Throwable e) {
+        } catch (NoSuchMethodException | SecurityException | LinkageError e) {
           StringJoiner sj = new StringJoiner(System.lineSeparator());
           sj.add("Could not load constructor in specification operation: " + operation);
           sj.add("The constructors are:");
@@ -229,7 +229,7 @@ import randoop.util.Util;
       } else {
         try {
           return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
-        } catch (Throwable e) {
+        } catch (NoSuchMethodException | SecurityException | LinkageError e) {
           StringJoiner sj = new StringJoiner(System.lineSeparator());
           sj.add(
               "Could not load method "
@@ -285,7 +285,8 @@ import randoop.util.Util;
 
         // Check for bad input
         if (operation == null) {
-          throw new Error("operation is null for specification " + specification);
+          throw new RandoopSpecificationError(
+              "operation is null for specification " + specification);
         }
         String duplicateName = specification.getIdentifiers().duplicateName();
         if (duplicateName != null) {
@@ -306,7 +307,7 @@ import randoop.util.Util;
     } catch (RandoopSpecificationError e) {
       e.setFile(specificationFile);
       throw e;
-    } catch (Throwable e) {
+    } catch (RuntimeException | LinkageError e) {
       System.out.println("Bad specification file:");
       e.printStackTrace(System.out);
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
@@ -361,6 +362,9 @@ import randoop.util.Util;
                 return super.preVisitDirectory(dir, attrs);
               }
             });
+        if (specificationError[0] != null) {
+          break;
+        }
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(

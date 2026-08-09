@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
@@ -293,6 +294,8 @@ public class InstantiationTest {
       fail("did not find method: " + e.getMessage());
     } catch (RandoopClassNameError e) {
       fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     return model;

@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -46,7 +47,7 @@ public final class CheckRepContract extends ObjectContract {
     return Objects.hash(checkRepMethod);
   }
 
-  public CheckRepContract(Method checkRepMethod) {
+  public CheckRepContract(Method checkRepMethod) throws RandoopSpecificationError {
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");
     }

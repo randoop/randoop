@@ -16,7 +16,7 @@ public class Visibility {
     throw new InnerInvisibleException();
   }
 
-  private static class InnerInvisibleException extends RuntimeException {
+  private static class InnerInvisibleException extends Exception {
     // empty body
   }
 }
