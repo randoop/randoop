@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -20,7 +21,7 @@ import randoop.types.ClassOrInterfaceType;
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override
-  void execute() {
+  void execute() throws RandoopSpecificationError {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     List<Class<?>> classes = new ArrayList<>();
@@ -59,7 +60,8 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     return 10000;
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
     return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }

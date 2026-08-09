@@ -1,6 +1,6 @@
 package randoop.reflection;
 
-public class RandoopInstantiationError extends Error {
+public class RandoopInstantiationError extends RuntimeException {
 
   /** ID for serializing this class. */
   private static final long serialVersionUID = 3611612630372756721L;

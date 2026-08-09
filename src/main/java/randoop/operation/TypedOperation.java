@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Constructor;
@@ -20,6 +21,7 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.ExecutableBooleanExpression;
 import randoop.condition.ExecutableSpecification;
 import randoop.condition.ExpectedOutcomeTable;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationTranslator;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -81,23 +83,32 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.inputTypes = inputTypes;
     this.outputType = outputType;
     this.execSpec = execSpec;
-    if (operation.isMethodCall()) {
-      MethodCall methodCall = (MethodCall) operation;
-      Method m = methodCall.getMethod();
-      Class<?> declaringClass = m.getDeclaringClass();
-      String className = declaringClass.getName();
-      OperationSpecification OperationSpec = specificationFromAnnotations(m, className);
-      try (SequenceCompiler compiler = new SequenceCompiler()) {
-        ExecutableSpecification annoSpec =
-            SpecificationTranslator.createExecutableSpecification(m, OperationSpec, compiler);
-        if (this.execSpec == null) {
-          this.execSpec = annoSpec;
-        } else {
-          this.execSpec = ExecutableSpecification.merge(annoSpec, this.execSpec);
-        }
-      } catch (Exception e) {
-        System.out.println("Exception occurred while creating and merging ExecutableSpecification");
-      }
+  }
+
+  /**
+   * Sets the specification of {@code operation} to the one derived from the annotations on the
+   * method that {@code operation} calls. Does nothing if {@code operation} is null.
+   *
+   * <p>This is done only for a freshly-created operation. An operation derived from another one
+   * (say, by {@link #substitute}) inherits the specification of the operation it was derived from.
+   *
+   * @param operation an operation whose {@link CallableOperation} is a {@link MethodCall}, or null
+   * @throws RandoopSpecificationError if a specification derived from the annotations does not
+   *     compile
+   */
+  private static void setSpecificationFromAnnotations(@Nullable TypedClassOperation operation)
+      throws RandoopSpecificationError {
+    if (operation == null) {
+      return;
+    }
+    Method m = ((MethodCall) operation.getOperation()).getMethod();
+    String className = m.getDeclaringClass().getName();
+    OperationSpecification operationSpec = specificationFromAnnotations(m, className);
+    try (SequenceCompiler compiler = new SequenceCompiler()) {
+      operation.setExecutableSpecification(
+          SpecificationTranslator.createExecutableSpecification(m, operationSpec, compiler));
+    } catch (IOException e) {
+      throw new RandoopBug("Problem closing compiler for " + m, e);
     }
   }
 
@@ -461,8 +472,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @param method the reflective method object
    * @return the typed operation for the given method
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
    */
-  public static TypedClassOperation forMethod(Method method) {
+  public static TypedClassOperation forMethod(Method method) throws RandoopSpecificationError {
 
     List<Type> methodParamTypes =
         CollectionsPlume.mapList(Type::forType, method.getGenericParameterTypes());
@@ -472,7 +485,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       Class<?> enclosingClass = declaringClass.getEnclosingClass();
       if (enclosingClass != null && enclosingClass.isEnum()) {
         // is a method in anonymous class for enum constant
-        return getAnonEnumOperation(method, methodParamTypes, enclosingClass);
+        TypedClassOperation anonEnumOperation =
+            getAnonEnumOperation(method, methodParamTypes, enclosingClass);
+        setSpecificationFromAnnotations(anonEnumOperation);
+        return anonEnumOperation;
       }
     }
 
@@ -485,10 +501,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     paramTypes.addAll(methodParamTypes);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     Type outputType = Type.forType(method.getGenericReturnType());
-    if (outputType.isVariable()) {
-      return new TypedClassOperationWithCast(op, declaringType, inputTypes, outputType);
-    }
-    return new TypedClassOperation(op, declaringType, inputTypes, outputType);
+    TypedClassOperation result =
+        outputType.isVariable()
+            ? new TypedClassOperationWithCast(op, declaringType, inputTypes, outputType)
+            : new TypedClassOperation(op, declaringType, inputTypes, outputType);
+    setSpecificationFromAnnotations(result);
+    return result;
   }
 
   /**
@@ -713,8 +731,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values the argument values
    * @return the {@link ExpectedOutcomeTable} indicating the results of checking the pre-conditions
    *     of the specifications of the operation
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] values) {
+  public ExpectedOutcomeTable checkPrestate(Object[] values) throws RandoopSpecificationError {
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }

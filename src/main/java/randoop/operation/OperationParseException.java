@@ -9,4 +9,14 @@ public class OperationParseException extends Exception {
   public OperationParseException(String string) {
     super(string);
   }
+
+  /**
+   * Creates an {@code OperationParseException} with the given message and cause.
+   *
+   * @param string the detail message
+   * @param cause the cause of this exception
+   */
+  public OperationParseException(String string, Throwable cause) {
+    super(string, cause);
+  }
 }

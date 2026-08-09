@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.EntryReader;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
@@ -57,7 +58,7 @@ public class ForwardExplorerPerformanceTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test1() {
+  public void test1() throws RandoopSpecificationError {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 

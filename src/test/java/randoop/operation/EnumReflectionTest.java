@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
@@ -49,7 +50,7 @@ public class EnumReflectionTest {
    * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test
-  public void simpleEnumTest() {
+  public void simpleEnumTest() throws RandoopSpecificationError {
     Class<?> se = SimpleEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(se);
 
@@ -89,7 +90,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void innerEnumTest() {
+  public void innerEnumTest() throws RandoopSpecificationError {
     Class<?> pc = PlayingCard.class;
 
     List<Enum<?>> include = new ArrayList<>();
@@ -121,7 +122,7 @@ public class EnumReflectionTest {
   }
 
   @Test
-  public void innerEnumWithMethodsTest() {
+  public void innerEnumWithMethodsTest() throws RandoopSpecificationError {
     Class<?> cwim = ClassWithInnerEnum.class;
 
     List<TypedOperation> include = new ArrayList<>();
@@ -160,7 +161,7 @@ public class EnumReflectionTest {
 
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void enumAsPredicateTest() {
+  public void enumAsPredicateTest() throws RandoopSpecificationError {
     Class<?> c = EnumAsPredicate.class;
     assertTrue(c.isEnum());
 
@@ -239,7 +240,7 @@ public class EnumReflectionTest {
    * at least package level.
    */
   @Test
-  public void valueEnum() {
+  public void valueEnum() throws RandoopSpecificationError {
     Class<?> coin = Coin.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(coin);
 
@@ -285,7 +286,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void abstractMethodEnum() {
+  public void abstractMethodEnum() throws RandoopSpecificationError {
     Class<?> op = OperatorEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(op);
 
@@ -315,7 +316,7 @@ public class EnumReflectionTest {
     assertEquals(count, actual.size());
   }
 
-  private List<TypedOperation> getConcreteOperations(Class<?> c) {
+  private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     Set<ClassOrInterfaceType> classTypes =
         DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
     return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);

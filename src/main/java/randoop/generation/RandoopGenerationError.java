@@ -3,7 +3,7 @@ package randoop.generation;
 import randoop.operation.TypedOperation;
 
 /** Error class to signal generation errors that should stop Randoop execution. */
-public class RandoopGenerationError extends Error {
+public class RandoopGenerationError extends RuntimeException {
 
   /** ID for serializing this class. */
   private static final long serialVersionUID = -2655768762421700468L;

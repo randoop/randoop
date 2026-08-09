@@ -1221,9 +1221,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
+   * @throws RandoopClassNameError if a class named by an argument cannot be loaded
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(
-      AccessibilityPredicate accessibility) {
+      AccessibilityPredicate accessibility) throws RandoopClassNameError {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, accessibility));
@@ -1351,9 +1352,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name; may be the empty string
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName}
+   * @throws RandoopClassNameError if a class in the package cannot be loaded
    */
   private static List<@ClassGetName String> getClassnamesFromPackage(
-      String packageName, AccessibilityPredicate accessibility) {
+      String packageName, AccessibilityPredicate accessibility) throws RandoopClassNameError {
     List<@ClassGetName String> classnames = new ArrayList<>();
 
     for (String path : Globals.getClassPath().split(File.pathSeparator)) {
@@ -1376,9 +1378,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes with the given package
+   * @throws RandoopClassNameError if a class in the directory cannot be loaded
    */
   private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
-      File directory, String packageName, AccessibilityPredicate accessibility) {
+      File directory, String packageName, AccessibilityPredicate accessibility)
+      throws RandoopClassNameError {
     String packageNameAsFile = packageName.replace(".", File.separator);
     // This directory contains the .class files.
     File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
@@ -1413,9 +1417,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName} in the given jar file
+   * @throws RandoopClassNameError if a class in the jar file cannot be loaded
    */
   private static List<@ClassGetName String> getClassesWithPackageFromJar(
-      File jarFile, String packageName, AccessibilityPredicate accessibility) {
+      File jarFile, String packageName, AccessibilityPredicate accessibility)
+      throws RandoopClassNameError {
     List<@ClassGetName String> classnames = new ArrayList<>();
     String classname = ""; // Declared here to be able to use variable in catch block
     try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarFile.toPath()))) {

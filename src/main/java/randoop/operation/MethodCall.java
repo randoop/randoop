@@ -11,6 +11,7 @@ import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
@@ -249,7 +250,7 @@ public final class MethodCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Class<?> runtimeClass = classType.getRuntimeClass();
     Method m = null;
@@ -272,7 +273,13 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    return TypedClassOperation.forMethod(m);
+    try {
+      return TypedClassOperation.forMethod(m);
+    } catch (RandoopSpecificationError e) {
+      throw new OperationParseException(
+          "Bad specification derived from annotations on \"" + signature + "\": " + e.getMessage(),
+          e);
+    }
   }
 
   /**
