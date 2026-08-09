@@ -41,7 +41,6 @@ plugins {
   // The `pmd` plugin is applied to all projects, including this one, below.
 }
 
-val isJava11orHigher = JavaVersion.current() >= JavaVersion.VERSION_11
 val isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17
 val isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
 
@@ -849,6 +848,10 @@ tasks.javadoc {
  * Unlike the `javadoc` task, any Javadoc warning fails this task.  Its output is written to
  * build/docs/api-private, so that it does not overwrite the published documentation in
  * build/docs/api, which omits private program elements' documentation.
+ *
+ * This task currently fails, because some private program elements lack Javadoc.  That is
+ * expected: scripts/test-misc.sh discards this task's exit status and passes its output to
+ * ci-lint-diff, which fails CI only for warnings on lines that the pull request changed.
  */
 tasks.register<Javadoc>("javadocPrivate") {
   dependsOn(":replacecall:shadowJar")
