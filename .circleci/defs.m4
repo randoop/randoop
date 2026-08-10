@@ -24,7 +24,7 @@ define([circleci_boilerplate_pre], [dnl
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 ])dnl
@@ -33,7 +33,7 @@ define([circleci_boilerplate_post], [
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 ])dnl
 dnl
 define([circleci_test_results], [dnl

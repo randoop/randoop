@@ -21,7 +21,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -30,7 +30,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -64,7 +64,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -75,7 +75,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -109,7 +109,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -118,7 +118,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -152,7 +152,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -163,7 +163,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -197,7 +197,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -206,7 +206,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -240,7 +240,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -251,7 +251,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -285,7 +285,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -294,7 +294,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -328,7 +328,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -339,7 +339,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -373,7 +373,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -382,7 +382,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -416,7 +416,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -427,7 +427,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -461,7 +461,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -470,7 +470,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -504,7 +504,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -515,7 +515,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
       # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
       - run:
@@ -550,7 +550,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
@@ -559,7 +559,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 
 workflows:
   build:
