@@ -21,6 +21,7 @@ exclude = { glob = [
   "**/*expected*",
   "**/COPYING",
   "src/main/resources/specifications/jdk/*",
+  "src/test/resources/end-to-end/**/*",
   "tests/kvasir-tests/povray/*",
 ] }
 
@@ -85,6 +86,17 @@ hooks = [
   ] } },
 ]
 
+## CircleCI
+
+# This doesn't install the tool!  It fails with "Circleci CLI could not be
+# found." unless you have installed the CircleCI CLI.  Using `snap` to install
+# leads to permission problems due to snap confinement.  To install:
+# - run: curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/main/install.sh | sudo bash
+[[repos]]
+repo = "https://github.com/zahorniak/pre-commit-circleci"
+rev = "v1.3.0"
+hooks = [{ id = "circleci_validate" }]
+
 ## GitHub Actions
 
 [[repos]]
@@ -103,20 +115,26 @@ hooks = [
     "**/pubs-bytopic-headfoot.html",
     "**/pubs-bytopic-underreview-headfoot.html",
     "google04aaa4eb05fd668b.html",
+    "pubs/*-abstract.html",
+    "pubs/index.html",
     "tests/sources/six170/huffman.html",
     "tools/hierarchical/clustering.html",
   ] } },
 ]
 
-## Java
+## Java and Kotlin
 
 # https://github.com/ORCID/pre-commit-spotless requires use of a spotless.xml file.
 
-[[repos]]
-repo = "local"
-hooks = [
-  { id = "gradle-spotless", name = "spotless formatting", language = "unsupported", entry = "bash -c 'if [ -f ./gradlew ] ; then ./gradlew spotlessApply; fi'", files = "\\.java$", pass_filenames = false },
-]
+# [[repos]]
+# repo = "local"
+# hooks = [
+#   { id = "gradle-spotless", name = "spotless formatting", language = "unsupported", entry = "bash -c 'if [ -f ./gradlew ] ; then ./gradlew spotlessApply; fi'", files = { glob = [
+#     "**/*.java",
+#     "**/*.kt",
+#     "**/*.kts",
+#   ] }, pass_filenames = false },
+# ]
 
 ## Makefiles
 
@@ -128,6 +146,7 @@ hooks = [
     "--format={{.FileName}}:{{.LineNumber}}:0: {{.Rule}}: {{.Violation}}\n",
   ], exclude = { glob = [
     "code-style.Makefile",
+    "tests/kvasir-tests/povray/*",
   ] } },
 ]
 
@@ -320,15 +339,3 @@ hooks = [
 repo = "https://github.com/adrienverge/yamllint"
 rev = "v1.38.0"
 hooks = [{ id = "yamllint" }]
-
-[[repos]]
-repo = "https://github.com/rhysd/actionlint"
-rev = "v1.7.12"
-hooks = [{ id = "actionlint" }]
-
-# This doesn't install the tool!  It fails with "Circleci CLI could
-# not be found." unless you have done `sudo snap install circleci`.
-[[repos]]
-repo = "https://github.com/zahorniak/pre-commit-circleci"
-rev = "v1.3.0"
-hooks = [{ id = "circleci_validate" }]

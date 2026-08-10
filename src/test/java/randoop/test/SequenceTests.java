@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
@@ -174,7 +175,11 @@ public class SequenceTests {
         sequenceLines, Arrays.asList(sequence.toParsableString().split(Globals.lineSep)), testId);
 
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new DummyVisitor(), testGen);
+    try {
+      ds.execute(new DummyVisitor(), testGen);
+    } catch (RandoopSpecificationError e) {
+      throw new RuntimeException(e);
+    }
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
 

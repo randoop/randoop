@@ -77,6 +77,7 @@ public class ExecutableBooleanExpression {
    *     it uses dummy variable names x0, x1, instead of formal parameter names.
    * @param comment the comment describing the expression
    * @param compiler the compiler to used to compile the expression method
+   * @throws RandoopSpecificationError if the expression does not compile
    */
   ExecutableBooleanExpression(
       RawSignature signature,
@@ -84,7 +85,8 @@ public class ExecutableBooleanExpression {
       String expressionSource,
       String contractSource,
       String comment,
-      SequenceCompiler compiler) {
+      SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     this(
         createMethod(signature, declarations, expressionSource, compiler), comment, contractSource);
   }
@@ -139,8 +141,9 @@ public class ExecutableBooleanExpression {
    *
    * @param values the values to check the expression against
    * @return true if this expression is satisfied by the values, false otherwise
+   * @throws RandoopSpecificationError if the expression cannot be evaluated
    */
-  public boolean check(Object[] values) {
+  public boolean check(Object[] values) throws RandoopSpecificationError {
     try {
       @SuppressWarnings("nullness:unboxing.of.nullable") // reflection
       boolean result = (boolean) expressionMethod.invoke(null, values);
@@ -207,13 +210,15 @@ public class ExecutableBooleanExpression {
    *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
   // package-private to enable test code to call it
   static Method createMethod(
       RawSignature signature,
       String parameterDeclaration,
       String expressionSource,
-      SequenceCompiler compiler) {
+      SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     String packageName = signature.getPackageName();
     String classname = classNameGenerator.next(); // ignore the class name in the signature
     String classText =

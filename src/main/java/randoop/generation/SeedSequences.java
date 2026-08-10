@@ -68,7 +68,7 @@ public final class SeedSequences {
    */
   public static Set<Sequence> defaultSeeds() {
     List<Object> seeds = new ArrayList<>(primitiveSeeds);
-    return SeedSequences.objectsToSeeds(seeds);
+    return objectsToSeeds(seeds);
   }
 
   /**

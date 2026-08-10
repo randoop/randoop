@@ -24,7 +24,10 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  @SuppressWarnings("initialization:method.invocation") // needed for CF 3.49.4 and earlier
+  @SuppressWarnings({
+    "initialization:method.invocation", // needed for CF 3.49.4 and earlier
+    "PMD.ConstructorCallsOverridableMethod"
+  })
   RunnerThread(@Nullable ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
@@ -59,7 +62,7 @@ public class RunnerThread extends Thread {
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  private void executeReflectionCode() {
     code.runReflectionCode();
   }
 

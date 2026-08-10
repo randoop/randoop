@@ -201,6 +201,7 @@ final class HelperSequenceCreator {
     }
   }
 
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   private interface SequenceExtender {
     Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }

@@ -45,27 +45,25 @@ public class TestCoverageInfo {
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
       double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
-      b.append(
-          (methodSignature == null ? "other" : methodSignature)
-              + ": "
-              + branchesCovered
-              + "/"
-              + branchesInMethod
-              + " ("
-              + percentCovered
-              + "%)"
-              + Globals.lineSep);
+      b.append((methodSignature == null ? "other" : methodSignature));
+      b.append(": ");
+      b.append(branchesCovered);
+      b.append("/");
+      b.append(branchesInMethod);
+      b.append(" (");
+      b.append(percentCovered);
+      b.append("%)");
+      b.append(Globals.lineSep);
     }
     double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
-    b.append(
-        "TOTAL :"
-            + totalBranchesCovered
-            + "/"
-            + totalBranches
-            + " ("
-            + totalPercent
-            + "%)"
-            + Globals.lineSep);
+    b.append("TOTAL :");
+    b.append(totalBranchesCovered);
+    b.append("/");
+    b.append(totalBranches);
+    b.append(" (");
+    b.append(totalPercent);
+    b.append("%)");
+    b.append(Globals.lineSep);
     return b.toString();
   }
 

@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.OptionsCache;
 
 public abstract class AbstractPerformanceTest {
@@ -27,7 +28,7 @@ public abstract class AbstractPerformanceTest {
 
   abstract int expectedTimeMillis();
 
-  abstract void execute();
+  abstract void execute() throws RandoopSpecificationError;
 
   private final double DIVIDE_FACTOR = 1700;
 
@@ -48,7 +49,7 @@ public abstract class AbstractPerformanceTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test() {
+  public void test() throws RandoopSpecificationError {
 
     System.out.println("@@@ factor: " + computeFactor());
     double factor = EXPECTED_MIN;

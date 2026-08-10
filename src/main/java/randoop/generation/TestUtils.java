@@ -56,8 +56,10 @@ public final class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings(
-      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+  @SuppressWarnings({
+    "DefaultCharset", // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+    "PMD.AvoidFileStream" // Fix after Java 8 is no longer supported
+  })
   public static void setRandoopLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setRandoopLog(" + filename + ")");
@@ -90,7 +92,10 @@ public final class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
+  @SuppressWarnings({
+    "DefaultCharset", // TODO: should specify a charset, fix after Java 8 is not supported
+    "PMD.AvoidFileStream" // Fix after Java 8 is no longer supported
+  })
   public static void setSelectionLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setSelectionLog(" + filename + ")");

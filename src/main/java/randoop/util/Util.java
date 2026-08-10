@@ -67,9 +67,9 @@ public final class Util {
   public static String convertToHexString(String unicodeString) {
     char[] chars = unicodeString.toCharArray();
     StringBuilder output = new StringBuilder();
-    for (int i = 0; i < chars.length; i++) {
+    for (char c : chars) {
       output.append("\\u");
-      String hex = Integer.toHexString(chars[i]);
+      String hex = Integer.toHexString(c);
       if (hex.length() < 4) {
         output.append('0');
       }

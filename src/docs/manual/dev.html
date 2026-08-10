@@ -238,7 +238,7 @@ given here, see the Gradle
 <h2 id="buildgradle">The Randoop build script</h2>
 
 <p>
-  The Gradle build tasks for Randoop are defined in the build script <code>build.gradle</code>,
+  The Gradle build tasks for Randoop are defined in the build script <code>build.gradle.kts</code>,
   along with the build scripts for the java agents in the corresponding subproject directories.
   This is the file you would modify to change the Randoop build.
   Note that the script uses plugins that each define tasks that may not be explicit
@@ -602,7 +602,7 @@ since the test run method only looks for JUnit suite classes.
   repository.
   If your tool creates new configuration files, please add them to the
   <code>.gitignore</code> file.
-  If you edit <code>build.gradle</code>,
+  If you edit <code>build.gradle.kts</code>,
   please verify that it doesn't change behavior
   from the command line using the Gradle wrapper.
 </p>
@@ -761,8 +761,8 @@ NEXTVERSION=<em>4.3.6</em></pre>
     </li>
     <li>Update the version number by running the following commands.
 <pre>
-  preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION build.gradle
-  preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION build.gradle
+  preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION build.gradle.kts
+  preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION build.gradle.kts
   (cd src && preplace `echo $NEWVERSION | sed 's/\./\\\./g'` $NEXTVERSION)
   (cd src && preplace `echo $OLDVERSION | sed 's/\./\\\./g'` $NEWVERSION)
 </pre>

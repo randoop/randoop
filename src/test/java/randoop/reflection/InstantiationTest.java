@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -290,6 +292,10 @@ public class InstantiationTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     return model;

@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -17,19 +16,6 @@ class LazyReferenceBound extends ReferenceBound {
 
   LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>{@link LazyReferenceBound} can be part of a recursive type, and so the hash code is based on
-   * the string representation of the bound to avoid recursive calls on {@code hashCode()}.
-   *
-   * @return the hashCode for the string representation of this bound
-   */
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.toString());
   }
 
   @Override
