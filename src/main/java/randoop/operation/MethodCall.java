@@ -9,7 +9,6 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
 import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
