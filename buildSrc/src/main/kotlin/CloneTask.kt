@@ -2,6 +2,7 @@ import java.io.File
 import java.time.Duration
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -14,7 +15,7 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
 
   @get:Input abstract val url: Property<String>
 
-  @get:OutputDirectory abstract val directory: Property<File>
+  @get:OutputDirectory abstract val directory: DirectoryProperty
 
   init {
     // A `git` invocation that hangs should not hang the build.  The budget covers two clone
@@ -24,7 +25,7 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
 
   @TaskAction
   fun doTaskAction() {
-    cloneAndUpdate(url.get(), directory.get())
+    cloneAndUpdate(url.get(), directory.get().asFile)
   }
 
   private fun cloneAndUpdate(url: String, directory: File) {
@@ -47,7 +48,7 @@ abstract class CloneTask @Inject constructor(private val execOperations: ExecOpe
       if (!File(directory, ".git").exists()) {
         println(
           "Cloning failed, will try again in ${RETRY_DELAY.toSeconds()} seconds:" +
-            " clone($url, $directory, true)"
+            " clone($url, $directory, false)"
         )
         Thread.sleep(RETRY_DELAY.toMillis())
         clone(url, directory, false)
