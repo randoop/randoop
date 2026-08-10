@@ -46,7 +46,7 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(List<File> sourceFiles, Path destinationDir) throws FileCompilerException {
+  public void compile(List<File> sourceFiles, Path destinationDir) {
     // Set the destination directory for the compiler
     List<String> compilerOptions = new ArrayList<>(options);
     compilerOptions.add("-d");
@@ -79,7 +79,7 @@ public class FileCompiler {
    * @param destinationDir the destination directory for class files
    * @throws FileCompilerException if the compilation fails
    */
-  public void compile(Path sourceFile, Path destinationDir) throws FileCompilerException {
+  public void compile(Path sourceFile, Path destinationDir) {
     compile(Collections.singletonList(sourceFile.toFile()), destinationDir);
   }
 

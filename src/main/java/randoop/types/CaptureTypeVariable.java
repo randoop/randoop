@@ -33,6 +33,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
+  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
     this.varID = count++;

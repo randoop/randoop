@@ -166,7 +166,7 @@ public class ComponentManager {
    *     GenInputsAbstract#call_non_sut_methods} is false)
    */
   public DemandDrivenInputCreator getDemandDrivenInputCreator() {
-    if (GenInputsAbstract.call_non_sut_methods == false) {
+    if (!GenInputsAbstract.call_non_sut_methods) {
       throw new IllegalStateException(
           "getDemandDrivenInputCreator() called when demand-driven input generation is disabled. "
               + "Enable it with --call-non-sut-methods=true.");

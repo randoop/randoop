@@ -9,12 +9,12 @@ import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** Created by bjkeller on 8/19/16. */
+/** Represents assigning an array element. */
 class ArrayElementSet extends CallableOperation {
 
-  private final int ARRAY = 0;
-  private final int INDEX = 1;
-  private final int VALUE = 2;
+  private static final int ARRAY = 0;
+  private static final int INDEX = 1;
+  private static final int VALUE = 2;
 
   private final Type elementType;
 

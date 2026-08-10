@@ -28,7 +28,10 @@ public final class MethodReflectionCode extends ReflectionCode {
    * @param receiver the receiver, or null for a static method
    * @param inputs the arguments that the method is applied to
    */
-  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
+  @SuppressWarnings({
+    "deprecation", // AccessibleObject.isAccessible() has no replacement in Java 8.
+    "PMD.ArrayIsStoredDirectly"
+  })
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
     this.receiver = receiver;
     this.method = method;
@@ -64,6 +67,8 @@ public final class MethodReflectionCode extends ReflectionCode {
         throw new ReflectionCodeException(
             "receiver was null - expected NPE from call to: " + method);
       }
+    } catch (ReflectionCodeException e) {
+      throw e;
     } catch (NullPointerException e) {
       this.exceptionThrown = e;
     } catch (InvocationTargetException e) {

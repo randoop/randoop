@@ -29,12 +29,9 @@ public abstract class GrtFuzzer {
    * @return a fuzzer that can handle the type, or null if none can
    */
   public static @Nullable GrtFuzzer getFuzzer(Type type) {
-    GrtFuzzer[] candidates =
-        new GrtFuzzer[] {
-          GrtNumericFuzzer.getInstance(),
-          GrtStringFuzzer.getInstance(),
-          GrtObjectFuzzer.getInstance()
-        };
+    GrtFuzzer[] candidates = {
+      GrtNumericFuzzer.getInstance(), GrtStringFuzzer.getInstance(), GrtObjectFuzzer.getInstance()
+    };
     for (GrtFuzzer f : candidates) {
       if (f.canFuzz(type)) {
         return f;

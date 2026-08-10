@@ -88,7 +88,7 @@ public class Bloodhound implements TypedOperationSelector {
    * Time interval, in milliseconds, at which to recompute weights. The name "t" and the specified
    * value are both from the GRT paper.
    */
-  private static final long t = 50000;
+  private static final long t = 50_000;
 
   /** {@code System.currentTimeMillis()} when branch coverage was last updated. */
   private long lastUpdateTime = 0;

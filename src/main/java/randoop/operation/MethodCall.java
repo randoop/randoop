@@ -8,9 +8,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
-import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
 import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -21,8 +19,8 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is an {@link Operation} that represents a call to a method. It is a wrapper for a
- * reflective Method object, and caches values of computed reflective calls.
+ * Represents a call to a method. It holds a reflective {@link java.lang.reflect.Method} object. It
+ * caches values of computed reflective calls.
  *
  * <p>As an {@link Operation}, a call to a non-static method<br>
  * {@code T mname (T1,...,Tn)}<br>
@@ -34,8 +32,6 @@ import randoop.util.ReflectionExecutor;
  *
  * <p>The execution of a {@code MethodCall} executes the enclosed {@link Method} given values for
  * the inputs.
- *
- * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
 
@@ -46,18 +42,9 @@ public final class MethodCall extends CallableOperation {
   private final boolean isStatic;
 
   /**
-   * getMethod returns Method object of this MethodCall.
-   *
-   * @return {@link Method} object called by this {@link MethodCall}
-   */
-  public Method getMethod() {
-    return this.method;
-  }
-
-  /**
    * Creates an object corresponding to a call to the given method.
    *
-   * @param method the reflective method object
+   * @param method the method to be called
    */
   public MethodCall(Method method) {
     if (method == null) {
@@ -70,9 +57,48 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * toString outputs a text representation of the method, but not of a method call.
+   * Returns what this calls.
    *
-   * @return string representation of the enclosed method
+   * @return what this calls
+   */
+  public Method getMethod() {
+    return this.method;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMethodCall() {
+    return true;
+  }
+
+  @Override
+  public Method getReflectionObject() {
+    return method;
+  }
+
+  @Override
+  public String getName() {
+    return method.getName();
+  }
+
+  /**
+   * Returns a string representation of the method, but not of a method call.
+   *
+   * @return string representation of the method
    */
   @Override
   public String toString() {
@@ -80,12 +106,11 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc}
+   * Adds code for calling this to the given {@link StringBuilder}.
    *
-   * <p>Issues the code that corresponds to calling the method with the provided {@link Variable}
-   * objects as arguments.
-   *
-   * @param inputVars is the list of actual arguments to be printed
+   * @param inputVars the list of actual arguments to for the call
+   * @param sb the StringBuilder to which the output is appended
+   * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
   public void appendCode(
@@ -154,30 +179,21 @@ public final class MethodCall extends CallableOperation {
     return Objects.hash(method);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
-   *     ExceptionalExecution} if an exception was thrown
-   */
   @Override
   public ExecutionOutcome execute(Object[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
     Object receiver = null;
-    int paramsLength = input.length;
     int paramsStartIndex = 0;
     if (!isStatic()) {
       receiver = input[0];
-      paramsLength--;
       paramsStartIndex = 1;
     }
 
-    Object[] params = new Object[paramsLength];
-    for (int i = 0; i < params.length; i++) {
-      params[i] = input[i + paramsStartIndex];
-      if (Log.isLoggingOn()) {
+    Object[] params = Arrays.copyOfRange(input, paramsStartIndex, input.length);
+    if (Log.isLoggingOn()) {
+      for (int i = 0; i < params.length; i++) {
         Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
@@ -195,15 +211,20 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * <p>The descriptor for a method is a string representing the method signature.
+   * <p>Returns a string representation of the signature.
    *
    * <p>Examples: java.util.ArrayList.get(int) java.util.ArrayList.add(int,java.lang.Object)
+   *
+   * @return the signature of this
+   * @see #parse(String)
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
-    sb.append(method.getDeclaringClass().getName()).append('.');
-    sb.append(method.getName()).append('(');
+    sb.append(method.getDeclaringClass().getName());
+    sb.append('.');
+    sb.append(method.getName());
+    sb.append("(");
     Class<?>[] params = method.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
     sb.append(')');
@@ -216,7 +237,7 @@ public final class MethodCall extends CallableOperation {
    * parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
-   * @return the method call operation for the given string descriptor
+   * @return the call operation for the given string descriptor
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
@@ -253,7 +274,7 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
     Class<?> runtimeClass = classType.getRuntimeClass();
-    Method m = null;
+    Method m;
     try {
       m = runtimeClass.getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
@@ -285,40 +306,10 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true always, since this is a method call
-   */
-  @Override
-  public boolean isMessage() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return true always, since this is a method call
-   */
-  @Override
-  public boolean isMethodCall() {
-    return true;
-  }
-
-  @Override
-  public String getName() {
-    return method.getName();
-  }
-
-  @Override
-  public Method getReflectionObject() {
-    return method;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
+   * <p>Determines whether this satisfies the given predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
-   * @return true only if the method in this object satisfies the canUse(Method) of predicate
+   * @return true if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {

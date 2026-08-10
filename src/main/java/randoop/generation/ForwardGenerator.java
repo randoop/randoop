@@ -223,8 +223,8 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
+    final int nanoPerMilli = 1_000_000;
+    final long nanoPerOne = 1_000_000_000L;
     // 1 second, in nanoseconds
     final long timeWarningLimitNanos = 1 * nanoPerOne;
 

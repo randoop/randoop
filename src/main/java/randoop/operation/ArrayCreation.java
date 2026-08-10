@@ -95,8 +95,9 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    StringBuilder result =
-        new StringBuilder(elementType.getBinaryName() + "[ " + inputTypes.get(0) + " ]");
+    StringBuilder result = new StringBuilder();
+    result.append(elementType.getBinaryName());
+    result.append("[ ").append(inputTypes.get(0)).append(" ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

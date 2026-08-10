@@ -37,8 +37,7 @@ public final class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeoutMillis)
-      throws CommandException {
+  static Status run(List<String> command, Path workingDirectory, long timeoutMillis) {
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name

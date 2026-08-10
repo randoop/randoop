@@ -241,6 +241,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    *     expected
    * @throws IOException if there is trouble with writing to a file
    */
+  @SuppressWarnings("PMD.ExceptionAsFlowControl")
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException, IOException {
     // Have we modified this class?
     boolean transformed = false;

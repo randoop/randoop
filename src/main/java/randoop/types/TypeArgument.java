@@ -135,6 +135,7 @@ public abstract class TypeArgument {
    * @return a substitution unifying this type or a supertype of this type with the goal type, or
    *     null if unification failed
    */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract") // indicates failure
   public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     // This implementation indicates failure.  It is overridden by subclasses.
     return null;

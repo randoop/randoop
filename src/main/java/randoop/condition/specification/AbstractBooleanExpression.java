@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @see Guard
  * @see Property
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractBooleanExpression {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other

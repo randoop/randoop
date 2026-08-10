@@ -34,7 +34,9 @@ final class TypeArguments {
    */
   static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
     Class<?>[] argTypes = new Class<?>[0];
-    if (argStr.trim().length() > 0) {
+    @SuppressWarnings("PMD.InefficientEmptyStringCheck") // Fix when no longer supporting Java 8.
+    boolean isBlank = argStr.trim().isEmpty();
+    if (!isBlank) {
       String[] argsStrs = argStr.split(",");
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {

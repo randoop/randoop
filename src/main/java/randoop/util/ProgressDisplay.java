@@ -166,7 +166,7 @@ public class ProgressDisplay extends Thread {
   }
 
   private void printAllStackTraces() {
-    for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
+    for (Map.Entry<Thread, StackTraceElement[]> trace : getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
       System.out.println("Stack trace:");

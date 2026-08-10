@@ -117,8 +117,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(String packageName, String classname, String classSource)
-      throws RandoopOutputException {
+  public Path writeClassCode(String packageName, String classname, String classSource) {
     assert !Objects.equals(packageName, "");
 
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
@@ -184,8 +183,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
-      throws RandoopOutputException {
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode) {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
@@ -587,8 +585,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      String packageName, String classname, String classSource, Path destinationDir)
-      throws FileCompiler.FileCompilerException {
+      String packageName, String classname, String classSource, Path destinationDir) {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
     Path sourceFile;

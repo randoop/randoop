@@ -109,7 +109,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization")
+  @OptionGroup("Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -194,23 +194,23 @@ public class Minimize extends CommandHandler {
       throw new RandoopCommandError(ae.getMessage());
     }
 
-    if (Minimize.suitepath == null) {
+    if (suitepath == null) {
       throw new RandoopCommandError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
-    if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopCommandError("The input file must be a Java file: " + Minimize.suitepath);
+    if (!FilenameUtils.getExtension(suitepath).equals("java")) {
+      throw new RandoopCommandError("The input file must be a Java file: " + suitepath);
     }
 
-    if (Minimize.testsuitetimeout <= 0) {
+    if (testsuitetimeout <= 0) {
       throw new RandoopCommandError(
-          "Timeout must be positive, was given as " + Minimize.testsuitetimeout + ".");
+          "Timeout must be positive, was given as " + testsuitetimeout + ".");
     }
 
-    if (Minimize.minimizetimeout <= 0) {
+    if (minimizetimeout <= 0) {
       throw new RandoopCommandError(
-          "Minimizer timeout must be positive, was given as " + Minimize.minimizetimeout + ".");
+          "Minimizer timeout must be positive, was given as " + minimizetimeout + ".");
     }
 
     // File object pointing to the file to be minimized.
@@ -233,7 +233,7 @@ public class Minimize extends CommandHandler {
 
     boolean success = false;
     try {
-      success = future.get(Minimize.minimizetimeout, TimeUnit.SECONDS);
+      success = future.get(minimizetimeout, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       System.err.println("Minimization process was interrupted.");
     } catch (ExecutionException e) {
@@ -579,7 +579,7 @@ public class Minimize extends CommandHandler {
             primitiveVarEquality(
                 mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
           } else {
-            return;
+            // Nothing to do; fall through to return.
           }
         }
       }
@@ -1166,6 +1166,7 @@ public class Minimize extends CommandHandler {
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
    */
+  @SuppressWarnings("PMD.AssignmentInOperand") // for `line = bufReader.readLine()`
   private static Map<String, String> normalizeJUnitOutput(String input) {
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
@@ -1510,7 +1511,7 @@ public class Minimize extends CommandHandler {
     }
     for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
       Node nodeToPrint = everything.get(i);
-      if (!(nodeToPrint instanceof Comment))
+      if (!(nodeToPrint instanceof Comment)) {
         throw new RuntimeException(
             "Expected comment, instead "
                 + nodeToPrint.getClass()
@@ -1518,6 +1519,7 @@ public class Minimize extends CommandHandler {
                 + positionOfPreviousChild
                 + ", position of child "
                 + positionOfTheChild);
+      }
       result.add((Comment) nodeToPrint);
     }
   }
