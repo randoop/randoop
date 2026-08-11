@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.ExecutableSequence;
 
 /** Generates invalid checks. */
@@ -9,7 +10,8 @@ public class InvalidCheckGenerator extends TestCheckGenerator {
   public InvalidCheckGenerator() {}
 
   @Override
-  public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
+  public InvalidChecks generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     return new InvalidChecks(new InvalidValueCheck(eseq, eseq.sequence.size() - 1));
   }
 }

@@ -47,8 +47,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
   }
 
   @Override
-  public CharSequence getCharContent(final boolean ignoreEncodingErrors)
-      throws UnsupportedOperationException {
+  public CharSequence getCharContent(final boolean ignoreEncodingErrors) {
     if (source == null) {
       throw new UnsupportedOperationException("getCharContent()");
     }

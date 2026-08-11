@@ -8,7 +8,7 @@ checker = "3.55.1"
 
 jacoco = "0.8.15"
 
-pmd = "7.25.0"
+pmd = "7.26.0"
 
 [libraries]
 
@@ -62,6 +62,6 @@ org-checkerframework = { id = "org.checkerframework", version = "1.0.2" }
 
 org-aim42-htmlSanityCheck = { id = "org.aim42.htmlSanityCheck", version = "1.1.6" }
 
-com-dorongold-task-tree = { id = "com.dorongold.task-tree", version = "4.0.1" }
+com-dorongold-task-tree = { id = "com.dorongold.task-tree", version = "4.0.2" }
 
 com-gorylenko-gradle-git-properties = { id = "com.gorylenko.gradle-git-properties", version = "4.0.1" }

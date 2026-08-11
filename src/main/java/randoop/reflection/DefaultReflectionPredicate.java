@@ -91,12 +91,12 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // Within Object, consider only getClass to be under test (even if not specified by user).
     // Exclude all other methods.  They involve threads, waiting, or are somehow problematic
     // (e.g. toString).
-    if (m.getDeclaringClass().equals(java.lang.Object.class)) {
+    if (m.getDeclaringClass().equals(Object.class)) {
       return m.getName().equals("getClass");
     }
 
     // This is a special case handled here to avoid printing the reason for exclusion.
-    if (m.getDeclaringClass().equals(java.lang.Thread.class)) {
+    if (m.getDeclaringClass().equals(Thread.class)) {
       return false;
     }
 
@@ -222,7 +222,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @param m the method to accept or reject for inclusion in methods under test
    * @return a non-null string giving a reason the method should be skipped, or null to not skip it
    */
-  @SuppressWarnings("ReferenceEquality")
+  @SuppressWarnings({"ReferenceEquality", "PMD.UseEqualsToCompareStrings"}) // interned
   private @Nullable String doNotUseSpecialCase(Method m) {
 
     String mName = m.getName().intern();

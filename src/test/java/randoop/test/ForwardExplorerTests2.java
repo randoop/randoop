@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -31,7 +32,7 @@ import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 
 /**
- * This test is disabled in build.gradle.
+ * This test is disabled in build.gradle.kts.
  *
  * <p>It has a sporadic Java heap space exception caught by the Throwable clause of the try block
  * for the call to exp.createAndClassifySequences() in test5().
@@ -106,7 +107,8 @@ public class ForwardExplorerTests2 {
     }
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
     return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }

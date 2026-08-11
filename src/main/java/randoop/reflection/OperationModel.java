@@ -32,6 +32,7 @@ import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -165,6 +166,8 @@ public final class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -175,17 +178,15 @@ public final class OperationModel {
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationSpecifications)
-      throws SignatureParseException, NoSuchMethodException {
+      throws SignatureParseException,
+          NoSuchMethodException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
 
     OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
-        accessibility,
-        reflectionPredicate,
-        classnames,
-        coveredClassesGoalNames,
-        errorHandler,
-        literalsFileList);
+        accessibility, reflectionPredicate, classnames, coveredClassesGoalNames, errorHandler);
 
     // Add methods from the classes.
     model.addOperationsFromClasses(accessibility, reflectionPredicate, operationSpecifications);
@@ -218,6 +219,8 @@ public final class OperationModel {
    * @return the operation model for the parameters
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -226,7 +229,10 @@ public final class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException,
+          SignatureParseException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     return createModel(
         accessibility,
         reflectionPredicate,
@@ -254,6 +260,8 @@ public final class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -263,7 +271,10 @@ public final class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException,
+          SignatureParseException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     return createModel(
         accessibility,
         reflectionPredicate,
@@ -367,7 +378,7 @@ public final class OperationModel {
     if (file != null) {
       try (EntryReader er =
           new EntryReader(file, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
-        return OperationModel.readOperations(er, ignoreParseError);
+        return readOperations(er, ignoreParseError);
       } catch (IOException e) {
         String message =
             String.format(
@@ -405,6 +416,9 @@ public final class OperationModel {
         }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
+      } catch (RandoopSpecificationError e) {
+        throw new RandoopUsageError(
+            String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e.getMessage()), e);
       }
       TypeTuple inputTypes = operation.getInputTypes();
       if (!inputTypes.isEmpty()) {
@@ -444,7 +458,7 @@ public final class OperationModel {
     // Read method omissions from user-provided file
     try (EntryReader er =
         new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
-      return OperationModel.readOperations(er, ignoreParseError);
+      return readOperations(er, ignoreParseError);
     } catch (IOException e) {
       String message =
           String.format(
@@ -619,16 +633,17 @@ public final class OperationModel {
    * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
    *     heuristic
    * @param errorHandler the handler for bad class names
-   * @param literalsFileList the list of literals file names
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for a member of one of the classes is
+   *     malformed
    */
-  @SuppressWarnings("UnusedVariable") // literalsFileList is kept for API compatibility
   private void addClassTypes(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) {
+      ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError, RandoopSpecificationError {
     ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
@@ -674,6 +689,9 @@ public final class OperationModel {
           try {
             mgr.apply(c);
             succeeded++;
+          } catch (RandoopSpecificationError e) {
+            // A malformed specification is a user error; do not silently ignore the class.
+            throw e;
           } catch (Throwable e) {
             System.out.printf(
                 "Cannot get methods for %s specified via "
@@ -709,9 +727,11 @@ public final class OperationModel {
    * @param errorHandler is called if no such class exists
    * @return the Class whose name is {@code classname}. May return null if {@code errorHandler} just
    *     warns on bad names.
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   private static @Nullable Class<?> getClass(
-      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
+      @ClassGetName String classname, ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError {
     try {
       return TypeNames.getTypeForName(classname);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
@@ -732,11 +752,13 @@ public final class OperationModel {
    * @param reflectionPredicate the reflection predicate
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   private void addOperationsFromClasses(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
-      SpecificationCollection operationSpecifications) {
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
@@ -754,6 +776,9 @@ public final class OperationModel {
           Log.logPrintf("    %s%n", op);
         }
         operations.addAll(oneClassOperations);
+      } catch (RandoopSpecificationError e) {
+        // A malformed specification is a user error; do not silently drop the class.
+        throw e;
       } catch (Throwable e) {
         // TODO: What is an example of this?  Should an error be raised, rather than this
         // easy-to-overlook output?
@@ -773,12 +798,14 @@ public final class OperationModel {
    * @param reflectionPredicate the reflection predicate
    * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
+   * @throws RandoopSpecificationError if a specification derived from a method's annotations does
+   *     not compile
    */
   private List<TypedClassOperation> getOperationsFromFile(
       Path methodSignatures_file,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException {
+      throws SignatureParseException, RandoopSpecificationError {
     List<TypedClassOperation> result = new ArrayList<>();
     if (methodSignatures_file == null) {
       return result;
@@ -817,12 +844,14 @@ public final class OperationModel {
    * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
    *     the class or the method or constructor
    * @throws SignatureParseException if the signature cannot be parsed
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
    */
   public static TypedClassOperation signatureToOperation(
       String signature,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException, FailedPredicateException {
+      throws SignatureParseException, FailedPredicateException, RandoopSpecificationError {
     AccessibleObject accessibleObject;
     accessibleObject = SignatureParser.parse(signature, accessibility, reflectionPredicate);
     if (accessibleObject == null) {

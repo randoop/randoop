@@ -8,6 +8,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.ObjectContract;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
@@ -56,7 +57,8 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
 
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);

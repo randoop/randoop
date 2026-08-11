@@ -15,7 +15,11 @@ public final class CompareToReturnsNormally extends ObjectContract {
     return instance;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({
+    "unchecked",
+    "rawtypes",
+    "PMD.UselessPureMethodCall" // called to see if it throws
+  })
   @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;

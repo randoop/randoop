@@ -68,13 +68,13 @@ public final class ArrayType extends ReferenceType {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
       Type componentType = Type.forType(arrayType.getGenericComponentType());
-      return ArrayType.ofComponentType(componentType);
+      return ofComponentType(componentType);
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
       @SuppressWarnings("nullness:argument") // isArray() => getComponentType() != null
       @NonNull Type componentType = Type.forType(((Class<?>) type).getComponentType());
-      return ArrayType.ofComponentType(componentType);
+      return ofComponentType(componentType);
     }
 
     throw new IllegalArgumentException("type " + type + " must be an array type");
@@ -116,7 +116,7 @@ public final class ArrayType extends ReferenceType {
   public ArrayType substitute(Substitution substitution) {
     Type type = componentType.substitute(substitution);
     if (!type.equals(componentType)) {
-      return ArrayType.ofComponentType(type);
+      return ofComponentType(type);
     } else {
       return this;
     }
@@ -282,7 +282,7 @@ public final class ArrayType extends ReferenceType {
     } else {
       return this;
     }
-    return ArrayType.ofComponentType(rawElementType);
+    return ofComponentType(rawElementType);
   }
 
   public int getDimensions() {

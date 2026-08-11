@@ -138,8 +138,7 @@ import randoop.util.Log;
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  private void compile(final String classname, final String javaSource)
-      throws SequenceCompilerException {
+  private void compile(final String classname, final String javaSource) {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
@@ -216,8 +215,7 @@ import randoop.util.Log;
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
       final @Identifier String classname,
-      final String javaSource)
-      throws SequenceCompilerException {
+      final String javaSource) {
     compile(classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
     File dir = new File("").getAbsoluteFile();

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
 import org.plumelib.util.MapsP;
+import randoop.condition.RandoopSpecificationError;
 import randoop.util.Log;
 
 /**
@@ -91,8 +92,9 @@ public class ReflectionManager {
    * once.
    *
    * @param c the {@link Class} object to be visited
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  public void apply(Class<?> c) {
+  public void apply(Class<?> c) throws RandoopSpecificationError {
     for (ClassVisitor visitor : visitors) {
       apply(visitor, c);
     }
@@ -106,8 +108,9 @@ public class ReflectionManager {
    *
    * @param visitor the {@link ClassVisitor} to apply to the class
    * @param c the class
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  public void apply(ClassVisitor visitor, Class<?> c) {
+  public void apply(ClassVisitor visitor, Class<?> c) throws RandoopSpecificationError {
     logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
     boolean classIsAccessible = predicate.isAccessible(c);
@@ -227,9 +230,10 @@ public class ReflectionManager {
    *
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
   @SuppressWarnings({"GetClassOnEnum"}) // c is an enum class
-  private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+  private void applyToEnum(ClassVisitor visitor, Class<?> c) throws RandoopSpecificationError {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
@@ -284,8 +288,9 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param c the member class to be visited
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  private void applyTo(ClassVisitor v, Class<?> c) {
+  private void applyTo(ClassVisitor v, Class<?> c) throws RandoopSpecificationError {
     logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
@@ -295,8 +300,9 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param co the constructor to be visited
+   * @throws RandoopSpecificationError if a specification for the constructor is malformed
    */
-  private void applyTo(ClassVisitor v, Constructor<?> co) {
+  private void applyTo(ClassVisitor v, Constructor<?> co) throws RandoopSpecificationError {
     logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
@@ -306,8 +312,9 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param m the method to be visited
+   * @throws RandoopSpecificationError if a specification for the method is malformed
    */
-  private void applyTo(ClassVisitor v, Method m) {
+  private void applyTo(ClassVisitor v, Method m) throws RandoopSpecificationError {
     logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }

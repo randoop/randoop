@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.accessibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
@@ -88,7 +89,7 @@ public class VisibilityBridgeTest {
    * bridge, which looks like an "inherited" public method of package private class.
    */
   @Test
-  public void testVisibilityBridge() throws ClassNotFoundException {
+  public void testVisibilityBridge() throws ClassNotFoundException, RandoopSpecificationError {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
@@ -118,7 +119,7 @@ public class VisibilityBridgeTest {
     }
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     return new LinkedHashSet<>(
         OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC));
   }

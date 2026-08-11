@@ -142,7 +142,7 @@ public final class Sequence {
    */
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
-    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    Sequence inputSequence = concatenate(inputSequences);
     List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
@@ -595,7 +595,6 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      verifyDifferentToString("size", other);
       return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
@@ -606,50 +605,10 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        verifyDifferentToString("statement index " + i, other);
         return false;
       }
     }
     return true;
-  }
-
-  /**
-   * Throws an exception if this sequence's {@link #toString} equals the given sequence's.
-   *
-   * @param message a diagnostic message
-   * @param other a sequence whose {@link #toString} to compare to this
-   */
-  private void verifyDifferentToString(String message, Sequence other) {
-    // This method `verifyDifferentToString` is not a useful test, because there can be two tests
-    // that differ only in the receiver type of an operation.  For instance, suppose that A is a
-    // supertype of B.  Then one test might choose the operation A.f and the other test might choose
-    // the operation B.f, with the same arguments.  The printed representation of the two tests is
-    // identical, so long as f is not static.  (This example is actually a duplicate that we do not
-    // want, since the two tests will dispatch to the same implementation at run time, but for now
-    // Randoop can produce it, so this method is disabled.)
-    if (true) { // "if (true)" because with just "return;" the compiler complains about dead code.
-      return;
-    }
-
-    if (!GenInputsAbstract.debug_checks) {
-      return;
-    }
-    // Previously was
-    //   if (this.toParsableString().equals(other.toParsableString()))
-    // but that does not make enough distinctions between different sequences.
-    if (this.toString().equals(other.toString())) {
-      throw new IllegalStateException(
-          message
-              + " :"
-              + System.lineSeparator()
-              + this.toString()
-              + ";;; "
-              + other.toString()
-              + ";;; "
-              + this.toParsableString()
-              + ";;; "
-              + other.toParsableString());
-    }
   }
 
   /** This sequence's hash code, cached to avoid recomputation. */
@@ -1081,7 +1040,7 @@ public final class Sequence {
 
         // Find input variables from their names.
         String[] inVars = new String[0];
-        if (!inVarsStr.trim().isEmpty()) {
+        if (!inVarsStr.isEmpty()) {
           // One or more input vars.
           inVars = inVarsStr.split("\\s");
         }

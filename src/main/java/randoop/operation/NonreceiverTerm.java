@@ -60,7 +60,7 @@ public final class NonreceiverTerm extends CallableOperation {
           throw new RandoopBug(
               "value=" + value + ", value.getClass()=" + value.getClass() + ",type=" + type);
         }
-        if (!NonreceiverTerm.isNonreceiverType(value.getClass())) {
+        if (!isNonreceiverType(value.getClass())) {
           throw new RandoopBug(
               "value is not a primitive-like value: value = "
                   + value

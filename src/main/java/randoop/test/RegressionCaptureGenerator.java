@@ -16,6 +16,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.EnumValue;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
@@ -111,7 +112,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
+  public RegressionChecks generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
 
     List<Check> checks = new ArrayList<>();
     ExceptionCheck exceptionCheck = null;

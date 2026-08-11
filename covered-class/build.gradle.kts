@@ -1,5 +1,10 @@
 // this is a Java project
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
   id("java")
   id("jacoco")
@@ -8,25 +13,27 @@ plugins {
 description = "covered-class instrumentation agent"
 
 configurations {
-  javassist
-  implementation.extendsFrom(javassist)
-  implementation.extendsFrom(plumelib)
+  create("javassist")
+  named("implementation") {
+    extendsFrom(configurations["javassist"])
+    extendsFrom(configurations["plumelib"])
+  }
 }
 
 dependencies {
-  javassist("org.javassist:javassist:3.+")
-  implementation(project(path: ":", configuration: "shadow"))
-  implementation(project(path: ":"))
+  "javassist"("org.javassist:javassist:3.+")
+  implementation(project(path = ":", configuration = "shadow"))
+  implementation(project(path = ":"))
 }
 
-javadoc {
-  options.addStringOption("Xwerror", "-Xdoclint:all")
+tasks.javadoc {
+  (options as StandardJavadocDocletOptions).addStringOption("Xwerror", "-Xdoclint:all")
 }
 
 /*
  * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
  */
-jar {
+tasks.jar {
   // The fat jar (shadowJar) is named covered-class-${version}.jar, because that is the
   // file that users pass to the JVM's -javaagent option.  Give the thin jar a
   // classifier so that the two tasks do not write to the same file.
@@ -34,15 +41,17 @@ jar {
 
   manifest {
     attributes(
-    "Premain-Class": "randoop.instrument.CoveredClassAgent",
-    "Can-Redefine-Classes": "true"
+      mapOf(
+        "Premain-Class" to "randoop.instrument.CoveredClassAgent",
+        "Can-Redefine-Classes" to "true",
+      )
     )
   }
 }
 
-shadowJar {
+tasks.named<ShadowJar>("shadowJar") {
   // Name the jar file covered-class-version.jar
-  archiveClassifier = null
+  archiveClassifier.set(null as String?)
 
   exclude("**/pom*")
 
@@ -68,7 +77,7 @@ shadowJar {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
-test {
+tasks.test {
   // The agent jar file is passed via -javaagent below, not via the test classpath, so
   // the agent jar file is not otherwise an input to this task; without this line, a
   // change that affects only shadowJar's output would leave this task UP-TO-DATE.
@@ -78,7 +87,7 @@ test {
   // Show as much as possible to console.
   testLogging {
     showStandardStreams = true
-    exceptionFormat = "full"
+    exceptionFormat = TestExceptionFormat.FULL
   }
 
   // Turn off HTML reports -- handled by testReport task.
@@ -87,7 +96,7 @@ test {
   doFirst {
     // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
-    workingDir = sourceSets.test.output.resourcesDir
+    workingDir = sourceSets["test"].output.resourcesDir!!
 
     // Compute shadowJar's archive file name when this task runs, rather than when this
     // build script is evaluated.  Otherwise, this block would have to appear textually
@@ -97,31 +106,31 @@ test {
   }
 }
 
-apply from: rootProject.file("gradle-mvn-push.gradle")
+apply(from = rootProject.file("gradle-mvn-push.gradle.kts"))
 
-final coveredClassPom(publication) {
+fun coveredClassPom(publication: MavenPublication) {
   // Don't use publication.from(components.java) which would publish the skinny jar as randoop.jar.
-  // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.
+  // Information that is in all pom files is configured in randoop/gradle-mvn-push.gradle.kts.
   publication.pom {
     name = "Randoop's covered-class agent"
     description = "Requires Randoop's tests to execute (cover) certain classes"
   }
 }
 
-publishing {
+configure<PublishingExtension> {
   publications {
-    remote(MavenPublication) {
-      coveredClassPom(it)
-      artifact(shadowJar)
-      artifact(javadocJar)
-      artifact(sourcesJar)
+    named<MavenPublication>("remote") {
+      coveredClassPom(this)
+      artifact(tasks.named<ShadowJar>("shadowJar"))
+      artifact(tasks["javadocJar"])
+      artifact(tasks["sourcesJar"])
     }
 
-    local(MavenPublication) {
-      coveredClassPom(it)
-      artifact(shadowJar)
-      artifact(javadocJar)
-      artifact(sourcesJar)
+    named<MavenPublication>("local") {
+      coveredClassPom(this)
+      artifact(tasks.named<ShadowJar>("shadowJar"))
+      artifact(tasks["javadocJar"])
+      artifact(tasks["sourcesJar"])
     }
   }
 }
