@@ -77,12 +77,17 @@ tasks.named<ShadowJar>("shadowJar") {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
+// A provider for shadowJar's output file.  Because the provider is lazy, its value is
+// computed after the `shadowJar` block above has set `archiveClassifier` and thereby
+// determined shadowJar's archive file name.
+val coveredClassAgentJar = tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
+
 tasks.test {
   // The agent jar file is passed via -javaagent below, not via the test classpath, so
   // the agent jar file is not otherwise an input to this task; without this line, a
   // change that affects only shadowJar's output would leave this task UP-TO-DATE.
   // Naming shadowJar's output file also carries the dependency on shadowJar.
-  inputs.file(shadowJar.archiveFile).withPropertyName("coveredClassAgent")
+  inputs.file(coveredClassAgentJar).withPropertyName("coveredClassAgent")
 
   // Show as much as possible to console.
   testLogging {
@@ -98,11 +103,7 @@ tasks.test {
     // instead of the project directory.
     workingDir = sourceSets["test"].output.resourcesDir!!
 
-    // Compute shadowJar's archive file name when this task runs, rather than when this
-    // build script is evaluated.  Otherwise, this block would have to appear textually
-    // after the `shadowJar` block, which sets `archiveClassifier` and thereby determines
-    // shadowJar's archive file name.
-    jvmArgs("-javaagent:${shadowJar.archiveFile.get()}")
+    jvmArgs("-javaagent:${coveredClassAgentJar.get()}")
   }
 }
 
