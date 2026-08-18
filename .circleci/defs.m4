@@ -6,6 +6,8 @@ define([canary_version], [25])dnl
 ifelse([each macro takes two arguments, the OS name and the JDK version])dnl
 dnl
 define([circleci_boilerplate_pre], [dnl
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:

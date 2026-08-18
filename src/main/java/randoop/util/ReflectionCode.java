@@ -91,9 +91,11 @@ public abstract class ReflectionCode {
   protected abstract void runReflectionCodeRaw();
 
   /**
-   * Returns the value returned by the execution, which is null if the execution threw an exception.
+   * Returns the value returned by the execution. The result is null if the execution returned null
+   * or if the execution threw an exception; call {@link #getExceptionThrown} to distinguish these
+   * two cases.
    *
-   * @return the value returned by the execution, or null if it threw an exception
+   * @return the value returned by the execution, or null if it returned null or threw an exception
    */
   public @Nullable Object getReturnValue() {
     if (!hasRun()) {

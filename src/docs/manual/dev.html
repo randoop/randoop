@@ -144,8 +144,8 @@
   placed in subdirectories named <code>build</code> in the parent directory and in
   each of the agent subdirectories.
   Jar files are placed in directory <code>build/libs</code> of each project.
-  In addition, the Randoop project's <code>build/distlibs</code> directory holds
-  copies of exactly the jar files that make up the distribution:
+  The Randoop project's <code>build/libs</code> directory also holds copies of the
+  agents' jar files, so it contains every jar file that makes up the distribution:
   <code>randoop-all-<em>X.Y.Z</em>.jar</code> and the agents' jar files.
 </p>
 
@@ -279,14 +279,14 @@ given here, see the Gradle
 <p>
 The jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of the agent project directories, and
-copies are in the <code>build/distlibs</code> subdirectory of the Randoop project.
+copies are in the <code>build/libs</code> subdirectory of the Randoop project.
 So, for instance, either of the following will work to run the <code>covered-class</code> agent:
 </p>
 <pre><code>-javaagent:&lt;randoop-path&gt;/covered-class/build/libs/covered-class-4.3.4.jar
--javaagent:&lt;randoop-path&gt;/build/distlibs/covered-class-4.3.4.jar</code></pre>
+-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.4.jar</code></pre>
 
 <p>
-Directory <code>build/libs</code> of an agent project also contains a file whose
+Each <code>build/libs</code> directory also contains a file whose
 name ends in <code>-thin.jar</code>.  That file contains only the agent's own
 class files, without the agent's dependencies, so that file does not work as a
 Java agent.
@@ -842,7 +842,8 @@ NEXTVERSION=<em>4.3.6</em></pre>
     use the changelog entry as the description
     (check the preview of the Markdown formatting, e.g., remove line breaks),
     upload the zip file from <code>build/distributions</code>,
-    upload the jar files from <code>build/distlibs</code>,
+    upload the distribution jar files (<code>randoop-all-<em>4.3.4</em>.jar</code> and
+    the agents' jar files) from <code>build/libs</code>,
     and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com

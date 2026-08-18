@@ -4,7 +4,7 @@ import java.util.Arrays;
 import org.plumelib.util.ArraysPlume;
 import randoop.contract.ObjectContract;
 
-/** A contract about an object contract. */
+/** Reflection code that evaluates an {@link ObjectContract} on given values. */
 public final class ObjectContractReflectionCode extends ReflectionCode {
 
   /** The contract to evaluate. */
