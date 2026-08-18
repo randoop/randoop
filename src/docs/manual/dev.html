@@ -286,8 +286,9 @@ So, for instance, either of the following will work to run the <code>covered-cla
 -javaagent:&lt;randoop-path&gt;/build/libs/covered-class-4.3.4.jar</code></pre>
 
 <p>
-Each <code>build/libs</code> directory also contains a file whose
-name ends in <code>-thin.jar</code>.  That file contains only the agent's own
+For each agent, those <code>build/libs</code> directories also contain a file whose
+name ends in <code>-thin.jar</code>, such as
+<code>covered-class-4.3.4-thin.jar</code>.  That file contains only the agent's own
 class files, without the agent's dependencies, so that file does not work as a
 Java agent.
 </p>

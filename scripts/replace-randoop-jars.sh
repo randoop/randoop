@@ -45,7 +45,9 @@ newest_jar() {
     fi
   done
   if [ -z "${newest}" ]; then
-    echo "$0: no distribution jar file matches $1" >&2
+    # Report every argument, because "$1" may be a file that was skipped above, and
+    # reporting only "$1" would suggest that the file does not exist.
+    echo "$0: no distribution jar file among: $*" >&2
     echo "$0: run \`./gradlew assemble\` in ${RANDOOP_DIR}" >&2
     exit 1
   fi
@@ -58,11 +60,25 @@ newest_jar() {
 # holds jar files that are not part of the distribution: the agents' "-thin" jar
 # files, which do not work as Java agents, and "-javadoc" and "-sources" jar files.
 LIBS_DIR="${RANDOOP_DIR}/build/libs"
-# Each call to `newest_jar` runs in a subshell, so the `exit` in `newest_jar` exits
-# only that subshell.  Each `|| exit 1` propagates the failure to this script.
+# The call to `newest_jar` runs in a subshell, so the `exit` in `newest_jar` exits only
+# that subshell.  The `|| exit 1` propagates the failure to this script.
 RANDOOP_ALL_JAR="$(newest_jar "${LIBS_DIR}"/randoop-all*.jar)" || exit 1
-REPLACECALL_JAR="$(newest_jar "${LIBS_DIR}"/replacecall*.jar)" || exit 1
-COVERED_CLASS_JAR="$(newest_jar "${LIBS_DIR}"/covered-class*.jar)" || exit 1
+
+# Choose the agents' jar files by version rather than by modification time, so that all
+# three jar files come from the same build.  Choosing each of the three independently
+# by modification time would link, say, the 4.3.10 randoop-all jar file with the 4.3.9
+# agent jar files, if the latest build rebuilt only some of the three.
+VERSION="$(basename -- "${RANDOOP_ALL_JAR}" .jar)"
+VERSION="${VERSION#randoop-all-}"
+REPLACECALL_JAR="${LIBS_DIR}/replacecall-${VERSION}.jar"
+COVERED_CLASS_JAR="${LIBS_DIR}/covered-class-${VERSION}.jar"
+for jarfile in "${REPLACECALL_JAR}" "${COVERED_CLASS_JAR}"; do
+  if [ ! -e "${jarfile}" ]; then
+    echo "$0: no version ${VERSION} agent jar file: ${jarfile}" >&2
+    echo "$0: run \`./gradlew assemble\` in ${RANDOOP_DIR}" >&2
+    exit 1
+  fi
+done
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .
