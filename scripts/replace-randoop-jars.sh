@@ -12,16 +12,6 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 RANDOOP_DIR=$(dirname "${SCRIPT_DIR}")
 SUFFIX=${1:-}
 
-# Move old versions of files to "*-ORIG", or delete if those files already exist.
-# Each `mv` may fail because the file does not exist, which is not an error here.
-if [ -f "randoop${SUFFIX}.jar-ORIG" ]; then
-  rm -f "randoop${SUFFIX}.jar" "replacecall${SUFFIX}.jar" "covered-class${SUFFIX}.jar"
-else
-  mv -f "randoop${SUFFIX}.jar" "randoop${SUFFIX}.jar-ORIG" 2> /dev/null || true
-  mv -f "replacecall${SUFFIX}.jar" "replacecall${SUFFIX}.jar-ORIG" 2> /dev/null || true
-  mv -f "covered-class${SUFFIX}.jar" "covered-class${SUFFIX}.jar-ORIG" 2> /dev/null || true
-fi
-
 # Outputs the most recently built of the arguments, which are the expansion of a glob.
 # Compares modification times rather than names, because name order is not version
 # order: "randoop-all-4.3.9.jar" sorts after "randoop-all-4.3.10.jar".
@@ -79,6 +69,16 @@ for jarfile in "${REPLACECALL_JAR}" "${COVERED_CLASS_JAR}"; do
     exit 1
   fi
 done
+
+# Move old versions of files to "*-ORIG", or delete if those files already exist.
+# Each `mv` may fail because the file does not exist, which is not an error here.
+if [ -f "randoop${SUFFIX}.jar-ORIG" ]; then
+  rm -f "randoop${SUFFIX}.jar" "replacecall${SUFFIX}.jar" "covered-class${SUFFIX}.jar"
+else
+  mv -f "randoop${SUFFIX}.jar" "randoop${SUFFIX}.jar-ORIG" 2> /dev/null || true
+  mv -f "replacecall${SUFFIX}.jar" "replacecall${SUFFIX}.jar-ORIG" 2> /dev/null || true
+  mv -f "covered-class${SUFFIX}.jar" "covered-class${SUFFIX}.jar-ORIG" 2> /dev/null || true
+fi
 
 # Install new versions
 ln -sf "$RANDOOP_ALL_JAR" .
