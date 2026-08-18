@@ -12,12 +12,23 @@ import randoop.types.TypeTuple;
 /** Represents assigning an array element. */
 class ArrayElementSet extends CallableOperation {
 
+  /** The index, within the arguments, of the array being assigned into. */
   private static final int ARRAY = 0;
+
+  /** The index, within the arguments, of the array index being assigned to. */
   private static final int INDEX = 1;
+
+  /** The index, within the arguments, of the value being assigned. */
   private static final int VALUE = 2;
 
+  /** The type of the array's elements. */
   private final Type elementType;
 
+  /**
+   * Creates an operation that assigns an element of an array with the given element type.
+   *
+   * @param elementType the type of the array's elements
+   */
   ArrayElementSet(Type elementType) {
     this.elementType = elementType;
   }

@@ -6,9 +6,18 @@ import randoop.contract.ObjectContract;
 
 public final class ObjectContractReflectionCode extends ReflectionCode {
 
+  /** The contract to evaluate. */
   final ObjectContract c;
+
+  /** The values that the contract is evaluated on. */
   final Object[] objs;
 
+  /**
+   * Creates an ObjectContractReflectionCode that evaluates the given contract on the given values.
+   *
+   * @param c the contract to evaluate
+   * @param objs the values that the contract is evaluated on
+   */
   @SuppressWarnings("PMD.ArrayIsStoredDirectly")
   public ObjectContractReflectionCode(final ObjectContract c, final Object... objs) {
     this.c = c;

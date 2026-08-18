@@ -201,8 +201,20 @@ final class HelperSequenceCreator {
     }
   }
 
+  /** Extends a sequence by one statement that adds an element to a collection or array. */
   @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   private interface SequenceExtender {
+    /**
+     * Returns {@code addSequence}, extended by statements that add one element to the collection or
+     * array.
+     *
+     * @param addSequence the sequence to extend
+     * @param creationIndex the index, in {@code addSequence}, of the variable holding the
+     *     collection or array
+     * @param index the index, in {@code addSequence}, of the variable holding the element to add
+     * @param i the position within the collection or array at which to add the element
+     * @return {@code addSequence}, extended to add the element
+     */
     Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }
 

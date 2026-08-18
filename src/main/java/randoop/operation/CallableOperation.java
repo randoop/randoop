@@ -131,6 +131,12 @@ public abstract class CallableOperation implements Operation {
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
 
+  /**
+   * Returns the reflection object (such as a {@code Method} or {@code Constructor}) that this
+   * operation invokes, or null if this operation is not implemented by a reflection object.
+   *
+   * @return the reflection object for this operation, or null if there is none
+   */
   @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
   public @Nullable AccessibleObject getReflectionObject() {
     return null;

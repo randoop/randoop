@@ -41,6 +41,20 @@ import randoop.util.Util;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
+  /**
+   * Creates a GenInputsAbstract. No arguments should be null.
+   *
+   * @param command the name of the command
+   * @param pitch the description of the command
+   * @param commandGrammar the usage of the command
+   * @param where the where
+   * @param summary the summary of the command
+   * @param notes the notes for the command
+   * @param input the input
+   * @param output the output
+   * @param example the usage example
+   * @param options the command line arguments
+   */
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
@@ -511,6 +525,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of seconds to spend generating tests")
   public static int time_limit = 100;
 
+  /**
+   * The default value for the {@code --attempted-limit}, {@code --generated-limit}, and {@code
+   * --output-limit} command-line options.
+   */
   private static int LIMIT_DEFAULT = 100_000_000;
 
   /** Maximum number of attempts to generate a test method candidate. */
@@ -554,6 +572,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
+    /** Creates a Limits with the limits given by the command-line options. */
     @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
     public Limits() {
       this(

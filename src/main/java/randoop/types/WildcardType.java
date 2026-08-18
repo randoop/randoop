@@ -27,6 +27,12 @@ class WildcardType extends ParameterType {
     this.hasUpperBound = false;
   }
 
+  /**
+   * Creates a wildcard type with the given bound.
+   *
+   * @param bound the bound of the wildcard type
+   * @param hasUpperBound true if {@code bound} is an upper bound, false if it is a lower bound
+   */
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   WildcardType(ParameterBound bound, boolean hasUpperBound) {
     super();

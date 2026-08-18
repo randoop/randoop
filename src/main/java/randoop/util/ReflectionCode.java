@@ -90,6 +90,11 @@ public abstract class ReflectionCode {
    */
   protected abstract void runReflectionCodeRaw();
 
+  /**
+   * Returns the value returned by the execution, which is null if the execution threw an exception.
+   *
+   * @return the value returned by the execution, or null if it threw an exception
+   */
   public @Nullable Object getReturnValue() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
