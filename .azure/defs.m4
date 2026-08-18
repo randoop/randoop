@@ -19,7 +19,9 @@ ifelse($1,canary_version,,[    dependsOn:
       - checkout: self
         fetchDepth: 25
       - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-nonSystemTest.sh
-        displayName: test-nonSystemTest.sh])dnl
+        displayName: test-nonSystemTest.sh
+    env:
+      TERM: dumb])dnl
 dnl
 define([systemTest_job], [dnl
   - job: systemTest_jdk$1
@@ -34,7 +36,9 @@ ifelse($1,canary_version,,[    dependsOn:
       - checkout: self
         fetchDepth: 25
       - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
-        displayName: test-systemTest.sh])dnl
+        displayName: test-systemTest.sh
+    env:
+      TERM: dumb])dnl
 dnl
 define([misc_job], [dnl
   - job: misc
@@ -45,7 +49,9 @@ define([misc_job], [dnl
       - checkout: self
         fetchDepth: 25
       - bash: ./scripts/test-misc.sh
-        displayName: test-misc.sh])dnl
+        displayName: test-misc.sh
+    env:
+      TERM: dumb])dnl
 dnl
 ifelse([
 Local Variables:

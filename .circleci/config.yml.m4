@@ -5,6 +5,9 @@ include([defs.m4])dnl
 
 version: 2.1
 
+environment:
+  TERM: dumb
+
 jobs:
 include([../.azure/jobs.m4])dnl
 

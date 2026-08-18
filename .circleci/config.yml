@@ -1,5 +1,8 @@
 version: 2.1
 
+environment:
+  TERM: dumb
+
 jobs:
   nonSystemTest-jdk8:
     docker:
