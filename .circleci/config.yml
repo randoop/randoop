@@ -4,6 +4,8 @@ jobs:
   nonSystemTest-jdk8:
     docker:
       - image: mdernst/randoop-ubuntu-jdk8
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -47,6 +49,8 @@ jobs:
   systemTest-jdk8:
     docker:
       - image: mdernst/randoop-ubuntu-jdk8
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -92,6 +96,8 @@ jobs:
   nonSystemTest-jdk11:
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -135,6 +141,8 @@ jobs:
   systemTest-jdk11:
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -180,6 +188,8 @@ jobs:
   nonSystemTest-jdk17:
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -223,6 +233,8 @@ jobs:
   systemTest-jdk17:
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -268,6 +280,8 @@ jobs:
   nonSystemTest-jdk21:
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -311,6 +325,8 @@ jobs:
   systemTest-jdk21:
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -356,6 +372,8 @@ jobs:
   nonSystemTest-jdk25:
     docker:
       - image: mdernst/randoop-ubuntu-jdk25
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -399,6 +417,8 @@ jobs:
   systemTest-jdk25:
     docker:
       - image: mdernst/randoop-ubuntu-jdk25
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -444,6 +464,8 @@ jobs:
   nonSystemTest-jdk26:
     docker:
       - image: mdernst/randoop-ubuntu-jdk26
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -487,6 +509,8 @@ jobs:
   systemTest-jdk26:
     docker:
       - image: mdernst/randoop-ubuntu-jdk26
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -532,6 +556,8 @@ jobs:
   misc:
     docker:
       - image: mdernst/randoop-ubuntu-jdkany
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:

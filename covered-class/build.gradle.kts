@@ -30,7 +30,15 @@ tasks.javadoc {
   (options as StandardJavadocDocletOptions).addStringOption("Xwerror", "-Xdoclint:all")
 }
 
+/*
+ * Jar needs to be executable as a javaagent.  shadowJar inherits this manifest.
+ */
 tasks.jar {
+  // The fat jar (shadowJar) is named covered-class-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
       mapOf(
@@ -69,15 +77,17 @@ tasks.named<ShadowJar>("shadowJar") {
   relocate("org.tmatesoft", "coveredclass.org.tmatesoft")
 }
 
-tasks.compileTestJava {
-  dependsOn(
-    ":shadowJar",
-    ":copyJars",
-  )
-}
+// A provider for shadowJar's output file.  Because the provider is lazy, its value is
+// computed after the `shadowJar` block above has set `archiveClassifier` and thereby
+// determined shadowJar's archive file name.
+val coveredClassAgentJar = tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile }
 
 tasks.test {
-  jvmArgs("-javaagent:${layout.buildDirectory.get()}/libs/covered-class-$version.jar")
+  // The agent jar file is passed via -javaagent below, not via the test classpath, so
+  // the agent jar file is not otherwise an input to this task; without this line, a
+  // change that affects only shadowJar's output would leave this task UP-TO-DATE.
+  // Naming shadowJar's output file also carries the dependency on shadowJar.
+  inputs.file(coveredClassAgentJar).withPropertyName("coveredClassAgent")
 
   // Show as much as possible to console.
   testLogging {
@@ -92,6 +102,8 @@ tasks.test {
     // Set the working directory for JUnit tests to the resources directory
     // instead of the project directory.
     workingDir = sourceSets["test"].output.resourcesDir!!
+
+    jvmArgs("-javaagent:${coveredClassAgentJar.get()}")
   }
 }
 

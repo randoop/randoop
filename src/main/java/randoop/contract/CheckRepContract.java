@@ -47,6 +47,16 @@ public final class CheckRepContract extends ObjectContract {
     return Objects.hash(checkRepMethod);
   }
 
+  /**
+   * Creates a contract from the given representation check method.
+   *
+   * @param checkRepMethod a public instance method with no parameters and with return type {@code
+   *     boolean} or {@code void}
+   * @throws IllegalArgumentException if {@code checkRepMethod} is null, or if its return type is
+   *     neither {@code boolean} nor {@code void}
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
+   */
   public CheckRepContract(Method checkRepMethod) throws RandoopSpecificationError {
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");

@@ -729,6 +729,10 @@ tasks.register<Zip>("distributionZip") {
   exclude { details ->
     details.file.name.contains("randoop") && !details.file.name.contains("-all-")
   }
+  // A "-thin" jar file contains an agent's own class files but not the agent's
+  // dependencies, so it does not work as a Java agent.  Don't ship it, so that no user
+  // mistakes it for the agent.
+  exclude("**/*-thin.jar")
 }
 
 // ******************** Building manual ******************

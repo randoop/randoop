@@ -58,6 +58,7 @@ public class RunnerThread extends Thread {
     this.state = NextCallMustBe.SETUP;
   }
 
+  /** Runs the {@link ReflectionCode} that this thread was set up with. */
   private void executeReflectionCode() {
     code.runReflectionCode();
   }

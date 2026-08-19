@@ -155,6 +155,11 @@ public class RawSignature {
         + ")";
   }
 
+  /**
+   * Returns a string representation of this that shows all of its fields. For debugging.
+   *
+   * @return a verbose string representation of this
+   */
   public final String toStringDebug(@UnknownInitialization RawSignature this) {
     StringJoiner result = new StringJoiner(System.lineSeparator());
     result.add("RawSignature{");

@@ -41,6 +41,11 @@ tasks.javadoc {
  * Jar needs to be executable as a javaagent.
  */
 tasks.jar {
+  // The fat jar (shadowJar) is named replacecall-${version}.jar, because that is the
+  // file that users pass to the JVM's -javaagent option.  Give the thin jar a
+  // classifier so that the two tasks do not write to the same file.
+  archiveClassifier = "thin"
+
   manifest {
     attributes(
       mapOf(
