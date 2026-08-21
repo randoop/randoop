@@ -33,6 +33,10 @@ public class RunnerThread extends Thread {
     this.code = null;
     this.runFinished = false;
     this.state = NextCallMustBe.SETUP;
+    // A thread that exceeds its timeout cannot always be stopped (see
+    // ReflectionExecutor.stopThread).  Being a daemon thread lets such a thread keep running
+    // without preventing the JVM from exiting.
+    this.setDaemon(true);
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
 
