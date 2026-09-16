@@ -8,8 +8,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-RANDOOP_DIR=$(dirname "${SCRIPT_DIR}")
+SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+RANDOOP_DIR="$(CDPATH='' cd -- "${SCRIPT_DIR}/.." && pwd -P)"
 SUFFIX=${1:-}
 
 # Outputs the most recently built of the arguments, which are the expansion of a glob.
