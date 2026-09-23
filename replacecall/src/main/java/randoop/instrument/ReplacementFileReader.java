@@ -426,7 +426,10 @@ public final class ReplacementFileReader {
     } else if (protocol.equals("file")) {
       Path path;
       try {
-        @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
+        @SuppressWarnings({
+          "JdkObsolete",
+          "PMD.UseStandardCharsets"
+        }) // The replacement requires JDK 11+.
         Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
         path = pathTmp;
       } catch (Exception e) {

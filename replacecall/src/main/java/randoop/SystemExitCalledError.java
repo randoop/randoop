@@ -1,10 +1,11 @@
 package randoop;
 
 /**
- * Exception to be thrown by default replacement for {@code System.exit()}.
+ * Exception to be thrown by the default replacement for {@code System.exit()}.
  *
  * @see randoop.mock.java.lang.System
  */
+@SuppressWarnings("PMD.DoNotExtendJavaLangError")
 public class SystemExitCalledError extends Error {
 
   private static final long serialVersionUID = 20250811;
