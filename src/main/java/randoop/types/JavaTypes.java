@@ -93,7 +93,7 @@ public final class JavaTypes {
 
   /** Do not instantiate. */
   private JavaTypes() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

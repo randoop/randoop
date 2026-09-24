@@ -6,8 +6,10 @@ import randoop.types.TypeTuple;
 
 /** Checks that calling hashCode() on an object does not throw an exception. */
 public final class HashCodeReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
+  /** Private constructor to enforce singleton. */
   private HashCodeReturnsNormally() {}
 
   public static HashCodeReturnsNormally getInstance() {

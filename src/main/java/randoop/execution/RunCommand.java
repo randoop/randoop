@@ -23,7 +23,7 @@ public final class RunCommand {
 
   /** Do not instantiate. */
   private RunCommand() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

@@ -13,6 +13,7 @@ public final class CompareToAntiSymmetric extends ObjectContract {
   /** The singleton instance of this class. */
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
+  /** Private constructor to enforce singleton. */
   private CompareToAntiSymmetric() {}
 
   public static CompareToAntiSymmetric getInstance() {

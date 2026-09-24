@@ -14,6 +14,7 @@ import org.plumelib.util.MapsP;
  * assignment tests.
  */
 public final class PrimitiveTypes {
+  /** Do not instantiate. */
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");
   }

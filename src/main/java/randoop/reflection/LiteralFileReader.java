@@ -53,7 +53,7 @@ public final class LiteralFileReader {
 
   /** Do not instantiate. */
   private LiteralFileReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

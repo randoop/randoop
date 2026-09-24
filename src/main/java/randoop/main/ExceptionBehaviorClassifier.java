@@ -14,7 +14,7 @@ public final class ExceptionBehaviorClassifier {
 
   /** Do not instantiate. */
   private ExceptionBehaviorClassifier() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

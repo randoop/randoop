@@ -22,7 +22,7 @@ public final class Randomness {
 
   /** Do not instantiate. */
   private Randomness() {
-    throw new Error("Do not instantiate.");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /** The default initial seed for the random number generator. */

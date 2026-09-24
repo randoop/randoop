@@ -13,7 +13,7 @@ public final class ObjectContractUtils {
 
   /** Do not instantiate. */
   private ObjectContractUtils() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

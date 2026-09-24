@@ -11,7 +11,7 @@ public final class CoveredClassAgent {
 
   /** Do not instantiate. */
   private CoveredClassAgent() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

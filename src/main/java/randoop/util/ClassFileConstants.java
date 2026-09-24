@@ -161,7 +161,7 @@ public final class ClassFileConstants {
 
   /** Do not instantiate. */
   private ClassFileConstants() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

@@ -17,7 +17,7 @@ public final class JarReader {
 
   /** Do not instantiate. */
   private JarReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   public static void main(String[] args) throws IOException {

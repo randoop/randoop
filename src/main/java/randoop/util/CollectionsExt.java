@@ -8,8 +8,10 @@ import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
+/** Utility methods that operate on collections. */
 public final class CollectionsExt {
 
+  /** Do not instantiate. */
   private CollectionsExt() {
     throw new IllegalStateException("no instances");
   }

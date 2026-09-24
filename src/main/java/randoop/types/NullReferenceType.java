@@ -11,6 +11,7 @@ final class NullReferenceType extends ReferenceType {
   /** The single canonical instance of this class. */
   private static final NullReferenceType value = new NullReferenceType();
 
+  /** Private constructor to enforce singleton. */
   private NullReferenceType() {}
 
   /**

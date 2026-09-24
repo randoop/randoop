@@ -12,6 +12,7 @@ import randoop.main.RandoopBug;
 /** Static methods that log to GenInputsAbstract.log, if that is non-null. */
 public final class Log {
 
+  /** Do not instantiate. */
   private Log() {
     throw new IllegalStateException("no instance");
   }

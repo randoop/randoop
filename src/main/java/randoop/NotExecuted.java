@@ -6,6 +6,7 @@ public final class NotExecuted extends ExecutionOutcome {
   /** The single canonical instance of this class. */
   private static NotExecuted notExecutedSingleton = new NotExecuted();
 
+  /** Private constructor to enforce singleton. */
   private NotExecuted() {
     super(-1);
   }

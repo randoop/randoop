@@ -18,7 +18,7 @@ public final class DemandDrivenLog {
 
   /** Do not instantiate. */
   private DemandDrivenLog() {
-    throw new IllegalStateException("Do not instantiate.");
+    throw new UnsupportedOperationException("Do not instantiate.");
   }
 
   /**

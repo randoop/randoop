@@ -12,7 +12,7 @@ public final class OperationParser {
 
   /** Do not instantiate. */
   private OperationParser() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

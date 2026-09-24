@@ -6,8 +6,10 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(x0)==true}. */
 public final class EqualsReflexive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReflexive instance = new EqualsReflexive();
 
+  /** Private constructor to enforce singleton. */
   private EqualsReflexive() {}
 
   public static EqualsReflexive getInstance() {

@@ -45,7 +45,7 @@ final class HelperSequenceCreator {
 
   /** Do not instantiate. */
   private HelperSequenceCreator() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
