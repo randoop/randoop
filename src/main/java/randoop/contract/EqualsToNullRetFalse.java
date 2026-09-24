@@ -8,6 +8,7 @@ import randoop.types.TypeTuple;
 public final class EqualsToNullRetFalse extends ObjectContract {
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 
+  /** Private constructor to enforce singleton. */
   private EqualsToNullRetFalse() {}
 
   public static EqualsToNullRetFalse getInstance() {

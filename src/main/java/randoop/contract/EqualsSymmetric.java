@@ -9,6 +9,7 @@ import randoop.types.TypeTuple;
 public final class EqualsSymmetric extends ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
+  /** Private constructor to enforce singleton. */
   private EqualsSymmetric() {}
 
   public static EqualsSymmetric getInstance() {

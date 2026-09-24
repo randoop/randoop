@@ -15,6 +15,7 @@ import randoop.types.Type;
  * Used by sequence generators.
  */
 public final class SeedSequences {
+  /** Do not instantiate. */
   private SeedSequences() {
     throw new IllegalStateException("no instance");
   }

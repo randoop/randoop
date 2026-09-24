@@ -26,6 +26,12 @@ public class TupleSet<E> {
     this.tupleLength = 0;
   }
 
+  /**
+   * Creates a tuple set with the given tuples.
+   *
+   * @param tuples the tuples, all of which have length {@code tupleLength}
+   * @param tupleLength the length of each tuple
+   */
   private TupleSet(List<List<E>> tuples, int tupleLength) {
     this.tuples = tuples;
     this.tupleLength = tupleLength;

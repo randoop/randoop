@@ -2,6 +2,7 @@ package randoop.mock.java.util;
 
 public class RandomReplace {
 
+  /** Do not instantiate. */
   private RandomReplace() {
     throw new UnsupportedOperationException("Do not instantiate");
   }

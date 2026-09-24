@@ -10,6 +10,7 @@ import randoop.Globals;
 
 public final class CollectionsExt {
 
+  /** Do not instantiate. */
   private CollectionsExt() {
     throw new IllegalStateException("no instances");
   }

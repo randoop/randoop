@@ -14,6 +14,7 @@ import randoop.Globals;
 /** Helpers for assertions, and stuff... */
 public final class Util {
 
+  /** Do not instantiate. */
   private Util() {
     throw new IllegalStateException("no instance");
   }

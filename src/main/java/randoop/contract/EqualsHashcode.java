@@ -8,6 +8,7 @@ import randoop.types.TypeTuple;
 public final class EqualsHashcode extends ObjectContract {
   private static final EqualsHashcode instance = new EqualsHashcode();
 
+  /** Private constructor to enforce singleton. */
   private EqualsHashcode() {}
 
   public static EqualsHashcode getInstance() {

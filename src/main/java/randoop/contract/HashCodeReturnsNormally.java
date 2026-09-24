@@ -8,6 +8,7 @@ import randoop.types.TypeTuple;
 public final class HashCodeReturnsNormally extends ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
+  /** Private constructor to enforce singleton. */
   private HashCodeReturnsNormally() {}
 
   public static HashCodeReturnsNormally getInstance() {
