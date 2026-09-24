@@ -20,6 +20,7 @@ import randoop.main.RandoopBug;
  */
 public final class ReflectionExecutor {
 
+  /** Do not instantiate. */
   private ReflectionExecutor() {
     throw new UnsupportedOperationException("Do not instantiate");
   }
