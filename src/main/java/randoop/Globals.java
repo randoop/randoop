@@ -16,7 +16,7 @@ public final class Globals {
 
   /** Do not instantiate. */
   private Globals() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /** The version number for Randoop. */

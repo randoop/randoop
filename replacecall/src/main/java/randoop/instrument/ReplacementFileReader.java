@@ -80,7 +80,7 @@ public final class ReplacementFileReader {
 
   /** Do not instantiate. */
   private ReplacementFileReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

@@ -321,7 +321,8 @@ hooks = [
 #   { id = "oxlint", verbose = true }
 # ]
 
-# Taplo does not work on ARM and is not actively maintained.
+# Taplo does not work on ARM Linux and is not actively maintained.
+# [[repos]]
 # repo = "https://github.com/ComPWA/taplo-pre-commit"
 # rev = "v0.9.3"
 # hooks = [

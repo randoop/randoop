@@ -12,7 +12,7 @@ final class CompileUtil {
 
   /** Do not instantiate. */
   private CompileUtil() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

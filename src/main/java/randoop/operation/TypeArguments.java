@@ -21,7 +21,7 @@ final class TypeArguments {
 
   /** Do not instantiate. */
   private TypeArguments() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

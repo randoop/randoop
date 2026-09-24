@@ -23,7 +23,7 @@ public final class TestUtils {
 
   /** Do not instantiate. */
   private TestUtils() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

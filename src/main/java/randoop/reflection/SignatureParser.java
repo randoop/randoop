@@ -41,7 +41,7 @@ public final class SignatureParser {
 
   /** Do not instantiate. */
   private SignatureParser() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**

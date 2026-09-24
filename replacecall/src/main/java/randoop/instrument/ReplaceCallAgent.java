@@ -46,7 +46,7 @@ public final class ReplaceCallAgent {
 
   /** Do not instantiate. */
   private ReplaceCallAgent() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /** Run the replacecall agent in debug mode. */

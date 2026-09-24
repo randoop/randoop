@@ -3,7 +3,7 @@ package randoop.mock.java.util;
 public class RandomReplace {
 
   private RandomReplace() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   // Used to replace calls to the constructor Random().

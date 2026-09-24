@@ -20,7 +20,7 @@ public final class Value {
 
   /** Do not instantiate. */
   private Value() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
