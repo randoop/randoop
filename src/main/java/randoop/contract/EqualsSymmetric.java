@@ -7,6 +7,7 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
 public final class EqualsSymmetric extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
   /** Private constructor to enforce singleton. */

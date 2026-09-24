@@ -7,6 +7,7 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
 public final class SizeToArrayLength extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final SizeToArrayLength instance = new SizeToArrayLength();
 
   /** Private constructor to enforce singleton. */

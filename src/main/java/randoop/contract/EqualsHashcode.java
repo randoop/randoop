@@ -6,6 +6,7 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o1.hashCode() == o2.hashCode()}. */
 public final class EqualsHashcode extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsHashcode instance = new EqualsHashcode();
 
   /** Private constructor to enforce singleton. */

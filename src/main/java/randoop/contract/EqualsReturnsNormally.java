@@ -6,6 +6,7 @@ import randoop.types.TypeTuple;
 
 /** Checks that calling equals() on an object does not throw an exception. */
 public final class EqualsReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
   /** Private constructor to enforce singleton. */
