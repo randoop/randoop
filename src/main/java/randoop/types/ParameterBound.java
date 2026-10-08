@@ -88,9 +88,6 @@ public abstract class ParameterBound {
   static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
-      }
       return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {

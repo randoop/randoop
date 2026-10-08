@@ -71,7 +71,7 @@ configure<PublishingExtension> {
 
     maven {
       name = "fakeRemote"
-      url = uri("file://${layout.buildDirectory.get()}/maven-fake-remote-repository")
+      url = uri(layout.buildDirectory.dir("maven-fake-remote-repository"))
     }
   }
 }
