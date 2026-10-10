@@ -51,7 +51,7 @@ tasks.jar {
       mapOf(
         "Premain-Class" to "randoop.instrument.ReplaceCallAgent",
         "Can-Redefine-Classes" to "true",
-      )
+      ),
     )
   }
 }
@@ -81,7 +81,7 @@ val replacecallAgentTest =
         files("${layout.buildDirectory.get()}/libs/replacecall-$version.jar")
     // use the replacecall agent using the exclusions file from agentTest/resources
     jvmArgs(
-      "-javaagent:${layout.buildDirectory.get()}/libs/replacecall-$version.jar=--dont-transform=replacecall-exclusions.txt"
+      "-javaagent:${layout.buildDirectory.get()}/libs/replacecall-$version.jar=--dont-transform=replacecall-exclusions.txt",
     )
     jvmArgs("-Xbootclasspath/a:${layout.buildDirectory.get()}/libs/replacecall-$version.jar")
     testLogging {
