@@ -44,7 +44,7 @@ tasks.jar {
       mapOf(
         "Premain-Class" to "randoop.instrument.CoveredClassAgent",
         "Can-Redefine-Classes" to "true",
-      )
+      ),
     )
   }
 }
