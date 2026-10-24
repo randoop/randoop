@@ -14,7 +14,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   /* --------------------------- Singleton --------------------------- */
 
-  /** Singleton instance. */
+  /** The singleton instance. */
   private static final GrtStringFuzzer INSTANCE = new GrtStringFuzzer();
 
   /**
@@ -40,7 +40,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   @Override
   public VarAndSeq fuzz(Sequence sequence, Variable variable) {
-    if (sequence.size() == 0) {
+    if (sequence.isEmpty()) {
       throw new IllegalArgumentException("Cannot fuzz an empty Sequence");
     }
 
@@ -49,7 +49,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
     Sequence fuzzedSeq =
         Sequence.concatenate(sequence, Sequence.createSequenceForPrimitive(mutated));
     return new VarAndSeq(
-        sequence.getLastVariable(), fuzzedSeq); // The last variable is the mutated String.
+        fuzzedSeq.getLastVariable(), fuzzedSeq); // The last variable is the mutated String.
   }
 
   /* ------------------------- Helper methods ------------------------------ */
@@ -69,16 +69,22 @@ public final class GrtStringFuzzer extends GrtFuzzer {
         char c = randomPrintableChar();
         return s.substring(0, pos) + c + s.substring(pos);
       case REMOVE:
-        if (len == 0) return s;
+        if (len == 0) {
+          return s;
+        }
         int rpos = Randomness.nextRandomInt(len);
         return s.substring(0, rpos) + s.substring(rpos + 1);
       case REPLACE:
-        if (len == 0) return s;
+        if (len == 0) {
+          return s;
+        }
         int xpos = Randomness.nextRandomInt(len);
         char xc = randomPrintableChar();
         return s.substring(0, xpos) + xc + s.substring(xpos + 1);
       case SUBSTRING:
-        if (len <= 1) return s;
+        if (len <= 1) {
+          return s;
+        }
         int i1 = Randomness.nextRandomInt(len - 1);
         int i2 = Randomness.nextRandomInt(len - i1) + i1 + 1;
         return s.substring(i1, i2);

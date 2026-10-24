@@ -12,7 +12,7 @@ import randoop.operation.TypedOperation;
 // TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
 // execution.
 /**
- * The working implementation of a {@link OperationHistoryLogInterface} that will collect and print
+ * The working implementation of an {@link OperationHistoryLogInterface} that will collect and print
  * the operation history log to the {@code PrintWriter} given when constructed.
  */
 public class OperationHistoryLogger implements OperationHistoryLogInterface {
@@ -70,8 +70,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
-        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
+    Map<OperationOutcome, String> formatMap = new EnumMap<>(OperationOutcome.class);
     writer.format("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {
       writer.format("\t%" + outcome.name().length() + "s", outcome);

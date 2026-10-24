@@ -1,6 +1,7 @@
 package randoop.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.plumelib.util.SystemPlume;
 import randoop.Globals;
@@ -12,7 +13,7 @@ import randoop.sequence.Sequence;
  * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
  * user, and passes control to whoever does.
  */
-public class Main {
+public final class Main {
 
   // Handlers for user-visible commands.
   public static List<CommandHandler> handlers;
@@ -24,7 +25,18 @@ public class Main {
     handlers.add(new Minimize());
   }
 
-  // The main method simply calls nonStaticMain.
+  /** Creates a new Main. */
+  private Main() {
+    // Nothing to do.
+  }
+
+  /**
+   * The entry point.
+   *
+   * <p>This method simply calls {@link #nonStaticMain}.
+   *
+   * @param args the command-line arguments
+   */
   public static void main(String[] args) {
 
     Main main = new Main();
@@ -39,13 +51,12 @@ public class Main {
    */
   public void nonStaticMain(String[] args) {
 
-    if (args.length == 0) args = new String[] {"help"};
+    if (args.length == 0) {
+      args = new String[] {"help"};
+    }
 
     String command = args[0];
-    String[] args2 = new String[args.length - 1];
-    for (int i = 1; i < args.length; i++) {
-      args2[i - 1] = args[i];
-    }
+    String[] args2 = Arrays.copyOfRange(args, 1, args.length);
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
@@ -72,15 +83,21 @@ public class Main {
         System.err.println("The Randoop command " + handler.fcommand + " failed.");
       }
 
-    } catch (RandoopUsageError e) {
+    } catch (RandoopCommandError e) {
 
       System.out.println();
       if (e.getMessage() != null) {
         System.out.println(e.getMessage());
       }
-      if (e instanceof RandoopCommandError) {
-        System.out.println(
-            "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      System.out.println(
+          "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
+      System.exit(1);
+
+    } catch (RandoopUsageError e) {
+
+      System.out.println();
+      if (e.getMessage() != null) {
+        System.out.println(e.getMessage());
       }
       System.exit(1);
 

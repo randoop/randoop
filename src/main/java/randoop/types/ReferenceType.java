@@ -19,6 +19,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class ReferenceType extends Type {
 
+  /** Creates a ReferenceType. */
+  public ReferenceType() {}
+
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object. Creates arrays,
    * classes, and interfaces. For arrays, calls {@link ArrayType#forClass(Class)}. For other
@@ -109,7 +112,7 @@ public abstract class ReferenceType extends Type {
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return super.isAssignableFrom(sourceType)
-        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
+        || (sourceType.isReferenceType() && sourceType.isSubtypeOfOrEqualTo(this));
   }
 
   /**
@@ -150,8 +153,8 @@ public abstract class ReferenceType extends Type {
 
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type. The
-   * substitution will unify this type or a supertype of this type with the given goal type.
+   * instantiate operations of this type, possibly inherited from the goal type. The substitution
+   * will unify this type or a supertype of this type with the given goal type.
    *
    * <p>If there is no unifying substitution, returns {@code null}.
    *
@@ -159,7 +162,7 @@ public abstract class ReferenceType extends Type {
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    return getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 
   /**
@@ -198,12 +201,12 @@ public abstract class ReferenceType extends Type {
    * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType == null) {
-      throw new IllegalArgumentException("type may not be null");
+      throw new IllegalArgumentException("isSubtypeOfOrEqualTo: argument may not be null");
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 

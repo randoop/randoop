@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.ThrowsClause;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
@@ -42,7 +43,8 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
@@ -79,7 +81,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
       ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
       ClassOrInterfaceType expected = exception.getExceptionType();
-      if (throwableType.isSubtypeOf(expected)) { // if exception is in set
+      if (throwableType.isSubtypeOfOrEqualTo(expected)) { // if exception is in set
         return expected;
       }
     }
@@ -93,9 +95,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * @return the ErrorRevealingChecks object
    */
   private ErrorRevealingChecks getMissingExceptionTestChecks(int finalIndex) {
-    ErrorRevealingChecks checks = new ErrorRevealingChecks();
-    checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
-    return checks;
+    return new ErrorRevealingChecks(new MissingExceptionCheck(exceptionSets, finalIndex));
   }
 
   /**

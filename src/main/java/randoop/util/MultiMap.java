@@ -21,7 +21,7 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
   /** The backing map. */
   private final Map<K, Set<V>> map;
 
-  /** Creates a new, empyt MultiMap. */
+  /** Creates a new, empty MultiMap. */
   public MultiMap() {
     map = new LinkedHashMap<>();
   }
@@ -49,8 +49,10 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
    * @param values the values
    */
   public void put(K key, Collection<? extends V> values) {
-    if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<V>(values));
+    if (contains(key)) {
+      remove(key);
+    }
+    map.put(key, new LinkedHashSet<>(values));
   }
 
   public void addAll(Map<? extends K, ? extends V> m) {
@@ -137,12 +139,12 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
    * @param <K> the type of keys
    * @param <V> the type of values
    */
-  private static class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
+  private static final class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
       extends MultiMap<K, V> {
 
     /** The canonical EmptyMultiMap. */
     @SuppressWarnings({"rawtypes"})
-    public static EmptyMultiMap instance = new EmptyMultiMap();
+    public static EmptyMultiMap instance = new EmptyMultiMap<>();
 
     /**
      * Creates an immutable, empty multimap. Should only be called once, because all EmptyMultiMaps

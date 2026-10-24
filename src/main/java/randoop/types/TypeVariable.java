@@ -84,8 +84,8 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   @Override
-  public boolean isSubtypeOf(Type otherType) {
-    if (super.isSubtypeOf(otherType)) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
     if (otherType.isReferenceType()) {
@@ -180,7 +180,7 @@ public abstract class TypeVariable extends ParameterType {
     }
     if (!(upperBound instanceof ReferenceBound
         && ((ReferenceBound) upperBound).getBoundType().isObject())) {
-      result.append(" super ").append(upperBound);
+      result.append(" extends ").append(upperBound);
     }
     return result.toString();
   }

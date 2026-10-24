@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
@@ -39,6 +40,8 @@ public class CaptureConversionTest {
       containerOperations.add(TypedOperation.forMethod(c.getMethod("c", Container.class)));
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
   }
 

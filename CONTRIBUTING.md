@@ -1,11 +1,10 @@
 # Contributing to Randoop
 
-Thank you for contributing to the Randoop!  This project is a
+Thank you for contributing to Randoop!  This project is a
 community effort of [more than 20
 developers](https://checkerframework.org/manual/#credits), plus countless
 more people who have contributed bug reports and feature suggestions.  We
 couldn't do it without your help.
-
 
 ## Reporting bugs
 
@@ -15,7 +14,6 @@ the Randoop manual.
 
 If the documentation is incorrect, incomplete, or confusing, that is a
 bug, and we want to fix it.  Please report it.
-
 
 ## Submitting changes
 
@@ -31,12 +29,10 @@ first issue"](https://github.com/randoop/randoop/contribute)
 label marks issues that require less deep knowledge and may be appropriate
 for a newcomer to the codebase.
 
-
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
 existing [license](LICENSE.txt), usually the MIT License.
-
 
 ## Code of conduct
 

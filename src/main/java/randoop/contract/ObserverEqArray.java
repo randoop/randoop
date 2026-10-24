@@ -29,7 +29,6 @@ public final class ObserverEqArray extends ObjectContract {
   private static final double DOUBLE_DELTA = 1e-15;
 
   /** The maximum difference for which floats are considered equal. */
-  @SuppressWarnings("value:cast.unsafe") // value checker bug
   private static final float FLOAT_DELTA = (float) 1e-15;
 
   /**

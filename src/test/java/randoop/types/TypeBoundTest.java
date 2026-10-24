@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionManager;
@@ -40,7 +41,7 @@ public class TypeBoundTest {
   }
 
   @Test
-  public void testWildcardBounds() {
+  public void testWildcardBounds() throws RandoopSpecificationError {
 
     ReferenceType twType = ReferenceType.forClass(TW.class);
     ReferenceType swType = ReferenceType.forClass(SW.class);
@@ -159,7 +160,8 @@ public class TypeBoundTest {
     }
   }
 
-  private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
+  private Map<String, TypeVariable> getArgumentTypes(Class<?> classType)
+      throws RandoopSpecificationError {
     Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
         new ReflectionManager(

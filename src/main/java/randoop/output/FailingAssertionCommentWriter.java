@@ -117,8 +117,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(String packageName, String classname, String classSource)
-      throws RandoopOutputException {
+  public Path writeClassCode(String packageName, String classname, String classSource) {
     assert !Objects.equals(packageName, "");
 
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
@@ -184,8 +183,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
-      throws RandoopOutputException {
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode) {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
@@ -440,7 +438,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                   + "Please correct the classpath and re-run Randoop.");
         }
       }
-      StringBuilder errorMessage = new StringBuilder();
+      StringBuilder errorMessage = new StringBuilder(256);
       if (status.exitStatus == 137) {
         errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
         errorMessage.append(Globals.lineSep);
@@ -554,6 +552,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
   /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 20171024;
 
     /** The pattern that was not found. */
@@ -586,8 +585,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      String packageName, String classname, String classSource, Path destinationDir)
-      throws FileCompiler.FileCompilerException {
+      String packageName, String classname, String classSource, Path destinationDir) {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
     Path sourceFile;

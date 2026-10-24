@@ -4,18 +4,22 @@ import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 
+/** Exception thrown when a sequence cannot be parsed. */
 public class SequenceParseException extends Exception {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
+
+  /** The error message for the parse exception. */
   private final String message;
 
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
 
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(
-        "Error while parsing the following list of strings as a sequence (error was at index "
-            + statementCount
-            + "): ");
+        "Error while parsing the following list of strings as a sequence (error was at index ");
+    b.append(statementCount);
+    b.append("): ");
     if (msg != null) {
       b.append(msg);
     }
@@ -23,9 +27,11 @@ public class SequenceParseException extends Exception {
     b.append(" While parsing the following sequence:").append(Globals.lineSep);
     for (int i = 0; i < statements.size(); i++) {
       if (i == statementCount) {
-        b.append(">> " + statements.get(i) + "").append(Globals.lineSep);
+        b.append(">> ");
+        b.append(statements.get(i)).append(Globals.lineSep);
       } else {
-        b.append("   " + statements.get(i) + "").append(Globals.lineSep);
+        b.append("   ");
+        b.append(statements.get(i)).append(Globals.lineSep);
       }
     }
     b.append("").append(Globals.lineSep).append(Globals.lineSep);

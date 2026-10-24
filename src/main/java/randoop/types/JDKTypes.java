@@ -58,11 +58,11 @@ import randoop.main.RandoopBug;
  * <p>These types should be maintained as new JDK versions are released. They have been updated for
  * JDK 8.
  */
-public class JDKTypes {
+public final class JDKTypes {
 
   /** Do not instantiate. */
   private JDKTypes() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /** The {@link GenericClassType} for {@code Collection}. */
@@ -159,6 +159,7 @@ public class JDKTypes {
   public static final GenericClassType HASH_SET_TYPE = GenericClassType.forClass(HashSet.class);
 
   /** The {@link GenericClassType} for {@code Hashtable}. */
+  @SuppressWarnings("PMD.ReplaceHashtableWithMap") // silly false positive
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
 
   /** The {@link GenericClassType} for {@code IdentityHashMap}. */
@@ -250,6 +251,7 @@ public class JDKTypes {
   public static final GenericClassType TREE_SET_TYPE = GenericClassType.forClass(TreeSet.class);
 
   /** The {@link GenericClassType} for {@code Vector}. */
+  @SuppressWarnings("PMD.ReplaceVectorWithList") // silly false positive
   public static final GenericClassType VECTOR_TYPE = GenericClassType.forClass(Vector.class);
 
   /** The {@link GenericClassType} for {@code WeakHashMap}. */
@@ -316,7 +318,8 @@ public class JDKTypes {
    */
   public static GenericClassType getImplementingTypeForCollection(ParameterizedType type) {
     GenericClassType genericType = type.getGenericClassType();
-    if (!genericType.isSubtypeOf(COLLECTION_TYPE) && !genericType.isSubtypeOf(MAP_TYPE)) {
+    if (!genericType.isSubtypeOfOrEqualTo(COLLECTION_TYPE)
+        && !genericType.isSubtypeOfOrEqualTo(MAP_TYPE)) {
       throw new IllegalArgumentException("type must be a JDK Collections type, got " + type);
     }
 
@@ -347,7 +350,7 @@ public class JDKTypes {
       version = version.substring(2, 3);
     } else {
       // Since Java 9, from a version string like "11.0.1", extract "11".
-      int i = version.indexOf(".");
+      int i = version.indexOf('.');
       if (i < 0) {
         // Some Linux dockerfiles return only the major version number for
         // the system property "java.version"; i.e., no ".<minor version>".
@@ -357,7 +360,7 @@ public class JDKTypes {
       }
     }
     // Handle version strings like "18-ea".
-    int i = version.indexOf("-");
+    int i = version.indexOf('-');
     if (i > 0) {
       version = version.substring(0, i);
     }

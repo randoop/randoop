@@ -9,6 +9,9 @@ import randoop.sequence.ExecutableSequence;
  */
 public class RegressionTestPredicate implements Predicate<ExecutableSequence> {
 
+  /** Creates a RegressionTestPredicate. */
+  public RegressionTestPredicate() {}
+
   /**
    * Returns true if an executable sequence is a valid regression test. In particular, shouldn't
    * have failures (an error-revealing test), and shouldn't throw TimeoutException.

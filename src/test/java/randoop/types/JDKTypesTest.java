@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  * The JDKTypes class has constants for JDK Collections classes (classes implementing the Collection
- * and Map interfaces, and maps each interface into an implementing class. This test mainly checks
+ * and Map interfaces), and maps each interface into an implementing class. This test mainly checks
  * this mapping to ensure that a concrete subtype is selected for each type.
  */
 public class JDKTypesTest {
@@ -47,7 +47,7 @@ public class JDKTypesTest {
       } else if (classType.isInterface() || classType.isAbstract()) {
         assertFalse(implementingType.isInterface());
         assertFalse(implementingType.isAbstract());
-        assertTrue(implementingType.isSubtypeOf(classType));
+        assertTrue(implementingType.isSubtypeOfOrEqualTo(classType));
       } else {
         assertEquals(classType, implementingType);
       }

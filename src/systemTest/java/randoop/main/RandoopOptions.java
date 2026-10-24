@@ -11,6 +11,8 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 
 /**
  * Manages the options for a run of Randoop within a system test method so that the information can
@@ -108,7 +110,7 @@ class RandoopOptions {
   }
 
   /**
-   * Adds a option-flag to this option set.
+   * Adds an option-flag to this option set.
    *
    * @param option the name of the option flag to be set
    */
@@ -272,7 +274,8 @@ class RandoopOptions {
    * @param classListFilename the class list filename
    */
   private void loadClassNames(String classListFilename) {
-    try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
+    try (EntryReader er =
+        new EntryReader(classListFilename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
       for (String line : er) {
         @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String name = line.trim();

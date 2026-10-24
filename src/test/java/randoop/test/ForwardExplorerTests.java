@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -57,7 +58,8 @@ public class ForwardExplorerTests {
     optionsCache.restoreState();
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
     return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
@@ -83,7 +85,7 @@ public class ForwardExplorerTests {
     ReflectionExecutor.call_timeout_millis = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     GenInputsAbstract.progressintervalsteps = 100;
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =
@@ -140,7 +142,7 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =

@@ -13,6 +13,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.checkerframework.checker.regex.qual.Regex;
 
 /**
  * Class to hold the return status from running a command assuming that it is run in a process where
@@ -42,7 +43,8 @@ class ProcessStatus {
     this.outputLines = outputLines;
   }
 
-  static final String lineSep = System.lineSeparator();
+  @SuppressWarnings("regex")
+  static final @Regex String lineSep = System.lineSeparator();
 
   /** Outputs a verbose representation of this. */
   public String dump() {

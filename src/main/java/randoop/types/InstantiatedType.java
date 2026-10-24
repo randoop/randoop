@@ -294,7 +294,7 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Returns true if this type is an instantiation of the given instantiated type. This is only
    * possible if this type is {@code A<T1,...,Tk>} where all {@code Ti} are instantiated by ground
-   * types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
+   * types (i.e., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
    * {@code Ti} matches {@code Si} for {@code i = 1,...,k} as follows:
    *
    * <ol>
@@ -338,7 +338,7 @@ public class InstantiatedType extends ParameterizedType {
       // isInstantiationOf("foo(Integer, String)", "foo(T,T)").
       return true;
     } else {
-      // otherType is not a ParameterizedType (not a InstantiatedType or GenericClassType)
+      // otherType is not a ParameterizedType (not an InstantiatedType or GenericClassType)
       if (super.isInstantiationOf(otherType)) {
         return true;
       }
@@ -348,8 +348,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }
@@ -400,7 +399,7 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
-    return argType.isSubtypeOf(this);
+    return argType.isSubtypeOfOrEqualTo(this);
   }
 
   @Override
@@ -424,7 +423,7 @@ public class InstantiatedType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType.isParameterized()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
@@ -452,17 +451,17 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
     // wildcard clause
     if (this.hasWildcard()) { // JLS 4.10.2
       // old note says this has to be tested first
-      return this.applyCaptureConversion().isSubtypeOf(otherType);
+      return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
-    return this.getRawtype().isSubtypeOf(otherType);
+    return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
   @Override

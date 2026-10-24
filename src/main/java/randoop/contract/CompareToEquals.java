@@ -9,7 +9,7 @@ import randoop.types.TypeTuple;
  *
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
-public class CompareToEquals extends ObjectContract {
+public final class CompareToEquals extends ObjectContract {
   /** The singleton instance of this class. */
   private static final CompareToEquals instance = new CompareToEquals();
 
@@ -68,11 +68,10 @@ public class CompareToEquals extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("(x0.compareTo(x1) == 0) == x0.equals(x1)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", (x0.compareTo(x1) == 0) == x0.equals(x1));");
     return b.toString();
   }
 }

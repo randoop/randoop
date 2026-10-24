@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -70,7 +70,7 @@ public class SliderDemo extends JPanel
         //Create the slider.
         JSlider framesPerSecond = new JSlider(JSlider.HORIZONTAL,
                                               FPS_MIN, FPS_MAX, FPS_INIT);
-        
+
 
         framesPerSecond.addChangeListener(this);
 
@@ -208,21 +208,21 @@ public class SliderDemo extends JPanel
         JFrame frame = new JFrame("SliderDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         SliderDemo animator = new SliderDemo();
-                
+
         //Add content to the window.
         frame.add(animator, BorderLayout.CENTER);
 
         //Display the window.
         frame.pack();
         frame.setVisible(true);
-        animator.startAnimation(); 
+        animator.startAnimation();
     }
 
     public static void main(String[] args) {
         /* Turn off metal's use of bold fonts */
         UIManager.put("swing.boldMetal", Boolean.FALSE);
-        
-        
+
+
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -232,4 +232,3 @@ public class SliderDemo extends JPanel
         });
     }
 }
-

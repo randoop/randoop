@@ -5,6 +5,7 @@ import static randoop.main.GenInputsAbstract.BehaviorType.INVALID;
 import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.SequenceExceptionError;
@@ -34,7 +35,7 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
   /**
    * {@inheritDoc}
    *
-   * <p>Checks validity of a test sequence and creates a {@code InvalidChecks} object containing a
+   * <p>Checks validity of a test sequence and creates an {@code InvalidChecks} object containing a
    * {@link InvalidChecks} for the first invalid exception encountered, if any. There are three
    * possible outcomes:
    *
@@ -58,9 +59,11 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
    *     statement of sequence
    */
   @Override
-  public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
-    int finalIndex = eseq.sequence.size() - 1;
-    for (int i = 0; i < eseq.sequence.size(); i++) { // SIList has no iterator
+  public InvalidChecks generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
+    int size = eseq.sequence.size();
+    int finalIndex = size - 1;
+    for (int i = 0; i < size; i++) { // SIList has no iterator
       ExecutionOutcome result = eseq.getResult(i);
       if (result instanceof ExceptionalExecution) {
         ExceptionalExecution exec = (ExceptionalExecution) result;

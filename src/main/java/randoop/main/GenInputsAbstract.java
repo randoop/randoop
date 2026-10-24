@@ -1,9 +1,9 @@
 package randoop.main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,6 +28,8 @@ import org.plumelib.options.Unpublicized;
 import org.plumelib.reflection.ReflectionPlume;
 import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.FileWriterWithName;
 import randoop.Globals;
 import randoop.reflection.AccessibilityPredicate;
@@ -39,6 +41,21 @@ import randoop.util.Util;
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
+  /**
+   * Creates a GenInputsAbstract. No arguments should be null.
+   *
+   * @param command the name of the command
+   * @param pitch the description of the command
+   * @param commandGrammar the usage of the command
+   * @param where the where
+   * @param summary the summary of the command
+   * @param notes the notes for the command
+   * @param input the input
+   * @param output the output
+   * @param example the usage example
+   * @param options the command line arguments
+   */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
       String pitch,
@@ -145,7 +162,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
   //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
   //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain curcimstances and may be be added in the future,
+  //  behaviors may be desirable in certain circumstances and may be added in the future,
   //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
@@ -288,7 +305,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int nondeterministic_methods_to_output = 10;
 
   /**
-   * If true, output error-revealing tests. Disables all output when used with {@code
+   * If true, do not output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -298,7 +315,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_error_revealing_tests = false;
 
   /**
-   * If true, output regression tests. Disables all output when used with {@code
+   * If true, do not output regression tests. Disables all output when used with {@code
    * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
    * of {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -319,7 +336,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
    * This check is useful because the assumptions in Randoop generation heuristics are sometimes
    * violated by input methods, and, as a result, a generated test may not compile. This check does
-   * increases the runtime by approximately 50%.
+   * increase the runtime by approximately 50%.
    */
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
@@ -411,7 +428,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * If a test that passes {@code null} as an argument throws a {@code NullPointerException}, should
-   * the test be be included in the error-revealing test suite (value: ERROR), regression test suite
+   * the test be included in the error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
    */
   @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")
@@ -508,7 +525,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of seconds to spend generating tests")
   public static int time_limit = 100;
 
-  private static int LIMIT_DEFAULT = 100000000;
+  /**
+   * The default value for the {@code --attempted-limit}, {@code --generated-limit}, and {@code
+   * --output-limit} command-line options.
+   */
+  private static int LIMIT_DEFAULT = 100_000_000;
 
   /** Maximum number of attempts to generate a test method candidate. */
   @Option("Maximum number of attempts to generate a candidate test")
@@ -527,7 +548,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * smaller than this limit. One reason is that Randoop does not output subsumed tests, which
    * appear as a subsequence of some longer test.
    */
-  @Option("Maximum number of tests to ouput")
+  @Option("Maximum number of tests to output")
   public static int output_limit = LIMIT_DEFAULT;
 
   /**
@@ -551,6 +572,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** Maximum number of sequences to output. Must be non-negative. */
     public int output_limit;
 
+    /** Creates a Limits with the limits given by the command-line options. */
+    @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
     public Limits() {
       this(
           GenInputsAbstract.time_limit,
@@ -598,7 +621,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>For example, a null ratio of 0.05 directs Randoop to use {@code null} as an input 5 percent
    * of the time when a non-{@code null} value of the appropriate type is available.
    *
-   * <p>Unless {@code --forbid_null} is supplied, a {@code null} value will still be used if no
+   * <p>Unless {@code --forbid-null} is supplied, a {@code null} value will still be used if no
    * other value can be passed as an argument even if {@code --null-ratio=0}.
    *
    * <p>Randoop never uses {@code null} for receiver values.
@@ -621,7 +644,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * A file containing literal values to be used as inputs to methods under test, or "CLASSES".
    *
-   * <p>Literals in these files are used in addition to all other constants in the pool. For the
+   * <p>Literals in these files are used in addition to all other literals in the pool. For the
    * format of this file, see documentation in class {@link randoop.reflection.LiteralFileReader}.
    * The special value "CLASSES" (with no quotes) means to read literals from all classes under
    * test; it may be specified in addition to one or more files.
@@ -655,6 +678,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** Each literal is used as input to any method under test. */
     ALL
   }
+
+  /** If true, use Literal-TF-IDF for selecting constants as procedure inputs. */
+  @Option("Whether to use Literal-TF-IDF for selecting constants as procedure inputs")
+  public static boolean literal_tfidf = false;
+
+  /**
+   * The probability of using a constant value as an input to a method under test. This option is
+   * only used when {@code --literal-tfidf} is set to true.
+   */
+  @Option("The probability to use Literal-TF-IDF")
+  public static double literal_tfidf_probability = 0.01;
+
+  /**
+   * If true, include literals from superclasses when computing literal statistics for TF-IDF. When
+   * true, a class's literal statistics will include literals from all of its superclasses. This
+   * option only applies when {@code --literal-tfidf} is set to true and {@code --literals-level} is
+   * set to CLASS.
+   */
+  @Option(
+      "Whether to include literals from superclasses when computing literal statistics for TF-IDF")
+  public static boolean include_superclass_literals = false;
 
   /**
    * Randoop generates new tests by choosing from a set of methods under test. This controls how the
@@ -711,6 +755,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 1000;
+
+  // This enables Randoop's "demand-driven" strategy.
+  /**
+   * Constructs missing method inputs on demand.
+   *
+   * <p>Normally, Randoop selects method inputs from values already present in the sequence
+   * collection. Thus, Randoop cannot test a method until the required input types have themselves
+   * been generated. If no method in the software under test (SUT) returns the required type, then
+   * Randoop can never generate or select objects of that type. With this option enabled, Randoop
+   * attempts to generate instances of types it cannot construct normally.
+   *
+   * <p>Enabling this option may violate the guarantee that Randoop's tests only use classes that
+   * the user specified. Any violation of this guarantee will be reported as part of the console
+   * output.
+   */
+  @Option("Call non-SUT methods if needed to create method inputs for SUT methods")
+  public static boolean call_non_sut_methods = false;
+
+  /**
+   * Log information about the classes used and the uninstantiable types encountered when creating
+   * values by calling non-SUT methods.
+   */
+  @Option("Log information about demand-driven input creation")
+  public static @MonotonicNonNull FileWriterWithName call_non_sut_methods_log = null;
 
   /**
    * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.
@@ -777,7 +845,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * tests generated during a single run.
    */
   @Option("Clear the component set when it gets this big")
-  public static int clear = 100000000;
+  public static int clear = 100_000_000;
 
   /**
    * Clear the component set each time Randoop uses this much memory.
@@ -786,7 +854,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * that is slow due to thrashing and garbage collection.
    */
   @Option("Clear the component set when Randoop uses this much memory")
-  public static long clear_memory = 4000000000L; // default: 4G
+  public static long clear_memory = 4_000_000_000L; // default: 4G
 
   /** Maximum number of tests to write to each JUnit file. */
   // ///////////////////////////////////////////////////////////////////
@@ -884,7 +952,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** System properties that Randoop will set similarly to {@code java -D}, of the form "x=y". */
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
-  // This list enables Randoop to pass these properties to other JVMs, which woud not be easy if the
+  // This list enables Randoop to pass these properties to other JVMs, which would not be easy if
+  // the
   // user ran Randoop using `java -D`.  (But, Randoop does not seem to do so!  It was removed.)
   @Option("-D Specify system properties to be set; similar to {@code java -Dx=y}.")
   public static List<String> system_props = new ArrayList<>();
@@ -936,7 +1005,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean progressdisplay = true;
 
   /** Default value for progressintervalmillis; helps to see if user has set it. */
-  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60000;
+  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60_000;
 
   /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
   @Option("Display progress message every <int> milliseconds; -1 means no display.")
@@ -958,6 +1027,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log lots of information. If not specified, no logging is done. Enabling the
    * logs slows down Randoop.
    */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   @Option("<filename> Log lots of information to this file")
   public static @Owning @MonotonicNonNull FileWriterWithName log = null;
 
@@ -965,8 +1035,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism (randomness). If not
    * specified, no logging is done.
    */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   @Option("<filename> Log each random selection to this file")
-  public static @MonotonicNonNull FileWriterWithName selection_log = null;
+  public static @Owning @MonotonicNonNull FileWriterWithName selection_log = null;
 
   /** A file to which to write operation usage, when Randoop exits. */
   @Option("<filename> Write operation usage counts to this file")
@@ -988,7 +1059,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   // ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value = "Advanced extension points")
+  @OptionGroup("Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
@@ -1013,7 +1084,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
     if (forbid_null) {
       if (null_ratio != 0 && null_ratio != null_ratio_default) {
-        throw new RandoopUsageError("Both --forbid_null and --null-ratio were provided");
+        throw new RandoopUsageError("Both --forbid-null and --null-ratio were provided");
       } else {
         null_ratio = 0;
       }
@@ -1027,7 +1098,34 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"
-              + " specified a class literal file and --use-class-literals=NONE");
+              + " specified a class literal file and --literals-level=NONE");
+    }
+
+    if (literal_tfidf && literals_level == ClassLiteralsMode.NONE) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " specified --literal-tfidf and --literals-level=NONE");
+    }
+
+    if (include_superclass_literals && !literal_tfidf) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals requires --literal-tfidf to be enabled");
+    }
+
+    if (include_superclass_literals && literals_level != ClassLiteralsMode.CLASS) {
+      throw new RandoopUsageError(
+          "Invalid parameter combination:"
+              + " --include-superclass-literals only works with --literals-level=CLASS");
+    }
+
+    // Allow edge probabilities 0 and 1 for determinism and consistency with
+    // Randomness.weightedCoinFlip(), which accepts values in [0, 1].
+    if (literal_tfidf_probability < 0 || literal_tfidf_probability > 1) {
+      throw new RandoopUsageError(
+          "Probability --literal-tfidf-probability="
+              + literal_tfidf_probability
+              + " must be in [0, 1]");
     }
 
     if (deterministic && ReflectionExecutor.usethreads) {
@@ -1050,7 +1148,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       }
     }
 
-    if (deterministic && GenInputsAbstract.input_selection == InputSelectionMode.ORIENTEERING) {
+    if (deterministic && input_selection == InputSelectionMode.ORIENTEERING) {
       throw new RandoopUsageError(
           "Invalid parameter combination: --deterministic with --input-selection==orienteering");
     }
@@ -1144,9 +1242,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @param accessibility the accessibility predicate
    * @return the classes provided via the --classlist or --testjar command-line argument
+   * @throws RandoopClassNameError if a class named by an argument cannot be loaded
    */
   public static Set<@ClassGetName String> getClassnamesFromArgs(
-      AccessibilityPredicate accessibility) {
+      AccessibilityPredicate accessibility) throws RandoopClassNameError {
     Set<@ClassGetName String> classnames = getClassNamesFromFile(classlist);
     for (Path jarFile : testjar) {
       classnames.addAll(getClassnamesFromJarFile(jarFile, accessibility));
@@ -1184,7 +1283,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public static Set<@ClassGetName String> getClassnamesFromJarFile(
       Path jarFile, AccessibilityPredicate accessibility) {
-    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+    try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarFile))) {
       Set<@ClassGetName String> classNames = new TreeSet<>();
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
@@ -1274,9 +1373,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name; may be the empty string
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName}
+   * @throws RandoopClassNameError if a class in the package cannot be loaded
    */
   private static List<@ClassGetName String> getClassnamesFromPackage(
-      String packageName, AccessibilityPredicate accessibility) {
+      String packageName, AccessibilityPredicate accessibility) throws RandoopClassNameError {
     List<@ClassGetName String> classnames = new ArrayList<>();
 
     for (String path : Globals.getClassPath().split(File.pathSeparator)) {
@@ -1299,9 +1399,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes with the given package
+   * @throws RandoopClassNameError if a class in the directory cannot be loaded
    */
   private static List<@ClassGetName String> getClassesWithPackageFromDirectory(
-      File directory, String packageName, AccessibilityPredicate accessibility) {
+      File directory, String packageName, AccessibilityPredicate accessibility)
+      throws RandoopClassNameError {
     String packageNameAsFile = packageName.replace(".", File.separator);
     // This directory contains the .class files.
     File packageDirectory = directory.toPath().resolve(packageNameAsFile).toFile();
@@ -1336,12 +1438,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param packageName a package name
    * @param accessibility the accessibility predicate
    * @return classes in package {@code packageName} in the given jar file
+   * @throws RandoopClassNameError if a class in the jar file cannot be loaded
    */
   private static List<@ClassGetName String> getClassesWithPackageFromJar(
-      File jarFile, String packageName, AccessibilityPredicate accessibility) {
+      File jarFile, String packageName, AccessibilityPredicate accessibility)
+      throws RandoopClassNameError {
     List<@ClassGetName String> classnames = new ArrayList<>();
     String classname = ""; // Declared here to be able to use variable in catch block
-    try (ZipInputStream zip = new ZipInputStream(new FileInputStream(jarFile.toString()))) {
+    try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(jarFile.toPath()))) {
       for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
         if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
           classname =
@@ -1422,7 +1526,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       @Regex(1) String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
-      try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {
+      try (EntryReader er =
+          new EntryReader(
+              listFile, EntryFormat.DEFAULT, new CommentFormat(commentRegex), includeRegex)) {
         for (String line : er) {
           String trimmed = line.trim();
           if (!trimmed.isEmpty()) {

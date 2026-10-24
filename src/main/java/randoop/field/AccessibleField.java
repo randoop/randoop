@@ -62,7 +62,7 @@ public class AccessibleField {
     } else {
       sb.append(inputVars.get(0).getName());
     }
-    return sb.append(".").append(getName()).toString();
+    return sb.append('.').append(getName()).toString();
   }
 
   /**

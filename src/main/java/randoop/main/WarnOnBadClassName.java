@@ -6,6 +6,9 @@ package randoop.main;
  */
 public class WarnOnBadClassName implements ClassNameErrorHandler {
 
+  /** Creates a WarnOnBadClassName. */
+  public WarnOnBadClassName() {}
+
   @Override
   public void handle(String className) {
     System.out.format("Warning: no class \"%s\" found on the classpath%n", className);

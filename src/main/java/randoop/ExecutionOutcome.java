@@ -57,4 +57,8 @@ public abstract class ExecutionOutcome {
   public @Nullable String get_output() {
     return output;
   }
+
+  // Force subclasses to override this method.
+  @Override
+  public abstract String toString();
 }

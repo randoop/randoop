@@ -1,10 +1,12 @@
 package randoop;
 
 /** Means that the statement that this outcome represents was not executed. */
-public class NotExecuted extends ExecutionOutcome {
+public final class NotExecuted extends ExecutionOutcome {
 
+  /** The single canonical instance of this class. */
   private static NotExecuted notExecutedSingleton = new NotExecuted();
 
+  /** Private constructor to enforce singleton. */
   private NotExecuted() {
     super(-1);
   }

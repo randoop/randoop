@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import randoop.condition.RandoopSpecificationError;
 
 /**
  * ClassVisitor defines the interface for a visitor class that uses reflection to collect
@@ -27,22 +28,25 @@ public interface ClassVisitor {
    *
    * @param c the member class
    * @param reflectionManager the {@link ReflectionManager} that called this visitor
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  void visit(Class<?> c, ReflectionManager reflectionManager);
+  void visit(Class<?> c, ReflectionManager reflectionManager) throws RandoopSpecificationError;
 
   /**
    * Perform action on a constructor.
    *
    * @param c the constructor
+   * @throws RandoopSpecificationError if a specification for the constructor is malformed
    */
-  void visit(Constructor<?> c);
+  void visit(Constructor<?> c) throws RandoopSpecificationError;
 
   /**
    * Perform an action on a method.
    *
    * @param m the method
+   * @throws RandoopSpecificationError if a specification for the method is malformed
    */
-  void visit(Method m);
+  void visit(Method m) throws RandoopSpecificationError;
 
   /**
    * Perform an action on a field.

@@ -25,7 +25,7 @@ import randoop.sequence.Variable;
  *
  * <ul>
  *   <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
- *       set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
+ *       set of runtime values. For example, the class {@link randoop.contract.EqualsReflexive} is a
  *       checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
  *       it returns {@code true}.
  *   <li>A list of {@link Variable}s, which describe the specific objects in the sequence that the

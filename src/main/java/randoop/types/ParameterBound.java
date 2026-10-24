@@ -20,14 +20,14 @@ import org.plumelib.util.CollectionsPlume;
  * </pre>
  *
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
- * ParameterBound} class hierarchy is simplified to use this {@link ReferenceType} objects as
- * bounds. Intersection types (which includes the greatest lower bound construction used in capture
+ * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
+ * bounds. Intersection types (which include the greatest lower bound construction used in capture
  * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
  * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
- * being {@link JavaTypes#NULL_TYPE}, and the default upperbound being {@link
+ * being {@link JavaTypes#NULL_TYPE}, and the default upper bound being {@link
  * JavaTypes#OBJECT_TYPE}.
  *
  * @see EagerReferenceBound
@@ -35,6 +35,9 @@ import org.plumelib.util.CollectionsPlume;
  * @see LazyParameterBound
  */
 public abstract class ParameterBound {
+
+  /** Creates a ParameterBound. */
+  public ParameterBound() {}
 
   /**
    * Constructs a parameter bound given a {@link ReferenceType}.
@@ -64,11 +67,11 @@ public abstract class ParameterBound {
     }
 
     if (bounds.length == 1) {
-      return ParameterBound.forType(variableSet, bounds[0]);
+      return forType(variableSet, bounds[0]);
     } else {
       List<ParameterBound> boundList =
           CollectionsPlume.mapList(
-              (java.lang.reflect.Type type) -> ParameterBound.forType(variableSet, type), bounds);
+              (java.lang.reflect.Type type) -> forType(variableSet, type), bounds);
       return new IntersectionTypeBound(boundList);
     }
   }
@@ -249,7 +252,7 @@ public abstract class ParameterBound {
    * @param boundType the other bound
    * @return true if this type is a subtype of the other bound, false otherwise
    */
-  public abstract boolean isSubtypeOf(ParameterBound boundType);
+  public abstract boolean isSubtypeOfOrEqualTo(ParameterBound boundType);
 
   /**
    * Determines if this bound is an upper bound for the argument type.

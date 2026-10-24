@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -28,6 +27,13 @@ class WildcardType extends ParameterType {
     this.hasUpperBound = false;
   }
 
+  /**
+   * Creates a wildcard type with the given bound.
+   *
+   * @param bound the bound of the wildcard type
+   * @param hasUpperBound true if {@code bound} is an upper bound, false if it is a lower bound
+   */
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   WildcardType(ParameterBound bound, boolean hasUpperBound) {
     super();
     this.hasUpperBound = hasUpperBound;
@@ -49,17 +55,15 @@ class WildcardType extends ParameterType {
    */
   public static WildcardType forType(java.lang.reflect.WildcardType type) {
     // Note: every wildcard has an upper bound, so need to check lower first
-    if (type.getLowerBounds().length > 0) {
-      assert type.getLowerBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(
-          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(0), type.getLowerBounds()), false);
+    java.lang.reflect.Type[] lowerBounds = type.getLowerBounds();
+    if (lowerBounds.length > 0) {
+      assert lowerBounds.length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      return new WildcardType(ParameterBound.forTypes(new HashSet<>(0), lowerBounds), false);
     }
-    if (type.getUpperBounds().length > 0) {
-      assert type.getUpperBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(
-          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(0), type.getUpperBounds()), true);
+    java.lang.reflect.Type[] upperBounds = type.getUpperBounds();
+    if (upperBounds.length > 0) {
+      assert upperBounds.length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      return new WildcardType(ParameterBound.forTypes(new HashSet<>(0), upperBounds), true);
     }
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }
@@ -154,7 +158,7 @@ class WildcardType extends ParameterType {
    * If this type has an upper bound, checks for containment cases:
    *
    * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOf(S)}
+   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
    *   <li>{@code ? extends T} contains {@code ?}
    * </ul>
    *
@@ -162,7 +166,7 @@ class WildcardType extends ParameterType {
    * {@code ? extends Object}. Otherwise, checks for the cases
    *
    * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code S.isSubtypeOf(T)}
+   *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
    *   <li>{@code ? super T} contains {@code ?}
    *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
@@ -175,14 +179,14 @@ class WildcardType extends ParameterType {
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound
-          && this.getUpperTypeBound().isSubtypeOf(otherType.getUpperTypeBound())) {
+          && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
         return true;
       }
     } else {
       if (otherType.hasUpperBound) {
         return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
       } else {
-        return otherType.getLowerTypeBound().isSubtypeOf(this.getLowerTypeBound());
+        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
       }
     }
     return false;

@@ -16,7 +16,12 @@ import randoop.types.Type;
 import randoop.util.Log;
 
 /** Utility methods to work with values in test sequences. */
-public class Value {
+public final class Value {
+
+  /** Do not instantiate. */
+  private Value() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Given a primitive, boxed primitive, String, Enum, or Class, or the value {@code null}, returns
@@ -137,13 +142,13 @@ public class Value {
     String str = (String) o;
 
     // Don't create assertions over strings that look like raw object references.
-    if (Value.looksLikeObjectToString(str)) {
+    if (looksLikeObjectToString(str)) {
       return true;
     }
 
     // Don't create assertions over long strings.  Long strings can cause the generated unit tests
-    // to be unreadable and/or non-compilable due to Java restrictions on String constants.
-    if (!Value.escapedStringLengthOk(str)) {
+    // to be unreadable and/or non-compilable due to Java restrictions on String literals.
+    if (!escapedStringLengthOk(str)) {
       Log.logPrintf(
           "Ignoring a string that exceeds the maximum length of %d%n",
           GenInputsAbstract.string_maxlen);

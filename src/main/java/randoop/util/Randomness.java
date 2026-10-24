@@ -18,10 +18,11 @@ import randoop.main.RandoopBug;
 public final class Randomness {
 
   /** 0 = no output, 1 = brief output, 2 = verbose output. */
-  public static int verbosity = 1;
+  public static final int verbosity = 1;
 
+  /** Do not instantiate. */
   private Randomness() {
-    throw new IllegalStateException("no instances");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /** The default initial seed for the random number generator. */
@@ -67,8 +68,11 @@ public final class Randomness {
    * @return a value selected from range [0, i)
    */
   public static int nextRandomInt(int i) {
+    if (i == 1) {
+      return 0;
+    }
     incrementCallsToRandom("nextRandomInt");
-    int value = Randomness.random.nextInt(i);
+    int value = random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
     return value;
   }
@@ -82,7 +86,7 @@ public final class Randomness {
    */
   public static double nextRandomGaussian(double mean, double stdDev) {
     incrementCallsToRandom("nextRandomGaussian");
-    double value = stdDev * Randomness.random.nextGaussian() + mean;
+    double value = stdDev * random.nextGaussian() + mean;
     logSelection(value, "nextRandomGaussian", "mean=" + mean + ", stdDev=" + stdDev);
     return value;
   }
@@ -98,7 +102,11 @@ public final class Randomness {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    int position = nextRandomInt(list.size());
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+    int position = nextRandomInt(size);
     logSelection(position, "randomMember", list);
     return list.get(position);
   }
@@ -114,7 +122,16 @@ public final class Randomness {
     if (c == null || c.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    int position = nextRandomInt(c.size());
+    int size = c.size();
+    if (size == 1) {
+      if (c instanceof List) {
+        return ((List<T>) c).get(0);
+      } else {
+        return c.iterator().next();
+      }
+    }
+
+    int position = nextRandomInt(size);
     logSelection(position, "randomMember", c);
     if (c instanceof List) {
       return ((List<T>) c).get(position);
@@ -129,7 +146,7 @@ public final class Randomness {
    * @param <T> the type of elements in the iterable
    * @param ible an iterable that has at least {@code n}+1 elements
    * @param n the 0-based index of the member to return
-   * @return the the nth element (0-indexed) from the iterable
+   * @return the nth element (0-indexed) from the iterable
    */
   public static <T> T nthMember(Iterable<T> ible, int n) {
     Iterator<T> itor = ible.iterator();
@@ -145,7 +162,9 @@ public final class Randomness {
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param <T> the type of the elements in the list
    * @return a randomly selected element from {@code list}
    */
@@ -155,11 +174,20 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     double totalWeight = 0.0;
-    for (int i = 0; i < list.size(); i++) { // SIList has no iterator
-      T elt = list.get(i);
+    for (T elt : list) {
+      Double weightObj = weights.get(elt);
+      if (weightObj == null) {
+        // Element not in weights map, treat as weight 0.0
+        continue;
+      }
       @SuppressWarnings({"nullness:unboxing.of", "nullness:argument"}) // non-null and a key
-      double weight = weights.get(elt);
+      double weight = weightObj;
       if (weight < 0) {
         throw new RandoopBug("Weight should be positive: " + weight);
       }
@@ -176,7 +204,9 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
@@ -187,9 +217,14 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(SIList)");
-    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
+    double chosenPoint = random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
@@ -199,18 +234,23 @@ public final class Randomness {
     }
 
     double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
-      currentPoint += weights.get(list.get(i));
-      if (currentPoint > chosenPoint) {
-        logSelection(i, "randomMemberWeighted", list);
-        return list.get(i);
+    for (int i = 0; i < size; i++) {
+      Double weightObj = weights.get(list.get(i));
+      if (weightObj != null) {
+        currentPoint += weightObj;
+        if (currentPoint > chosenPoint) {
+          logSelection(i, "randomMemberWeighted", list);
+          return list.get(i);
+        }
       }
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
     System.out.printf("currentPoint=%f%n", currentPoint);
-    System.out.printf("list.size()=%d%n", list.size());
-    for (int i = 0; i < list.size(); i++) {
-      System.out.printf("%d, %f%n", i, weights.get(list.get(i)));
+    System.out.printf("size=%d%n", size);
+    for (int i = 0; i < size; i++) {
+      Double weightObj = weights.get(list.get(i));
+      double weight = (weightObj != null) ? weightObj : 0.0;
+      System.out.printf("%d, %f%n", i, weight);
     }
     throw new RandoopBug("Unable to select random member");
   }
@@ -222,7 +262,9 @@ public final class Randomness {
    * @param <T> the type of the elements in the list
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights. Each element's weight must be
-   *     non-negative. An element with a weight of zero will never be selected.
+   *     non-negative. An element with a weight of zero will never be selected. Elements in {@code
+   *     list} that are not in {@code weights} are treated as having weight 0.0 and will never be
+   *     selected.
    * @param totalWeight the total weight of the elements of the list
    * @return a randomly selected element from {@code list}
    */
@@ -233,9 +275,14 @@ public final class Randomness {
       throw new IllegalArgumentException("Empty list");
     }
 
+    int size = list.size();
+    if (size == 1) {
+      return list.get(0);
+    }
+
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom("randomMemberWeighted(List)");
-    double chosenPoint = Randomness.random.nextDouble() * totalWeight;
+    double chosenPoint = random.nextDouble() * totalWeight;
     if (GenInputsAbstract.selection_log != null) {
       try {
         GenInputsAbstract.selection_log.write(String.format("chosenPoint = %s%n", chosenPoint));
@@ -245,29 +292,22 @@ public final class Randomness {
     }
 
     double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
-      @SuppressWarnings({
-        "nullness:argument",
-        "nullness:assignment",
-        "nullness:unboxing.of.nullable"
-      }) // map keys
-      double weight = weights.get(list.get(i));
-      currentPoint += weight;
-      if (currentPoint > chosenPoint) {
-        logSelection(i, "randomMemberWeighted", list);
-        return list.get(i);
+    for (int i = 0; i < size; i++) {
+      Double weightObj = weights.get(list.get(i));
+      if (weightObj != null) {
+        currentPoint += weightObj;
+        if (currentPoint > chosenPoint) {
+          logSelection(i, "randomMemberWeighted", list);
+          return list.get(i);
+        }
       }
     }
     System.out.printf("totalWeight=%f%n", totalWeight);
     System.out.printf("currentPoint=%f%n", currentPoint);
-    System.out.printf("list.size()=%d%n", list.size());
-    for (int i = 0; i < list.size(); i++) {
-      @SuppressWarnings({
-        "nullness:argument",
-        "nullness:assignment",
-        "nullness:unboxing.of.nullable"
-      }) // map keys
-      double weight = weights.get(list.get(i));
+    System.out.printf("size=%d%n", size);
+    for (int i = 0; i < size; i++) {
+      Double weightObj = weights.get(list.get(i));
+      double weight = (weightObj != null) ? weightObj : 0.0;
       System.out.printf("%d, %f%n", i, weight);
     }
     throw new RandoopBug("Unable to select random member");
@@ -276,14 +316,13 @@ public final class Randomness {
   /**
    * Returns a random member of the set, selected uniformly at random.
    *
-   * @param <T> the type of elements of the set param set the collection from which to choose an
-   *     element
+   * @param <T> the type of elements of the set
    * @param set the collection from which to select an element
    * @return a randomly-selected member of the set
    */
   public static <T> T randomSetMember(Collection<T> set) {
     int setSize = set.size();
-    int randIndex = Randomness.nextRandomInt(setSize);
+    int randIndex = nextRandomInt(setSize);
     logSelection(randIndex, "randomSetMember", set);
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
@@ -300,13 +339,13 @@ public final class Randomness {
     }
     double falseProb = 1 - trueProb;
     incrementCallsToRandom("weightedCoinFlip");
-    boolean result = Randomness.random.nextDouble() >= falseProb;
+    boolean result = random.nextDouble() >= falseProb;
     logSelection(result, "weightedCoinFlip", trueProb);
     return result;
   }
 
   /**
-   * Returns true or false with the given relative probabilites, which need not add to 1.
+   * Returns true or false with the given relative probabilities, which need not add to 1.
    *
    * @param falseProb the likelihood that true is returned; an arbitrary non-negative number
    * @param trueProb the likelihood that true is returned; an arbitrary non-negative number
@@ -325,7 +364,7 @@ public final class Randomness {
     }
     double falseProbNormalized = falseProb / totalProb;
     incrementCallsToRandom("randomBoolFromDistribution");
-    boolean result = Randomness.random.nextDouble() >= falseProbNormalized;
+    boolean result = random.nextDouble() >= falseProbNormalized;
     logSelection(result, "randomBoolFromDistribution", falseProb + ", " + trueProb);
     return result;
   }
