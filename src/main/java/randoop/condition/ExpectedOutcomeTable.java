@@ -165,7 +165,7 @@ public class ExpectedOutcomeTable {
 
   @Override
   public String toString() {
-    if (isEmpty == true) {
+    if (isEmpty) {
       return "ExpectedOutcomeTable(empty)";
     }
     return String.format(

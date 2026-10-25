@@ -12,7 +12,7 @@ import org.checkerframework.checker.signedness.qual.Signed;
  * A map from a key to a multi-set.
  *
  * @param <K> the type of the keys
- * @param <V> the types of the elements of the value mulit-sets
+ * @param <V> the types of the elements of the value multi-sets
  */
 // @Signed so that the values can be printed.
 public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
@@ -37,9 +37,15 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     }
   }
 
+  /**
+   * Map the key to the value (along with any other keys it already maps to).
+   *
+   * @param key the key
+   * @param value the value
+   */
   public void add(K key, V value) {
     MultiSet<V> values = map.computeIfAbsent(key, __ -> new MultiSet<>());
-    map.put(key, values);
+    values.add(value);
   }
 
   public void remove(K key, V value) {
@@ -79,7 +85,7 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     return map.containsKey(obj);
   }
 
-  // Removes all keys with an empty set
+  /** Removes all keys that map to an empty set. */
   public void clean() {
     for (Iterator<Map.Entry<K, MultiSet<V>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
       Map.Entry<K, MultiSet<V>> element = iter.next();

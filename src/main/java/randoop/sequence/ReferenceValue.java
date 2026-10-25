@@ -34,6 +34,7 @@ public final class ReferenceValue {
    * @param obj the object to test for equality
    * @return true if parameter has the same type and identical value to this object, false otherwise
    */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {

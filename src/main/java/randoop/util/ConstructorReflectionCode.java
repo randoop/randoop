@@ -22,9 +22,13 @@ public final class ConstructorReflectionCode extends ReflectionCode {
    *
    * @param constructor the constructor to be called
    * @param inputs the arguments that the constructor is applied to. If an inner class constructor
-   *     has a receiver, it is the first element of this array.
+   *     has a receiver, it is the first element of this array. The client must not change this
+   *     after the constructor invocation.
    */
-  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
+  @SuppressWarnings({
+    "deprecation", // AccessibleObject.isAccessible() has no replacement in Java 8.
+    "PMD.ArrayIsStoredDirectly"
+  })
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");

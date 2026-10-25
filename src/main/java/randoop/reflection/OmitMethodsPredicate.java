@@ -13,7 +13,7 @@ import randoop.util.Log;
 // will also be omitted (because otherwise a variable myObject might hold a MyClass, and a call
 // myObject.toString() might dispatch to my.package.MyClass.toString).
 //
-// There is not currently a way to omit just one implementation and not all its overrdden
+// There is not currently a way to omit just one implementation and not all its overridden
 // implementations.
 //
 // There is not currently a way to omit a given instance method implementation m, plus also all
@@ -125,7 +125,7 @@ public class OmitMethodsPredicate {
 
     // Search the type and its supertypes that have the method.
 
-    for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
+    for (ClassOrInterfaceType type : operation.getDeclaringType().getSupertypesInclusive()) {
       if (logOmit) {
         Log.logPrintf("shouldOmit looking in %s for %s%n", type, signature.getName());
       }

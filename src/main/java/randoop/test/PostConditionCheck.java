@@ -75,7 +75,7 @@ public class PostConditionCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder(128);
     for (ExecutableBooleanExpression postCondition : postConditions) {
       String conditionString =
           ObjectContractUtils.localizeContractCode(

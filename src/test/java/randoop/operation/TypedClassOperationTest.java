@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -17,7 +18,7 @@ import randoop.types.ClassOrInterfaceType;
 
 public class TypedClassOperationTest {
   @Test
-  public void testOperationForType() {
+  public void testOperationForType() throws RandoopSpecificationError {
     ClassOrInterfaceType cType = ClassOrInterfaceType.forClass(C.class);
     Set<TypedOperation> operations = getOperations(cType);
 
@@ -56,7 +57,8 @@ public class TypedClassOperationTest {
     return signature;
   }
 
-  private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
+  private Set<TypedOperation> getOperations(ClassOrInterfaceType type)
+      throws RandoopSpecificationError {
     OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");

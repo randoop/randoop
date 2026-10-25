@@ -3,10 +3,10 @@
 #
 # This script generates coverage data for Randoop generated tests over the defects4j suite.
 # By default, it does so for just 6 projects and bug ids 1-5 in each project.
-# An optional first agument will replace the default project list.
+# An optional first argument will replace the default project list.
 #   The argument should be space-separated numbers, as in "1 2 3 4 5".
-# An optional second agument will replace the default bid list; "all" means all valid bids.
-# An optional third agument of 'debug' will set the defects4j DEBUG flag.
+# An optional second argument will replace the default bid list; "all" means all valid bids.
+# An optional third argument of 'debug' will set the defects4j DEBUG flag.
 #
 ################################################################################
 
@@ -83,7 +83,7 @@ suite_src=randoop
 suite_num=1
 expected_test_count=0
 
-# probably should be a flag whether or not to keep existing data for cumlative run(s)
+# probably should be a flag whether or not to keep existing data for cumulative run(s)
 #rm -f $master_coverage
 
 for pid in "${projects[@]}"; do

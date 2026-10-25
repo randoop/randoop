@@ -77,7 +77,7 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic()
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
-        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+        if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
           substitution = instantiateClass(declaringType);
@@ -285,8 +285,9 @@ public class TypeInstantiator {
       }
     }
     // return types don't have to exist, but do need to have their type parameters instantiated
-    if (operation.getOutputType().isReferenceType()) {
-      Type paramType = operation.getOutputType().substitute(substitution);
+    Type outputType = operation.getOutputType();
+    if (outputType.isReferenceType()) {
+      Type paramType = outputType.substitute(substitution);
       if (paramType.isGeneric()) {
         typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
       }

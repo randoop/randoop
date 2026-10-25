@@ -38,7 +38,7 @@ import java.lang.reflect.*;
  * <p>The documentation for the methods contained in this class includes
  * briefs description of the <i>implementations</i>. Such descriptions should
  * be regarded as <i>implementation notes</i>, rather than parts of the
- * <i>specification</i>. Implementors should feel free to substitute other
+ * <i>specification</i>. Implementers should feel free to substitute other
  * algorithms, so long as the specification itself is adhered to. (For
  * example, the algorithm used by {@code sort(Object[])} does not have to be
  * a MergeSort, but it does have to be <i>stable</i>.)
@@ -441,7 +441,7 @@ public class Arrays {
      *
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
-     * TimSort</a>).  It uses techiques from Peter McIlroy's "Optimistic
+     * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.
@@ -491,7 +491,7 @@ public class Arrays {
      *
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
-     * TimSort</a>).  It uses techiques from Peter McIlroy's "Optimistic
+     * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.
@@ -606,7 +606,7 @@ public class Arrays {
      *
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
-     * TimSort</a>).  It uses techiques from Peter McIlroy's "Optimistic
+     * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.
@@ -655,7 +655,7 @@ public class Arrays {
      *
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
-     * TimSort</a>).  It uses techiques from Peter McIlroy's "Optimistic
+     * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.

@@ -91,14 +91,14 @@ public interface Operation {
   /**
    * Predicate to indicate whether this object represents an unchecked cast.
    *
-   * @return true if the this object is a cast, and false otherwise
+   * @return true if this object is a cast, and false otherwise
    */
   boolean isUncheckedCast();
 
   /**
-   * Returns the "value" of an operation that is actually a ground term, meaning a constant of some
-   * form. Only null if value is null, otherwise throws an exception if there is not a reasonable
-   * meaning of value for type of operation.
+   * Returns the "value" of an operation that is actually a ground term, meaning a literal. Only
+   * null if value is null, otherwise throws an exception if there is not a reasonable meaning of
+   * value for type of operation.
    *
    * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *

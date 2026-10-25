@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -86,6 +87,8 @@ public class DevExampleCode {
           s.toCodeString());
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
   }
 }

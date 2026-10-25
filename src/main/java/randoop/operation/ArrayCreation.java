@@ -68,6 +68,7 @@ public class ArrayCreation extends CallableOperation {
   // The argument array contains a single Integer.
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
+    @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
     int length = ((Integer) input[0]).intValue();
     long startTimeMillis = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
@@ -83,7 +84,7 @@ public class ArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
-    b.append("new").append(" ").append(this.elementType.getFqName());
+    b.append("new").append(' ').append(this.elementType.getFqName());
     b.append("[ ");
     String param = getArgumentString(inputVar);
     b.append(param).append(" ]");
@@ -94,8 +95,9 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    StringBuilder result =
-        new StringBuilder(elementType.getBinaryName() + "[ " + inputTypes.get(0) + " ]");
+    StringBuilder result = new StringBuilder();
+    result.append(elementType.getBinaryName());
+    result.append("[ ").append(inputTypes.get(0)).append(" ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

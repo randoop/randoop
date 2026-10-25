@@ -15,8 +15,7 @@ public interface CodeWriter {
    * @return the {@code Path} object for the Java file written
    * @throws RandoopOutputException if there is an error while writing the code
    */
-  public Path writeClassCode(String packageName, String classname, String classCode)
-      throws RandoopOutputException;
+  public Path writeClassCode(String packageName, String classname, String classCode);
 
   /**
    * Writes the given class. Does not modify the class text.
@@ -27,6 +26,5 @@ public interface CodeWriter {
    * @return the {@code Path} object for the Java file written
    * @throws RandoopOutputException if there is an error while writing the code
    */
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
-      throws RandoopOutputException;
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode);
 }

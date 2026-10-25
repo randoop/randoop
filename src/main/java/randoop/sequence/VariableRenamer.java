@@ -29,7 +29,7 @@ class VariableRenamer {
   }
 
   /**
-   * Heuristically transforms variables to better names based on its type name. Here are some
+   * Heuristically transforms variables to better names based on their type names. Here are some
    * examples:
    *
    * <pre>{@code

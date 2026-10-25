@@ -12,11 +12,11 @@ public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    SIList<Integer> a1 = SIList.fromList(Arrays.asList(1, 2));
+    SIList<Integer> a1 = SIList.from(Arrays.asList(1, 2));
 
     SIList<Integer> a2 = SIList.empty();
 
-    SIList<Integer> a3 = SIList.fromList(Arrays.asList(3, 4, 5));
+    SIList<Integer> a3 = SIList.from(Arrays.asList(3, 4, 5));
 
     for (int i = 0; i < 100; i++) {
 

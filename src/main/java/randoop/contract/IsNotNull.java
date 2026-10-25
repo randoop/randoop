@@ -15,6 +15,9 @@ import randoop.types.TypeTuple;
  */
 public final class IsNotNull extends ObjectContract {
 
+  /** Creates an IsNotNull. */
+  public IsNotNull() {}
+
   @Override
   public boolean equals(@Nullable Object o) {
     if (o == this) {
@@ -49,9 +52,7 @@ public final class IsNotNull extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertNotNull(x0);");
-    return b.toString();
+    return "org.junit.Assert.assertNotNull(x0);";
   }
 
   @Override

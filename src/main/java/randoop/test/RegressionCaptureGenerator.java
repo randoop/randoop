@@ -7,6 +7,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -15,6 +16,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.EnumValue;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
@@ -22,6 +24,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
@@ -109,15 +112,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
-  public RegressionChecks generateTestChecks(ExecutableSequence eseq) {
+  public RegressionChecks generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
 
-    RegressionChecks checks = new RegressionChecks();
+    List<Check> checks = new ArrayList<>();
+    ExceptionCheck exceptionCheck = null;
 
-    int finalIndex = eseq.sequence.size() - 1;
+    int size = eseq.sequence.size();
+    int finalIndex = size - 1;
 
     // Capture checks for each value created/returned by a statement.
     // Does not currently capture checks for values side-effected by a statement.
-    for (int i = 0; i < eseq.sequence.size(); i++) {
+    for (int i = 0; i < size; i++) {
 
       Statement statement = eseq.sequence.getStatement(i);
       ExecutionOutcome result = eseq.getResult(i);
@@ -239,15 +245,17 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
           throw new Error("Exception thrown before end of sequence");
         }
 
-        // Otherwise, add the check determined by exceptionExpectation
-        ExceptionalExecution e = (ExceptionalExecution) result;
-        checks.add(exceptionExpectation.getExceptionCheck(e, eseq, i));
+        if (exceptionCheck != null) {
+          throw new RandoopBug("Multiple exception checks: " + exceptionCheck + " " + result);
+        }
 
+        ExceptionalExecution e = (ExceptionalExecution) result;
+        exceptionCheck = exceptionExpectation.getExceptionCheck(e, eseq, i);
       } else { // statement not executed
         throw new Error("Unexpected result type: " + StringsPlume.toStringAndClass(result));
       }
     }
-    return checks;
+    return new RegressionChecks(checks, exceptionCheck);
   }
 
   /**
@@ -310,11 +318,10 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     }
 
     // Must return non-void.
-    if (m.getOutputType().isVoid()) {
+    Type outputType = m.getOutputType();
+    if (outputType.isVoid()) {
       return false;
     }
-
-    Type outputType = m.getOutputType();
 
     Class<?> outputClass;
     try {

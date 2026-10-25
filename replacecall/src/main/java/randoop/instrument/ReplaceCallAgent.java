@@ -1,0 +1,561 @@
+package randoop.instrument;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.instrument.Instrumentation;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
+import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.options.Option;
+import org.plumelib.options.Options;
+import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
+import randoop.MethodReplacements;
+
+/**
+ * The replacecall javaagent applies the {@link CallReplacementTransformer} to replace calls in
+ * loaded classes by calls to alternate implementations.
+ *
+ * <p>The transformer applies method call replacements as specified in either the default or a
+ * user-provided replacement file. (See the <a
+ * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
+ * documentation</a> for the file format.) Default replacements are given in an internal resource
+ * file {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
+ * --replacement-file} command-line argument. A user replacement may override a default replacement.
+ *
+ * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
+ * excluded from transformation.
+ */
+public final class ReplaceCallAgent {
+
+  /** Do not instantiate. */
+  private ReplaceCallAgent() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
+
+  /** Run the replacecall agent in debug mode. */
+  @SuppressWarnings("WeakerAccess")
+  @Option("print debug information")
+  public static boolean debug = false;
+
+  /**
+   * The directory where debug logs are written when {@code debug} is set. If no directory is given,
+   * then the current working directory is used.
+   */
+  @SuppressWarnings("WeakerAccess")
+  @Option("directory name where debug logs are written")
+  public static @MonotonicNonNull String debug_directory;
+
+  /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
+  @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
+  static Path debugPath;
+
+  @SuppressWarnings("WeakerAccess")
+  @Option("print progress information")
+  public static boolean verbose = false;
+
+  /** The file from which to read the user replacements for replacing calls. */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing methods whose calls to replace by substitute methods")
+  public static @MonotonicNonNull Path replacement_file = null;
+
+  /** Exclude transformation of classes in the listed packages. */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing packages whose classes should not be transformed")
+  public static @MonotonicNonNull Path dont_transform = null;
+
+  /** Comma-separated list of default replacement method signatures to exclude. */
+  @SuppressWarnings("WeakerAccess")
+  @Option(
+      "comma-separated list of default replacement method signatures to exclude; "
+          + "accepts colon/JVM-descriptor form, e.g. 'java.lang.System.exit:(I)V'")
+  public static @Nullable String replacecall_exclude = null;
+
+  /** File that lists default replacement method signatures to exclude. */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing default replacement method signatures to exclude (one per line)")
+  public static @Nullable Path replacecall_exclude_file = null;
+
+  /**
+   * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
+   * so that when classes are loaded they are transformed to replace calls to methods as specified
+   * in the replacements file(s).
+   *
+   * @param agentArgs the arguments to the agent
+   * @param instrumentation the {@code Instrumentation} object
+   * @throws IOException if there is an error reading a file
+   */
+  public static void premain(String agentArgs, Instrumentation instrumentation) throws IOException {
+    try {
+      if (agentArgs != null) { // If there are any arguments, parse them
+        Options options = new Options(ReplaceCallAgent.class);
+        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        if (target_args.length > 0) {
+          System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
+          System.exit(1); // Exit on bad user input.
+        }
+      }
+
+      if (verbose) {
+        System.out.format(
+            "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n",
+            agentArgs, instrumentation);
+      }
+
+      debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
+      boolean createDebugDiretory = debug && debug_directory != null && !debug_directory.isEmpty();
+      if (createDebugDiretory) {
+        debugPath = debugPath.resolve(debug_directory);
+        if (!Files.exists(debugPath)) {
+          Files.createDirectory(debugPath);
+        }
+      }
+
+      // Load package prefixes from the resource file in the jar for default package exclusions
+      Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
+
+      String exclusionFileName = "/default-load-exclusions.txt";
+      try (InputStream inputStream =
+          ReplaceCallAgent.class.getResourceAsStream(exclusionFileName)) {
+        if (inputStream == null) {
+          replaceCallExit("Unable to find default package exclusion file.");
+        }
+        try {
+          excludedPackagePrefixes.addAll(
+              loadExclusions(new InputStreamReader(inputStream, UTF_8), exclusionFileName));
+        } catch (IOException e) {
+          replaceCallExit("Unable to read default package exclusion file: " + e.getMessage());
+        }
+      }
+
+      // If user-provided package exclusion file, load user package exclusions
+      Path exclusionFilePath = null;
+      if (dont_transform != null) {
+        String dont_transform_string = dont_transform.toString();
+        try (Reader dont_transform_reader = Files.newBufferedReader(dont_transform, UTF_8)) {
+          excludedPackagePrefixes.addAll(
+              loadExclusions(dont_transform_reader, dont_transform_string));
+        } catch (IOException e) {
+          // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
+          System.err.format(
+              "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
+          System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
+        }
+        // Get path for exclusions file to use in argument string given to Randoop
+        exclusionFilePath = dont_transform;
+      }
+
+      /*
+       * The agent is called when classes are loaded. If Randoop is using threads, this can result
+       * in multiple threads accessing the map to apply replacements.
+       */
+      Map<MethodSignature, MethodSignature> replacementMap = null;
+
+      // Read the default replacement file
+      String replacementPath = "/default-replacements.txt";
+      try (InputStream inputStream = ReplaceCallAgent.class.getResourceAsStream(replacementPath)) {
+        if (inputStream == null) {
+          replaceCallExit("Unable to open default replacements file.");
+        }
+        try {
+          replacementMap =
+              ReplacementFileReader.readReplacements(
+                  new InputStreamReader(inputStream, UTF_8), replacementPath);
+        } catch (ReplacementFileException e) {
+          replaceCallExit("Error reading default replacement file. " + e.getMessage());
+        }
+      }
+
+      // Remove (or override) excluded default replacements.
+      if (replacecall_exclude != null || replacecall_exclude_file != null) {
+        // Parse exclusions to MethodSignature objects (supports multiple input formats).
+        Set<MethodSignature> excludeSignatures = new LinkedHashSet<>();
+
+        // From CLI CSV
+        if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
+          for (String raw : replacecall_exclude.split(",")) {
+            trimAndParseExcludedSignature(excludeSignatures, raw);
+          }
+        }
+
+        // From the file (one per line, '#' comments allowed)
+        if (replacecall_exclude_file != null) {
+          Path excludeFile = replacecall_exclude_file;
+          try (Reader r = Files.newBufferedReader(excludeFile, UTF_8)) {
+            for (String line :
+                new EntryReader(
+                    r, excludeFile.toString(), EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
+              trimAndParseExcludedSignature(excludeSignatures, line);
+            }
+          } catch (IOException e) {
+            System.err.printf(
+                "Error reading replacement exclusion file %s:%n %s%n", excludeFile, e.getMessage());
+            System.exit(1);
+          }
+        }
+
+        // 1) Handle any method-level exclusions.
+        Set<MethodSignature> toRemove = new HashSet<>();
+        for (MethodSignature key : replacementMap.keySet()) {
+          if (excludeSignatures.contains(key)) {
+            toRemove.add(key);
+          }
+        }
+        replacementMap.keySet().removeAll(toRemove);
+
+        // 2) For exclusions that did not match an existing method-level key, install an
+        //    identity override (src -> src). This cancels a class-level mapping for just that
+        // method.
+        Set<MethodSignature> unmatched = new LinkedHashSet<>(excludeSignatures);
+        unmatched.removeAll(toRemove);
+        for (MethodSignature ms : unmatched) {
+          replacementMap.put(ms, ms);
+          if (verbose) {
+            System.err.println("Installed identity override for exclusion: " + ms);
+          }
+        }
+      }
+
+      // If the user has provided a replacement file, load user replacements and put them into the
+      // map, possibly overriding default replacements that already appear in the map.
+      Path replacementFilePath = null;
+      if (replacement_file != null) {
+        try {
+          replacementMap.putAll(ReplacementFileReader.readReplacements(replacement_file));
+        } catch (Throwable e) {
+          System.err.printf(
+              "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
+          System.exit(1);
+        }
+        assert replacement_file != null : "@AssumeAssertion(nullness): no side effects above";
+        // Get path for replacement file to use in argument string given to Randoop.
+        replacementFilePath = replacement_file;
+      }
+
+      /*
+       * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
+       * file inputs on the command-line. The paths for the files are made absolute and then the
+       * argument string is rebuilt.
+       */
+      MethodReplacements.setAgentPath(getAgentPath());
+      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+
+      /*
+      if (debug) {
+        ArrayList<MethodSignature> sortedKeys = new ArrayList<>(replacementMap.keySet());
+        Collections.sort(sortedKeys);
+        for (MethodSignature key : sortedKeys) {
+          System.err.println("map: " + key + " : " + replacementMap.get(key));
+        }
+      }
+      */
+
+      // Communicate the list of replaced methods to Randoop to omit direct calls
+      List<String> signatureList =
+          CollectionsPlume.mapList(MethodSignature::toString, replacementMap.keySet());
+      MethodReplacements.setReplacedMethods(signatureList);
+
+      // Create the transformer and add to the class loader instrumentation
+      CallReplacementTransformer transformer =
+          new CallReplacementTransformer(replacementMap, excludedPackagePrefixes);
+      transformer.addMapFileShutdownHook();
+      instrumentation.addTransformer(transformer);
+
+    } catch (Throwable e) {
+      replaceCallExit(e.getMessage());
+    }
+  }
+
+  /**
+   * Trims the given string and parses it as a {@link MethodSignature} to add to the set of excluded
+   * signatures.
+   *
+   * @param excludeSignatures the set of excluded method signatures to which the parsed signature is
+   *     added
+   * @param text the string to parse as a method signature
+   */
+  private static void trimAndParseExcludedSignature(
+      Set<MethodSignature> excludeSignatures, String text) {
+    String s = text.trim();
+    if (!s.isEmpty()) {
+      MethodSignature ms = parseExcludedSignature(s);
+      if (ms != null) {
+        excludeSignatures.add(ms);
+      } else if (verbose) {
+        System.err.println("Warning: could not parse replacecall exclusion '" + s + "'");
+      }
+    }
+  }
+
+  /**
+   * Exit the program due to an exception in the ReplaceCall agent.
+   *
+   * @param message the exception's message
+   */
+  private static void replaceCallExit(String message) {
+    System.err.println("Error in replacecall agent: " + message);
+    System.err.println(
+        "For problems with the default replacements file, make sure that the"
+            + " replacecall.jar file is on the bootclasspath.");
+    System.err.println("Otherwise, please report at https://github.com/randoop/randoop/issues ,");
+    System.err.println(
+        "providing the information requested at"
+            + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
+    System.exit(1);
+  }
+
+  /**
+   * Load package names from the given file and add them to the set of excluded package names. Adds
+   * a period to the end of any name that does not have one.
+   *
+   * @param exclusionReader the reader for the text file containing the list of excluded packages.
+   *     Is closed by this method.
+   * @param filename the name of the file read by the reader
+   * @return the set of excluded package prefixes from the file
+   * @throws IOException if there is an error reading the file
+   */
+  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
+      throws IOException {
+    Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
+    try (EntryReader reader =
+        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
+      for (String line : reader) {
+        String trimmed = line.trim();
+        if (!trimmed.isEmpty()) {
+          if (trimmed.charAt(trimmed.length() - 1) != '.') {
+            trimmed = trimmed + ".";
+          }
+          excludedPackagePrefixes.add(trimmed);
+        }
+      }
+    }
+    return excludedPackagePrefixes;
+  }
+
+  /**
+   * Parses an exclusion string into a {@link MethodSignature}.
+   *
+   * <p>Accepts the colon/JVM-descriptor form: {@code pkg.Clazz.method:(...)}. Examples: {@code
+   * java.lang.System.exit:(I)V}, {@code
+   * java.util.Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;}
+   *
+   * <p>Returns null if parsing fails.
+   *
+   * @param text the string to parse
+   * @return the parsed {@link MethodSignature} or null if parsing fails
+   */
+  private static @Nullable MethodSignature parseExcludedSignature(String text) {
+    String s = text.trim();
+
+    int colon = s.indexOf(':');
+    if (colon > 0 && s.indexOf('(') > colon) {
+      String ownerAndName = s.substring(0, colon);
+      int dot = ownerAndName.lastIndexOf('.');
+      if (dot > 0) {
+        String owner = ownerAndName.substring(0, dot);
+        String name = ownerAndName.substring(dot + 1);
+        String jvmDesc = s.substring(colon + 1); // "(..)[ret]"
+        String paramList = methodDescriptorToParamBinaryNames(jvmDesc);
+        if (paramList != null) {
+          try {
+            return MethodSignature.of(owner + "." + name + "(" + paramList + ")");
+          } catch (IllegalArgumentException ignored) {
+            return null;
+          }
+        }
+      }
+    }
+
+    // Any other format is not supported.
+    return null;
+  }
+
+  /**
+   * Converts a JVM method descriptor to a comma-separated list of formal parameter types, in binary
+   * name format, suitable for {@link MethodSignature#of(String)}. For example, "(I)V" &rarr; "int"
+   * and "([Ljava/lang/String;I)V" &rarr; "java.lang.String[], int". Returns null if the input
+   * doesn't look like a valid method descriptor.
+   */
+  private static @Nullable String methodDescriptorToParamBinaryNames(String methodDescriptor) {
+    if (methodDescriptor == null) {
+      return null;
+    }
+    String s = methodDescriptor.trim();
+    int l = s.indexOf('(');
+    int r = s.indexOf(')');
+    if (l != 0 || r < 0) {
+      return null;
+    }
+    // parse parameter types between '(' and ')'
+    StringBuilder out = new StringBuilder();
+    int i = 1;
+    boolean first = true;
+    while (i < r) {
+      int arr = 0;
+      while (i < r && s.charAt(i) == '[') {
+        arr++;
+        i++;
+      }
+      if (i >= r) break;
+      char c = s.charAt(i++);
+      String base;
+      switch (c) {
+        case 'B':
+          base = "byte";
+          break;
+        case 'C':
+          base = "char";
+          break;
+        case 'D':
+          base = "double";
+          break;
+        case 'F':
+          base = "float";
+          break;
+        case 'I':
+          base = "int";
+          break;
+        case 'J':
+          base = "long";
+          break;
+        case 'S':
+          base = "short";
+          break;
+        case 'Z':
+          base = "boolean";
+          break;
+        case 'L':
+          int semi = s.indexOf(';', i);
+          if (semi < 0 || semi > r) return null;
+          base = s.substring(i, semi).replace('/', '.');
+          i = semi + 1;
+          break;
+        default:
+          return null;
+      }
+      StringBuilder type = new StringBuilder(base);
+      for (int k = 0; k < arr; k++) type.append("[]");
+      if (!first) out.append(", ");
+      out.append(type);
+      first = false;
+    }
+    return out.toString();
+  }
+
+  /**
+   * Extracts the path for the jar of this agent from the boot classpath.
+   *
+   * @return the path for the jar file, as a string
+   * @throws BugInAgentException if the agent is not found on the boot classpath
+   */
+  private static String getAgentPath() throws BugInAgentException {
+    Class<?> c;
+    try {
+      c = Class.forName("randoop.instrument.ReplaceCallAgent");
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
+      throw new BugInAgentException("Error loading ReplaceCallAgent", e);
+    }
+    if (c.getClassLoader() != null) {
+      throw new BugInAgentException("Agent should be included on bootclasspath");
+    }
+    String resource = "randoop/instrument/ReplaceCallAgent.class";
+    URL url = ClassLoader.getSystemResource(resource);
+    if (url == null) {
+      // This agent has no access to RandoopUsageError and randoop.util.Util.pathAndAbsolute().
+      System.err.format("Cannot find resource %s%n", resource);
+      System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
+    }
+    String jarFilePath = getJarPathFromURL(url);
+    if (debug) {
+      System.err.println("AgentPath: " + jarFilePath);
+    }
+    return jarFilePath;
+  }
+
+  /**
+   * Extracts the path from a URL of type jar.
+   *
+   * @param url the url to extract the path from
+   * @return the path for the jar file, as a string
+   */
+  static String getJarPathFromURL(URL url) {
+    String jarPath = url.getPath();
+    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
+    return jarPath.substring(jarPath.indexOf(':') + offset, jarPath.indexOf('!'));
+  }
+
+  /**
+   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   *
+   * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
+   * files used in the original use of the agent.
+   *
+   * @param replacementFilePath the {@code Path} for the replacement file
+   * @param exclusionFilePath the {@code Path} for the replacement file
+   * @return the argument string for the current run using absolute paths
+   */
+  private static String createAgentArgs(
+      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
+    StringJoiner result = new StringJoiner(",");
+    if (replacementFilePath != null) {
+      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+    }
+    if (exclusionFilePath != null) {
+      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+    }
+    // Preserve the exclude options if they were supplied, so flaky-filter uses identical args.
+    if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
+      result.add("--replacecall-exclude=" + replacecall_exclude.trim());
+    }
+    if (replacecall_exclude_file != null) {
+      result.add("--replacecall-exclude-file=" + replacecall_exclude_file.toAbsolutePath());
+    }
+    return result.toString();
+  }
+
+  /**
+   * Private exception class used to manage agent-specific errors.
+   *
+   * <p>Analogous to {@code RandoopBug}, but that class is not available within the agent.
+   */
+  private static class BugInAgentException extends Exception {
+
+    private static final long serialVersionUID = 20250811;
+
+    /**
+     * Create a {@link BugInAgentException} with the message.
+     *
+     * @param message the error message
+     */
+    BugInAgentException(String message) {
+      super(message);
+    }
+
+    /**
+     * Create a {@link BugInAgentException} with the message and causing exception.
+     *
+     * @param message the message
+     * @param cause the exception
+     */
+    BugInAgentException(String message, Throwable cause) {
+      super(message, cause);
+    }
+  }
+}

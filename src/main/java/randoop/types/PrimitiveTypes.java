@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 
 /**
  * Utilities for working with {@code Class<?> objects} that Java reflection treats as primitive,
@@ -14,13 +14,14 @@ import org.plumelib.util.CollectionsPlume;
  * assignment tests.
  */
 public final class PrimitiveTypes {
+  /** Do not instantiate. */
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");
   }
 
   /** Map from boxed primitive to primitive {@code Class<?>} objects. */
   private static final Map<Class<?>, Class<?>> boxedToPrimitive =
-      new HashMap<>(CollectionsPlume.mapCapacity(8));
+      new HashMap<>(MapsP.mapCapacity(8));
 
   static {
     boxedToPrimitive.put(Integer.class, int.class);
@@ -35,7 +36,7 @@ public final class PrimitiveTypes {
 
   /** Map from primitive to boxed primitive {@code Class<?>} objects. */
   private static final Map<Class<?>, Class<?>> primitiveToBoxed =
-      new HashMap<>(CollectionsPlume.mapCapacity(8));
+      new HashMap<>(MapsP.mapCapacity(8));
 
   static {
     primitiveToBoxed.put(boolean.class, Boolean.class);
@@ -49,8 +50,7 @@ public final class PrimitiveTypes {
   }
 
   /** Map from primitive type name (and "void") to {@code Class<?>} objects. */
-  private static final Map<String, Class<?>> nameToClass =
-      new HashMap<>(CollectionsPlume.mapCapacity(8));
+  private static final Map<String, Class<?>> nameToClass = new HashMap<>(MapsP.mapCapacity(8));
 
   static {
     nameToClass.put("void", void.class); // reflection considers void a primitive
@@ -71,14 +71,14 @@ public final class PrimitiveTypes {
    * 5.1.2</a>.
    */
   private static final Map<Class<?>, Set<Class<?>>> wideningTable =
-      new HashMap<>(CollectionsPlume.mapCapacity(8));
+      new HashMap<>(MapsP.mapCapacity(8));
 
   static {
     // build transitive widening table for primitive types
     // both boolean and double have no supertypes
     wideningTable.put(boolean.class, Collections.emptySet());
     wideningTable.put(double.class, Collections.emptySet());
-    Set<Class<?>> s = new HashSet<>(CollectionsPlume.mapCapacity(5));
+    Set<Class<?>> s = new HashSet<>(MapsP.mapCapacity(5));
     s.add(double.class);
     wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
@@ -118,7 +118,7 @@ public final class PrimitiveTypes {
       throw new IllegalArgumentException("types must be primitive");
     }
 
-    // check identity and primitive  widening
+    // check identity and primitive widening
     return source.equals(target) || isSubtype(source, target);
   }
 
@@ -141,7 +141,7 @@ public final class PrimitiveTypes {
    * @return true if the first type is a subtype of the second type
    */
   public static boolean isSubtype(Class<?> first, Class<?> second) {
-    if (!first.isPrimitive() && !second.isPrimitive()) {
+    if (!first.isPrimitive() || !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
     Set<Class<?>> superTypes = wideningTable.get(first);

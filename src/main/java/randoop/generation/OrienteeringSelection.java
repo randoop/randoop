@@ -11,7 +11,7 @@ import randoop.util.Randomness;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
- * Random Testing" by Ma et. al (appears in ASE 2015):
+ * Random Testing" by Ma et al. (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Biases input selection towards sequences that have lower execution cost. Execution cost is
@@ -29,7 +29,7 @@ import randoop.util.Randomness;
  * by zero when computing weights.
  *
  * <p>The GRT paper also does not describe how to handle input sequences that have not yet been
- * selected. We start ecah input sequences with a selection count of 1 to prevent division by zero
+ * selected. We start each input sequence with a selection count of 1 to prevent division by zero
  * when computing weights.
  */
 public class OrienteeringSelection extends InputSequenceSelector {
@@ -39,7 +39,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
   /**
    * Map from a sequence to its weight. For every sequence s, {@code weightMap.get(s) ==
    * sequenceDetailsMap.get(s).getWeight()}. This is needed because {@code
-   * Randomneess#randomMemberWeighted} takes a {@code Map<T, Double>} as an argument.
+   * Randomness#randomMemberWeighted} takes a {@code Map<T, Double>} as an argument.
    */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
@@ -209,7 +209,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
-   * Returns the the square root of the number of method call statements within the given sequence.
+   * Returns the square root of the number of method call statements within the given sequence.
    *
    * <p>To prevent division by zero, we use 1 for a sequence with no method calls.
    *

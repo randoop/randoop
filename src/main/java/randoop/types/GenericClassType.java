@@ -128,11 +128,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
-    if (superclass != null) {
-      return ClassOrInterfaceType.forClass(superclass);
-    } else {
-      return JavaTypes.OBJECT_TYPE;
-    }
+    return superclass == null ? null : ClassOrInterfaceType.forClass(superclass);
   }
 
   /**
@@ -183,11 +179,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
-    if (typeArguments.length != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.length != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -208,11 +205,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
-    if (typeArguments.size() != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.size() != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
@@ -259,12 +257,12 @@ public class GenericClassType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
     if (otherType.runtimeClassIs(this.getRuntimeClass())) {

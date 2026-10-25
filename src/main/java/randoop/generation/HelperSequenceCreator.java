@@ -41,10 +41,11 @@ import randoop.util.Randomness;
  * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
  * {@link #createCollection}.
  */
-class HelperSequenceCreator {
+final class HelperSequenceCreator {
 
+  /** Do not instantiate. */
   private HelperSequenceCreator() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -60,6 +61,7 @@ class HelperSequenceCreator {
    */
   static SIList<Sequence> createArraySequence(ComponentManager components, Type collectionType) {
 
+    // The returned sequence has length less than this.
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
@@ -199,7 +201,21 @@ class HelperSequenceCreator {
     }
   }
 
+  /** Extends a sequence by one or more statements that add an element to a collection or array. */
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   private interface SequenceExtender {
+    /**
+     * Returns {@code addSequence}, extended by one or more statements that add one element to the
+     * collection or array.
+     *
+     * @param addSequence the sequence to extend
+     * @param creationIndex the index, in {@code addSequence}, of the variable holding the
+     *     collection or array
+     * @param index the index, in {@code addSequence}, of the variable holding the element to add
+     * @param i the position within the collection or array at which to add the element; the
+     *     collection implementation ignores it, because it appends the element via {@code add}
+     * @return {@code addSequence}, extended to add the element
+     */
     Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }
 
@@ -367,7 +383,7 @@ class HelperSequenceCreator {
    */
   private static InstantiatedType getImplementingTypeForCollection(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
-    if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
+    if (elementType.getGenericClassType().isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
       List<TypeArgument> elementTypeArgs = elementType.getTypeArguments();

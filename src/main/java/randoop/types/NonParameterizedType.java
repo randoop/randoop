@@ -109,6 +109,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType getRawtype() {
+    if (this.isMemberClass()) {
+      // Special case: non-parameterized member classes can still carry type variables from
+      // their enclosing type. Rawifying only the member class is not enough.
+      NonParameterizedType rawEnclosingType = enclosingType.getRawtype();
+      if (!enclosingType.equals(rawEnclosingType)) {
+        NonParameterizedType rawType = new NonParameterizedType(runtimeType);
+        rawType.enclosingType = rawEnclosingType;
+        return rawType;
+      }
+    }
     return this;
   }
 
@@ -129,21 +139,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.isObject()) {
-      return this;
-    }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      if (superclass != null) {
-        return NonParameterizedType.forClass(superclass);
-      }
+      return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
+      return supertype == null ? null : forType(supertype);
     }
-    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override
@@ -178,11 +180,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    // Return true if the run-time type is an enum type or is an enum constant.  An enum constant is
-    // represented (by the javac compiler) as a subclass of an enum type.
-    return runtimeType.isEnum()
-        || (getRuntimeClass().getSuperclass() != null
-            && getRuntimeClass().getSuperclass().isEnum());
+    // Return true if the run-time type is an enum type or is an enum constant.
+    if (runtimeType.isEnum()) {
+      return true;
+    }
+    // An enum constant is represented (by the javac compiler) as a subclass of an enum type.
+    Class<?> superClass = getRuntimeClass().getSuperclass();
+    return superClass != null && superClass.isEnum();
   }
 
   /**

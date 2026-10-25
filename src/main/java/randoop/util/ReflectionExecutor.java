@@ -20,8 +20,9 @@ import randoop.main.RandoopBug;
  */
 public final class ReflectionExecutor {
 
+  /** Do not instantiate. */
   private ReflectionExecutor() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -131,7 +132,7 @@ public final class ReflectionExecutor {
           }
         }
         return new ExceptionalExecution(
-            e, call_timeout_millis * 1000000L); // convert milliseconds to nanoseconds
+            e, call_timeout_millis * 1_000_000L); // convert milliseconds to nanoseconds
       }
     } else {
       executeReflectionCodeUnThreaded(code);
@@ -187,7 +188,7 @@ public final class ReflectionExecutor {
         throw new TimeoutException();
       }
 
-    } catch (java.lang.InterruptedException e) {
+    } catch (InterruptedException e) {
       throw new IllegalStateException(
           "A RunnerThread thread shouldn't be interrupted by anyone! (This may be a bug in"
               + " Randoop; please report it at https://github.com/randoop/randoop/issues ,"
@@ -201,6 +202,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    */
+  @SuppressWarnings("PMD.AvoidRethrowingException")
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
@@ -211,15 +213,13 @@ public final class ReflectionExecutor {
       throw e;
     } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
       throw new RandoopBug("code=" + code, e);
-    } catch (Throwable e) {
-      if (e instanceof java.lang.reflect.InvocationTargetException) {
-        throw new RandoopBug("Unexpected InvocationTargetException", e);
-      }
-
+    }
+    /*
+      catch (Throwable e) {
       // Debugging -- prints unconditionally, to System.out.
-      // printExceptionDetails(e, System.out);
-
+      printExceptionDetails(e, System.out);
       throw e;
     }
+    */
   }
 }

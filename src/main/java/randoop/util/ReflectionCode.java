@@ -26,10 +26,23 @@ public abstract class ReflectionCode {
   /** The exception thrown by execution. */
   protected @Nullable Throwable exceptionThrown;
 
+  /** Creates a ReflectionCode. */
+  public ReflectionCode() {}
+
+  /**
+   * Returns true if this code has started execution.
+   *
+   * @return true if this code has started execution
+   */
   public final boolean hasStarted() {
     return hasStarted;
   }
 
+  /**
+   * Returns true if this code has completed execution.
+   *
+   * @return true if this code has completed execution
+   */
   public final boolean hasRun() {
     return hasRun;
   }
@@ -62,7 +75,7 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  public final void runReflectionCode() throws ReflectionCodeException {
+  public final void runReflectionCode() {
     this.setHasStarted();
     runReflectionCodeRaw();
     this.setHasRun();
@@ -75,8 +88,15 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
+  protected abstract void runReflectionCodeRaw();
 
+  /**
+   * Returns the value returned by the execution. The result is null if the execution returned null
+   * or if the execution threw an exception; call {@link #getExceptionThrown} to distinguish these
+   * two cases.
+   *
+   * @return the value returned by the execution, or null if it returned null or threw an exception
+   */
   public @Nullable Object getReturnValue() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
@@ -112,6 +132,7 @@ public abstract class ReflectionCode {
 
   /** Indicates a bug in the ReflectionCode class. */
   static final class ReflectionCodeException extends IllegalStateException {
+    /** ID for serializing this class. */
     private static final long serialVersionUID = -7508201027241079866L;
 
     ReflectionCodeException(String msg) {

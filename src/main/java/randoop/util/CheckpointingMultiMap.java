@@ -17,7 +17,8 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
  * @param <K> the type of keys
  * @param <V> the type of values
  */
-// @Signed so the values can be printed
+// @Signed so the values can be printed.
+// Cannot do `extends AbstractMap<K, Set<V>>` because its `remove()` has a different signature.
 public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed Object>
     implements IMultiMap<K, V> {
 
@@ -134,6 +135,7 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
   }
 
   /** Undo changes since the last call to {@link #mark()}. */
+  @SuppressWarnings("ListRemoveAmbiguous")
   public void undoToLastMark() {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
@@ -142,11 +144,14 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
-    steps = marks.remove(marks.size() - 1);
+    // On Java 11+, use: steps = marks.removeLast();
+    steps = marks.remove(marks.size() - 1); // index-based removal: remove the last element
   }
 
   private void undoLastOp() {
-    if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
+    if (ops.isEmpty()) {
+      throw new IllegalStateException("ops empty.");
+    }
     OpKeyVal last = ops.remove(ops.size() - 1);
     Ops op = last.op;
     K key = last.key;
@@ -168,7 +173,9 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
 
   @Override
   public Set<V> getValues(K key) {
-    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (key == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
     return map.getOrDefault(key, Collections.emptySet());
   }
 
@@ -179,7 +186,9 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
    * @return true if this map contains the given key
    */
   public boolean containsKey(@UnknownSignedness Object key) {
-    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (key == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
     return map.containsKey(key);
   }
 

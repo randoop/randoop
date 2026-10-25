@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
 import randoop.TestValue;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
@@ -21,7 +22,7 @@ import randoop.types.JavaTypes;
 public class SeedSequencesTests {
 
   @Test
-  public void testGetSeedsFromAnnotatedFields() {
+  public void testGetSeedsFromAnnotatedFields() throws RandoopSpecificationError {
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
     AccessibilityPredicate accessibilityPredicate =

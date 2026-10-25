@@ -20,6 +20,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.MethodCall;
@@ -249,12 +250,14 @@ public class ExecutableSequence {
    * @see #execute(ExecutionVisitor, TestCheckGenerator, boolean)
    * @param visitor the {@link ExecutionVisitor} that collects checks from results
    * @param gen the check generator for tests
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
+  public void execute(ExecutionVisitor visitor, TestCheckGenerator gen)
+      throws RandoopSpecificationError {
     // TODO: Setting the third argument to false would mask fewer errors.  Doing so causes 3 Randoop
     // system tests to fail (because some sequence throws an exception before the last statement).
     // One is innocuous:  java.lang.OutOfMemoryError due to creation of a very large object --
-    // repeated executions evenutally exhaust memory.  Two others are odd: failures in
+    // repeated executions eventually exhaust memory.  Two others are odd: failures in
     // sun.reflect.DelegatingMethodAccessorImpl.invoke called by java.lang.reflect.Method.invoke.
     execute(visitor, gen, true);
   }
@@ -296,9 +299,11 @@ public class ExecutableSequence {
    * @param ignoreException if true, ignore exceptions thrown before the last statement
    * @throws Error if execution of the sequence throws an exception and {@code
    *     ignoreException==false}
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
   @SuppressWarnings("SameParameterValue")
-  private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
+  private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException)
+      throws RandoopSpecificationError {
 
     long startTime = System.nanoTime();
     try { // try statement for timing
@@ -382,6 +387,7 @@ public class ExecutableSequence {
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
+        break;
       }
     }
     return ros;
@@ -479,10 +485,14 @@ public class ExecutableSequence {
       // For a getClass() call, the index of receiver is 1 since the lastValues will always
       // be [output, receiver].
       ReferenceType elemType = lastValues.get(1).getType();
-      if (elemType.isGeneric()) {
+      if (elemType instanceof GenericClassType) {
         GenericClassType g = (GenericClassType) elemType;
         elemType =
             g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
+      } else if (elemType.isGeneric()) {
+        // Special case: a member class can be non-parameterized itself but still generic via
+        // its enclosing type, e.g., Outer<T>.Inner.
+        elemType = (ReferenceType) elemType.getRawtype();
       }
       // cast to Class<ConcreteType>
       runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
@@ -499,8 +509,21 @@ public class ExecutableSequence {
       return null;
     }
 
+    Class<?> runtimeClass = runTimeType.getRuntimeClass();
+    if (runtimeClass.isSynthetic()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is a synthetic class.%n", runTimeType);
+      return null;
+    }
+
+    if (runtimeClass.isAnonymousClass()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is an anonymous class.%n", runTimeType);
+      return null;
+    }
+
     // Sanity check.
-    assert lastOpIsGetClass || runTimeType.isSubtypeOf(declaredType)
+    assert lastOpIsGetClass || runTimeType.isSubtypeOfOrEqualTo(declaredType)
         : String.format(
             "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
             runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
@@ -649,7 +672,7 @@ public class ExecutableSequence {
    */
   public List<ReferenceValue> getAllValues() {
     Set<ReferenceValue> values = new LinkedHashSet<>();
-    for (int i = 0; i < sequence.size() - 1; i++) {
+    for (int i = 0; i < sequence.size(); i++) {
       // TODO: Should this be only reference values, not all values?
       Object value = getValue(i);
       if (value != null) {
