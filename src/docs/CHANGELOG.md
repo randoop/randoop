@@ -24,10 +24,10 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
-The replacecall agent's options may be separated by whitespace as well as by
-commas.  The agent removes single and double quotes from its options, so a
-filename that contains whitespace or a quote character must be quoted.  See
-the [manual](https://randoop.github.io/randoop/manual/index.html#replacecall-options).
+The replacecall agent removes single and double quotes from its options.  A
+filename that contains whitespace, a single quote, or a double quote must be
+quoted.  See the
+[manual](https://randoop.github.io/randoop/manual/index.html#replacecall-options).
 
 ## Version 4.3.4 (June 6, 2025)
 
