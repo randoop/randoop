@@ -144,21 +144,36 @@ public class OmitMethodsTest {
 
   @Test
   public void testOmittedOperations() throws RandoopSpecificationError {
-    ClassOrInterfaceType gType =
-        ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.G.class);
     Pattern omitpattern = Pattern.compile(P + "G\\.m1\\(\\)");
+    // m1 is declared in G.
+    assertOmittedGM1(
+        ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.G.class), omitpattern);
+    // m1 is inherited from G.
+    assertOmittedGM1(
+        ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.C.class), omitpattern);
+  }
+
+  /**
+   * Asserts that extracting the operations of {@code type} omits exactly {@code G.m1}.
+   *
+   * @param type the type whose operations to extract
+   * @param omitpattern the omit pattern, which should match {@code G.m1} and nothing else
+   * @throws RandoopSpecificationError if a specification is malformed
+   */
+  private void assertOmittedGM1(ClassOrInterfaceType type, Pattern omitpattern)
+      throws RandoopSpecificationError {
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     OperationExtractor extractor =
-        new OperationExtractor(
-            gType,
+        OperationExtractor.extract(
+            new ReflectionManager(accessibility),
+            type,
             new DefaultReflectionPredicate(),
             new OmitMethodsPredicate(Collections.singletonList(omitpattern)),
             accessibility,
             null);
-    new ReflectionManager(accessibility).apply(extractor, gType.getRuntimeClass());
-    assertDoesNotHaveMethod("G.m1", extractor.getOperations());
-    assertHasMethod("G.m2", extractor.getOperations());
+    assertDoesNotHaveMethod("m1", extractor.getOperations());
+    assertHasMethod("m2", extractor.getOperations());
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
     assertHasMethod("G.m1", omitted);
