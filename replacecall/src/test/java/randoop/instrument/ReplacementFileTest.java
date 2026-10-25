@@ -106,7 +106,8 @@ public class ReplacementFileTest {
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
         "inheritedconstructorshorthand.txt:2: Constructor java.lang.Integer.<init>() not found"
-            + " for line: java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+            + " for line: java.lang.Integer()"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
