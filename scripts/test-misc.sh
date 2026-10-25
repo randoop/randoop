@@ -61,8 +61,7 @@ fi
 
 ## Javadoc documentation
 if [ ! -f SKIP-REQUIRE-JAVADOC ]; then
-  (./gradlew requireJavadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-rjp.txt 2>&1) || true
-  "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-rjp.txt || failures="requireJavadoc $failures"
+  ./gradlew requireJavadocDiff --console=plain --warning-mode=all --no-daemon || failures="requireJavadoc $failures"
   (./gradlew javadoc --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadoc.txt 2>&1) || true
   "$PLUME_SCRIPTS"/ci-lint-diff /tmp/warnings-javadoc.txt || failures="javadoc-warning-mode-all $failures"
   (./gradlew javadocPrivate --console=plain --warning-mode=all --no-daemon > /tmp/warnings-javadocPrivate.txt 2>&1) || true

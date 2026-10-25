@@ -234,8 +234,6 @@ dependencies {
   implementation(libs.commons.lang3)
   implementation(libs.commons.io)
 
-  compileOnly(libs.require.javadoc)
-
   /* Jacoco measures coverage of classes and methods under test. */
   implementation(libs.org.jacoco.core)
   implementation(variantOf(libs.org.jacoco.agent) { classifier("runtime") })
@@ -888,26 +886,72 @@ tasks.register<Javadoc>("javadocPrivate") {
 
 tasks.check { dependsOn(tasks.javadoc) }
 
-allprojects {
-  tasks.register<JavaExec>("requireJavadoc") {
-    description = "Ensures that Javadoc documentation exists."
+val requireJavadocClasspath = configurations.create("requireJavadoc")
+
+dependencies { requireJavadocClasspath(libs.require.javadoc) }
+
+/**
+ * Configures this task to run require-javadoc on the main source code of every project. Filenames
+ * in its output are relative to the root project directory, as filenames in `git diff` output are.
+ */
+fun JavaExec.runRequireJavadoc() {
+  mainClass = "org.plumelib.javadoc.RequireJavadoc"
+  classpath = requireJavadocClasspath
+  workingDir = rootDir
+  args("--relative", "--exclude=replacecall/src/main/java/randoop/mock")
+  args(
+    allprojects
+      .map { it.file("src/main/java") }
+      .filter { it.isDirectory }
+      .map { it.relativeTo(rootDir).path },
+  )
+}
+
+tasks.register<JavaExec>("requireJavadoc") {
+  description = "Ensures that Javadoc documentation exists."
+  group = "Documentation"
+  runRequireJavadoc()
+}
+
+// This doesn't yet pass.  TODO: make it pass.  (We are incrementally approaching that goal.)
+// tasks.named("check") { dependsOn(tasks.named("requireJavadoc")) }
+
+val requireJavadocWarnings = layout.buildDirectory.file("require-javadoc/warnings.txt")
+
+val requireJavadocReport =
+  tasks.register<JavaExec>("requireJavadocReport") {
+    description = "Writes require-javadoc's warnings about all the code to a file."
     group = "Documentation"
-    mainClass = "org.plumelib.javadoc.RequireJavadoc"
-    classpath = sourceSets["test"].compileClasspath
-    args("agent", "src/main/java", "--exclude=replacecall/src/main/java/randoop/mock")
-    jvmArgs(
-      "--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-      "--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-      "--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-      "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-      "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-      "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-      "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-      "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-    )
+    runRequireJavadoc()
+    outputs.file(requireJavadocWarnings)
+    outputs.upToDateWhen { false }
+    // Exit status 1 means that there were warnings, which are not an error for this task.
+    isIgnoreExitValue = true
+    doFirst {
+      val warningsFile = requireJavadocWarnings.get().asFile
+      warningsFile.parentFile.mkdirs()
+      standardOutput = warningsFile.outputStream()
+    }
+    doLast {
+      standardOutput.close()
+      val exitValue = executionResult.get().exitValue
+      if (exitValue > 1) {
+        throw GradleException(
+          "require-javadoc failed with exit status $exitValue; see " +
+            requireJavadocWarnings.get().asFile,
+        )
+      }
+    }
   }
-  // This doesn't yet pass.  TODO: make it pass.  (We are incrementally approaching that goal.)
-  // tasks.named("check") { dependsOn(tasks.named("requireJavadoc")) }
+
+tasks.register<Exec>("requireJavadocDiff") {
+  description =
+    "Ensures that Javadoc documentation exists for the lines that the current branch changes."
+  group = "Documentation"
+  dependsOn(requireJavadocReport, "clonePlumeScripts")
+  workingDir = rootDir
+  executable = layout.buildDirectory.file("utils/plume-scripts/ci-lint-diff").get().asFile.path
+  args(requireJavadocWarnings.get().asFile.path)
 }
 
 // needed for javadoc.doLast
