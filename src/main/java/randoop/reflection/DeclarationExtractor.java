@@ -10,9 +10,19 @@ import randoop.types.ClassOrInterfaceType;
  * {@link Class} objects.
  */
 public class DeclarationExtractor extends DefaultClassVisitor {
+  /** The types of visited classes; is side-effected by this visitor. */
   private final Set<ClassOrInterfaceType> classDeclarationTypes;
+
+  /** The predicate that determines which classes are collected. */
   private ReflectionPredicate reflectionPredicate;
 
+  /**
+   * Creates a visitor that adds the types of visited classes to the given set.
+   *
+   * @param classDeclarationTypes the set to which types of visited classes are added; is
+   *     side-effected
+   * @param reflectionPredicate the predicate that determines which classes are collected
+   */
   public DeclarationExtractor(
       Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate reflectionPredicate) {
     super();

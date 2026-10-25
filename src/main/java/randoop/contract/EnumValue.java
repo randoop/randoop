@@ -12,9 +12,17 @@ import randoop.types.TypeTuple;
  */
 public final class EnumValue extends ObjectContract {
 
+  /** The expected enum constant. */
   public final Enum<?> value;
+
+  /** The type of the enum constant. */
   private final Type type;
 
+  /**
+   * Creates a check that a value equals the given enum constant.
+   *
+   * @param value the expected enum constant
+   */
   public EnumValue(Enum<?> value) {
     super();
     this.value = value;

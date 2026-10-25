@@ -19,8 +19,14 @@ import randoop.types.TypeTuple;
  */
 public class EnumConstant extends CallableOperation {
 
+  /** The enum constant returned by this operation. */
   private Enum<?> value;
 
+  /**
+   * Creates an operation that returns the given enum constant.
+   *
+   * @param value the enum constant
+   */
   public EnumConstant(Enum<?> value) {
     super();
     if (value == null) {

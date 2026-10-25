@@ -20,8 +20,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class WildcardType extends ParameterType {
 
+  /** True if the bound of this wildcard is an upper bound, false if it is a lower bound. */
   private final boolean hasUpperBound;
 
+  /** Do not create a wildcard type without a bound. */
   private WildcardType() {
     super();
     //  do not create object

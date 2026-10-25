@@ -18,6 +18,11 @@ public final class EqualsTransitive extends ObjectContract {
     super();
   }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsTransitive getInstance() {
     return instance;
   }
