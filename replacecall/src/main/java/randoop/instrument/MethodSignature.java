@@ -212,6 +212,15 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns true if this {@link MethodSignature} represents a constructor.
+   *
+   * @return true if this {@link MethodSignature} represents a constructor
+   */
+  boolean isConstructor() {
+    return name.equals("<init>");
+  }
+
+  /**
    * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodSignature}.
    *
    * @return the parameter types for this {@link MethodSignature}
@@ -267,7 +276,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         }
       }
 
-      if (this.name.equals("<init>")) {
+      if (isConstructor()) {
         throw new NoSuchMethodException("Constructor " + this + " not found");
       }
 

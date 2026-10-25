@@ -1,0 +1,2 @@
+// bad replacement file for testing: a doubly-nested class written with "."
+randoop.instrument.SampleReplacements.Middle.Inner() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

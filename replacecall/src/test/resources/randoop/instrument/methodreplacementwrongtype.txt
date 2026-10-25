@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement for an instance method has the wrong return type
+java.lang.String.length() randoop.instrument.SampleReplacements.badLength(java.lang.String)

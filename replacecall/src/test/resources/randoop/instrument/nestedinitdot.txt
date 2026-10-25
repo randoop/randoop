@@ -1,0 +1,2 @@
+// bad replacement file for testing: a nested class written with "." in an <init> signature
+java.util.AbstractMap.SimpleEntry.<init>(java.lang.Object,java.lang.Object) randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)
