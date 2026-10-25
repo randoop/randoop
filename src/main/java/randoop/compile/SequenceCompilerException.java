@@ -50,7 +50,7 @@ public class SequenceCompilerException extends Throwable {
   }
 
   /**
-   * Get the source text for the class being compiled when this exception was thrown.
+   * Returns the source text for the class being compiled when this exception was thrown.
    *
    * @return the source text for the class that was being compiled
    */
@@ -59,7 +59,7 @@ public class SequenceCompilerException extends Throwable {
   }
 
   /**
-   * Return the compiler diagnostics.
+   * Returns the compiler diagnostics.
    *
    * @return the compiler diagnostics
    */

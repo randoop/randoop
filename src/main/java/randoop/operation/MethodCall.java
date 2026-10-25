@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -136,7 +137,7 @@ public final class MethodCall extends CallableOperation {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }
@@ -185,11 +186,6 @@ public final class MethodCall extends CallableOperation {
     return ReflectionExecutor.executeReflectionCode(code);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if this method is static, and false otherwise
-   */
   @Override
   public boolean isStatic() {
     return isStatic;
@@ -319,5 +315,18 @@ public final class MethodCall extends CallableOperation {
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(method);
+  }
+
+  /**
+   * Returns true if the method takes one argument of its own type. It might be a zero-argument
+   * instance method, or a static method whose single parameter type matches the declaring class.
+   *
+   * @param m a Method
+   * @return true if the method takes one argument
+   */
+  public static boolean isUnarySelfType(Method m) {
+    return Modifier.isStatic(m.getModifiers())
+        ? m.getParameterCount() == 1 && m.getParameters()[0].getType().equals(m.getDeclaringClass())
+        : m.getParameterCount() == 0;
   }
 }

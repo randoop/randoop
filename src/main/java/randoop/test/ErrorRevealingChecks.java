@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence. Each check may
@@ -94,7 +95,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
    * @return null, since no expected exceptions in error-revealing tests
    */
   @Override
-  public ExceptionCheck getExceptionCheck() {
+  public @Nullable ExceptionCheck getExceptionCheck() {
     return null;
   }
 
@@ -110,7 +111,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

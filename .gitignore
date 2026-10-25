@@ -38,3 +38,5 @@ scripts/dockerdir
 
 # rg needs this:  https://github.com/BurntSushi/ripgrep/issues/1040
 .git/
+
+.factorypath

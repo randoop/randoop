@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a type argument of a parameterized type as described in <a
@@ -50,7 +51,7 @@ public abstract class TypeArgument {
   public abstract TypeArgument substitute(Substitution substitution);
 
   /**
-   * Checks whether this type argument contains another argument, using relationship defined in <a
+   * Returns true if this type argument contains another argument, using relationship defined in <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
    * 4.5.1</a>.
    *
@@ -69,7 +70,7 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicate whether this type argument has a wildcard.
+   * Returns true if this type argument has a wildcard.
    *
    * @return true if this argument has a wildcard argument
    */
@@ -78,7 +79,7 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicate whether this type argument has a capture variable.
+   * Returns true if this type argument has a capture variable.
    *
    * @return true if this argument has a capture variable
    */
@@ -87,7 +88,7 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicates whether this type argument is generic.
+   * Returns true if this type argument is generic.
    *
    * @return true if this type argument is generic, false otherwise
    */
@@ -96,7 +97,7 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicates whether this type argument is generic.
+   * Returns true if this type argument is generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
    *     operation generic
@@ -105,7 +106,7 @@ public abstract class TypeArgument {
   public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
-   * Determines whether this type argument is an instantiation of the other argument.
+   * Returns true if this type argument is an instantiation of the other argument.
    *
    * @param otherArgument the other argument
    * @return true if this type is an instantiation of the other argument, false otherwise
@@ -116,7 +117,7 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicate whether this type argument is a wildcard argument.
+   * Returns true if this type argument is a wildcard argument.
    *
    * @return true if this is a wildcard argument, false otherwise
    */
@@ -131,27 +132,27 @@ public abstract class TypeArgument {
    * @return a substitution unifying this type or a supertype of this type with the goal type, or
    *     null if unification failed
    */
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     // This implementation indicates failure.  It is overridden by subclasses.
     return null;
   }
 
   /**
-   * Indicate whether this type argument is a type variable.
+   * Returns true if this type argument is a type variable.
    *
    * @return true if this argument is a type variable, false otherwise
    */
   public abstract boolean isVariable();
 
   /**
-   * Return the fully-qualified name.
+   * Returns the fully-qualified name.
    *
    * @return the fully-qualified name
    */
   public abstract String getFqName();
 
   /**
-   * Return the binary name.
+   * Returns the binary name.
    *
    * @return the binary name
    */

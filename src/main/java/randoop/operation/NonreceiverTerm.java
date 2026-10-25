@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -21,7 +22,7 @@ import randoop.types.TypeTuple;
  *
  * <p>As an {@link Operation}, a value v of type T is formally represented by an operation v : []
  * &rarr; T, with no input types, and the type of the value as the output type. This kind of
- * operation is a <i>ground</i> term &mdash; it requires no inputs.
+ * operation is a <i>ground</i> term that requires no inputs.
  *
  * <p>The execution of this {@link Operation} simply returns the value.
  */
@@ -30,8 +31,11 @@ public final class NonreceiverTerm extends CallableOperation {
   /** The {@link Type} of this non-receiver term. */
   private final Type type;
 
-  /** The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. */
-  private final Object value;
+  /**
+   * The value of this non-receiver term. Must be null, a String, a boxed primitive, or a Class. Is
+   * null only if {@link #type} is not String, primitive, or {@code JavaTypes.CLASS_TYPE}.
+   */
+  private final @Nullable Object value;
 
   /**
    * Constructs a NonreceiverTerm.
@@ -83,7 +87,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
+   * Returns true if the given {@code Class<?>} is the type of a non-receiver term.
    *
    * @param c the {@code Class<?>} object
    * @return true iff the type is primitive, boxed primitive, {@code String}, or {@code Class}
@@ -95,9 +99,9 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /** Indicates whether this object is equal to o. */
+  /** Returns true if this object is equal to o. */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }
@@ -119,6 +123,7 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
+      assert value != null : "@AssumeAssertion(nullness): value != null if type is a class";
       return ((Class<?>) value).getName() + ".class";
     }
     return Objects.toString(value);
@@ -165,12 +170,12 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return value of this {@link NonreceiverTerm}
    */
   @Override
-  public Object getValue() {
+  public @Nullable Object getValue() {
     return value;
   }
 
   /**
-   * Return the type.
+   * Returns the type.
    *
    * @return the type
    */

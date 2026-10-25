@@ -7,11 +7,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -75,6 +78,7 @@ class RandoopRunStatus {
    * @param options the command-line arguments to Randoop
    * @return the status information collected from generation
    */
+  @SuppressWarnings("CatchAndPrintStackTrace") // The problem is with the log, so cannot log it.
   static ProcessStatus generate(SystemTestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
     command.add("java");
@@ -112,7 +116,40 @@ class RandoopRunStatus {
     command.add("gentests");
     command.addAll(options.getOptions());
     System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
-    return ProcessStatus.runCommand(command);
+
+    try {
+      return ProcessStatus.runCommand(command);
+    } catch (Throwable t) {
+      try {
+        printFile(options.getOption("log"));
+        printFile(options.getOption("operation-history-log"));
+        printFile(options.getOption("selection-log"));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      throw t;
+    }
+  }
+
+  /**
+   * Prints the contents of a file to standard out.
+   *
+   * @param filename a file name; the method does nothing if {@code filename} is null
+   */
+  private static void printFile(String filename) {
+    if (filename != null) {
+      try (BufferedReader br =
+          Files.newBufferedReader(Paths.get(filename), StandardCharsets.UTF_8)) {
+        System.out.println("---------------- contents of " + filename + " ----------------");
+        String line;
+        while ((line = br.readLine()) != null) {
+          System.out.println(line);
+        }
+        System.out.println("---------------- end of " + filename + " ----------------");
+      } catch (IOException e) {
+        System.out.println("ERROR: Cannot read " + filename);
+      }
+    }
   }
 
   /**

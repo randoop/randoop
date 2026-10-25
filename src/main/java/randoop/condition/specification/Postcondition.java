@@ -1,6 +1,7 @@
 package randoop.condition.specification;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A {@link Postcondition} is a specification clause of a contract on the outcome of the invocation
@@ -37,7 +38,7 @@ public class Postcondition extends SpecificationClause {
   private final Property property;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "nullness:assignment"}) // dummy constructor for Gson serialization
   private Postcondition() {
     super();
     this.property = null;
@@ -65,7 +66,7 @@ public class Postcondition extends SpecificationClause {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

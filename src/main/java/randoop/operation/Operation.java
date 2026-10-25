@@ -59,7 +59,7 @@ public interface Operation {
   boolean isMessage();
 
   /**
-   * Indicates whether this object represents a method-call operation (either static or instance).
+   * Returns true if this object represents a method-call operation (either static or instance).
    * This excludes getters and setters.
    *
    * @return true if this operation is a method call, and false otherwise
@@ -96,9 +96,9 @@ public interface Operation {
   boolean isUncheckedCast();
 
   /**
-   * Returns the "value" of an operation that is actually a ground term, meaning a constant of some
-   * form. Only null if value is null, otherwise throws an exception if there is not a reasonable
-   * meaning of value for type of operation.
+   * Returns the "value" of an operation that is actually a ground term, meaning a literal. Only
+   * null if value is null, otherwise throws an exception if there is not a reasonable meaning of
+   * value for type of operation.
    *
    * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *
@@ -108,7 +108,7 @@ public interface Operation {
   Object getValue();
 
   /**
-   * Determines whether the reflective object in this {@link Operation} satisfies the {@code canUse}
+   * Returns true if the reflective object in this {@link Operation} satisfies the {@code canUse}
    * criteria of the given {@link ReflectionPredicate}.
    *
    * @param reflectionPredicate a {@link ReflectionPredicate} to be checked

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
@@ -34,7 +35,7 @@ class LazyParameterBound extends ParameterBound {
    *     identical, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -239,7 +240,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Return true if the given type has a capture variable.
+   * Returns true if the given type has a capture variable.
    *
    * @param type the type to test
    * @return true if the given type has a capture variable
@@ -285,9 +286,9 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
     throw new LazyBoundException();
-    // assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    // assert false : "LazyParameterBound.isSubtypeOfOrEqualTo is not implemented";
     // return false;
   }
 

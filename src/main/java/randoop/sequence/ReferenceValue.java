@@ -1,6 +1,7 @@
 package randoop.sequence;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.ReferenceType;
 
 /**
@@ -27,14 +28,14 @@ public final class ReferenceValue {
   }
 
   /**
-   * Indicates whether two {@link ReferenceValue} objects are equal. Note: tests the {@code Object}
+   * Returns true if two {@link ReferenceValue} objects are equal. Note: tests the {@code Object}
    * value of each object by identity.
    *
    * @param obj the object to test for equality
    * @return true if parameter has the same type and identical value to this object, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

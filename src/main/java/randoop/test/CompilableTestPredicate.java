@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.compile.SequenceCompiler;
 import randoop.main.GenTests;
 import randoop.output.JUnitCreator;
@@ -111,7 +112,7 @@ import randoop.util.Log;
   }
 
   /**
-   * Return true if the given source code compiles without error. This is here to allow the
+   * Returns true if the given source code compiles without error. This is here to allow the
    * mechanics of the predicate to be tested directly. Otherwise, we have to create a broken {@link
    * ExecutableSequence}, which may not always be possible.
    *
@@ -120,7 +121,7 @@ import randoop.util.Log;
    * @param packageName the package name for the test, null if no package
    * @return true if the code compiles (without error), false otherwise
    */
-  boolean testSource(String testClassName, CompilationUnit source, String packageName) {
+  boolean testSource(String testClassName, CompilationUnit source, @Nullable String packageName) {
     String sourceText = source.toString();
     return compiler.isCompilable(packageName, testClassName, sourceText);
   }

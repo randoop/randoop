@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
@@ -73,8 +74,8 @@ public class OperationSpecification {
   @SerializedName("throws")
   private final List<ThrowsCondition> throwsSpecifications;
 
-  /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  /** Gson serialization requires a no-argument constructor. */
+  @SuppressWarnings({"unused", "nullness:assignment"}) // dummy constructor for Gson serialization
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();
@@ -123,7 +124,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link OperationSignature} for the operation.
+   * Returns the {@link OperationSignature} for the operation.
    *
    * @return the reflection object for the operation
    */
@@ -132,7 +133,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link Identifiers} for this specification.
+   * Returns the {@link Identifiers} for this specification.
    *
    * @return the identifiers for this specification
    */
@@ -141,7 +142,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Precondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Precondition} objects for this specification
    */
@@ -150,7 +151,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Postcondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Postcondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Postcondition} objects for this specification
    */
@@ -159,7 +160,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of specifications for this operation specification, is non-null
    */
@@ -195,7 +196,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
+   * Returns true if this {@link OperationSpecification} contains any pre-, post-, or
    * throws-specifications.
    *
    * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
@@ -207,7 +208,7 @@ public class OperationSpecification {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

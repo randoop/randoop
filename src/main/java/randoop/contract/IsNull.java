@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -15,7 +16,7 @@ import randoop.types.TypeTuple;
 public final class IsNull extends ObjectContract {
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

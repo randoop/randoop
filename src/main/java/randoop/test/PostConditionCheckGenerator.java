@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
@@ -68,8 +69,8 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     }
   }
 
-  private Object[] addNullReceiver(Object[] values) {
-    Object[] args = new Object[values.length + 1];
+  private @Nullable Object[] addNullReceiver(Object[] values) {
+    @Nullable Object[] args = new Object[values.length + 1];
     args[0] = null;
     System.arraycopy(values, 0, args, 1, values.length);
     return args;

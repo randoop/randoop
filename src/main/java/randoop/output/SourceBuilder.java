@@ -18,14 +18,14 @@ abstract class SourceBuilder {
   }
 
   /**
-   * Return the source for this declaration as lines of {@code Strings}
+   * Returns the source for this declaration as lines of {@code Strings}
    *
    * @return the list of lines in this declaration
    */
   abstract List<String> toLines();
 
   /**
-   * Return this declaration as a {@code String}.
+   * Returns this declaration as a {@code String}.
    *
    * @return the {@code String} for this declaration
    */

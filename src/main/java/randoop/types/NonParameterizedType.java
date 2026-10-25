@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -60,7 +62,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return true if the runtime types are the same, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -119,6 +121,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
+  @Pure
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;
@@ -126,21 +129,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.isObject()) {
-      return this;
-    }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      if (superclass != null) {
-        return NonParameterizedType.forClass(superclass);
-      }
+      return superclass == null ? null : NonParameterizedType.forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
+      return supertype == null ? null : ClassOrInterfaceType.forType(supertype);
     }
-    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override
@@ -175,11 +170,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    // Return true if the run-time type is an enum type or is an enum constant.  An enum constant is
-    // represented (by the javac compiler) as a subclass of an enum type.
-    return runtimeType.isEnum()
-        || (getRuntimeClass().getSuperclass() != null
-            && getRuntimeClass().getSuperclass().isEnum());
+    // Return true if the run-time type is an enum type or is an enum constant.
+    if (runtimeType.isEnum()) {
+      return true;
+    }
+    // An enum constant is represented (by the javac compiler) as a subclass of an enum type.
+    Class<?> superClass = getRuntimeClass().getSuperclass();
+    return superClass != null && superClass.isEnum();
   }
 
   /**

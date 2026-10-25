@@ -1,5 +1,7 @@
 package randoop.types;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
  * return values, and is not a type. However, we need to pretend that it is to be able to represent
@@ -19,7 +21,7 @@ public class VoidType extends Type {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (!(obj instanceof VoidType)) {
       return false;
     }
@@ -62,7 +64,7 @@ public class VoidType extends Type {
    * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return false;
   }
 

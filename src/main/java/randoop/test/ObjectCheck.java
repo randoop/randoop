@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
@@ -65,7 +66,7 @@ public class ObjectCheck implements Check {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
-<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="stylesheets/main.css" type="text/css">
+<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png">
 <title>Randoop Manual</title>
 </head>
 <body>
@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 4.3.3, released May 2, 2024.
+This is the manual for Randoop version 4.3.4, released June 6, 2025.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -229,22 +229,22 @@ Randoop runs on a Java 8 or later JVM.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v4.3.3/randoop-4.3.3.zip"><code>randoop-4.3.3.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v4.3.4/randoop-4.3.4.zip"><code>randoop-4.3.4.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-4.3.3.jar</code>, the Java agent jar files
-  (<code>covered-class-4.3.3.jar</code> and
-   <code>replacecall-4.3.3.jar</code>),
+  <code>randoop-all-4.3.4.jar</code>, the Java agent jar files
+  (<code>covered-class-4.3.4.jar</code> and
+   <code>replacecall-4.3.4.jar</code>),
   and this documentation.
 -->
   This manual uses <code>${RANDOOP_PATH}</code> to refer to
   the path of the unzipped archive,
   and <code>${RANDOOP_JAR}</code> to refer to
-  the location of <code>randoop-all-4.3.3.jar</code>
+  the location of <code>randoop-all-4.3.4.jar</code>
   within the unzipped archive.
 </p>
 
@@ -416,7 +416,7 @@ RegressionTest will pass.
 </p>
 
 <pre class="code">
-java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.3.jar \
+java -cp .:junit.jar:<em>myclasspath</em>:.../randoop/build/libs/randoop-all-4.3.4.jar \
   randoop.main.Main minimize --suitepath=ErrorTest0.java --suiteclasspath=.:junit-4.12.jar:<em>myclasspath</em>
 </pre>
 
@@ -904,7 +904,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -cp randoop-all-4.3.3.jar randoop.main.Main minimize \
+java -cp randoop-all-4.3.4.jar randoop.main.Main minimize \
   --suitepath=ErrorTest0.java --suiteclasspath=junit.jar:commons-lang.jar --testsuitetimeout=30
 </pre>
 
@@ -1052,20 +1052,20 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
-             Whether to output error-revealing tests. Disables all output when used with <code>
+             If true, output error-revealing tests. Disables all output when used with <code>
  --no-regression-tests</code>. Restricting output can result in long runs if the default values of
  <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>.
-             Whether to output regression tests. Disables all output when used with <code>
+             If true, output regression tests. Disables all output when used with <code>
  --no-error-revealing-tests</code>. Restricting output can result in long runs if the default values
  of <code>--generated-limit</code> and <code>--time-limit</code> are used. [default: false]
             <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>.
-             Whether to include assertions in regression tests. If false, then the regression tests contain
- no assertions (except that if the test throws an exception, it should continue to throw an
+             If true, include assertions in regression tests. If false, then the regression tests contain no
+ assertions (except that if the test throws an exception, it should continue to throw an
  exception of the same type). Tests without assertions can be used to exercise the code, but
  they do not enforce any particular behavior, such as values returned. [default: false]
             <li id="option:check-compilable"><b>--check-compilable=</b><i>boolean</i>.
-             Whether to check that generated sequences can be compiled. If true, the code for each generated
+             If true, check that generated sequences can be compiled. If true, the code for each generated
  sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
  This check is useful because the assumptions in Randoop generation heuristics are sometimes
  violated by input methods, and, as a result, a generated test may not compile. This check does
@@ -1250,13 +1250,17 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <code>[+]</code>.
              A file containing literal values to be used as inputs to methods under test, or "CLASSES".
 
- <p>Literals in these files are used in addition to all other constants in the pool. For the
+ <p>Literals in these files are used in addition to all other literals in the pool. For the
  format of this file, see documentation in class <code>randoop.reflection.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under
- test.
+ test; it may be specified in addition to one or more files.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
-             How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. [default: CLASS]
+             Where to use literal values as method arguments. Should a literal be used as an argument to any
+ method, or only to methods defined in the class where the literal appears, or only in the
+ package where the literal appears?
+
+ <p>The literal values might have been obtained from the bytecode and/or from a file provided
+ via the <code>--literals-file</code> command-line option. [default: CLASS]
 <ul>
   <li><b>NONE</b> Do not use literals specified in a literals file.
   <li><b>CLASS</b> A literal for a given class is used as input only to methods of that class.
@@ -1282,6 +1286,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
  Virtual Machine specification. [default: 1000]
+            <li id="option:cast-to-run-time-type"><b>--cast-to-run-time-type=</b><i>boolean</i>.
+             If this is false, then each variable in a test is declared according to the compile-time type
+ of the expression being assigned to it. If this is true, then the variable is declared
+ according to the run-time type of the expression's value. [default: false]
       </ul>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>
@@ -1359,7 +1367,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  be sure to set <code>--generated-limit</code> or <code>--time-limit</code> to a reasonable value when
  using this option. [default: false]
             <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>.
-             Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
+             If true, use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
  invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
  problem, then set this to false and Randoop will output tests that use direct method calls
  instead of reflection. The tests will include a <code>main</code> method and will execute methods
@@ -1486,7 +1494,7 @@ Here are some examples.
 </p>
 <ul>
   <li><code>System.exit</code> will terminate Randoop if called during test generation.</li>
-  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which interferes with automated testing.</li>
+  <li><code>JOptionPane.showConfirmDialog</code> opens a modal dialog box requiring user interaction, which waits forever during automated testing.</li>
   <li>The no-argument <code>Random()</code> constructor uses a randomly-chosen seed, so tests might behave differently on each execution.</li>
 </ul>
 <p>
@@ -1503,13 +1511,13 @@ To use it:
 <ul>
   <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.3.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.4.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>replacecall-4.3.3.jar</code> to the boot class path,
+  <li>When running the generated tests, add the file <code>replacecall-4.3.4.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
--Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.3.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar
+-Xbootclasspath/a:${RANDOOP_PATH}/replacecall-4.3.4.jar -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar
 </pre>
 </li>
 </ul>
@@ -1544,7 +1552,7 @@ The replacecall agent never modifies
 
 <p>
 You can exclude additional packages from being transformed.
-Create an exclusion file <code>replacecall-exclusions.txt</code> containing, for example:
+Create an exclusion file <code>dont-transform.txt</code> containing, for example:
 </p>
 <pre>
 mypackage.mysubpackage.
@@ -1554,7 +1562,7 @@ org.something.library.
 and run the agent with the <code>--dont-transform=<em>filename</em></code> command-line option:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--dont-transform=replacecall-exclusions.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt
 </pre>
 
 <p>
@@ -1569,7 +1577,7 @@ For diagnostic output (such as to see what classes are being transformed),
 run the agent with the <code>--debug</code> flag
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--debug
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--debug
 </pre>
 
 
@@ -1582,18 +1590,27 @@ and you will specify the replacements in a replacement file (<a href="https://gi
 </p>
 
 <p>
-Each line of a replacement file is whitespace-separated package names
-(replace all calls in all methods of all classes in the package and its
-subpackages), or whitespace-separated class names (replace all methods in
-the class), or whitespace-separated method signatures without return
-types (replace the first method by the second).
+Each line of a replacement file is one of:
 </p>
+<ul>
+  <li>two whitespace-separated package names (replace all calls in all methods
+    of all classes in the package and its subpackages)
+  </li>
+  <li>two whitespace-separated class names (replace all methods in the class)
+  </li>
+  <li>two whitespace-separated method signatures without return types (replace
+    the first method by the second); each method signature is
+    a <a href="#fully-qualified-signature">Randoop fully-qualified
+    signature</a>.
+  </li>
+</ul>
+
 
 <p>
 Give the replacement file to the replacecall agent using the <code>--replacement-file</code> argument:
 </p>
 <pre>
--javaagent:${RANDOOP_PATH}/replacecall-4.3.3.jar=--replacement-file=replacecall-replacements.txt
+-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacement-file=replacecall-replacements.txt
 </pre>
 
 <p>
@@ -1619,7 +1636,7 @@ constructor.
 
 <p>
 Please keep in mind that when you define a replacement,
-it can change the behavior of client code.
+it can change the behavior of test code.
 </p>
 
 
@@ -2113,13 +2130,13 @@ exception escaping the method as the rep invariant being violated.
   option for java
 </p>
 <pre><code>
--javaagent:${RANDOOP_PATH}/covered-class-4.3.3.jar
+-javaagent:${RANDOOP_PATH}/covered-class-4.3.4.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   The instrumentation is not done on any JDK or JUnit classes.
-  The <code>covered-class-4.3.3.jar</code> file can be found in the
+  The <code>covered-class-4.3.4.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 </p>
@@ -2798,7 +2815,7 @@ says that Randoop was compiled by a Java 11 compiler (= class file version 55.0)
 
 <p>
   If you are using a distributed version of Randoop, please open a bug report.
-  If you copmiled Randoop yourself, then need to recompile Randoop.
+  If you compiled Randoop yourself, then you need to recompile Randoop.
 </p>
 
 
@@ -2925,7 +2942,7 @@ Waylon Huang.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage jdeps apionly MyClass Za sed uniq testjar jarfile jvm Sonion Guidry
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT replacecall org gradle awt subpackages RandoopMappedCalls pre test1 o1 t1 s1 ErrorTest0 Zaplatynski test10 var0 var1 var2 c' s2 a1 Xing InputTestSuiteMinimized mypackage mysubpackage jdeps apionly MyClass Za sed uniq testjar jarfile jvm Sonion Guidry doesn
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->

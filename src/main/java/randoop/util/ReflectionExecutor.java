@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.plumelib.options.Option;
 import org.plumelib.options.OptionGroup;
 import org.plumelib.util.FileWriterWithName;
@@ -43,7 +44,7 @@ public final class ReflectionExecutor {
    * {@code --usethreads} command-line option is given.
    */
   @Option("<filename> logs timed-out tests to the specified file")
-  public static FileWriterWithName timed_out_tests = null;
+  public static @MonotonicNonNull FileWriterWithName timed_out_tests = null;
 
   /**
    * Default for call_timeout_millis, in milliseconds. Should only be accessed by {@code
@@ -87,12 +88,20 @@ public final class ReflectionExecutor {
     return excep_exec_count;
   }
 
-  /** The average normal execution time, in milliseconds. */
+  /**
+   * Returns the average normal execution time, in milliseconds.
+   *
+   * @return the average normal execution time, in milliseconds
+   */
   public static double normalExecAvgMillis() {
     return ((normal_exec_duration_nanos / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
-  /** The average exceptional execution time, in milliseconds. */
+  /**
+   * Returns the average exceptional execution time, in milliseconds.
+   *
+   * @return the average exceptional execution time, in milliseconds
+   */
   public static double excepExecAvgMillis() {
     return ((excep_exec_duration_nanos / (double) excep_exec_count) / Math.pow(10, 6));
   }
@@ -132,14 +141,14 @@ public final class ReflectionExecutor {
     if (code.getExceptionThrown() != null) {
       // Add durationNanos to running sum for exceptional execution.
       excep_exec_duration_nanos += durationNanos;
-      assert excep_exec_duration_nanos > 0; // check no overflow.
+      assert excep_exec_duration_nanos >= 0; // check no overflow.
       excep_exec_count++;
       // System.out.println("exceptional execution: " + code);
       return new ExceptionalExecution(code.getExceptionThrown(), durationNanos);
     } else {
       // Add durationNanos to running sum for normal execution.
       normal_exec_duration_nanos += durationNanos;
-      assert normal_exec_duration_nanos > 0; // check no overflow.
+      assert normal_exec_duration_nanos >= 0; // check no overflow.
       normal_exec_count++;
       // System.out.println("normal execution: " + code);
       return new NormalExecution(code.getReturnValue(), durationNanos);

@@ -8,7 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signedness.qual.Signed;
 
-/** Implements an IMultiMap with a java.util.LinkedHashMap. */
+/**
+ * Implements an IMultiMap with a java.util.LinkedHashMap.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ */
 // @Signed so the keys and values can be printed.
 public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     implements IMultiMap<K, V> {
@@ -28,6 +33,8 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
   /**
    * Returns an immutable, empty multimap.
    *
+   * @param <K> the type of the keys
+   * @param <V> the type of the values
    * @return an immutable, empty multimap
    */
   @SuppressWarnings({"unchecked"})
@@ -124,7 +131,12 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     return map.toString();
   }
 
-  /** An immutable, empty multimap. */
+  /**
+   * An immutable, empty multimap.
+   *
+   * @param <K> the type of keys
+   * @param <V> the type of values
+   */
   private static class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
       extends MultiMap<K, V> {
 

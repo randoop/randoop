@@ -38,7 +38,7 @@ public class NameGenerator {
   }
 
   /**
-   * Return a new gensym (unique identifier).
+   * Returns a new gensym (unique identifier).
    *
    * @return the next identifier in the sequence produced by this
    */

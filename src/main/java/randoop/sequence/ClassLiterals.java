@@ -6,11 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.SIList;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
 
 /**
  * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented
@@ -33,20 +32,22 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
       new LinkedHashMap<>();
 
   @Override
-  public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
+  public SIList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
 
     Set<ClassOrInterfaceType> superClasses =
         hashedSuperClasses.computeIfAbsent(key, k -> getSuperClasses(k));
-    List<SimpleList<Sequence>> listOfLists = new ArrayList<>(superClasses.size() + 1);
+    List<SIList<Sequence>> listOfLists = new ArrayList<>(superClasses.size() + 1);
     listOfLists.add(super.getSequences(key, desiredType));
     for (ClassOrInterfaceType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
-    return new ListOfLists<>(listOfLists);
+    return SIList.concat(listOfLists);
   }
 
+  // TODO: Why isn't this defined in `ClassOrInterfaceType`?
   /**
-   * Gets superclasses for the given class. Stops at null or Object (excludes Object from result).
+   * Gets superclasses for the given class, not including Object. Does not include implemented
+   * interfaces.
    *
    * @param cls the class/interface type
    * @return the superclasses for the given type

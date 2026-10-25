@@ -30,6 +30,7 @@ import randoop.condition.specification.Precondition;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsCondition;
 import randoop.field.AccessibleField;
+import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
@@ -54,18 +55,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The operation to be decorated. */
   private final CallableOperation operation;
 
-  /**
-   * The type tuple of input types. For a non-static method call or an instance field access, the
-   * first input type is always that of the receiver, that is, the declaring class of the method or
-   * the field. Refer to {@link Operation}.
-   */
+  /** The input types, including the receiver if any. See {@link Operation}. */
   protected final TypeTuple inputTypes;
 
   /** The output type. */
   private final Type outputType;
 
   /** The specification for this operation. */
-  private ExecutableSpecification execSpec;
+  private @Nullable ExecutableSpecification execSpec;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -181,12 +178,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *
    * @return the specification to use for this object
    */
-  public ExecutableSpecification getExecutableSpecification() {
+  public @Nullable ExecutableSpecification getExecutableSpecification() {
     return execSpec;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -306,7 +303,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Get the enclosed operation in this typed operation.
+   * Returns the enclosed operation in this typed operation.
    *
    * @return the enclosed operation
    */
@@ -315,14 +312,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicates whether this operation has a type that is a wildcard type.
+   * Returns true if this operation has a type that is a wildcard type.
    *
    * @return true if at least one input or output type has a wildcard, false otherwise
    */
   public abstract boolean hasWildcardTypes();
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @return true if the operation is generic, false if not
@@ -332,7 +329,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * Returns true if this operation is generic. An operation is generic if any of its input and
    * output types are generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
@@ -425,9 +422,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract TypedOperation applyCaptureConversion();
 
   /**
-   * Returns an empty list representing the type parameters of this. Clients will mutate the list.
+   * Returns an empty list representing the type parameters of this.
    *
-   * @return an empty list representing the type parameters of this
+   * <p>Clients (such as subclasses calling this via super) may mutate the list.
+   *
+   * @return an empty list representing the type parameters of this, which clients may mutate
    */
   public List<TypeVariable> getTypeParameters() {
     // Implementation note: clients mutate the list, so don't use Collections.emptyList.
@@ -504,7 +503,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the typed operation for the given method, null if no matching method is found in {@code
    *     enumClass}
    */
-  private static TypedClassOperation getAnonEnumOperation(
+  private static @Nullable TypedClassOperation getAnonEnumOperation(
       Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
@@ -539,7 +538,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
         InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
         assert superType != null
-            : "should exist a super type of enum instantiating " + genDeclaringType;
+            : "@AssumeAssertion(nullness): should exist a super type of enum instantiating "
+                + genDeclaringType;
         Substitution substitution = superType.getTypeSubstitution();
         inputTypes = inputTypes.substitute(substitution);
         outputType = outputType.substitute(substitution);
@@ -560,13 +560,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
      * of generic type parameter. These just cause pain when generating code, and this code
      * assumes that the current method is one of these if we cannot find a match.
      */
-    System.out.println(
+    String msg =
         method.getName()
             + " is bridge? "
             + method.isBridge()
             + " is synthetic? "
-            + method.isSynthetic());
-    return null;
+            + method.isSynthetic();
+    throw new RandoopBug(msg);
   }
 
   /**
@@ -730,8 +730,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
-  private Object[] addNullReceiverIfStatic(Object[] values) {
-    Object[] args = values;
+  private @Nullable Object[] addNullReceiverIfStatic(Object[] values) {
+    @Nullable Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
       args[0] = null;

@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -35,7 +37,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * The enclosing type. Non-null only if this is a nested type (either a member type or a nested
    * static type).
    */
-  protected ClassOrInterfaceType enclosingType = null;
+  protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -99,8 +101,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
 
+  // This implementation is for an abstract class; subclasses do the real work.
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -108,8 +111,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
-    return !(this.isNestedClass() && otherType.isNestedClass())
-        || this.enclosingType.equals(otherType.enclosingType);
+    ClassOrInterfaceType enclosingThis = this.enclosingType;
+    ClassOrInterfaceType enclosingOther = otherType.enclosingType;
+    return Objects.equals(enclosingThis, enclosingOther);
   }
 
   @Override
@@ -170,12 +174,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return getRuntimeClass().getCanonicalName();
   }
 
   @Override
-  public String getFqName() {
+  public @Nullable String getFqName() {
     if (this.isNestedClass()) {
       if (this.isStatic()) {
         return enclosingType.getCanonicalName() + "." + this.getSimpleName();
@@ -222,7 +226,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package of the runtime class of this type, or null if there is none
    */
-  public Package getPackage() {
+  public @Nullable Package getPackage() {
     Class<?> c = getRuntimeClass();
     if (c == null) {
       throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
@@ -231,7 +235,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the package part of a type name, including the final period. Returns the empty string
+   * Returns the package part of a type name, including the final period. Returns the empty string
    * for a type in the unnamed package.
    *
    * @return the package part of a type name, or ""
@@ -266,7 +270,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public @Nullable InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -302,7 +306,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult =
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
@@ -333,14 +337,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the type for the superclass for this class.
+   * Returns the type for the superclass for this class. Returns null if this type has no superclass
+   * (it is the Object type or an interface type).
    *
-   * @return superclass of this type, or the {@code Object} type if this type has no superclass
+   * @return the superclass of this type, or null
    */
   public abstract ClassOrInterfaceType getSuperclass();
 
   /**
-   * Return the set of all of the supertypes of this type.
+   * Returns the set of all of the supertypes of this type.
    *
    * @return the set of all supertypes of this type
    */
@@ -362,7 +367,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Return the immediate supertypes of this type.
+   * Returns the immediate supertypes of this type.
    *
    * @return the immediate supertypes of this type
    */
@@ -374,13 +379,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     ClassOrInterfaceType superclass = this.getSuperclass();
     List<ClassOrInterfaceType> interfaces = this.getInterfaces();
     List<ClassOrInterfaceType> supertypes = new ArrayList<>(interfaces.size() + 1);
-    supertypes.add(superclass);
+    if (superclass != null) {
+      supertypes.add(superclass);
+    }
     supertypes.addAll(interfaces);
     return supertypes;
   }
 
   /**
-   * Return all supertypes of this type, including itself.
+   * Returns all supertypes of this type, including itself.
    *
    * @return all supertypes of this type, including itself
    */
@@ -400,7 +407,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is abstract.
+   * Returns true if this class is abstract.
    *
    * @return true if this class is abstract, false otherwise
    */
@@ -434,114 +441,171 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a nested class.
+   * Returns true if this class is a nested class.
    *
    * @return true iff this class is a nested class
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isNestedClass() {
     return enclosingType != null;
   }
 
   /**
-   * Indicate whether this class is a member of another class. (see <a
+   * Returns true if this class is a member of another class. (see <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *
    * @return true if this class is a member class, false otherwise
    */
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isMemberClass() {
     return isNestedClass() && !isStatic();
   }
 
   @Override
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public boolean isParameterized() {
     return this.isMemberClass() && enclosingType.isParameterized();
   }
 
   /**
-   * Indicates whether this class is static.
+   * Returns true if this class is static.
    *
    * @return true if this class is static, false otherwise
    */
   public abstract boolean isStatic();
 
   /**
-   * Test whether this type is a subtype of the given type according to transitive closure of
+   * Returns true if this type is a subtype of the given type according to transitive closure of
    * definition of the <i>direct supertype</i> relation in <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.10.2">section 4.10.2
    * of JLS for JavaSE 8</a>.
    *
+   * <p>Returns true if {@code otherType} is the same type as this type.
+   *
    * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    * @see #isAssignableFrom(Type)
-   * @see ParameterizedType#isSubtypeOf(Type)
+   * @see ParameterizedType#isSubtypeOfOrEqualTo(Type)
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    // TODO: Cache and look up results, for efficiency?
     if (debug) {
       System.out.printf(
-          "isSubtypeOf(%s, %s) [%s, %s]%n", this, otherType, this.getClass(), otherType.getClass());
+          "isSubtypeOfOrEqualTo(%s, %s) [%s, %s]%n",
+          this, otherType, this.getClass(), otherType.getClass());
     }
-
-    // Return true if this is the same as otherType, or if one of this's supertypes is a subtype of
-    // otherType.
 
     if (otherType.isObject()) {
       return true;
     }
 
-    // This handles two cases: this==otherType, or otherType==Object
-    if (super.isSubtypeOf(otherType)) {
+    if (this.equals(otherType)) {
       return true;
     }
-    if ((this instanceof NonParameterizedType)
-        && otherType.isGeneric()
-        && (this.getRuntimeClass() == otherType.getRuntimeClass())) {
-      return true;
+
+    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
+      Class<?> thisClass = this.getRuntimeClass();
+      Class<?> otherClass = otherType.getRuntimeClass();
+      if (thisClass == otherClass) {
+        return true;
+      }
     }
 
     if (!otherType.isReferenceType()) {
       return false;
     }
+    if (otherType.isArray()) {
+      return false;
+    }
+    ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
+    if (otherRefType.isInterface()) {
+      return this.isSubinterfaceOf(otherRefType);
+    } else {
+      return this.isSubclassOf(otherRefType);
+    }
+  }
 
-    // Check all the supertypes of this:  that is, interfaces and superclasses.
-
-    // First, check interfaces (only if otherType is an interface)
-    if (otherType.isInterface()) {
-      for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
-        if (debug) {
-          System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
-        }
-
-        if (iface.equals(otherType)) {
-          return true;
-        }
-        if (iface.isSubtypeOf(otherType)) {
-          return true;
-        }
-      }
-      // a superclass might implement otherType
+  /**
+   * Returns true if this type is a subtype of the given interface.
+   *
+   * <p>The receiver type may be a class or an interface.
+   *
+   * @param otherInterface an interface that might be a supertype of this
+   * @return true if this type implements the given interface, false otherwise
+   */
+  public boolean isSubinterfaceOf(ClassOrInterfaceType otherInterface) {
+    if (debug) {
+      System.out.printf(
+          "isSubinterfaceOf(%s, %s) [%s, %s]%n",
+          this, otherInterface, this.getClass(), otherInterface.getClass());
     }
 
-    // Second, check superclasses
+    assert otherInterface.isInterface();
 
-    // If this type is an interface, it has no superclasses, so there is nothing to do
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null) {
+      if (superclass.isSubinterfaceOf(otherInterface)) {
+        return true;
+      }
+    }
+
+    for (ClassOrInterfaceType iface : getInterfaces()) { // directly implemented interfaces
+      if (debug) {
+        System.out.printf("  iface: %s%n", StringsPlume.toStringAndClass(iface));
+      }
+
+      if (iface.equals(otherInterface)) {
+        return true;
+      }
+      // TODO: Use iteration rather than recursion, for efficiency?
+      if (iface.isSubinterfaceOf(otherInterface)) {
+        if (debug) {
+          System.out.printf(
+              "isSubinterfaceOf(%s, %s) [%s, %s] => true%n",
+              this, otherInterface, this.getClass(), otherInterface.getClass());
+        }
+        return true;
+      }
+    }
+
+    if (debug) {
+      System.out.printf(
+          "isSubinterfaceOf(%s, %s) [%s, %s] => false%n",
+          this, otherInterface, this.getClass(), otherInterface.getClass());
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if this type is a strict subclass of the given class.
+   *
+   * @param otherClass the possible supertype
+   * @return true if this type is a subclass of the given type, false otherwise
+   */
+  public boolean isSubclassOf(ClassOrInterfaceType otherClass) {
+    if (debug) {
+      System.out.printf(
+          "isSubclassOf(%s, %s) [%s, %s]%n",
+          this, otherClass, this.getClass(), otherClass.getClass());
+    }
+
+    assert !otherClass.isInterface();
     if (this.isInterface()) {
       return false;
     }
 
-    ClassOrInterfaceType superClassType = this.getSuperclass();
-    if (debug) {
-      System.out.printf("  superClassType: %s%n", superClassType);
+    if (otherClass.isObject()) {
+      return true;
     }
 
-    if (superClassType == null || superClassType.isObject()) {
-      // Search has failed; stop.
-      return false;
+    for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
+      if (current.equals(otherClass)) {
+        return true;
+      }
     }
-
-    // Check whether superclass is a subtype of otherType.
-    return superClassType.isSubtypeOf(otherType);
+    return false;
   }
 
   @Override

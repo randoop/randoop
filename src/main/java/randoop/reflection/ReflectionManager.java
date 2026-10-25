@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.util.Log;
 
 /**
@@ -144,8 +144,7 @@ public class ReflectionManager {
       // inherited ones).
 
       Method[] deterministicMethods = ClassDeterministic.getMethods(c);
-      Set<Method> methods =
-          new HashSet<>(CollectionsPlume.mapCapacity(deterministicMethods.length));
+      Set<Method> methods = new HashSet<>(MapsP.mapCapacity(deterministicMethods.length));
       for (Method m : deterministicMethods) {
         Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
@@ -229,7 +228,7 @@ public class ReflectionManager {
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted
    */
-  @SuppressWarnings("GetClassOnEnum")
+  @SuppressWarnings({"GetClassOnEnum"}) // c is an enum class
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
@@ -252,8 +251,7 @@ public class ReflectionManager {
         }
       }
     }
-    // get any inherited methods also declared in anonymous class of some
-    // constant
+    // Get any inherited methods also declared in anonymous class of some constant.
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isAccessible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
@@ -346,7 +344,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a method, its parameter types, and its return type are all accessible.
+   * Returns true if a method, its parameter types, and its return type are all accessible.
    *
    * @param m the method to check for accessibility
    * @return true if the method, each parameter type, and the return type are all accessible; and
@@ -372,7 +370,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a constructor and each of its parameter types are accessible.
+   * Returns true if a constructor and each of its parameter types are accessible.
    *
    * @param c the constructor
    * @return true if the constructor and each parameter type are accessible; false, otherwise
@@ -394,7 +392,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a {@code java.lang.reflect.Type} is a type accessible by to the generated
+   * Returns true if a {@code java.lang.reflect.Type} is a type accessible by to the generated
    * tests.
    *
    * @param type the type to check

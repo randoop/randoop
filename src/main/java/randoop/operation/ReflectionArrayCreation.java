@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -51,7 +52,8 @@ public class ReflectionArrayCreation extends CallableOperation {
   }
 
   @Override
-  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
+  public @Nullable String toParsableString(
+      Type declaringType, TypeTuple inputTypes, Type outputType) {
     return null;
   }
 

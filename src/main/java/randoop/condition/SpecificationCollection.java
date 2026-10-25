@@ -173,7 +173,7 @@ import randoop.util.Util;
   }
 
   /**
-   * Get the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
+   * Returns the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
    *
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}

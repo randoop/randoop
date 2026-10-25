@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * A substitution maps type parameters/variables (including wildcards) to concrete types. It
@@ -86,7 +90,7 @@ public class Substitution {
    * @return true if the substitution maps are identical and false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -115,16 +119,17 @@ public class Substitution {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
+  @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      if (this.map.containsKey(entry.getKey())
-          && !this.get(entry.getKey()).equals(entry.getValue())) {
+      TypeVariable key = entry.getKey();
+      if (this.map.containsKey(key) && !this.get(key).equals(entry.getValue())) {
         return false;
       }
     }
     for (Map.Entry<java.lang.reflect.Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      if (this.rawMap.containsKey(entry.getKey())
-          && !this.get(entry.getKey()).equals(entry.getValue())) {
+      java.lang.reflect.Type key = entry.getKey();
+      if (this.rawMap.containsKey(key) && !this.get(key).equals(entry.getValue())) {
         return false;
       }
     }
@@ -180,7 +185,7 @@ public class Substitution {
    * @return the concrete type mapped from the variable in this substitution, or null if there is no
    *     type for the variable
    */
-  public ReferenceType get(TypeVariable parameter) {
+  public @Nullable ReferenceType get(TypeVariable parameter) {
     return map.get(parameter);
   }
 
@@ -203,7 +208,7 @@ public class Substitution {
    * @param parameter the type variable
    * @return the value for the type variable, or null if there is none
    */
-  public ReferenceType get(Type parameter) {
+  public @Nullable ReferenceType get(Type parameter) {
     return rawMap.get(parameter);
   }
 
@@ -212,7 +217,7 @@ public class Substitution {
    *
    * @return the type variables mapped from by this
    */
-  public Set<TypeVariable> keySet() {
+  public Set<@KeyFor("this.map") TypeVariable> keySet() {
     return map.keySet();
   }
 
@@ -229,7 +234,9 @@ public class Substitution {
    * @param typeParameter the type variable
    * @param type the concrete type
    */
-  private void put(TypeVariable typeParameter, ReferenceType type) {
+  @RequiresNonNull({"map", "rawMap"})
+  private void put(
+      @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
     map.put(typeParameter, type);
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
@@ -237,7 +244,7 @@ public class Substitution {
   }
 
   /**
-   * Indicates whether this substitution is empty.
+   * Returns true if this substitution is empty.
    *
    * @return true if this has no substitution pairs, false otherwise
    */

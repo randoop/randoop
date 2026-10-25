@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.Type;
 
 /** A dummy variable, to ensure that parameter lists are the expected length. */
@@ -17,7 +18,7 @@ public class DummyVariable extends Variable {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     return o == this;
   }
 

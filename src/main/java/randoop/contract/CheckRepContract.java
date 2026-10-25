@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
@@ -28,7 +29,7 @@ public final class CheckRepContract extends ObjectContract {
   public final Class<?> declaringClass; // derived from checkRepMethod
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }

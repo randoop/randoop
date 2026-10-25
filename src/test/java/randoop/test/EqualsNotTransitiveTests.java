@@ -33,14 +33,14 @@ public class EqualsNotTransitiveTests extends TestCase {
   // public void test3() throws Exception {
   // class EqualToEveryone{
   // @Override
-  // public boolean equals(Object obj) {
+  // public boolean equals(@Nullable Object obj) {
   // return true;
   // }
   // }
 
   // class EqualToAnyNonString{
   // @Override
-  // public boolean equals(Object obj) {
+  // public boolean equals(@Nullable Object obj) {
   // return ! (obj instanceof String);
   // }
   // }

@@ -92,6 +92,22 @@ class RandoopOptions {
   }
 
   /**
+   * Returns the value of the given option. The value may be the empty string. Returns null if not
+   * set.
+   *
+   * @return the value of the given option, or null if not set
+   */
+  String getOption(String option) {
+    for (String o : options) {
+      String prefix = "--" + option + "=";
+      if (o.startsWith(prefix)) {
+        return o.substring(prefix.length());
+      }
+    }
+    return null;
+  }
+
+  /**
    * Adds a option-flag to this option set.
    *
    * @param option the name of the option flag to be set
@@ -210,7 +226,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the regression basename for this option set.
+   * Returns the regression basename for this option set.
    *
    * @return the regression basename, which may be null if not set
    */
@@ -219,7 +235,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the error base name for this option set.
+   * Returns the error base name for this option set.
    *
    * @return the error base name, which may be null if not set
    */
@@ -228,7 +244,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return this set of options as a list of strings.
+   * Returns this set of options as a list of strings.
    *
    * @return this option set as a list of {@code String}
    */

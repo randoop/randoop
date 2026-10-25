@@ -4,6 +4,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
@@ -69,7 +72,8 @@ public class ArrayType extends ReferenceType {
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
-      Type componentType = Type.forType(((Class<?>) type).getComponentType());
+      @SuppressWarnings("nullness:argument") // isArray() => getComponentType() != null
+      @NonNull Type componentType = Type.forType(((Class<?>) type).getComponentType());
       return ArrayType.ofComponentType(componentType);
     }
 
@@ -92,7 +96,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -157,7 +161,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public Class<?> getRuntimeClass() {
+  public @Pure Class<?> getRuntimeClass() {
     return runtimeClass;
   }
 
@@ -212,8 +216,8 @@ public class ArrayType extends ReferenceType {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
-    if (super.isSubtypeOf(otherType)) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
@@ -228,7 +232,7 @@ public class ArrayType extends ReferenceType {
     if (otherType.isArray() && componentType.isReferenceType()) {
       ArrayType otherArrayType = (ArrayType) otherType;
       return otherArrayType.componentType.isReferenceType()
-          && this.componentType.isSubtypeOf(otherArrayType.componentType);
+          && this.componentType.isSubtypeOfOrEqualTo(otherArrayType.componentType);
     }
 
     return false;
@@ -253,7 +257,7 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Indicates whether this array type has a parameterized element type.
+   * Returns true if this array type has a parameterized element type.
    *
    * @return true if the element type is parameterized; false otherwise
    */

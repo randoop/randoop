@@ -37,7 +37,7 @@ public class RandoopGenerationError extends Error {
   }
 
   /**
-   * Return the {@code String} representation of the {@link TypedOperation} in this error.
+   * Returns the {@code String} representation of the {@link TypedOperation} in this error.
    *
    * @return the {@code String} representation of the operation
    */
@@ -46,7 +46,7 @@ public class RandoopGenerationError extends Error {
   }
 
   /**
-   * Return the {@code Throwable} for this error.
+   * Returns the {@code Throwable} for this error.
    *
    * @return the {@code Throwable} for this error
    */

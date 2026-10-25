@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
 
 /**
@@ -48,7 +49,7 @@ public abstract class ExceptionCheck implements Check {
    */
   @Override
   @SuppressWarnings("EqualsGetClass")
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -131,7 +132,7 @@ public abstract class ExceptionCheck implements Check {
    *
    * @return the canonical name of the exception class
    */
-  public String getExceptionName() {
+  public @Nullable String getExceptionName() {
     return exception.getClass().getCanonicalName();
   }
 

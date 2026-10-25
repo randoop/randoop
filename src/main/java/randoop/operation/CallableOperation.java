@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -55,7 +56,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Checks whether reflective object contained in an {@link Operation} satisfies the predicate.
+   * Returns true if reflective object contained in an {@link Operation} satisfies the predicate.
    * Since there is no reflective object in an {@code CallableOperation}, returns false.
    *
    * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked
@@ -127,7 +128,7 @@ public abstract class CallableOperation implements Operation {
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
 
-  public AccessibleObject getReflectionObject() {
+  public @Nullable AccessibleObject getReflectionObject() {
     return null;
   }
 }

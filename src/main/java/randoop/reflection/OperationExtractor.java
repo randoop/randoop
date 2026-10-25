@@ -22,6 +22,7 @@ import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
 
@@ -38,7 +39,7 @@ import randoop.util.Log;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  /** Whether to produce debugging output to the Randoop log. */
+  /** If true, produce debugging output to the Randoop log. */
   private static boolean debug = false;
 
   /** The type of the declaring class for the collected operations. */
@@ -267,6 +268,16 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
+   * Given an array of {@link Class}es, this method converts them into a list of {@link Type}s.
+   *
+   * @param classes an array of classes
+   * @return a list of Types
+   */
+  public static List<Type> classArrayToTypeList(Class<?>[] classes) {
+    return CollectionsPlume.mapList(Type::forClass, classes);
+  }
+
+  /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
    * members of the class satisfying the given accessibility and reflection predicates and that
    * don't violate the omit method predicate.
@@ -373,7 +384,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   // TODO: poor name
   private void checkSubTypes(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
-    if (!classType.isSubtypeOf(declaringType)) {
+    if (!classType.isSubtypeOfOrEqualTo(declaringType)) {
       throw new RandoopBug(
           String.format(
               "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",

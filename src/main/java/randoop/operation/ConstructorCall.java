@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
@@ -46,7 +47,7 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Return the reflective constructor corresponding to this ConstructorCall.
+   * Returns the reflective constructor corresponding to this ConstructorCall.
    *
    * @return {@link Constructor} object called by this constructor call
    */
@@ -118,13 +119,13 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Tests whether the parameter is a call to the same constructor.
+   * Returns true if the parameter is a call to the same constructor.
    *
    * @param o an object
    * @return true if o is a ConstructorCall referring to same constructor object; false otherwise
    */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }

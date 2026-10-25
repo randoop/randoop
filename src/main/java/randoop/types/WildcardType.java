@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.HashSet;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
@@ -64,7 +65,7 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -153,7 +154,7 @@ class WildcardType extends ParameterType {
    * If this type has an upper bound, checks for containment cases:
    *
    * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOf(S)}
+   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOfOrEqualTo(S)}
    *   <li>{@code ? extends T} contains {@code ?}
    * </ul>
    *
@@ -161,7 +162,7 @@ class WildcardType extends ParameterType {
    * {@code ? extends Object}. Otherwise, checks for the cases
    *
    * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code S.isSubtypeOf(T)}
+   *   <li>{@code ? super T} contains {@code ? super S} if {@code S.isSubtypeOfOrEqualTo(T)}
    *   <li>{@code ? super T} contains {@code ?}
    *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
@@ -174,14 +175,14 @@ class WildcardType extends ParameterType {
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound
-          && this.getUpperTypeBound().isSubtypeOf(otherType.getUpperTypeBound())) {
+          && this.getUpperTypeBound().isSubtypeOfOrEqualTo(otherType.getUpperTypeBound())) {
         return true;
       }
     } else {
       if (otherType.hasUpperBound) {
         return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
       } else {
-        return otherType.getLowerTypeBound().isSubtypeOf(this.getLowerTypeBound());
+        return otherType.getLowerTypeBound().isSubtypeOfOrEqualTo(this.getLowerTypeBound());
       }
     }
     return false;
@@ -192,6 +193,11 @@ class WildcardType extends ParameterType {
     return getTypeBound().isGeneric(ignoreWildcards);
   }
 
+  /**
+   * Returns true if this wildcard has an upper bound.
+   *
+   * @return true if this wildcard has an upper bound
+   */
   boolean hasUpperBound() {
     return hasUpperBound;
   }

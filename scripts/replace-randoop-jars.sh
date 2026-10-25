@@ -8,12 +8,12 @@
 
 # shellcheck disable=SC2012
 
-SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-RANDOOP_DIR=$(dirname "${SCRIPTDIR}")
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+RANDOOP_DIR=$(dirname "${SCRIPT_DIR}")
 SUFFIX=$1
 
 # Move old versions of files to "*-ORIG", or delete if those files already exist.
-if [ -f "randoop${SUFFIX}.jar-ORIG" ] ; then
+if [ -f "randoop${SUFFIX}.jar-ORIG" ]; then
   rm -f "randoop${SUFFIX}.jar" "replacecall${SUFFIX}.jar" "covered-class${SUFFIX}.jar"
 else
   mv -f "randoop${SUFFIX}.jar" "randoop${SUFFIX}.jar-ORIG" 2> /dev/null

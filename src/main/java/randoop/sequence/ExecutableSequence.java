@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -18,12 +21,18 @@ import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExpectedOutcomeTable;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopBug;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
@@ -57,11 +66,24 @@ import randoop.util.ProgressDisplay;
  */
 public class ExecutableSequence {
 
+  /** The {@code java.lang.Object#getClass()} method. */
+  private static final Method OBJECT_GETCLASS;
+
+  static {
+    try {
+      OBJECT_GETCLASS = Object.class.getMethod("getClass");
+    } catch (NoSuchMethodException e) {
+      // Impossible on a sane JDK; turn the checked error into an unchecked one.
+      throw new AssertionError(e);
+    }
+  }
+
   /** The underlying sequence. */
   public Sequence sequence;
 
   /** The checks for the last statement in this sequence. */
-  private TestChecks<?> checks;
+  // I'm not 100% sure this type should be @MonotonicNonNull.
+  private @MonotonicNonNull TestChecks<?> checks = null;
 
   /**
    * Contains the runtime objects created and exceptions thrown (if any) during execution of this
@@ -144,7 +166,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -192,7 +214,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * Returns this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
    * checks.
    *
    * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
@@ -210,7 +232,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the code representation of the i'th statement.
+   * Returns the code representation of the i'th statement.
    *
    * @param i the statement index
    * @return the string representation of the statement
@@ -390,6 +412,127 @@ public class ExecutableSequence {
     return runtimeObjects;
   }
 
+  /**
+   * Side-effects the sequence by casting its output to its dynamic type. Its output is the value
+   * returned by the last statement. This allows Randoop to call methods on the output that do not
+   * exist in the supertype. Has no effect only if the dynamic type (the run-time class) is the same
+   * as the static type.
+   *
+   * <p>This implements the "GRT Elephant-Brain" component, as described in <a
+   * href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT: Program-Analysis-Guided Random
+   * Testing</a> by Ma et. al (ASE 2015).
+   *
+   * @return true if the cast was performed, false otherwise (in which case no side effect occurs)
+   */
+  public boolean castToRunTimeType() {
+    if (!GenInputsAbstract.cast_to_run_time_type) {
+      throw new RandoopBug("Bad call to castToRunTimeType: cast_to_run_time_type is false");
+    }
+    if (!this.isNormalExecution()) {
+      throw new RandoopBug("Bad call to castToRunTimeType: isNormalExecution() is false");
+    }
+
+    List<ReferenceValue> lastValues = this.getLastStatementValues();
+    if (lastValues.isEmpty()) {
+      return false;
+    }
+
+    ReferenceValue lastValue = lastValues.get(0);
+    Type declaredType = lastValue.getType();
+    Type runTimeType = getRunTimeType(lastValues, declaredType);
+    if (runTimeType == null) {
+      return false;
+    }
+
+    if (runTimeType.equals(declaredType)) {
+      return false; // cast would have no effect
+    }
+
+    Variable var = sequence.firstVariableForTypeInLastStatement(declaredType, false);
+    if (var == null) {
+      throw new RandoopBug(String.format("Found no variable for %s in %s", declaredType, sequence));
+    }
+
+    TypedOperation castOp = TypedOperation.createCast(declaredType, runTimeType);
+    sequence = sequence.extend(castOp, Collections.singletonList(var));
+    return true;
+  }
+
+  /**
+   * Returns the run-time type of the last statement's output.
+   *
+   * @param lastValues the non-empty values produced by the last statement
+   * @param declaredType the declared type of the last statement's output
+   * @return the run-time type of the last statement's output, or null if it cannot be determined
+   */
+  private @Nullable Type getRunTimeType(List<ReferenceValue> lastValues, Type declaredType) {
+
+    Type runTimeType;
+    boolean lastOpIsGetClass = lastOpIsGetClass();
+
+    if (lastOpIsGetClass) {
+      // Special-case getClass(): when run-time casting is enabled and the last op is
+      // `Object.getClass()`, convert `Class<?>` to `Class<ConcreteType>` to avoid emitting the
+      // uninstantiated type "Class<T>". By default, method `Type#forClass` (required to find the
+      // run-time type to cast to in cast-to-run-time-type) on wildcard generics carries over type
+      // variables, which can produce uncompilable "Class<T>" in generated tests.
+      // For a getClass() call, the index of receiver is 1 since the lastValues will always
+      // be [output, receiver].
+      ReferenceType elemType = lastValues.get(1).getType();
+      if (elemType.isGeneric()) {
+        GenericClassType g = (GenericClassType) elemType;
+        elemType =
+            g.instantiate(Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
+      }
+      // cast to Class<ConcreteType>
+      runTimeType = JavaTypes.CLASS_TYPE.instantiate(Collections.singletonList(elemType));
+    } else {
+      // Ordinary case: use the dynamic class of the returned value.
+      runTimeType = Type.forClass(lastValues.get(0).getObjectValue().getClass());
+    }
+
+    // Skip uncompilable un-instantiated generics.
+    if (runTimeType instanceof ParameterizedType && !(runTimeType instanceof InstantiatedType)) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is not an instantiated type.%n",
+          runTimeType);
+      return null;
+    }
+
+    Class<?> runtimeClass = runTimeType.getRuntimeClass();
+    if (runtimeClass.isSynthetic()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is a synthetic class.%n", runTimeType);
+      return null;
+    }
+
+    if (runtimeClass.isAnonymousClass()) {
+      Log.logPrintf(
+          "Skipping cast to run-time type %s because it is an anonymous class.%n", runTimeType);
+      return null;
+    }
+
+    // Sanity check.
+    assert lastOpIsGetClass || runTimeType.isSubtypeOfOrEqualTo(declaredType)
+        : String.format(
+            "Run-time type %s [%s] is not a subtype of declared type %s [%s]",
+            runTimeType, runTimeType.getClass(), declaredType, declaredType.getClass());
+
+    return runTimeType;
+  }
+
+  /**
+   * Returns true iff the last operation is a call to {@code Object.getClass()}.
+   *
+   * @return true iff the last operation is a call to {@code Object.getClass()}
+   */
+  private boolean lastOpIsGetClass() {
+    Statement last = sequence.getStatement(sequence.size() - 1);
+    TypedOperation op = last.getOperation();
+    return op.isMethodCall()
+        && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
+  }
+
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
@@ -447,11 +590,14 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the set of test checks for the most recent execution.
+   * Returns the set of test checks for the most recent execution.
    *
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks<?> getChecks() {
+    if (checks == null) {
+      throw new Error("getChecks() called prematurely");
+    }
     return checks;
   }
 
@@ -534,7 +680,7 @@ public class ExecutableSequence {
    * @param value the value
    * @return the set of variables that have the given value, or null if none
    */
-  public List<Variable> getVariables(Object value) {
+  public @Nullable List<Variable> getVariables(Object value) {
     Set<Variable> variables = variableMap.get(value);
     if (variables == null) {
       return null;
@@ -600,7 +746,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return true if an exception of the given class (or a class compatible with it) was thrown
+   * Returns true if an exception of the given class (or a class compatible with it) was thrown
    * during this sequence's execution.
    *
    * @param exceptionClass the exception class
@@ -612,7 +758,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns whether the sequence contains a non-executed statement. That happens if some statement
+   * Returns true if the sequence contains a non-executed statement. That happens if some statement
    * before the last one throws an exception.
    *
    * @return true if this sequence has non-executed statements, false otherwise
@@ -640,11 +786,14 @@ public class ExecutableSequence {
 
   @Override
   public int hashCode() {
+    if (checks == null) {
+      throw new Error("hashCode() called prematurely");
+    }
     return Objects.hash(sequence.hashCode(), checks.hashCode());
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -656,7 +805,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicates whether the executed sequence has any null input values.
+   * Returns true if the executed sequence has any null input values.
    *
    * @return true if there is a null input value in this sequence, false otherwise
    */
@@ -665,7 +814,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicate whether checks are failing or passing.
+   * Returns true if checks are failing or passing.
    *
    * @return true if checks are all failing, or false if all passing
    */
@@ -674,7 +823,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicate whether there are any invalid checks.
+   * Returns true if there are any invalid checks.
    *
    * @return true if the test checks have been set and are for invalid behavior, false otherwise
    */
@@ -692,7 +841,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicates whether the given class is covered by the most recent execution of this sequence.
+   * Returns true if the given class is covered by the most recent execution of this sequence.
    *
    * @param c the class to be covered
    * @return true if the class is covered by the sequence, false otherwise
@@ -702,7 +851,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the operation from which this sequence was generated -- the operation of the last
+   * Returns the operation from which this sequence was generated -- the operation of the last
    * statement of this sequence.
    *
    * @return the operation of the last statement of this sequence
@@ -712,7 +861,7 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return the number of statements in this sequence.
+   * Returns the number of statements in this sequence.
    *
    * @return the number of statements in this sequence
    */

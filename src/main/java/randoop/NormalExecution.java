@@ -1,5 +1,6 @@
 package randoop;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -18,18 +19,21 @@ import org.plumelib.util.StringsPlume;
  */
 public class NormalExecution extends ExecutionOutcome {
 
-  private final Object result;
+  /** The value created by executing the statement. */
+  private final @Nullable Object result;
 
   /**
+   * Creates a new NormalExecution.
+   *
    * @param result the return value
    * @param executionTimeNanos the execution time, in nanoseconds
    */
-  public NormalExecution(Object result, long executionTimeNanos) {
+  public NormalExecution(@Nullable Object result, long executionTimeNanos) {
     super(executionTimeNanos);
     this.result = result;
   }
 
-  public Object getRuntimeValue() {
+  public @Nullable Object getRuntimeValue() {
     return this.result;
   }
 

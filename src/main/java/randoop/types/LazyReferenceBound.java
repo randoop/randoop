@@ -34,7 +34,7 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound substitute(Substitution substitution) {
-    // if the substitution has no effect on this bound just return this
+    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
@@ -99,8 +99,8 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "subtype not implemented for LazyReferenceBound";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
+    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
     return false;
   }
 

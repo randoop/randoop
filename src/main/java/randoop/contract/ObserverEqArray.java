@@ -3,6 +3,7 @@ package randoop.contract;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Assert;
 import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
@@ -71,7 +72,7 @@ public final class ObserverEqArray extends ObjectContract {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -148,7 +149,7 @@ public final class ObserverEqArray extends ObjectContract {
    * @return a Java array constructor expression for this
    */
   private String newArrayExpression() {
-    return "new " + value.getClass().getCanonicalName() + arrayComponentsToString();
+    return "new " + value.getClass().getCanonicalName() + arrayComponentsToJavaString();
   }
 
   /**
@@ -157,7 +158,7 @@ public final class ObserverEqArray extends ObjectContract {
    *
    * @return a String that represents the components of the array
    */
-  private String arrayComponentsToString() {
+  private String arrayComponentsToJavaString() {
     StringJoiner sj = new StringJoiner(", ", "{", "}");
     int length = Array.getLength(value);
     for (int i = 0; i < length; i++) {
@@ -223,6 +224,6 @@ public final class ObserverEqArray extends ObjectContract {
 
   @Override
   public String toString() {
-    return "ObserverEqArray(" + arrayComponentsToString() + ")";
+    return "ObserverEqArray(" + arrayComponentsToJavaString() + ")";
   }
 }

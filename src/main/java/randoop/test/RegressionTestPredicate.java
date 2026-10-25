@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
 public class RegressionTestPredicate implements Predicate<ExecutableSequence> {
 
   /**
-   * Determines whether an executable sequence is a valid regression test. In particular, shouldn't
+   * Returns true if an executable sequence is a valid regression test. In particular, shouldn't
    * have failures (an error-revealing test), and shouldn't throw TimeoutException.
    *
    * <p>A true result means the test is a candidate for output.

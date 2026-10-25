@@ -37,20 +37,21 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.Identifier;
-import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.FileWriterWithName;
+import org.plumelib.util.MapsP;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MethodReplacements;
-import randoop.SideEffectFree;
 import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.execution.TestEnvironment;
@@ -109,13 +110,24 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SimpleList;
 import randoop.util.Util;
 import randoop.util.predicate.AlwaysFalse;
 
 /** Test generation. */
 public class GenTests extends GenInputsAbstract {
 
+  /** The prefix for Randoop annotations. */
+  private static final String RANDOOP_PREFIX = "randoop.";
+
+  /** The annotation for pure methods. */
+  private static final String PURE_ANNOTATION =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.Pure";
+
+  /** The annotation for side-effect-free methods. */
+  private static final String SIDE_EFFECT_FREE =
+      RANDOOP_PREFIX + "org.checkerframework.dataflow.qual.SideEffectFree";
+
+  /** The message printed when there are no operations to test. */
   // If this is changed, also change RandoopSystemTest.NO_OPERATIONS_TO_TEST
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
@@ -150,7 +162,7 @@ public class GenTests extends GenInputsAbstract {
   private static final List<String> notes;
 
   /** The prefix for test method names. */
-  public static final @Identifier String TEST_METHOD_NAME_PREFIX = "test";
+  public static final @Regex(0) @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -408,15 +420,12 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> defaultSeeds = SeedSequences.defaultSeeds();
     Set<Sequence> annotatedTestValues = operationModel.getAnnotatedTestValues();
     Set<Sequence> components =
-        new LinkedHashSet<>(
-            CollectionsPlume.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
+        new LinkedHashSet<>(MapsP.mapCapacity(defaultSeeds.size() + annotatedTestValues.size()));
     components.addAll(defaultSeeds);
     components.addAll(annotatedTestValues);
 
     ComponentManager componentMgr = new ComponentManager(components);
-    operationModel.addClassLiterals(
-        // TODO: Why pass GenInputsAbstract.literals_file here when we can get those directly?
-        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(componentMgr);
 
     MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType = readSideEffectFreeMethods();
 
@@ -427,8 +436,12 @@ public class GenTests extends GenInputsAbstract {
         Method m = methodCall.getMethod();
         // Read method annotations for @Pure and @SideEffectFree
         for (Annotation annotation : m.getAnnotations()) {
-          if (annotation instanceof Pure || annotation instanceof SideEffectFree) {
-            // Get declaring class and create Type object
+          // TODO: All instances of "org.checkerframework" are replaced with
+          //  "randoop.org.checkerframework", annotation name and the check must be prefixed with
+          //  "randoop.". Is there a better way to check annotations?
+          String annotationName = RANDOOP_PREFIX + annotation.annotationType().getName();
+          if (annotationName.equals(PURE_ANNOTATION) || annotationName.equals(SIDE_EFFECT_FREE)) {
+            // Get the declaring class of the method and create a Type object for it.
             Class<?> declaringClass = m.getDeclaringClass();
             Type type = Type.forClass(declaringClass);
             sideEffectFreeMethodsByType.add(type, TypedOperation.forMethod(m));
@@ -516,7 +529,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>(CollectionsPlume.mapCapacity(1));
+    Set<Sequence> excludeSet = new LinkedHashSet<>(MapsP.mapCapacity(1));
     excludeSet.add(newObj);
 
     // Define test predicate to decide which test sequences will be output.
@@ -704,8 +717,7 @@ public class GenTests extends GenInputsAbstract {
    * Read side-effect-free methods from the default JDK side-effect-free method list, and from a
    * user-provided method list if provided.
    *
-   * @return a map from a Type to a set of side-effect-free methods that take that type as their
-   *     only argument
+   * @return a map from a Type to a set of side-effect-free methods defined in it
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
     MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
@@ -730,8 +742,7 @@ public class GenTests extends GenInputsAbstract {
 
     MultiMap<Type, TypedClassOperation> result =
         new MultiMap<>(
-            CollectionsPlume.mapCapacity(
-                sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
+            MapsP.mapCapacity(sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
     result.addAll(sideEffectFreeJDKMethods);
     result.addAll(sideEffectFreeUserMethods);
     return result;
@@ -774,7 +785,8 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param flakySequences the flaky test sequences
    * @param sequences all the sequences (flaky and non-flaky)
-   * @param sideEffectFreeMethodsByType side-effect-free methods to use in assertions
+   * @param sideEffectFreeMethodsByType side-effect-free methods; will use the unary ones in
+   *     assertions
    * @param omitMethodsPredicate the user-supplied predicate for which methods should not be used
    *     during test generation
    * @param accessibilityPredicate accessibility predicate for side-effect-free methods
@@ -896,7 +908,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // 2. Count up calls that appear in assertions over the final value.
-      SimpleList<Statement> statements = es.sequence.statements;
+      SIList<Statement> statements = es.sequence.statements;
       Statement lastStatement = statements.get(statements.size() - 1);
       Type lastValueType = lastStatement.getOutputType();
       for (TypedClassOperation tco : assertableSideEffectFreeMethods.getValues(lastValueType)) {
@@ -916,9 +928,9 @@ public class GenTests extends GenInputsAbstract {
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
     HashSet<TypedClassOperation> ops = new HashSet<>();
 
-    SimpleList<Statement> statements = es.sequence.statements;
-    for (int i = 0; i < statements.size(); i++) { // SimpleList has no iterator
-      TypedOperation to = statements.get(i).getOperation();
+    SIList<Statement> statements = es.sequence.statements;
+    for (Statement s : statements) {
+      TypedOperation to = s.getOperation();
       if (to.isMethodCall()) {
         ops.add((TypedClassOperation) to);
       }
@@ -1137,6 +1149,7 @@ public class GenTests extends GenInputsAbstract {
       String trimmed = line.trim();
       if (!trimmed.isEmpty()) {
         try {
+          @SuppressWarnings("regex:argument") // caught immediately below
           Pattern pattern = Pattern.compile(trimmed);
           result.add(pattern);
         } catch (PatternSyntaxException e) {
@@ -1161,13 +1174,15 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
-   * matches that string.
+   * matches that string (with spaces removed).
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
   private static Pattern signatureToPattern(String signatureString) {
-    String patternString =
+    // TODO: Why doesn't this use Regex.quote()?
+    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
+    @Regex String patternString =
         signatureString
             .replaceAll(" ", "")
             .replaceAll("\\.", "\\\\.")
@@ -1233,10 +1248,9 @@ public class GenTests extends GenInputsAbstract {
         }
         // Once flaky sequence found, collect the operations executed
         if (flakySequenceFound) {
-          SimpleList<Statement> seqStatements = sequence.statements;
-          int seqSize = seqStatements.size();
-          for (int i = 0; i < seqSize; i++) { // SimpleList has no iterator
-            Operation operation = seqStatements.get(i).getOperation();
+          SIList<Statement> seqStatements = sequence.statements;
+          for (Statement s : seqStatements) {
+            Operation operation = s.getOperation();
             if (!operation.isNonreceivingValue()) {
               executedOperationTrace.add(operation.toString());
             }
@@ -1381,7 +1395,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Return the text of the given file, as a list of lines. Returns null if the {@code filename}
+   * Returns the text of the given file, as a list of lines. Returns null if the {@code filename}
    * argument is null. Terminates execution if the {@code filename} file cannot be read.
    *
    * @param filename the file to read

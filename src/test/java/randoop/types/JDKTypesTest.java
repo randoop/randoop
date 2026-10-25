@@ -25,7 +25,15 @@ public class JDKTypesTest {
     for (Field f : JDKTypes.class.getDeclaredFields()) {
       if (!f.getName().equals("$jacocoData")
           && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
-        collectionTypes.add((GenericClassType) f.get(null));
+        try {
+          GenericClassType gct = (GenericClassType) f.get(null);
+          if (gct != null) {
+            // Fields for classes added in later JDKs are set to null.
+            collectionTypes.add(gct);
+          }
+        } catch (IllegalAccessException e) {
+          throw new Error("Cannot access " + f + " in JDKTypes", e);
+        }
       }
     }
 
@@ -39,7 +47,7 @@ public class JDKTypesTest {
       } else if (classType.isInterface() || classType.isAbstract()) {
         assertFalse(implementingType.isInterface());
         assertFalse(implementingType.isAbstract());
-        assertTrue(implementingType.isSubtypeOf(classType));
+        assertTrue(implementingType.isSubtypeOfOrEqualTo(classType));
       } else {
         assertEquals(classType, implementingType);
       }

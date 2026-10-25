@@ -63,9 +63,7 @@ class ProcessStatus {
   }
 
   /**
-   * Runs the given command in a new process using the given timeout.
-   *
-   * <p>The process is run with a timeout of 20 minutes.
+   * Runs the given command in a new process using a timeout of 20 minutes.
    *
    * @param command the command to be run in the process
    * @return the exit status and combined standard stream output
@@ -95,7 +93,7 @@ class ProcessStatus {
     executor.setStreamHandler(streamHandler);
 
     if (cmdLine.toString().length() > 4095) {
-      System.out.printf("Command line is too long:%n%s%n", cmdLine);
+      System.out.printf("Command line has length %d:%n%s%n", cmdLine.toString().length(), cmdLine);
     }
 
     try {
@@ -129,10 +127,14 @@ class ProcessStatus {
     }
 
     if (timedOut) {
+      String msg = "Process timed out after " + (timeoutMillis / 1000.0) + " secs";
+      // TODO: Where does this output appear?
+      // TODO: Also print the log?
+      System.out.println(msg);
       for (String line : outputLines) {
         System.out.println(line);
       }
-      fail("Process timed out after " + (timeoutMillis / 1000.0) + " secs");
+      fail(msg);
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }

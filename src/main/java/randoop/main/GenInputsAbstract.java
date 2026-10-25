@@ -15,7 +15,9 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.InternalForm;
@@ -87,7 +89,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * appear in a test</a>.
    */
   @Option("File that lists classes under test")
-  public static Path classlist = null;
+  public static @MonotonicNonNull Path classlist = null;
 
   /**
    * The fully-qualified raw name of a class to test; for example, {@code
@@ -121,7 +123,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * appear in a test</a>.
    */
   @Option("File that lists methods under test")
-  public static Path methodlist = null;
+  public static @MonotonicNonNull Path methodlist = null;
 
   /**
    * A regex that indicates classes that should not be used in tests, even if included by some other
@@ -137,7 +139,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * These patterns are used along with those provided with {@code --omit-classes}.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omit_classes_file = null;
+  public static @MonotonicNonNull List<Path> omit_classes_file = null;
 
   // Documentation to add.
   //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
@@ -172,7 +174,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --omit-methods}, and the default omissions.
    */
   @Option("File containing regular expressions for methods to omit")
-  public static List<Path> omit_methods_file = null;
+  public static @MonotonicNonNull List<Path> omit_methods_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
@@ -202,14 +204,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * field is used unless it is omitted by this or the {@code --omit-field-file} option.
    */
   @Option("Omit field from generated tests")
-  public static List<String> omit_field = null;
+  public static @MonotonicNonNull List<String> omit_field = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
    * accessible field is used unless it is omitted by this or the {@code --omit-field} option.
    */
   @Option("File containing field names to omit from generated tests")
-  public static Path omit_field_file = null;
+  public static @MonotonicNonNull Path omit_field_file = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. An
@@ -217,7 +219,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Unpublicized
   @Option("File containing field names to omit from generated tests")
-  public static Path omit_field_list = null;
+  public static @MonotonicNonNull Path omit_field_list = null;
 
   /**
    * Restrict tests to only call public members of classes.
@@ -286,7 +288,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int nondeterministic_methods_to_output = 10;
 
   /**
-   * Whether to output error-revealing tests. Disables all output when used with {@code
+   * If true, output error-revealing tests. Disables all output when used with {@code
    * --no-regression-tests}. Restricting output can result in long runs if the default values of
    * {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -296,7 +298,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_error_revealing_tests = false;
 
   /**
-   * Whether to output regression tests. Disables all output when used with {@code
+   * If true, output regression tests. Disables all output when used with {@code
    * --no-error-revealing-tests}. Restricting output can result in long runs if the default values
    * of {@code --generated-limit} and {@code --time-limit} are used.
    */
@@ -304,8 +306,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_regression_tests = false;
 
   /**
-   * Whether to include assertions in regression tests. If false, then the regression tests contain
-   * no assertions (except that if the test throws an exception, it should continue to throw an
+   * If true, include assertions in regression tests. If false, then the regression tests contain no
+   * assertions (except that if the test throws an exception, it should continue to throw an
    * exception of the same type). Tests without assertions can be used to exercise the code, but
    * they do not enforce any particular behavior, such as values returned.
    */
@@ -313,7 +315,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_regression_assertions = false;
 
   /**
-   * Whether to check that generated sequences can be compiled. If true, the code for each generated
+   * If true, check that generated sequences can be compiled. If true, the code for each generated
    * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
    * This check is useful because the assumptions in Randoop generation heuristics are sometimes
    * violated by input methods, and, as a result, a generated test may not compile. This check does
@@ -327,7 +329,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * least one use of a member of a class whose name matches the regular expression.
    */
   @Option("Classes that must occur in a test")
-  public static Pattern require_classname_in_test = null;
+  public static @MonotonicNonNull Pattern require_classname_in_test = null;
 
   /**
    * File containing binary names of classes that the tests must use, directly or indirectly. This
@@ -339,7 +341,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must cover")
-  public static Path require_covered_classes = null;
+  public static @MonotonicNonNull Path require_covered_classes = null;
 
   /**
    * If true, Randoop outputs both original error-revealing tests and a minimized version. Setting
@@ -447,7 +449,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Specifications for methods/constructors")
   @Option("JSON specifications for methods/constructors")
-  public static List<Path> specifications = null;
+  public static @MonotonicNonNull List<Path> specifications = null;
 
   /**
    * Use built-in specifications for JDK classes and for classes that inherit from them, as if they
@@ -488,7 +490,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Side-effect-free methods")
   @Option("File containing side-effect-free methods")
-  public static Path side_effect_free_methods = null;
+  public static @MonotonicNonNull Path side_effect_free_methods = null;
 
   /**
    * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
@@ -619,21 +621,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * A file containing literal values to be used as inputs to methods under test, or "CLASSES".
    *
-   * <p>Literals in these files are used in addition to all other constants in the pool. For the
+   * <p>Literals in these files are used in addition to all other literals in the pool. For the
    * format of this file, see documentation in class {@link randoop.reflection.LiteralFileReader}.
    * The special value "CLASSES" (with no quotes) means to read literals from all classes under
-   * test.
+   * test; it may be specified in addition to one or more files.
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<>();
 
   /**
-   * How to use literal values that are specified via the {@code --literals-file} command-line
-   * option.
+   * Where to use literal values as method arguments. Should a literal be used as an argument to any
+   * method, or only to methods defined in the class where the literal appears, or only in the
+   * package where the literal appears?
    *
-   * @see ClassLiteralsMode
+   * <p>The literal values might have been obtained from the bytecode and/or from a file provided
+   * via the {@code --literals-file} command-line option.
    */
-  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
+  @Option("How to use literal values: ALL, PACKAGE, CLASS, or NONE")
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
 
   /**
@@ -709,6 +713,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 1000;
 
   /**
+   * The "GRT Impurity" technique from the GRT paper modifies the inputs of methods used in tests.
+   * When GRT Fuzzing is enabled, Randoop will fuzz primitive/String values. (Randoop by default
+   * starts with a small fixed set of primitive/String inputs to use as arguments to methods.)
+   *
+   * <p>Non-primitive input fuzzing will be added in the future.
+   */
+  @Unpublicized
+  @Option("Fuzz the inputs of methods used in tests")
+  public static boolean grt_fuzzing = false;
+
+  /**
+   * The standard deviation parameter for the Gaussian distribution used to fuzz the primitive
+   * number inputs used in tests. Only used when {@code --grt-fuzzing} is set to true.
+   */
+  @Unpublicized
+  @Option("Standard deviation for the Gaussian distribution used by GRT Impurity to fuzz numbers")
+  public static double grt_fuzzing_stddev = 30.0;
+
+  /**
+   * If this is false, then each variable in a test is declared according to the compile-time type
+   * of the expression being assigned to it. If this is true, then the variable is declared
+   * according to the run-time type of the expression's value.
+   */
+  @Option("Declare variables with the exact types obtained at run time")
+  public static boolean cast_to_run_time_type = false;
+
+  /**
    * Try to reuse values from a sequence with the given frequency. If an alias ratio is given, it
    * should be between 0 and 1.
    *
@@ -780,7 +811,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --only-test-public-members}.
    */
   @Option("Name of the package for the generated JUnit files (optional)")
-  public static String junit_package_name;
+  public static @MonotonicNonNull String junit_package_name = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -791,7 +822,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @BeforeEach} is JUnit 5.)
    */
   @Option("Filename for code to include in Before-annotated method of test classes")
-  public static String junit_before_each = null;
+  public static @MonotonicNonNull String junit_before_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -802,7 +833,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 4, and {@code @AfterEach} is JUnit 5.)
    */
   @Option("Filename for code to include in After-annotated method of test classes")
-  public static String junit_after_each = null;
+  public static @MonotonicNonNull String junit_after_each = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -813,7 +844,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @BeforeAll} is JUnit 5.)
    */
   @Option("Filename for code to include in BeforeClass-annotated method of test classes")
-  public static String junit_before_all = null;
+  public static @MonotonicNonNull String junit_before_all = null;
 
   /**
    * Name of file containing code text to be added to the <a
@@ -824,11 +855,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit 4, and {@code @AfterAll} is JUnit 5.)
    */
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
-  public static String junit_after_all = null;
+  public static @MonotonicNonNull String junit_after_all = null;
 
   /** Name of the directory in which JUnit files should be written. */
   @Option("Name of the directory to which JUnit files should be written")
-  public static String junit_output_dir = null;
+  public static @MonotonicNonNull String junit_output_dir = null;
 
   /**
    * Run test generation without output. May be desirable when running with a visitor.
@@ -841,7 +872,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_output_tests = false;
 
   /**
-   * Whether to use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
+   * If true, use JUnit's standard reflective mechanisms for invoking tests. JUnit's reflective
    * invocations can interfere with code instrumentation, such as by the DynComp tool. If that is a
    * problem, then set this to false and Randoop will output tests that use direct method calls
    * instead of reflection. The tests will include a {@code main} method and will execute methods
@@ -928,18 +959,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * logs slows down Randoop.
    */
   @Option("<filename> Log lots of information to this file")
-  public static @Owning FileWriterWithName log = null;
+  public static @Owning @MonotonicNonNull FileWriterWithName log = null;
 
   /**
    * A file to which to log selections; helps find sources of non-determinism (randomness). If not
    * specified, no logging is done.
    */
   @Option("<filename> Log each random selection to this file")
-  public static FileWriterWithName selection_log = null;
+  public static @MonotonicNonNull FileWriterWithName selection_log = null;
 
   /** A file to which to write operation usage, when Randoop exits. */
   @Option("<filename> Write operation usage counts to this file")
-  public static FileWriterWithName operation_history_log = null;
+  public static @MonotonicNonNull FileWriterWithName operation_history_log = null;
 
   /**
    * True if Randoop should print generated tests that do not compile, which indicate Randoop bugs.
@@ -1385,7 +1416,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
-      @Nullable Path listFile, String fileDescription, String commentRegex, String includeRegex) {
+      @Nullable Path listFile,
+      String fileDescription,
+      @Regex String commentRegex,
+      @Regex(1) String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile.toFile(), commentRegex, includeRegex)) {

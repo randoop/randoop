@@ -63,10 +63,10 @@ import randoop.test.TestCheckGenerator;
  */
 public class ExpectedOutcomeTable {
 
-  /** Indicates whether this table is empty. */
+  /** True if this table is empty. */
   private boolean isEmpty = true;
 
-  /** Indicates whether the precondition was satisfied for at least one row of the table. */
+  /** True if the precondition was satisfied for at least one row of the table. */
   private boolean hasSatisfiedPrecondition = false;
 
   /** The list of post-conditions whose guard expression was satisfied. */
@@ -110,7 +110,7 @@ public class ExpectedOutcomeTable {
   }
 
   /**
-   * Indicate whether the call should be classified as {@link
+   * Returns true if the call should be classified as {@link
    * randoop.main.GenInputsAbstract.BehaviorType#INVALID}.)
    *
    * <p>Occurs when all guard expressions fail and there are no expected exceptions.

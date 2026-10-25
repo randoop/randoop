@@ -1,19 +1,18 @@
 package randoop.sequence;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.plumelib.util.SIList;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
-import randoop.util.SimpleList;
 
 /**
  * A multimap from keys of type K to sequences. Such a map can be useful to specify sequences that
  * should only be used in specific contexts, for example sequences that should only be used as
  * components when testing a specific class.
+ *
+ * @param <K> the type of keys
  */
 public class MappedSequences<K> {
 
@@ -44,23 +43,15 @@ public class MappedSequences<K> {
    * @param desiredType the query type
    * @return the list of sequences for the key and query type
    */
-  public SimpleList<Sequence> getSequences(K key, Type desiredType) {
+  public SIList<Sequence> getSequences(K key, Type desiredType) {
     if (key == null) {
       throw new IllegalArgumentException("key is null");
     }
-    SequenceCollection c = map.get(key);
-    if (c == null) {
-      return emptyList;
+    SequenceCollection sc = map.get(key);
+    if (sc == null) {
+      return SIList.empty();
     }
-    return map.get(key).getSequencesForType(desiredType, true, false);
-  }
-
-  // Cached empty list used by getSequences method.
-  private static final SimpleList<Sequence> emptyList;
-
-  static {
-    List<SimpleList<Sequence>> emptyJDKList = Collections.emptyList();
-    emptyList = new ListOfLists<>(emptyJDKList);
+    return sc.getSequencesForType(desiredType, true, false);
   }
 
   /**

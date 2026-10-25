@@ -26,7 +26,8 @@ class TypeExtractor extends DefaultClassVisitor {
    * Creates a visitor that adds discovered concrete types to the given set if they satisfy the
    * accessibility predicate.
    *
-   * @param inputTypes the set of concrete types
+   * @param inputTypes the set of concrete types. A client passes a (typically empty) set, this
+   *     class populates the set, and the client reads the set it passed in.
    * @param predicate the accessibility predicate
    */
   TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
@@ -83,7 +84,7 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Determines whether the given general type is not generic, and, if so, adds the concrete type to
+   * Returns true if the given general type is not generic, and, if so, adds the concrete type to
    * the input types of this object.
    *
    * @param type the general type

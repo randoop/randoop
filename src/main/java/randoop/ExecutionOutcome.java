@@ -1,5 +1,7 @@
 package randoop;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Represents the outcome of executing one statement in a sequence, including:
  *
@@ -18,9 +20,11 @@ public abstract class ExecutionOutcome {
    * The standard output and error output of executing the sequence. Only populated if {@link
    * randoop.main.GenInputsAbstract#capture_output} is true.
    */
-  String output = null;
+  @Nullable String output = null;
 
   /**
+   * Creates a new ExecutionOutcome.
+   *
    * @param executionTimeNanos the execution time, in nanoseconds
    */
   protected ExecutionOutcome(long executionTimeNanos) {
@@ -50,7 +54,7 @@ public abstract class ExecutionOutcome {
    *
    * @return the statement output
    */
-  public String get_output() {
+  public @Nullable String get_output() {
     return output;
   }
 }

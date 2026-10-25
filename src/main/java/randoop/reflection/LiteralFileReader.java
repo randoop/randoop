@@ -33,8 +33,8 @@ import randoop.util.RecordProcessor;
  * Capitalized text must appear literally. Lowercase text is as follows:
  *
  * <ul>
- *   <li>classname is the name of a class in Class.getName format. More specifically,
- *       TypeNames.getTypeForName(classname) must return a valid Class object.
+ *   <li>classname is the name of a class in {@code Class.getName()} format. More specifically,
+ *       {@code TypeNames.getTypeForName(classname)} must return a valid {@code Class} object.
  *   <li>Each type:value pair describes the type and value of a literal (for example, {@code
  *       int:3}).
  * </ul>
@@ -57,7 +57,7 @@ public class LiteralFileReader {
   }
 
   /**
-   * Returns a map from class to list of constants.
+   * Returns a map from class to list of literals.
    *
    * @param inFile the input file
    * @return the map from types to literal values
@@ -71,7 +71,7 @@ public class LiteralFileReader {
           @Override
           public void processRecord(List<String> lines) {
 
-            if (!(lines.size() >= 1
+            if (!(!lines.isEmpty()
                 && lines.get(0).trim().toUpperCase(Locale.getDefault()).equals("CLASSNAME"))) {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
@@ -88,7 +88,7 @@ public class LiteralFileReader {
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
               throwRecordSyntaxError(e);
             }
-            assert cls != null;
+            assert cls != null : "@AssumeAssertion(nullness)";
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
             if (!(lines.size() >= 3

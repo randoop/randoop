@@ -76,7 +76,7 @@ class MethodCoverageMap {
   }
 
   /**
-   * Return the set of names for covered methods of the class.
+   * Returns the set of names for covered methods of the class.
    *
    * @param classname the class name
    * @return the set of method names for covered methods

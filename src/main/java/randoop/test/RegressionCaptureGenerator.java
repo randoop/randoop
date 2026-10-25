@@ -7,6 +7,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.plumelib.util.StringsPlume;
@@ -21,6 +22,7 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqArray;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
+import randoop.operation.MethodCall;
 import randoop.operation.TypedClassOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
@@ -28,8 +30,10 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
+import randoop.types.ExplicitTypeVariable;
 import randoop.types.PrimitiveTypes;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -62,7 +66,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
-   * Whether to include regression assertions. If false, no assertions are added for sequences whose
+   * If true, include regression assertions. If false, no assertions are added for sequences whose
    * execution is NormalExecution.
    */
   private boolean includeAssertions;
@@ -78,7 +82,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     the type; assertions may call these methods
    * @param isAccessible the accessibility predicate
    * @param omitMethodsPredicate the user-supplied predicate for methods that should not be called
-   * @param includeAssertions whether to include regression assertions
+   * @param includeAssertions if true, include regression assertions
    */
   public RegressionCaptureGenerator(
       ExpectedExceptionCheckGen exceptionExpectation,
@@ -190,6 +194,14 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                 sideEffectFreeMethodsByType.getValues(var0.getType());
             if (sideEffectFreeMethods != null) {
               for (TypedClassOperation m : sideEffectFreeMethods) {
+
+                AccessibleObject executable = m.getOperation().getReflectionObject();
+                if (executable instanceof Method) {
+                  if (!MethodCall.isUnarySelfType((Method) executable)) {
+                    continue;
+                  }
+                }
+
                 if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
                   continue;
                 }
@@ -239,11 +251,11 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return true if the method is Object.toString (which is nondeterministic for classes that have
-   * not overridden it).
+   * Returns true if the method is {@code Object.toString} (which is nondeterministic for classes
+   * that have not overridden it).
    *
    * @param m the method to test
-   * @return true if the method is Object.toString
+   * @return true if the method is {@code Object.toString}
    */
   private static boolean isObjectToString(TypedClassOperation m) {
     Class<?> declaringClass = m.getDeclaringType().getRuntimeClass();
@@ -265,7 +277,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     should not be called
    * @param accessibility the predicate used to check whether a method or constructor is accessible
    *     to call
-   * @return whether we can use this method or constructor in a side-effect-free assertion
+   * @return true if we can use this method or constructor in a side-effect-free assertion
    * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(
@@ -277,6 +289,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       return false;
     }
 
+    // Must be accessible.
     AccessibleObject executable = m.getOperation().getReflectionObject();
     if (executable instanceof Method) {
       if (!accessibility.isAccessible((Method) executable)) {
@@ -300,12 +313,32 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
     if (m.getOutputType().isVoid()) {
       return false;
     }
-    Class<?> outputClass = m.getOutputType().getRuntimeClass();
+
+    Type outputType = m.getOutputType();
+
+    Class<?> outputClass;
+    try {
+      if (outputType instanceof ExplicitTypeVariable) {
+        List<TypeVariable> methodTypeParams = m.getTypeParameters();
+        System.out.println("m : " + m);
+        System.out.printf("  output type: %s [%s]%n", outputType, outputType.getClass());
+        System.out.println("  " + methodTypeParams.contains(outputType));
+        for (TypeVariable tv : methodTypeParams) {
+          System.out.printf("  %s [%s] %s%n", tv, tv.getClass(), outputType.equals(tv));
+        }
+        outputClass = null;
+      } else {
+        outputClass = outputType.getRuntimeClass();
+      }
+    } catch (Exception e) {
+      throw new Error(String.format("Problem with %s [%s]", m, m.getClass()), e);
+    }
     // Ignore the null reference type.
     if (outputClass == null) {
       return false;
     }
-    // Don't create assertions over types that are not primitives,  strings, or enums.
+
+    // Don't create assertions over types that are not primitives, strings, or enums.
     if (!PrimitiveTypes.isBoxedPrimitive(outputClass)
         && !outputClass.equals(String.class)
         && !outputClass.isEnum()) {

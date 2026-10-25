@@ -127,7 +127,7 @@ public class OperationExtractorTest {
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     assertFalse(classType.isParameterized());
     final Collection<TypedOperation> operations =
         OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
@@ -153,7 +153,7 @@ public class OperationExtractorTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
     assertFalse(classType.isParameterized());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());

@@ -1,8 +1,96 @@
+  
 version: 2.1
 
 jobs:
-  nonSystemTest-jdk11:
+  nonSystemTest-jdk8:
+    docker:
+      - image: mdernst/randoop-ubuntu-jdk8
+    resource_class: large
 
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v2-{{ .Branch }}-{{ .Revision }}
+            - source-v2-{{ .Branch }}-
+            - source-v2-
+      - checkout
+      - save_cache:
+          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-
+            - gradle-v2-
+
+      - run: ./scripts/test-nonSystemTest.sh
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+      # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit
+
+  systemTest-jdk8:
+    docker:
+      - image: mdernst/randoop-ubuntu-jdk8
+    resource_class: large
+
+    steps:
+
+      - restore_cache:
+          keys:
+            - source-v2-{{ .Branch }}-{{ .Revision }}
+            - source-v2-{{ .Branch }}-
+            - source-v2-
+      - checkout
+      - save_cache:
+          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-
+            - gradle-v2-
+
+      - run:
+          command: ./scripts/test-systemTest.sh
+          no_output_timeout: 20m
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+
+      # From https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit
+
+  nonSystemTest-jdk11:
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
     resource_class: large
@@ -46,7 +134,6 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk11:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk11
     resource_class: large
@@ -92,7 +179,6 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk17:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
@@ -136,7 +222,6 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk17:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk17
     resource_class: large
@@ -182,9 +267,9 @@ jobs:
           path: ~/test-results/junit
 
   nonSystemTest-jdk21:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    resource_class: large
 
     steps:
 
@@ -225,9 +310,9 @@ jobs:
           path: ~/test-results/junit
 
   systemTest-jdk21:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdk21
+    resource_class: large
 
     steps:
 
@@ -269,10 +354,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  nonSystemTest-jdk22:
-
+  nonSystemTest-jdk24:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk24
+    resource_class: large
 
     steps:
 
@@ -312,10 +397,10 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  systemTest-jdk22:
-
+  systemTest-jdk24:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk22
+      - image: mdernst/randoop-ubuntu-jdk24
+    resource_class: large
 
     steps:
 
@@ -358,7 +443,6 @@ jobs:
           path: ~/test-results/junit
 
   misc:
-
     docker:
       - image: mdernst/randoop-ubuntu-jdkany
     resource_class: large
@@ -367,12 +451,13 @@ jobs:
 
       - restore_cache:
           keys:
-            - source-v2-{{ .Branch }}-{{ .Revision }}
-            - source-v2-{{ .Branch }}-
-            - source-v2-
-      - checkout
+            - source-v2full-{{ .Branch }}-{{ .Revision }}
+            - source-v2full-{{ .Branch }}-
+            - source-v2full-
+      - checkout:
+          method: full
       - save_cache:
-          key: source-v2-{{ .Branch }}-{{ .Revision }}
+          key: source-v2full-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
 
@@ -389,16 +474,42 @@ jobs:
             - ~/.gradle
           key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
 
+
 workflows:
-  version: 2
   build:
     jobs:
-      - nonSystemTest-jdk11
-      - systemTest-jdk11
-      - nonSystemTest-jdk17
-      - systemTest-jdk17
-      - nonSystemTest-jdk21
-      - systemTest-jdk21
-      - nonSystemTest-jdk22
-      - systemTest-jdk22
+      - nonSystemTest-jdk8:
+          requires:
+            - misc
+            - nonSystemTest-jdk24
+      - systemTest-jdk8:
+          requires:
+            - misc
+            - systemTest-jdk24
+      - nonSystemTest-jdk11:
+          requires:
+            - misc
+            - nonSystemTest-jdk24
+      - systemTest-jdk11:
+          requires:
+            - misc
+            - systemTest-jdk24
+      - nonSystemTest-jdk17:
+          requires:
+            - misc
+            - nonSystemTest-jdk24
+      - systemTest-jdk17:
+          requires:
+            - misc
+            - systemTest-jdk24
+      - nonSystemTest-jdk21:
+          requires:
+            - misc
+            - nonSystemTest-jdk24
+      - systemTest-jdk21:
+          requires:
+            - misc
+            - systemTest-jdk24
+      - nonSystemTest-jdk24
+      - systemTest-jdk24
       - misc

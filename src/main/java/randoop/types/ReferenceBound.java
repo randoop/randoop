@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -27,7 +28,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
