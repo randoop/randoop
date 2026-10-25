@@ -279,6 +279,12 @@ public abstract class ParameterBound {
    * Returns true if this bound is an upper bound on the type of the given bound with respect to the
    * type substitution.
    *
+   * <p>A type variable in this bound that the substitution does not replace by a different type
+   * stands for an unknown type that may be any type that satisfies the variable's upper bound. An
+   * example is another type parameter of the declaration of the variable whose bound this is. Every
+   * other type variable, including one that the substitution maps another type variable to, stands
+   * for itself.
+   *
    * @param bound the other bound
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
@@ -289,10 +295,13 @@ public abstract class ParameterBound {
    * Returns true if the given type is an upper bound on every type that has this bound as an upper
    * bound.
    *
-   * @param upperBound the possible upper bound
+   * @param upperBound the possible upper bound, to which {@code substitution} has been applied
+   * @param substitution the type substitution, which determines which type variables in {@code
+   *     upperBound} stand for unknown types, as in {@link #isUpperBound(ParameterBound,
+   *     Substitution)}
    * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
    */
-  abstract boolean hasUpperBound(ReferenceType upperBound);
+  abstract boolean hasUpperBound(ReferenceType upperBound, Substitution substitution);
 
   /**
    * Returns true if this bound is a type variable.

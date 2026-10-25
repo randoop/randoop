@@ -84,9 +84,15 @@ class LazyReferenceBound extends ReferenceBound {
     return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type, after substitution, may contain type variables, such as one that the
+   * substitution maps to itself. It is compared as an {@link EagerReferenceBound} would be.
+   */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isUpperBound(argType, substitution);
+    return new EagerReferenceBound(getBoundType().substitute(substitution))
+        .isUpperBound(argType, substitution);
   }
 }
