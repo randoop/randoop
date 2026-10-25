@@ -208,4 +208,19 @@ class IntersectionTypeBound extends ParameterBound {
     }
     return true;
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given type is an upper bound on some member bound of this object
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound) {
+    for (ParameterBound b : boundList) {
+      if (b.hasUpperBound(upperBound)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
