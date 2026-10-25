@@ -54,9 +54,9 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/badsignaturereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
-        "badsignaturereplacement.txt:2: Bad original signature: Bad parameter type \"\" in"
-            + " signature: randoop.MethodReplacements.getAgentPath(int,) for line:"
-            + " randoop.MethodReplacements.getAgentPath(int,)"
+        "badsignaturereplacement.txt:2: Bad original signature: Bad parameter type \"int x\" in"
+            + " signature: randoop.MethodReplacements.getAgentPath(int x) for line:"
+            + " randoop.MethodReplacements.getAgentPath(int x)"
             + " randoop.mock.java.awt.Component.show()";
     thrown.expectMessage(msg);
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
