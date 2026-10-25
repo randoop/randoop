@@ -323,6 +323,26 @@ public class TypeVariableTest {
    */
   static class SiblingOfSiblingBound<S extends Related<S, B>, B, V extends S> {}
 
+  /** A class that is related to itself and to {@code Integer}. */
+  static class RelatedToInteger implements Related<RelatedToInteger, Integer> {}
+
+  /**
+   * A type parameter bounded by {@link RelatedToInteger}.
+   *
+   * @param <T> the type parameter
+   */
+  static class RelatedToIntegerBound<T extends RelatedToInteger> {}
+
+  /**
+   * Like {@link SiblingOfSiblingBound}, but {@code B} has a bound.
+   *
+   * @param <S> a type parameter whose bound refers to {@code B}
+   * @param <B> a type parameter bounded by {@code Number}
+   * @param <V> a type parameter bounded by {@code S}
+   */
+  static class SiblingOfBoundedSiblingBound<
+      S extends Related<S, B>, B extends Number, V extends S> {}
+
   /**
    * Returns the first type parameter of the given generic class.
    *
@@ -483,5 +503,10 @@ public class TypeVariableTest {
     // S := RelatedToString and B := String satisfy the bounds.
     assertTrue(typeParameter(RelatedToStringBound.class).isInstantiationOf(v));
     assertFalse(typeParameter(NumberBound.class).isInstantiationOf(v));
+
+    // B := String does not satisfy B's bound Number, but B := Integer does.
+    TypeVariable bounded = typeParameter(SiblingOfBoundedSiblingBound.class, 2);
+    assertFalse(typeParameter(RelatedToStringBound.class).isInstantiationOf(bounded));
+    assertTrue(typeParameter(RelatedToIntegerBound.class).isInstantiationOf(bounded));
   }
 }

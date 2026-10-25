@@ -331,6 +331,9 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>A type variable in this bound that the substitution does not replace stands for an unknown
    * type, which may be any type that satisfies its bound.
+   *
+   * <p>Returns false, and fails an assertion, if the substitution does not instantiate this bound,
+   * which happens only for a kind of type that {@link #substitute(Substitution)} does not handle.
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
@@ -348,7 +351,13 @@ class LazyParameterBound extends ParameterBound {
         unknowns.isEmpty()
             ? substitution
             : substitution.extend(unknowns, new ArrayList<ReferenceType>(unknowns));
-    return this.substitute(completeSubstitution).isUpperBound(bound, completeSubstitution);
+    ParameterBound b = this.substitute(completeSubstitution);
+    if (b.equals(this)) {
+      // Calling b.isUpperBound would recurse forever.
+      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
+      return false;
+    }
+    return b.isUpperBound(bound, completeSubstitution);
   }
 
   /**
