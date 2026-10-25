@@ -53,7 +53,8 @@ public class Component {
   }
 
   /**
-   * Mock of method {@code java.awt.Component.requestFocus()} to prevent component getting focus.
+   * Mock of method {@code java.awt.Component.requestFocus(boolean)} to prevent component getting
+   * focus.
    *
    * @param component the component that should not receive focus
    * @param temporary flag that indicates that focus should be temporary (ignored)

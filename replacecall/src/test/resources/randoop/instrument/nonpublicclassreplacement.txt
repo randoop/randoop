@@ -1,2 +1,2 @@
-// bad replacement file for testing: the replacement class is not public
-java.lang.Math.abs(int) randoop.instrument.testmocks.HiddenMocks.abs(int)
+// bad replacement file for testing
+java.util.Random.nextInt() randoop.instrument.NonPublicReplacementClass.nextInt(java.util.Random)
