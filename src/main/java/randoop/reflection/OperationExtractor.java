@@ -49,6 +49,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The operations collected by the extractor. This is the product of applying the visitor. */
   private final Collection<TypedOperation> operations = new TreeSet<>();
 
+  /** The operations that the extractor omitted because {@link #omitPredicate} matched them. */
+  private final Collection<TypedOperation> omittedOperations = new TreeSet<>();
+
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
@@ -459,6 +462,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             "OperationExtractor.visit: shouldOmit failed %s%n  %s%n",
             StringsPlume.toStringAndClass(operation), omitPredicate);
       }
+      omittedOperations.add(operation);
     }
   }
 
@@ -509,6 +513,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation operationForType = operation.getOperationForType(classType);
     if (omitPredicate.shouldOmit(operationForType)) {
       Log.logPrintln("omitPreditate omits " + operationForType);
+      omittedOperations.add(operation);
       return;
     }
 
@@ -597,5 +602,17 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   public Collection<TypedOperation> getOperations() {
     return operations;
+  }
+
+  /**
+   * Returns the {@link TypedOperation} objects for {@link #classType} that the omit predicate
+   * matched, and that therefore are not among those returned by {@link #getOperations()}.
+   *
+   * <p>Should be called after all members of the class are visited.
+   *
+   * @return the collection of operations omitted from the class
+   */
+  public Collection<TypedOperation> getOmittedOperations() {
+    return omittedOperations;
   }
 }

@@ -107,6 +107,9 @@ public final class OperationModel {
   /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations = new TreeSet<>();
 
+  /** Set of operations that {@link #omitMethodsPredicate} excluded from {@link #operations}. */
+  private final Set<TypedOperation> omittedOperations = new TreeSet<>();
+
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
@@ -573,6 +576,12 @@ public final class OperationModel {
         out.write(Globals.lineSep);
         out.flush();
       }
+      out.write("Omitted operations: (" + omittedOperations.size() + ")" + Globals.lineSep);
+      for (TypedOperation t : omittedOperations) {
+        out.write("  " + StringsPlume.toStringAndClass(t.toString()));
+        out.write(Globals.lineSep);
+        out.flush();
+      }
     } catch (IOException e) {
       throw new RandoopBug("Error while logging operations", e);
     }
@@ -764,18 +773,21 @@ public final class OperationModel {
       ClassOrInterfaceType classType = itor.next();
       Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
       try {
-        Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(
+        OperationExtractor extractor =
+            new OperationExtractor(
                 classType,
                 reflectionPredicate,
                 omitMethodsPredicate,
                 accessibility,
                 operationSpecifications);
+        new ReflectionManager(accessibility).apply(extractor, classType.getRuntimeClass());
+        Collection<TypedOperation> oneClassOperations = extractor.getOperations();
         Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
         for (TypedOperation op : oneClassOperations) {
           Log.logPrintf("    %s%n", op);
         }
         operations.addAll(oneClassOperations);
+        omittedOperations.addAll(extractor.getOmittedOperations());
       } catch (RandoopSpecificationError e) {
         // A malformed specification is a user error; do not silently drop the class.
         throw e;
@@ -819,7 +831,9 @@ public final class OperationModel {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, accessibility, reflectionPredicate);
-            if (!omitMethodsPredicate.shouldOmit(operation)) {
+            if (omitMethodsPredicate.shouldOmit(operation)) {
+              omittedOperations.add(operation);
+            } else {
               result.add(operation);
             }
           } catch (FailedPredicateException e) {

@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -149,6 +150,26 @@ public class OmitMethodsTest {
     assertFalse(hasMethodNamed(operations, "m1"));
     operations = getOperations(eType, omitpattern);
     assertTrue(hasMethodNamed(operations, "m1"));
+  }
+
+  @Test
+  public void testOmittedOperations() throws RandoopSpecificationError {
+    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m1\\(\\)");
+    AccessibilityPredicate accessibility =
+        new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
+    OperationExtractor extractor =
+        new OperationExtractor(
+            gType,
+            new DefaultReflectionPredicate(),
+            new OmitMethodsPredicate(Collections.singletonList(omitpattern)),
+            accessibility,
+            null);
+    new ReflectionManager(accessibility).apply(extractor, gType.getRuntimeClass());
+    assertFalse(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m1"));
+    assertTrue(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m2"));
+    Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
+    assertEquals(1, omitted.size());
+    assertTrue(hasMethodNamed(omitted, "m1"));
   }
 
   private boolean hasMethodNamed(Set<TypedOperation> operations, String name) {
