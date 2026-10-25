@@ -127,6 +127,19 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return isUpperBound(getBoundType(), substitution);
+    if (bound instanceof ReferenceBound) {
+      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      // An upper bound of any type in an intersection is an upper bound of the intersection.
+      for (ParameterBound b : ((IntersectionTypeBound) bound).getBoundList()) {
+        if (isUpperBound(b, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    // A LazyParameterBound cannot be compared without first substituting for its type variables.
+    return false;
   }
 }
