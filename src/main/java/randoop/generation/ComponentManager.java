@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -36,10 +35,10 @@ import randoop.util.SimpleList;
  * </ul>
  *
  * <p>SEED SEQUENCES. Seed sequences are the initial sequences provided to the generation process.
- * They include (1) sequences passed via the constructor, (2) class literals, and (3) package
- * literals. The only different treatment of seed sequences is during calls to the
- * clearGeneratedSequences() method, which removes only general, non-seed components from the
- * collection.
+ * They include (1) sequences passed via the constructor or via {@link #addSeedSequence}, (2) class
+ * literals, and (3) package literals. The only different treatment of seed sequences is during
+ * calls to the clearGeneratedSequences() method, which removes only general, non-seed components
+ * from the collection.
  */
 public class ComponentManager {
 
@@ -52,13 +51,18 @@ public class ComponentManager {
   private SequenceCollection gralComponents;
 
   /**
-   * The sequences that were given pre-generation to the component manager (via its constructor).
-   * (Does not include literals, I think?)
+   * The general seed sequences: those given to the constructor or to {@link #addSeedSequence}.
    *
-   * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the user calls {@link #clearGeneratedSequences}.
+   * <p>Seeds are all contained in {@link #gralComponents}. This set is kept to restore seeds if the
+   * user calls {@link #clearGeneratedSequences}.
    */
-  private final Collection<Sequence> gralSeeds;
+  private final Set<Sequence> gralSeeds;
+
+  /**
+   * The number of calls to {@link #addGeneratedSequence} since this was created or since the last
+   * call to {@link #clearGeneratedSequences}.
+   */
+  private int numGeneratedSequences = 0;
 
   /**
    * Components representing literals that should only be used as input to specific classes.
@@ -80,7 +84,7 @@ public class ComponentManager {
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = new LinkedHashSet<>();
   }
 
   /**
@@ -91,19 +95,30 @@ public class ComponentManager {
    *     considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
-    seedSet.addAll(generalSeeds);
-    this.gralSeeds = Collections.unmodifiableSet(seedSet);
-    gralComponents = new SequenceCollection(seedSet);
+    gralSeeds = new LinkedHashSet<>(generalSeeds);
+    gralComponents = new SequenceCollection(gralSeeds);
   }
 
   /**
-   * Returns the number of (non-seed) sequences stored by the manager.
+   * Returns the number of (non-seed) sequences added to the manager since it was created or since
+   * the last call to {@link #clearGeneratedSequences}.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
   public int numGeneratedSequences() {
-    return gralComponents.size() - gralSeeds.size();
+    return numGeneratedSequences;
+  }
+
+  /**
+   * Add a general seed sequence, which can be used as input to any method in any class and which
+   * is not removed by {@link #clearGeneratedSequences}.
+   *
+   * @param seq the sequence
+   */
+  public void addSeedSequence(Sequence seq) {
+    if (gralSeeds.add(seq)) {
+      gralComponents.add(seq);
+    }
   }
 
   /**
@@ -141,6 +156,7 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+    numGeneratedSequences++;
   }
 
   /**
@@ -148,6 +164,7 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+    numGeneratedSequences = 0;
   }
 
   /**

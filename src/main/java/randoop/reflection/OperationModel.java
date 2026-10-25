@@ -291,7 +291,7 @@ public class OperationModel {
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
             case ALL:
-              compMgr.addGeneratedSequence(seq);
+              compMgr.addSeedSequence(seq);
               break;
             default:
               throw new Error(
