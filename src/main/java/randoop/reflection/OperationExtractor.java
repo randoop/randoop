@@ -67,6 +67,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Returns the public operations in the class that satisfy the default reflection predicate.
    *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
+   *
    * @param clazz the declaring class for collected operations
    * @return the public operations in the class that satisfy the default reflection predicate
    * @throws RandoopSpecificationError if an expression in a specification does not compile
@@ -77,6 +80,9 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Returns the public operations in the class that satisfy the default reflection predicate.
+   *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
    *
    * @param classType the declaring class for collected operations
    * @return the public operations in the class that satisfy the default reflection predicate
@@ -90,6 +96,9 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Returns the public operations in the classes that satisfy the default reflection predicate.
+   *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
    *
    * @param classTypes the declaring classes for collected operations
    * @return the public operations in the classes that satisfy the default reflection predicate

@@ -160,7 +160,6 @@ public class OperationExtractorTest {
 
   @Test
   public void inaccessibleArgumentTest() throws RandoopSpecificationError {
-    AccessibilityPredicate accessibility = IS_PUBLIC;
     String classname = "randoop.reflection.accessibilitytest.InaccessibleArgumentInput";
     Class<?> c;
     try {
@@ -170,8 +169,7 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
 
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(c, new DefaultReflectionPredicate(), accessibility);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(c);
     assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(
