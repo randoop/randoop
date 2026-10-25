@@ -23,6 +23,7 @@ class WildcardType extends ParameterType {
   private final boolean hasUpperBound;
 
   private WildcardType() {
+    super();
     //  do not create object
     this.hasUpperBound = false;
   }

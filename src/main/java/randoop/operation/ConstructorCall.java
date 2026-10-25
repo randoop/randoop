@@ -42,6 +42,7 @@ public final class ConstructorCall extends CallableOperation {
    * @param constructor reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
+    super();
     if (constructor == null) {
       throw new IllegalArgumentException("constructor should not be null.");
     }

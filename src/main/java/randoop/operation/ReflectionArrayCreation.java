@@ -19,6 +19,7 @@ public class ReflectionArrayCreation extends CallableOperation {
   private final int length;
 
   public ReflectionArrayCreation(ArrayType arrayType, int length) {
+    super();
     this.elementType = arrayType.getComponentType();
     this.length = length;
   }

@@ -19,6 +19,7 @@ public class RandoopInstantiationError extends RuntimeException {
    * @param exception the exception thrown while instantiating the operation
    */
   public RandoopInstantiationError(String opName, Throwable exception) {
+    super();
     this.opName = opName;
     this.exception = exception;
   }

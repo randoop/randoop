@@ -58,6 +58,7 @@ public final class CheckRepContract extends ObjectContract {
    *     not compile
    */
   public CheckRepContract(Method checkRepMethod) throws RandoopSpecificationError {
+    super();
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");
     }

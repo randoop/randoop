@@ -32,6 +32,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
+    super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }

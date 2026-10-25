@@ -11,7 +11,9 @@ public final class EqualsSymmetric extends ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
   /** Private constructor to enforce singleton. */
-  private EqualsSymmetric() {}
+  private EqualsSymmetric() {
+    super();
+  }
 
   public static EqualsSymmetric getInstance() {
     return instance;

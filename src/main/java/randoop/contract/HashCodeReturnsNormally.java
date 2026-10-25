@@ -10,7 +10,9 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
   /** Private constructor to enforce singleton. */
-  private HashCodeReturnsNormally() {}
+  private HashCodeReturnsNormally() {
+    super();
+  }
 
   public static HashCodeReturnsNormally getInstance() {
     return instance;

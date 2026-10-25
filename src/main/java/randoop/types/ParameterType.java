@@ -19,11 +19,13 @@ public abstract class ParameterType extends ReferenceType {
   private ParameterBound upperBound;
 
   ParameterType() {
+    super();
     this.lowerBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);
     this.upperBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
   }
 
   ParameterType(ParameterBound lowerBound, ParameterBound upperBound) {
+    super();
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
   }

@@ -15,6 +15,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
 
   public DeclarationExtractor(
       Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate reflectionPredicate) {
+    super();
     this.classDeclarationTypes = classDeclarationTypes;
     this.reflectionPredicate = reflectionPredicate;
   }
