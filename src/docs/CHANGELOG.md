@@ -4,6 +4,10 @@
 
 Randoop compiles under Java 21-26 and runs under Java 8-26.
 
+With `--progressdisplay=false`, Randoop now exits when a test runs for more
+than 10 seconds, as it already did by default (unless `--usethreads` is
+given).  Previously, `--progressdisplay=false` disabled that check.
+
 New command-line arguments:
 
 * `--call-non-sut-methods` calls methods outside the system under test to

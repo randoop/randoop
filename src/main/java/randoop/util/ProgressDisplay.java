@@ -194,20 +194,9 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-  /**
-   * Returns true iff no progress output should be displayed.
-   *
-   * @return true iff no progress output should be displayed
-   */
-  private boolean noProgressOutput() {
-    return outputMode == Mode.NO_DISPLAY
-        || (GenInputsAbstract.progressintervalmillis <= 0
-            && GenInputsAbstract.progressintervalsteps <= 0);
-  }
-
   /** Clear the display; good to do before printing to System.out. */
   public void clear() {
-    if (noProgressOutput()) {
+    if (outputMode == Mode.NO_DISPLAY) {
       return;
     }
     // "display("");" is wrong because it leaves the timestamp and writes
@@ -224,7 +213,7 @@ public class ProgressDisplay extends Thread {
    * @param withTime if true, print time and memory usage
    */
   public void display(boolean withTime) {
-    if (noProgressOutput()) {
+    if (outputMode == Mode.NO_DISPLAY) {
       return;
     }
     display(message(withTime));
@@ -236,7 +225,7 @@ public class ProgressDisplay extends Thread {
    * @param message the message to display
    */
   private void display(String message) {
-    if (noProgressOutput()) {
+    if (outputMode == Mode.NO_DISPLAY) {
       return;
     }
     synchronized (print_synchro) {

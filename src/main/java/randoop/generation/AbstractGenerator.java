@@ -111,8 +111,8 @@ public abstract class AbstractGenerator {
   private @Nullable IStopper stopper;
 
   /**
-   * Updates the progress display message printed to the console. Null if {@link
-   * GenInputsAbstract#progressdisplay} is false.
+   * Displays progress messages, and exits Randoop if the generator stops taking steps. Its mode is
+   * {@link ProgressDisplay.Mode#NO_DISPLAY} if no progress messages should be displayed.
    */
   private ProgressDisplay progressDisplay;
 
@@ -301,10 +301,14 @@ public abstract class AbstractGenerator {
 
     startTime = System.currentTimeMillis();
 
-    if (GenInputsAbstract.progressdisplay) {
-      progressDisplay = new ProgressDisplay(this, ProgressDisplay.Mode.MULTILINE);
-      progressDisplay.start();
-    }
+    ProgressDisplay.Mode progressDisplayMode =
+        (GenInputsAbstract.progressdisplay
+                && (GenInputsAbstract.progressintervalmillis > 0
+                    || GenInputsAbstract.progressintervalsteps > 0))
+            ? ProgressDisplay.Mode.MULTILINE
+            : ProgressDisplay.Mode.NO_DISPLAY;
+    progressDisplay = new ProgressDisplay(this, progressDisplayMode);
+    progressDisplay.start();
 
     while (!shouldStop()) {
 
@@ -316,8 +320,7 @@ public abstract class AbstractGenerator {
         Log.logPrintf("%nseq before run:%n%s%n", eSeq);
       }
 
-      if (GenInputsAbstract.progressdisplay
-          && GenInputsAbstract.progressintervalsteps != -1
+      if (GenInputsAbstract.progressintervalsteps != -1
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
         progressDisplay.display(!GenInputsAbstract.deterministic);
       }
@@ -360,10 +363,8 @@ public abstract class AbstractGenerator {
       }
     }
 
-    if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
-      progressDisplay.display(!GenInputsAbstract.deterministic);
-      progressDisplay.shouldStop = true;
-    }
+    progressDisplay.display(!GenInputsAbstract.deterministic);
+    progressDisplay.shouldStop = true;
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.println();
