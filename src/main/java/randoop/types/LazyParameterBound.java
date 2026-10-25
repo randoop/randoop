@@ -64,16 +64,12 @@ class LazyParameterBound extends ParameterBound {
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
-        if (referenceType.isVariable()) {
-          return new LazyReferenceBound(referenceType);
-        }
-        return new EagerReferenceBound(referenceType);
+        return forSubstitutedType(referenceType);
       }
       return this;
     }
 
     if (boundType instanceof ParameterizedType) {
-      boolean isLazy = false;
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
@@ -82,16 +78,11 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy |= substitutesVariable(parameter, substitution);
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      if (isLazy) {
-        return new LazyReferenceBound(instantiatedType);
-      }
-      return new EagerReferenceBound(instantiatedType);
+      return forSubstitutedType(new InstantiatedType(classType, argumentList));
     }
 
     throw new RandoopBug(
@@ -99,40 +90,18 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Returns true if the substitution maps a type variable that occurs in the given reflection type
-   * to a type variable.
+   * Returns a bound for the given type, which results from applying a substitution to this bound.
+   * The bound is lazy if the type contains a type variable, because the bounds of that type
+   * variable might refer back to the type.
    *
-   * @param type the reflection type
-   * @param substitution the type substitution
-   * @return true if {@code substitution} maps a type variable in {@code type} to a type variable
+   * @param type the type that results from applying a substitution to this bound
+   * @return a lazy bound if {@code type} contains a type variable, an eager bound otherwise
    */
-  private static boolean substitutesVariable(
-      java.lang.reflect.Type type, Substitution substitution) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      ReferenceType referenceType = substitution.get(type);
-      return referenceType != null && referenceType.isVariable();
+  private static ReferenceBound forSubstitutedType(ReferenceType type) {
+    if (type.isGeneric()) {
+      return new LazyReferenceBound(type);
     }
-    if (type instanceof ParameterizedType) {
-      for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
-        if (substitutesVariable(argType, substitution)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof java.lang.reflect.WildcardType) {
-      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
-        if (substitutesVariable(boundType, substitution)) {
-          return true;
-        }
-      }
-      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
-        if (substitutesVariable(boundType, substitution)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return new EagerReferenceBound(type);
   }
 
   /**

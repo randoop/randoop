@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -77,8 +78,18 @@ public class LazyParameterBoundTest {
             ClassOrInterfaceType.forType(
                 LazyParameterBoundTest.class.getDeclaredField("wildcardField").getGenericType());
     InstantiatedType capturedType = wildcardType.applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
     // The capture variable's bound is Map<capture, String>, which refers to the capture variable.
-    assertEquals(1, capturedType.getTypeParameters().size());
+    ParameterBound bound = capture.getUpperTypeBound();
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(capture, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
   }
 
   @Test
@@ -95,5 +106,21 @@ public class LazyParameterBoundTest {
             .instantiate(
                 GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteTypeContainingVariable() {
+    TypeVariable t = selfFirstArgumentBoundParameter();
+    TypeVariable v = GenericClassType.forClass(Unbounded.class).getTypeParameters().get(0);
+    InstantiatedType listOfV = GenericClassType.forClass(List.class).instantiate(v);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, listOfV));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(listOfV, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
   }
 }
