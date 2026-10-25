@@ -2656,13 +2656,13 @@ a long-running sequence will prevent Randoop from creating new tests.
 Two possible reasons for a long-running test are:
 </p>
 <ul>
- <li>Randoop is executing a test that
+  <li>Randoop is executing a test that
     <ul>
       <li>contains nonterminating behavior; for example, some implementations
-      of <code>equals()</code>, <code>hashCode()</code>, etc. do not terminate
-      when a collection contains itself, or
+        of <code>equals()</code>, <code>hashCode()</code>, etc. do not terminate
+        when a collection contains itself, or</li>
       <li>takes very long to execute.  For example, maybe Randoop passed a value
-        much larger than expected, causing long run times.
+        much larger than expected, causing long run times.</li>
     </ul>
     See "<a href="#nontermination">Randoop does not terminate</a>".
   </li>
