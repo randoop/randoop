@@ -25,11 +25,11 @@ public class ReflectionArrayCreation extends CallableOperation {
 
   @Override
   public ExecutionOutcome execute(Object[] input) {
-    long startTime = System.currentTimeMillis();
+    long startTimeNanos = System.nanoTime();
     assert input.length == 0;
     Object arrayObject = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(arrayObject, totalTime);
+    long durationNanos = System.nanoTime() - startTimeNanos;
+    return new NormalExecution(arrayObject, durationNanos);
   }
 
   @Override
