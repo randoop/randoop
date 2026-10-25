@@ -5,9 +5,16 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
+
+  /**
+   * The type variables in the lazy parts of the bounds of this variable, other than this variable;
+   * null if not yet computed. Use {@link #getBoundVariables()} instead of reading this field.
+   */
+  private @Nullable List<TypeVariable> boundVariables = null;
 
   /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
@@ -73,15 +80,12 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isVariable()) {
       TypeVariable otherVariable = (TypeVariable) otherType;
       Substitution substitution = otherVariable.getSubstitution(this);
-      boolean lowerboundOk =
-          otherVariable
-              .getLowerTypeBound()
-              .isLowerBound(resolveTypeVariables(getLowerTypeBound()), substitution);
-      boolean upperboundOk =
-          otherVariable
+      return otherVariable
               .getUpperTypeBound()
-              .isUpperBound(resolveTypeVariables(getUpperTypeBound()), substitution);
-      return lowerboundOk && upperboundOk;
+              .isUpperBound(getResolvedUpperTypeBound(), substitution)
+          && otherVariable
+              .getLowerTypeBound()
+              .isLowerBound(getResolvedLowerTypeBound(), substitution);
     }
 
     return false;
@@ -100,20 +104,26 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the given bound, with each type variable in its lazy parts substituted for itself. For
-   * example, the bound of {@code T extends Comparable<T>} is a {@link LazyParameterBound}; the
-   * result is a {@link ReferenceBound} whose type, {@code Comparable<T>}, can be compared with
-   * other types.
+   * Returns the upper bound of this variable, with each type variable in its lazy parts substituted
+   * for itself. For example, the bound of {@code T extends Comparable<T>} is a {@link
+   * LazyParameterBound}; the result is a {@link ReferenceBound} whose type, {@code Comparable<T>},
+   * can be compared with other types.
    *
-   * @param bound a type bound
-   * @return the bound, with references to type variables resolved
+   * @return the upper bound of this variable, with references to type variables resolved
    */
-  static ParameterBound resolveTypeVariables(ParameterBound bound) {
-    List<TypeVariable> variables = bound.getLazyTypeParameters();
-    if (variables.isEmpty()) {
-      return bound;
-    }
-    return bound.substitute(new Substitution(variables, new ArrayList<ReferenceType>(variables)));
+  ParameterBound getResolvedUpperTypeBound() {
+    return getUpperTypeBound().substitute(getSubstitution(this));
+  }
+
+  /**
+   * Returns the lower bound of this variable, with each type variable in its lazy parts substituted
+   * for itself.
+   *
+   * @return the lower bound of this variable, with references to type variables resolved
+   * @see #getResolvedUpperTypeBound()
+   */
+  ParameterBound getResolvedLowerTypeBound() {
+    return getLowerTypeBound().substitute(getSubstitution(this));
   }
 
   /**
@@ -126,16 +136,43 @@ public abstract class TypeVariable extends ParameterType {
    * @return a substitution that replaces this variable with {@code otherType}
    */
   private Substitution getSubstitution(ReferenceType otherType) {
-    List<TypeVariable> parameters = new ArrayList<>(getLowerTypeBound().getLazyTypeParameters());
-    parameters.addAll(getUpperTypeBound().getLazyTypeParameters());
-    parameters.removeIf(this::equals);
-    if (parameters.isEmpty()) {
-      return new Substitution(this, otherType);
-    }
+    List<TypeVariable> parameters = new ArrayList<>(getBoundVariables());
     List<ReferenceType> arguments = new ArrayList<>(parameters);
     parameters.add(this);
     arguments.add(otherType);
     return new Substitution(parameters, arguments);
+  }
+
+  /**
+   * Returns the type variables in the lazy parts of the bounds of this variable, other than this
+   * variable.
+   *
+   * @return the type variables in the lazy parts of the bounds of this variable, other than this
+   *     variable
+   */
+  private List<TypeVariable> getBoundVariables() {
+    List<TypeVariable> result = boundVariables;
+    if (result == null) {
+      Set<TypeVariable> variables =
+          new LinkedHashSet<>(getLowerTypeBound().getLazyTypeParameters());
+      variables.addAll(getUpperTypeBound().getLazyTypeParameters());
+      variables.remove(this);
+      result = new ArrayList<>(variables);
+      boundVariables = result;
+    }
+    return result;
+  }
+
+  @Override
+  void setUpperBound(ParameterBound upperBound) {
+    super.setUpperBound(upperBound);
+    boundVariables = null;
+  }
+
+  @Override
+  void setLowerBound(ParameterBound lowerBound) {
+    super.setLowerBound(lowerBound);
+    boundVariables = null;
   }
 
   @Override

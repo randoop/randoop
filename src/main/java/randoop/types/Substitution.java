@@ -184,6 +184,20 @@ public class Substitution {
   }
 
   /**
+   * Returns a copy of this substitution in which the given type variable maps to the given type,
+   * whether or not this substitution maps the type variable.
+   *
+   * @param parameter the type variable
+   * @param argument the type that {@code parameter} maps to
+   * @return a copy of this substitution that maps {@code parameter} to {@code argument}
+   */
+  Substitution replace(TypeVariable parameter, ReferenceType argument) {
+    Substitution result = new Substitution(this);
+    result.put(parameter, argument);
+    return result;
+  }
+
+  /**
    * Returns the concrete type mapped from the type variable by this substitution. Returns null if
    * the variable is not in the substitution.
    *

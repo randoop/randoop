@@ -224,9 +224,9 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the given type is an upper bound on some member bound of this object
    */
   @Override
-  boolean hasUpperBound(ReferenceType upperBound) {
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
     for (ParameterBound b : boundList) {
-      if (b.hasUpperBound(upperBound)) {
+      if (b.hasUpperBound(upperBound, substitution)) {
         return true;
       }
     }

@@ -1,12 +1,12 @@
 package randoop.types;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -117,10 +117,15 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof ParameterizedType) {
-      List<TypeArgument> argumentList =
-          CollectionsPlume.mapList(
-              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
-              ((ParameterizedType) type).getActualTypeArguments());
+      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
+      for (java.lang.reflect.Type parameter : actualTypeArgs) {
+        TypeArgument typeArgument = substitute(parameter, substitution);
+        if (typeArgument == null) {
+          return null;
+        }
+        argumentList.add(typeArgument);
+      }
 
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
@@ -130,6 +135,16 @@ class LazyParameterBound extends ParameterBound {
 
     if (type instanceof Class) {
       return TypeArgument.forType(ClassOrInterfaceType.forType(type));
+    }
+
+    if (type instanceof GenericArrayType) {
+      TypeArgument componentArgument =
+          substitute(((GenericArrayType) type).getGenericComponentType(), substitution);
+      if (!(componentArgument instanceof ReferenceArgument)) {
+        return null;
+      }
+      ReferenceType componentType = ((ReferenceArgument) componentArgument).getReferenceType();
+      return TypeArgument.forType(ArrayType.ofComponentType(componentType));
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
@@ -195,6 +210,8 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
+    } else if (type instanceof GenericArrayType) {
+      variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
     } else if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
@@ -309,14 +326,15 @@ class LazyParameterBound extends ParameterBound {
     return b.isUpperBound(argType, substitution);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if the substitution does not instantiate this bound.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
-    if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
-    }
-    return b.isUpperBound(bound, substitution);
+    return !b.equals(this) && b.isUpperBound(bound, substitution);
   }
 
   /**
@@ -326,7 +344,7 @@ class LazyParameterBound extends ParameterBound {
    * for its type variables.
    */
   @Override
-  boolean hasUpperBound(ReferenceType upperBound) {
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
     return false;
   }
 

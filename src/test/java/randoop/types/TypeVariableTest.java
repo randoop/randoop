@@ -224,6 +224,78 @@ public class TypeVariableTest {
   static class MutualBound<S extends Comparable<T>, T extends List<S>> {}
 
   /**
+   * A type parameter bounded by another type parameter that has a bound.
+   *
+   * @param <W> the bound of {@code V}
+   * @param <V> the type parameter
+   */
+  static class BoundedVariableBound<W extends Number, V extends W> {}
+
+  /**
+   * A type parameter bounded by a parameterized type with a nested type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class CollectionListStringBound<T extends Collection<List<String>>> {}
+
+  /**
+   * A type parameter whose bound contains a wildcard whose bound refers to the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class CollectionListSelfBound<T extends Collection<? extends List<T>>> {}
+
+  /**
+   * A type parameter whose self-referential bound contains an array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayBound<T extends java.util.Map<T, T[]>> {}
+
+  /**
+   * A type parameter whose self-referential bound contains an array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class OtherSelfArrayBound<T extends java.util.Map<T, T[]>> {}
+
+  /**
+   * A type parameter bounded by {@code Map<?, ?>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class MapWildcardBound<T extends java.util.Map<?, ?>> {}
+
+  /**
+   * A class in the style of a fluent assertion library, whose type parameter {@code SELF} refers to
+   * its sibling {@code ACTUAL}.
+   *
+   * @param <SELF> the type of this assertion
+   * @param <ACTUAL> the type of the value under test
+   */
+  abstract static class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, ACTUAL> {}
+
+  /**
+   * A subclass of {@link AbstractAssert} that passes its own type parameters to it.
+   *
+   * @param <SELF> the type of this assertion
+   * @param <ACTUAL> the type of the value under test
+   */
+  abstract static class AbstractObjectAssert<
+          SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL>
+      extends AbstractAssert<SELF, ACTUAL> {}
+
+  /**
+   * A type parameter bounded by an {@link AbstractAssert} whose value type is {@code String}.
+   *
+   * @param <SELF> the type parameter
+   */
+  static class StringAssertBound<SELF extends AbstractAssert<SELF, String>> {}
+
+  /** A concrete instantiation of {@link AbstractAssert}. */
+  static class ConcreteAssert extends AbstractAssert<ConcreteAssert, String> {}
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -334,7 +406,46 @@ public class TypeVariableTest {
     assertTrue(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
     assertTrue(t.isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
     assertFalse(t.isInstantiationOf(typeParameter(ComparableWildcardBound.class)));
-    // MutualBound.T's bound is List<S>, and String does not satisfy S's bound Comparable<T>.
+    // MutualBound.T's bound is List<S>.  S stands for an unknown type that must satisfy its bound
+    // Comparable<T>, with ListStringBound.T for T.  S would have to be String, and String is not a
+    // Comparable<ListStringBound.T>.
     assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testBoundedVariableBound() {
+    TypeVariable v = typeParameter(BoundedVariableBound.class, 1);
+    assertTrue(typeParameter(NumberBound.class).isInstantiationOf(v));
+    assertTrue(typeParameter(IntegerBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(ComparableIntegerBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(v));
+  }
+
+  @Test
+  public void testNestedTypeArgument() {
+    TypeVariable t = typeParameter(CollectionListSelfBound.class);
+    assertFalse(typeParameter(CollectionListStringBound.class).isInstantiationOf(t));
+    assertTrue(
+        typeParameter(CollectionListStringBound.class)
+            .isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
+  }
+
+  @Test
+  public void testArrayInBound() {
+    TypeVariable t = typeParameter(SelfArrayBound.class);
+    assertTrue(t.isInstantiationOf(typeParameter(OtherSelfArrayBound.class)));
+    assertTrue(t.isInstantiationOf(typeParameter(MapWildcardBound.class)));
+    assertFalse(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
+  }
+
+  @Test
+  public void testSiblingTypeParameter() {
+    TypeVariable self = typeParameter(AbstractAssert.class, 0);
+    assertTrue(typeParameter(AbstractObjectAssert.class, 0).isInstantiationOf(self));
+    assertTrue(typeParameter(StringAssertBound.class).isInstantiationOf(self));
+    assertFalse(typeParameter(SelfComparableBound.class).isInstantiationOf(self));
+
+    assertTrue(self.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteAssert.class)));
+    assertFalse(self.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 }

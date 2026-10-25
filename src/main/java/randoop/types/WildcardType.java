@@ -193,33 +193,6 @@ class WildcardType extends ParameterType {
     }
   }
 
-  /**
-   * Returns true if this wildcard type contains the given reference type, as a type argument (JLS
-   * section 4.5.1):
-   *
-   * <ul>
-   *   <li>{@code ? extends T} contains {@code S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? super T} contains {@code S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   * </ul>
-   *
-   * Returns false if the bound of this wildcard type is not a {@link ReferenceBound}.
-   *
-   * @param otherType the type to check for
-   * @return true if this type contains the other type, false otherwise
-   */
-  public boolean contains(ReferenceType otherType) {
-    ParameterBound bound = getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
-    if (hasUpperBound) {
-      return otherType.isSubtypeOfOrEqualTo(boundType);
-    } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
-    }
-  }
-
   @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return getTypeBound().isGeneric(ignoreWildcards);
