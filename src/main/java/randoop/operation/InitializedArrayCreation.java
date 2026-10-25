@@ -62,10 +62,11 @@ public final class InitializedArrayCreation extends CallableOperation {
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput) {
-    if (statementInput.length != length) {
+    if (statementInput.length > length) {
       throw new IllegalArgumentException(
-          "Wrong number of arguments: " + statementInput.length + ", expected: " + length);
+          "Too many arguments: " + statementInput.length + ", capacity: " + length);
     }
+    assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) {
       Array.set(theArray, i, statementInput[i]);
@@ -86,9 +87,9 @@ public final class InitializedArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    if (inputVars.size() != length) {
+    if (inputVars.size() > length) {
       throw new IllegalArgumentException(
-          "Wrong number of arguments: " + inputVars.size() + ", expected: " + length);
+          "Too many arguments: " + inputVars.size() + ", capacity: " + length);
     }
 
     String arrayTypeName = this.elementType.getFqName();

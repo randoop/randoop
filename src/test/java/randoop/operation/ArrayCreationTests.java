@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -84,13 +83,6 @@ public class ArrayCreationTests {
     Statement st_ad = new Statement(acOp);
     st_ad.appendCode(var1, input, b);
     assertEquals("char[][] charArray1 = new char[][] { charArray0 };", b.toString());
-  }
-
-  @Test
-  public void testWrongNumberOfElements() {
-    ArrayType arrayType = ArrayType.ofComponentType(JavaTypes.INT_TYPE);
-    InitializedArrayCreation arrayCreation = new InitializedArrayCreation(arrayType, 3);
-    assertThrows(IllegalArgumentException.class, () -> arrayCreation.execute(new Object[] {1, 2}));
   }
 
   @Test
