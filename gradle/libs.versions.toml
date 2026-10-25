@@ -20,7 +20,7 @@ require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
 javaparser-core = "com.github.javaparser:javaparser-core:3.28.2"
 
-gson = "com.google.code.gson:gson:2.14.0"
+gson = "com.google.code.gson:gson:2.15.0"
 
 commons-exec = "org.apache.commons:commons-exec:1.6.0"
 
@@ -54,7 +54,7 @@ javassist = "org.javassist:javassist:3.+"
 
 com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
 
-com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.10.3" }
+com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.10.4" }
 
 net-ltgt-errorprone = { id = "net.ltgt.errorprone", version = "5.1.1" }
 
