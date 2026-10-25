@@ -329,12 +329,35 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns false if the substitution does not instantiate this bound.
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, which may be any type that satisfies its bound.
+   *
+   * <p>Returns false, and fails an assertion, if the substitution does not instantiate this bound,
+   * which happens only for a kind of type that {@link #substitute(Substitution)} does not handle.
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
-    return !b.equals(this) && b.isUpperBound(bound, substitution);
+    List<TypeVariable> unknowns = new ArrayList<>();
+    for (TypeVariable variable : getTypeParameters()) {
+      // Look up the reflection variable, as substitute() does.
+      java.lang.reflect.Type reflectionVariable =
+          ((ExplicitTypeVariable) variable).getReflectionTypeVariable();
+      if (substitution.get(reflectionVariable) == null && !unknowns.contains(variable)) {
+        unknowns.add(variable);
+      }
+    }
+    // Substituting each unknown for itself makes it an unknown in ReferenceBound's comparison.
+    Substitution completeSubstitution =
+        unknowns.isEmpty()
+            ? substitution
+            : substitution.extend(unknowns, new ArrayList<ReferenceType>(unknowns));
+    ParameterBound b = this.substitute(completeSubstitution);
+    if (b.equals(this)) {
+      // Calling b.isUpperBound would recurse forever.
+      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
+      return false;
+    }
+    return b.isUpperBound(bound, completeSubstitution);
   }
 
   /**
