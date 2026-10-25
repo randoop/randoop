@@ -84,7 +84,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * Creates a {@link MethodSignature} object from string representations of its method name and
    * types.
    *
-   * @param fullMethodName fully-qualified name of method
+   * @param fullMethodName fully-qualified name of method: {@code classname.methodname}, or {@code
+   *     classname.<init>} or {@code classname} for a constructor
    * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
@@ -96,6 +97,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     }
     String classname = fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
+    if (!methodName.equals("<init>") && !isClass(classname) && isClass(fullMethodName)) {
+      // fullMethodName is a classname, so this is a constructor.
+      classname = fullMethodName;
+      methodName = "<init>";
+    }
     Type[] paramTypes = new Type[params.length];
     for (int i = 0; i < params.length; i++) {
       // TODO: This seems incorrect, since it doesn't handle arrays.
@@ -106,11 +112,27 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns true if a class file for the given class is on the classpath.
+   *
+   * @param classname a fully-qualified class name
+   * @return true if a class file for {@code classname} is on the classpath
+   */
+  private static boolean isClass(String classname) {
+    try {
+      return ReplacementFileReader.getJavaClassFromClassname(classname) != null;
+    } catch (ReplacementFileReader.ReplacementException e) {
+      // The class file exists but cannot be parsed.
+      return true;
+    }
+  }
+
+  /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
    * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
-   * not include a return type.
+   * name, and then the fully-qualified parameter types in parentheses. For a constructor, the
+   * method name is either {@code <init>} or omitted. Note that a signature does not include a
+   * return type.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string

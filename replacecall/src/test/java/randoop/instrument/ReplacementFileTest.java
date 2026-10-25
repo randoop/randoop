@@ -79,6 +79,18 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void constructorSignatureTest() {
+    MethodSignature init = MethodSignature.of("java.util.Random.<init>(long)");
+    assertEquals("java.util.Random", init.getClassname());
+    assertEquals("<init>", init.getName());
+    assertEquals(init, MethodSignature.of("java.util.Random(long)"));
+
+    MethodSignature method = MethodSignature.of("java.util.Random.nextInt(int)");
+    assertEquals("java.util.Random", method.getClassname());
+    assertEquals("nextInt", method.getName());
+  }
+
+  @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
