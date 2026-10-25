@@ -28,9 +28,16 @@ public class ProgressDisplay extends Thread {
    */
   private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
+  /** How progress messages are displayed. */
   public enum Mode {
+    /** Each progress message overwrites the previous one, on a single line. */
     SINGLE_LINE_OVERWRITE,
+    /** Each progress message appears on its own line. */
     MULTILINE,
+    /**
+     * No progress message is displayed. The thread still checks for a generator that has stopped
+     * taking steps, and if it finds one, it prints diagnostics and exits Randoop.
+     */
     NO_DISPLAY
   }
 
