@@ -233,8 +233,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
-   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
-   *     found on the classpath
+   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature}, or a
+   *     superclass that is searched, is not found on the classpath
    * @throws NoSuchMethodException if the containing class of this {@link MethodSignature} does not
    *     have the represented method as a member
    * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}

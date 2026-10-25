@@ -123,6 +123,49 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void missingMethodClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/missingmethodclass.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "missingmethodclass.txt:2: Class alpha.beta not found for line: alpha.beta.gamma(int)"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nestedConstructorDotTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nestedconstructordot.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nestedconstructordot.txt:2: Method SimpleEntry not found (for a constructor of nested"
+            + " class java.util.AbstractMap$SimpleEntry, write"
+            + " java.util.AbstractMap$SimpleEntry(...))");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void constructorReplacementWrongTypeTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/constructorreplacementwrongtype.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "constructorreplacementwrongtype.txt:2: Replacement"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero() for constructor"
+            + " java.lang.Object.<init>() must have the same parameter types and return"
+            + " java.lang.Object");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nonStaticReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonstaticreplacement.txt:2: Replacement method java.lang.Object.hashCode() is not static");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);

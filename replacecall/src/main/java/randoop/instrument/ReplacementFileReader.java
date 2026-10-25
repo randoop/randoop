@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -171,12 +173,15 @@ public final class ReplacementFileReader {
    *
    * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. In
    * addition, the original signature may be a constructor written as {@code
-   * package-name.classname(argument-list)}.
+   * package-name.classname(argument-list)}. The replacement must be a static method. The
+   * replacement for a constructor must have the same parameter types as the constructor, and must
+   * return the class that contains the constructor.
    *
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
-   * @throws ReplacementException if either signature is badly-formed
+   * @throws ReplacementException if either signature is badly-formed, or the replacement is not
+   *     suitable for the original
    * @throws ClassNotFoundException if either class cannot be found
    * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
@@ -196,28 +201,21 @@ public final class ReplacementFileReader {
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad original signature", e);
     }
+    original = resolveConstructorShorthand(original);
     // Call toMethod() instead of exists() to get more precise error messages.
     try {
       original.toMethod();
-    } catch (ClassNotFoundException e) {
-      if (original.getName().equals("<init>")) {
-        throw e;
+    } catch (NoSuchMethodException e) {
+      // The signature might be a constructor of a nested class, written with "." instead of "$".
+      String nestedClassname = original.getClassname() + "$" + original.getName();
+      if (!original.getName().equals("<init>")
+          && getJavaClassFromClassname(nestedClassname) != null) {
+        throw new NoSuchMethodException(
+            String.format(
+                "%s (for a constructor of nested class %s, write %s(...))",
+                e.getMessage(), nestedClassname, nestedClassname));
       }
-      // The signature might be a constructor written as package-name.classname(argument-list).
-      MethodSignature constructor = original.toConstructorSignature();
-      try {
-        constructor.toMethod();
-      } catch (ClassNotFoundException e2) {
-        ClassNotFoundException notFound =
-            new ClassNotFoundException(
-                String.format(
-                    "Class %s not found (nor class %s, for a constructor)",
-                    original.getClassname(), constructor.getClassname()),
-                e);
-        notFound.addSuppressed(e2);
-        throw notFound;
-      }
-      original = constructor;
+      throw e;
     }
 
     MethodSignature replacement;
@@ -227,9 +225,56 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad replacement signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    replacement.toMethod();
+    Method replacementMethod = replacement.toMethod();
+    if (!replacementMethod.isStatic()) {
+      throw new ReplacementException("Replacement method " + replacement + " is not static");
+    }
+    if (original.getName().equals("<init>")) {
+      @SuppressWarnings("signature:assignment") // toMethod() found a class with this name
+      @BinaryName String constructedClassname = original.getClassname();
+      Type constructedType = new ObjectType(constructedClassname);
+      if (!Arrays.equals(replacement.getParameterTypes(), original.getParameterTypes())
+          || !replacementMethod.getReturnType().equals(constructedType)) {
+        String msg =
+            String.format(
+                "Replacement %s for constructor %s must have the same parameter types and return %s",
+                replacement, original, constructedType);
+        throw new ReplacementException(msg);
+      }
+    }
 
     addReplacement(replacementMap, original, replacement);
+  }
+
+  /**
+   * Returns the method or constructor that the given signature denotes. A signature such as {@code
+   * pkg.C(int)} has two interpretations: method {@code C} of class {@code pkg}, or a constructor of
+   * class {@code pkg.C}. This prefers the method interpretation, and uses the constructor
+   * interpretation only if class {@code pkg} does not exist and class {@code pkg.C} does.
+   *
+   * @param signature a method signature
+   * @return the given signature, or the signature of the constructor that it denotes
+   * @throws ClassNotFoundException if no interpretation of the signature names an existing class
+   * @throws ReplacementException if there is an error reading a class file
+   */
+  private static MethodSignature resolveConstructorShorthand(MethodSignature signature)
+      throws ClassNotFoundException, ReplacementException {
+    if (signature.getName().equals("<init>")
+        || getJavaClassFromClassname(signature.getClassname()) != null) {
+      return signature;
+    }
+    MethodSignature constructor = signature.toConstructorSignature();
+    if (getJavaClassFromClassname(constructor.getClassname()) != null) {
+      return constructor;
+    }
+    // Mention the constructor interpretation only if the name looks like a class name.
+    if (Character.isUpperCase(signature.getName().charAt(0))) {
+      throw new ClassNotFoundException(
+          String.format(
+              "Class %s not found (nor class %s, for a constructor)",
+              signature.getClassname(), constructor.getClassname()));
+    }
+    throw new ClassNotFoundException("Class " + signature.getClassname() + " not found");
   }
 
   /**
