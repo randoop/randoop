@@ -25,25 +25,23 @@ class ReplacementFileException extends Exception {
    * @param lineText the text of the line where the error occurred
    */
   ReplacementFileException(String msg, String filename, int lineNumber, String lineText) {
-    this(msg, filename, lineNumber, lineText, null);
+    super(msg);
+    this.filename = filename;
+    this.lineNumber = lineNumber;
+    this.lineText = lineText;
   }
 
   /**
-   * Creates a {@link ReplacementFileException} with the message and causing exception.
+   * Creates a {@link ReplacementFileException} whose message is formed from the messages of {@code
+   * cause} and its causes.
    *
-   * @param msg the exception message
+   * @param cause the causing exception
    * @param filename the replacement file name
    * @param lineNumber the line of the file where the error occurred
    * @param lineText the text of the line where the error occurred
-   * @param cause the causing exception, or null
    */
-  ReplacementFileException(
-      @Nullable String msg,
-      String filename,
-      int lineNumber,
-      String lineText,
-      @Nullable Throwable cause) {
-    super(msg, cause);
+  ReplacementFileException(Throwable cause, String filename, int lineNumber, String lineText) {
+    super(null, cause);
     this.filename = filename;
     this.lineNumber = lineNumber;
     this.lineText = lineText;
@@ -52,22 +50,35 @@ class ReplacementFileException extends Exception {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns the message followed by the line text
+   * <p>Returns a string in the format {@code file-name:line-number: message for line: line-text},
+   * where the message includes the messages of the causes of this exception.
    */
   @Override
   public String getMessage() {
     return String.format(
-        "%s:%d: %s for line: %s", filename, lineNumber, super.getMessage(), lineText);
+        "%s:%d: %s for line: %s", filename, lineNumber, messageWithCauses(), lineText);
   }
 
   /**
-   * {@inheritDoc}
+   * Returns the message of this exception, followed by the messages of its causes, separated by ":
+   * ". A cause that has no message is represented by its {@code toString()}. A cause message that
+   * already appears in the result is omitted.
    *
-   * <p>Returns a string in the format {@code file-name:line-number: message}.
+   * @return the message of this exception, followed by the messages of its causes
    */
-  @Override
-  public String toString() {
-    return String.format(
-        "%s:%d: %s for line: %s", filename, lineNumber, super.toString(), lineText);
+  private String messageWithCauses() {
+    @Nullable String result = super.getMessage();
+    for (Throwable t = getCause(); t != null; t = t.getCause()) {
+      String message = t.getMessage();
+      if (message == null) {
+        message = t.toString();
+      }
+      if (result == null) {
+        result = message;
+      } else if (!result.contains(message)) {
+        result = result + ": " + message;
+      }
+    }
+    return result != null ? result : "unknown error";
   }
 }

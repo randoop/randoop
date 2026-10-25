@@ -114,8 +114,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
-   * @throws IllegalArgumentException if {@code signature} is not formatted correctly; the message
-   *     describes the problem but does not repeat {@code signature}
+   * @throws IllegalArgumentException if {@code signature} is not formatted correctly
    */
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
@@ -250,11 +249,9 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       JavaClass currentClass;
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (Throwable e) {
+      } catch (ReplacementFileReader.ReplacementException e) {
         IllegalClassFormatException icfe =
-            new IllegalClassFormatException(
-                ReplacementFileReader.ReplacementException.withCauseMessage(
-                    "Unable to read " + currentClassname, e));
+            new IllegalClassFormatException("Unable to read " + currentClassname);
         icfe.initCause(e);
         throw icfe;
       }
@@ -275,7 +272,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       // not have been loaded into BCEL yet.
       if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
-        throw new NoSuchMethodException("Method " + this.name + " not found");
+        throw new NoSuchMethodException("Method " + this + " not found");
       }
       currentClassname = currentClass.getSuperclassName();
     }
