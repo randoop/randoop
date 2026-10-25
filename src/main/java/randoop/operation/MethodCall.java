@@ -47,6 +47,7 @@ public final class MethodCall extends CallableOperation {
    * @param method the method to be called
    */
   public MethodCall(Method method) {
+    super();
     if (method == null) {
       throw new IllegalArgumentException("method should not be null.");
     }

@@ -16,6 +16,7 @@ public final class EnumValue extends ObjectContract {
   private final Type type;
 
   public EnumValue(Enum<?> value) {
+    super();
     this.value = value;
     this.type = Type.forClass(value.getDeclaringClass());
   }

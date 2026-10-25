@@ -21,6 +21,7 @@ public class ExtendGenerator extends TestCheckGenerator {
    * @param secondGenerator the visitor to identify other checks for the sequence
    */
   public ExtendGenerator(TestCheckGenerator firstGenerator, TestCheckGenerator secondGenerator) {
+    super();
     this.firstGenerator = firstGenerator;
     this.secondGenerator = secondGenerator;
   }

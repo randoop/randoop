@@ -22,6 +22,7 @@ public class EnumConstant extends CallableOperation {
   private Enum<?> value;
 
   public EnumConstant(Enum<?> value) {
+    super();
     if (value == null) {
       throw new IllegalArgumentException("enum constant cannot be null");
     }

@@ -19,6 +19,7 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
   public final CheckpointingMultiMap<E, Boolean> map;
 
   public CheckpointingSet() {
+    super();
     this.map = new CheckpointingMultiMap<>();
   }
 

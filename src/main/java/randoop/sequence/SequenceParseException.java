@@ -14,6 +14,7 @@ public class SequenceParseException extends Exception {
   private final String message;
 
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
+    super();
 
     StringBuilder b = new StringBuilder(256);
     b.append(

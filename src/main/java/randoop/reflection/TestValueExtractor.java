@@ -22,6 +22,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
   private final Set<Sequence> valueSequences;
 
   public TestValueExtractor(Set<Sequence> valueSequences) {
+    super();
     this.valueSequences = valueSequences;
   }
 
