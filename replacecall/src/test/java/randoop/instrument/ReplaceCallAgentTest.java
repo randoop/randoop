@@ -12,21 +12,29 @@ import org.plumelib.options.Options;
 public class ReplaceCallAgentTest {
 
   @Test
+  @SuppressWarnings("nullness:monotonic") // restores the options' original values, possibly null
   public void createAgentArgsTest() {
-    Path replacementFile = Paths.get("my replacements.txt");
-    Path dontTransformFile = Paths.get("don't transform.txt");
-    ReplaceCallAgent.replacement_file = replacementFile;
-    ReplaceCallAgent.dont_transform = dontTransformFile;
-    String args = ReplaceCallAgent.createAgentArgs();
+    Path origReplacementFile = ReplaceCallAgent.replacement_file;
+    Path origDontTransform = ReplaceCallAgent.dont_transform;
+    try {
+      Path replacementFile = Paths.get("my replacements.txt");
+      Path dontTransformFile = Paths.get("don't transform.txt");
+      ReplaceCallAgent.replacement_file = replacementFile;
+      ReplaceCallAgent.dont_transform = dontTransformFile;
+      String args = ReplaceCallAgent.createAgentArgs();
 
-    // Parse the arguments as the agent does, into options that have different values.
-    ReplaceCallAgent.replacement_file = Paths.get("other");
-    ReplaceCallAgent.dont_transform = Paths.get("other");
-    String[] targetArgs =
-        new Options(ReplaceCallAgent.class).parse(true, ReplaceCallAgent.tokenize(args));
+      // Parse the arguments as the agent does, into options that have different values.
+      ReplaceCallAgent.replacement_file = Paths.get("other");
+      ReplaceCallAgent.dont_transform = Paths.get("other");
+      String[] targetArgs =
+          new Options(ReplaceCallAgent.class).parse(true, ReplaceCallAgent.tokenize(args));
 
-    assertArrayEquals(new String[0], targetArgs);
-    assertEquals(replacementFile.toAbsolutePath(), ReplaceCallAgent.replacement_file);
-    assertEquals(dontTransformFile.toAbsolutePath(), ReplaceCallAgent.dont_transform);
+      assertArrayEquals(new String[0], targetArgs);
+      assertEquals(replacementFile.toAbsolutePath(), ReplaceCallAgent.replacement_file);
+      assertEquals(dontTransformFile.toAbsolutePath(), ReplaceCallAgent.dont_transform);
+    } finally {
+      ReplaceCallAgent.replacement_file = origReplacementFile;
+      ReplaceCallAgent.dont_transform = origDontTransform;
+    }
   }
 }

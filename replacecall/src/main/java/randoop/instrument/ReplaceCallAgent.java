@@ -333,6 +333,10 @@ public final class ReplaceCallAgent {
    */
   static String[] tokenize(String args) {
     // Options.tokenize() retains the quote characters, which is why this method removes them.
+    // TODO: When upgrading to a version of plume-lib Options that includes
+    // https://github.com/plume-lib/options/pull/713, whose Options.tokenize() removes the quote
+    // characters, replace this method by Options.tokenize() and remove unquote().  Otherwise,
+    // unquote() corrupts every value that contains a quote character.
     String[] result = Options.tokenize(args);
     for (int i = 0; i < result.length; i++) {
       result[i] = unquote(result[i]);
