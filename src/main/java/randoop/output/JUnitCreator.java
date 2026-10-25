@@ -2,6 +2,8 @@ package randoop.output;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -572,11 +574,21 @@ public final class JUnitCreator {
       return null;
     }
     StringBuilder blockText = new StringBuilder();
-    blockText.append('{').append(Globals.lineSep);
+    // No line separator after the brace, so that line numbers in error messages match bodyText.
+    blockText.append('{');
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append('}');
-    return javaParser.parseBlock(blockText.toString()).getResult().get();
+    blockText.append('}');
+    // On a syntax error, JavaParser recovers and yields a partial result, so check for problems.
+    ParseResult<BlockStmt> result = javaParser.parseBlock(blockText.toString());
+    if (!result.isSuccessful()) {
+      StringJoiner message = new StringJoiner(Globals.lineSep);
+      for (Problem problem : result.getProblems()) {
+        message.add(problem.getVerboseMessage());
+      }
+      throw new ParseException(message.toString());
+    }
+    return result.getResult().get();
   }
 }
