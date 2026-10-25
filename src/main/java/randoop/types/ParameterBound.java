@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.lang.reflect.GenericDeclaration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
@@ -21,8 +23,9 @@ import org.plumelib.util.CollectionsPlume;
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
  * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
  * bounds. Intersection types (which include the greatest lower bound construction used in capture
- * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
- * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
+ * conversion) are explicitly represented. And, recursive type bounds are avoided by holding a type
+ * parameter bound as a {@link LazyParameterBound} if the bound contains the type parameter, or if
+ * constructing the bound might construct the class that declares the type parameter.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
@@ -55,7 +58,7 @@ public abstract class ParameterBound {
    * type. See <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.2">JLS
    * section 8.1.2</a>.
    *
-   * @param variableSet the set of variables affected by this bound
+   * @param variableSet the type variables bounded by these bounds
    * @param bounds the type bounds
    * @return the {@code ParameterBound} for the given types
    */
@@ -80,16 +83,14 @@ public abstract class ParameterBound {
    * types that are represented by {@code Class} objects, or {@code
    * java.lang.reflect.ParameterizedType} objects.
    *
-   * @param variableSet the set of type variables bound by this type; empty for a wildcard bound
+   * @param variableSet the type variables bounded by this bound
    * @param type the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper bound
    */
   static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      // A type parameter bound is lazy because an eager one might construct the declaring class,
-      // which recurses infinitely on a declaration such as `Builder<T extends Builder<?>>`.
-      if (variableSet.isEmpty()) {
+      if (!hasTypeVariable(type, variableSet) && !mayConstructDeclaringClass(type, variableSet)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
       }
       return new LazyParameterBound(type);
@@ -126,6 +127,147 @@ public abstract class ParameterBound {
    * @return the list of {@code TypeVariable} objects in this bound
    */
   public abstract List<TypeVariable> getTypeParameters();
+
+  /**
+   * Returns true if the given (reflection) type reference represents a type in which a type
+   * variable occurs.
+   *
+   * @param type the reflection type
+   * @param variableSet the set of variables
+   * @return true if the type has a type variable, and false otherwise
+   */
+  private static boolean hasTypeVariable(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {
+    if (isTypeVariable(type)) {
+      java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable) type;
+      if (variableSet.contains(variable)) {
+        return true;
+      }
+      Set<java.lang.reflect.TypeVariable<?>> recursiveSet = new HashSet<>(variableSet);
+      recursiveSet.add(variable);
+      for (java.lang.reflect.Type boundType : variable.getBounds()) {
+        if (hasTypeVariable(boundType, recursiveSet)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (hasTypeVariable(argType, variableSet)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (hasTypeVariable(boundType, variableSet)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (hasTypeVariable(boundType, variableSet)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if constructing a {@link Type} for the given reflection type might construct a
+   * class that declares one of the given type variables. A bound that does so must be lazy, because
+   * constructing a generic class constructs the bounds of its type parameters, so an eager bound
+   * would recurse infinitely.
+   *
+   * @param type the reflection type
+   * @param variableSet the set of variables
+   * @return true if constructing a type for {@code type} might construct a class that declares a
+   *     variable in {@code variableSet}
+   */
+  private static boolean mayConstructDeclaringClass(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {
+    Set<GenericDeclaration> declarations = new HashSet<>();
+    for (java.lang.reflect.TypeVariable<?> variable : variableSet) {
+      declarations.add(variable.getGenericDeclaration());
+    }
+    return mayConstruct(type, declarations, new HashSet<>());
+  }
+
+  /**
+   * Returns true if constructing a {@link Type} for the given reflection type might construct a
+   * type for one of the given classes. Over-approximates: considers every class, type argument, and
+   * bound that is reachable from {@code type}.
+   *
+   * @param type the reflection type
+   * @param classes the classes to look for
+   * @param visited the types already examined; is side-effected by this method
+   * @return true if constructing a type for {@code type} might construct one of {@code classes}
+   */
+  private static boolean mayConstruct(
+      java.lang.reflect.Type type,
+      Set<? extends GenericDeclaration> classes,
+      Set<java.lang.reflect.Type> visited) {
+    if (!visited.add(type)) {
+      return false;
+    }
+    if (type instanceof Class<?>) {
+      Class<?> c = (Class<?>) type;
+      if (classes.contains(c)) {
+        return true;
+      }
+      if (c.isArray()) {
+        return mayConstruct(c.getComponentType(), classes, visited);
+      }
+      for (java.lang.reflect.TypeVariable<?> parameter : c.getTypeParameters()) {
+        if (mayConstruct(parameter, classes, visited)) {
+          return true;
+        }
+      }
+      Class<?> enclosingClass = c.getEnclosingClass();
+      return enclosingClass != null && mayConstruct(enclosingClass, classes, visited);
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      if (mayConstruct(pt.getRawType(), classes, visited)) {
+        return true;
+      }
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (mayConstruct(argType, classes, visited)) {
+          return true;
+        }
+      }
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      return ownerType != null && mayConstruct(ownerType, classes, visited);
+    }
+    if (isTypeVariable(type)) {
+      for (java.lang.reflect.Type boundType :
+          ((java.lang.reflect.TypeVariable<?>) type).getBounds()) {
+        if (mayConstruct(boundType, classes, visited)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (mayConstruct(boundType, classes, visited)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (mayConstruct(boundType, classes, visited)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return mayConstruct(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType(), classes, visited);
+    }
+    return false;
+  }
 
   /**
    * Returns true if the type is a type variable.

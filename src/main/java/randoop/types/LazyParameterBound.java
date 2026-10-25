@@ -10,9 +10,10 @@ import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
- * A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
- * from having to deal with recursive type bounds. All methods that need to evaluate the bound are
- * provided with a substitution for the variable for which this object is a bound.
+ * A lazy representation of a type parameter bound that contains a type variable, or whose
+ * construction might construct the class that declares the type parameter. Prevents type
+ * recognition from having to deal with recursive type bounds. All methods that need to evaluate the
+ * bound are provided with a substitution for the variable for which this object is a bound.
  */
 class LazyParameterBound extends ParameterBound {
 
@@ -82,7 +83,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
