@@ -80,8 +80,12 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    assert bound instanceof EagerReferenceBound : "only handling reference bounds";
-    return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
+    if (bound instanceof ReferenceBound) {
+      return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
+    }
+    // An intersection is never a lower bound, and a LazyParameterBound cannot be compared without
+    // first substituting for its type variables.
+    return false;
   }
 
   @Override
@@ -123,23 +127,5 @@ class EagerReferenceBound extends ReferenceBound {
       return argSuperType.isInstantiationOf(boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
-  }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof ReferenceBound) {
-      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
-    }
-    if (bound instanceof IntersectionTypeBound) {
-      // An upper bound of any type in an intersection is an upper bound of the intersection.
-      for (ParameterBound b : ((IntersectionTypeBound) bound).getBoundList()) {
-        if (isUpperBound(b, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    // A LazyParameterBound cannot be compared without first substituting for its type variables.
-    return false;
   }
 }

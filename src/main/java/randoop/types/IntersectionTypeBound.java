@@ -39,15 +39,6 @@ class IntersectionTypeBound extends ParameterBound {
     this.boundList = boundList;
   }
 
-  /**
-   * Returns the type bounds whose intersection is this bound.
-   *
-   * @return the type bounds whose intersection is this bound
-   */
-  List<ParameterBound> getBoundList() {
-    return boundList;
-  }
-
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
   // be reordered)
   @Override
@@ -216,5 +207,20 @@ class IntersectionTypeBound extends ParameterBound {
       }
     }
     return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given type is an upper bound on some member bound of this object
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound) {
+    for (ParameterBound b : boundList) {
+      if (b.hasUpperBound(upperBound)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -95,10 +95,4 @@ class LazyReferenceBound extends ReferenceBound {
     ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
-    return false;
-  }
 }

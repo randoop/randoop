@@ -275,6 +275,15 @@ public abstract class ParameterBound {
   abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
 
   /**
+   * Returns true if the given type is an upper bound on every type that has this bound as an upper
+   * bound.
+   *
+   * @param upperBound the possible upper bound
+   * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
+   */
+  abstract boolean hasUpperBound(ReferenceType upperBound);
+
+  /**
    * Returns true if this bound is a type variable.
    *
    * @return true if this bound is a type variable, false otherwise

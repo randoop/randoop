@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -88,5 +89,55 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isVariable() {
     return boundType.isVariable();
+  }
+
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    return bound.hasUpperBound(boundType.substitute(substitution));
+  }
+
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound) {
+    if (boundType.isVariable()) {
+      if (boundType.equals(upperBound)) {
+        return true;
+      }
+      // An upper bound of a type variable's upper bound is an upper bound of the type variable.
+      TypeVariable variable = (TypeVariable) boundType;
+      return variable.resolveSelfReferences(variable.getUpperTypeBound()).hasUpperBound(upperBound);
+    }
+    return isSubtypeOrEqual(boundType, upperBound);
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. A type variable
+   * in either type stands for itself. This differs from {@link
+   * ParameterBound#isUpperBound(Type,Substitution)}, which treats type variables in the bound as
+   * unknowns to be instantiated, and from {@link ReferenceType#isSubtypeOfOrEqualTo(Type)}, which
+   * treats a raw type as a subtype of a parameterized type.
+   *
+   * @param type the possible subtype
+   * @param otherType the possible supertype
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOrEqual(ReferenceType type, ReferenceType otherType) {
+    if (!(otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType)) {
+      return type.isSubtypeOfOrEqualTo(otherType);
+    }
+    InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+    InstantiatedType supertype =
+        ((ClassOrInterfaceType) type)
+            .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+    if (supertype == null) {
+      return false;
+    }
+    List<TypeArgument> typeArguments = supertype.getTypeArguments();
+    List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
+    for (int i = 0; i < typeArguments.size(); i++) {
+      if (!otherTypeArguments.get(i).contains(typeArguments.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 }
