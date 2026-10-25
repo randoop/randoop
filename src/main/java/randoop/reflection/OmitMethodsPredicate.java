@@ -13,7 +13,7 @@ import randoop.util.Log;
 // will also be omitted (because otherwise a variable myObject might hold a MyClass, and a call
 // myObject.toString() might dispatch to my.package.MyClass.toString).
 //
-// There is not currently a way to omit just one implementation and not all its overrdden
+// There is not currently a way to omit just one implementation and not all its overridden
 // implementations.
 //
 // There is not currently a way to omit a given instance method implementation m, plus also all

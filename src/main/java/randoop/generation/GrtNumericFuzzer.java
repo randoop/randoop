@@ -79,13 +79,27 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
     Class<?> cls = type.getRuntimeClass();
     double fuzzed =
         orig.doubleValue() + Randomness.nextRandomGaussian(0, GenInputsAbstract.grt_fuzzing_stddev);
-    if (cls == byte.class || cls == Byte.class) return (byte) Math.round(fuzzed);
-    if (cls == short.class || cls == Short.class) return (short) Math.round(fuzzed);
-    if (cls == char.class || cls == Character.class) return (char) Math.round(fuzzed);
-    if (cls == int.class || cls == Integer.class) return (int) Math.round(fuzzed);
-    if (cls == long.class || cls == Long.class) return Math.round(fuzzed);
-    if (cls == float.class || cls == Float.class) return (float) fuzzed;
-    if (cls == double.class || cls == Double.class) return fuzzed;
+    if (cls == byte.class || cls == Byte.class) {
+      return (byte) Math.round(fuzzed);
+    }
+    if (cls == short.class || cls == Short.class) {
+      return (short) Math.round(fuzzed);
+    }
+    if (cls == char.class || cls == Character.class) {
+      return (char) Math.round(fuzzed);
+    }
+    if (cls == int.class || cls == Integer.class) {
+      return (int) Math.round(fuzzed);
+    }
+    if (cls == long.class || cls == Long.class) {
+      return Math.round(fuzzed);
+    }
+    if (cls == float.class || cls == Float.class) {
+      return (float) fuzzed;
+    }
+    if (cls == double.class || cls == Double.class) {
+      return fuzzed;
+    }
     throw new RandoopBug("Unexpected numeric type " + type);
   }
 }

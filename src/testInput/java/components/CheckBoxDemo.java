@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -37,7 +37,7 @@ import javax.swing.*;
 
 /*
  * CheckBoxDemo.java requires 16 image files in the images/geek
- * directory: 
+ * directory:
  * geek-----.gif, geek-c---.gif, geek--g--.gif, geek---h-.gif, geek----t.gif,
  * geek-cg--.gif, ..., geek-cght.gif.
  */

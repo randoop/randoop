@@ -34,7 +34,7 @@ import randoop.util.Log;
  * SubTypeSet} to find the set {@code T} of feasible subtypes, and returns the range of {@code T}
  * (that is, all the sequences mapped to by any t&isin;T) in the sequence map.
  */
-public class SequenceCollection {
+public final class SequenceCollection {
 
   /** The demand-driven input creator that finds sequences for types not in this collection. */
   private @MonotonicNonNull DemandDrivenInputCreator demandDrivenInputCreator = null;
@@ -103,7 +103,7 @@ public class SequenceCollection {
   }
 
   /**
-   * Create a new collection and adds the given initial sequences.
+   * Create a new collection and add the given initial sequences.
    *
    * @param initialSequences the initial collection of sequences
    */
@@ -112,7 +112,9 @@ public class SequenceCollection {
     "nullness:method.invocation" // sufficiently initialized for addAll()
   })
   public SequenceCollection(Collection<Sequence> initialSequences) {
-    if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
+    if (initialSequences == null) {
+      throw new IllegalArgumentException("initialSequences is null.");
+    }
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.sequenceCount = 0;
@@ -155,7 +157,7 @@ public class SequenceCollection {
 
   /**
    * Add a sequence to this collection. This method takes into account the active indices in the
-   * sequence. If sequence[i] creates a values of type T, and sequence[i].isActive==true, then the
+   * sequence. If sequence[i] creates a value of type T, and sequence[i].isActive==true, then the
    * sequence is seen as creating a useful value at index i. More precisely, the method/constructor
    * at that index is said to produce a useful value (and if the user later queries for all
    * sequences that create a T, the sequence will be in the collection returned by the query). How a
@@ -167,8 +169,8 @@ public class SequenceCollection {
    *
    * <p>(An alternative would be to only use outputs from the last statement, and include its inputs
    * as well. That alternative is not implemented. It would probably be faster, but it would not
-   * handle the case of a method side-effecting a variable that that was not explicitly passed to
-   * it. That case probably isn't important/common.)
+   * handle the case of a method side-effecting a variable that was not explicitly passed to it.
+   * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
    */

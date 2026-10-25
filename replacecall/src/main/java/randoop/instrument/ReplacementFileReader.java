@@ -40,7 +40,7 @@ import org.plumelib.util.EntryReader.EntryFormat;
  * href="https://randoop.github.io/randoop/manual/index.html#replacecall">replacecall user
  * documentation</a> for the file format.
  */
-public class ReplacementFileReader {
+public final class ReplacementFileReader {
 
   /** Regex for Java identifiers. */
   public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
@@ -63,7 +63,7 @@ public class ReplacementFileReader {
       DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
 
   /**
-   * Unanchored pattern to match of method replacements consisting of a pair of signatures. Uses the
+   * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
    * naive signature pattern separated by one or more spaces or tabs. Can be used to decide whether
    * a replacement file line indicates a method replacement. Groups 1 and 2 correspond to each of
    * the signature strings. (Use with {@code matches}.)
@@ -77,6 +77,11 @@ public class ReplacementFileReader {
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
+
+  /** Do not instantiate. */
+  private ReplacementFileReader() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Reads the given replacement file specifying method calls that should be replaced by other
@@ -328,7 +333,7 @@ public class ReplacementFileReader {
 
     for (Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>")) {
-        // Do not to replace the original class constructor with the replacement class constructor.
+        // Do not replace the original class constructor with the replacement class constructor.
         continue;
       }
       if (m.isPrivate()) {
@@ -396,7 +401,7 @@ public class ReplacementFileReader {
       System.err.println("classpath: " + System.getProperty("java.class.path"));
     }
 
-    // We will only process the first occurance found; the boot classpath
+    // We will only process the first occurrence found; the boot classpath
     // is searched prior to the system classpath.
     String replacementPackagePath = replacementPackage.replace('.', '/');
     URL url = ClassLoader.getSystemResource(replacementPackagePath);
@@ -419,9 +424,12 @@ public class ReplacementFileReader {
         throw new ReplacementException("Error reading jar file " + file, e);
       }
     } else if (protocol.equals("file")) {
-      Path path = null;
+      Path path;
       try {
-        @SuppressWarnings("JdkObsolete") // The replacement requires JDK 11+.
+        @SuppressWarnings({
+          "JdkObsolete",
+          "PMD.UseStandardCharsets"
+        }) // The replacement requires JDK 11+.
         Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
         path = pathTmp;
       } catch (Exception e) {
@@ -527,7 +535,7 @@ public class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  protected static @Nullable JavaClass getJavaClassFromClassname(String classname)
+  /*package-protected*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);
@@ -560,7 +568,7 @@ public class ReplacementFileReader {
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  private static class ReplacementException extends Throwable {
+  static class ReplacementException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 

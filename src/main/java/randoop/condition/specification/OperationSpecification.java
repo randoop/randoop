@@ -245,13 +245,13 @@ public class OperationSpecification {
             + ", "
             + "\"preSpecifications\": "
             + this.preSpecifications
-            + " }"
             + ", "
             + "\"postSpecifications\": "
             + this.postSpecifications
             + ", "
             + "\"throwsSpecifications\": "
-            + this.throwsSpecifications;
+            + this.throwsSpecifications
+            + " }";
     return result;
   }
 }

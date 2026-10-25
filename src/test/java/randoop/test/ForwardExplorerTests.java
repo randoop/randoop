@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -57,7 +58,8 @@ public class ForwardExplorerTests {
     optionsCache.restoreState();
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
     return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }

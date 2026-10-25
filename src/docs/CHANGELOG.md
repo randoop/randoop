@@ -17,9 +17,12 @@ New command-line arguments:
   applying random mutations (based on the GRT technique)
 * `--grt-fuzzing-stddev` controls the standard deviation for Gaussian
   distribution used to fuzz numeric values (used with `--grt-fuzzing`)
-* `--literal-tfidf` enables TF-IDF weighted selection of literal values extracted from bytecode
-* `--literal-tfidf-probability` sets the probability of using TF-IDF weighted selection (vs. random selection) when choosing literals
-* `--include-superclass-literals` makes literals from superclasses available when testing a subclass (only meaningful with `--literals-level=CLASS`)
+* `--literal-tfidf` enables TF-IDF weighted selection of literal values
+  extracted from bytecode
+* `--literal-tfidf-probability` sets the probability of using TF-IDF weighted
+  selection (vs. random selection) when choosing literals
+* `--include-superclass-literals` makes literals from superclasses available
+  when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
 ## Version 4.3.4 (June 6, 2025)
 
@@ -71,7 +74,7 @@ Support escaping dollar sign from variable name.
 ## Version 4.2.7 (December 17, 2021)
 
 New `--test-package` command-line option means to test all classes on the
-classpath within the given.  Thanks to Ivan Kocherhin.
+classpath within the given package.  Thanks to Ivan Kocherhin.
 
 Randoop tests public static methods in classes that cannot be instantiated.
 
@@ -256,7 +259,7 @@ New command-line arguments:
 --print-file-system-state (default = false) writes any generated tests with
 compilation errors to standard out.
 
---deterministic (default = false) makes Randoop is deterministic, producing
+--deterministic (default = false) makes Randoop deterministic, producing
 the same test suite when run twice.  When set to false, Randoop may or may
 not produce the same test suite when run twice.  Use --randomseed to
 produce a different test suite.
@@ -273,7 +276,7 @@ Some command-line options have been renamed:
 * --timelimit => --time-limit
 * --inputlimit => --generated-limit
 * --outputlimit => --output-limit
-* --timeout => --call-timout.
+* --timeout => --call-timeout.
 * --include-if-classname-appears => --require-classname-in-test.
 * --include-if-class-exercised => --require-covered-classes.
      File "exercised-class.jar" is now "covered-class.jar".
@@ -497,7 +500,7 @@ See the developer manual for details.
 
 Fixed a bug in --include-if-class-exercised that was including too many tests.
 The option now requires that Randoop be run with -javaagent:exercised_agent.jar.
-Also, modified the option so that allow any class, and not just those specified
+Also, modified the option so that it allows any class, and not just those specified
 by --testclass or --classlist. This change allows abstract classes, which cannot
 be given to --testclass.
 
@@ -578,7 +581,7 @@ arguments replace the arguments --check-object-contracts,
 --check-regression-behavior and --junit-classname that have been removed.
 
 Tests where exceptions are thrown are classified by how exceptions are
-assigned types of behavior. A test with with an exception that is INVALID
+assigned types of behavior. A test with an exception that is INVALID
 behavior is invalid, one with an exception that is ERROR behavior (and none
 that are INVALID) is an error-revealing test, and one with no INVALID or ERROR
 behaviors and an exception that is an EXPECTED behavior is a regression test.

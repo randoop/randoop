@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
@@ -75,7 +76,8 @@ public class ICSE07ContainersTest {
       List<Class<?>> classList,
       List<Pattern> omitMethodPatterns,
       IStopper stopper,
-      Set<String> excludeNames) {
+      Set<String> excludeNames)
+      throws RandoopSpecificationError {
 
     System.out.println("ICSE 2006 container: " + name);
     System.out.println("GenInputsAbstract.clear=" + GenInputsAbstract.clear);
@@ -119,7 +121,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testFibHeap() throws IOException {
+  public void testFibHeap() throws IOException, RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -150,7 +152,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinTree() {
+  public void testBinTree() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -178,7 +180,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testTreeMap() {
+  public void testTreeMap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -208,7 +210,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinomialHeap() {
+  public void testBinomialHeap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 

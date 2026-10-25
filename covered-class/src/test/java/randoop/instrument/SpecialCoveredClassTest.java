@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -22,6 +23,7 @@ import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -48,7 +50,11 @@ public class SpecialCoveredClassTest {
 
   @Test
   public void abstractClassTest()
-      throws ClassNotFoundException, NoSuchMethodException, SignatureParseException {
+      throws ClassNotFoundException,
+          NoSuchMethodException,
+          SignatureParseException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =

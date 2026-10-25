@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -12,14 +13,19 @@ import randoop.sequence.ExecutableSequence;
 // Abstract class instead of an interface to permit default implementation of hasGenerator().
 public abstract class TestCheckGenerator {
 
+  /** Creates a TestCheckGenerator. */
+  public TestCheckGenerator() {}
+
   /**
    * Generate a {@link TestChecks} object for the executed sequence {@code eseq} based on the
    * criteria of this generator.
    *
    * @param eseq the sequence for which checks are generated
    * @return the generated check set for the sequence
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public abstract TestChecks<?> generateTestChecks(ExecutableSequence eseq);
+  public abstract TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError;
 
   /**
    * Returns true if this generator contains a generator of the given class.

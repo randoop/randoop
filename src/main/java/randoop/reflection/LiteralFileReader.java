@@ -9,7 +9,6 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -50,10 +49,11 @@ import randoop.util.RecordProcessor;
  * to specify literals that are not related to any class in particular, or literals that are related
  * to only specific methods within a class.
  */
-public class LiteralFileReader {
+public final class LiteralFileReader {
 
+  /** Do not instantiate. */
   private LiteralFileReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -76,7 +76,7 @@ public class LiteralFileReader {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
 
-            if (!(lines.size() >= 2)) {
+            if (lines.size() < 2) {
               throwRecordSyntaxError("class name missing", lines, 1);
             }
 
@@ -99,7 +99,7 @@ public class LiteralFileReader {
             for (int i = 3; i < lines.size(); i++) {
               try {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
-                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>(0)));
+                map.add(classType, new Sequence().extend(operation, new ArrayList<>(0)));
               } catch (OperationParseException e) {
                 throwRecordSyntaxError(e);
               }
@@ -123,7 +123,7 @@ public class LiteralFileReader {
   }
 
   private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());

@@ -3,6 +3,7 @@ package randoop.reflection;
 /** Represents exception when parsing signature strings using {@link SignatureParser}. */
 public class SignatureParseException extends Exception {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
 
   public SignatureParseException(String string) {

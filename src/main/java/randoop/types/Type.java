@@ -38,6 +38,9 @@ import org.plumelib.reflection.Signatures;
  */
 public abstract class Type implements Comparable<Type> {
 
+  /** Creates a Type. */
+  public Type() {}
+
   /**
    * Translates a {@code Class} into a {@link Type} object. For primitive types, creates a {@link
    * PrimitiveType} object. For reference types, delegates to {@link ReferenceType#forClass(Class)}.
@@ -73,7 +76,7 @@ public abstract class Type implements Comparable<Type> {
     if (c == null) {
       c = Class.forName(typeName);
     }
-    return Type.forClass(c);
+    return forClass(c);
   }
 
   /**
@@ -89,15 +92,15 @@ public abstract class Type implements Comparable<Type> {
   public static Type getTypeforFullyQualifiedName(@FqBinaryName String fullyQualifiedName)
       throws ClassNotFoundException {
     Class<?> className = forFullyQualifiedName(fullyQualifiedName);
-    return className.isArray() ? ArrayType.forClass(className) : Type.forClass(className);
+    return className.isArray() ? ArrayType.forClass(className) : forClass(className);
   }
 
   /**
    * Returns the Class for a fully-qualified name (that may or may not be a multi-dimensional
    * array).
    *
-   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses uses "$" rather
-   *     than "." to indicate a nested class
+   * @param fullyQualifiedName the fully-qualified binary name of a type, which uses "$" rather than
+   *     "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -129,8 +132,8 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the Class for a class name. Does not support arrays.
    *
-   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses uses
-   *     "$" rather than "." to indicate a nested class
+   * @param fullyQualifiedName the fully-qualified binary name of a non-array type, which uses "$"
+   *     rather than "." to indicate a nested class
    * @return the type object for the type with the name
    * @throws ClassNotFoundException if name is not a recognized type
    */
@@ -169,7 +172,7 @@ public abstract class Type implements Comparable<Type> {
    * @return the {@link Type} for the given value
    */
   public static Type forValue(Object value) {
-    return Type.forClass(value.getClass());
+    return forClass(value.getClass());
   }
 
   /**
@@ -192,7 +195,7 @@ public abstract class Type implements Comparable<Type> {
     }
 
     if ((type instanceof Class) && ((Class<?>) type).isPrimitive()) {
-      return Type.forClass((Class<?>) type);
+      return forClass((Class<?>) type);
     }
 
     return ReferenceType.forType(type);
@@ -245,7 +248,7 @@ public abstract class Type implements Comparable<Type> {
    * Identical to {@link #getFqName()} except for types with type arguments. For {@code
    * java.util.List<T>} returns {@code "java.util.List"}. Returns {@code null} when {@code
    * Class<?>.getCanonicalName()} does for the underlying {@code Class<?>} object (e.g., the type is
-   * a local or anonymous class, or array type where the component type that has no canonical name).
+   * a local or anonymous class, or array type where the component type has no canonical name).
    *
    * @return the fully-qualified canonical name of this type
    */
@@ -468,7 +471,7 @@ public abstract class Type implements Comparable<Type> {
 
   /**
    * Returns the type created by instantiating the type parameters of this type with {@link
-   * ReferenceType} objects. Simply returns this type if it has no type parameters. In otherwords,
+   * ReferenceType} objects. Simply returns this type if it has no type parameters. In other words,
    * this type is not a {@link ParameterizedType}, which includes {@link GenericClassType}.
    *
    * <p>There are contexts in which it is necessary to apply a substitution to a {@link Type} and it
@@ -540,7 +543,7 @@ public abstract class Type implements Comparable<Type> {
     if (value == null) {
       return !this.isPrimitive();
     }
-    Type type = Type.forClass(value.getClass());
+    Type type = forClass(value.getClass());
     return this.isAssignableFrom(type);
   }
 
@@ -585,4 +588,10 @@ public abstract class Type implements Comparable<Type> {
       return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
     }
   }
+
+  @Override
+  public abstract boolean equals(@Nullable Object obj);
+
+  @Override
+  public abstract int hashCode();
 }

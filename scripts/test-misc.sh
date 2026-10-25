@@ -29,13 +29,12 @@ fi
 
 ./gradlew assemble
 ./gradlew javadoc
-echo "----------------  Javadoc warnings above  ----------------"
-echo "---------------- do not cause CI failures ----------------"
+echo "------------  Javadoc warnings above do not cause CI failures  ------------"
 
 failures=""
 
-## Code style
-make style-check || failures="style-check $failures"
+## Linting and code style
+# `prek` is run elsewhere, not by this script.
 if grep -n -r --exclude-dir=test --exclude-dir=testInput --exclude="*~" '^\(import .*\*;$\)'; then
   echo "Don't use wildcard import"
   failures="wildcard-import $failures"

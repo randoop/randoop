@@ -17,6 +17,7 @@ import org.plumelib.util.SystemPlume;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.literaltfidf.LiteralStatistics;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.generation.literaltfidf.TfIdfSelector;
@@ -187,10 +188,10 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public @Nullable ExecutableSequence step() {
+  public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
+    final int nanoPerMilli = 1_000_000;
+    final long nanoPerOne = 1_000_000_000L;
     // 1 second, in nanoseconds
     final long timeWarningLimitNanos = 1 * nanoPerOne;
 
@@ -660,7 +661,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than to repeatedly
     // extend S.)
 
-    // This might be shorter than inputTypes if some value is re-used as two inputs.
+    // This might be shorter than inputTypes if some value is reused as two inputs.
     List<Sequence> sequences = new ArrayList<>();
 
     // The total size of S
@@ -930,19 +931,20 @@ public class ForwardGenerator extends AbstractGenerator {
       if (isReceiver
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
+        Type randomVariableType = randomVariable.getType();
+        Statement creatingStatement = chosenSeq.getCreatingStatement(randomVariable);
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);
         System.out.printf("  isReceiver = %s%n", isReceiver);
         System.out.printf("  randomVariable = %s%n", randomVariable);
-        System.out.printf("    getType() = %s%n", randomVariable.getType());
-        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
+        System.out.printf("    getType() = %s%n", randomVariableType);
+        System.out.printf("    isPrimitive = %s%n", randomVariableType.isPrimitive());
         System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
-        System.out.printf(
-            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf("    getCreatingStatement = %s%n", creatingStatement);
         System.out.printf(
             "    isNonreceivingInitialization = %s%n",
-            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+            creatingStatement.isNonreceivingInitialization());
         continue;
         // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");

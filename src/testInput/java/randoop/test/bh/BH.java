@@ -4,7 +4,7 @@ import java.util.Enumeration;
 
 /**
  * A Java implementation of the <tt>bh</tt> Olden benchmark. The Olden benchmark implements the
- * Barnes-Hut benchmark that is decribed in:
+ * Barnes-Hut benchmark that is described in:
  *
  * <p><cite> J. Barnes and P. Hut, "A hierarchical o(NlogN) force-calculation algorithm", Nature,
  * 324:446-449, Dec. 1986 </cite>
@@ -19,7 +19,7 @@ public class BH {
   /** The maximum number of time steps to take in the simulation */
   private static int nsteps = 10;
 
-  /** Should we print information messsages */
+  /** Should we print information messages */
   private static boolean printMsgs = false;
   /** Should we print detailed results */
   private static boolean printResults = false;
@@ -68,7 +68,7 @@ public class BH {
   }
 
   /**
-   * Random number generator used by the orignal BH benchmark.
+   * Random number generator used by the original BH benchmark.
    *
    * @param seed the seed to the generator
    * @return a random number

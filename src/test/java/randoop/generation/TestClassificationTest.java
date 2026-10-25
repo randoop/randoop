@@ -21,6 +21,7 @@ import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
@@ -48,8 +49,8 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysTrue;
 
 /**
- * Tests the classification of tests based on exception behavior assignments. So, question is where
- * exceptions are placed.
+ * Tests the classification of tests based on exception behavior assignments. So, the question is
+ * where exceptions are placed.
  */
 public class TestClassificationTest {
 
@@ -67,11 +68,11 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests the classification of tests when all exceptions are invalid. Because of class will have
-   * no error tests, and regression tests should have no exceptions.
+   * Tests the classification of tests when all exceptions are invalid. Because of this, the class
+   * will have no error tests, and regression tests should have no exceptions.
    */
   @Test
-  public void allInvalidTest() {
+  public void allInvalidTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -116,10 +117,10 @@ public class TestClassificationTest {
 
   /**
    * Tests the classification of tests when all exceptions are errors. All exceptions should show as
-   * NoExceptionCheck, and should be no expected exceptions in regression tests.
+   * NoExceptionCheck, and there should be no expected exceptions in regression tests.
    */
   @Test
-  public void allErrorTest() {
+  public void allErrorTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -180,7 +181,7 @@ public class TestClassificationTest {
    * expected exception checks, and there should be no error tests.
    */
   @Test
-  public void allExpectedTest() {
+  public void allExpectedTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -227,7 +228,7 @@ public class TestClassificationTest {
    * without input, should see NPE as expected when no null inputs. Otherwise, should not see NPE.
    */
   @Test
-  public void defaultsTest() {
+  public void defaultsTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -289,7 +290,7 @@ public class TestClassificationTest {
    * should not see NPE, or any other checks.
    */
   @Test
-  public void defaultsWithNoRegressionAssertions() {
+  public void defaultsWithNoRegressionAssertions() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -349,10 +350,10 @@ public class TestClassificationTest {
 
   /**
    * The tests generated here should throw an ArrayStoreException, which is a RuntimeException. Want
-   * to make that resulting sequence is not going into component manager.
+   * to make sure that the resulting sequence is not going into the component manager.
    */
   @Test
-  public void regressionTestGeneration() {
+  public void regressionTestGeneration() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 

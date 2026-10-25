@@ -18,6 +18,9 @@ public abstract class AccessibilityPredicate {
   /** A predicate that always returns true. */
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 
+  /** Creates an AccessibilityPredicate. */
+  public AccessibilityPredicate() {}
+
   /**
    * Returns true if this AccessibilityPredicate considers a {@link Class} accessible.
    *
@@ -44,8 +47,11 @@ public abstract class AccessibilityPredicate {
    */
   public abstract boolean isAccessible(Field f);
 
-  /** AnyAccessibilityPredicate is a {@link AccessibilityPredicate} that always returns true. */
-  private static class AnyAccessibilityPredicate extends AccessibilityPredicate {
+  /** AnyAccessibilityPredicate is an {@link AccessibilityPredicate} that always returns true. */
+  private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new AnyAccessibilityPredicate. */
+    private AnyAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -84,10 +90,13 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * PublicAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the case
+   * PublicAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is public.
    */
-  private static class PublicAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new PublicAccessibilityPredicate. */
+    private PublicAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -96,7 +105,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 
@@ -120,8 +130,11 @@ public abstract class AccessibilityPredicate {
       return isAccessible(f.getModifiers() & Modifier.fieldModifiers());
     }
 
-    /*
+    /**
      * Returns true if the provided modifiers indicate public bit is set.
+     *
+     * @param mods Java modifier bits
+     * @return true if the public bit is set
      */
     private boolean isAccessible(int mods) {
       return Modifier.isPublic(mods);
@@ -148,7 +161,7 @@ public abstract class AccessibilityPredicate {
    * in the given package. So, this class does not implement Java's full accessibility rules; those
    * for subclasses and default-accessibility are not relevant to this predicate.
    */
-  public static class PackageAccessibilityPredicate extends AccessibilityPredicate {
+  public static final class PackageAccessibilityPredicate extends AccessibilityPredicate {
 
     /** The package name from which to test accessibility of elements. */
     private final String packageName;
@@ -220,10 +233,13 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * NotPrivateAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the
+   * NotPrivateAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the
    * case that the class/method/constructor/field is not declared to be private.
    */
-  private static class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new NotPrivateAccessibilityPredicate. */
+    private NotPrivateAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -232,7 +248,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 

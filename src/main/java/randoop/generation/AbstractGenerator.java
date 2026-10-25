@@ -17,6 +17,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -31,8 +32,8 @@ import randoop.util.predicate.AlwaysFalse;
  * Algorithm template for implementing a test generator.
  *
  * <p>The main generation loop is defined in method {@code createAndClassifySequences()}, which
- * repeatedly generates a new sequence, determines if it a failing sequence, and stops the process
- * when the time or sequence limit expires. The process of generating a new sequences is left
+ * repeatedly generates a new sequence, determines if it is a failing sequence, and stops the
+ * process when the time or sequence limit expires. The process of generating a new sequence is left
  * abstract.
  *
  * @see ForwardGenerator
@@ -247,8 +248,9 @@ public abstract class AbstractGenerator {
    * Attempt to generate a test (a sequence).
    *
    * @return a test sequence, may be null
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public abstract @Nullable ExecutableSequence step();
+  public abstract @Nullable ExecutableSequence step() throws RandoopSpecificationError;
 
   /**
    * Returns the count of attempts to generate a sequence so far.
@@ -290,8 +292,9 @@ public abstract class AbstractGenerator {
    *
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public void createAndClassifySequences() {
+  public void createAndClassifySequences() throws RandoopSpecificationError {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }

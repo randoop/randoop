@@ -7,6 +7,9 @@ import randoop.util.Randomness;
 /** Select sequences uniformly at random. */
 public class UniformRandomSequenceSelection extends InputSequenceSelector {
 
+  /** Creates a UniformRandomSequenceSelection. */
+  public UniformRandomSequenceSelection() {}
+
   /**
    * Pick randomly with uniform probability, a sequence from the candidate list.
    *

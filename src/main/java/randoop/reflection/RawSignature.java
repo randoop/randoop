@@ -45,9 +45,13 @@ public class RawSignature {
    * @param packageName the package name of the class. The unnamed package is indicated by null.
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
-   * @param parameterTypes the method parameter types, including the receiver type if any
+   * @param parameterTypes the method parameter types, including the receiver type if any; is stored
+   *     directly without copying, so the client should not change it after the call
    */
-  @SuppressWarnings("this-escape") // checkRep() does not leak this
+  @SuppressWarnings({
+    "this-escape", // checkRep() does not leak this
+    "PMD.ArrayIsStoredDirectly"
+  })
   public RawSignature(
       @Nullable @DotSeparatedIdentifiers String packageName,
       String classname,
@@ -61,7 +65,7 @@ public class RawSignature {
   }
 
   /** Check the representation invariants of this. */
-  private void checkRep(@UnknownInitialization RawSignature this) {
+  private final void checkRep(@UnknownInitialization RawSignature this) {
     if (Objects.equals(packageName, "")) {
       throw new Error(
           "Represent the default package by `null`, not the empty string: " + toStringDebug());
@@ -84,9 +88,10 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code executable}
    */
   public static RawSignature of(Method executable) {
-    Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
-    String fullclassname = executable.getDeclaringClass().getName();
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = getPackageName(declaringPackage);
+    String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
 
@@ -101,9 +106,10 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code executable}
    */
   public static RawSignature of(Constructor<?> executable) {
-    Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
-    String fullclassname = executable.getDeclaringClass().getName();
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = getPackageName(declaringPackage);
+    String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
     String fullname = executable.getName();
@@ -149,7 +155,12 @@ public class RawSignature {
         + ")";
   }
 
-  public String toStringDebug(@UnknownInitialization RawSignature this) {
+  /**
+   * Returns a string representation of this that shows all of its fields. For debugging.
+   *
+   * @return a verbose string representation of this
+   */
+  public final String toStringDebug(@UnknownInitialization RawSignature this) {
     StringJoiner result = new StringJoiner(System.lineSeparator());
     result.add("RawSignature{");
     result.add("  packageName = " + packageName);
@@ -220,8 +231,9 @@ public class RawSignature {
   /**
    * Returns the array of parameter types for this signature.
    *
-   * @return the array of parameter types for this signature
+   * @return the array of parameter types for this signature, which the client should not modify
    */
+  @SuppressWarnings("PMD.MethodReturnsInternalArray")
   public Class<?>[] getParameterTypes() {
     return parameterTypes;
   }
@@ -236,7 +248,9 @@ public class RawSignature {
    */
   public static @Nullable @DotSeparatedIdentifiers String getPackageName(
       @Nullable Package aPackage) {
-    if (aPackage == null) return null;
+    if (aPackage == null) {
+      return null;
+    }
     String result = aPackage.getName();
     if (result.equals("")) {
       return null;

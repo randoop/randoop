@@ -26,6 +26,12 @@ public class TupleSet<E> {
     this.tupleLength = 0;
   }
 
+  /**
+   * Creates a tuple set with the given tuples.
+   *
+   * @param tuples the tuples, all of which have length {@code tupleLength}
+   * @param tupleLength the length of each tuple
+   */
   private TupleSet(List<List<E>> tuples, int tupleLength) {
     this.tuples = tuples;
     this.tupleLength = tupleLength;
@@ -67,10 +73,10 @@ public class TupleSet<E> {
    * Creates a new tuple set from this set, where each tuple has been augmented by one element.
    *
    * <p>Suppose that each tuple of this has length <i>tlen</i>, and only 1 element is given. Then
-   * each tuple will be be replaced by <i>tlen+1</i> tuples, each of length <i>tlen+1</i> and
+   * each tuple will be replaced by <i>tlen+1</i> tuples, each of length <i>tlen+1</i> and
    * containing the original tuple plus one element, at an arbitrary location in the tuple.
    *
-   * <p>If <i>k</i> elements are given, then each tuple will be be replaced by <i>k * (tlen+1)</i>
+   * <p>If <i>k</i> elements are given, then each tuple will be replaced by <i>k * (tlen+1)</i>
    * tuples, each of length <i>tlen+1</i>.
    *
    * @param elements the list of elements

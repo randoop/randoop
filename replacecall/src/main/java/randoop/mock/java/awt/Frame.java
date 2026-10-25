@@ -51,7 +51,7 @@ public class Frame {
 
   /**
    * Mock of {@code java.awt.Frame.toFront()} to avoid scenario where a dialog could assume focus by
-   * moving to the front (this only applies to some dialoging systems).
+   * moving to the front (this only applies to some windowing systems).
    *
    * @param dialog the dialog that shouldn't assume focus
    */

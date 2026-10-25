@@ -15,6 +15,7 @@ import randoop.types.Type;
  * Used by sequence generators.
  */
 public final class SeedSequences {
+  /** Do not instantiate. */
   private SeedSequences() {
     throw new IllegalStateException("no instance");
   }
@@ -68,7 +69,7 @@ public final class SeedSequences {
    */
   public static Set<Sequence> defaultSeeds() {
     List<Object> seeds = new ArrayList<>(primitiveSeeds);
-    return SeedSequences.objectsToSeeds(seeds);
+    return objectsToSeeds(seeds);
   }
 
   /**

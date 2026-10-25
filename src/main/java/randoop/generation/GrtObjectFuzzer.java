@@ -67,7 +67,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /** Creates a GrtObjectFuzzer. The client must call {@link #initialize}. */
-  // This constructor is private to to enforce the singleton pattern.
+  // This constructor is private to enforce the singleton pattern.
   private GrtObjectFuzzer() {
     // nothing to do; `initialize()` does the initialization.
   }
@@ -290,7 +290,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
           }
         }
       } else {
-        // Not a ClassOrInterfaceType, so it as an array: only consider the raw type itself.
+        // Not a ClassOrInterfaceType, so it is an array: only consider the raw type itself.
         List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
         if (ops != null) {
           opsSet.addAll(ops);

@@ -110,7 +110,7 @@ class RandoopOptions {
   }
 
   /**
-   * Adds a option-flag to this option set.
+   * Adds an option-flag to this option set.
    *
    * @param option the name of the option flag to be set
    */

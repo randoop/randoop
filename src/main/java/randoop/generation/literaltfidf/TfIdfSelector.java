@@ -91,7 +91,7 @@ public class TfIdfSelector {
    * Select a sequence from {@code candidates} based on TF-IDF.
    *
    * @param candidates the candidate sequences
-   * @return the selected sequence, or null if there are no sequences in this
+   * @return the selected sequence, or null if there are no candidate sequences in this scope
    */
   public @Nullable Sequence selectSequence(SIList<Sequence> candidates) {
     // Empty when no literals are in scope.

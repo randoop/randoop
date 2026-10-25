@@ -40,7 +40,7 @@ import randoop.util.MultiMap;
 
 public class OperationSpecificationTest {
   @Test
-  public void conditionTest() throws NoSuchMethodException {
+  public void conditionTest() throws NoSuchMethodException, RandoopSpecificationError {
     Class<?> c = ClassWithConditions.class;
     Method method = c.getDeclaredMethod("category", int.class);
     ExecutableSpecification execSpec = getCoverageGoal(method);
@@ -89,7 +89,7 @@ public class OperationSpecificationTest {
   }
 
   @Test
-  public void constructorSequenceTest() throws NoSuchMethodException {
+  public void constructorSequenceTest() throws NoSuchMethodException, RandoopSpecificationError {
     ExecutableSequence es = createConstructorSequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue(es.hasInvalidBehavior());
@@ -100,7 +100,7 @@ public class OperationSpecificationTest {
   }
 
   @Test
-  public void methodSequenceTest() throws NoSuchMethodException {
+  public void methodSequenceTest() throws NoSuchMethodException, RandoopSpecificationError {
     ExecutableSequence es = createCategorySequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue(es.hasInvalidBehavior());
@@ -167,14 +167,15 @@ public class OperationSpecificationTest {
   }
 
   @Test
-  public void testMultipleThrows() throws NoSuchMethodException {
+  public void testMultipleThrows() throws NoSuchMethodException, RandoopSpecificationError {
     ExecutableSequence es = createBadnessSequence();
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse(es.hasInvalidBehavior());
     assertFalse(es.hasFailure());
   }
 
-  private ExecutableSequence createConstructorSequence(int initValue) throws NoSuchMethodException {
+  private ExecutableSequence createConstructorSequence(int initValue)
+      throws NoSuchMethodException, RandoopSpecificationError {
     Class<?> c = ClassWithConditions.class;
     Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
@@ -187,7 +188,8 @@ public class OperationSpecificationTest {
     return new ExecutableSequence(sequence);
   }
 
-  private ExecutableSequence createCategorySequence(int value) throws NoSuchMethodException {
+  private ExecutableSequence createCategorySequence(int value)
+      throws NoSuchMethodException, RandoopSpecificationError {
     Class<?> c = ClassWithConditions.class;
     Constructor<?> reflectionConstructor = c.getConstructor(int.class);
     TypedClassOperation constructorOp = TypedOperation.forConstructor(reflectionConstructor);
@@ -207,7 +209,8 @@ public class OperationSpecificationTest {
     return new ExecutableSequence(sequence);
   }
 
-  private ExecutableSequence createBadnessSequence() throws NoSuchMethodException {
+  private ExecutableSequence createBadnessSequence()
+      throws NoSuchMethodException, RandoopSpecificationError {
     Class<?> c = ClassWithConditions.class;
     Method method = c.getDeclaredMethod("badness", ClassWithConditions.Range.class, int.class);
     TypedClassOperation methodOp = TypedOperation.forMethod(method);
@@ -237,7 +240,7 @@ public class OperationSpecificationTest {
    *     ClassWithConditions#category(int)}
    * @param method the method for which to get the specification
    */
-  private ExecutableSpecification getCoverageGoal(Method method) {
+  private ExecutableSpecification getCoverageGoal(Method method) throws RandoopSpecificationError {
     List<String> paramNames = Collections.singletonList("value");
     OperationSpecification spec =
         new OperationSpecification(OperationSignature.of(method), new Identifiers(paramNames));
@@ -293,7 +296,8 @@ public class OperationSpecificationTest {
   }
 
   /** Creates ExecutableSpecification including post-condition for constructor that will fail. */
-  private ExecutableSpecification getConstructorConditions(Constructor<?> constructor) {
+  private ExecutableSpecification getConstructorConditions(Constructor<?> constructor)
+      throws RandoopSpecificationError {
 
     List<String> paramNames = Collections.singletonList("value");
     OperationSpecification spec =
@@ -321,7 +325,8 @@ public class OperationSpecificationTest {
     return collection.getExecutableSpecification(constructor);
   }
 
-  private ExecutableSpecification getBadnessConditions(Method method) {
+  private ExecutableSpecification getBadnessConditions(Method method)
+      throws RandoopSpecificationError {
     List<String> paramNames = new ArrayList<>();
     paramNames.add("range");
     paramNames.add("value");

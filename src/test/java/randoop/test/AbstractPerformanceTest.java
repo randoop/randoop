@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.OptionsCache;
 
 public abstract class AbstractPerformanceTest {
@@ -27,7 +28,7 @@ public abstract class AbstractPerformanceTest {
 
   abstract int expectedTimeMillis();
 
-  abstract void execute();
+  abstract void execute() throws RandoopSpecificationError;
 
   private final double DIVIDE_FACTOR = 1700;
 
@@ -48,7 +49,7 @@ public abstract class AbstractPerformanceTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test() {
+  public void test() throws RandoopSpecificationError {
 
     System.out.println("@@@ factor: " + computeFactor());
     double factor = EXPECTED_MIN;
@@ -68,8 +69,10 @@ public abstract class AbstractPerformanceTest {
       b.append(
           "Failure: performance test actual time was greater than expected time."
               + Globals.lineSep);
-      b.append("This failure could have two causes:" + Globals.lineSep);
-      b.append(" (1) Randoop mis-estimated your machine speed." + Globals.lineSep);
+      b.append("This failure could have two causes:");
+      b.append(Globals.lineSep);
+      b.append(" (1) Randoop mis-estimated your machine speed.");
+      b.append(Globals.lineSep);
       b.append(
           " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep);
       fail(b.toString());

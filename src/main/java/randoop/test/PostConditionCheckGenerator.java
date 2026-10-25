@@ -7,6 +7,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExecutableBooleanExpression;
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.DummyVariable;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
@@ -35,10 +36,11 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
    *
    * @param eseq the sequence for which checks are generated
    * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the
-   *     post-condition fails on the sequence, an {@code null} otherwise
+   *     post-condition fails on the sequence, a {@code null} otherwise
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
     if (result instanceof NotExecuted) {

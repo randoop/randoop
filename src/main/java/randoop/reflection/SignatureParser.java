@@ -11,10 +11,10 @@ import org.checkerframework.checker.regex.qual.Regex;
 import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
-public class SignatureParser {
+public final class SignatureParser {
 
   // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
-  // module) so that it can also be used in javagents. The patterns are duplicated from {@code
+  // module) so that it can also be used in javaagents. The patterns are duplicated from {@code
   // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers. */
@@ -38,6 +38,11 @@ public class SignatureParser {
    */
   private static final Pattern SIGNATURE_PATTERN =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")\\(([^)]*)\\)");
+
+  /** Do not instantiate. */
+  private SignatureParser() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Parses a fully-qualified signature and returns the corresponding {@code

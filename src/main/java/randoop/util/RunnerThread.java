@@ -24,7 +24,10 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  @SuppressWarnings("initialization:method.invocation") // needed for CF 3.49.4 and earlier
+  @SuppressWarnings({
+    "initialization:method.invocation", // needed for CF 3.49.4 and earlier
+    "PMD.ConstructorCallsOverridableMethod"
+  })
   RunnerThread(@Nullable ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
@@ -34,22 +37,29 @@ public class RunnerThread extends Thread {
   }
 
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP) throw new IllegalStateException();
-    if (code == null) throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP) {
+      throw new IllegalStateException();
+    }
+    if (code == null) {
+      throw new IllegalArgumentException("code cannot be null.");
+    }
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN) throw new IllegalStateException();
+    if (state != NextCallMustBe.RUN) {
+      throw new IllegalStateException();
+    }
     runFinished = false;
     executeReflectionCode();
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  /** Runs the {@link ReflectionCode} that this thread was set up with. */
+  private void executeReflectionCode() {
     code.runReflectionCode();
   }
 

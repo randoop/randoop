@@ -3,7 +3,7 @@ package randoop.generation;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * Defines various event during Randoop's generation at which an implementing class can be notified
+ * Defines various events during Randoop's generation at which an implementing class can be notified
  * and perform some action.
  */
 public interface IEventListener {
@@ -28,7 +28,7 @@ public interface IEventListener {
    * Called by the AbstractGenerator during each generation iteration, immediately after a
    * generation {@code step()} has completed.
    *
-   * @param eseq sequence that was generated and executed in the last generation step. Can b null,
+   * @param eseq sequence that was generated and executed in the last generation step. Can be null,
    *     which means the last step was unable to generate a sequence (e.g. due to a bad random
    *     choice).
    * @see randoop.generation.AbstractGenerator

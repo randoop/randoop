@@ -19,6 +19,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public abstract class ReferenceType extends Type {
 
+  /** Creates a ReferenceType. */
+  public ReferenceType() {}
+
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object. Creates arrays,
    * classes, and interfaces. For arrays, calls {@link ArrayType#forClass(Class)}. For other
@@ -150,8 +153,8 @@ public abstract class ReferenceType extends Type {
 
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type. The
-   * substitution will unify this type or a supertype of this type with the given goal type.
+   * instantiate operations of this type, possibly inherited from the goal type. The substitution
+   * will unify this type or a supertype of this type with the given goal type.
    *
    * <p>If there is no unifying substitution, returns {@code null}.
    *
@@ -159,7 +162,7 @@ public abstract class ReferenceType extends Type {
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    return getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 
   /**

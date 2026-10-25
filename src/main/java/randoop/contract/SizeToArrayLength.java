@@ -7,8 +7,10 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
 public final class SizeToArrayLength extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final SizeToArrayLength instance = new SizeToArrayLength();
 
+  /** Private constructor to enforce singleton. */
   private SizeToArrayLength() {}
 
   public static SizeToArrayLength getInstance() {
@@ -52,11 +54,10 @@ public final class SizeToArrayLength extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertEquals(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.toArray().length, x0.size()");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertEquals(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.toArray().length, x0.size());");
     return b.toString();
   }
 }

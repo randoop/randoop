@@ -17,7 +17,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * FieldGetter is an adapter that creates a {@link Operation} from a {@link AccessibleField} and
+ * FieldGetter is an adapter that creates a {@link Operation} from an {@link AccessibleField} and
  * behaves like a getter for the field.
  *
  * @see AccessibleField

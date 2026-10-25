@@ -30,7 +30,7 @@
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
-          <li><a href="#Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: convert a set of interdependent tests into independent ones</a></li>
+          <li><a href="#Approach_2:_convert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: convert a set of interdependent tests into independent ones</a></li>
         </ul></li>
       <li><a href="#flakiness">Flakiness</a></li>
       <li><a href="#robustness">Robustness</a></li>
@@ -129,7 +129,7 @@ next method to test. Here are a few example strategies; the project would involv
 
 <ul>
   <li>Track code coverage information and use it to guide the generation process, by choosing methods that have not been covered so far.</li>
-  <li>Let the user specify methods that are critical to test and Randoop should select more often.</li>
+  <li>Let the user specify methods that are critical to test and that Randoop should select more often.</li>
   <li>Combine random selection with non-random selection strategies (for example, exhaustive testing).</li>
 </ul>
 
@@ -177,7 +177,7 @@ type <code>T1</code>.  Currently, Randoop selects an object of type <code>T1</co
 Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
 <p>
-Randoop could determine what fields a method will read, and then chose an
+Randoop could determine what fields a method will read, and then choose an
 object for which those fields have been recently side-effected.  As an
 example, when obtaining a <code>Point</code> to pass to
 the <code>getX()</code> method, a <code>Point</code> produced by
@@ -288,7 +288,7 @@ Could use it in conjunction with other resources (eg, the bug report).
 Is it good or bad to add more regression tests to a test suite before APR?
 Here is a paper that did this evaluation, for plausible patches but not for correct patches:
 &ldquo;Alleviating patch overfitting with automatic test generation: a study of feasibility and effectiveness for the Nopol repair system&rdquo;
-https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its absract:
+https://link.springer.com/article/10.1007/s10664-018-9619-4 . From its abstract:
 &ldquo;The main result is that automatic test
 generation is effective in alleviating one kind of overfitting, issue–regression introduction,
 but due to oracle problem, has minimal positive impact on alleviating the other kind of
@@ -482,7 +482,7 @@ command-line options.  How much does that degrade Randoop's fault-finding
 ability?
 </p>
 
-<h3 id="Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: convert a set of interdependent tests into independent ones</h3>
+<h3 id="Approach_2:_convert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: convert a set of interdependent tests into independent ones</h3>
 
 <p>
 The goal of this project is to convert
@@ -490,7 +490,7 @@ the Randoop output, which is currently a set of interdependent tests, into a
 set of independent tests.</p>
 
 <p>Suppose Randoop outputs 100 small unit tests.
-An idea is to split each tests into the part that depends on other tests,
+An idea is to split each test into the part that depends on other tests,
 and the independent part.  Now move  the dependent parts into a new test.
 The result is 101 tests:  100 of them are even smaller than before, but are
 completely independent of one another, and the last one is relatively large
@@ -553,7 +553,7 @@ We could compute the property via a static analysis, or by executing the tests t
 
 <h4>Questions</h4> <!-- omit from toc -->
 
-<p>What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
+<p>What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
 
 <h2 id="flakiness">Flakiness</h2>
@@ -583,7 +583,7 @@ Approach #2 would avoid the need for a dedicated runtime library.
 <p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
 
 <p>
-One approach is to create a wrapper around Randoop: a process that that
+One approach is to create a wrapper around Randoop: a process that
 monitors test generation and can terminate/restart the generator if it
 fails to make progress or aborts unexpectedly. For more details on the
 wrapper idea, see
@@ -641,7 +641,7 @@ problem for Randoop; effort would probably be better invested elsewhere.
 
   Ordinarily, Randoop assumes that a method call may change any object that
   is passed to it.  For example, Randoop considers <code>x</code> to be
-  different after 
+  different after
 <pre>
   x = foo();
 </pre>
@@ -774,7 +774,7 @@ test). For example, consider the following test generated by Randoop:
   <li>Synthesize the results of the above executions as debugging comments</li>
 </ul>
 
-<p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of variations of a test is non-trivial, and synthesizing test executions into useful comments, are both non-trivial tasks.</p>
+<p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of variations of a test is non-trivial, and synthesizing test executions into useful comments are both non-trivial tasks.</p>
 
 
 <!-- <h2 id="integration-with-eclipse">Integration with Eclipse</h2>
@@ -878,7 +878,7 @@ Randoop for C/C++ programs
 
       6-8 person weeks
 
-    - Integrate C/C++ symbol information with Randoop.  Either by creating 
+    - Integrate C/C++ symbol information with Randoop.  Either by creating
       native calls for Fjalar or by running Fjalar separately, writing the
       information to a more understandable file format, and reading that into
       Java.  Another approach would be to combine this with the previous task
@@ -886,16 +886,16 @@ Randoop for C/C++ programs
 
       2 person weeks
 
-    - Support C/C++ test sequences.  Basically this is building C/C++ 
-      support into all of the types that now presume Java reflection.  
-      Optimally a test sequence could include either Java or C/C++ 
+    - Support C/C++ test sequences.  Basically this is building C/C++
+      support into all of the types that now presume Java reflection.
+      Optimally a test sequence could include either Java or C/C++
       sequences.  After this is complete, the C/C++ test sequences could
       be handled just as Java ones are, including reading and writing
       serialized versions and source versions.
 
       3 person weeks
 
-    - Execute C/C++ test sequences by writing out source, compiling and 
+    - Execute C/C++ test sequences by writing out source, compiling and
       running it.  An interesting problem here will be handling exceptions
       and other problems that occur when running.
 
@@ -960,7 +960,7 @@ started with Randoop development and make a contribution.
     </p>
 
     <p>
-      Randoop could be extended to make it easier to specify a routine that returns a set of 
+      Randoop could be extended to make it easier to specify a routine that returns a set of
       legal values for a parameter (that Randoop wouldn't otherwise guess).
     </p>
 

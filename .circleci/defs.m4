@@ -6,6 +6,8 @@ define([canary_version], [25])dnl
 ifelse([each macro takes two arguments, the OS name and the JDK version])dnl
 dnl
 define([circleci_boilerplate_pre], [dnl
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -24,7 +26,7 @@ define([circleci_boilerplate_pre], [dnl
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 ])dnl
@@ -33,7 +35,7 @@ define([circleci_boilerplate_post], [
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 ])dnl
 dnl
 define([circleci_test_results], [dnl

@@ -1,7 +1,7 @@
 package randoop.mock.java.awt;
 
 /**
- * Class of mock methods for {@code java.awt.Component}
+ * Class of mock methods for {@code java.awt.Component}.
  *
  * <p>Default replacement for {@link randoop.instrument.ReplaceCallAgent}. Replacement should be
  * specified in {@code "resources/default-replacements.txt"}

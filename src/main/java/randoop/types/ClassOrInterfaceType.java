@@ -24,7 +24,7 @@ import org.plumelib.util.StringsPlume;
  * </pre>
  *
  * InterfaceType is syntactically the same as ClassType. Therefore, {@code ClassType} and {@code
- * InterfaceType} do not exist as subclasses of this class, Rather, the subclasses of this type
+ * InterfaceType} do not exist as subclasses of this class. Rather, the subclasses of this type
  * distinguish between types with parameters ({@link ParameterizedType}), and types without ({@link
  * NonParameterizedType}).
  */
@@ -38,6 +38,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * static type).
    */
   protected @Nullable ClassOrInterfaceType enclosingType = null;
+
+  /** Creates a ClassOrInterfaceType. */
+  public ClassOrInterfaceType() {}
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -61,7 +64,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
-      type.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+      type.enclosingType = forClass(enclosingClass);
     }
     return type;
   }
@@ -83,7 +86,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // treat these as Class<?>
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        return ClassOrInterfaceType.forClass(rawType);
+        return forClass(rawType);
       }
       return ParameterizedType.forType(t);
     }
@@ -307,8 +310,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }
@@ -460,7 +462,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if this class is a member of another class. (see <a
+   * Returns true if this class is a member of another class. (See <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *

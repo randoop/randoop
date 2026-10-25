@@ -106,7 +106,7 @@ public class Identifiers {
    * Returns an identifier name that occurs more than once in this {@link Identifiers}, or null if
    * there are no duplicate names.
    *
-   * @return a name occurs more than once, or null if there are no duplicate names
+   * @return a name that occurs more than once, or null if there are no duplicate names
    */
   public @Nullable String duplicateName() {
     Set<String> names = new HashSet<>(MapsP.mapCapacity(parameters.size() + 2));

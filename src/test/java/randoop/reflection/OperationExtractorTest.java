@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -28,7 +29,7 @@ import randoop.types.Substitution;
 public class OperationExtractorTest {
 
   @Test
-  public void concreteClassTest() {
+  public void concreteClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
@@ -58,7 +59,7 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void genericClassTest() {
+  public void genericClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
@@ -79,7 +80,7 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void memberOfGenericTest() {
+  public void memberOfGenericTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     Class<?> c;
     try {
@@ -116,7 +117,7 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void memberExtendingEnclosingTest() {
+  public void memberExtendingEnclosingTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericWithInnerSub$Inner";
     Class<?> c;
     try {
@@ -135,7 +136,7 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void partialInstantiationTest() {
+  public void partialInstantiationTest() throws RandoopSpecificationError {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
         new ReflectionManager(
@@ -162,7 +163,7 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void inaccessibleArgumentTest() {
+  public void inaccessibleArgumentTest() throws RandoopSpecificationError {
     AccessibilityPredicate accessibility = IS_PUBLIC;
     String classname = "randoop.reflection.accessibilitytest.InaccessibleArgumentInput";
     Class<?> c;

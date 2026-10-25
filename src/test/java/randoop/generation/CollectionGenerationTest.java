@@ -11,6 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.EnumConstant;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -46,7 +47,7 @@ public class CollectionGenerationTest {
   }
 
   @Test
-  public void testConcreteCollection() {
+  public void testConcreteCollection() throws RandoopSpecificationError {
     ComponentManager componentManager = setupComponentManager();
     ReferenceType elementType = JavaTypes.STRING_TYPE;
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
@@ -248,7 +249,7 @@ public class CollectionGenerationTest {
   }
 
   /**
-   * inspired by jfreechart case in Defects4J where Randoop trying to create an array of type
+   * Inspired by jfreechart case in Defects4J where Randoop is trying to create an array of type
    * Comparable<org.jfree.chart.plot.PlotOrientation>[]. Tests that Comparable<String>[] is replaced
    * with String[]
    */

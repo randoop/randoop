@@ -30,6 +30,7 @@ public class ErrorRevealed implements IMessage {
     this.junitFile = junitFile;
   }
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -9131735651851725022L;
 
   @Override
