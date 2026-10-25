@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.function.BiConsumer;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -269,18 +270,13 @@ public final class ReplaceCallAgent {
       addDisabledSignature(result, signature, "--disable-default-replacement");
     }
     if (disable_default_replacements_file != null) {
-      try (EntryReader reader =
-          new EntryReader(
-              Files.newBufferedReader(disable_default_replacements_file, UTF_8),
-              disable_default_replacements_file.toString(),
-              EntryFormat.DEFAULT,
-              CommentFormat.C,
-              null)) {
-        for (String line : reader) {
-          addDisabledSignature(result, line, reader.getFileName() + ":" + reader.getLineNumber());
-        }
-      } catch (IOException | UncheckedIOException e) {
-        // EntryReader's iterator wraps an IOException in an UncheckedIOException.
+      String filename = disable_default_replacements_file.toString();
+      try (Reader fileReader = Files.newBufferedReader(disable_default_replacements_file, UTF_8)) {
+        forEachEntry(
+            fileReader,
+            filename,
+            (entry, location) -> addDisabledSignature(result, entry, location));
+      } catch (IOException e) {
         System.err.printf(
             "Error reading disabled default replacements file %s:%n %s%n",
             disable_default_replacements_file, e.getMessage());
@@ -360,19 +356,39 @@ public final class ReplaceCallAgent {
   private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
+    forEachEntry(
+        exclusionReader,
+        filename,
+        (entry, location) ->
+            excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
+    return excludedPackagePrefixes;
+  }
+
+  /**
+   * Calls the given action on each entry of a file. An entry is a line, with leading and trailing
+   * whitespace removed. Blank lines and C-style ({@code //} and {@code /* ... *}{@code /}) comments
+   * are ignored.
+   *
+   * @param fileReader the reader for the file. Is closed by this method.
+   * @param filename the name of the file read by the reader
+   * @param action called on each entry and its location, in the form "filename:linenumber"
+   * @throws IOException if there is an error reading the file
+   */
+  private static void forEachEntry(
+      @Owning Reader fileReader, String filename, BiConsumer<String, String> action)
+      throws IOException {
     try (EntryReader reader =
-        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
+        new EntryReader(fileReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
       for (String line : reader) {
-        String trimmed = line.trim();
-        if (!trimmed.isEmpty()) {
-          if (trimmed.charAt(trimmed.length() - 1) != '.') {
-            trimmed = trimmed + ".";
-          }
-          excludedPackagePrefixes.add(trimmed);
+        String entry = line.trim();
+        if (!entry.isEmpty()) {
+          action.accept(entry, reader.getFileName() + ":" + reader.getLineNumber());
         }
       }
+    } catch (UncheckedIOException e) {
+      // EntryReader's iterator wraps an IOException in an UncheckedIOException.
+      throw e.getCause();
     }
-    return excludedPackagePrefixes;
   }
 
   /**
@@ -507,7 +523,8 @@ public final class ReplaceCallAgent {
    * @return {@code value}, quoted if necessary
    */
   static String quote(String value) {
-    if (!value.matches("[^\\s'\"]*")) {
+    // Options.tokenize() splits at any character for which Character.isWhitespace() is true.
+    if (value.chars().anyMatch(ch -> Character.isWhitespace(ch) || ch == '\'' || ch == '"')) {
       // Each single quote ends the quoted text, appears within double quotes, and resumes it.
       return "'" + value.replace("'", "'\"'\"'") + "'";
     }

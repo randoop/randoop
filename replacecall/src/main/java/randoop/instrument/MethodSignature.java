@@ -152,10 +152,9 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       throw new IllegalArgumentException(
           "Method signature expected, text after closing parenthesis: " + signature);
     }
-    String paramString = signature.substring(parenPos + 1, lastParenPos);
+    String paramString = signature.substring(parenPos + 1, lastParenPos).trim();
     @SuppressWarnings("signature:assignment") // dynamically checked just below
-    @FqBinaryName String[] parameters =
-        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+    @FqBinaryName String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException(

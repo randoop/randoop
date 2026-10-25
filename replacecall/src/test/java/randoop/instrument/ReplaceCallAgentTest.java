@@ -41,7 +41,7 @@ public class ReplaceCallAgentTest {
   public void createAgentArgsTest() {
     Path replacementFile = Paths.get("my replacements.txt");
     Path dontTransformFile = Paths.get("dont-transform.txt");
-    Path disabledFile = Paths.get("don't \"replace\".txt");
+    Path disabledFile = Paths.get("don't replace.txt");
     String args =
         ReplaceCallAgent.createAgentArgs(
             replacementFile,

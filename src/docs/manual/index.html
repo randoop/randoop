@@ -1561,8 +1561,10 @@ To disable a default replacement, pass the signature of the original method to t
 <code>--disable-default-replacement</code> command-line option.
 (By contrast, the <a href="#replacecall-load-exclusions"><code>--dont-transform</code></a>
 command-line option prevents all replacements in the classes of given packages.)
-The signature is a <a href="#fully-qualified-signature">Randoop fully-qualified signature</a>,
-as in a <a href="#replacecall-replacement-definition">replacement file</a>.
+The signature has the same format as a method signature in a
+<a href="#replacecall-replacement-definition">replacement file</a>;
+in particular, a constructor is written as
+<code>package-name.classname.&lt;init&gt;(argument-list)</code>.
 If the signature contains whitespace, enclose it in single quotes.
 You may give the option multiple times.
 For example, by default every <code>java.util.Random</code> object
@@ -1669,7 +1671,8 @@ Each line of a replacement file is one of:
   <li>two whitespace-separated method signatures without return types (replace
     the first method by the second); each method signature is
     a <a href="#fully-qualified-signature">Randoop fully-qualified
-    signature</a>.
+    signature</a>, except that a constructor is written as
+    <code>package-name.classname.&lt;init&gt;(argument-list)</code>.
   </li>
 </ul>
 
