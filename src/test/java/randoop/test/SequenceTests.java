@@ -3,7 +3,7 @@ package randoop.test;
 import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
@@ -23,8 +24,8 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.OmitMethodsPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
@@ -110,13 +111,17 @@ public class SequenceTests {
     contracts.add(EqualsSymmetric.getInstance());
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(visibility);
+    AccessibilityPredicate accessibility = IS_PUBLIC;
+    ExpectedExceptionCheckGen expectation = new ExpectedExceptionCheckGen(accessibility);
     testGen =
         new ExtendGenerator(
             new ContractCheckingGenerator(contracts),
             new RegressionCaptureGenerator(
-                expectation, new MultiMap<>(), visibility, OmitMethodsPredicate.NO_OMISSION, true));
+                expectation,
+                new MultiMap<>(),
+                accessibility,
+                OmitMethodsPredicate.NO_OMISSION,
+                true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -144,7 +149,7 @@ public class SequenceTests {
       throw new IllegalArgumentException(
           "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
-    if (sequenceLines.size() == 0) {
+    if (sequenceLines.isEmpty()) {
       throw new IllegalArgumentException("Empty sequence found.");
     }
 
@@ -155,7 +160,7 @@ public class SequenceTests {
       currIdx++;
     }
 
-    if (expectedCode.size() == 0) {
+    if (expectedCode.isEmpty()) {
       throw new IllegalArgumentException("Expected code is empty.");
     }
 
@@ -170,7 +175,11 @@ public class SequenceTests {
         sequenceLines, Arrays.asList(sequence.toParsableString().split(Globals.lineSep)), testId);
 
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new DummyVisitor(), testGen);
+    try {
+      ds.execute(new DummyVisitor(), testGen);
+    } catch (RandoopSpecificationError e) {
+      throw new RuntimeException(e);
+    }
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
 
@@ -199,7 +208,7 @@ public class SequenceTests {
   private static String failureMessage(
       String testId, String msg, List<String> expected, List<String> actual) {
     StringBuilder b = new StringBuilder();
-    b.append("Failure in test ").append(testId).append(": ").append(msg).append(".");
+    b.append("Failure in test ").append(testId).append(": ").append(msg).append('.');
     b.append("").append(Globals.lineSep).append("Expected:").append(Globals.lineSep).append("");
     for (int i = 0; i < expected.size(); i++) {
       b.append(i).append(": ").append(expected.get(i)).append(Globals.lineSep);

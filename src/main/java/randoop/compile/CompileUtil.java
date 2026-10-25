@@ -8,7 +8,12 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 /** Utilities for compiler classes. */
-class CompileUtil {
+final class CompileUtil {
+
+  /** Do not instantiate. */
+  private CompileUtil() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Converts the path string to a URI for use by the file manager of the compiler.
@@ -30,16 +35,19 @@ class CompileUtil {
    * @param out the print writer
    * @param diagnostics the compiler diagnostics
    */
+  @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
   public static void printDiagnostics(
       PrintWriter out, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
-        if (diag.getSource() != null) {
-          String sourceName = diag.getSource().toUri().toString();
-          if (diag.getLineNumber() >= 0) {
+        JavaFileObject source = diag.getSource();
+        if (source != null) {
+          String sourceName = source.toUri().toString();
+          long lineNumber = diag.getLineNumber();
+          if (lineNumber >= 0) {
             out.printf(
                 "Error on line %d, col %d of %s%n%s%n",
-                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
+                lineNumber, diag.getColumnNumber(), sourceName, diag.getMessage(null));
           } else {
             out.printf("%s%n", diag.getMessage(null));
           }

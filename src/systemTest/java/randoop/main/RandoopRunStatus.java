@@ -7,11 +7,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -75,6 +78,7 @@ class RandoopRunStatus {
    * @param options the command-line arguments to Randoop
    * @return the status information collected from generation
    */
+  @SuppressWarnings("CatchAndPrintStackTrace") // The problem is with the log, so cannot log it.
   static ProcessStatus generate(SystemTestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
     command.add("java");
@@ -112,7 +116,40 @@ class RandoopRunStatus {
     command.add("gentests");
     command.addAll(options.getOptions());
     System.out.format("RandoopRunStatus.generate() command:%n%s%n", command);
-    return ProcessStatus.runCommand(command);
+
+    try {
+      return ProcessStatus.runCommand(command);
+    } catch (Throwable t) {
+      try {
+        printFile(options.getOption("log"));
+        printFile(options.getOption("operation-history-log"));
+        printFile(options.getOption("selection-log"));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      throw t;
+    }
+  }
+
+  /**
+   * Prints the contents of a file to standard out.
+   *
+   * @param filename a file name; the method does nothing if {@code filename} is null
+   */
+  private static void printFile(String filename) {
+    if (filename != null) {
+      try (BufferedReader br =
+          Files.newBufferedReader(Paths.get(filename), StandardCharsets.UTF_8)) {
+        System.out.println("---------------- contents of " + filename + " ----------------");
+        String line;
+        while ((line = br.readLine()) != null) {
+          System.out.println(line);
+        }
+        System.out.println("---------------- end of " + filename + " ----------------");
+      } catch (IOException e) {
+        System.out.println("ERROR: Cannot read " + filename);
+      }
+    }
   }
 
   /**
@@ -125,7 +162,7 @@ class RandoopRunStatus {
   static RandoopRunStatus generateAndCompile(
       SystemTestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
-    /// Generate tests.
+    // Generate tests.
 
     ProcessStatus randoopExitStatus = generate(testEnvironment, options);
 
@@ -141,7 +178,7 @@ class RandoopRunStatus {
       }
     }
 
-    /// Check that test files are there.
+    // Check that test files are there.
 
     String packageName = options.getPackageName();
     String packagePathString = packageName == null ? "" : packageName.replace('.', '/');
@@ -155,14 +192,14 @@ class RandoopRunStatus {
     // Definitely cannot do anything useful if no generated test files
     // but not sure that this is the right way to deal with it.
     // What if test is meant not to generate anything ?
-    if (testSourceFiles.size() == 0) {
+    if (testSourceFiles.isEmpty()) {
       for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }
       fail("No test class source files found");
     }
 
-    /// Compile.
+    // Compile.
 
     Path classDir = testEnvironment.classDir;
     CompilationStatus compileStatus =
@@ -177,16 +214,17 @@ class RandoopRunStatus {
       }
       compileStatus.printDiagnostics(System.err);
 
-      fail("Compilation failed");
+      String message =
+          String.format(
+              "compileTests(%s, %s, %s)",
+              testSourceFiles, testEnvironment.getSystemTestClasspath(), classDir.toString());
+      fail("Compilation failed: " + message);
     }
 
     Path classFileDir = classDir.resolve(packagePathString);
     List<File> testClassFiles =
         getFiles(classFileDir, "*.class", regressionBasename, errorBasename);
-    assertEquals(
-        "Number of compiled test files must equal source test files",
-        testSourceFiles.size(),
-        testClassFiles.size());
+    assertEquals(testSourceFiles.size(), testClassFiles.size());
 
     // Compilation succeeded.  Return the result of test generation.
     return getRandoopRunStatus(randoopExitStatus);
@@ -239,7 +277,7 @@ class RandoopRunStatus {
       if (line.startsWith(POSSIBLY_FLAKY_PREFIX)) {
         suspectedFlakyMethodNames.add(line.substring(POSSIBLY_FLAKY_PREFIX.length()));
       } else if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
-        int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
+        int count = Integer.parseInt(line.replaceFirst("\\D*(\\d*).*", "$1"));
         if (line.contains("PUBLIC MEMBERS=")) {
           operatorCount = count;
         } else if (line.contains("Regression")) {

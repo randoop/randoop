@@ -6,7 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.MapsP;
+import org.plumelib.util.StringsPlume;
+import randoop.condition.ExecutableSpecification;
+import randoop.main.RandoopBug;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -25,7 +30,7 @@ public class TypedClassOperation extends TypedOperation {
   private final ClassOrInterfaceType declaringType;
 
   /** The cached value of {@link #getRawSignature()}. */
-  private RawSignature rawSignature = null;
+  private @MonotonicNonNull RawSignature rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -41,12 +46,31 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType) {
-    super(operation, inputTypes, outputType);
+    this(operation, declaringType, inputTypes, outputType, null);
+  }
+
+  /**
+   * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
+   * signature of the operation.
+   *
+   * @param operation the {@link CallableOperation}
+   * @param declaringType the declaring class type for this operation
+   * @param inputTypes the input types for the operation
+   * @param outputType the output types for the operation
+   * @param execSpec the specification for the operation
+   */
+  public TypedClassOperation(
+      CallableOperation operation,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      Type outputType,
+      @Nullable ExecutableSpecification execSpec) {
+    super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -84,14 +108,24 @@ public class TypedClassOperation extends TypedOperation {
     ClassOrInterfaceType declaringType = this.declaringType.substitute(substitution);
     TypeTuple inputTypes = this.getInputTypes().substitute(substitution);
     Type outputType = this.getOutputType().substitute(substitution);
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
     Type outputType = this.getOutputType();
-    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        outputType,
+        this.getExecutableSpecification());
   }
 
   /**
@@ -124,7 +158,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     if (this.isGeneric()) {
-      String b = "<" + UtilPlume.join(",", this.getTypeParameters()) + ">" + " ";
+      String b = "<" + StringsPlume.join(",", this.getTypeParameters()) + ">" + " ";
       return b + super.toString();
     } else {
       return super.toString();
@@ -154,8 +188,10 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
-    paramSet.addAll(getInputTypes().getTypeParameters());
+    List<TypeVariable> inputTypeParams = getInputTypes().getTypeParameters();
+    // This set, and the returned list, is likely to be very small.
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(MapsP.mapCapacity(inputTypeParams.size()));
+    paramSet.addAll(inputTypeParams);
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
     }
@@ -168,25 +204,23 @@ public class TypedClassOperation extends TypedOperation {
    * @return this operation's fully qualified signature if it is a method or constructor call, null
    *     otherwise
    */
-  public String getFullyQualifiedSignature() {
+  public @Nullable String getFullyQualifiedSignature() {
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }
 
     Package classPackage = this.declaringType.getPackage();
-    String packageName = (classPackage == null) ? null : classPackage.getName();
+    String packageName = RawSignature.getPackageName(classPackage);
     String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
-    String name =
-        this.getUnqualifiedBinaryName().equals("<init>")
-            ? classname
-            : this.getUnqualifiedBinaryName();
+    String unqualifiedBinaryName = this.getUnqualifiedBinaryName();
+    String name = unqualifiedBinaryName.equals("<init>") ? classname : unqualifiedBinaryName;
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
-    List<String> typeNames = new ArrayList<>();
+    List<String> typeNames = new ArrayList<>(inputTypes.size());
 
     for (int i = 0; inputTypeIterator.hasNext(); i++) {
       String typeName = inputTypeIterator.next().getFqName();
-      if (!isStatic() && i == 0) {
+      if (i == 0 && !isStatic()) {
         continue;
       }
       typeNames.add(typeName);
@@ -195,27 +229,30 @@ public class TypedClassOperation extends TypedOperation {
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
-        + UtilPlume.join(",", typeNames)
+        + StringsPlume.join(",", typeNames)
         + ")";
   }
 
   /**
-   * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
+   * Returns the {@link RawSignature} for this operation, which must be a method or constructor
+   * call.
    *
-   * @return the {@link RawSignature} of this method or constructor operation, null if this is
-   *     another kind of operation
+   * @return the {@link RawSignature} of this method or constructor operation
    */
   public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
     // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
-      return null;
+      throw new RandoopBug(
+          String.format("Don't call getRawSignature on %s [%s]", this, this.getClass()));
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
-      String packageName = (classPackage == null) ? null : classPackage.getName();
+      String packageName = RawSignature.getPackageName(classPackage);
       // There should be a way to do this without calling getUnqualifiedBinaryName.
-      String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
+      String classname =
+          RawSignature.classNameToIdentifier(
+              this.getDeclaringType().getRawtype().getUnqualifiedBinaryName());
       String name =
           this.getUnqualifiedBinaryName().equals("<init>")
               ? classname
@@ -249,7 +286,12 @@ public class TypedClassOperation extends TypedOperation {
       return this;
     } else {
       return new TypedClassOperation(
-          this.getOperation(), type, this.getInputTypes(), this.getOutputType());
+          this.getOperation(),
+          type,
+          this.getInputTypes(),
+          this.getOutputType(),
+          // TODO: Is this the right ExecutableSpecification?
+          this.getExecutableSpecification());
     }
   }
 }

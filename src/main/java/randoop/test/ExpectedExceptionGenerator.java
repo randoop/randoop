@@ -1,9 +1,11 @@
 package randoop.test;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.ThrowsClause;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
@@ -41,7 +43,8 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
 
@@ -74,11 +77,11 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    * @param throwsClauses the {@link ThrowsClause}s to search within
    * @return the type in the first matching {@link ThrowsClause}, or null if none match
    */
-  private static ClassOrInterfaceType findMatchingExpectedType(
+  private static @Nullable ClassOrInterfaceType findMatchingExpectedType(
       ClassOrInterfaceType throwableType, List<ThrowsClause> throwsClauses) {
     for (ThrowsClause exception : throwsClauses) {
       ClassOrInterfaceType expected = exception.getExceptionType();
-      if (throwableType.isSubtypeOf(expected)) { // if exception is in set
+      if (throwableType.isSubtypeOfOrEqualTo(expected)) { // if exception is in set
         return expected;
       }
     }
@@ -86,15 +89,13 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return an ErrorRevealingChecks that checks for a missing exception at the given index.
+   * Returns an ErrorRevealingChecks that checks for a missing exception at the given index.
    *
    * @param finalIndex the index
    * @return the ErrorRevealingChecks object
    */
   private ErrorRevealingChecks getMissingExceptionTestChecks(int finalIndex) {
-    ErrorRevealingChecks checks = new ErrorRevealingChecks();
-    checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
-    return checks;
+    return new ErrorRevealingChecks(new MissingExceptionCheck(exceptionSets, finalIndex));
   }
 
   /**

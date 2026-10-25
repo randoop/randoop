@@ -1,10 +1,11 @@
 package randoop.test;
 
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -13,21 +14,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.EntryReader;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.types.ClassOrInterfaceType;
 
 // DEPRECATED. Will delete after testing other performance tests
-// in different machines.
+// on different machines.
 public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;
-  private static final long EXPECTED_MIN = 18000000 / performanceMultiplier();
+  // Minimum number of expected tests generated.
+  private static final long EXPECTED_MIN = 18000000 / performanceMultiplierMillis();
 
   private static OptionsCache optionsCache;
 
@@ -43,42 +44,39 @@ public class ForwardExplorerPerformanceTest {
   }
 
   @SuppressWarnings("ModifiedButNotUsed")
-  private static long performanceMultiplier() {
+  private static long performanceMultiplierMillis() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     for (int i = 0; i < 10000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    long time = System.currentTimeMillis() - startTime;
-    return time;
+    long timeMillis = System.currentTimeMillis() - startTimeMillis;
+    return timeMillis;
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test1() {
+  public void test1() throws RandoopSpecificationError {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
     final List<TypedOperation> model = new ArrayList<>();
 
-    ReflectionManager manager = new ReflectionManager(IS_PUBLIC);
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
-        ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-        final OperationExtractor extractor =
-            new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
-        manager.apply(extractor, c);
-        model.addAll(extractor.getOperations());
+        Collection<TypedOperation> oneClassOperations =
+            OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+        model.addAll(oneClassOperations);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("class not found when reading classnames: " + e);
     }
 

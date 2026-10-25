@@ -2,6 +2,7 @@ package randoop.field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -21,23 +22,21 @@ public class AccessibleFieldTest {
     AccessibleField pf10 = new AccessibleField(c.getField("tenField"), declaringType);
 
     // identity
-    assertEquals("Object built from same field should be equal", pf1, pf1_2);
-    assertFalse("Objects of different fields should not be equal", pf1.equals(pf2));
-    assertEquals(
-        "Objects build from same field should have same hashcode",
-        pf1.hashCode(),
-        pf1_2.hashCode());
+    assertEquals(pf1, pf1_2);
+    assertEquals(pf1.hashCode(), pf1_2.hashCode());
+
+    assertNotEquals(pf1, pf2);
 
     /*
      * Note: this test shrank because type information lifted beyond operation level.
      */
 
-    assertTrue("field is not static ", !pf1.isStatic());
-    assertTrue("field is static ", pf2.isStatic());
-    assertTrue("field is not static ", !pf10.isStatic());
+    assertFalse(pf1.isStatic());
+    assertTrue(pf2.isStatic());
+    assertFalse(pf10.isStatic());
 
-    assertTrue("field is not final ", !pf1.isFinal());
-    assertTrue("field is not final", !pf2.isFinal());
-    assertTrue("field is final ", pf10.isFinal());
+    assertFalse(pf1.isFinal());
+    assertFalse(pf2.isFinal());
+    assertTrue(pf10.isFinal());
   }
 }

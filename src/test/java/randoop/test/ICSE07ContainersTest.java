@@ -1,12 +1,12 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -17,18 +17,20 @@ import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.Sequence;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -74,7 +76,8 @@ public class ICSE07ContainersTest {
       List<Class<?>> classList,
       List<Pattern> omitMethodPatterns,
       IStopper stopper,
-      Set<String> excludeNames) {
+      Set<String> excludeNames)
+      throws RandoopSpecificationError {
 
     System.out.println("ICSE 2006 container: " + name);
     System.out.println("GenInputsAbstract.clear=" + GenInputsAbstract.clear);
@@ -85,30 +88,24 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
     System.out.println("GenInputsAbstract.input_selection=" + GenInputsAbstract.input_selection);
 
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     Set<ClassOrInterfaceType> classesUnderTest = new HashSet<>();
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       classesUnderTest.add(classType);
-      final OperationExtractor extractor =
-          new OperationExtractor(
-              classType,
-              new DefaultReflectionPredicate(excludeNames),
-              new OmitMethodsPredicate(omitMethodPatterns),
-              visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
     }
-    assertTrue("model should not be empty", !model.isEmpty());
+    final List<TypedOperation> model =
+        OperationExtractor.operations(
+            OperationExtractor.classListToTypeList(classList),
+            new DefaultReflectionPredicate(excludeNames),
+            new OmitMethodsPredicate(omitMethodPatterns),
+            accessibility);
+    assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
-    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(
-        "Number of seed sequences should be same as default seeds",
-        SeedSequences.defaultSeeds().size(),
-        componentMgr.numGeneratedSequences());
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, accessibility);
+    assertEquals(seeds.size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -117,14 +114,14 @@ public class ICSE07ContainersTest {
                 120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,
             stopper,
-            null,
             classesUnderTest);
     explorer.setTestCheckGenerator(new DummyCheckGenerator());
+    TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
   }
 
   @Test
-  public void testFibHeap() throws IOException {
+  public void testFibHeap() throws IOException, RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -155,7 +152,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinTree() {
+  public void testBinTree() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -183,7 +180,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testTreeMap() {
+  public void testTreeMap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -213,7 +210,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinomialHeap() {
+  public void testBinomialHeap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 

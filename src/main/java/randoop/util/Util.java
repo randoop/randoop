@@ -1,25 +1,29 @@
 package randoop.util;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.regex.qual.Regex;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
 /** Helpers for assertions, and stuff... */
 public final class Util {
 
+  /** Do not instantiate. */
   private Util() {
     throw new IllegalStateException("no instance");
   }
 
   /**
-   * Return true if a and b are equal (both true or both false).
+   * Returns true if a and b are equal (both true or both false).
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second boolean to test
    * @return true if a and b are equal
    */
   public static boolean iff(boolean a, boolean b) {
@@ -27,10 +31,10 @@ public final class Util {
   }
 
   /**
-   * Return true if a is false or b is true.
+   * Returns true if a is false or b is true.
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second boolean to test
    * @return true if a is false or b is true
    */
   public static boolean implies(boolean a, boolean b) {
@@ -38,7 +42,7 @@ public final class Util {
   }
 
   /**
-   * Return true if the string is a legal Java identifier.
+   * Returns true if the string is a legal Java identifier.
    *
    * @param s string to test
    * @return true if the string is a legal Java identifier
@@ -64,13 +68,21 @@ public final class Util {
   public static String convertToHexString(String unicodeString) {
     char[] chars = unicodeString.toCharArray();
     StringBuilder output = new StringBuilder();
-    for (int i = 0; i < chars.length; i++) {
+    for (char c : chars) {
       output.append("\\u");
-      String hex = Integer.toHexString(chars[i]);
-      if (hex.length() < 4) output.append("0");
-      if (hex.length() < 3) output.append("0");
-      if (hex.length() < 2) output.append("0");
-      if (hex.length() < 1) output.append("0");
+      String hex = Integer.toHexString(c);
+      if (hex.length() < 4) {
+        output.append('0');
+      }
+      if (hex.length() < 3) {
+        output.append('0');
+      }
+      if (hex.length() < 2) {
+        output.append('0');
+      }
+      if (hex.length() < 1) {
+        output.append('0');
+      }
 
       output.append(hex);
     }
@@ -78,14 +90,16 @@ public final class Util {
   }
 
   /**
-   * Return the number of times that the pattern appears in the text.
+   * Returns the number of times that the pattern appears in the text.
    *
    * @param text string to search
    * @param pattern string pattern to search for
    * @return the number of times the pattern appears in the text
    */
   public static int occurCount(StringBuilder text, String pattern) {
-    if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
+    if (pattern.length() == 0) {
+      throw new IllegalArgumentException("empty pattern");
+    }
     int i = 0;
     int currIdx = text.indexOf(pattern);
     while (currIdx != -1) {
@@ -106,7 +120,9 @@ public final class Util {
    * @return a string representation of the formatted paragraph, include line separators
    */
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
-    if (string == null) throw new IllegalArgumentException("string cannot be null.");
+    if (string == null) {
+      throw new IllegalArgumentException("string cannot be null.");
+    }
     if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }
@@ -117,10 +133,10 @@ public final class Util {
 
     boolean firstLine = true;
     while (true) {
-      // Determine line's length (exclusive of intent if any)
+      // Determine line's length (exclusive of indent if any)
       int lineLength = firstLine ? colWidth : colWidth - indentWidth;
 
-      if (lineLength > string.length()) {
+      if (lineLength >= string.length()) {
         if (!firstLine) {
           b.append(indentString);
         }
@@ -160,61 +176,55 @@ public final class Util {
    * @return the text modified by replacing original names with replacement names
    */
   public static String replaceWords(String text, Map<String, String> replacements) {
-    Pattern namesPattern =
-        Pattern.compile("\\b(" + UtilPlume.join("|", replacements.keySet().toArray()) + ")\\b");
+    @SuppressWarnings({"regex:argument", "regex:assignment"}) // string manipulation
+    @Regex(1) Pattern namesPattern =
+        Pattern.compile("\\b(" + StringsPlume.join("|", replacements.keySet().toArray()) + ")\\b");
     Matcher namesMatcher = namesPattern.matcher(text);
     StringBuilder b = new StringBuilder();
     int position = 0;
     while (namesMatcher.find(position)) {
       b.append(text.substring(position, namesMatcher.start(1)));
-      b.append(replacements.get(namesMatcher.group(1)));
+      @SuppressWarnings("nullness:assignment") // https://tinyurl.com/cfissue/4006
+      @NonNull String name = namesMatcher.group(1);
+      b.append(replacements.get(name));
       position = namesMatcher.end(1);
     }
     b.append(text.substring(position));
     return b.toString();
   }
 
-  /** The number of bytes in a megabyte. */
-  private static int MEGABYTE = 1024 * 1024;
-
-  /** The Runtime instance for the current execution. */
-  private static Runtime runtime = Runtime.getRuntime();
-
   /**
-   * Returns the amount of used memory in the JVM, in megabytes.
+   * Returns the path if it is absolute, otherwise returns the path AND the absolute path.
    *
-   * @param forceGc if true, force a garbage collection, which gives a more accurate
-   *     overapproximation of the memory used, but is also slower
-   * @return the amount of used memory, in megabytes
+   * @param path a file path
+   * @return the path, and the absolute path if different
    */
-  public static long usedMemory(boolean forceGc) {
-    if (forceGc) {
-      long oldCollectionCount = getCollectionCount();
-      System.gc();
-      while (getCollectionCount() == oldCollectionCount) {
-        try {
-          Thread.sleep(1); // 1 millisecond
-        } catch (InterruptedException e) {
-          // nothing to do
-        }
-      }
+  public static String pathAndAbsolute(Path path) {
+    if (!path.isAbsolute()) {
+      return path.toString();
+    } else {
+      return path + " = " + path.toAbsolutePath();
     }
-    return (runtime.totalMemory() - runtime.freeMemory()) / MEGABYTE;
   }
 
   /**
-   * Return the number of garbage collections that have occurred.
+   * Returns the file if it is absolute, otherwise returns the file AND the absolute file.
    *
-   * @return the number of garbage collections that have occurred
+   * @param file a file
+   * @return the file, and the absolute file if different
    */
-  private static long getCollectionCount() {
-    long result = 0;
-    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
-      long count = b.getCollectionCount();
-      if (count != -1) {
-        result += count;
-      }
-    }
-    return result;
+  public static String fileAndAbsolute(File file) {
+    return pathAndAbsolute(file.toPath());
+  }
+
+  /**
+   * Returns the filename if it is absolute, otherwise returns the filename AND the absolute
+   * filename.
+   *
+   * @param filename a file name
+   * @return the filename, and the absolute filename if different
+   */
+  public static String filenameAndAbsolute(String filename) {
+    return pathAndAbsolute(Paths.get(filename));
   }
 }

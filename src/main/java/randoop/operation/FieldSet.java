@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -17,7 +18,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation} that acts like a
+ * FieldSetter is an adapter for an {@link AccessibleField} as a {@link Operation} that acts like a
  * setter for the field.
  *
  * @see AccessibleField
@@ -115,7 +116,7 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getFqName() + ".<set>(" + field.getName() + ")";
+    return declaringType.getBinaryName() + ".<set>(" + field.getName() + ")";
   }
 
   /**
@@ -156,7 +157,7 @@ public class FieldSet extends CallableOperation {
       throw new OperationParseException(
           "Cannot create setter for final field " + classname + "." + opname);
     }
-    List<Type> setInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>(2);
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }
@@ -179,7 +180,7 @@ public class FieldSet extends CallableOperation {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -207,8 +208,7 @@ public class FieldSet extends CallableOperation {
   }
 
   /**
-   * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies the given
-   * predicate.
+   * Returns true if enclosed {@link java.lang.reflect.Field Field} satisfies the given predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this setter satisfies predicate.canUse

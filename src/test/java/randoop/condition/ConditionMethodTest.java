@@ -17,27 +17,27 @@ public class ConditionMethodTest {
   public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
-  public void testSimpleConditionMethod() {
+  public void testSimpleConditionMethod() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(null, "SimpleCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
         createCondition(signature, "(String s)", "true", "// always true");
     Object[] values = new Object[] {"dummy"};
-    assertTrue("condition is always true", simple.check(values));
+    assertTrue(simple.check(values));
   }
 
   @Test
-  public void testSingleArgumentMethod() {
+  public void testSingleArgumentMethod() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(null, "SingleArgumentCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
         createCondition(signature, "(String s)", "s.length() > 2", "// has two characters");
-    assertTrue("string has more than two characters", simple.check(new Object[] {"dummy"}));
-    assertFalse("string has two characters", simple.check(new Object[] {"01"}));
+    assertTrue(simple.check(new Object[] {"dummy"}));
+    assertFalse(simple.check(new Object[] {"01"}));
   }
 
   @Test
-  public void testWrongIdentifier() {
+  public void testWrongIdentifier() throws RandoopSpecificationError {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
@@ -45,7 +45,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testWrongType() {
+  public void testWrongType() throws RandoopSpecificationError {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
@@ -53,7 +53,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testErrorThrown() {
+  public void testErrorThrown() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -73,9 +73,7 @@ public class ConditionMethodTest {
     GenInputsAbstract.ignore_condition_exception = true;
     GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
-      assertFalse(
-          "should be false when error thrown",
-          error.check(new Object[] {new ConditionWithException()}));
+      assertFalse(error.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
       GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
@@ -83,7 +81,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testThrowableThrown() {
+  public void testThrowableThrown() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -103,9 +101,7 @@ public class ConditionMethodTest {
     GenInputsAbstract.ignore_condition_exception = true;
     GenInputsAbstract.ignore_condition_exception_quiet = true;
     try {
-      assertFalse(
-          "should be false when exception thrown",
-          throwable.check(new Object[] {new ConditionWithException()}));
+      assertFalse(throwable.check(new Object[] {new ConditionWithException()}));
     } finally {
       GenInputsAbstract.ignore_condition_exception = old_ignore_condition_exception;
       GenInputsAbstract.ignore_condition_exception_quiet = old_ignore_condition_exception_quiet;
@@ -113,7 +109,8 @@ public class ConditionMethodTest {
   }
 
   private ExecutableBooleanExpression createCondition(
-      RawSignature signature, String declarations, String conditionText, String comment) {
+      RawSignature signature, String declarations, String conditionText, String comment)
+      throws RandoopSpecificationError {
     Method method =
         ExecutableBooleanExpression.createMethod(
             signature, declarations, conditionText, getCompiler());

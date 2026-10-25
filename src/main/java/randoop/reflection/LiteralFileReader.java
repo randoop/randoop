@@ -2,13 +2,13 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -32,8 +32,8 @@ import randoop.util.RecordProcessor;
  * Capitalized text must appear literally. Lowercase text is as follows:
  *
  * <ul>
- *   <li>classname is the name of a class in Class.getName format. More specifically,
- *       TypeNames.getTypeForName(classname) must return a valid Class object.
+ *   <li>classname is the name of a class in {@code Class.getName()} format. More specifically,
+ *       {@code TypeNames.getTypeForName(classname)} must return a valid {@code Class} object.
  *   <li>Each type:value pair describes the type and value of a literal (for example, {@code
  *       int:3}).
  * </ul>
@@ -49,14 +49,15 @@ import randoop.util.RecordProcessor;
  * to specify literals that are not related to any class in particular, or literals that are related
  * to only specific methods within a class.
  */
-public class LiteralFileReader {
+public final class LiteralFileReader {
 
+  /** Do not instantiate. */
   private LiteralFileReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
-   * Returns a map from class to list of constants.
+   * Returns a map from class to list of literals.
    *
    * @param inFile the input file
    * @return the map from types to literal values
@@ -70,11 +71,12 @@ public class LiteralFileReader {
           @Override
           public void processRecord(List<String> lines) {
 
-            if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals("CLASSNAME"))) {
+            if (!(!lines.isEmpty()
+                && lines.get(0).trim().toUpperCase(Locale.getDefault()).equals("CLASSNAME"))) {
               throwRecordSyntaxError("record does not begin with \"CLASSNAME\"", lines, 0);
             }
 
-            if (!(lines.size() >= 2)) {
+            if (lines.size() < 2) {
               throwRecordSyntaxError("class name missing", lines, 1);
             }
 
@@ -83,20 +85,21 @@ public class LiteralFileReader {
               @SuppressWarnings("signature") // reading from file, checked & exception thrown below
               @ClassGetName String className = lines.get(1);
               cls = TypeNames.getTypeForName(className);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
               throwRecordSyntaxError(e);
             }
-            assert cls != null;
+            assert cls != null : "@AssumeAssertion(nullness)";
             ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
-            if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals("LITERALS"))) {
+            if (!(lines.size() >= 3
+                && lines.get(2).trim().toUpperCase(Locale.getDefault()).equals("LITERALS"))) {
               throwRecordSyntaxError("Missing field \"LITERALS\"", lines, 2);
             }
 
             for (int i = 3; i < lines.size(); i++) {
               try {
                 TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
-                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>()));
+                map.add(classType, new Sequence().extend(operation, new ArrayList<>(0)));
               } catch (OperationParseException e) {
                 throwRecordSyntaxError(e);
               }
@@ -115,12 +118,12 @@ public class LiteralFileReader {
    *
    * @param e the cause
    */
-  private static void throwRecordSyntaxError(Exception e) {
+  private static void throwRecordSyntaxError(Throwable e) {
     throw new Error(e);
   }
 
   private static void throwRecordSyntaxError(String string, List<String> lines, int i) {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     b.append("RECORD PROCESSING ERROR: ").append(string).append(Globals.lineSep);
     appendRecord(b, lines, i);
     throw new Error(b.toString());

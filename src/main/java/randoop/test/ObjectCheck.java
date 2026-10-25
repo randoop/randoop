@@ -2,7 +2,8 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.main.RandoopBug;
@@ -24,7 +25,7 @@ import randoop.sequence.Variable;
  *
  * <ul>
  *   <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
- *       set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
+ *       set of runtime values. For example, the class {@link randoop.contract.EqualsReflexive} is a
  *       checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
  *       it returns {@code true}.
  *   <li>A list of {@link Variable}s, which describe the specific objects in the sequence that the
@@ -65,7 +66,7 @@ public class ObjectCheck implements Check {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -83,7 +84,11 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    return "<" + contract.toString() + " " + UtilPlume.escapeJava(Arrays.toString(vars)) + ">";
+    return "<check: "
+        + contract.toString()
+        + " "
+        + StringsPlume.escapeJava(Arrays.toString(vars))
+        + ">";
   }
 
   @Override

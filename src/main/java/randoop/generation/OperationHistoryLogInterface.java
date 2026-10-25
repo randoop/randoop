@@ -4,7 +4,7 @@ import randoop.operation.TypedOperation;
 
 /**
  * Interface for classes that log the usage of operations in the generated sequences. Represents a
- * table of counts indexed by operations and the outcome (as a {@link OperationOutcome}.
+ * table of counts indexed by operations and the outcome (as an {@link OperationOutcome}).
  */
 public interface OperationHistoryLogInterface {
   /**

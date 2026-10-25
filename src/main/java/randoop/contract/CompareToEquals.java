@@ -1,7 +1,6 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -10,11 +9,21 @@ import randoop.types.TypeTuple;
  *
  * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
-public class CompareToEquals extends ObjectContract {
+public final class CompareToEquals extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToEquals instance = new CompareToEquals();
 
+  /**
+   * Creates the singleton CompareToEquals; is only ever called once. Clients should call {@link
+   * #getInstance}.
+   */
   private CompareToEquals() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToEquals getInstance() {
     return instance;
   }
@@ -25,7 +34,8 @@ public class CompareToEquals extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    if (o1 instanceof Comparable) {
+    // Ignore StringBuilder because it does not override equals, causing the contract to fail.
+    if (o1 instanceof Comparable && !(o1 instanceof StringBuilder)) {
       Comparable compObj1 = (Comparable) o1;
       return (compObj1.compareTo(o2) == 0) == o1.equals(o2);
     }
@@ -58,14 +68,10 @@ public class CompareToEquals extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("(x0.compareTo(x1) == 0) == x0.equals(x1)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", (x0.compareTo(x1) == 0) == x0.equals(x1));");
     return b.toString();
   }
 }

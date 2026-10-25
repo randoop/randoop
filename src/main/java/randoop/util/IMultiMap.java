@@ -2,39 +2,50 @@ package randoop.util;
 
 import java.util.Set;
 
-/** A multimap, which maps each key to a set of values. */
-public interface IMultiMap<T1, T2> {
+/**
+ * A multimap, which maps each key to a set of values.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of elements of values
+ */
+public interface IMultiMap<K, V> {
 
   /**
    * Precondition: the mapping key&rarr;value is not already in the map.
    *
    * @param key cannot be null
    * @param value cannot be null
+   * @return true if the call modifies this object
    */
-  void add(T1 key, T2 value);
+  boolean add(K key, V value);
 
   /**
    * Precondition: the mapping key&rarr;value is in the map.
    *
    * @param key cannot be null
    * @param value cannot be null
+   * @return true if the call modifies this object
    */
-  void remove(T1 key, T2 value);
+  boolean remove(K key, V value);
 
   /**
    * Returns the values that the given key maps to.
    *
+   * <p>For efficiency, this is permitted to be (but is not guaranteed to be) part of the internal
+   * representation. Clients must not modify the return value (but may make a copy and modify the
+   * copy).
+   *
    * @param key cannot be null
    * @return the set of values for the given key
    */
-  Set<T2> getValues(T1 key);
+  Set<V> getValues(K key);
 
   /**
    * Returns the set of keys in this map (the domain).
    *
    * @return the set of keys in this map
    */
-  Set<T1> keySet();
+  Set<K> keySet();
 
   /**
    * Returns the size of this map: the number of mappings.

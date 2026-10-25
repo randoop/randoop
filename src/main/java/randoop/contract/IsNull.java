@@ -1,7 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -15,8 +15,11 @@ import randoop.types.TypeTuple;
  */
 public final class IsNull extends ObjectContract {
 
+  /** Creates an IsNull. */
+  public IsNull() {}
+
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -49,12 +52,7 @@ public final class IsNull extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append(
-        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
-    b.append("org.junit.Assert.assertNull(x0);");
-    return b.toString();
+    return "org.junit.Assert.assertNull(x0);";
   }
 
   @Override

@@ -1,6 +1,7 @@
 package randoop.types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -11,7 +12,7 @@ import org.junit.Test;
 
 /**
  * The JDKTypes class has constants for JDK Collections classes (classes implementing the Collection
- * and Map interfaces, and maps each interface into an implementing class. This test mainly checks
+ * and Map interfaces), and maps each interface into an implementing class. This test mainly checks
  * this mapping to ensure that a concrete subtype is selected for each type.
  */
 public class JDKTypesTest {
@@ -24,7 +25,15 @@ public class JDKTypesTest {
     for (Field f : JDKTypes.class.getDeclaredFields()) {
       if (!f.getName().equals("$jacocoData")
           && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
-        collectionTypes.add((GenericClassType) f.get(null));
+        try {
+          GenericClassType gct = (GenericClassType) f.get(null);
+          if (gct != null) {
+            // Fields for classes added in later JDKs are set to null.
+            collectionTypes.add(gct);
+          }
+        } catch (IllegalAccessException e) {
+          throw new Error("Cannot access " + f + " in JDKTypes", e);
+        }
       }
     }
 
@@ -34,21 +43,13 @@ public class JDKTypesTest {
       }
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(classType);
       if (classType.equals(JDKTypes.ENUM_SET_TYPE)) { // EnumSet is a special case
-        assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));
+        assertEquals(classType, implementingType);
       } else if (classType.isInterface() || classType.isAbstract()) {
-        assertTrue(
-            "interface "
-                + classType
-                + " may not map to interface or abstract class "
-                + implementingType,
-            !implementingType.isInterface() && !implementingType.isAbstract());
-        assertThat(
-            "interface " + classType + " should have subtype " + implementingType,
-            implementingType.isSubtypeOf(classType));
+        assertFalse(implementingType.isInterface());
+        assertFalse(implementingType.isAbstract());
+        assertTrue(implementingType.isSubtypeOfOrEqualTo(classType));
       } else {
-        assertTrue(
-            "classtype " + classType + " should implement itself",
-            classType.equals(implementingType));
+        assertEquals(classType, implementingType);
       }
     }
   }

@@ -1,14 +1,15 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
 /** Checks that calling equals() on an object does not throw an exception. */
 public final class EqualsReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
+  /** Private constructor to enforce singleton. */
   private EqualsReturnsNormally() {}
 
   public static EqualsReturnsNormally getInstance() {
@@ -22,8 +23,11 @@ public final class EqualsReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection EqualsWithItself,ResultOfMethodCallIgnored
-      o.equals(o);
+      @SuppressWarnings({
+        "UnusedVariable",
+        "PMD.UnusedLocalVariable"
+      }) // Execute equals() but ignore its value.
+      boolean ignore = o.equals(o);
     } catch (Exception e) {
       return false;
     }
@@ -55,14 +59,6 @@ public final class EqualsReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals()");
-    b.append(");");
-    return b.toString();
+    return "x0.equals(x0);";
   }
 }

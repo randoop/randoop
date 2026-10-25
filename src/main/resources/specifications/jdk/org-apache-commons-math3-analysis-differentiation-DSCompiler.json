@@ -1,0 +1,24 @@
+[
+  {
+    "operation": {
+	"classname": "org.apache.commons.math3.analysis.differentiation.DSCompiler",
+      "name": "getCompiler",
+	"parameterTypes": [ "int", "int" ]
+    },
+    "identifiers": {
+      "parameters": [ "parameters", "order" ],
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "large arguments lead to large memory use or nontermination",
+        "guard": {
+          "condition": "0 <= parameters && parameters < 6 && 0 <= order && order <= 6",
+          "description": "large arguments lead to large memory use or nontermination"
+        }
+      }
+    ]
+  }
+]

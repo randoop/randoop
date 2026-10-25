@@ -1,7 +1,7 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,9 +10,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
-import randoop.reflection.visibilitytest.PackageSubclass;
+import randoop.reflection.accessibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
@@ -29,12 +31,12 @@ public class VisibilityBridgeTest {
    * because we can't use equals() to compare a method of superclass directly to a method of
    * subclass. This method has an equals() method, permitting list search.
    */
-  private static class MethodSignature {
+  private static class MethodSignatureForTest {
     private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
 
-    MethodSignature(Method m, ClassOrInterfaceType declaringType) {
+    MethodSignatureForTest(Method m, ClassOrInterfaceType declaringType) {
       this.returnType = Type.forClass(m.getReturnType());
       this.name = m.getName();
       List<Type> paramTypes = new ArrayList<>();
@@ -47,21 +49,21 @@ public class VisibilityBridgeTest {
       this.parameterTypes = new TypeTuple(paramTypes);
     }
 
-    MethodSignature(TypedOperation op) {
+    MethodSignatureForTest(TypedOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
       this.name = op.getOperation().getName();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
       if (this == obj) {
         return true;
       }
-      if (!(obj instanceof MethodSignature)) {
+      if (!(obj instanceof MethodSignatureForTest)) {
         return false;
       }
-      MethodSignature m = (MethodSignature) obj;
+      MethodSignatureForTest m = (MethodSignatureForTest) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)
           && this.parameterTypes.equals(m.parameterTypes);
@@ -87,27 +89,27 @@ public class VisibilityBridgeTest {
    * bridge, which looks like an "inherited" public method of package private class.
    */
   @Test
-  public void testVisibilityBridge() throws ClassNotFoundException {
+  public void testVisibilityBridge() throws ClassNotFoundException, RandoopSpecificationError {
     Class<?> sub = PackageSubclass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     // should only inherit public non-synthetic methods of package private superclass
-    List<MethodSignature> superclassMethods = new ArrayList<>();
-    Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
+    List<MethodSignatureForTest> superclassMethods = new ArrayList<>();
+    Class<?> sup = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateBase");
     for (Method m : sup.getDeclaredMethods()) {
       if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-        superclassMethods.add(new MethodSignature(m, declaringType));
+        superclassMethods.add(new MethodSignatureForTest(m, declaringType));
       }
     }
 
-    List<MethodSignature> subclassMethods = new ArrayList<>();
+    List<MethodSignatureForTest> subclassMethods = new ArrayList<>();
     for (TypedOperation op : getConcreteOperations(sub)) {
       if (op.isMethodCall()) {
-        subclassMethods.add(new MethodSignature(op));
+        subclassMethods.add(new MethodSignatureForTest(op));
       }
     }
 
-    for (MethodSignature m : superclassMethods) {
+    for (MethodSignatureForTest m : superclassMethods) {
       assertTrue(
           "superclass method "
               + m.getName()
@@ -117,20 +119,8 @@ public class VisibilityBridgeTest {
     }
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    OperationExtractor extractor =
-        new OperationExtractor(classType, reflectionPredicate, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.add(extractor);
-    manager.apply(c);
-    return new LinkedHashSet<>(extractor.getOperations());
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
+    return new LinkedHashSet<>(
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC));
   }
 }

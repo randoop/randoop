@@ -7,9 +7,7 @@ import randoop.types.Type;
 import randoop.util.CheckpointingMultiMap;
 import randoop.util.CheckpointingSet;
 import randoop.util.IMultiMap;
-import randoop.util.ISimpleSet;
 import randoop.util.MultiMap;
-import randoop.util.SimpleSet;
 
 /**
  * A set of classes. This data structure additionally allows for efficient answers to queries about
@@ -18,7 +16,7 @@ import randoop.util.SimpleSet;
 public class SubTypeSet {
 
   /** The members of the set. */
-  public ISimpleSet<Type> types;
+  public Set<Type> types;
 
   /**
    * Maps a type to all its proper subtypes that are in the set. If the mapped-to list is empty,
@@ -37,7 +35,7 @@ public class SubTypeSet {
     } else {
       this.supportsCheckpoints = false;
       this.subTypes = new MultiMap<>();
-      this.types = new SimpleSet<>();
+      this.types = new LinkedHashSet<>();
     }
   }
 
@@ -65,7 +63,9 @@ public class SubTypeSet {
    * @param c the type to be added
    */
   public void add(Type c) {
-    if (c == null) throw new IllegalArgumentException("c cannot be null.");
+    if (c == null) {
+      throw new IllegalArgumentException("c cannot be null.");
+    }
     if (types.contains(c)) {
       return;
     }
@@ -74,20 +74,24 @@ public class SubTypeSet {
     // Update existing entries.
     for (Type cls : subTypes.keySet()) {
       if (cls.isAssignableFrom(c)) {
-        if (!subTypes.getValues(cls).contains(c)) subTypes.add(cls, c);
+        if (!subTypes.getValues(cls).contains(c)) {
+          subTypes.add(cls, c);
+        }
       }
     }
   }
 
   private void addQueryType(Type type) {
-    if (type == null) throw new IllegalArgumentException("c cannot be null.");
+    if (type == null) {
+      throw new IllegalArgumentException("c cannot be null.");
+    }
     Set<Type> keySet = subTypes.keySet();
     if (keySet.contains(type)) {
       return;
     }
 
     Set<Type> compatibleTypes = new LinkedHashSet<>();
-    for (Type t : types.getElements()) {
+    for (Type t : types) {
       if (type.isAssignableFrom(t)) {
         compatibleTypes.add(t);
       }
@@ -119,14 +123,5 @@ public class SubTypeSet {
    */
   public int size() {
     return types.size();
-  }
-
-  /**
-   * Returns the elements of this set.
-   *
-   * @return the elements of the set
-   */
-  public Set<Type> getElements() {
-    return types.getElements();
   }
 }

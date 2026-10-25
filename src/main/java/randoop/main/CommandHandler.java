@@ -3,8 +3,10 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.plumelib.options.Options;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.util.Util;
 
 /**
@@ -38,7 +40,8 @@ public abstract class CommandHandler {
    * @param example the usage example
    * @param options the command line arguments
    */
-  public CommandHandler(
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  protected CommandHandler(
       String command,
       String pitch,
       String commandGrammar,
@@ -59,18 +62,36 @@ public abstract class CommandHandler {
     this.fcommandGrammar = commandGrammar == null ? "undocumented" : commandGrammar;
     this.fwhere = where == null ? "undocumented" : where;
     this.fsummary = summary == null ? "undocumented" : summary;
-    this.fnotes = notes == null ? new ArrayList<String>() : notes;
+    this.fnotes = notes == null ? new ArrayList<>(0) : notes;
     this.finput = input == null ? "undocumented" : input;
     this.foutput = output == null ? "undocumented" : output;
     this.fexample = example == null ? "undocumented" : example;
     this.foptions = options;
   }
 
+  /**
+   * Returns true if this CommandHandler handles the given command.
+   *
+   * @param command a command
+   * @return true if this CommandHandler handles the given command
+   */
   public final boolean handles(String command) {
-    return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
+    return command != null
+        && command
+            .toUpperCase(Locale.getDefault())
+            .equals(fcommand.toUpperCase(Locale.getDefault()));
   }
 
-  public abstract boolean handle(String[] args);
+  /**
+   * Executes the command with the given arguments.
+   *
+   * @param args the command-line arguments, not including the command itself
+   * @return true if the command succeeded
+   * @throws RandoopClassNameError if a class named by an argument cannot be loaded
+   * @throws RandoopSpecificationError if a specification is malformed or cannot be evaluated
+   */
+  public abstract boolean handle(String[] args)
+      throws RandoopClassNameError, RandoopSpecificationError;
 
   /**
    * Prints out formatted text in (google code) Wiki format.

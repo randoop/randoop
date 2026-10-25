@@ -1,8 +1,8 @@
 package randoop.condition.specification;
 
 /**
- * The representation of a boolean expression over the the values of parameters, receiver object,
- * and return value of a method. The identifiers refer to the values after the method is called. The
+ * The representation of a boolean expression over the values of parameters, receiver object, and
+ * return value of a method. The identifiers refer to the values after the method is called. The
  * value of expressions prior to the method call can be referred to by wrapping the expression in
  * "{@code \old(-)}". For instance, an expression that states that the method call increases the
  * length of a {@code List} object named {@code list} by one would be written "{@code list.size() +

@@ -7,23 +7,25 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.regex.qual.Regex;
 import randoop.types.Type;
 
 /** Parses type signature strings used to identify methods and constructors in input. */
-public class SignatureParser {
+public final class SignatureParser {
 
   // TODO: The duplicated regular expressions should be factored into a separate source set (aka,
-  // module) so that it can also be used in javagents. The patterns are duplicated from {@code
+  // module) so that it can also be used in javaagents. The patterns are duplicated from {@code
   // ReplacementFileReader} from the replacecall agent.
 
   /** Regex for Java identifiers. */
-  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final @Regex(0) String ID_STRING =
+      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers (or {@code <init>}) separated by periods. Corresponds
    * to package names, fully-qualified classnames, or method names with fully-qualified classname.
    */
-  public static final String DOT_DELIMITED_IDS =
+  public static final @Regex(0) String DOT_DELIMITED_IDS =
       ID_STRING + "(?:\\." + ID_STRING + ")*" + "(?:\\.<init>)?";
 
   /**
@@ -36,6 +38,11 @@ public class SignatureParser {
    */
   private static final Pattern SIGNATURE_PATTERN =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")\\(([^)]*)\\)");
+
+  /** Do not instantiate. */
+  private SignatureParser() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Parses a fully-qualified signature and returns the corresponding {@code
@@ -55,18 +62,21 @@ public class SignatureParser {
    *
    * @param signature the string to parse: a signature string for a method or constructor, in the
    *     above format
-   * @param visibility the predicate for determining whether the method or constructor is visible
+   * @param accessibility the predicate for determining whether the method or constructor is
+   *     accessible
    * @param reflectionPredicate the predicate for checking reflection policy
    * @return the {@code AccessibleObject} for the method or constructor represented by the string
    * @throws IllegalArgumentException if the string does not have the format of a signature
    * @throws SignatureParseException if the signature is not fully-qualified, or the class, an
    *     argument type, or the method or constructor is not found using reflection
-   * @throws FailedPredicateException if the visibility or reflection predicate returns false on the
-   *     class or the method or constructor
+   * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
+   *     the class or the method or constructor
    */
   @SuppressWarnings("signature") // parsing
   public static AccessibleObject parse(
-      String signature, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate)
+      String signature,
+      AccessibilityPredicate accessibility,
+      ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, FailedPredicateException {
     Matcher signatureMatcher = SIGNATURE_PATTERN.matcher(signature);
     if (!signatureMatcher.matches()) {
@@ -110,12 +120,12 @@ public class SignatureParser {
     Class<?> clazz;
     try {
       clazz = Type.forFullyQualifiedName(qualifiedClassname);
-    } catch (ClassNotFoundException first) {
+    } catch (ClassNotFoundException | NoClassDefFoundError first) {
       // could be that qualified name is package-name.class-name
       try {
         clazz = Type.forFullyQualifiedName(qualifiedName);
         isConstructor = true;
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new SignatureParseException(
             "Class not found for method or constructor "
                 + qualifiedName
@@ -125,17 +135,17 @@ public class SignatureParser {
       }
     }
 
-    // Can't use the method if the class is non-visible
-    if (!visibility.isVisible(clazz)) {
+    // Can't use the method if the class is non-accessible
+    if (!accessibility.isAccessible(clazz)) {
       throw new FailedPredicateException(
-          "Ignoring signature " + signature + " from non-visible " + clazz);
+          "Ignoring signature " + signature + " from non-accessible " + clazz);
     }
 
     Class<?>[] argTypes = new Class<?>[arguments.length];
     for (int i = 0; i < arguments.length; i++) {
       try {
         argTypes[i] = Type.forFullyQualifiedName(arguments[i]);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         throw new SignatureParseException(
             "Argument type \"" + arguments[i] + "\" not recognized in signature " + signature, e);
       }
@@ -149,8 +159,8 @@ public class SignatureParser {
         throw new SignatureParseException(
             "Class " + clazz + " found, but constructor not found for signature " + signature, e);
       }
-      if (!visibility.isVisible(constructor)) {
-        throw new FailedPredicateException("Non-visible constructor " + signature);
+      if (!accessibility.isAccessible(constructor)) {
+        throw new FailedPredicateException("Non-accessible constructor " + signature);
       }
       if (!reflectionPredicate.test(constructor)) {
         throw new FailedPredicateException("Constructor fails reflection predicate: " + signature);
@@ -174,8 +184,8 @@ public class SignatureParser {
         }
         throw new SignatureParseException(b.toString(), e);
       }
-      if (!visibility.isVisible(method)) {
-        throw new FailedPredicateException("Ignoring non-visible method " + signature);
+      if (!accessibility.isAccessible(method)) {
+        throw new FailedPredicateException("Ignoring non-accessible method " + signature);
       }
       if (!reflectionPredicate.test(method)) {
         throw new FailedPredicateException("Method fails reflection predicate: " + signature);

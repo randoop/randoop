@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,12 +20,10 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
 import randoop.test.EnumAsPredicate;
@@ -43,7 +40,7 @@ import randoop.types.TypeTuple;
 /**
  * EnumReflectionTest consists of tests of reflection classes to verify what is collected from enums
  * and classes using enums. In particular, want to collect enum constants, methods of enum (esp. if
- * abstract), enums that are are inner types.
+ * abstract), enums that are inner types.
  */
 public class EnumReflectionTest {
 
@@ -53,7 +50,7 @@ public class EnumReflectionTest {
    * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test
-  public void simpleEnumTest() {
+  public void simpleEnumTest() throws RandoopSpecificationError {
     Class<?> se = SimpleEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(se);
 
@@ -61,9 +58,9 @@ public class EnumReflectionTest {
     List<Enum<?>> include = asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
-    Set<TypedOperation> actual = getConcreteOperations(se);
+    List<TypedOperation> actual = getConcreteOperations(se);
 
-    assertEquals("number of statements", include.size(), actual.size());
+    assertEquals(include.size(), actual.size());
 
     for (Enum<?> e : include) {
       assertTrue(
@@ -93,7 +90,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void innerEnumTest() {
+  public void innerEnumTest() throws RandoopSpecificationError {
     Class<?> pc = PlayingCard.class;
 
     List<Enum<?>> include = new ArrayList<>();
@@ -109,7 +106,7 @@ public class EnumReflectionTest {
       }
     }
 
-    Set<TypedOperation> actual = getConcreteOperations(pc);
+    List<TypedOperation> actual = getConcreteOperations(pc);
 
     for (Enum<?> e : include) {
       assertTrue(
@@ -121,11 +118,11 @@ public class EnumReflectionTest {
           actual.contains(createEnumOperation(e)));
     }
 
-    assertEquals("number of statements", include.size() + 8, actual.size());
+    assertEquals(include.size() + 8, actual.size());
   }
 
   @Test
-  public void innerEnumWithMethodsTest() {
+  public void innerEnumWithMethodsTest() throws RandoopSpecificationError {
     Class<?> cwim = ClassWithInnerEnum.class;
 
     List<TypedOperation> include = new ArrayList<>();
@@ -138,7 +135,7 @@ public class EnumReflectionTest {
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
-          if (!m.getName().equals("$jacocoInit")) {
+          if (Modifier.isPublic(m.getModifiers())) {
             if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
               include.add(createMethodCall(m, enumType));
             } else {
@@ -151,8 +148,8 @@ public class EnumReflectionTest {
 
     // TODO test that declaring class of operations for inner enum is enum
 
-    Set<TypedOperation> actual = getConcreteOperations(cwim);
-    assertEquals("number of statements", 14, actual.size());
+    List<TypedOperation> actual = getConcreteOperations(cwim);
+    assertEquals(14, actual.size());
 
     for (TypedOperation op : include) {
       assertTrue("operation " + op + " should occur", actual.contains(op));
@@ -164,7 +161,7 @@ public class EnumReflectionTest {
 
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void enumAsPredicateTest() {
+  public void enumAsPredicateTest() throws RandoopSpecificationError {
     Class<?> c = EnumAsPredicate.class;
     assertTrue(c.isEnum());
 
@@ -189,7 +186,7 @@ public class EnumReflectionTest {
       }
     }
     for (Method m : c.getDeclaredMethods()) {
-      if (!m.getName().equals("$jacocoInit")) {
+      if (Modifier.isPublic(m.getModifiers())) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           include.add(createMethodCall(m, enumType));
         } else {
@@ -198,17 +195,18 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : c.getMethods()) {
-      Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
+    for (Method publicMethod : c.getMethods()) {
+      Set<TypedClassOperation> opSet = overrideMap.get(publicMethod.getName());
       if (opSet != null) {
         TypedClassOperation actualEnumOp =
-            createMethodCall(m, enumType).substitute(interfaceType.getTypeSubstitution());
+            createMethodCall(publicMethod, enumType)
+                .substitute(interfaceType.getTypeSubstitution());
         include.add(actualEnumOp);
       }
     }
 
-    Set<TypedOperation> actual = getConcreteOperations(c);
-    assertEquals("number of operations", 5, actual.size());
+    List<TypedOperation> actual = getConcreteOperations(c);
+    assertEquals(5, actual.size());
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
@@ -232,7 +230,7 @@ public class EnumReflectionTest {
     assertTrue(
         "should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
     NormalExecution exec = (NormalExecution) outcome;
-    assertEquals("should have return value for input", expected, exec.getRuntimeValue());
+    assertEquals(expected, exec.getRuntimeValue());
   }
 
   /**
@@ -242,11 +240,11 @@ public class EnumReflectionTest {
    * at least package level.
    */
   @Test
-  public void valueEnum() {
+  public void valueEnum() throws RandoopSpecificationError {
     Class<?> coin = Coin.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(coin);
 
-    Set<TypedOperation> actual = getConcreteOperations(coin);
+    List<TypedOperation> actual = getConcreteOperations(coin);
 
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
@@ -266,17 +264,19 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : coin.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (m.getName().equals("value")) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(mc));
+    for (Method publicMethod : coin.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (publicMethod.getName().equals("value")) {
+        assertTrue(
+            "enum method " + publicMethod.toGenericString() + " should occur", actual.contains(mc));
         count++;
       } else {
         assertFalse(
-            "enum method " + m.toGenericString() + " should not occur", actual.contains(mc));
+            "enum method " + publicMethod.toGenericString() + " should not occur",
+            actual.contains(mc));
       }
     }
-    assertEquals("number of statements", count, actual.size());
+    assertEquals(count, actual.size());
   }
 
   /**
@@ -286,11 +286,11 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void abstractMethodEnum() {
+  public void abstractMethodEnum() throws RandoopSpecificationError {
     Class<?> op = OperatorEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(op);
 
-    Set<TypedOperation> actual = getConcreteOperations(op);
+    List<TypedOperation> actual = getConcreteOperations(op);
     Set<String> overrides = new TreeSet<>();
     int count = 0;
     for (Object obj : op.getEnumConstants()) {
@@ -303,9 +303,9 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : op.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (overrides.contains(m.getName())) {
+    for (Method publicMethod : op.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (overrides.contains(publicMethod.getName())) {
         assertTrue("enum method " + mc + " should occur", actual.contains(mc));
         count++;
       } else {
@@ -313,29 +313,13 @@ public class EnumReflectionTest {
       }
     }
 
-    assertEquals("number of operations", count, actual.size());
+    assertEquals(count, actual.size());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ReflectionManager typeManager = new ReflectionManager(visibilityPredicate);
-    Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
-    typeManager.apply(new DeclarationExtractor(classTypes, reflectionPredicate), c);
-    final Set<TypedOperation> operations = new LinkedHashSet<>();
-    ReflectionManager opManager = new ReflectionManager(visibilityPredicate);
-    for (ClassOrInterfaceType type : classTypes) {
-      final OperationExtractor extractor =
-          new OperationExtractor(type, reflectionPredicate, visibilityPredicate);
-      opManager.apply(extractor, type.getRuntimeClass());
-      operations.addAll(extractor.getOperations());
-    }
-    return operations;
+  private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
+    Set<ClassOrInterfaceType> classTypes =
+        DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private TypedClassOperation createEnumOperation(Enum<?> e) {

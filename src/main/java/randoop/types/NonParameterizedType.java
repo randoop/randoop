@@ -1,11 +1,13 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.plumelib.util.CollectionsPlume;
 
 /**
  * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
@@ -27,6 +29,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return a NonParameterizedType for the argument
    */
   public static NonParameterizedType forClass(Class<?> runtimeType) {
+    // This cannot be
+    //   return cache.computeIfAbsent(runtimeType, NonParameterizedType::new);
+    // because NonParameterizedType::new side-effects `cache`.  It does so by calling
+    // ClassOrInterfaceType.forClass which may call back into NonParameterizedType.
+
     NonParameterizedType cached = cache.get(runtimeType);
     if (cached == null) {
       cached = new NonParameterizedType(runtimeType);
@@ -45,7 +52,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     this.runtimeType = runtimeType;
     Class<?> enclosingClass = runtimeType.getEnclosingClass();
     if (enclosingClass != null) {
-      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      this.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
   }
 
@@ -55,7 +62,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return true if the runtime types are the same, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -96,15 +103,22 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
   }
 
   @Override
   public NonParameterizedType getRawtype() {
+    if (this.isMemberClass()) {
+      // Special case: non-parameterized member classes can still carry type variables from
+      // their enclosing type. Rawifying only the member class is not enough.
+      NonParameterizedType rawEnclosingType = enclosingType.getRawtype();
+      if (!enclosingType.equals(rawEnclosingType)) {
+        NonParameterizedType rawType = new NonParameterizedType(runtimeType);
+        rawType.enclosingType = rawEnclosingType;
+        return rawType;
+      }
+    }
     return this;
   }
 
@@ -114,13 +128,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeType.getInterfaces()) {
-      interfaces.add(NonParameterizedType.forClass(c));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
+  @Pure
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;
@@ -128,21 +139,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.isObject()) {
-      return this;
-    }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      if (superclass != null) {
-        return NonParameterizedType.forClass(superclass);
-      }
+      return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
+      return supertype == null ? null : forType(supertype);
     }
-    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override
@@ -154,8 +157,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>Specifically checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
-   * (section 5.1.7)</a>
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.7">boxing
+   * conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -177,7 +180,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    return runtimeType.isEnum();
+    // Return true if the run-time type is an enum type or is an enum constant.
+    if (runtimeType.isEnum()) {
+      return true;
+    }
+    // An enum constant is represented (by the javac compiler) as a subclass of an enum type.
+    Class<?> superClass = getRuntimeClass().getSuperclass();
+    return superClass != null && superClass.isEnum();
   }
 
   /**

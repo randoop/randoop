@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -15,15 +15,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.RandoopTypeException;
@@ -40,7 +40,7 @@ public class FieldReflectionTest {
    * basicFields tests that all of the expected fields are collected for the ClassWithFields class.
    */
   @Test
-  public void basicFields() {
+  public void basicFields() throws RandoopSpecificationError {
     Class<?> c = ClassWithFields.class;
 
     @SuppressWarnings("unchecked")
@@ -51,8 +51,7 @@ public class FieldReflectionTest {
     // number of operations is twice number of fields plus constructor and getter minus one for each
     // constant
     // in this case, 11
-    assertEquals(
-        "number of operations twice number of fields", 2 * fields.size() + 1, operations.size());
+    assertEquals(2 * fields.size() + 1, operations.size());
 
     // exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -84,22 +83,18 @@ public class FieldReflectionTest {
     }
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 
   private Set<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      VisibilityPredicate visibilityPredicate) {
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-
-    OperationExtractor extractor =
-        new OperationExtractor(
-            classType, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, visibilityPredicate);
-    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.apply(extractor, c);
-    return new LinkedHashSet<>(extractor.getOperations());
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
+    return new LinkedHashSet<>(
+        OperationExtractor.operations(
+            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate));
   }
 
   /**
@@ -107,7 +102,7 @@ public class FieldReflectionTest {
    * we cannot get to them without reflection.
    */
   @Test
-  public void inheritedFields() {
+  public void inheritedFields() throws RandoopSpecificationError {
     Class<?> c = SubclassWithFields.class;
 
     List<Field> expected = new ArrayList<>();
@@ -148,12 +143,12 @@ public class FieldReflectionTest {
     } catch (RandoopTypeException e) {
       fail("type error: " + e);
     }
-    assertEquals("number of operations ", 2 * expected.size() - 1 + 3, actual.size());
+    assertEquals(2 * expected.size() - 1 + 3, actual.size());
   }
 
-  /** filteredFields checks to ensure we don't get any fields that should be removed */
+  /** This method checks to ensure we don't get any fields that should be removed. */
   @Test
-  public void filteredFields() {
+  public void filteredFields() throws RandoopSpecificationError {
     Class<?> c = ClassWithFields.class;
 
     // let's exclude every field
@@ -167,7 +162,7 @@ public class FieldReflectionTest {
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
     Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
 
-    assertEquals("number of operations ", 3, actual.size());
+    assertEquals(3, actual.size());
 
     for (Field f : exclude) {
       try {

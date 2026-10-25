@@ -21,7 +21,7 @@ import javax.tools.ToolProvider;
 class CompilationStatus {
 
   /** The flag to indicate whether the compilation succeeded. */
-  final Boolean succeeded;
+  final boolean succeeded;
 
   /** The list of compiler diagnostics. */
   private final List<Diagnostic<? extends JavaFileObject>> diagnostics;
@@ -33,7 +33,7 @@ class CompilationStatus {
    * @param diagnostics the diagnostic output of the compiler
    */
   private CompilationStatus(
-      Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+      boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     this.succeeded = succeeded;
     this.diagnostics = diagnostics;
   }
@@ -44,7 +44,7 @@ class CompilationStatus {
    *
    * @param testSourceFiles the Java source for the tests
    * @param classpath the classpath for compiling
-   * @param destinationDir the path to the desination directory
+   * @param destinationDir the path to the destination directory
    * @return true if compile succeeded, false otherwise
    */
   static CompilationStatus compileTests(
@@ -54,7 +54,7 @@ class CompilationStatus {
     final Writer writer = null; // use System.err for output
     final List<String> annotatedClasses = null; // no classes
 
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(5);
     compilerOptions.add("-classpath");
     compilerOptions.add(classpath);
     compilerOptions.add("-d");
@@ -64,7 +64,7 @@ class CompilationStatus {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    Boolean succeeded = false;
+    boolean succeeded = false;
     try (StandardJavaFileManager fileManager =
         compiler.getStandardFileManager(diagnostics, locale, charset)) {
       Iterable<? extends JavaFileObject> filesToCompile =

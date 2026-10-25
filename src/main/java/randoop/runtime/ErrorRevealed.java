@@ -5,13 +5,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/** A message indicating that an error was revealed. */
 public class ErrorRevealed implements IMessage {
 
+  /** The Java code. */
   public final String testCode;
+
+  /** A description of the error. */
   public final String description;
+
+  /** The file for the JUnit test. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final Path junitFile;
 
-  // Unmodifiable collection.
+  /** The classes whose tests failed. An unmodifiable collection. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   public final List<String> failingClassNames;
 
   public ErrorRevealed(
@@ -22,6 +30,7 @@ public class ErrorRevealed implements IMessage {
     this.junitFile = junitFile;
   }
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -9131735651851725022L;
 
   @Override

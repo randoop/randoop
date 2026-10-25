@@ -12,7 +12,7 @@ import randoop.operation.TypedOperation;
 // TODO: It's weird to call this a "history log" when it is just a summary, printed at the end of
 // execution.
 /**
- * The working implementation of a {@link OperationHistoryLogInterface} that will collect and print
+ * The working implementation of an {@link OperationHistoryLogInterface} that will collect and print
  * the operation history log to the {@code PrintWriter} given when constructed.
  */
 public class OperationHistoryLogger implements OperationHistoryLogInterface {
@@ -20,8 +20,11 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   /** The {@code PrintWriter} for outputting the operation history as a table. */
   private final PrintWriter writer;
 
-  /** A sparse representation for the operation-outcome table. */
-  private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
+  /**
+   * A sparse representation for the operation-outcome table. The integer {@code
+   * operationMap.get(A).get(B)} is the number of times that (A, B) were arguments to {@link #add}.
+   */
+  private final Map<TypedOperation, EnumMap<OperationOutcome, Integer>> operationMap;
 
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
@@ -35,19 +38,11 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   @Override
   public void add(TypedOperation operation, OperationOutcome outcome) {
-    Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
-    int count = 0;
-    if (outcomeMap == null) {
-      outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
-    } else {
-      Integer countInteger = outcomeMap.get(outcome);
-      if (countInteger != null) {
-        count = countInteger;
-      }
-    }
+    EnumMap<OperationOutcome, Integer> outcomeMap =
+        operationMap.computeIfAbsent(operation, __ -> new EnumMap<>(OperationOutcome.class));
+    int count = outcomeMap.getOrDefault(outcome, 0);
     count += 1;
     outcomeMap.put(outcome, count);
-    operationMap.put(operation, outcomeMap);
   }
 
   @Override
@@ -75,8 +70,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
-        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
+    Map<OperationOutcome, String> formatMap = new EnumMap<>(OperationOutcome.class);
     writer.format("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {
       writer.format("\t%" + outcome.name().length() + "s", outcome);
@@ -99,13 +93,10 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       int firstColumnLength,
       Map<OperationOutcome, String> formatMap,
       TypedOperation operation,
-      Map<OperationOutcome, Integer> countMap) {
+      EnumMap<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      Integer count = countMap.get(outcome);
-      if (count == null) {
-        count = 0;
-      }
+      Integer count = countMap.getOrDefault(outcome, 0);
       writer.format(formatMap.get(outcome), count);
     }
     writer.format("%n");

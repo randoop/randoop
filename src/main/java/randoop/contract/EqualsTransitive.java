@@ -9,9 +9,11 @@ import randoop.types.TypeTuple;
  * The contract: Checks the transitivity of equals for an object {@code (x0.equals(x1) &&
  * x1.equals(x2)) ==> x0.equals(x2)}.
  */
-public class EqualsTransitive extends ObjectContract {
+public final class EqualsTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsTransitive instance = new EqualsTransitive();
 
+  /** Private constructor to enforce singleton. */
   private EqualsTransitive() {}
 
   public static EqualsTransitive getInstance() {
@@ -24,7 +26,10 @@ public class EqualsTransitive extends ObjectContract {
     Object o2 = objects[1];
     Object o3 = objects[2];
 
-    return !(o1.equals(o2) && o2.equals(o3)) || o1.equals(o3);
+    if (o1.equals(o2) && o2.equals(o3)) {
+      return o1.equals(o3);
+    }
+    return true;
   }
 
   @Override
@@ -54,14 +59,13 @@ public class EqualsTransitive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(Globals.lineSep);
-    b.append("// This assertion (transitivity of equals) fails ");
+    b.append("// Transitivity of equals");
     b.append(Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2)");
-    b.append(");");
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2));");
     return b.toString();
   }
 }

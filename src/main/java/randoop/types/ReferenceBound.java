@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -27,7 +28,7 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -38,9 +39,19 @@ public abstract class ReferenceBound extends ParameterBound {
     return this.boundType.equals(bound.boundType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A {@link LazyReferenceBound} can be part of a recursive type, so the hash code is based on
+   * the string representation of the bound type to avoid recursive calls on {@code hashCode()}. All
+   * subclasses use this implementation, so that equal bounds have equal hash codes regardless of
+   * their subclass.
+   *
+   * @return the hashCode for the string representation of this bound
+   */
   @Override
   public int hashCode() {
-    return Objects.hash(boundType);
+    return Objects.hash(boundType.toString());
   }
 
   @Override

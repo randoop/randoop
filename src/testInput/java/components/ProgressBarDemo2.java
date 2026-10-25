@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -38,7 +38,7 @@ import java.beans.*;
 import java.util.Random;
 
 public class ProgressBarDemo2 extends JPanel
-                              implements ActionListener, 
+                              implements ActionListener,
                                          PropertyChangeListener {
 
     private JProgressBar progressBar;
@@ -95,7 +95,7 @@ public class ProgressBarDemo2 extends JPanel
 
         //Call setStringPainted now so that the progress bar height
         //stays the same whether or not the string is shown.
-        progressBar.setStringPainted(true); 
+        progressBar.setStringPainted(true);
 
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));

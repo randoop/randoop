@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.MapsP;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -104,10 +106,10 @@ public class Identifiers {
    * Returns an identifier name that occurs more than once in this {@link Identifiers}, or null if
    * there are no duplicate names.
    *
-   * @return a name occurs more than once, or null if there are no duplicate names
+   * @return a name that occurs more than once, or null if there are no duplicate names
    */
-  public String duplicateName() {
-    Set<String> names = new HashSet<>();
+  public @Nullable String duplicateName() {
+    Set<String> names = new HashSet<>(MapsP.mapCapacity(parameters.size() + 2));
     for (String name : parameters) {
       if (!names.add(name)) {
         return name;
@@ -123,7 +125,7 @@ public class Identifiers {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -149,7 +151,7 @@ public class Identifiers {
         + "\""
         + ", \"parameters\": "
         + "[ \""
-        + UtilPlume.join("\", \"", parameters)
+        + StringsPlume.join("\", \"", parameters)
         + "\"]"
         + ", \"returnName\": "
         + "\""

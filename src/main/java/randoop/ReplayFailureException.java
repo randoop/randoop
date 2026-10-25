@@ -8,8 +8,11 @@ import randoop.test.Check;
  */
 public class ReplayFailureException extends RuntimeException {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -6685935677958691837L;
 
+  /** The check that failed. */
+  @SuppressWarnings("serial")
   private final Check decoration;
 
   public ReplayFailureException(String message, Check d) {

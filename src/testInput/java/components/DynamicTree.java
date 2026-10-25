@@ -27,12 +27,12 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
 /*
- * This code is based on an example provided by Richard Stanford, 
+ * This code is based on an example provided by Richard Stanford,
  * a tutorial reader.
  */
 
@@ -57,7 +57,7 @@ public class DynamicTree extends JPanel {
 
     public DynamicTree() {
         super(new GridLayout(1,0));
-        
+
         rootNode = new DefaultMutableTreeNode("Root Node");
         treeModel = new DefaultTreeModel(rootNode);
 	treeModel.addTreeModelListener(new MyTreeModelListener());
@@ -88,7 +88,7 @@ public class DynamicTree extends JPanel {
                 treeModel.removeNodeFromParent(currentNode);
                 return;
             }
-        } 
+        }
 
         // Either there was no selection, or the root was selected.
         toolkit.beep();
@@ -115,17 +115,17 @@ public class DynamicTree extends JPanel {
     }
 
     public DefaultMutableTreeNode addObject(DefaultMutableTreeNode parent,
-                                            Object child, 
+                                            Object child,
                                             boolean shouldBeVisible) {
-        DefaultMutableTreeNode childNode = 
+        DefaultMutableTreeNode childNode =
                 new DefaultMutableTreeNode(child);
 
         if (parent == null) {
             parent = rootNode;
         }
-	
+
 	//It is key to invoke this on the TreeModel, and NOT DefaultMutableTreeNode
-        treeModel.insertNodeInto(childNode, parent, 
+        treeModel.insertNodeInto(childNode, parent,
                                  parent.getChildCount());
 
         //Make sure the user can see the lovely new node.

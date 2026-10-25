@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.OptionsCache;
 
 public abstract class AbstractPerformanceTest {
@@ -27,7 +28,7 @@ public abstract class AbstractPerformanceTest {
 
   abstract int expectedTimeMillis();
 
-  abstract void execute();
+  abstract void execute() throws RandoopSpecificationError;
 
   private final double DIVIDE_FACTOR = 1700;
 
@@ -37,27 +38,27 @@ public abstract class AbstractPerformanceTest {
   private double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     for (int i = 0; i < 50000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    long time = System.currentTimeMillis() - startTime;
+    long time = System.currentTimeMillis() - startTimeMillis;
     return time / DIVIDE_FACTOR;
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test() {
+  public void test() throws RandoopSpecificationError {
 
     System.out.println("@@@ factor: " + computeFactor());
     double factor = EXPECTED_MIN;
     System.out.println("@@@ EXPECTED_MIN: " + EXPECTED_MIN);
     long expected = (long) (factor * expectedTimeMillis());
 
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     execute();
-    long time = System.currentTimeMillis() - startTime;
+    long time = System.currentTimeMillis() - startTimeMillis;
 
     System.out.println();
     System.out.println("Expected time: " + expected);
@@ -68,8 +69,10 @@ public abstract class AbstractPerformanceTest {
       b.append(
           "Failure: performance test actual time was greater than expected time."
               + Globals.lineSep);
-      b.append("This failure could have two causes:" + Globals.lineSep);
-      b.append(" (1) Randoop mis-estimated your machine speed." + Globals.lineSep);
+      b.append("This failure could have two causes:");
+      b.append(Globals.lineSep);
+      b.append(" (1) Randoop mis-estimated your machine speed.");
+      b.append(Globals.lineSep);
       b.append(
           " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep);
       fail(b.toString());

@@ -1,19 +1,23 @@
 package randoop.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-public class JarReader {
+public final class JarReader {
 
+  /** If true, output debugging diagnostics. */
   private static boolean debug = false;
 
+  /** Do not instantiate. */
   private JarReader() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   public static void main(String[] args) throws IOException {
@@ -31,9 +35,8 @@ public class JarReader {
       System.out.println("Jar " + jarName + " looking for " + packageName);
     }
 
-    JarInputStream jarFile = null;
-    try {
-      jarFile = new JarInputStream(new FileInputStream(jarName));
+    try (InputStream fis = Files.newInputStream(Paths.get(jarName));
+        JarInputStream jarFile = new JarInputStream(fis)) {
       JarEntry jarEntry;
 
       while (true) {
@@ -42,12 +45,12 @@ public class JarReader {
           break;
         }
         if (jarEntry.getName().startsWith(packageName) && jarEntry.getName().endsWith(".class")) {
-          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          if (debug) {
+            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          }
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
-    } finally {
-      if (jarFile != null) jarFile.close();
     }
     return classes;
   }
@@ -59,9 +62,8 @@ public class JarReader {
       System.out.println("Jar " + jarName);
     }
 
-    JarInputStream jarFile = null;
-    try {
-      jarFile = new JarInputStream(new FileInputStream(jarName));
+    try (InputStream fis = Files.newInputStream(Paths.get(jarName));
+        JarInputStream jarFile = new JarInputStream(fis)) {
       JarEntry jarEntry;
 
       while (true) {
@@ -70,12 +72,12 @@ public class JarReader {
           break;
         }
         if (jarEntry.getName().endsWith(".class")) {
-          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          if (debug) {
+            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          }
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
-    } finally {
-      if (jarFile != null) jarFile.close();
     }
     return classes;
   }

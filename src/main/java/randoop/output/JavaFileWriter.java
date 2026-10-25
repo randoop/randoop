@@ -36,12 +36,12 @@ public class JavaFileWriter implements CodeWriter {
    * @return the Path object for generated java file
    */
   @Override
-  public Path writeClassCode(String packageName, String className, String classCode)
-      throws RandoopOutputException {
+  public Path writeClassCode(String packageName, String className, String classCode) {
     Path dir = createOutputDir(packageName);
     Path file = new java.io.File(dir.toFile(), className + ".java").toPath();
 
-    try (PrintWriter out = new PrintWriter(file.toFile(), UTF_8.name())) {
+    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+        PrintWriter out = new PrintWriter(file.toFile(), UTF_8.name())) {
       out.println(classCode);
     } catch (IOException e) {
       String message = "Exception creating print writer for file " + file.toString();
@@ -52,8 +52,7 @@ public class JavaFileWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode)
-      throws RandoopOutputException {
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String classCode) {
     return writeClassCode(packageName, classname, classCode);
   }
 
@@ -64,7 +63,7 @@ public class JavaFileWriter implements CodeWriter {
    * @return the {@code Path} for the created directory
    * @throws RandoopOutputException if the directory for the package could not be created
    */
-  private Path createOutputDir(String packageName) throws RandoopOutputException {
+  private Path createOutputDir(String packageName) {
     Path dir = getDir(packageName);
     if (!Files.exists(dir)) {
       boolean success = dir.toFile().mkdirs();

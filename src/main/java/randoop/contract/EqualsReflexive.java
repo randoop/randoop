@@ -1,14 +1,15 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(x0)==true}. */
 public final class EqualsReflexive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReflexive instance = new EqualsReflexive();
 
+  /** Private constructor to enforce singleton. */
   private EqualsReflexive() {}
 
   public static EqualsReflexive getInstance() {
@@ -50,14 +51,10 @@ public final class EqualsReflexive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x0)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.equals(x0));");
     return b.toString();
   }
 }

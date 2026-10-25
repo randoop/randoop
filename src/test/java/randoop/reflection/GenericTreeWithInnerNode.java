@@ -18,6 +18,7 @@ public class GenericTreeWithInnerNode<T extends Comparable<T>> {
   public class Node {
     private T element;
     private Node left;
+
     // private Node right;
 
     Node(final T element) {

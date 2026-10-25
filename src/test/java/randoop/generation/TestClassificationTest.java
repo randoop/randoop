@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,20 +17,22 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.Check;
@@ -44,12 +46,11 @@ import randoop.test.TestChecks;
 import randoop.types.JavaTypes;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 
 /**
- * Tests the classification of tests based on exception behavior assignments. So, question is where
- * exceptions are placed.
+ * Tests the classification of tests based on exception behavior assignments. So, the question is
+ * where exceptions are placed.
  */
 public class TestClassificationTest {
 
@@ -67,11 +68,11 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests the classification of tests when all exceptions are invalid. Because of class will have
-   * no error tests, and regression tests should have no exceptions.
+   * Tests the classification of tests when all exceptions are invalid. Because of this, the class
+   * will have no error tests, and regression tests should have no exceptions.
    */
   @Test
-  public void allInvalidTest() {
+  public void allInvalidTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -93,13 +94,13 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertFalse(rTests.isEmpty());
 
     for (ExecutableSequence eseq : rTests) {
       TestChecks<?> cks = eseq.getChecks();
       if (!cks.hasChecks()) {
-        assertFalse("these are not error checks", cks.hasErrorBehavior());
-        assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+        assertFalse(cks.hasErrorBehavior());
+        assertFalse(cks.hasInvalidBehavior());
       }
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
@@ -111,15 +112,15 @@ public class TestClassificationTest {
       }
     }
 
-    assertEquals("when all exceptions invalid, have no error tests", 0, eTests.size());
+    assertEquals(0, eTests.size());
   }
 
   /**
    * Tests the classification of tests when all exceptions are errors. All exceptions should show as
-   * NoExceptionCheck, and should be no expected exceptions in regression tests.
+   * NoExceptionCheck, and there should be no expected exceptions in regression tests.
    */
   @Test
-  public void allErrorTest() {
+  public void allErrorTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -141,12 +142,12 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertFalse(rTests.isEmpty());
 
     for (ExecutableSequence eseq : rTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertFalse("these are not error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertFalse(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
@@ -157,13 +158,13 @@ public class TestClassificationTest {
       }
     }
 
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertFalse(eTests.isEmpty());
 
     for (ExecutableSequence eseq : eTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertTrue("these are error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertTrue(cks.hasChecks());
+      assertTrue(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
       for (Check ck : cks.checks()) {
@@ -171,7 +172,7 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
@@ -180,7 +181,7 @@ public class TestClassificationTest {
    * expected exception checks, and there should be no error tests.
    */
   @Test
-  public void allExpectedTest() {
+  public void allExpectedTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -202,23 +203,23 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertFalse(rTests.isEmpty());
 
     for (ExecutableSequence eseq : rTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertFalse("these are not error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertFalse(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
-        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
+        assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be ExpectedExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof ExpectedExceptionCheck);
       }
     }
 
-    assertEquals("all exceptions expected, should be no error tests", 0, eTests.size());
+    assertEquals(0, eTests.size());
   }
 
   /**
@@ -227,7 +228,7 @@ public class TestClassificationTest {
    * without input, should see NPE as expected when no null inputs. Otherwise, should not see NPE.
    */
   @Test
-  public void defaultsTest() {
+  public void defaultsTest() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -249,29 +250,29 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertFalse(rTests.isEmpty());
 
     for (ExecutableSequence eseq : rTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertFalse("these are not error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertFalse(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
-        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
+        assertTrue(cks.hasChecks());
         assertTrue(
             "should be expected exception, was" + eck.getClass().getName(),
             eck instanceof ExpectedExceptionCheck);
       }
     }
 
-    assertTrue("should have error tests", eTests.size() > 0);
+    assertFalse(eTests.isEmpty());
 
     for (ExecutableSequence eseq : eTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertTrue("these are error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertTrue(cks.hasChecks());
+      assertTrue(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
       for (Check ck : cks.checks()) {
@@ -279,7 +280,7 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
@@ -289,7 +290,7 @@ public class TestClassificationTest {
    * should not see NPE, or any other checks.
    */
   @Test
-  public void defaultsWithNoRegressionAssertions() {
+  public void defaultsWithNoRegressionAssertions() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -311,31 +312,31 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertFalse(rTests.isEmpty());
 
     for (ExecutableSequence eseq : rTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertFalse("these are not error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertFalse(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
-        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
+        assertTrue(cks.hasChecks());
         assertTrue(
-            "should be expected exception, was" + eck.getClass().getName(),
+            "should be EmptyExceptionCheck, was " + eck.getClass().getName() + ": " + eck,
             eck instanceof EmptyExceptionCheck);
       } else {
-        assertFalse("if there is no exception check, should be no checks", cks.hasChecks());
+        assertFalse(cks.hasChecks());
       }
     }
 
-    assertTrue("should have error tests", eTests.size() > 0);
+    assertFalse(eTests.isEmpty());
 
     for (ExecutableSequence eseq : eTests) {
       TestChecks<?> cks = eseq.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertTrue("these are error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      assertTrue(cks.hasChecks());
+      assertTrue(cks.hasErrorBehavior());
+      assertFalse(cks.hasInvalidBehavior());
 
       int exceptionCount = 0;
       for (Check ck : cks.checks()) {
@@ -343,16 +344,16 @@ public class TestClassificationTest {
           exceptionCount++;
         }
       }
-      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+      assertEquals(1, exceptionCount);
     }
   }
 
   /**
    * The tests generated here should throw an ArrayStoreException, which is a RuntimeException. Want
-   * to make that resulting sequence is not going into component manager.
+   * to make sure that the resulting sequence is not going into the component manager.
    */
   @Test
-  public void regressionTestGeneration() {
+  public void regressionTestGeneration() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -360,29 +361,27 @@ public class TestClassificationTest {
     GenInputsAbstract.generated_limit = 100;
     Class<?> c = FlakyStore.class;
     ComponentManager componentManager = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
+            accessibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+    ForwardGenerator gen = buildGenerator(c, componentManager, accessibility, checkGenerator);
     gen.createAndClassifySequences();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-    assertEquals("should be no error tests", 0, eTests.size());
+    assertEquals(0, eTests.size());
 
-    SimpleList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
+    SIList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
     for (ExecutableSequence es : rTests) {
       if (!es.isNormalExecution()) {
         int exceptionIndex = es.getNonNormalExecutionIndex();
         ExecutionOutcome outcome = es.getResult(exceptionIndex);
-        assertTrue("should be exception ", outcome instanceof ExceptionalExecution);
+        assertTrue(outcome instanceof ExceptionalExecution);
         Throwable exception = ((ExceptionalExecution) outcome).getException();
-        assertTrue("should be ArrayStoreException", exception instanceof ArrayStoreException);
+        assertTrue(exception instanceof ArrayStoreException);
 
         for (int i = 0; i < sequences.size(); i++) {
-          assertFalse(
-              "sequence with exception should not be component",
-              es.sequence.equals(sequences.get(i)));
+          assertFalse(es.sequence.equals(sequences.get(i)));
         }
       }
     }
@@ -391,7 +390,7 @@ public class TestClassificationTest {
   private ForwardGenerator buildGenerator(
       Class<?> c,
       ComponentManager componentMgr,
-      VisibilityPredicate visibility,
+      AccessibilityPredicate accessibility,
       TestCheckGenerator checkGenerator) {
     Set<@ClassGetName String> classnames = new HashSet<>();
     classnames.add(c.getName());
@@ -402,7 +401,7 @@ public class TestClassificationTest {
     try {
       operationModel =
           OperationModel.createModel(
-              visibility,
+              accessibility,
               reflectionPredicate,
               GenInputsAbstract.omit_methods,
               classnames,
@@ -414,15 +413,13 @@ public class TestClassificationTest {
     }
     final List<TypedOperation> model = operationModel.getOperations();
 
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
             new GenInputsAbstract.Limits(),
             componentMgr,
-            null,
-            listenerMgr,
+            /* stopper= */ null,
             operationModel.getClassTypes());
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.setTestPredicate(isOutputTest);
@@ -434,16 +431,16 @@ public class TestClassificationTest {
 
   private ForwardGenerator buildGenerator(Class<?> c) {
     ComponentManager componentMgr = getComponentManager();
-    VisibilityPredicate visibility = IS_PUBLIC;
+    AccessibilityPredicate accessibility = IS_PUBLIC;
     TestCheckGenerator checkGenerator =
         GenTests.createTestCheckGenerator(
-            visibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
-    return buildGenerator(c, componentMgr, visibility, checkGenerator);
+            accessibility, new ContractSet(), new MultiMap<>(), OmitMethodsPredicate.NO_OMISSION);
+    return buildGenerator(c, componentMgr, accessibility, checkGenerator);
   }
 
   private ComponentManager getComponentManager() {
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
-    return new ComponentManager(components);
+    return new ComponentManager(components, IS_PUBLIC);
   }
 }

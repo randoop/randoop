@@ -6,11 +6,12 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.types.TypeVariable;
 
 public class TypedOperationTest {
   @Test
-  public void testOperationParameterTypes() {
+  public void testOperationParameterTypes() throws RandoopSpecificationError {
     Class<?> c = ParameterInput.class;
     Method m;
     try {
@@ -26,8 +27,7 @@ public class TypedOperationTest {
     assertFalse(
         "cap converted op has type parameters: " + capOp, capOp.getTypeParameters().isEmpty());
     for (TypeVariable variable : operation.getTypeParameters()) {
-      assertTrue(
-          "wildcard params in cap converted params", capOp.getTypeParameters().contains(variable));
+      assertTrue(capOp.getTypeParameters().contains(variable));
     }
   }
 }

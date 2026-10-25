@@ -2,12 +2,13 @@ package randoop.generation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
@@ -19,11 +20,10 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
 
 /**
  * Implements the Bloodhound component, as described by the paper "GRT: Program-Analysis-Guided
- * Random Testing" by Ma et. al (appears in ASE 2015):
+ * Random Testing" by Ma et al. (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Bloodhound computes a weight for each method under test by taking a weighted combination of
@@ -70,7 +70,7 @@ public class Bloodhound implements TypedOperationSelector {
    * List of operations, identical to {@link ForwardGenerator}'s operation list. Used for making
    * random, weighted selections for a method under test.
    */
-  private final SimpleArrayList<TypedOperation> operationSimpleList;
+  private final List<TypedOperation> operationList;
 
   /**
    * Parameter for balancing branch coverage and number of times a method was chosen. The name
@@ -88,7 +88,7 @@ public class Bloodhound implements TypedOperationSelector {
    * Time interval, in milliseconds, at which to recompute weights. The name "t" and the specified
    * value are both from the GRT paper.
    */
-  private static final long t = 50000;
+  private static final long t = 50_000;
 
   /** {@code System.currentTimeMillis()} when branch coverage was last updated. */
   private long lastUpdateTime = 0;
@@ -123,7 +123,7 @@ public class Bloodhound implements TypedOperationSelector {
    * @param classesUnderTest set of classes under test
    */
   public Bloodhound(List<TypedOperation> operations, Set<ClassOrInterfaceType> classesUnderTest) {
-    this.operationSimpleList = new SimpleArrayList<>(operations);
+    this.operationList = new ArrayList<>(operations);
     this.coverageTracker = new CoverageTracker(classesUnderTest);
 
     // Compute an initial weight for all methods under test. We also initialize the uncovered ratio
@@ -148,10 +148,10 @@ public class Bloodhound implements TypedOperationSelector {
     // Make a random, weighted choice for the next method.
     TypedOperation selectedOperation =
         Randomness.randomMemberWeighted(
-            operationSimpleList, methodWeights, totalWeightOfMethodsUnderTest);
+            operationList, methodWeights, totalWeightOfMethodsUnderTest);
 
     // Update the selected method's selection count and recompute its weight.
-    CollectionsPlume.incrementMap(methodSelectionCounts, selectedOperation);
+    MapsP.incrementMap(methodSelectionCounts, selectedOperation);
     updateWeight(selectedOperation);
 
     return selectedOperation;
@@ -168,7 +168,7 @@ public class Bloodhound implements TypedOperationSelector {
    *       branch coverage was last updated. This is GRT's approach and is the default. It makes
    *       Randoop non-deterministic.
    *   <li>Count of successful invocations: branch coverage is updated after every {@code
-   *       branchCoverageInteral} successful invocations (of any method under test).
+   *       branchCoverageInterval} successful invocations (of any method under test).
    * </ul>
    */
   private void updateBranchCoverageMaybe() {
@@ -235,7 +235,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private void updateWeightsForAllOperations() {
     double totalWeight = 0;
-    for (TypedOperation operation : operationSimpleList) {
+    for (TypedOperation operation : operationList) {
       totalWeight += updateWeight(operation);
     }
     totalWeightOfMethodsUnderTest = totalWeight;
@@ -258,7 +258,7 @@ public class Bloodhound implements TypedOperationSelector {
    */
   private double updateWeight(TypedOperation operation) {
     // Remove type arguments, because Jacoco does not include type arguments when naming a method.
-    String methodName = operation.getName().replaceAll("<.*>\\.", ".");
+    String methodName = operation.getName().replaceAll("<.*>\\.", ".").replace('$', '.');
 
     // Corresponds to uncovRatio(m) in the GRT paper.
     Double uncovRatio = coverageTracker.getBranchCoverageForMethod(methodName);
@@ -281,11 +281,14 @@ public class Bloodhound implements TypedOperationSelector {
       boolean isAbstractMethod = false;
       boolean isSyntheticMethod = false;
       boolean isFromAbstractClass = false;
+      boolean isClassUnderTest = true;
       if (callableOperation instanceof MethodCall) {
         Method method = ((MethodCall) callableOperation).getMethod();
         isAbstractMethod = Modifier.isAbstract(method.getModifiers());
         isSyntheticMethod = method.isSynthetic();
-        isFromAbstractClass = Modifier.isAbstract(method.getDeclaringClass().getModifiers());
+        Class<?> declaringClass = method.getDeclaringClass();
+        isFromAbstractClass = Modifier.isAbstract(declaringClass.getModifiers());
+        isClassUnderTest = coverageTracker.classesUnderTest.contains(declaringClass.getName());
       }
 
       boolean isGetterMethod = callableOperation instanceof FieldGet;
@@ -299,6 +302,7 @@ public class Bloodhound implements TypedOperationSelector {
               || isEnumConstant
               || isSyntheticMethod
               || isFromAbstractClass
+              || !isClassUnderTest
               || operationName.equals("java.lang.Object.<init>")
               || operationName.equals("java.lang.Object.getClass");
       if (!isExpectedToHaveNoCoverage) {
@@ -311,12 +315,10 @@ public class Bloodhound implements TypedOperationSelector {
 
     // The number of successful invocations of this method. Corresponds to "succ(m)" in the GRT
     // paper.
-    Integer succM = methodInvocationCounts.get(operation);
-    if (succM == null) {
-      succM = 0;
-    }
+    Integer succM = methodInvocationCounts.getOrDefault(operation, 0);
 
     // Corresponds to w(m, 0) in the GRT paper.
+    @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD: needed for floating-point divide
     double wm0 = alpha * uncovRatio + (1.0 - alpha) * (1.0 - (succM.doubleValue() / maxSuccM));
 
     // Corresponds to w(m, k) in the GRT paper.
@@ -329,15 +331,12 @@ public class Bloodhound implements TypedOperationSelector {
     } else {
       // Corresponds to the case where k >= 1 in the GRT paper.
       double val1 = (-3.0 / Math.log(1.0 - p)) * (Math.pow(p, k) / k);
-      double val2 = 1.0 / Math.log(operationSimpleList.size() + 3.0);
+      double val2 = 1.0 / Math.log(operationList.size() + 3.0);
       wmk = Math.max(val1, val2) * wm0;
     }
 
     // Retrieve the weight from the methodWeights map if it exists. Otherwise, default to zero.
-    Double existingWeight = methodWeights.get(operation);
-    if (existingWeight == null) {
-      existingWeight = 0.0;
-    }
+    Double existingWeight = methodWeights.getOrDefault(operation, 0.0);
 
     methodWeights.put(operation, wmk);
 
@@ -355,14 +354,15 @@ public class Bloodhound implements TypedOperationSelector {
    */
   public void incrementSuccessfulInvocationCount(TypedOperation operation) {
     totalSuccessfulInvocations += 1;
-    CollectionsPlume.incrementMap(methodInvocationCounts, operation);
+    MapsP.incrementMap(methodInvocationCounts, operation);
+    // The `methodInvocationCounts` map contains the key `operation`.
     int numSuccessfulInvocations = methodInvocationCounts.get(operation);
     maxSuccM = Math.max(maxSuccM, numSuccessfulInvocations);
   }
 
   /**
-   * Increment the number of successful invocations of the last method in the newly-created sequence
-   * that was classified as a regression test.
+   * Increments the number of successful invocations of the last method in the newly-created
+   * sequence that was classified as a regression test.
    *
    * @param sequence newly-created sequence that was classified as a regression test
    */

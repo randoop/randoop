@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -14,7 +16,7 @@ import randoop.main.RandoopBug;
  */
 class LazyParameterBound extends ParameterBound {
 
-  /** the type for this bound */
+  /** The type for this bound. */
   private final java.lang.reflect.Type boundType;
 
   /**
@@ -33,7 +35,7 @@ class LazyParameterBound extends ParameterBound {
    *     identical, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -70,11 +72,12 @@ class LazyParameterBound extends ParameterBound {
       return this;
     }
 
-    if (boundType instanceof java.lang.reflect.ParameterizedType) {
+    if (boundType instanceof ParameterizedType) {
       boolean isLazy = false;
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter :
-          ((ParameterizedType) boundType).getActualTypeArguments()) {
+      java.lang.reflect.Type[] actualTypeArgs =
+          ((ParameterizedType) boundType).getActualTypeArguments();
+      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
+      for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
         if (typeArgument == null) {
           return this;
@@ -113,12 +116,12 @@ class LazyParameterBound extends ParameterBound {
       return null;
     }
 
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      List<TypeArgument> argumentList = new ArrayList<>();
-      for (java.lang.reflect.Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
-        TypeArgument paramType = substitute(parameter, substitution);
-        argumentList.add(paramType);
-      }
+    if (type instanceof ParameterizedType) {
+      List<TypeArgument> argumentList =
+          CollectionsPlume.mapList(
+              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
+              ((ParameterizedType) type).getActualTypeArguments());
+
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
@@ -131,22 +134,20 @@ class LazyParameterBound extends ParameterBound {
 
     if (type instanceof java.lang.reflect.WildcardType) {
       final java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
-      if (wildcardType.getLowerBounds().length > 0) {
-        assert wildcardType.getLowerBounds().length == 1
-            : "a wildcard is defined by the JLS to only have one bound";
-        java.lang.reflect.Type lowerBound = wildcardType.getLowerBounds()[0];
+      java.lang.reflect.Type[] lowerBounds = wildcardType.getLowerBounds();
+      if (lowerBounds.length > 0) {
+        assert lowerBounds.length == 1 : "a wildcard is defined by the JLS to only have one bound";
+        java.lang.reflect.Type lowerBound = lowerBounds[0];
         ParameterBound bound;
         if (lowerBound instanceof java.lang.reflect.TypeVariable) {
           ReferenceType boundType = substitution.get(lowerBound);
           if (boundType != null) {
-            bound = ParameterBound.forType(boundType);
+            bound = forType(boundType);
           } else {
             bound = new LazyParameterBound(lowerBound);
           }
         } else {
-          bound =
-              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
-                  .substitute(substitution);
+          bound = forType(new HashSet<>(0), lowerBound).substitute(substitution);
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -154,9 +155,7 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      ParameterBound bound =
-          ParameterBound.forTypes(
-              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
+      ParameterBound bound = forTypes(new HashSet<>(0), wildcardType.getUpperBounds());
       bound = bound.substitute(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }
@@ -186,8 +185,8 @@ class LazyParameterBound extends ParameterBound {
     List<TypeVariable> variableList = new ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {
       variableList.add(TypeVariable.forType(type));
-    } else if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+    } else if (type instanceof ParameterizedType) {
+      ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
@@ -220,8 +219,8 @@ class LazyParameterBound extends ParameterBound {
       }
       return false;
     }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+    if (type instanceof ParameterizedType) {
+      ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasWildcard(argType)) {
           return true;
@@ -237,7 +236,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Return true if the given type has a capture variable.
+   * Returns true if the given type has a capture variable.
    *
    * @param type the type to test
    * @return true if the given type has a capture variable
@@ -251,8 +250,8 @@ class LazyParameterBound extends ParameterBound {
       }
       return false;
     }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+    if (type instanceof ParameterizedType) {
+      ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasCaptureVariable(argType)) {
           return true;
@@ -283,9 +282,9 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
     throw new LazyBoundException();
-    // assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    // assert false : "LazyParameterBound.isSubtypeOfOrEqualTo is not implemented";
     // return false;
   }
 
@@ -319,6 +318,10 @@ class LazyParameterBound extends ParameterBound {
 
   /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
+    /** Creates a new LazyBoundException. */
+    public LazyBoundException() {}
+
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 20190508;
   }
 }

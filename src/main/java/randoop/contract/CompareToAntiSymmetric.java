@@ -1,7 +1,6 @@
 package randoop.contract;
 
 import java.util.Arrays;
-import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -10,9 +9,11 @@ import randoop.types.TypeTuple;
  *
  * <pre>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</pre>
  */
-public class CompareToAntiSymmetric extends ObjectContract {
+public final class CompareToAntiSymmetric extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
+  /** Private constructor to enforce singleton. */
   private CompareToAntiSymmetric() {}
 
   public static CompareToAntiSymmetric getInstance() {
@@ -63,10 +64,7 @@ public class CompareToAntiSymmetric extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" ").append(toCommentString()).append(Globals.lineSep);
+    StringBuilder b = new StringBuilder(256);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))");

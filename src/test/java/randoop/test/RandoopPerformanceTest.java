@@ -1,45 +1,46 @@
 package randoop.test;
 
 import static org.junit.Assert.assertFalse;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override
-  void execute() {
+  void execute() throws RandoopSpecificationError {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     List<Class<?>> classes = new ArrayList<>();
-    try (EntryReader er =
-        new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+    try (InputStream resourceStream =
+            ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
+        EntryReader er = new EntryReader(resourceStream)) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         classes.add(Class.forName(entry));
       }
     } catch (IOException e) {
       throw new AssertionError("exception while reading class names", e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new AssertionError("couldn't load class", e);
     }
 
     List<TypedOperation> model = getConcreteOperations(classes);
-    assertFalse("model should not be empty", model.isEmpty());
+    assertFalse(model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
@@ -59,17 +60,9 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     return 10000;
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<TypedOperation> model = new ArrayList<>();
-    VisibilityPredicate visibility = IS_PUBLIC;
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (Class<?> c : classes) {
-      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      final OperationExtractor extractor =
-          new OperationExtractor(classType, new DefaultReflectionPredicate(), visibility);
-      mgr.apply(extractor, c);
-      model.addAll(extractor.getOperations());
-    }
-    return model;
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
+    List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
+    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
 }
