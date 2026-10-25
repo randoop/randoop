@@ -107,6 +107,15 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      return boundType.isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
+    }
+    assert false : "not handling ReferenceBound subtype of other bound type";
+    return false;
+  }
+
+  @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     return bound.hasUpperBound(boundType.substitute(substitution));
   }
@@ -119,7 +128,8 @@ public abstract class ReferenceBound extends ParameterBound {
       }
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
       TypeVariable variable = (TypeVariable) boundType;
-      return variable.resolveSelfReferences(variable.getUpperTypeBound()).hasUpperBound(upperBound);
+      return TypeVariable.resolveTypeVariables(variable.getUpperTypeBound())
+          .hasUpperBound(upperBound);
     }
     return isSubtypeOrEqual(boundType, upperBound);
   }
