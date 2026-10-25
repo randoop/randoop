@@ -32,7 +32,7 @@ public final class CheckRepContract extends ObjectContract {
   private final TypedClassOperation operation;
 
   /** True if the check-rep method returns a boolean, false if it returns void. */
-  /*package*/ boolean returnsBoolean; // derived from checkRepMethod
+  private final boolean returnsBoolean; // derived from checkRepMethod
 
   /** The class that declares the check-rep method. */
   public final Class<?> declaringClass; // derived from checkRepMethod

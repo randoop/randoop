@@ -217,8 +217,7 @@ public abstract class ObjectContract {
 
   /**
    * Returns the result of calling {@code toString()} on the given object, or a description of the
-   * object if {@code toString()} throws an exception. (The toString() of class Buggy throws an
-   * exception.)
+   * object if {@code toString()} throws an exception.
    *
    * @param o an object
    * @return a printed representation of the object

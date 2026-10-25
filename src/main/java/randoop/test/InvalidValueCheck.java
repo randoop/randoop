@@ -10,10 +10,12 @@ import randoop.sequence.ExecutableSequence;
 public class InvalidValueCheck implements Check {
 
   /** The sequence that creates the value to be checked. */
-  /*package*/ ExecutableSequence eseq;
+  @SuppressWarnings("UnusedVariable") // identifies the invalid value in a debugger
+  private final ExecutableSequence eseq;
 
   /** The index in the sequence of the statement that creates the value. */
-  /*package*/ int index;
+  @SuppressWarnings("UnusedVariable") // identifies the invalid value in a debugger
+  private final int index;
 
   /**
    * Create an InvalidValueCheck.
