@@ -1,1 +1,1 @@
-com.beust.jcommander.internal.DefaultConsole randoop.mock.com.beust.jcommander.internal.DefaultConsole
+com.beust.jcommander.internal.Console randoop.mock.com.beust.jcommander.internal.Console

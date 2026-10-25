@@ -107,10 +107,8 @@ public class ReplacementFileTest {
     assertEquals(1, map.size());
     assertEquals(
         MethodSignature.of(
-            "randoop.mock.com.beust.jcommander.internal.DefaultConsole.readPassword("
-                + "com.beust.jcommander.internal.DefaultConsole, boolean)"),
-        map.get(
-            MethodSignature.of(
-                "com.beust.jcommander.internal.DefaultConsole.readPassword(boolean)")));
+            "randoop.mock.com.beust.jcommander.internal.Console.readPassword("
+                + "com.beust.jcommander.internal.Console, boolean)"),
+        map.get(MethodSignature.of("com.beust.jcommander.internal.Console.readPassword(boolean)")));
   }
 }
