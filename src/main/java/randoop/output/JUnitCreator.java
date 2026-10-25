@@ -44,6 +44,7 @@ import java.util.StringJoiner;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -347,8 +348,13 @@ public final class JUnitCreator {
 
     // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
+    BlockStmt sequenceBlock;
     // try {
-    BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    try {
+      sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    } catch (Exception e) {
+      throw new RandoopBug("Cannot parse: " + sequenceBlockString, e);
+    }
     statements.addAll(sequenceBlock.getStatements());
     // }
     // catch (ParseException e) {
