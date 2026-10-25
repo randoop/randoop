@@ -14,7 +14,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(ReferenceType boundType) {
+  /*package*/ ReferenceBound(ReferenceType boundType) {
     this.boundType = boundType;
   }
 
@@ -66,7 +66,7 @@ public abstract class ReferenceBound extends ParameterBound {
   public abstract ReferenceBound applyCaptureConversion();
 
   @Override
-  boolean hasWildcard() {
+  /*package*/ boolean hasWildcard() {
     return boundType.hasWildcard();
   }
 

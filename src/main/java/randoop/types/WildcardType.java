@@ -33,7 +33,7 @@ class WildcardType extends ParameterType {
    * @param bound the bound of the wildcard type
    * @param hasUpperBound true if {@code bound} is an upper bound, false if it is a lower bound
    */
-  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+  /*package*/ @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   WildcardType(ParameterBound bound, boolean hasUpperBound) {
     super();
     this.hasUpperBound = hasUpperBound;
@@ -202,7 +202,7 @@ class WildcardType extends ParameterType {
    *
    * @return true if this wildcard has an upper bound
    */
-  boolean hasUpperBound() {
+  /*package*/ boolean hasUpperBound() {
     return hasUpperBound;
   }
 }

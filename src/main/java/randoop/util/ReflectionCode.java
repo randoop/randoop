@@ -131,19 +131,19 @@ public abstract class ReflectionCode {
   }
 
   /** Indicates a bug in the ReflectionCode class. */
-  static final class ReflectionCodeException extends IllegalStateException {
+  /*package*/ static final class ReflectionCodeException extends IllegalStateException {
     /** ID for serializing this class. */
     private static final long serialVersionUID = -7508201027241079866L;
 
-    ReflectionCodeException(String msg) {
+    /*package*/ ReflectionCodeException(String msg) {
       super(msg);
     }
 
-    ReflectionCodeException(String msg, Throwable cause) {
+    /*package*/ ReflectionCodeException(String msg, Throwable cause) {
       super(msg, cause);
     }
 
-    ReflectionCodeException(Throwable cause) {
+    /*package*/ ReflectionCodeException(Throwable cause) {
       super(cause);
     }
   }

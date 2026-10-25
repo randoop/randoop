@@ -27,7 +27,7 @@ public final class CheckRepContract extends ObjectContract {
 
   public final Method checkRepMethod;
   private final TypedClassOperation operation;
-  boolean returnsBoolean; // derived from checkRepMethod
+  /*package*/ boolean returnsBoolean; // derived from checkRepMethod
   public final Class<?> declaringClass; // derived from checkRepMethod
 
   @Override

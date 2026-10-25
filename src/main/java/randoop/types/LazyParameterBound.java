@@ -24,7 +24,7 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param boundType the reflection type for this bound
    */
-  LazyParameterBound(java.lang.reflect.Type boundType) {
+  /*package*/ LazyParameterBound(java.lang.reflect.Type boundType) {
     this.boundType = boundType;
   }
 
@@ -203,7 +203,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean hasWildcard() {
+  /*package*/ boolean hasWildcard() {
     return hasWildcard(boundType);
   }
 
@@ -305,7 +305,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  /*package*/ boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     throw new LazyBoundException();
     // assert false : " not quite sure what to do with lazy type bound";
     // return false;
@@ -317,7 +317,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
-  static class LazyBoundException extends RuntimeException {
+  /*package*/ static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
     public LazyBoundException() {}
 

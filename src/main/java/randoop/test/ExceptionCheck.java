@@ -20,7 +20,7 @@ public abstract class ExceptionCheck implements Check {
   protected final Throwable exception;
 
   /** Indicates which statement results in the given exception. */
-  final int statementIndex;
+  /*package*/ final int statementIndex;
 
   /**
    * The name of exception to be caught. This might be a supertype of {@code exception}'s class C,

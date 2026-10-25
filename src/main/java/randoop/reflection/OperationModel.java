@@ -222,7 +222,7 @@ public final class OperationModel {
    * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
-  static OperationModel createModel(
+  /*package*/ static OperationModel createModel(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,

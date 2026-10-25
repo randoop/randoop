@@ -14,16 +14,16 @@ public class RandoopSpecificationError extends Exception {
 
   /** Which file was being read when the error occurred. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  Path file = null;
+  /*package*/ Path file = null;
 
-  String thisMessage = null;
+  /*package*/ String thisMessage = null;
 
   /**
    * Create a {@link RandoopSpecificationError} with the given message.
    *
    * @param message the error message
    */
-  RandoopSpecificationError(String message) {
+  /*package*/ RandoopSpecificationError(String message) {
     super(message);
   }
 
@@ -33,7 +33,7 @@ public class RandoopSpecificationError extends Exception {
    * @param message the error message
    * @param cause the causing exception
    */
-  RandoopSpecificationError(String message, Throwable cause) {
+  /*package*/ RandoopSpecificationError(String message, Throwable cause) {
     super(message, cause);
   }
 

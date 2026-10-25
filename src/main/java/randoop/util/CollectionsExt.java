@@ -16,7 +16,7 @@ public final class CollectionsExt {
     throw new IllegalStateException("no instances");
   }
 
-  static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
+  /*package*/ static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
     if (s == null) {
       throw new IllegalArgumentException("s cannot be null.");
     }
@@ -51,7 +51,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
-  static String toStringInLines(Collection<? extends @Signed Object> c) {
+  /*package*/ static String toStringInLines(Collection<? extends @Signed Object> c) {
     if (c.isEmpty()) {
       return "";
     }

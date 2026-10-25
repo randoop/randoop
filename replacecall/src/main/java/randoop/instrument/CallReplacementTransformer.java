@@ -69,7 +69,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    * @param excludedPackagePrefixes the period-terminated prefixes for packages from which classes
    *     should not be transformed
    */
-  CallReplacementTransformer(
+  /*package*/ CallReplacementTransformer(
       Map<MethodSignature, MethodSignature> replacementMap, Set<String> excludedPackagePrefixes) {
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
@@ -220,8 +220,8 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   private static class NewInstInfo {
-    InstructionHandle new_inst;
-    String new_class;
+    /*package*/ InstructionHandle new_inst;
+    /*package*/ String new_class;
 
     public NewInstInfo(InstructionHandle new_inst, String new_class) {
       this.new_inst = new_inst;
@@ -567,7 +567,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /** Adds a shutdown hook that prints out {@link #replacementMap}, if debug logging is enabled. */
-  void addMapFileShutdownHook() {
+  /*package*/ void addMapFileShutdownHook() {
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread() {

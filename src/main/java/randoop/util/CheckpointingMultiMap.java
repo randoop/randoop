@@ -48,13 +48,13 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
   /** A triple of an operation, a key, and a value. */
   private class OpKeyVal {
     /** An operation. */
-    final Ops op;
+    /*package*/ final Ops op;
 
     /** A key. */
-    final K key;
+    /*package*/ final K key;
 
     /** A value. */
-    final V val;
+    /*package*/ final V val;
 
     /**
      * Creates a new OpKeyVal.
@@ -63,7 +63,7 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
      * @param key a key
      * @param val a value
      */
-    OpKeyVal(final Ops op, final K key, final V val) {
+    /*package*/ OpKeyVal(final Ops op, final K key, final V val) {
       this.op = op;
       this.key = key;
       this.val = val;

@@ -115,7 +115,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  /*package*/ boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return false;
   }
 

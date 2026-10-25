@@ -22,7 +22,8 @@ class ReplacementFileException extends Exception {
    * @param lineNumber the line of the file where the error occurred
    * @param lineText the text of the line where the error occurred
    */
-  ReplacementFileException(String msg, String filename, int lineNumber, String lineText) {
+  /*package*/ ReplacementFileException(
+      String msg, String filename, int lineNumber, String lineText) {
     super(msg);
     this.filename = filename;
     this.lineNumber = lineNumber;

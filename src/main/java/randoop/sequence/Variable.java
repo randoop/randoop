@@ -131,7 +131,7 @@ public class Variable implements Comparable<Variable> {
    * @param type the type
    * @return the variable name as a string
    */
-  static String classToVariableName(Type type) {
+  /*package*/ static String classToVariableName(Type type) {
     return VariableRenamer.getVariableName(type);
   }
 

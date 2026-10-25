@@ -31,7 +31,7 @@ class IntersectionTypeBound extends ParameterBound {
    *
    * @param boundList the list of type bounds
    */
-  IntersectionTypeBound(List<ParameterBound> boundList) {
+  /*package*/ IntersectionTypeBound(List<ParameterBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -104,7 +104,7 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  boolean hasWildcard() {
+  /*package*/ boolean hasWildcard() {
     for (ParameterBound b : boundList) {
       if (b.hasWildcard()) {
         return true;
@@ -200,7 +200,7 @@ class IntersectionTypeBound extends ParameterBound {
    *     bound
    */
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  /*package*/ boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

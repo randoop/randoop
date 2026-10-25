@@ -1202,7 +1202,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param className an argument that should be a class name
    * @param commandLineOption the command line option name, without leading "--"
    */
-  static void validateClassName(String className, String commandLineOption) {
+  /*package*/ static void validateClassName(String className, String commandLineOption) {
     if (className.isEmpty()) {
       throw new RandoopUsageError(
           "Do not provide the empty string as the argument to --" + commandLineOption + ".");

@@ -18,12 +18,12 @@ public abstract class ParameterType extends ReferenceType {
   /** The upper bound on this type. */
   private ParameterBound upperBound;
 
-  ParameterType() {
+  /*package*/ ParameterType() {
     this.lowerBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);
     this.upperBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
   }
 
-  ParameterType(ParameterBound lowerBound, ParameterBound upperBound) {
+  /*package*/ ParameterType(ParameterBound lowerBound, ParameterBound upperBound) {
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
   }
@@ -93,7 +93,7 @@ public abstract class ParameterType extends ReferenceType {
    *
    * @param upperBound the new upper bound
    */
-  void setUpperBound(ParameterBound upperBound) {
+  /*package*/ void setUpperBound(ParameterBound upperBound) {
     this.upperBound = upperBound;
   }
 
@@ -102,7 +102,7 @@ public abstract class ParameterType extends ReferenceType {
    *
    * @param lowerBound the new lower bound
    */
-  void setLowerBound(ParameterBound lowerBound) {
+  /*package*/ void setLowerBound(ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
   }
 

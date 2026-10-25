@@ -51,7 +51,7 @@ import randoop.sequence.ExecutableSequence;
 public final class JUnitCreator {
 
   /** An instance of a Java parser. */
-  static JavaParser javaParser = new JavaParser();
+  /*package*/ static JavaParser javaParser = new JavaParser();
 
   /** The "public" modifier. */
   private final NodeList<Modifier> PUBLIC = new NodeList<>(Modifier.publicModifier());

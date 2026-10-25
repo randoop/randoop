@@ -19,7 +19,7 @@ final class NullReferenceType extends ReferenceType {
    *
    * @return the null type object
    */
-  static NullReferenceType getNullType() {
+  /*package*/ static NullReferenceType getNullType() {
     return value;
   }
 

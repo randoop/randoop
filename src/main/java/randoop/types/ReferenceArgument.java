@@ -132,7 +132,7 @@ public final class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  /*package*/ boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return false;
     }

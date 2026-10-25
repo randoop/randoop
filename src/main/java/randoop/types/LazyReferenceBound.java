@@ -14,7 +14,7 @@ import java.util.List;
  */
 class LazyReferenceBound extends ReferenceBound {
 
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -97,7 +97,7 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  /*package*/ boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
     return false;
   }

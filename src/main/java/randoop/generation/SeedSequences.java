@@ -97,7 +97,7 @@ public final class SeedSequences {
    * @param type the type
    * @return the seed values with the given raw type
    */
-  static Set<Object> getSeeds(Type type) {
+  /*package*/ static Set<Object> getSeeds(Type type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
       if (type.isAssignableFromTypeOf(seed)) {

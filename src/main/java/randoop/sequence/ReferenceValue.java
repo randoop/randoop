@@ -22,7 +22,7 @@ public final class ReferenceValue {
    * @param type the type of this value
    * @param value the {@link Object} reference to this value
    */
-  ReferenceValue(ReferenceType type, Object value) {
+  /*package*/ ReferenceValue(ReferenceType type, Object value) {
     this.type = type;
     this.value = value;
   }

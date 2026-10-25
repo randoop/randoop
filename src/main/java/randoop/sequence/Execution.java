@@ -17,7 +17,7 @@ import randoop.NotExecuted;
 public final class Execution {
 
   // The execution outcome of each statement.
-  final List<ExecutionOutcome> outcomes;
+  /*package*/ final List<ExecutionOutcome> outcomes;
 
   private Set<Class<?>> coveredClasses;
 
@@ -52,11 +52,11 @@ public final class Execution {
     return outcomes.get(i);
   }
 
-  void addCoveredClass(Class<?> c) {
+  /*package*/ void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
-  Set<Class<?>> getCoveredClasses() {
+  /*package*/ Set<Class<?>> getCoveredClasses() {
     return coveredClasses;
   }
 }

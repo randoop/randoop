@@ -64,7 +64,7 @@ public final class ReplaceCallAgent {
 
   /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
-  static Path debugPath;
+  /*package*/ static Path debugPath;
 
   @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
@@ -301,7 +301,7 @@ public final class ReplaceCallAgent {
    * @param url the url to extract the path from
    * @return the path for the jar file, as a string
    */
-  static String getJarPathFromURL(URL url) {
+  /*package*/ static String getJarPathFromURL(URL url) {
     String jarPath = url.getPath();
     int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
     return jarPath.substring(jarPath.indexOf(':') + offset, jarPath.indexOf('!'));
@@ -343,7 +343,7 @@ public final class ReplaceCallAgent {
      *
      * @param message the error message
      */
-    BugInAgentException(String message) {
+    /*package*/ BugInAgentException(String message) {
       super(message);
     }
 
@@ -353,7 +353,7 @@ public final class ReplaceCallAgent {
      * @param message the message
      * @param cause the exception
      */
-    BugInAgentException(String message, Throwable cause) {
+    /*package*/ BugInAgentException(String message, Throwable cause) {
       super(message, cause);
     }
   }

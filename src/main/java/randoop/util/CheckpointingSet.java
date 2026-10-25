@@ -78,7 +78,7 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
      *
      * @param underlying the iterator over the underlying map's keys
      */
-    CheckpointingSetIterator(Iterator<E> underlying) {
+    /*package*/ CheckpointingSetIterator(Iterator<E> underlying) {
       this.underlying = underlying;
     }
 

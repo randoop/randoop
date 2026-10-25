@@ -44,7 +44,7 @@ class VariableRenamer {
    * @return a variable name based on its type, with the first character lowercase and the final
    *     character not a digit
    */
-  static String getVariableName(Type type) {
+  /*package*/ static String getVariableName(Type type) {
     String varName = getVariableName(type, VAR_NAME_MAX_DEPTH);
 
     // Preserve camel case.

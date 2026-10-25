@@ -16,7 +16,7 @@ abstract class SourceBuilder {
    * @param toks the tokens to include on the line
    * @return the {@code String} constructed from the tokens
    */
-  String createLine(String... toks) {
+  /*package*/ String createLine(String... toks) {
     return StringsPlume.join(" ", toks);
   }
 
@@ -25,7 +25,7 @@ abstract class SourceBuilder {
    *
    * @return the list of lines in this declaration
    */
-  abstract List<String> toLines();
+  /*package*/ abstract List<String> toLines();
 
   /**
    * Returns this declaration as a {@code String}.

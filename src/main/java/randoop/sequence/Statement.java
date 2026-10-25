@@ -30,7 +30,7 @@ public final class Statement {
   // NOTE that the inputs to a statement are not a list
   // of Variables, but a list of RelativeNegativeIndex objects.
   // See that class for an explanation.
-  final List<RelativeNegativeIndex> inputs;
+  /*package*/ final List<RelativeNegativeIndex> inputs;
 
   /**
    * Create a new statement of type statement that takes as input the given values.

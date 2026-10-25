@@ -24,7 +24,7 @@ public class NoExceptionCheck implements Check {
    */
   private String exceptionName;
 
-  NoExceptionCheck(int statementIdx, String exceptionName) {
+  /*package*/ NoExceptionCheck(int statementIdx, String exceptionName) {
     this.statementIdx = statementIdx;
     this.exceptionName = exceptionName;
   }

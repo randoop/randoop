@@ -32,7 +32,8 @@ final class TypeArguments {
    * @return the array of {@link Class} objects for the type arguments in argStr
    * @throws OperationParseException if a type name in the string is not a valid type
    */
-  static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
+  /*package*/ static Class<?>[] getTypeArgumentsForString(String argStr)
+      throws OperationParseException {
     Class<?>[] argTypes = new Class<?>[0];
     @SuppressWarnings("PMD.InefficientEmptyStringCheck") // Fix when no longer supporting Java 8.
     boolean isBlank = argStr.trim().isEmpty();
@@ -59,7 +60,7 @@ final class TypeArguments {
    * @param sb the {@link StringBuilder} to which type names are added
    * @param params the array of {@link Class} objects representing the types of signature arguments
    */
-  static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
+  /*package*/ static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
     StringJoiner sj = new StringJoiner(",");
     for (Class<?> param : params) {
       sj.add(param.getName());

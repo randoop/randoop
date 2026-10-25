@@ -52,7 +52,7 @@ public class ReflectionManager {
    * If true, output diagnostics to stdout rather than to a log. Useful when running unit tests,
    * which don't do logging.
    */
-  boolean logToStdout = false;
+  /*package*/ boolean logToStdout = false;
 
   /**
    * The accessibility predicate for classes and class members.

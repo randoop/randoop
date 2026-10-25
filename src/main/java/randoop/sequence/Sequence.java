@@ -288,7 +288,7 @@ public final class Sequence {
    *
    * @return the variables used in the last statement of this sequence
    */
-  List<Variable> getVariablesOfLastStatement() {
+  /*package*/ List<Variable> getVariablesOfLastStatement() {
     return this.lastStatementVariables;
   }
 
@@ -299,7 +299,7 @@ public final class Sequence {
    *
    * @return the types of the variables in the last statement of this sequence
    */
-  List<Type> getTypesForLastStatement() {
+  /*package*/ List<Type> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
@@ -408,7 +408,7 @@ public final class Sequence {
     return !activeFlags.isEmpty();
   }
 
-  boolean isActive(int i) {
+  /*package*/ boolean isActive(int i) {
     return activeFlags.get(i);
   }
 
@@ -794,7 +794,7 @@ public final class Sequence {
     return new Variable(this, index);
   }
 
-  void checkIndex(int i) {
+  /*package*/ void checkIndex(int i) {
     if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
     }
@@ -1161,7 +1161,7 @@ public final class Sequence {
    * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
-  Sequence getSubsequence(int index) {
+  /*package*/ Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublistContaining(index));
   }
 
@@ -1187,7 +1187,7 @@ public final class Sequence {
    *
    * @return true if literals should be inlined in this sequence, and false otherwise
    */
-  boolean shouldInlineLiterals() {
+  /*package*/ boolean shouldInlineLiterals() {
     return shouldInlineLiterals;
   }
 

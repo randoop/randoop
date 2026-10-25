@@ -15,10 +15,10 @@ public class TestCoverageInfo {
 
   // A pair of: branches covered, total branches in method
   private static class BranchCov {
-    final int covered;
-    final int inMethod;
+    /*package*/ final int covered;
+    /*package*/ final int inMethod;
 
-    BranchCov(int covered, int inMethod) {
+    /*package*/ BranchCov(int covered, int inMethod) {
       this.covered = covered;
       this.inMethod = inMethod;
     }

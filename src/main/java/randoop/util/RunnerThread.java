@@ -9,7 +9,7 @@ public class RunnerThread extends Thread {
   private @MonotonicNonNull ReflectionCode code;
 
   // Fields assigned when calling run()
-  boolean runFinished;
+  /*package*/ boolean runFinished;
 
   // The state of the thread.
   private NextCallMustBe state;
@@ -24,7 +24,7 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  @SuppressWarnings({
+  /*package*/ @SuppressWarnings({
     "initialization:method.invocation", // needed for CF 3.49.4 and earlier
     "PMD.ConstructorCallsOverridableMethod"
   })
