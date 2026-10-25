@@ -1150,37 +1150,38 @@ public class GenTests extends GenInputsAbstract {
    * @return true if all fixtures were read without error, false, otherwise
    */
   private boolean createFixtureCode() {
-    boolean badFixtureText = false;
+    List<String> errors = new ArrayList<>();
+    afterAllFixtureBody = parseFixtureFile(GenInputsAbstract.junit_after_all, "after-all", errors);
+    afterEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_after_each, "after-each", errors);
+    beforeAllFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_all, "before-all", errors);
+    beforeEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_each, "before-each", errors);
+    for (String error : errors) {
+      System.out.println(error);
+    }
+    return errors.isEmpty();
+  }
 
+  /**
+   * Parses the fixture text in the given file.
+   *
+   * @param filename the file containing the fixture text, or null
+   * @param fixtureKind the kind of fixture, such as "after-all", for use in error messages
+   * @param errors a list to which this adds a message if the fixture text cannot be parsed
+   * @return the parsed fixture text, or null if {@code filename} is null or the fixture text cannot
+   *     be parsed
+   */
+  private static BlockStmt parseFixtureFile(
+      String filename, String fixtureKind, List<String> errors) {
     try {
-      afterAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+      return JUnitCreator.parseFixture(getFileText(filename));
     } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text: " + e.getMessage());
-      badFixtureText = true;
+      errors.add(
+          String.format("Error in %s fixture file %s: %s", fixtureKind, filename, e.getMessage()));
+      return null;
     }
-    try {
-      afterEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
-    } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text: " + e.getMessage());
-      badFixtureText = true;
-    }
-    try {
-      beforeAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
-    } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text: " + e.getMessage());
-      badFixtureText = true;
-    }
-    try {
-      beforeEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
-    } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text: " + e.getMessage());
-      badFixtureText = true;
-    }
-    return !badFixtureText;
   }
 
   /**
