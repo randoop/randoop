@@ -24,7 +24,8 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  /*package*/ @SuppressWarnings({
+  /*package*/
+  @SuppressWarnings({
     "initialization:method.invocation", // needed for CF 3.49.4 and earlier
     "PMD.ConstructorCallsOverridableMethod"
   })
