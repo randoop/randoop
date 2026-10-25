@@ -232,15 +232,14 @@ public class OperationExtractor extends DefaultClassVisitor {
       AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications)
       throws RandoopSpecificationError {
-    ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     OperationExtractor extractor =
-        new OperationExtractor(
+        extract(
+            new ReflectionManager(accessibilityPredicate),
             classType,
             reflectionPredicate,
             omitMethodsPredicate,
             accessibilityPredicate,
             operationSpecifications);
-    mgr.apply(extractor, classType.getRuntimeClass());
     return new ArrayList<>(extractor.getOperations());
   }
 
@@ -267,16 +266,49 @@ public class OperationExtractor extends DefaultClassVisitor {
     ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
-          new OperationExtractor(
+          extract(
+              mgr,
               classType,
               reflectionPredicate,
               omitMethodsPredicate,
               accessibilityPredicate,
               operationSpecifications);
-      mgr.apply(extractor, classType.getRuntimeClass());
       result.addAll(extractor.getOperations());
     }
     return new ArrayList<>(result);
+  }
+
+  /**
+   * Returns an extractor that has visited the given class. Its {@link #getOperations()} and {@link
+   * #getOmittedOperations()} methods return the operations that were extracted and omitted.
+   *
+   * @param mgr the reflection manager that applies the extractor to the class
+   * @param classType the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
+   *     null
+   * @param accessibilityPredicate the predicate for test accessibility
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
+   * @return an extractor that has visited {@code classType}
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
+   */
+  static OperationExtractor extract(
+      ReflectionManager mgr,
+      ClassOrInterfaceType classType,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitMethodsPredicate,
+      AccessibilityPredicate accessibilityPredicate,
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
+    OperationExtractor extractor =
+        new OperationExtractor(
+            classType,
+            reflectionPredicate,
+            omitMethodsPredicate,
+            accessibilityPredicate,
+            operationSpecifications);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    return extractor;
   }
 
   /**
@@ -513,7 +545,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation operationForType = operation.getOperationForType(classType);
     if (omitPredicate.shouldOmit(operationForType)) {
       Log.logPrintln("omitPreditate omits " + operationForType);
-      omittedOperations.add(operation);
+      omittedOperations.add(operationForType);
       return;
     }
 

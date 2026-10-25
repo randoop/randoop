@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
@@ -155,21 +156,39 @@ public class OmitMethodsTest {
   @Test
   public void testOmittedOperations() throws RandoopSpecificationError {
     Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m1\\(\\)");
+    // m1 is declared in G.
+    assertOmittedM1(gType, omitpattern);
+    // m1 is inherited from G.
+    assertOmittedM1(cType, omitpattern);
+  }
+
+  /**
+   * Asserts that extracting the operations of {@code type} omits exactly {@code m1}, and that the
+   * omitted operation has {@code type} as its declaring type.
+   *
+   * @param type the type whose operations to extract
+   * @param omitpattern the omit pattern, which should match {@code m1} and nothing else
+   * @throws RandoopSpecificationError if a specification is malformed
+   */
+  private void assertOmittedM1(ClassOrInterfaceType type, Pattern omitpattern)
+      throws RandoopSpecificationError {
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     OperationExtractor extractor =
-        new OperationExtractor(
-            gType,
+        OperationExtractor.extract(
+            new ReflectionManager(accessibility),
+            type,
             new DefaultReflectionPredicate(),
             new OmitMethodsPredicate(Collections.singletonList(omitpattern)),
             accessibility,
             null);
-    new ReflectionManager(accessibility).apply(extractor, gType.getRuntimeClass());
     assertFalse(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m1"));
     assertTrue(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m2"));
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
     assertTrue(hasMethodNamed(omitted, "m1"));
+    TypedOperation omittedOp = omitted.iterator().next();
+    assertEquals(type, ((TypedClassOperation) omittedOp).getDeclaringType());
   }
 
   private boolean hasMethodNamed(Set<TypedOperation> operations, String name) {
