@@ -170,6 +170,11 @@ class LazyParameterBound extends ParameterBound {
     return getTypeParameters(boundType);
   }
 
+  @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    return getTypeParameters();
+  }
+
   /**
    * Collects the type parameters from the given reflection {@code Type} object.
    *
@@ -299,15 +304,14 @@ class LazyParameterBound extends ParameterBound {
     return b.isUpperBound(argType, substitution);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns false if the substitution does not instantiate this bound.
-   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
-    return !b.equals(this) && b.isUpperBound(bound, substitution);
+    if (b.equals(this)) {
+      throw new IllegalArgumentException(
+          "substitution " + substitution + " does not instantiate " + this);
+    }
+    return b.isUpperBound(bound, substitution);
   }
 
   /**

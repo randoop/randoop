@@ -160,9 +160,10 @@ class WildcardType extends ParameterType {
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
    *   <li>{@code ? extends T} contains {@code ?}
+   *   <li>{@code ? extends Object} contains {@code ? super S}
    * </ul>
    *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
+   * The first two are technically the same because from a reflection perspective {@code ?} is just
    * {@code ? extends Object}. Otherwise, checks for the cases
    *
    * <ul>
@@ -178,9 +179,10 @@ class WildcardType extends ParameterType {
    */
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {
-      if (otherType.hasUpperBound
-          && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
-        return true;
+      if (otherType.hasUpperBound) {
+        return otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound());
+      } else {
+        return this.getUpperTypeBound().isObject();
       }
     } else {
       if (otherType.hasUpperBound) {
@@ -189,7 +191,6 @@ class WildcardType extends ParameterType {
         return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
       }
     }
-    return false;
   }
 
   /**
