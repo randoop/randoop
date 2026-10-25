@@ -213,25 +213,11 @@ public final class ReplacementFileReader {
     }
     // Call toMethod() instead of exists() to get more precise error messages.
     Method replacementMethod = replacement.toMethod();
-
-    // The replacement is called via invokestatic from instrumented classes in arbitrary packages.
-    if (!replacementMethod.isPublic() || !replacementMethod.isStatic()) {
-      throw new ReplacementException(
-          "Replacement method must be public and static: " + replacement);
-    }
     JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
     if (replacementClass == null) {
       throw new ClassNotFoundException("Class " + replacement.getClassname() + " not found");
     }
-    if (!replacementClass.isPublic()) {
-      throw new ReplacementException(
-          "Replacement class must be public: " + replacement.getClassname());
-    }
-    // The transformer emits a Methodref, which cannot refer to an interface method.
-    if (replacementClass.isInterface()) {
-      throw new ReplacementException(
-          "Replacement class must not be an interface: " + replacement.getClassname());
-    }
+    checkReplacementIsCallable(replacementClass, replacementMethod, replacement);
 
     // The transformer builds the replacement call's descriptor from the original call, so the
     // replacement must have exactly the corresponding parameter and return types.
@@ -260,6 +246,34 @@ public final class ReplacementFileReader {
     }
 
     addReplacement(replacementMap, original, replacement);
+  }
+
+  /**
+   * Checks that a replacement method can be called, via {@code invokestatic}, from a class in any
+   * package.
+   *
+   * @param replacementClass the class named in the replacement's signature
+   * @param replacementMethod the replacement method
+   * @param replacement the signature of the replacement method
+   * @throws ReplacementException if the replacement method is not public and static, or if the
+   *     replacement class is not public or is an interface
+   */
+  private static void checkReplacementIsCallable(
+      JavaClass replacementClass, Method replacementMethod, MethodSignature replacement)
+      throws ReplacementException {
+    if (!replacementMethod.isPublic() || !replacementMethod.isStatic()) {
+      throw new ReplacementException(
+          "Replacement method must be public and static: " + replacement);
+    }
+    if (!replacementClass.isPublic()) {
+      throw new ReplacementException(
+          "Replacement class must be public: " + replacementClass.getClassName());
+    }
+    // The transformer emits a Methodref, which cannot refer to an interface method.
+    if (replacementClass.isInterface()) {
+      throw new ReplacementException(
+          "Replacement class must not be an interface: " + replacementClass.getClassName());
+    }
   }
 
   /**
@@ -340,8 +354,9 @@ public final class ReplacementFileReader {
    * @param replacementPackage the name of the package containing the replacement class
    * @param classname the class's simple name
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a replacement method is not static, or has no matching
-   *     original, or if the replacement class cannot be found
+   * @throws ReplacementException if a non-private replacement method is not public and static or
+   *     has no matching original, if the replacement class has a non-private method but is not
+   *     public or is an interface, or if the replacement class cannot be found
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -358,10 +373,11 @@ public final class ReplacementFileReader {
   /**
    * Adds method replacements determined by original and replacement class.
    *
-   * <p>For each non-private static method in the replacement class, the original class is checked
-   * for a corresponding method. This original method may either be non-static, where the receiver
-   * is translated to the first argument of the replacement, or static, having the same arguments as
-   * the replacement.
+   * <p>For each non-private method in the replacement class, other than constructors and static
+   * initializers, the method is checked to be callable as a replacement, and the original class is
+   * checked for a corresponding method. This original method may either be non-static, where the
+   * receiver is translated to the first argument of the replacement, or static, having the same
+   * arguments as the replacement.
    *
    * <p>Note: This method will not overwrite an existing replacement method.
    *
@@ -369,8 +385,9 @@ public final class ReplacementFileReader {
    * @param originalClassname the name of the original class
    * @param replacementClassname the name of the replacement class
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a replacement method is not static, or has no matching
-   *     original, or if the replacement class cannot be found
+   * @throws ReplacementException if a non-private replacement method is not public and static or
+   *     has no matching original, if the replacement class has a non-private method but is not
+   *     public or is an interface, or if the replacement class cannot be found
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -385,23 +402,18 @@ public final class ReplacementFileReader {
     }
 
     for (Method m : replacementJC.getMethods()) {
-      if (m.getName().equals("<init>")) {
-        // Do not replace the original class constructor with the replacement class constructor.
+      if (m.getName().equals("<init>") || m.getName().equals("<clinit>")) {
+        // Do not replace the original class constructor or static initializer with the
+        // replacement class's.
         continue;
       }
       if (m.isPrivate()) {
         // A replacement class may have private helper methods; quietly ignore them.
         continue;
       }
-      if (!m.isStatic()) {
-        String msg =
-            String.format(
-                "Non-static non-private replacement method found: %s.%s",
-                replacementClassname, m.getName());
-        throw new ReplacementException(msg);
-      }
 
       MethodSignature replacement = MethodSignature.of(replacementClassname, m);
+      checkReplacementIsCallable(replacementJC, m, replacement);
 
       MethodSignature original = replacement.substituteClassname(originalClassname);
       if (original.exists()) {

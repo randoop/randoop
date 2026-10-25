@@ -134,6 +134,28 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void nonPublicMethodClassReplacementTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/nonpublicmethodclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonpublicmethodclassreplacement.txt:2: Replacement method must be public and static:"
+            + " randoop.instrument.ReplacementTestMethods$PackagePrivateMethodClass.nextInt(java.util.Random)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nonPublicClassClassReplacementTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/nonpublicclassclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonpublicclassclassreplacement.txt:2: Replacement class must be public:"
+            + " randoop.instrument.NonPublicReplacementClass");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void missingClassClassTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);

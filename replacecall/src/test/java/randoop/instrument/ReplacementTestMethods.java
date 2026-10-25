@@ -41,6 +41,25 @@ public class ReplacementTestMethods {
     return 0;
   }
 
+  /** A replacement class for {@code Random} whose replacement method is not public. */
+  public static class PackagePrivateMethodClass {
+
+    /** Do not instantiate. */
+    private PackagePrivateMethodClass() {
+      throw new UnsupportedOperationException("Do not instantiate");
+    }
+
+    /**
+     * A replacement for {@code Random.nextInt()} that is not public.
+     *
+     * @param r the receiver of the replaced call
+     * @return 0
+     */
+    static int nextInt(Random r) {
+      return 0;
+    }
+  }
+
   /** An interface that declares a replacement method. */
   public interface ReplacementInterface {
     /**
