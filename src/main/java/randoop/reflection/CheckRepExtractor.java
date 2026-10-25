@@ -24,6 +24,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
    * @param contracts the set of contracts
    */
   /*package*/ CheckRepExtractor(ContractSet contracts) {
+    super();
     this.contracts = contracts;
   }
 

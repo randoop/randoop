@@ -12,7 +12,9 @@ final class NullReferenceType extends ReferenceType {
   private static final NullReferenceType value = new NullReferenceType();
 
   /** Private constructor to enforce singleton. */
-  private NullReferenceType() {}
+  private NullReferenceType() {
+    super();
+  }
 
   /**
    * Returns the null type.

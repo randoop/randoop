@@ -21,6 +21,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
    */
   @SuppressWarnings("PMD.ArrayIsStoredDirectly")
   public ObjectContractReflectionCode(final ObjectContract c, final Object... objs) {
+    super();
     this.c = c;
     this.objs = objs;
   }

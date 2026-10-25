@@ -25,6 +25,7 @@ class UncheckedCast extends CallableOperation {
    * @param type the cast type
    */
   /*package*/ UncheckedCast(Type type) {
+    super();
     this.type = type;
   }
 

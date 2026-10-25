@@ -24,6 +24,7 @@ public final class EnumValue extends ObjectContract {
    * @param value the enum constant that the checked value must equal
    */
   public EnumValue(Enum<?> value) {
+    super();
     this.value = value;
     this.type = Type.forClass(value.getDeclaringClass());
   }

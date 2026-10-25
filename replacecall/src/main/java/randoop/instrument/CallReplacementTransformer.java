@@ -71,6 +71,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    */
   /*package*/ CallReplacementTransformer(
       Map<MethodSignature, MethodSignature> replacementMap, Set<String> excludedPackagePrefixes) {
+    super();
     this.replacementMap = replacementMap;
     this.excludedPackagePrefixes = excludedPackagePrefixes;
     // debugInstrument.enabled = ReplaceCallAgent.debug;

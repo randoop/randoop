@@ -28,6 +28,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
    * @param scopeToLiteralStatistics a map from types to sequences in them that yield a literal
    */
   /*package*/ ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    super();
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 

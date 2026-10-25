@@ -33,6 +33,7 @@ public class InstantiatedType extends ParameterizedType {
    * @throws IllegalArgumentException if either argument is null
    */
   /*package*/ InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
+    super();
     if (genericType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }

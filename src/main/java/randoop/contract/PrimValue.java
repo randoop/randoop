@@ -54,6 +54,7 @@ public final class PrimValue extends ObjectContract {
    * @param equalityMode what equality test the assertion uses
    */
   public PrimValue(Object value, EqualityMode equalityMode) {
+    super();
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }

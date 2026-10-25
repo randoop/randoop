@@ -32,6 +32,7 @@ public class ArrayCreation extends CallableOperation {
    * @param arrayType the type of the created array
    */
   /*package*/ ArrayCreation(ArrayType arrayType) {
+    super();
     this.elementType = arrayType.getElementType();
     this.componentType = arrayType.getComponentType();
     this.dimensions = arrayType.getDimensions();

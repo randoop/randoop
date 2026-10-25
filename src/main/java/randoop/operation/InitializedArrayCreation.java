@@ -42,6 +42,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @param arrayType the type of array this operation creates
    */
   /*package*/ InitializedArrayCreation(ArrayType arrayType, int length) {
+    super();
     assert length >= 0 : "array length may not be negative: " + length;
 
     this.elementType = arrayType.getComponentType();

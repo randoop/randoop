@@ -124,6 +124,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @param seedSequences set of seed sequences
    */
   public OrienteeringSelection(Set<Sequence> seedSequences) {
+    super();
     for (Sequence seedSequence : seedSequences) {
       // Treat every seed sequence as having an execution time of 1 nanosecond.
       createSequenceDetailsWithExecutionTime(seedSequence, 1L);

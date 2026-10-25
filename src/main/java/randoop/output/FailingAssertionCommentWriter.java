@@ -568,6 +568,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
      * @param pattern the pattern that was not found
      */
     public NotMatchedException(Pattern pattern) {
+      super();
       this.pattern = pattern;
     }
 

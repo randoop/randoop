@@ -10,7 +10,9 @@ public final class EqualsReturnsNormally extends ObjectContract {
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
   /** Private constructor to enforce singleton. */
-  private EqualsReturnsNormally() {}
+  private EqualsReturnsNormally() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.

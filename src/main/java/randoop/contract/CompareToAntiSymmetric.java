@@ -14,7 +14,9 @@ public final class CompareToAntiSymmetric extends ObjectContract {
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
   /** Private constructor to enforce singleton. */
-  private CompareToAntiSymmetric() {}
+  private CompareToAntiSymmetric() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
