@@ -89,4 +89,28 @@ public class ReplacementFileTest {
         ReplacementFileReader.readReplacements(defaultFile);
     assertEquals(75, map.size());
   }
+
+  @Test
+  public void javaxMailReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/javaxmailreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(4, map.size());
+    assertEquals(
+        MethodSignature.of("randoop.mock.javax.mail.Service.connect(javax.mail.Service)"),
+        map.get(MethodSignature.of("javax.mail.Service.connect()")));
+  }
+
+  @Test
+  public void jcommanderReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/jcommanderreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
+    assertEquals(
+        MethodSignature.of(
+            "randoop.mock.com.beust.jcommander.internal.DefaultConsole.readPassword("
+                + "com.beust.jcommander.internal.DefaultConsole, boolean)"),
+        map.get(
+            MethodSignature.of(
+                "com.beust.jcommander.internal.DefaultConsole.readPassword(boolean)")));
+  }
 }

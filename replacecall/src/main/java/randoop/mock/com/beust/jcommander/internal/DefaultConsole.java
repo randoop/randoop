@@ -1,17 +1,33 @@
 package randoop.mock.com.beust.jcommander.internal;
 
-public class DefaultConsole {
+/**
+ * Class of mock methods for {@code com.beust.jcommander.internal.DefaultConsole}. The mock methods
+ * do not read from standard input.
+ *
+ * <p>This is not a default replacement, because JCommander is not part of the JDK. To use it, put
+ * this line in a replacement file:
+ *
+ * <pre>
+ * com.beust.jcommander.internal.DefaultConsole randoop.mock.com.beust.jcommander.internal.DefaultConsole
+ * </pre>
+ */
+public final class DefaultConsole {
+
+  /** Do not instantiate. */
+  private DefaultConsole() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
-   * Mock of com.beust.jcommander.internal.DefaultConsole.readPassword(boolean). This method does
-   * nothing and returns an empty char array.
+   * Mock of {@code com.beust.jcommander.internal.DefaultConsole.readPassword(boolean)}. Returns an
+   * empty password without reading from standard input.
    *
-   * @param instance the instance of DefaultConsole (ignored)
-   * @param echoInput the echoInput parameter (ignored)
+   * @param console the receiver (ignored)
+   * @param echoInput whether to echo the input (ignored)
    * @return an empty char array
    */
   public static char[] readPassword(
-      com.beust.jcommander.internal.Console instance, boolean echoInput) {
+      com.beust.jcommander.internal.DefaultConsole console, boolean echoInput) {
     return new char[0];
   }
 }

@@ -52,6 +52,7 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
+          <li><a href="#replacecall-disable-default">Disabling default replacements</a></li>
           <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
@@ -1551,6 +1552,36 @@ To use it:
 Randoop uses a <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">
 default set of replacements</a>.
 You can <a href="#replacecall-replacement-definition">define additional replacements</a>.
+
+
+<h3 id="replacecall-disable-default">Disabling default replacements</h3>
+
+<p>
+To disable a default replacement, pass the signature of the original method to the
+<code>--replacecall-exclude</code> command-line option.
+The signature is a <a href="#fully-qualified-signature">Randoop fully-qualified signature</a>,
+as in a <a href="#replacecall-replacement-definition">replacement file</a>,
+and it must not contain whitespace.
+You may give the option multiple times.
+For example, to let tests call the real <code>System.exit</code>,
+use this command-line argument (the quotes prevent the shell from interpreting the parentheses):
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacecall-exclude=java.lang.System.exit(int)"
+</pre>
+
+<p>
+Alternately, list the signatures in a file, one per line, and pass the file to the
+<code>--replacecall-exclude-file=<em>filename</em></code> command-line option.
+(Blank lines and <code>#</code>-style comments are ignored.)
+</p>
+
+<p>
+It is an error to exclude a method that has no default replacement.
+When a default replacement is disabled, Randoop may call the original method directly.
+These options affect only the default replacements, not the ones in a
+file given by <code>--replacement-file</code>.
+</p>
 
 
 <h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
