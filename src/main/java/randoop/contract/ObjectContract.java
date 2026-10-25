@@ -215,7 +215,14 @@ public abstract class ObjectContract {
     return new ObjectCheck(this, varArray);
   }
 
-  // The toString() of class Buggy throws an exception.
+  /**
+   * Returns the result of calling {@code toString()} on the given object, or a description of the
+   * object if {@code toString()} throws an exception. (The toString() of class Buggy throws an
+   * exception.)
+   *
+   * @param o an object
+   * @return a printed representation of the object
+   */
   /*package*/ static String toStringHandleExceptions(Object o) {
     try {
       return o.toString();

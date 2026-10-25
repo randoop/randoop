@@ -7,17 +7,36 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 
+/**
+ * Branch coverage information for a class whose bytecode has been instrumented to record it. An
+ * instrumented class stores its TestCoverageInfo in a static field named {@code
+ * randoopCoverageInfo}.
+ */
 public class TestCoverageInfo {
 
+  /** For each branch, the number of times its true direction was taken. */
   public final int[] branchTrue;
+
+  /** For each branch, the number of times its false direction was taken. */
   public final int[] branchFalse;
+
+  /** Maps a method signature to the indices of the branches in that method. */
   public final Map<String, Set<Integer>> methodToIndices;
 
-  // A pair of: branches covered, total branches in method
+  /** A pair of: branches covered, total branches in method. */
   private static class BranchCov {
+    /** The number of branches covered. */
     /*package*/ final int covered;
+
+    /** The total number of branches in the method. */
     /*package*/ final int inMethod;
 
+    /**
+     * Creates a BranchCov.
+     *
+     * @param covered the number of branches covered
+     * @param inMethod the total number of branches in the method
+     */
     /*package*/ BranchCov(int covered, int inMethod) {
       this.covered = covered;
       this.inMethod = inMethod;

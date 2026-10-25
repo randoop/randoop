@@ -219,10 +219,20 @@ public class CallReplacementTransformer extends InstructionListUtils
     return false;
   }
 
+  /** Information about a NEW instruction whose corresponding constructor call is not yet seen. */
   private static class NewInstInfo {
+    /** The NEW instruction. */
     /*package*/ InstructionHandle new_inst;
+
+    /** The name of the class that the NEW instruction allocates. */
     /*package*/ String new_class;
 
+    /**
+     * Creates a NewInstInfo.
+     *
+     * @param new_inst the NEW instruction
+     * @param new_class the name of the class that the NEW instruction allocates
+     */
     public NewInstInfo(InstructionHandle new_inst, String new_class) {
       this.new_inst = new_inst;
       this.new_class = new_class;

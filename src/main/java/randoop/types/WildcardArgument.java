@@ -192,6 +192,11 @@ public class WildcardArgument extends TypeArgument {
     return false;
   }
 
+  /**
+   * Returns the wildcard type of this argument.
+   *
+   * @return the wildcard type of this argument
+   */
   /*package*/ WildcardType getWildcardType() {
     return argumentType;
   }

@@ -61,6 +61,11 @@ public class ExplicitTypeVariable extends TypeVariable {
     return this.getFqName();
   }
 
+  /**
+   * Returns the reflection type variable that this type variable represents.
+   *
+   * @return the reflection type variable that this type variable represents
+   */
   /*package*/ java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
     return this.variable;
   }

@@ -25,9 +25,16 @@ import randoop.types.TypeTuple;
  */
 public final class CheckRepContract extends ObjectContract {
 
+  /** The check-rep method. */
   public final Method checkRepMethod;
+
+  /** The operation that calls the check-rep method. */
   private final TypedClassOperation operation;
+
+  /** True if the check-rep method returns a boolean, false if it returns void. */
   /*package*/ boolean returnsBoolean; // derived from checkRepMethod
+
+  /** The class that declares the check-rep method. */
   public final Class<?> declaringClass; // derived from checkRepMethod
 
   @Override
