@@ -296,6 +296,34 @@ public class TypeVariableTest {
   static class ConcreteAssert extends AbstractAssert<ConcreteAssert, String> {}
 
   /**
+   * A generic interface with two type parameters.
+   *
+   * @param <X> the first type parameter
+   * @param <Y> the second type parameter
+   */
+  interface Related<X, Y> {}
+
+  /** A class that is related to itself and to {@code String}. */
+  static class RelatedToString implements Related<RelatedToString, String> {}
+
+  /**
+   * A type parameter bounded by {@link RelatedToString}.
+   *
+   * @param <T> the type parameter
+   */
+  static class RelatedToStringBound<T extends RelatedToString> {}
+
+  /**
+   * A type parameter {@code V} bounded by its sibling {@code S}, whose bound refers to a sibling
+   * {@code B} that does not occur in the bound of {@code V}.
+   *
+   * @param <S> a type parameter whose bound refers to {@code B}
+   * @param <B> a type parameter
+   * @param <V> a type parameter bounded by {@code S}
+   */
+  static class SiblingOfSiblingBound<S extends Related<S, B>, B, V extends S> {}
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -447,5 +475,13 @@ public class TypeVariableTest {
 
     assertTrue(self.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteAssert.class)));
     assertFalse(self.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSiblingOfSiblingTypeParameter() {
+    TypeVariable v = typeParameter(SiblingOfSiblingBound.class, 2);
+    // S := RelatedToString and B := String satisfy the bounds.
+    assertTrue(typeParameter(RelatedToStringBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(NumberBound.class).isInstantiationOf(v));
   }
 }
