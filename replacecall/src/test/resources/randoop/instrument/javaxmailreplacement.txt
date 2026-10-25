@@ -1,1 +1,0 @@
-javax.mail.Service randoop.mock.javax.mail.Service
