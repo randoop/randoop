@@ -113,7 +113,11 @@ public final class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** User-supplied predicate for methods that should not be used during test generation. */
+  /**
+   * User-supplied predicate for methods that should not be used during test generation. After
+   * {@link #omitOverriddenMethods} is called, it also omits the methods that omitted methods
+   * override.
+   */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
@@ -197,6 +201,7 @@ public final class OperationModel {
     model.operations.addAll(
         model.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
+    model.omitOverriddenMethods();
     // Add the constructor "Object()".
     model.addObjectConstructor();
 
@@ -878,6 +883,24 @@ public final class OperationModel {
       return TypedOperation.forConstructor((Constructor<?>) accessibleObject);
     } else {
       return TypedOperation.forMethod((Method) accessibleObject);
+    }
+  }
+
+  /**
+   * Omits every method that an omitted method overrides, because a call to it might dispatch to the
+   * omitted method at run time. Moves such methods from {@link #operations} to {@link
+   * #omittedOperations}, and updates {@link #omitMethodsPredicate} to omit them.
+   */
+  private void omitOverriddenMethods() {
+    omitMethodsPredicate = omitMethodsPredicate.omittingOverriddenMethods(omittedOperations);
+    Iterator<TypedOperation> itor = operations.iterator();
+    while (itor.hasNext()) {
+      TypedOperation operation = itor.next();
+      if (operation instanceof TypedClassOperation
+          && omitMethodsPredicate.shouldOmit((TypedClassOperation) operation)) {
+        itor.remove();
+        omittedOperations.add(operation);
+      }
     }
   }
 

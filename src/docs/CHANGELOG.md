@@ -24,6 +24,14 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+Changed command-line arguments:
+
+* `--omit-methods`:  If a pattern matches method M, Randoop omits M and every
+  method that M overrides, because a call to an overridden method might
+  dispatch to M.  Randoop no longer omits methods that override M.  A pattern
+  must match the signature in the class that declares a method, not in a
+  class that inherits it.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
