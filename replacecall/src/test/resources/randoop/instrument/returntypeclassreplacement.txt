@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement has the wrong return type
+java.lang.Math randoop.instrument.testmocks.MathMock

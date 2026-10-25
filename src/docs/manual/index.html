@@ -1639,23 +1639,24 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </pre>
 
 <p>
-  A replacement method must be static and non-private.
+  A replacement method must be a public static method of a public class.
   (Therefore, replacement classes don't need to be instantiated.)
 </p>
 <ul>
-  <li>If the original method is static, the replacement method should have the
+  <li>If the original method is static, the replacement method must have the
     identical signature.</li>
-  <li>If the original method is non-static, then the replacement method should
-have an additional first parameter whose type is the containing
-class of the original method.
+  <li>If the original method is non-static, then the replacement method must
+have an additional first parameter whose type is the class named for the
+original method in the replacement file.
+That class may be a subclass of the class that declares the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
 An example mock class is
 <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.</li>
   <li>If the original method is a constructor (an
 <code>&lt;init&gt;</code> method),
-then the replacement method should have the same
-parameter types, and its return type is the class that contains the
+then the replacement method must have the same
+parameter types, and its return type must be the class that contains the
 constructor.
 </ul>
 

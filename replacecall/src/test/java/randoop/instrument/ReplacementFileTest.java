@@ -66,7 +66,7 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "nonstaticreplacement.txt:2: Replacement method must be static and non-private:"
+        "nonstaticreplacement.txt:2: Replacement method must be public and static:"
             + " randoop.mock.java.util.RandomReplace.<init>()");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
@@ -76,7 +76,7 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/instancereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "instancereplacement.txt:2: Replacement method must be static and non-private:"
+        "instancereplacement.txt:2: Replacement method must be public and static:"
             + " java.lang.Object.hashCode()");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
@@ -93,8 +93,8 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/receiverreplacement.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "receiverreplacement.txt:2: Replacement method java.lang.Math.abs(int) must have parameter"
-            + " types (java.lang.String) and return type int");
+        "receiverreplacement.txt:2: Replacement method int java.lang.Math.abs(int) must have"
+            + " signature int abs(java.lang.String)");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
@@ -103,8 +103,82 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/returntypereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "returntypereplacement.txt:2: Replacement method java.lang.Math.abs(int) must have"
-            + " parameter types (int) and return type void");
+        "returntypereplacement.txt:2: Replacement method int java.lang.Math.abs(int) must have"
+            + " signature void abs(int)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void privateReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/privatereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "privatereplacement.txt:2: Replacement method must be public and static:"
+            + " randoop.instrument.testmocks.MethodMocks.abs(int)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void packagePrivateReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/packageprivatereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "packageprivatereplacement.txt:2: Replacement method must be public and static:"
+            + " randoop.instrument.testmocks.MethodMocks.negateExact(int)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nonPublicClassReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nonpublicclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonpublicclassreplacement.txt:2: Replacement class must be public:"
+            + " randoop.instrument.testmocks.HiddenMocks");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void constructorReturnTypeReplacementTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/constructorreturntypereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "constructorreturntypereplacement.txt:2: Replacement method java.lang.String"
+            + " randoop.instrument.testmocks.MethodMocks.newObject() must have signature java.lang.Object"
+            + " newObject()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nonPublicClassClassTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/nonpublicclassclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonpublicclassclassreplacement.txt:2: Replacement class must be public:"
+            + " randoop.instrument.testmocks.HiddenMocks");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void returnTypeClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/returntypeclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "returntypeclassreplacement.txt:2: Replacement method void"
+            + " randoop.instrument.testmocks.MathMock.abs(int) must have signature int abs(int)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void receiverClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/receiverclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "receiverclassreplacement.txt:2: Replacement method int"
+            + " randoop.instrument.testmocks.StringMock.length() must have signature int"
+            + " length(java.lang.String)");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 

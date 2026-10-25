@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement class is not public
+java.lang.Math.abs(int) randoop.instrument.testmocks.HiddenMocks.abs(int)
