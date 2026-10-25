@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
+import org.checkerframework.checker.signature.qual.FieldDescriptor;
 import org.checkerframework.checker.signature.qual.InternalForm;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -64,7 +65,9 @@ public class ClassAnnotationScanner extends ClassVisitor {
    *     "(char[],int,int,java.lang.String,int)"
    */
   private void addMethodIfMatching(String annotationName, String method, String argumentSignature) {
-    if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(annotationName))) {
+    @SuppressWarnings("signature:assignment") // ASM gives a field descriptor
+    @FieldDescriptor String annotationDescriptor = annotationName;
+    if (desiredAnnotations.contains(Signatures.fieldDescriptorToBinaryName(annotationDescriptor))) {
       matchingSignatures.add(getFullyQualifiedMethodSignature(method, argumentSignature));
     }
   }
