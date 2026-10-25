@@ -16,6 +16,11 @@ public final class EqualsTransitive extends ObjectContract {
   /** Private constructor to enforce singleton. */
   private EqualsTransitive() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsTransitive getInstance() {
     return instance;
   }

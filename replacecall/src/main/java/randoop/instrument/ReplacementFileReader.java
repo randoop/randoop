@@ -525,6 +525,7 @@ public final class ReplacementFileReader {
     }
   }
 
+  /** A cache for {@link #getJavaClassFromClassname}. Maps a class name to its parsed class. */
   private static Map<String, JavaClass> javaClasses = new ConcurrentHashMap<>();
 
   /**

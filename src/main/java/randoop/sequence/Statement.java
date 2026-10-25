@@ -25,11 +25,12 @@ public final class Statement {
   /** The operation (method call, constructor call, primitive values declaration, etc.). */
   private final TypedOperation operation;
 
-  // The list of values used as input to the statement.
-  //
-  // NOTE that the inputs to a statement are not a list
-  // of Variables, but a list of RelativeNegativeIndex objects.
-  // See that class for an explanation.
+  /**
+   * The list of values used as input to the statement.
+   *
+   * <p>The inputs to a statement are not a list of Variables, but a list of RelativeNegativeIndex
+   * objects. See that class for an explanation.
+   */
   /*package*/ final List<RelativeNegativeIndex> inputs;
 
   /**
@@ -85,10 +86,20 @@ public final class Statement {
     return Objects.hash(operation, inputs);
   }
 
+  /**
+   * Returns the output type of this statement's operation.
+   *
+   * @return the output type of this statement's operation
+   */
   public Type getOutputType() {
     return operation.getOutputType();
   }
 
+  /**
+   * Returns the input types of this statement's operation.
+   *
+   * @return the input types of this statement's operation
+   */
   public TypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
@@ -115,6 +126,14 @@ public final class Statement {
     b.append(';');
   }
 
+  /**
+   * Returns a parsable representation of this statement, of the form "{@code VAR = OPCLASS :
+   * OPERATION : VAR ... VAR}", where OPCLASS is the simple name of the operation's class.
+   *
+   * @param variableName the name of the variable to which this statement's result is assigned
+   * @param inputs the input variables of this statement
+   * @return a parsable string representation of this statement
+   */
   public String toParsableString(String variableName, List<Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);

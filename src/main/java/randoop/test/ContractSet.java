@@ -45,6 +45,11 @@ public class ContractSet {
     contractList.add(contract);
   }
 
+  /**
+   * Returns true if no contract has been added to this set.
+   *
+   * @return true if no contract has been added to this set
+   */
   public boolean isEmpty() {
     return contractMap.isEmpty();
   }

@@ -247,7 +247,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Only use public members in tests")
   public static boolean only_test_public_members = false;
 
-  @Option("Ignore class names specified by user that cannot be found")
+  /**
+   * If true, Randoop prints a warning and continues when a class name specified by the user cannot
+   * be found. If false, Randoop exits with an error in that case.
+   */
+  @Option("Warn about, rather than fail on, user-specified class names that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
@@ -966,6 +970,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // CircleCI runs out of memory during test generation if 2500m.
   public static String jvm_max_memory = "3000m";
 
+  /**
+   * If true, Randoop captures everything written to standard output and standard error while
+   * executing each statement, and stores it in the statement's {@link randoop.ExecutionOutcome}.
+   */
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
   public static boolean capture_output = false;
@@ -1063,6 +1071,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Install the given runtime visitor")
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
+  /**
+   * If true, then with probability 0.1, after extending a sequence with a method call, Randoop
+   * repeats that call a random number of times (fewer than 100).
+   */
   // ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
   // TODO Need to decide to keep the heuristic that uses this in

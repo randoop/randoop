@@ -12,7 +12,10 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /** An empty, immutable set of invalid checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
-  // Either an InvalidExceptionCheck or an InvalidValueCheck.
+  /**
+   * The sole member of this set, or null if this set is empty. If non-null, either an {@link
+   * InvalidExceptionCheck} or an {@link InvalidValueCheck}.
+   */
   private Check check;
 
   /** Create an empty, mutable set of invalid checks. */

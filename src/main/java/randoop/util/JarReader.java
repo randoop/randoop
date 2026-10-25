@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+/** Utility methods for listing the classes contained in a jar file. */
 public final class JarReader {
 
   /** If true, output debugging diagnostics. */
@@ -20,12 +21,28 @@ public final class JarReader {
     throw new UnsupportedOperationException("Do not instantiate");
   }
 
+  /**
+   * Prints, one per line in sorted order, the names of the class files in the given jar file.
+   *
+   * @param args the command-line arguments; the first is the name of the jar file
+   * @throws IOException if there is a problem reading the jar file
+   */
   public static void main(String[] args) throws IOException {
     List<String> names = getClasseNamesInJar(args[0]);
     Collections.sort(names);
     System.out.println(CollectionsExt.toStringInLines(names));
   }
 
+  /**
+   * Returns the names of the class files in the given jar file whose names start with the given
+   * package name. Each result is a jar entry name with "/" replaced by "." (for example, {@code
+   * "java.lang.Object.class"}).
+   *
+   * @param jarName the name of the jar file
+   * @param packageName the package name, in dotted form
+   * @return the names of the class files in the given package
+   * @throws IOException if there is a problem reading the jar file
+   */
   public static List<String> getClassNamesInPackage(String jarName, String packageName)
       throws IOException {
     ArrayList<String> classes = new ArrayList<>();
@@ -55,6 +72,14 @@ public final class JarReader {
     return classes;
   }
 
+  /**
+   * Returns the names of all the class files in the given jar file. Each result is a jar entry name
+   * with "/" replaced by "." (for example, {@code "java.lang.Object.class"}).
+   *
+   * @param jarName the name of the jar file
+   * @return the names of the class files in the jar file
+   * @throws IOException if there is a problem reading the jar file
+   */
   public static List<String> getClasseNamesInJar(String jarName) throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 

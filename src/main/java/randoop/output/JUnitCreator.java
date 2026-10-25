@@ -567,6 +567,13 @@ public final class JUnitCreator {
     return compilationUnit.toString();
   }
 
+  /**
+   * Parses the given lines of Java code as a block statement.
+   *
+   * @param bodyText the lines of code that form the body of the block, or null
+   * @return a block statement containing the given code, or null if {@code bodyText} is null
+   * @throws ParseException if the code cannot be parsed
+   */
   public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
     if (bodyText == null) {
       return null;
