@@ -136,7 +136,7 @@ public final class ReplacementFileReader {
               | IllegalClassFormatException
               | NoSuchMethodException e) {
             throw new ReplacementFileException(
-                e.getMessage(), filename, reader.getLineNumber(), line);
+                e.getMessage(), filename, reader.getLineNumber(), line, e);
           }
         } else {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
@@ -152,7 +152,7 @@ public final class ReplacementFileReader {
                 | ClassNotFoundException
                 | NoClassDefFoundError e) {
               throw new ReplacementFileException(
-                  e.getMessage(), filename, reader.getLineNumber(), line);
+                  e.getMessage(), filename, reader.getLineNumber(), line, e);
             }
           } else {
             String msg = "Error in replacement file: bad format";
@@ -187,25 +187,39 @@ public final class ReplacementFileReader {
           IllegalClassFormatException,
           NoSuchMethodException {
 
-    MethodSignature original;
-    try {
-      original = MethodSignature.of(originalSignature);
-    } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad original signature: " + e.getMessage(), e);
-    }
-    // Call toMethod() instead of exists() to get more precise error messages.
-    original.toMethod();
-
-    MethodSignature replacement;
-    try {
-      replacement = MethodSignature.of(replacementSignature);
-    } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad replacement signature: " + e.getMessage(), e);
-    }
-    // Call toMethod() instead of exists() to get more precise error messages.
-    replacement.toMethod();
-
+    MethodSignature original = parseExistingMethod(originalSignature, "original");
+    MethodSignature replacement = parseExistingMethod(replacementSignature, "replacement");
     addReplacement(replacementMap, original, replacement);
+  }
+
+  /**
+   * Parses a method signature and verifies that the method exists.
+   *
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   *
+   * @param signature the method signature
+   * @param role the role of the method in a replacement, such as "original" or "replacement"; used
+   *     in error messages
+   * @return the {@link MethodSignature} for {@code signature}
+   * @throws ReplacementException if the signature is badly-formed
+   * @throws ClassNotFoundException if the class cannot be found
+   * @throws IllegalClassFormatException if the class has an illegal format
+   * @throws NoSuchMethodException if the method cannot be found
+   */
+  private static MethodSignature parseExistingMethod(String signature, String role)
+      throws ReplacementException,
+          ClassNotFoundException,
+          IllegalClassFormatException,
+          NoSuchMethodException {
+    MethodSignature result;
+    try {
+      result = MethodSignature.of(signature);
+    } catch (IllegalArgumentException e) {
+      throw new ReplacementException("Bad " + role + " signature", e);
+    }
+    // Call toMethod() instead of exists() to get more precise error messages.
+    result.toMethod();
+    return result;
   }
 
   /**
@@ -581,13 +595,27 @@ public final class ReplacementFileReader {
     }
 
     /**
-     * Create an exception with the message and causing exception.
+     * Create an exception with the message and causing exception. The exception's message is {@code
+     * message} followed by the message of {@code cause}.
      *
      * @param message the message
-     * @param cause the error message
+     * @param cause the causing exception
      */
-    ReplacementException(@Nullable String message, @Nullable Throwable cause) {
-      super(message, cause);
+    ReplacementException(String message, Throwable cause) {
+      super(withCauseMessage(message, cause), cause);
+    }
+
+    /**
+     * Returns the given message followed by the message of the given exception. If {@code cause}
+     * has no message, uses its {@code toString()} instead.
+     *
+     * @param message a message
+     * @param cause an exception
+     * @return {@code message} followed by the message of {@code cause}
+     */
+    static String withCauseMessage(String message, Throwable cause) {
+      String causeMessage = cause.getMessage();
+      return message + ": " + (causeMessage != null ? causeMessage : cause.toString());
     }
   }
 }

@@ -124,21 +124,19 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
-   * @throws IllegalArgumentException if {@code signature} is not formatted correctly
+   * @throws IllegalArgumentException if {@code signature} is not formatted correctly; the message
+   *     describes the problem but does not repeat {@code signature}
    */
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
     if (parenPos < 0) {
       throw new IllegalArgumentException(
-          "Method signature expected, did not find beginning parenthesis: " + signature);
+          "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
     if (!FULL_METHOD_NAME.matcher(fullMethodName).matches()) {
       throw new IllegalArgumentException(
-          "Method signature expected, bad fully-qualified method name \""
-              + fullMethodName
-              + "\": "
-              + signature);
+          "Method signature expected, bad fully-qualified method name \"" + fullMethodName + "\"");
     }
     if (!signature.endsWith(")")) {
       throw new IllegalArgumentException(
@@ -151,8 +149,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
     for (String parameter : parameters) {
       if (!Signatures.isFqBinaryName(parameter)) {
-        throw new IllegalArgumentException(
-            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
+        throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
     }
     return of(fullMethodName, parameters);
@@ -269,7 +266,12 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
       } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
+        IllegalClassFormatException icfe =
+            new IllegalClassFormatException(
+                ReplacementFileReader.ReplacementException.withCauseMessage(
+                    "Unable to read " + currentClassname, e));
+        icfe.initCause(e);
+        throw icfe;
       }
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");

@@ -54,9 +54,8 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/badsignaturereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
-        "badsignaturereplacement.txt:2: Bad original signature: Bad parameter type \"int x\" in"
-            + " signature: randoop.MethodReplacements.getAgentPath(int x) for line:"
-            + " randoop.MethodReplacements.getAgentPath(int x)"
+        "badsignaturereplacement.txt:2: Bad original signature: Bad parameter type \"int x\" for"
+            + " line: randoop.MethodReplacements.getAgentPath(int x)"
             + " randoop.mock.java.awt.Component.show()";
     thrown.expectMessage(msg);
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
@@ -70,6 +69,29 @@ public class ReplacementFileTest {
         "badmethodnamereplacement.txt:2: Bad original signature: Method signature expected, bad"
             + " fully-qualified method name \"foo\": foo(int) for line:"
             + " foo(int) randoop.mock.java.awt.Component.show()";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void badReplacementSignatureMethodTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badreplacementsignature.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "badreplacementsignature.txt:2: Bad replacement signature: Bad parameter type \"int x\""
+            + " for line: randoop.MethodReplacements.getAgentPath()"
+            + " randoop.mock.java.awt.Component.show(int x)";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void badClassFileMethodTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badclassfilereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "badclassfilereplacement.txt:2: Unable to read randoop.instrument.NotAClass: Error reading"
+            + " class file: randoop/instrument/NotAClass.class: ";
     thrown.expectMessage(msg);
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
