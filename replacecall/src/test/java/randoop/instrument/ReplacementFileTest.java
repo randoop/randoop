@@ -79,15 +79,34 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void constructorSignatureTest() {
-    MethodSignature init = MethodSignature.of("java.util.Random.<init>(long)");
-    assertEquals("java.util.Random", init.getClassname());
-    assertEquals("<init>", init.getName());
-    assertEquals(init, MethodSignature.of("java.util.Random(long)"));
+  public void constructorReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/constructorreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
+    assertEquals(
+        MethodSignature.of("randoop.mock.java.util.RandomReplace.randomWithSeedZero()"),
+        map.get(MethodSignature.of("java.util.Random.<init>()")));
+  }
 
-    MethodSignature method = MethodSignature.of("java.util.Random.nextInt(int)");
-    assertEquals("java.util.Random", method.getClassname());
-    assertEquals("nextInt", method.getName());
+  @Test
+  public void missingConstructorClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/missingconstructorclass.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "missingconstructorclass.txt:2: Neither class alpha.beta nor class alpha.beta.Gamma found"
+            + " for line: alpha.beta.Gamma(int)"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void nonStaticReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonstaticreplacement.txt:2: Replacement method must be static and non-private:"
+            + " randoop.mock.java.util.RandomReplace.<init>()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
   @Test
