@@ -174,7 +174,8 @@ public final class ReplacementFileReader {
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
-   * @throws ReplacementException if either signature is badly-formed
+   * @throws ReplacementException if either signature is badly-formed, or if the replacement method
+   *     is not static and non-private
    * @throws ClassNotFoundException if either class cannot be found
    * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
@@ -204,7 +205,11 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad replacement signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    replacement.toMethod();
+    Method replacementMethod = replacement.toMethod();
+    if (!replacementMethod.isStatic() || replacementMethod.isPrivate()) {
+      throw new ReplacementException(
+          "Replacement method must be static and non-private: " + replacement);
+    }
 
     addReplacement(replacementMap, original, replacement);
   }

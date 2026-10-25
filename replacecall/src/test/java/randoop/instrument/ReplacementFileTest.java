@@ -62,6 +62,26 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void nonStaticReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "nonstaticreplacement.txt:2: Replacement method must be static and non-private:"
+            + " randoop.mock.java.util.RandomReplace.<init>()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void instanceReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/instancereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "instancereplacement.txt:2: Replacement method must be static and non-private:"
+            + " java.lang.Object.hashCode()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void missingClassClassTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);
