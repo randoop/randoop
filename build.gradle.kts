@@ -898,11 +898,11 @@ fun JavaExec.runRequireJavadoc() {
   mainClass = "org.plumelib.javadoc.RequireJavadoc"
   classpath = requireJavadocClasspath
   workingDir = rootDir
-  args("--relative", "--exclude=replacecall/src/main/java/randoop/mock")
+  // require-javadoc matches the regex against filenames that use the platform's file separator.
+  args("--exclude=" + Regex.escape(File("replacecall/src/main/java/randoop/mock").path))
   args(
     allprojects
-      .map { it.file("src/main/java") }
-      .filter { it.isDirectory }
+      .flatMap { it.the<SourceSetContainer>()["main"].java.srcDirs }
       .map { it.relativeTo(rootDir).path },
   )
 }
@@ -925,7 +925,9 @@ val requireJavadocReport =
     runRequireJavadoc()
     outputs.file(requireJavadocWarnings)
     outputs.upToDateWhen { false }
-    // Exit status 1 means that there were warnings, which are not an error for this task.
+    // Exit status 1 means that there were warnings, which are not an error for this task.  The JVM
+    // also exits with status 1 if require-javadoc cannot start or throws an exception, but then
+    // require-javadoc writes nothing to standard output.
     isIgnoreExitValue = true
     doFirst {
       val warningsFile = requireJavadocWarnings.get().asFile
@@ -934,12 +936,17 @@ val requireJavadocReport =
     }
     doLast {
       standardOutput.close()
+      val warningsFile = requireJavadocWarnings.get().asFile
       val exitValue = executionResult.get().exitValue
-      if (exitValue > 1) {
+      if (exitValue > 1 || (exitValue == 1 && warningsFile.length() == 0L)) {
         throw GradleException(
-          "require-javadoc failed with exit status $exitValue; see " +
-            requireJavadocWarnings.get().asFile,
+          "require-javadoc failed with exit status $exitValue; see the error output above and " +
+            warningsFile,
         )
+      }
+      // Filenames in `git diff` output use `/` as the separator on every platform.
+      if (File.separatorChar != '/') {
+        warningsFile.writeText(warningsFile.readText().replace(File.separatorChar, '/'))
       }
     }
   }
@@ -950,8 +957,12 @@ tasks.register<Exec>("requireJavadocDiff") {
   group = "Documentation"
   dependsOn(requireJavadocReport, "clonePlumeScripts")
   workingDir = rootDir
-  executable = layout.buildDirectory.file("utils/plume-scripts/ci-lint-diff").get().asFile.path
-  args(requireJavadocWarnings.get().asFile.path)
+  // Run the script via `bash`, because Windows cannot execute a shell script directly.
+  executable = "bash"
+  args(
+    layout.buildDirectory.file("utils/plume-scripts/ci-lint-diff").get().asFile.path,
+    requireJavadocWarnings.get().asFile.path,
+  )
 }
 
 // needed for javadoc.doLast
