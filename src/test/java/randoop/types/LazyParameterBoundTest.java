@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
@@ -15,6 +16,13 @@ public class LazyParameterBoundTest {
    * @param <T> the type parameter
    */
   static class SelfFirstArgumentBound<T extends Map<T, String>> {}
+
+  /**
+   * A type parameter whose bound contains the type parameter nested in a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   /**
    * A class with a type parameter.
@@ -71,5 +79,21 @@ public class LazyParameterBoundTest {
     InstantiatedType capturedType = wildcardType.applyCaptureConversion();
     // The capture variable's bound is Map<capture, String>, which refers to the capture variable.
     assertEquals(1, capturedType.getTypeParameters().size());
+  }
+
+  @Test
+  public void testSubstituteNestedVariable() {
+    TypeVariable t =
+        GenericClassType.forClass(SelfNestedArgumentBound.class).getTypeParameters().get(0);
+    TypeVariable v = GenericClassType.forClass(Unbounded.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
   }
 }

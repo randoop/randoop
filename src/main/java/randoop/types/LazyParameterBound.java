@@ -82,7 +82,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= substitutesVariable(parameter, substitution);
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -96,6 +96,43 @@ class LazyParameterBound extends ParameterBound {
 
     throw new RandoopBug(
         "lazy parameter bounds should be either a type variable or parameterized type");
+  }
+
+  /**
+   * Returns true if the substitution maps a type variable that occurs in the given reflection type
+   * to a type variable.
+   *
+   * @param type the reflection type
+   * @param substitution the type substitution
+   * @return true if {@code substitution} maps a type variable in {@code type} to a type variable
+   */
+  private static boolean substitutesVariable(
+      java.lang.reflect.Type type, Substitution substitution) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      ReferenceType referenceType = substitution.get(type);
+      return referenceType != null && referenceType.isVariable();
+    }
+    if (type instanceof ParameterizedType) {
+      for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
+        if (substitutesVariable(argType, substitution)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (substitutesVariable(boundType, substitution)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (substitutesVariable(boundType, substitution)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
