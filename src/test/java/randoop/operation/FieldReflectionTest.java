@@ -21,7 +21,6 @@ import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.ClassOrInterfaceType;
@@ -84,7 +83,7 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return new LinkedHashSet<>(OperationExtractor.operations(c));
   }
 
   private Set<TypedOperation> getConcreteOperations(
@@ -93,8 +92,7 @@ public class FieldReflectionTest {
       AccessibilityPredicate accessibilityPredicate)
       throws RandoopSpecificationError {
     return new LinkedHashSet<>(
-        OperationExtractor.operations(
-            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate));
+        OperationExtractor.operations(c, reflectionPredicate, accessibilityPredicate));
   }
 
   /**

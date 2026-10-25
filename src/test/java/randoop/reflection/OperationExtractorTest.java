@@ -38,8 +38,7 @@ public class OperationExtractorTest {
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(c.getName(), classType.getBinaryName());
 
     assertEquals(14, operations.size());
@@ -74,8 +73,7 @@ public class OperationExtractorTest {
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(21, operations.size());
   }
 
@@ -97,8 +95,7 @@ public class OperationExtractorTest {
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
 
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(4, operations.size());
 
     ClassOrInterfaceType memberType = null;
@@ -130,8 +127,7 @@ public class OperationExtractorTest {
     assertFalse(classType.isGeneric());
     assertTrue(classType.getTypeParameters().isEmpty());
     assertFalse(classType.isParameterized());
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(3, operations.size());
   }
 

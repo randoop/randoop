@@ -25,7 +25,6 @@ import randoop.main.RandoopBug;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.ExecutableSequence;
@@ -61,7 +60,7 @@ public class ForwardExplorerTests {
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
       throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
-    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return OperationExtractor.operations(types);
   }
 
   @Test

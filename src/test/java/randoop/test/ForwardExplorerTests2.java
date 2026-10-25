@@ -20,7 +20,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.Sequence;
@@ -110,7 +109,7 @@ public class ForwardExplorerTests2 {
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
       throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
-    return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return OperationExtractor.operations(types);
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
