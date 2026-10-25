@@ -1,2 +1,0 @@
-// replacement file for testing: constructors written without <init>
-java.util.Random() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

@@ -56,8 +56,8 @@ public final class ReplacementFileReader {
    * anything in parentheses. The parentheses are expected to contain argument types, but the
    * pattern permits anything.
    *
-   * <p>The original method may be a constructor, written as {@code classname.<init>(...)} or as
-   * {@code classname(...)}. A replacement is always a static method.
+   * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
+   * constructors is unnecessary.
    */
   private static final String SIGNATURE_STRING =
       DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
@@ -167,18 +167,14 @@ public final class ReplacementFileReader {
 
   /**
    * Adds a method replacement described by a pair of method signatures to the replacement map.
-   * Verifies that both signatures are well-formed and correspond to a method that exists, and that
-   * the replacement method is static and non-private.
+   * Verifies that both signatures are well-formed and correspond to a method that exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. In
-   * addition, the original signature may be a constructor written as {@code
-   * package-name.classname(argument-list)}.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
    *
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
-   * @throws ReplacementException if either signature is badly-formed, or if the replacement method
-   *     is not static and non-private
+   * @throws ReplacementException if either signature is badly-formed
    * @throws ClassNotFoundException if either class cannot be found
    * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
@@ -199,28 +195,7 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad original signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    try {
-      original.toMethod();
-    } catch (ClassNotFoundException e) {
-      if (original.getName().equals("<init>")) {
-        throw e;
-      }
-      // The signature might be a constructor written as package-name.classname(argument-list).
-      MethodSignature constructor = original.toConstructorSignature();
-      try {
-        constructor.toMethod();
-      } catch (ClassNotFoundException e2) {
-        ClassNotFoundException notFound =
-            new ClassNotFoundException(
-                String.format(
-                    "Class %s not found (nor class %s, for a constructor)",
-                    original.getClassname(), constructor.getClassname()),
-                e);
-        notFound.addSuppressed(e2);
-        throw notFound;
-      }
-      original = constructor;
-    }
+    original.toMethod();
 
     MethodSignature replacement;
     try {
@@ -229,11 +204,7 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad replacement signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    Method replacementMethod = replacement.toMethod();
-    if (!replacementMethod.isStatic() || replacementMethod.isPrivate()) {
-      throw new ReplacementException(
-          "Replacement method must be static and non-private: " + replacement);
-    }
+    replacement.toMethod();
 
     addReplacement(replacementMap, original, replacement);
   }

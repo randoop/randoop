@@ -1,2 +1,0 @@
-// bad replacement file for testing: Integer() is not a constructor, even though Object() is
-java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

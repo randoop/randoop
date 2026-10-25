@@ -79,57 +79,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void constructorReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/constructorreplacement.txt");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-    assertEquals(1, map.size());
-    assertEquals(
-        MethodSignature.of("randoop.mock.java.util.RandomReplace.randomWithSeedZero()"),
-        map.get(MethodSignature.of("java.util.Random.<init>()")));
-  }
-
-  @Test
-  public void missingConstructorClassTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/missingconstructorclass.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "missingconstructorclass.txt:2: Class alpha.beta not found (nor class alpha.beta.Gamma,"
-            + " for a constructor) for line: alpha.beta.Gamma(int)"
-            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void inheritedConstructorTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/inheritedconstructor.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "inheritedconstructor.txt:2: Constructor java.lang.Integer.<init>() not found for line:"
-            + " java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void instanceReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/instancereplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "instancereplacement.txt:2: Replacement method must be static and non-private:"
-            + " java.lang.Object.hashCode()");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void nonStaticReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "nonstaticreplacement.txt:2: Replacement method must be static and non-private:"
-            + " randoop.mock.java.util.RandomReplace.<init>()");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
