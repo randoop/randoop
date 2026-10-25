@@ -14,11 +14,6 @@ public final class EqualsHashcode extends ObjectContract {
     super();
   }
 
-  /**
-   * Returns the singleton instance of this class.
-   *
-   * @return the singleton instance of this class
-   */
   public static EqualsHashcode getInstance() {
     return instance;
   }

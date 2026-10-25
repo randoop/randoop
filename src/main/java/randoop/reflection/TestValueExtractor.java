@@ -19,14 +19,8 @@ import randoop.sequence.Sequence;
  */
 public class TestValueExtractor extends DefaultClassVisitor {
 
-  /** The sequences for test values; is side-effected by this visitor. */
   private final Set<Sequence> valueSequences;
 
-  /**
-   * Creates a visitor that adds sequences for annotated test values to the given set.
-   *
-   * @param valueSequences the set to which sequences for test values are added; is side-effected
-   */
   public TestValueExtractor(Set<Sequence> valueSequences) {
     super();
     this.valueSequences = valueSequences;

@@ -234,6 +234,8 @@ dependencies {
   implementation(libs.commons.lang3)
   implementation(libs.commons.io)
 
+  compileOnly(libs.require.javadoc)
+
   /* Jacoco measures coverage of classes and methods under test. */
   implementation(libs.org.jacoco.core)
   implementation(variantOf(libs.org.jacoco.agent) { classifier("runtime") })
@@ -886,22 +888,13 @@ tasks.register<Javadoc>("javadocPrivate") {
 
 tasks.check { dependsOn(tasks.javadoc) }
 
-val requireJavadocDependency = libs.require.javadoc
-
 allprojects {
-  val requireJavadocClasspath = configurations.create("requireJavadocClasspath")
-  dependencies { requireJavadocClasspath(requireJavadocDependency) }
   tasks.register<JavaExec>("requireJavadoc") {
     description = "Ensures that Javadoc documentation exists."
     group = "Documentation"
     mainClass = "org.plumelib.javadoc.RequireJavadoc"
-    classpath = requireJavadocClasspath
-    // Run from the root directory so that reported filenames are relative to it.
-    workingDir = rootDir
-    args(
-      projectDir.resolve("src/main/java").relativeTo(rootDir).path,
-      "--exclude=replacecall/src/main/java/randoop/mock",
-    )
+    classpath = sourceSets["test"].compileClasspath
+    args("agent", "src/main/java", "--exclude=replacecall/src/main/java/randoop/mock")
     jvmArgs(
       "--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
       "--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",

@@ -14,11 +14,6 @@ public final class CompareToReturnsNormally extends ObjectContract {
     super();
   }
 
-  /**
-   * Returns the singleton instance of this class.
-   *
-   * @return the singleton instance of this class
-   */
   public static CompareToReturnsNormally getInstance() {
     return instance;
   }

@@ -15,11 +15,6 @@ public final class EqualsSymmetric extends ObjectContract {
     super();
   }
 
-  /**
-   * Returns the singleton instance of this class.
-   *
-   * @return the singleton instance of this class
-   */
   public static EqualsSymmetric getInstance() {
     return instance;
   }

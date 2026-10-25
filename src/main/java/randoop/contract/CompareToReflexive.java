@@ -16,11 +16,6 @@ public final class CompareToReflexive extends ObjectContract {
     super();
   }
 
-  /**
-   * Returns the singleton instance of this class.
-   *
-   * @return the singleton instance of this class
-   */
   public static CompareToReflexive getInstance() {
     return instance;
   }

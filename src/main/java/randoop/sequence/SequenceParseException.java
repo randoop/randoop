@@ -13,13 +13,6 @@ public class SequenceParseException extends Exception {
   /** The error message for the parse exception. */
   private final String message;
 
-  /**
-   * Creates a parse exception for the given statements.
-   *
-   * @param msg the error message, or null
-   * @param statements the statements being parsed
-   * @param statementCount the index of the statement where the error occurred
-   */
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
     super();
 
