@@ -11,8 +11,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +39,8 @@ import randoop.MethodReplacements;
  * documentation</a> for the file format.) Default replacements are given in an internal resource
  * file {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
  * --replacement-file} command-line argument. A user replacement may override a default replacement.
+ * The {@code --replacecall-exclude} and {@code --replacecall-exclude-file} command-line arguments
+ * disable individual default replacements.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
@@ -81,17 +83,23 @@ public final class ReplaceCallAgent {
   @Option("file listing packages whose classes should not be transformed")
   public static @MonotonicNonNull Path dont_transform = null;
 
-  /** Comma-separated list of default replacement method signatures to exclude. */
+  /**
+   * Default replacements that should not be used. Each value is the signature of an original
+   * method, in the format used in replacement files, such as {@code java.lang.System.exit(int)}.
+   * The signature must not contain whitespace. This option may be given multiple times.
+   */
   @SuppressWarnings("WeakerAccess")
-  @Option(
-      "comma-separated list of default replacement method signatures to exclude; "
-          + "accepts colon/JVM-descriptor form, e.g. 'java.lang.System.exit:(I)V'")
-  public static @Nullable String replacecall_exclude = null;
+  @Option("method whose default replacement should not be used")
+  public static List<String> replacecall_exclude = new ArrayList<>();
 
-  /** File that lists default replacement method signatures to exclude. */
+  /**
+   * File listing default replacements that should not be used. Each line is the signature of an
+   * original method, in the format used in replacement files, such as {@code
+   * java.lang.System.exit(int)}.
+   */
   @SuppressWarnings("WeakerAccess")
-  @Option("file listing default replacement method signatures to exclude (one per line)")
-  public static @Nullable Path replacecall_exclude_file = null;
+  @Option("file listing methods whose default replacements should not be used, one per line")
+  public static @MonotonicNonNull Path replacecall_exclude_file = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -183,54 +191,13 @@ public final class ReplaceCallAgent {
         }
       }
 
-      // Remove (or override) excluded default replacements.
-      if (replacecall_exclude != null || replacecall_exclude_file != null) {
-        // Parse exclusions to MethodSignature objects (supports multiple input formats).
-        Set<MethodSignature> excludeSignatures = new LinkedHashSet<>();
-
-        // From CLI CSV
-        if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
-          for (String raw : replacecall_exclude.split(",")) {
-            trimAndParseExcludedSignature(excludeSignatures, raw);
-          }
-        }
-
-        // From the file (one per line, '#' comments allowed)
-        if (replacecall_exclude_file != null) {
-          Path excludeFile = replacecall_exclude_file;
-          try (Reader r = Files.newBufferedReader(excludeFile, UTF_8)) {
-            for (String line :
-                new EntryReader(
-                    r, excludeFile.toString(), EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
-              trimAndParseExcludedSignature(excludeSignatures, line);
-            }
-          } catch (IOException e) {
-            System.err.printf(
-                "Error reading replacement exclusion file %s:%n %s%n", excludeFile, e.getMessage());
-            System.exit(1);
-          }
-        }
-
-        // 1) Handle any method-level exclusions.
-        Set<MethodSignature> toRemove = new HashSet<>();
-        for (MethodSignature key : replacementMap.keySet()) {
-          if (excludeSignatures.contains(key)) {
-            toRemove.add(key);
-          }
-        }
-        replacementMap.keySet().removeAll(toRemove);
-
-        // 2) For exclusions that did not match an existing method-level key, install an
-        //    identity override (src -> src). This cancels a class-level mapping for just that
-        // method.
-        Set<MethodSignature> unmatched = new LinkedHashSet<>(excludeSignatures);
-        unmatched.removeAll(toRemove);
-        for (MethodSignature ms : unmatched) {
-          replacementMap.put(ms, ms);
-          if (verbose) {
-            System.err.println("Installed identity override for exclusion: " + ms);
-          }
-        }
+      // Remove the default replacements that the user excluded.
+      Set<MethodSignature> unmatched =
+          removeExcludedReplacements(replacementMap, readExcludedSignatures());
+      if (!unmatched.isEmpty()) {
+        System.err.printf(
+            "No default replacement exists for replacecall exclusion(s): %s%n", unmatched);
+        System.exit(1); // Exit on bad user input.
       }
 
       // If the user has provided a replacement file, load user replacements and put them into the
@@ -255,7 +222,12 @@ public final class ReplaceCallAgent {
        * argument string is rebuilt.
        */
       MethodReplacements.setAgentPath(getAgentPath());
-      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+      MethodReplacements.setAgentArgs(
+          createAgentArgs(
+              replacementFilePath,
+              exclusionFilePath,
+              replacecall_exclude,
+              replacecall_exclude_file));
 
       /*
       if (debug) {
@@ -284,24 +256,76 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Trims the given string and parses it as a {@link MethodSignature} to add to the set of excluded
-   * signatures.
+   * Returns the signatures given by the {@code --replacecall-exclude} and {@code
+   * --replacecall-exclude-file} command-line options. Exits if a signature cannot be parsed or the
+   * file cannot be read.
    *
-   * @param excludeSignatures the set of excluded method signatures to which the parsed signature is
-   *     added
-   * @param text the string to parse as a method signature
+   * @return the signatures of the methods whose default replacements should not be used
    */
-  private static void trimAndParseExcludedSignature(
-      Set<MethodSignature> excludeSignatures, String text) {
-    String s = text.trim();
-    if (!s.isEmpty()) {
-      MethodSignature ms = parseExcludedSignature(s);
-      if (ms != null) {
-        excludeSignatures.add(ms);
-      } else if (verbose) {
-        System.err.println("Warning: could not parse replacecall exclusion '" + s + "'");
+  private static Set<MethodSignature> readExcludedSignatures() {
+    Set<MethodSignature> result = new LinkedHashSet<>();
+    for (String signature : replacecall_exclude) {
+      addExcludedSignature(result, signature, "--replacecall-exclude");
+    }
+    if (replacecall_exclude_file != null) {
+      try (EntryReader reader =
+          new EntryReader(
+              Files.newBufferedReader(replacecall_exclude_file, UTF_8),
+              replacecall_exclude_file.toString(),
+              EntryFormat.DEFAULT,
+              CommentFormat.SHELL,
+              null)) {
+        for (String line : reader) {
+          addExcludedSignature(result, line, reader.getFileName() + ":" + reader.getLineNumber());
+        }
+      } catch (IOException e) {
+        System.err.printf(
+            "Error reading replacecall exclusion file %s:%n %s%n",
+            replacecall_exclude_file, e.getMessage());
+        System.exit(1); // Exit on bad user input.
       }
     }
+    return result;
+  }
+
+  /**
+   * Parses a method signature and adds it to the given set. Does nothing if the text is blank.
+   * Exits if the text cannot be parsed.
+   *
+   * @param signatures the set to which the parsed signature is added
+   * @param text the method signature, in the format used in replacement files
+   * @param source where the text came from, for error messages
+   */
+  private static void addExcludedSignature(
+      Set<MethodSignature> signatures, String text, String source) {
+    String trimmed = text.trim();
+    if (trimmed.isEmpty()) {
+      return;
+    }
+    try {
+      signatures.add(MethodSignature.of(trimmed));
+    } catch (IllegalArgumentException e) {
+      System.err.printf("Bad replacecall exclusion in %s: %s%n", source, e.getMessage());
+      System.exit(1); // Exit on bad user input.
+    }
+  }
+
+  /**
+   * Removes the replacements for the given methods from the replacement map.
+   *
+   * @param replacementMap the map from original methods to their replacements; is side-effected
+   * @param excluded the original methods whose replacements to remove
+   * @return the elements of {@code excluded} that are not keys of {@code replacementMap}
+   */
+  static Set<MethodSignature> removeExcludedReplacements(
+      Map<MethodSignature, MethodSignature> replacementMap, Set<MethodSignature> excluded) {
+    Set<MethodSignature> unmatched = new LinkedHashSet<>();
+    for (MethodSignature signature : excluded) {
+      if (replacementMap.remove(signature) == null) {
+        unmatched.add(signature);
+      }
+    }
+    return unmatched;
   }
 
   /**
@@ -350,116 +374,6 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Parses an exclusion string into a {@link MethodSignature}.
-   *
-   * <p>Accepts the colon/JVM-descriptor form: {@code pkg.Clazz.method:(...)}. Examples: {@code
-   * java.lang.System.exit:(I)V}, {@code
-   * java.util.Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;}
-   *
-   * <p>Returns null if parsing fails.
-   *
-   * @param text the string to parse
-   * @return the parsed {@link MethodSignature} or null if parsing fails
-   */
-  private static @Nullable MethodSignature parseExcludedSignature(String text) {
-    String s = text.trim();
-
-    int colon = s.indexOf(':');
-    if (colon > 0 && s.indexOf('(') > colon) {
-      String ownerAndName = s.substring(0, colon);
-      int dot = ownerAndName.lastIndexOf('.');
-      if (dot > 0) {
-        String owner = ownerAndName.substring(0, dot);
-        String name = ownerAndName.substring(dot + 1);
-        String jvmDesc = s.substring(colon + 1); // "(..)[ret]"
-        String paramList = methodDescriptorToParamBinaryNames(jvmDesc);
-        if (paramList != null) {
-          try {
-            return MethodSignature.of(owner + "." + name + "(" + paramList + ")");
-          } catch (IllegalArgumentException ignored) {
-            return null;
-          }
-        }
-      }
-    }
-
-    // Any other format is not supported.
-    return null;
-  }
-
-  /**
-   * Converts a JVM method descriptor to a comma-separated list of formal parameter types, in binary
-   * name format, suitable for {@link MethodSignature#of(String)}. For example, "(I)V" &rarr; "int"
-   * and "([Ljava/lang/String;I)V" &rarr; "java.lang.String[], int". Returns null if the input
-   * doesn't look like a valid method descriptor.
-   */
-  private static @Nullable String methodDescriptorToParamBinaryNames(String methodDescriptor) {
-    if (methodDescriptor == null) {
-      return null;
-    }
-    String s = methodDescriptor.trim();
-    int l = s.indexOf('(');
-    int r = s.indexOf(')');
-    if (l != 0 || r < 0) {
-      return null;
-    }
-    // parse parameter types between '(' and ')'
-    StringBuilder out = new StringBuilder();
-    int i = 1;
-    boolean first = true;
-    while (i < r) {
-      int arr = 0;
-      while (i < r && s.charAt(i) == '[') {
-        arr++;
-        i++;
-      }
-      if (i >= r) break;
-      char c = s.charAt(i++);
-      String base;
-      switch (c) {
-        case 'B':
-          base = "byte";
-          break;
-        case 'C':
-          base = "char";
-          break;
-        case 'D':
-          base = "double";
-          break;
-        case 'F':
-          base = "float";
-          break;
-        case 'I':
-          base = "int";
-          break;
-        case 'J':
-          base = "long";
-          break;
-        case 'S':
-          base = "short";
-          break;
-        case 'Z':
-          base = "boolean";
-          break;
-        case 'L':
-          int semi = s.indexOf(';', i);
-          if (semi < 0 || semi > r) return null;
-          base = s.substring(i, semi).replace('/', '.');
-          i = semi + 1;
-          break;
-        default:
-          return null;
-      }
-      StringBuilder type = new StringBuilder(base);
-      for (int k = 0; k < arr; k++) type.append("[]");
-      if (!first) out.append(", ");
-      out.append(type);
-      first = false;
-    }
-    return out.toString();
-  }
-
-  /**
    * Extracts the path for the jar of this agent from the boot classpath.
    *
    * @return the path for the jar file, as a string
@@ -502,30 +416,36 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   * Creates an argument string using absolute paths for the replacement and exclusion files.
    *
    * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
    * files used in the original use of the agent.
    *
    * @param replacementFilePath the {@code Path} for the replacement file
-   * @param exclusionFilePath the {@code Path} for the replacement file
+   * @param exclusionFilePath the {@code Path} for the file of packages not to transform
+   * @param excludedSignatures the values of the {@code --replacecall-exclude} command-line option
+   * @param excludedSignaturesFilePath the {@code Path} for the file of methods whose default
+   *     replacements should not be used
    * @return the argument string for the current run using absolute paths
    */
-  private static String createAgentArgs(
-      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
-    StringJoiner result = new StringJoiner(",");
+  static String createAgentArgs(
+      @Nullable Path replacementFilePath,
+      @Nullable Path exclusionFilePath,
+      List<String> excludedSignatures,
+      @Nullable Path excludedSignaturesFilePath) {
+    // Options.tokenize() splits the argument string at whitespace.
+    StringJoiner result = new StringJoiner(" ");
     if (replacementFilePath != null) {
       result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
     }
     if (exclusionFilePath != null) {
       result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
     }
-    // Preserve the exclude options if they were supplied, so flaky-filter uses identical args.
-    if (replacecall_exclude != null && !replacecall_exclude.trim().isEmpty()) {
-      result.add("--replacecall-exclude=" + replacecall_exclude.trim());
+    for (String signature : excludedSignatures) {
+      result.add("--replacecall-exclude=" + signature.trim());
     }
-    if (replacecall_exclude_file != null) {
-      result.add("--replacecall-exclude-file=" + replacecall_exclude_file.toAbsolutePath());
+    if (excludedSignaturesFilePath != null) {
+      result.add("--replacecall-exclude-file=" + excludedSignaturesFilePath.toAbsolutePath());
     }
     return result.toString();
   }
