@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -125,6 +126,16 @@ public abstract class ParameterBound {
    * @return the list of {@code TypeVariable} objects in this bound
    */
   public abstract List<TypeVariable> getTypeParameters();
+
+  /**
+   * Returns the type parameters in the lazy parts of this bound. A substitution must map each of
+   * them before this bound can be compared with types.
+   *
+   * @return the list of {@code TypeVariable} objects in the lazy parts of this bound
+   */
+  List<TypeVariable> getLazyTypeParameters() {
+    return Collections.emptyList();
+  }
 
   /**
    * Returns true if the given (reflection) type reference represents a type in which a type

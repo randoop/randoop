@@ -85,12 +85,6 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
-    return false;
-  }
-
-  @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     ReferenceBound b = this.substitute(substitution);
     return !this.equals(b) && b.isUpperBound(argType, substitution);

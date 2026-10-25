@@ -160,6 +160,70 @@ public class TypeVariableTest {
   static class VariableBound<S extends Comparable<Integer>, T extends S> {}
 
   /**
+   * A type parameter bounded by {@code Integer}.
+   *
+   * @param <T> the type parameter
+   */
+  static class IntegerBound<T extends Integer> {}
+
+  /**
+   * A type parameter bounded by {@code Comparable<? super Integer>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ComparableSuperIntegerBound<T extends Comparable<? super Integer>> {}
+
+  /**
+   * A type parameter with a self-referential bound.
+   *
+   * @param <E> the type parameter
+   */
+  static class SelfEnumBound<E extends Enum<E>> {}
+
+  /**
+   * A type parameter bounded by {@code Enum<?>}.
+   *
+   * @param <E> the type parameter
+   */
+  static class EnumWildcardBound<E extends Enum<?>> {}
+
+  /**
+   * A type parameter bounded by {@code List<String>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListStringBound<T extends List<String>> {}
+
+  /**
+   * A type parameter bounded by {@code List<?>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListWildcardBound<T extends List<?>> {}
+
+  /**
+   * A type parameter whose self-reference occurs in a wildcard bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfInWildcardBound<T extends Collection<? extends Comparable<T>>> {}
+
+  /**
+   * A type parameter whose self-reference occurs in a wildcard bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class OtherSelfInWildcardBound<T extends Collection<? extends Comparable<T>>> {}
+
+  /**
+   * Mutually recursive type parameters.
+   *
+   * @param <S> a type parameter whose bound refers to {@code T}
+   * @param <T> a type parameter whose bound refers to {@code S}
+   */
+  static class MutualBound<S extends Comparable<T>, T extends List<S>> {}
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -231,5 +295,46 @@ public class TypeVariableTest {
     TypeVariable t = typeParameter(VariableBound.class, 1);
     assertTrue(t.isInstantiationOf(typeParameter(ComparableIntegerBound.class)));
     assertFalse(t.isInstantiationOf(typeParameter(ComparableStringBound.class)));
+  }
+
+  @Test
+  public void testWildcardInBound() {
+    TypeVariable comparableWildcard = typeParameter(ComparableWildcardBound.class);
+    assertTrue(typeParameter(ComparableStringBound.class).isInstantiationOf(comparableWildcard));
+    assertTrue(
+        typeParameter(SelfEnumBound.class)
+            .isInstantiationOf(typeParameter(EnumWildcardBound.class)));
+    assertTrue(
+        typeParameter(IntegerBound.class)
+            .isInstantiationOf(typeParameter(ComparableSuperIntegerBound.class)));
+    assertFalse(
+        typeParameter(ComparableStringBound.class)
+            .isInstantiationOf(typeParameter(ComparableSuperIntegerBound.class)));
+    assertTrue(
+        typeParameter(ListStringBound.class)
+            .isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
+    assertFalse(typeParameter(NumberBound.class).isInstantiationOf(comparableWildcard));
+    assertTrue(
+        typeParameter(ComparableSuperIntegerBound.class).isInstantiationOf(comparableWildcard));
+  }
+
+  @Test
+  public void testSelfReferenceInWildcardBound() {
+    TypeVariable t = typeParameter(SelfInWildcardBound.class);
+    assertTrue(t.isInstantiationOf(typeParameter(OtherSelfInWildcardBound.class)));
+    assertTrue(t.isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
+    assertFalse(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
+  }
+
+  @Test
+  public void testMutuallyRecursiveBound() {
+    TypeVariable s = typeParameter(MutualBound.class, 0);
+    TypeVariable t = typeParameter(MutualBound.class, 1);
+    assertTrue(s.isInstantiationOf(typeParameter(ComparableWildcardBound.class)));
+    assertTrue(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
+    assertTrue(t.isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
+    assertFalse(t.isInstantiationOf(typeParameter(ComparableWildcardBound.class)));
+    // MutualBound.T's bound is List<S>, and String does not satisfy S's bound Comparable<T>.
+    assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
   }
 }
