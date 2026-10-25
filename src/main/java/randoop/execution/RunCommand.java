@@ -3,6 +3,7 @@ package randoop.execution;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.exec.CommandLine;
@@ -10,7 +11,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.plumelib.util.UtilPlume;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.util.Log;
 
@@ -18,7 +19,12 @@ import randoop.util.Log;
  * Class providing the {@link #run(List, Path, long)} method to run a command in a separate process
  * with a timeout.
  */
-public class RunCommand {
+public final class RunCommand {
+
+  /** Do not instantiate. */
+  private RunCommand() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Runs the given command synchronously in the given directory using the given timeout. If the
@@ -27,22 +33,22 @@ public class RunCommand {
    *
    * @param command the command to be run in the process
    * @param workingDirectory the working directory for the command
-   * @param timeout the timeout in milliseconds for executing the process
+   * @param timeoutMillis the timeout in milliseconds for executing the process
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeout)
-      throws CommandException {
+  static Status run(List<String> command, Path workingDirectory, long timeoutMillis) {
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    executor.setWorkingDirectory(workingDirectory.toFile());
+    DefaultExecutor executor =
+        DefaultExecutor.builder().setWorkingDirectory(workingDirectory.toFile()).get();
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofMillis(timeoutMillis)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -51,8 +57,8 @@ public class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, UtilPlume.join(" ", command));
-    Log.logPrintf("  timeout=%s, environment: %s%n", timeout, System.getenv());
+    Log.logPrintf("  cd %s; %s%n", workingDirectory, StringsPlume.join(" ", command));
+    Log.logPrintf("  timeoutMillis=%s, environment: %s%n", timeoutMillis, System.getenv());
 
     try {
       executor.execute(cmdLine, resultHandler);
@@ -71,14 +77,18 @@ public class RunCommand {
 
     List<String> standardOutputLines;
     try {
-      standardOutputLines = Arrays.asList(outStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String outStreamString = outStream.toString();
+      standardOutputLines = Arrays.asList(outStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process standard output", e);
     }
 
     List<String> errorOutputLines;
     try {
-      errorOutputLines = Arrays.asList(errStream.toString().split(Globals.lineSep));
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errStreamString = errStream.toString();
+      errorOutputLines = Arrays.asList(errStreamString.split(Globals.lineSep));
     } catch (RuntimeException e) {
       throw new CommandException("Exception getting process error output", e);
     }
@@ -98,7 +108,7 @@ public class RunCommand {
     /** The exit status of the command. */
     public final int exitStatus;
 
-    /** Whether the command process timed out. */
+    /** True if the command process timed out. */
     public final boolean timedOut;
 
     /** The output from running the command. */
@@ -115,7 +125,7 @@ public class RunCommand {
      *
      * @param command the command
      * @param exitStatus the exit status
-     * @param timedOut whether the process timed out
+     * @param timedOut true if the process timed out
      * @param standardOutputLines the lines of process output to standard output
      * @param errorOutputLines the lines of process output to standard error
      */
@@ -138,26 +148,26 @@ public class RunCommand {
       sb.append(
           String.format(
               "Status %d (timedOut=%s) for command \"%s\"",
-              exitStatus, timedOut, UtilPlume.join(" ", command)));
+              exitStatus, timedOut, StringsPlume.join(" ", command)));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();
     }
 
     /**
-     * Print to sb the lines, or say how many lines there were.
+     * Print to {@code sb} the lines, or say how many lines there were.
      *
      * @param source the source of the lines, such as "stdout" or "stderr"
      * @param lines the lines
-     * @param sb where to print the represenation
+     * @param sb where to print the representation
      */
     private void describeLines(String source, List<String> lines, StringBuilder sb) {
       if (lines.size() <= 2) {
         sb.append(", ");
         sb.append(source);
         sb.append("=\"");
-        sb.append(UtilPlume.joinLines(lines));
-        sb.append("\"");
+        sb.append(StringsPlume.joinLines(lines));
+        sb.append('\"');
         sb.append(Globals.lineSep);
       } else {
         sb.append(", ");
@@ -169,11 +179,12 @@ public class RunCommand {
   }
 
   /**
-   * Exception representing an error that occured while running a process with {@link
+   * Exception representing an error that occurred while running a process with {@link
    * RunCommand#run(List, Path, long)}.
    */
-  public static class CommandException extends Throwable {
+  public static class CommandException extends RuntimeException {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;
 
     /**

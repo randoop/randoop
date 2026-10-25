@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A specification of a constructor or method, aka, an <i>operation</i>. Consists of the {@code
@@ -16,33 +17,33 @@ import java.util.Objects;
  * this class, as in
  *
  * <pre>
- *   {
- *     "operation": {
- *       "classname": "net.Connection",
- *       "name": "send",
- *       "parameterTypes": [
- *         "int"
- *       ]
- *     },
- *    "identifiers": {
- *       "parameters": [
- *         "signalValue"
- *        ],
- *       "receiverName": "receiver",
- *       "returnName": "result"
- *     },
- *    "preSpecifications": [
- *      {
- *        "description": "the signalValue must be positive",
- *        "guard": {
- *          "conditionText": {@code "signalValue > 0"},
- *          "description": "the signalValue must be positive"
- *         }
- *      }
- *    "postSpecifications": [],
- *    "throwsSpecifications": [],
- *    ]
- *   }
+ * {
+ *   "operation": {
+ *     "classname": "net.Connection",
+ *     "name": "send",
+ *     "parameterTypes": [
+ *       "int"
+ *     ]
+ *   },
+ *   "identifiers": {
+ *     "parameters": [
+ *       "signalValue"
+ *     ],
+ *     "receiverName": "receiver",
+ *     "returnName": "result"
+ *   },
+ *   "pre": [
+ *     {
+ *       "description": "the signalValue must be positive",
+ *       "guard": {
+ *         "conditionText": {@code "signalValue > 0"},
+ *         "description": "the signalValue must be positive"
+ *       }
+ *     }
+ *   ],
+ *   "post": [],
+ *   "throws": [],
+ * }
  * </pre>
  *
  * Method {@link
@@ -73,8 +74,8 @@ public class OperationSpecification {
   @SerializedName("throws")
   private final List<ThrowsCondition> throwsSpecifications;
 
-  /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  /** Gson serialization requires a no-argument constructor. */
+  @SuppressWarnings({"unused", "nullness:assignment"}) // dummy constructor for Gson serialization
   private OperationSpecification() {
     this.operation = null;
     this.identifiers = new Identifiers();
@@ -93,9 +94,10 @@ public class OperationSpecification {
     this(
         operation,
         identifiers,
-        new ArrayList<Precondition>(),
-        new ArrayList<Postcondition>(),
-        new ArrayList<ThrowsCondition>());
+        // These cannot be Collections.emptyList() because the fields are mutable
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>());
   }
 
   /**
@@ -122,7 +124,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link OperationSignature} for the operation.
+   * Returns the {@link OperationSignature} for the operation.
    *
    * @return the reflection object for the operation
    */
@@ -131,7 +133,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the {@link Identifiers} for this specification.
+   * Returns the {@link Identifiers} for this specification.
    *
    * @return the identifiers for this specification
    */
@@ -140,7 +142,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Precondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Precondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Precondition} objects for this specification
    */
@@ -149,7 +151,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Postcondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link Postcondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of {@link Postcondition} objects for this specification
    */
@@ -158,7 +160,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
+   * Returns the list of {@link ThrowsCondition} objects for this {@link OperationSpecification}.
    *
    * @return the list of specifications for this operation specification, is non-null
    */
@@ -194,7 +196,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Indicates whether this {@link OperationSpecification} contains any pre-, post-, or
+   * Returns true if this {@link OperationSpecification} contains any pre-, post-, or
    * throws-specifications.
    *
    * @return {@code true} if there are no pre-, post-, or throws-specifications, false otherwise
@@ -206,7 +208,7 @@ public class OperationSpecification {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -233,20 +235,23 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return "{ \"operation\": "
-        + this.operation.toString()
-        + ", "
-        + "\"identifiers\": "
-        + this.identifiers
-        + ", "
-        + "\"preSpecifications\": "
-        + this.preSpecifications
-        + " }"
-        + ", "
-        + "\"postSpecifications\": "
-        + this.postSpecifications
-        + ", "
-        + "\"throwsSpecifications\": "
-        + this.throwsSpecifications;
+    // Use a temporary variable to avoid interleaved output, when callees produce output.
+    String result =
+        "{ \"operation\": "
+            + this.operation.toString()
+            + ", "
+            + "\"identifiers\": "
+            + this.identifiers
+            + ", "
+            + "\"preSpecifications\": "
+            + this.preSpecifications
+            + ", "
+            + "\"postSpecifications\": "
+            + this.postSpecifications
+            + ", "
+            + "\"throwsSpecifications\": "
+            + this.throwsSpecifications
+            + " }";
+    return result;
   }
 }

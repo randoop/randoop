@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.List;
 
 /** Processes a single record given by RecordListReader. */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface RecordProcessor {
 
   /**

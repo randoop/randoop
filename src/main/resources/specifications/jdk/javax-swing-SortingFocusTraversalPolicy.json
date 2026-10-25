@@ -107,7 +107,7 @@
         },
         "description": "return true if aComponent is visible, displayable, enabled, and focusable; false otherwise",
         "guard": {
-          "condition": "aComponent.isVisible()",
+          "condition": "aComponent.isAccessible()",
           "description": ""
         }
       },
@@ -118,7 +118,7 @@
         },
         "description": "return true if aComponent is visible, displayable, enabled, and focusable; false otherwise",
         "guard": {
-          "condition": "aComponent.isVisible()",
+          "condition": "aComponent.isAccessible()",
           "description": ""
         }
       }

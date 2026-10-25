@@ -1,6 +1,7 @@
 package randoop;
 
-import randoop.util.Log;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -18,18 +19,21 @@ import randoop.util.Log;
  */
 public class NormalExecution extends ExecutionOutcome {
 
-  private final Object result;
+  /** The value created by executing the statement. */
+  private final @Nullable Object result;
 
   /**
+   * Creates a new NormalExecution.
+   *
    * @param result the return value
-   * @param executionTime the execution time, in nanoseconds
+   * @param executionTimeNanos the execution time, in nanoseconds
    */
-  public NormalExecution(Object result, long executionTime) {
-    super(executionTime);
+  public NormalExecution(@Nullable Object result, long executionTimeNanos) {
+    super(executionTimeNanos);
     this.result = result;
   }
 
-  public Object getRuntimeValue() {
+  public @Nullable Object getRuntimeValue() {
     return this.result;
   }
 
@@ -40,6 +44,6 @@ public class NormalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    return String.format("[NormalExecution %s]", Log.toStringAndClass(result));
+    return String.format("[NormalExecution %s]", StringsPlume.toStringAndClass(result));
   }
 }

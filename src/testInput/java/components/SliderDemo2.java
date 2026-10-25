@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -70,9 +70,9 @@ public class SliderDemo2 extends JPanel
         framesPerSecond.addChangeListener(this);
         framesPerSecond.setMajorTickSpacing(10);
         framesPerSecond.setPaintTicks(true);
-        
+
         //Create the label table.
-        Hashtable<Integer, JLabel> labelTable = 
+        Hashtable<Integer, JLabel> labelTable =
             new Hashtable<Integer, JLabel>();
         //PENDING: could use images, but we don't have any good ones.
         labelTable.put(new Integer( 0 ),
@@ -212,20 +212,20 @@ public class SliderDemo2 extends JPanel
         JFrame frame = new JFrame("SliderDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         SliderDemo2 animator = new SliderDemo2();
-                
+
         //Add content to the window.
         frame.add(animator, BorderLayout.CENTER);
 
         //Display the window.
         frame.pack();
         frame.setVisible(true);
-        animator.startAnimation(); 
+        animator.startAnimation();
     }
 
     public static void main(String[] args) {
         /* Turn off metal's use of bold fonts */
         UIManager.put("swing.boldMetal", Boolean.FALSE);
-        
+
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -235,4 +235,3 @@ public class SliderDemo2 extends JPanel
         });
     }
 }
-

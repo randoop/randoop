@@ -9,7 +9,10 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.plumelib.reflection.Signatures;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 
 /**
  * Manages the options for a run of Randoop within a system test method so that the information can
@@ -91,7 +94,23 @@ class RandoopOptions {
   }
 
   /**
-   * Adds a option-flag to this option set.
+   * Returns the value of the given option. The value may be the empty string. Returns null if not
+   * set.
+   *
+   * @return the value of the given option, or null if not set
+   */
+  String getOption(String option) {
+    for (String o : options) {
+      String prefix = "--" + option + "=";
+      if (o.startsWith(prefix)) {
+        return o.substring(prefix.length());
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Adds an option-flag to this option set.
    *
    * @param option the name of the option flag to be set
    */
@@ -139,13 +158,15 @@ class RandoopOptions {
   /**
    * Sets the regression base name for generated tests, and adds the option to this set.
    *
+   * <p>Does nothing if the argument is the empty string.
+   *
    * @param regressionBasename the regression basename
    */
   void setRegressionBasename(String regressionBasename) {
-    if (regressionBasename.length() > 0) {
-      setOption("regression-test-basename", regressionBasename);
-      this.regressionBasename = regressionBasename;
-    }
+    String optionName = "regression-test-basename";
+    validateClassName(regressionBasename, optionName);
+    setOption(optionName, regressionBasename);
+    this.regressionBasename = regressionBasename;
   }
 
   /**
@@ -154,10 +175,10 @@ class RandoopOptions {
    * @param errorBasename the errorBasename
    */
   void setErrorBasename(String errorBasename) {
-    if (errorBasename.length() > 0) {
-      setOption("error-test-basename", errorBasename);
-      this.errorBasename = errorBasename;
-    }
+    String optionName = "error-test-basename";
+    validateClassName(errorBasename, optionName);
+    setOption(optionName, errorBasename);
+    this.errorBasename = errorBasename;
   }
 
   /**
@@ -166,11 +187,34 @@ class RandoopOptions {
    * @param classname the test class name
    */
   void addTestClass(@ClassGetName String classname) {
-    if (classname.length() > 0) {
-      setOption("testclass", classname);
-      classnames.add(classname);
-    } else {
-      throw new IllegalArgumentException("class name may not be empty string");
+    String optionName = "testclass";
+    validateClassName(classname, optionName);
+    setOption(optionName, classname);
+    classnames.add(classname);
+  }
+
+  /**
+   * Validates an argument that should be a class name. Throws RandoopUsageError if it is not valid.
+   *
+   * @param className an argument that should be a class name
+   * @param commandLineOption the command line option name, without leading "--"
+   */
+  static void validateClassName(String className, String commandLineOption) {
+    if (className.isEmpty()) {
+      throw new Error(
+          "Do not provide the empty string as the argument to --" + commandLineOption + ".");
+    }
+    if (className.indexOf('.') == -1 && !Character.isUpperCase(className.charAt(0))) {
+      throw new Error(
+          String.format(
+              "Java classnames start with an uppercase letter. You provided --%s=%s",
+              commandLineOption, className));
+    }
+
+    if (className.charAt(0) == '[' || !Signatures.isClassGetName(className)) {
+      throw new Error(
+          String.format(
+              "Invalid Java classname. You provided --%s=%s", commandLineOption, className));
     }
   }
 
@@ -184,7 +228,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the regression basename for this option set.
+   * Returns the regression basename for this option set.
    *
    * @return the regression basename, which may be null if not set
    */
@@ -193,7 +237,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return the error base name for this option set.
+   * Returns the error base name for this option set.
    *
    * @return the error base name, which may be null if not set
    */
@@ -202,7 +246,7 @@ class RandoopOptions {
   }
 
   /**
-   * Return this set of options as a list of strings.
+   * Returns this set of options as a list of strings.
    *
    * @return this option set as a list of {@code String}
    */
@@ -230,16 +274,17 @@ class RandoopOptions {
    * @param classListFilename the class list filename
    */
   private void loadClassNames(String classListFilename) {
-    try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {
+    try (EntryReader er =
+        new EntryReader(classListFilename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
       for (String line : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String name = line.trim();
         if (!name.isEmpty()) {
           classnames.add(name);
         }
       }
     } catch (IOException e) {
-      System.err.println("Failed to load class names: " + e.getMessage());
+      throw new RuntimeException("Failed to load class names file " + classListFilename, e);
     }
   }
 

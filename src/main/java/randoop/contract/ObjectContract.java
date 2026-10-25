@@ -3,6 +3,7 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -17,7 +18,6 @@ import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
-import randoop.util.TimeoutExceededException;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -25,7 +25,7 @@ import randoop.util.TimeoutExceededException;
  * contract holds. Any sequence of method calls that leads to a failing contract is outputted by
  * Randoop as an error-revealing test case.
  *
- * <p>Implementing classes provide two key pieces functionality:
+ * <p>Implementing classes provide two key pieces of functionality:
  *
  * <ul>
  *   <li>A method {@link #evaluate}{@code (Object... objects)} that determines if the given
@@ -38,6 +38,9 @@ import randoop.util.TimeoutExceededException;
  * EqualsReflexive}).
  */
 public abstract class ObjectContract {
+
+  /** Creates an ObjectContract. */
+  public ObjectContract() {}
 
   /**
    * The number of values that this contract is over.
@@ -123,6 +126,7 @@ public abstract class ObjectContract {
     }
 
     if (outcome instanceof NormalExecution) {
+      @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
       boolean result = ((Boolean) ((NormalExecution) outcome).getRuntimeValue()).booleanValue();
       if (result) {
         return null;
@@ -132,12 +136,12 @@ public abstract class ObjectContract {
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
       Log.logPrintf(
-          "checkContract(): Contract %s threw exception of class %s with message %s%n",
-          this, e.getClass(), e.getMessage());
+          "checkContract(): Contract %s [%s] threw exception of class %s with message %s%n",
+          toCodeString(), getClass(), e.getClass(), e.getMessage());
       if (e instanceof RandoopBug) {
         throw (RandoopBug) e;
       }
-      if (e instanceof TimeoutExceededException) {
+      if (e instanceof TimeoutException) {
         // The index and name won't get used, but set them anyway.
         return new InvalidExceptionCheck(e, eseq.size() - 1, e.getClass().getName());
       }
@@ -161,7 +165,7 @@ public abstract class ObjectContract {
           // method that throws an exception; for example, the method might throw
           // NullPointerException or ConcurrentModificationException.
 
-          // This is wrong:  it attaches an expected exeption to the method call that
+          // This is wrong:  it attaches an expected exception to the method call that
           // created the object, not to the contract check that comes afterward.
           // return new ExpectedExceptionCheck(
           //     e, eseq.size(), ExpectedExceptionCheckGen.getCatchClassName(e.getClass()));
@@ -187,7 +191,7 @@ public abstract class ObjectContract {
   }
 
   /**
-   * Return an ObjectCheck indicating that a contract failed.
+   * Returns an ObjectCheck indicating that a contract failed.
    *
    * @param eseq the sequence for which a contract failed
    * @param values the input values

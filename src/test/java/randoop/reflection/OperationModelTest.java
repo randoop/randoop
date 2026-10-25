@@ -10,7 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +21,9 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
 import randoop.operation.TypedClassOperation;
@@ -55,6 +57,10 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -73,9 +79,9 @@ public class OperationModelTest {
     }
     assertEquals(1, concreteOpCount);
     assertThat(
-        "generic operation count (JDK7: 51, JDK8: 58, JDK11: 59)",
+        "generic operation count (JDK7: 50, JDK8: 57, JDK11: 58, JDK21: 59)",
         genericOpCount,
-        isOneOf(50, 57, 58));
+        isOneOf(50, 57, 58, 59));
     assertEquals(1, wildcardTypeCount);
     assertEquals(concreteOpCount + genericOpCount + 1, model.getOperations().size());
   }
@@ -103,6 +109,10 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     assertEquals(3, model.getClassTypes().size());
@@ -166,6 +176,10 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     } catch (SignatureParseException e) {
       fail("failed to parse operation: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
 
@@ -217,7 +231,7 @@ public class OperationModelTest {
     }
   }
 
-  /** Test whether member classes are harvested. */
+  /** Returns true if member classes are harvested. */
   @Test
   public void memberTypeTest() {
     String classname = "randoop.reflection.ClassWithMemberTypes";
@@ -277,12 +291,12 @@ public class OperationModelTest {
     classnames1.add("randoop.reflection.ClassWithMemberTypes");
     classnames1.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames1.add("randoop.reflection.supertypetest.InheritedEnum");
-    classnames1.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames1.add("randoop.reflection.accessibilitytest.PublicClass");
     OperationModel model1 = getOperationModel(classnames1);
     List<TypedOperation> operations1 = model1.getOperations();
 
     Set<@ClassGetName String> classnames2 = new LinkedHashSet<>();
-    classnames2.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames2.add("randoop.reflection.accessibilitytest.PublicClass");
     classnames2.add("randoop.reflection.GenericTreeWithInnerNode");
     classnames2.add("randoop.reflection.supertypetest.InheritedEnum");
     classnames2.add("randoop.reflection.ClassWithMemberTypes");
@@ -345,6 +359,10 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     return model;
   }

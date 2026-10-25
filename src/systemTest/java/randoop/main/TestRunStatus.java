@@ -1,5 +1,7 @@
 package randoop.main;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ class TestRunStatus {
   }
 
   /**
-   * Runs the tests with the given basename, and captures and returns a description of the results.
+   * Runs the tests with the given basename, and returns a description of the results.
    *
    * @param testEnvironment the environment for this test run
    * @param packageName the package name of the JUnit tests, null if default package
@@ -63,7 +65,7 @@ class TestRunStatus {
     String execFile = jacocoDir.resolve(basename + "jacoco.exec").toString();
     String jUnitTestSuiteName = ((packageName == null) ? "" : packageName + ".") + basename;
 
-    List<String> command = new ArrayList<>();
+    List<String> command = new ArrayList<>(10);
     command.add("java");
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
@@ -106,6 +108,7 @@ class TestRunStatus {
    * adding information about the number of passing and failing tests.
    *
    * @param ps the {@link ProcessStatus} of the run of the JUnit test suite
+   * @param coverageMap the coverage map
    * @return the run description for the given process results
    */
   private static TestRunStatus getTestRunStatus(ProcessStatus ps, MethodCoverageMap coverageMap) {
@@ -115,13 +118,13 @@ class TestRunStatus {
 
     for (String line : ps.outputLines) {
       if (line.contains("OK (")) {
-        testsSucceed = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
+        testsSucceed = Integer.parseInt(line.replaceFirst("\\D*(\\d*).*", "$1"));
         testsRun = testsSucceed;
       } else if (line.contains("Failures:")) {
         String[] toks = line.split(",");
-        assert toks.length == 2;
-        testsRun = Integer.valueOf(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
-        testsFail = Integer.valueOf(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
+        assertEquals(toks.length, 2);
+        testsRun = Integer.parseInt(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
+        testsFail = Integer.parseInt(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
         testsSucceed = testsRun - testsFail;
       }
     }

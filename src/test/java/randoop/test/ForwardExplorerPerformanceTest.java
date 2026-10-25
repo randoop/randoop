@@ -1,7 +1,7 @@
 package randoop.test;
 
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.EntryReader;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
@@ -22,11 +23,12 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 
 // DEPRECATED. Will delete after testing other performance tests
-// in different machines.
+// on different machines.
 public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;
-  private static final long EXPECTED_MIN = 18000000 / performanceMultiplier();
+  // Minimum number of expected tests generated.
+  private static final long EXPECTED_MIN = 18000000 / performanceMultiplierMillis();
 
   private static OptionsCache optionsCache;
 
@@ -42,21 +44,21 @@ public class ForwardExplorerPerformanceTest {
   }
 
   @SuppressWarnings("ModifiedButNotUsed")
-  private static long performanceMultiplier() {
+  private static long performanceMultiplierMillis() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
-    long startTime = System.currentTimeMillis();
+    long startTimeMillis = System.currentTimeMillis();
     for (int i = 0; i < 10000000; i++) {
       list.add(foo);
       list.remove(0);
     }
-    long time = System.currentTimeMillis() - startTime;
-    return time;
+    long timeMillis = System.currentTimeMillis() - startTimeMillis;
+    return timeMillis;
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  public void test1() {
+  public void test1() throws RandoopSpecificationError {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
@@ -65,7 +67,7 @@ public class ForwardExplorerPerformanceTest {
     try (EntryReader er =
         new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entryLine : er) {
-        @SuppressWarnings("signature:assignment.type.incompatible") // need run-time check
+        @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
         Collection<TypedOperation> oneClassOperations =
@@ -74,7 +76,7 @@ public class ForwardExplorerPerformanceTest {
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("class not found when reading classnames: " + e);
     }
 

@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import java.util.StringJoiner;
 import org.checkerframework.checker.signature.qual.FqBinaryName;
 import randoop.types.Type;
 
@@ -16,7 +17,12 @@ import randoop.types.Type;
  *   <li>{@code randoop.operation.Operation}
  * </ul>
  */
-class TypeArguments {
+final class TypeArguments {
+
+  /** Do not instantiate. */
+  private TypeArguments() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Parses comma-no-space-delimited type argument string and returns a list of types.
@@ -28,7 +34,9 @@ class TypeArguments {
    */
   static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
     Class<?>[] argTypes = new Class<?>[0];
-    if (argStr.trim().length() > 0) {
+    @SuppressWarnings("PMD.InefficientEmptyStringCheck") // Fix when no longer supporting Java 8.
+    boolean isBlank = argStr.trim().isEmpty();
+    if (!isBlank) {
       String[] argsStrs = argStr.split(",");
       argTypes = new Class<?>[argsStrs.length];
       for (int i = 0; i < argsStrs.length; i++) {
@@ -37,7 +45,7 @@ class TypeArguments {
 
         try {
           argTypes[i] = Type.forFullyQualifiedName(typeName);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new OperationParseException("Class " + typeName + " is not on classpath");
         }
       }
@@ -52,9 +60,10 @@ class TypeArguments {
    * @param params the array of {@link Class} objects representing the types of signature arguments
    */
   static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1)) sb.append(",");
+    StringJoiner sj = new StringJoiner(",");
+    for (Class<?> param : params) {
+      sj.add(param.getName());
     }
+    sb.append(sj);
   }
 }

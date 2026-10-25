@@ -40,22 +40,21 @@ import com.github.javaparser.ast.visitor.CloneVisitor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -110,7 +109,7 @@ public class Minimize extends CommandHandler {
 
   /** The Java file whose failing tests will be minimized. */
   @SuppressWarnings("WeakerAccess")
-  @OptionGroup(value = "Test case minimization")
+  @OptionGroup("Test case minimization")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -149,9 +148,13 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
-        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "Path to Java file whose failing tests will be minimized, classpath to compile and run the"
+            + " Java file, maximum time (in seconds) allowed for a single unit test case to run"
+            + " before it times out.",
+        "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if"
+            + " \"InputFile.java\" were the name of the input file.",
+        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java"
+            + " --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
@@ -191,29 +194,30 @@ public class Minimize extends CommandHandler {
       throw new RandoopCommandError(ae.getMessage());
     }
 
-    if (Minimize.suitepath == null) {
+    if (suitepath == null) {
       throw new RandoopCommandError("Use --suitepath to specify a file to be minimized.");
     }
 
     // Check that the input file is a Java file.
-    if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
-      throw new RandoopCommandError("The input file must be a Java file: " + Minimize.suitepath);
+    if (!FilenameUtils.getExtension(suitepath).equals("java")) {
+      throw new RandoopCommandError("The input file must be a Java file: " + suitepath);
     }
 
-    if (Minimize.testsuitetimeout <= 0) {
+    if (testsuitetimeout <= 0) {
       throw new RandoopCommandError(
-          "Timout must be positive, was given as " + Minimize.testsuitetimeout + ".");
+          "Timeout must be positive, was given as " + testsuitetimeout + ".");
     }
 
-    if (Minimize.minimizetimeout <= 0) {
+    if (minimizetimeout <= 0) {
       throw new RandoopCommandError(
-          "Minimizer timout must be positive, was given as " + Minimize.minimizetimeout + ".");
+          "Minimizer timeout must be positive, was given as " + minimizetimeout + ".");
     }
 
     // File object pointing to the file to be minimized.
     final Path originalFile = Paths.get(suitepath);
 
     ExecutorService executor = Executors.newFixedThreadPool(1);
+    @SuppressWarnings("PMD.UseDiamondOperator") // Java 9 feature
     Future<Boolean> future =
         executor.submit(
             new Callable<Boolean>() {
@@ -224,11 +228,12 @@ public class Minimize extends CommandHandler {
               }
             });
 
+    // ExecutorService was made to implement AutoCloseable in JDK 21.
     executor.shutdown();
 
     boolean success = false;
     try {
-      success = future.get(Minimize.minimizetimeout, TimeUnit.SECONDS);
+      success = future.get(minimizetimeout, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       System.err.println("Minimization process was interrupted.");
     } catch (ExecutionException e) {
@@ -245,7 +250,7 @@ public class Minimize extends CommandHandler {
         executor.shutdownNow();
       }
     } catch (InterruptedException e) {
-      System.err.println("Minimization process force terminated.");
+      System.err.println("Minimization process was force-terminated.");
     }
 
     return success;
@@ -272,7 +277,7 @@ public class Minimize extends CommandHandler {
    * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether to produce verbose output
+   * @param verboseOutput if true, produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    * @throws IOException if write to file fails
@@ -287,7 +292,7 @@ public class Minimize extends CommandHandler {
 
     // Read and parse input Java file.
     CompilationUnit compilationUnit;
-    try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
+    try (InputStream inputStream = Files.newInputStream(file)) {
       ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
       if (parseCompilationUnit.isSuccessful()) {
         compilationUnit = parseCompilationUnit.getResult().get();
@@ -301,7 +306,7 @@ public class Minimize extends CommandHandler {
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + file);
       e.printStackTrace(System.err);
-      return false;
+      throw e;
     }
 
     if (verboseOutput) {
@@ -310,16 +315,11 @@ public class Minimize extends CommandHandler {
 
     // Find the package name of the input file if it has one.
     String packageName;
-    try {
-      Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
-      if (oClassPackage.isPresent()) {
-        packageName = oClassPackage.get().getName().toString();
-      } else {
-        packageName = null;
-      }
-    } catch (NoSuchElementException e) {
+    Optional<PackageDeclaration> oClassPackage = compilationUnit.getPackageDeclaration();
+    if (oClassPackage.isPresent()) {
+      packageName = oClassPackage.get().getName().toString();
+    } else {
       packageName = null;
-      // No package declaration.
     }
 
     String oldClassName = FilenameUtils.removeExtension(file.getFileName().toString());
@@ -461,7 +461,7 @@ public class Minimize extends CommandHandler {
     List<Statement> statements = body.getStatements();
 
     // Map from primitive variable name to the variable's value extracted
-    // from a passing assertion.
+    // from a passing assertion.  Modified by the call to storeValueFromAssertion().
     Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
@@ -551,7 +551,8 @@ public class Minimize extends CommandHandler {
           Expression mExp;
           if (mArgs.size() == 1) {
             mExp = mArgs.get(0);
-          } else if (mArgs.size() == 1) {
+          } else if (mArgs.size() == 2) {
+            // First argument is a string explanation; the condition is the second argument.
             mExp = mArgs.get(1);
           } else {
             return;
@@ -578,7 +579,7 @@ public class Minimize extends CommandHandler {
             primitiveVarEquality(
                 mArgs.get(1), mArgs.get(2), primitiveValues, primitiveAndWrappedTypeVars);
           } else {
-            return;
+            // Nothing to do; fall through to return.
           }
         }
       }
@@ -586,7 +587,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If one of the arguments is a NamxExpr and the other is a LiteralExpr, put them in {@code
+   * If one of the arguments is a NameExpr and the other is a LiteralExpr, put them in {@code
    * primitiveValues}.
    *
    * @param exp1 the first expression
@@ -622,7 +623,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of statements that are a simplification of a given statement, in order from most
+   * Returns a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
    * <ul>
@@ -640,7 +641,7 @@ public class Minimize extends CommandHandler {
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<>();
+    List<Statement> replacements = new ArrayList<>(4);
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -672,7 +673,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of variable declaration statements that could replace the right hand side by 0,
+   * Returns a list of variable declaration statements that could replace the right hand side by 0,
    * false, or null, whichever is type correct. Returns an empty list if there are multiple variable
    * declarations in a single statement, such as {@code int i, j, k; }.
    *
@@ -681,7 +682,7 @@ public class Minimize extends CommandHandler {
    *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<>();
+    List<Statement> resultList = new ArrayList<>(3);
 
     if (vdExpr.getVariables().size() != 1) {
       // Number of variables declared in this expression is not 1.
@@ -711,7 +712,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that simplifies the right hand side by a calculated
+   * Returns a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. Returns null if there are multiple variable declarations in a single
    * statement, such as {@code int i, j, k; }.
    *
@@ -744,8 +745,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that sets the right hand side of a variable declaration
-   * to the value that is passed in.
+   * Returns a variable declaration statement that sets the right hand side of a variable
+   * declaration to the value that is passed in.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param exprType type of the variable declaration expression, should not be null
@@ -783,7 +784,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a literal expression with the value that is passed in.
+   * Returns a literal expression with the value that is passed in.
    *
    * @param value the value for the literal expression. If null, the value of the literal expression
    *     will be the zero value for the type that is passed in.
@@ -832,8 +833,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a statement that contains only the right hand side of a given statement. Returns null if
-   * there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
+   * Returns a statement that contains only the right hand side of a given statement. Returns null
+   * if there are multiple variable declarations in a single statement, such as {@code int i=1, j=2,
    * k=3; }, or if there are no initializers, as in {@code int i;}.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
@@ -863,12 +864,17 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts a type by its simple name. */
-  private static class ClassOrInterfaceTypeComparator implements Comparator<ClassOrInterfaceType> {
+  private static final class ClassOrInterfaceTypeComparator
+      implements Comparator<ClassOrInterfaceType> {
+    /** Creates a new ClassOrInterfaceTypeComparator. */
+    public ClassOrInterfaceTypeComparator() {}
+
     @Override
     public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
       return o1.toString().compareTo(o2.toString());
     }
   }
+
   /** Sorts a type by its simple name. */
   private static ClassOrInterfaceTypeComparator classOrInterfaceTypeComparator =
       new ClassOrInterfaceTypeComparator();
@@ -887,7 +893,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether or not to output information about minimization status
+   * @param verboseOutput if true, output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    * @throws IOException thrown if write to file fails
    */
@@ -1038,8 +1044,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in, given file path and package name. Returns a {@code Path}
-   * pointing to the directory that the Java file should be executed in.
+   * Returns directory to execute command in, given file path and package name. Returns a {@code
+   * Path} pointing to the directory that the Java file should be executed in.
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
@@ -1089,12 +1095,15 @@ public class Minimize extends CommandHandler {
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-    DefaultExecutor executor = new DefaultExecutor();
-    if (executionDir != null) {
-      executor.setWorkingDirectory(executionDir.toFile());
-    }
 
-    ExecuteWatchdog watchdog = new ExecuteWatchdog(timeoutLimit * 1000);
+    DefaultExecutor.Builder<?> executorBuilder = DefaultExecutor.builder();
+    if (executionDir != null) {
+      executorBuilder.setWorkingDirectory(executionDir.toFile());
+    }
+    DefaultExecutor executor = executorBuilder.get();
+
+    ExecuteWatchdog watchdog =
+        ExecuteWatchdog.builder().setTimeout(Duration.ofSeconds(timeoutLimit)).get();
     executor.setWatchdog(watchdog);
 
     final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -1105,7 +1114,7 @@ public class Minimize extends CommandHandler {
     try {
       executor.execute(cmdLine, resultHandler);
     } catch (IOException e) {
-      return Outputs.failure(cmdLine, "Exception starting process");
+      return Outputs.failure(cmdLine, "Exception starting process: " + e.getMessage());
     }
 
     int exitValue = -1;
@@ -1123,15 +1132,20 @@ public class Minimize extends CommandHandler {
     String errOutputString;
 
     try {
-      stdOutputString = outStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String stdOutputStringTmp = outStream.toString();
+      stdOutputString = stdOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process standard output");
+      return Outputs.failure(
+          cmdLine, "Exception getting process standard output: " + e.getMessage());
     }
 
     try {
-      errOutputString = errStream.toString();
+      @SuppressWarnings("DefaultCharset") // JDK 8 version does not accept UTF_8 argument
+      String errOutputStringTmp = errStream.toString();
+      errOutputString = errOutputStringTmp;
     } catch (RuntimeException e) {
-      return Outputs.failure(cmdLine, "Exception getting process error output");
+      return Outputs.failure(cmdLine, "Exception getting process error output: " + e.getMessage());
     }
 
     if (timedOut) {
@@ -1152,9 +1166,8 @@ public class Minimize extends CommandHandler {
    * @return a map from method name to the method's failure stack trace. The stack trace will not
    *     contain any line numbers.
    */
+  @SuppressWarnings("PMD.AssignmentInOperand") // for `line = bufReader.readLine()`
   private static Map<String, String> normalizeJUnitOutput(String input) {
-    BufferedReader bufReader = new BufferedReader(new StringReader(input));
-
     String methodName = null;
     Map<String, String> resultMap = new HashMap<>();
 
@@ -1162,7 +1175,7 @@ public class Minimize extends CommandHandler {
     // JUnit output starts with index 1 for first failure.
     int index = 1;
 
-    try {
+    try (BufferedReader bufReader = new BufferedReader(new StringReader(input))) {
       for (String line; (line = bufReader.readLine()) != null; ) {
         String indexStr = index + ") ";
         // Check if the current line is the start of a failure stack
@@ -1195,7 +1208,6 @@ public class Minimize extends CommandHandler {
           result.append(line).append(Globals.lineSep);
         }
       }
-      bufReader.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -1264,12 +1276,16 @@ public class Minimize extends CommandHandler {
   }
 
   /** Sorts ImportDeclaration objects by their name. */
-  private static class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+  private static final class ImportDeclarationComparator implements Comparator<ImportDeclaration> {
+    /** Creates a new ImportDeclaration. */
+    public ImportDeclarationComparator() {}
+
     @Override
     public int compare(ImportDeclaration o1, ImportDeclaration o2) {
       return o1.getName().toString().compareTo(o2.getName().toString());
     }
   }
+
   /** Sorts ImportDeclaration objects by their name. */
   private static ImportDeclarationComparator importDeclarationComparator =
       new ImportDeclarationComparator();
@@ -1294,10 +1310,13 @@ public class Minimize extends CommandHandler {
   public static class Outputs {
     /** The command that was run. */
     public final String command;
+
     /** Exit value from running a process. 0 is success, other values are failure. */
     public final int exitValue;
+
     /** The standard output. */
     public final String stdout;
+
     /** The error output. */
     public final String errout;
 
@@ -1340,7 +1359,7 @@ public class Minimize extends CommandHandler {
     }
 
     /**
-     * Return true if the command succeeded.
+     * Returns true if the command succeeded.
      *
      * @return true if the command succeeded
      */
@@ -1349,7 +1368,7 @@ public class Minimize extends CommandHandler {
     }
 
     /**
-     * Return true if the command failed.
+     * Returns true if the command failed.
      *
      * @return true if the command failed
      */
@@ -1360,7 +1379,7 @@ public class Minimize extends CommandHandler {
     /**
      * Verbose toString().
      *
-     * @return a verbose multi-line string representation of this object, for dbugging
+     * @return a verbose multi-line string representation of this object, for debugging
      */
     public String diagnostics() {
       return String.join(
@@ -1379,7 +1398,7 @@ public class Minimize extends CommandHandler {
    *
    * @param file the file to compute the length of
    * @return the number of lines in the file. Returns -1 if an exception occurs while reading the
-   *     file
+   *     file.
    * @throws IOException thrown if error reading file
    */
   private static int getFileLength(Path file) throws IOException {
@@ -1399,7 +1418,7 @@ public class Minimize extends CommandHandler {
    * Deletes the .class file associated with the outputFile.
    *
    * @param outputFile the source file for the class file to be removed
-   * @param verboseOutput whether to print information about minimization status
+   * @param verboseOutput if true, print information about minimization status
    */
   private static void cleanUp(Path outputFile, boolean verboseOutput) {
     System.out.println("Minimizing complete.");
@@ -1415,11 +1434,12 @@ public class Minimize extends CommandHandler {
       }
     } catch (IOException e) {
       System.err.println("IOException when cleaning up .class file.");
+      e.printStackTrace();
     }
   }
 
   /**
-   * Return the number of JUnit test methods in a compilation unit.
+   * Returns the number of JUnit test methods in a compilation unit.
    *
    * @param compilationUnit the compilation unit to count the number of unit test methods
    * @return the number of unit test methods in compilationUnit
@@ -1472,22 +1492,26 @@ public class Minimize extends CommandHandler {
     if (parent == null) {
       return;
     }
-    List<Node> everything = new LinkedList<>(parent.getChildNodes());
+    List<Node> everything = new ArrayList<>(parent.getChildNodes());
     sortByBeginPosition(everything);
     int positionOfTheChild = -1;
     for (int i = 0; i < everything.size(); i++) {
-      if (everything.get(i) == node) positionOfTheChild = i;
+      if (everything.get(i) == node) {
+        positionOfTheChild = i;
+      }
     }
     if (positionOfTheChild == -1) {
       throw new AssertionError("I am not a child of my parent.");
     }
     int positionOfPreviousChild = -1;
     for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
-      if (!(everything.get(i) instanceof Comment)) positionOfPreviousChild = i;
+      if (!(everything.get(i) instanceof Comment)) {
+        positionOfPreviousChild = i;
+      }
     }
     for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
       Node nodeToPrint = everything.get(i);
-      if (!(nodeToPrint instanceof Comment))
+      if (!(nodeToPrint instanceof Comment)) {
         throw new RuntimeException(
             "Expected comment, instead "
                 + nodeToPrint.getClass()
@@ -1495,6 +1519,7 @@ public class Minimize extends CommandHandler {
                 + positionOfPreviousChild
                 + ", position of child "
                 + positionOfTheChild);
+      }
       result.add((Comment) nodeToPrint);
     }
   }

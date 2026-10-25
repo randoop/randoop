@@ -1,5 +1,6 @@
 package randoop.main;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ class SystemTestEnvironmentManager {
    *
    * @param classpath the system test classpath
    * @param buildDir the build directory
-   * @return the system test environment with
+   * @return the system test environment
    */
   static SystemTestEnvironmentManager createSystemTestEnvironmentManager(
       String classpath, Path buildDir) {
@@ -80,7 +81,7 @@ class SystemTestEnvironmentManager {
     Path replacecallAgentPath = getPathFromProperty("jar.replacecall.agent");
     Path coveredClassAgentPath = getPathFromProperty("jar.covered.class.agent");
 
-    assert randoopJarPath != null;
+    assertNotNull(randoopJarPath);
 
     return new SystemTestEnvironmentManager(
         classpath + java.io.File.pathSeparator + randoopJarPath,

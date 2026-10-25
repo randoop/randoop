@@ -1,45 +1,71 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.ClassFileConstants;
-import randoop.util.MultiMap;
 
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
- * of each class visited, adding a sequence for each to a map associating a sequence with a type.
+ * of each class visited, recording constant statistics including usage frequency and the classes
+ * that contain each constant.
  *
  * @see OperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
-  private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
+  /** The storage for constant information. */
+  private ScopeToLiteralStatistics scopeToLiteralStatistics;
 
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
-    this.literalMap = literalMap;
+  /**
+   * Creates a visitor that records constant statistics.
+   *
+   * @param scopeToLiteralStatistics a map from types to sequences in them that yield a literal
+   */
+  ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For each class, add to the literal map a sequence for each literal that the class uses.
+   *
+   * <p>This method does all the work; there is no {@code visitAfter()} method.
+   */
   @Override
   public void visitBefore(Class<?> c) {
-    Collection<ClassFileConstants.ConstantSet> constList =
-        Collections.singletonList(ClassFileConstants.getConstants(c.getName()));
-    MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
-    for (Class<?> constantClass : constantMap.keySet()) {
-      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
-      for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        Sequence seq =
-            new Sequence()
-                .extend(
-                    TypedOperation.createNonreceiverInitialization(term),
-                    new ArrayList<Variable>());
-        literalMap.add(constantType, seq);
+    Set<Sequence> allConstants = new HashSet<>();
+    ClassOrInterfaceType containingType = ClassOrInterfaceType.forClass(c);
+    ClassFileConstants.ConstantSet constantSet = ClassFileConstants.getConstants(c.getName());
+    Set<NonreceiverTerm> nonreceiverTerms =
+        ClassFileConstants.constantSetToNonreceiverTerms(constantSet);
+    for (NonreceiverTerm term : nonreceiverTerms) {
+      Sequence seq =
+          new Sequence()
+              .extend(TypedOperation.createNonreceiverInitialization(term), new ArrayList<>(0));
+      Object termValue = term.getValue();
+      // Skip constants with null values; they are not useful as mined literals.
+      if (termValue == null) {
+        continue;
       }
+      int frequency = constantSet.getConstantFrequency(termValue);
+      // Skip constants with zero or negative frequency. These appear in the constant pool
+      // (e.g., for static final field initializers) but have zero usage in executable bytecode
+      // Including these would create inconsistent statistics where numUses=0 but numClassesWith>0.
+      if (frequency <= 0) {
+        continue;
+      }
+      scopeToLiteralStatistics.incrementNumUses(containingType, seq, frequency);
+      allConstants.add(seq);
     }
+
+    // Record scope-level statistics for this class after processing all sequences.
+    scopeToLiteralStatistics.recordSequencesInClass(containingType, allConstants);
   }
 }

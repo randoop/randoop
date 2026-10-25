@@ -87,15 +87,18 @@ public class FieldSetterTest {
     assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
     assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualNExec.getExecutionTimeNanos());
     assertEquals(24, (int) f.getValue(null));
   }
 
   @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField()
-      throws NoSuchFieldException, NoSuchMethodException, InstantiationException,
-          InvocationTargetException, IllegalAccessException {
+      throws NoSuchFieldException,
+          NoSuchMethodException,
+          InstantiationException,
+          InvocationTargetException,
+          IllegalAccessException {
     Class<?> c = ClassWithFields.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     Field field = c.getField("oneField");
@@ -159,7 +162,7 @@ public class FieldSetterTest {
     assertTrue(actualExec instanceof NormalExecution);
     NormalExecution actualNExec = (NormalExecution) actualExec;
     assertEquals(expectedExec.getRuntimeValue(), actualNExec.getRuntimeValue());
-    assertEquals(expectedExec.getExecutionTime(), actualNExec.getExecutionTime());
+    assertEquals(expectedExec.getExecutionTimeNanos(), actualNExec.getExecutionTimeNanos());
     assertEquals(9, (int) f.getValue(inputs2[0]));
   }
 
@@ -174,7 +177,8 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet setOp = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when final instance field given to FieldSet constructor");
+          "IllegalArgumentException expected when final instance field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
       assertEquals("Field may not be final for FieldSet", e.getMessage());
     }
@@ -191,7 +195,8 @@ public class FieldSetterTest {
       @SuppressWarnings("unused")
       FieldSet op = new FieldSet(f);
       fail(
-          "IllegalArgumentException expected when static final field given to FieldSet constructor");
+          "IllegalArgumentException expected when static final field given to FieldSet"
+              + " constructor");
     } catch (IllegalArgumentException e) {
       assertEquals("Field may not be final for FieldSet", e.getMessage());
     }

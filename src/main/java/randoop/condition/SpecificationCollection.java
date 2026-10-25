@@ -6,8 +6,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -23,18 +25,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.OperationSignature;
 import randoop.condition.specification.OperationSpecification;
+import randoop.main.RandoopBug;
+import randoop.operation.TypedOperation;
 import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
+import randoop.util.Util;
 
 /**
  * A collection of {@link OperationSpecification} objects, indexed by {@link AccessibleObject}
  * reflection objects. Only represents methods that have a specification.
+ *
+ * <p>This represents a file given on the command line via {@code --specifications}. Its purpose is
+ * only to hold specifications temporarily, so the specification can be stored in the operation (via
+ * {@link TypedOperation#setExecutableSpecification}). Once all operations have been created (and
+ * specifications stored in them), the SpecificationCollection is discarded.
  *
  * <p>The {@link SpecificationCollection} should be constructed from the specification input before
  * the {@link randoop.reflection.OperationModel} is created.
@@ -43,14 +58,15 @@ import randoop.util.MultiMap;
  * corresponding {@link ExecutableSpecification} on demand. This lazy strategy avoids building
  * condition methods for specifications that are not used.
  */
-public class SpecificationCollection {
+@MustCall("close") public class SpecificationCollection implements Closeable {
 
   /** Map from method or constructor to the corresponding {@link OperationSpecification}. */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
   /**
    * Given a method signature, what methods (that have specifications) have that signature? Does not
-   * contain constructors.
+   * contain constructors. This map is used to determine overriding relationships in {@code
+   * overridden}.
    */
   private final MultiMap<OperationSignature, Method> signatureToMethods;
 
@@ -58,7 +74,8 @@ public class SpecificationCollection {
   private final Map<AccessibleObject, Set<Method>> overridden;
 
   /** Compiler for creating conditionMethods. */
-  private final SequenceCompiler compiler;
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
+  private final @Owning SequenceCompiler compiler;
 
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
@@ -67,8 +84,8 @@ public class SpecificationCollection {
    * testing. Clients should use {@link #create(List)} instead.
    *
    * @param specificationMap the map from method or constructor to {@link OperationSpecification}
-   * @param signatureToMethods the multimap from a signature to methods with with the signature
-   * @param overridden the map from a method to methods that it it overrides and that have a
+   * @param signatureToMethods the multimap from a signature to methods with the signature
+   * @param overridden the map from a method to methods that it overrides and that have a
    *     specification
    */
   SpecificationCollection(
@@ -88,8 +105,10 @@ public class SpecificationCollection {
    * @param specificationFiles files containing serialized specifications
    * @return the {@link SpecificationCollection} built from the serialized {@link
    *     OperationSpecification} objects, or null if the argument is null
+   * @throws RandoopSpecificationError if a specification file is malformed
    */
-  public static SpecificationCollection create(List<Path> specificationFiles) {
+  public static SpecificationCollection create(List<Path> specificationFiles)
+      throws RandoopSpecificationError {
     if (specificationFiles == null) {
       return null;
     }
@@ -100,6 +119,17 @@ public class SpecificationCollection {
     }
     Map<AccessibleObject, Set<Method>> overridden = buildOverridingMap(signatureToMethods);
     return new SpecificationCollection(specificationMap, signatureToMethods, overridden);
+  }
+
+  /** Releases any system resources used by this. */
+  @EnsuresCalledMethods(value = "compiler", methods = "close")
+  @Override
+  public void close() {
+    try {
+      compiler.close();
+    } catch (IOException e) {
+      throw new RandoopBug(e);
+    }
   }
 
   /**
@@ -146,28 +176,72 @@ public class SpecificationCollection {
   }
 
   /**
-   * Get the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
+   * Returns the {@code java.lang.reflect.AccessibleObject} for the {@link OperationSignature}.
    *
    * @param operation the {@link OperationSignature}
    * @return the {@code java.lang.reflect.AccessibleObject} for {@code operation}
+   * @throws RandoopSpecificationError if the operation's class or signature cannot be loaded
    */
-  private static AccessibleObject getAccessibleObject(OperationSignature operation) {
+  private static AccessibleObject getAccessibleObject(OperationSignature operation)
+      throws RandoopSpecificationError {
     if (operation.isValid()) {
       List<@ClassGetName String> paramTypeNames = operation.getParameterTypeNames();
       Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
+      for (int i = 0; i < argTypes.length; i++) {
+        String typeName = paramTypeNames.get(i);
+        try {
+          argTypes[i] = TypeNames.getTypeForName(typeName);
+        } catch (ClassNotFoundException | LinkageError e) {
+          throw new RandoopSpecificationError(
+              "Could not load parameter type #"
+                  + i
+                  + " "
+                  + typeName
+                  + " in specification operation: "
+                  + operation,
+              e);
+        }
+      }
+      String classname = operation.getClassname();
+      Class<?> declaringClass;
       try {
-        for (int i = 0; i < argTypes.length; i++) {
-          argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
-        }
-        Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
-        if (operation.isConstructor()) {
-          return declaringClass.getDeclaredConstructor(argTypes);
-        } else {
-          return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
-        }
-      } catch (Throwable e) {
+        declaringClass = TypeNames.getTypeForName(classname);
+      } catch (ClassNotFoundException | LinkageError e) {
         throw new RandoopSpecificationError(
-            "Could not load specification operation: " + operation, e);
+            "Could not load declaring class "
+                + classname
+                + " in specification operation: "
+                + operation,
+            e);
+      }
+      if (operation.isConstructor()) {
+        try {
+          return declaringClass.getDeclaredConstructor(argTypes);
+        } catch (NoSuchMethodException | SecurityException | LinkageError e) {
+          StringJoiner sj = new StringJoiner(System.lineSeparator());
+          sj.add("Could not load constructor in specification operation: " + operation);
+          sj.add("The constructors are:");
+          for (Constructor<?> c : declaringClass.getDeclaredConstructors()) {
+            sj.add("  " + c);
+          }
+          throw new RandoopSpecificationError(sj.toString(), e);
+        }
+      } else {
+        try {
+          return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
+        } catch (NoSuchMethodException | SecurityException | LinkageError e) {
+          StringJoiner sj = new StringJoiner(System.lineSeparator());
+          sj.add(
+              "Could not load method "
+                  + operation.getName()
+                  + " in specification operation: "
+                  + operation);
+          sj.add("The methods are:");
+          for (Method m : declaringClass.getDeclaredMethods()) {
+            sj.add("  " + m);
+          }
+          throw new RandoopSpecificationError(sj.toString(), e);
+        }
       }
     }
     return null;
@@ -176,7 +250,7 @@ public class SpecificationCollection {
   // Can't store an object of type {@code Type}, because the
   /** The type of {@code List<OperationSpecification>>}. */
   private static TypeToken<List<OperationSpecification>> LIST_OF_OS_TYPE_TOKEN =
-      (new TypeToken<List<OperationSpecification>>() {});
+      new TypeToken<List<OperationSpecification>>() {};
 
   /**
    * Reads {@link OperationSpecification} objects from the given file, and adds them to the other
@@ -185,13 +259,18 @@ public class SpecificationCollection {
    * @param specificationFile the JSON file of {@link OperationSpecification} objects
    * @param specificationMap side-effected by this method
    * @param signatureToMethods side-effected by this method
+   * @throws RandoopSpecificationError if the file is malformed
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({
+    "unchecked",
+    "PMD.ExceptionAsFlowControl" // call `e.setFile()`
+  })
   private static void readSpecificationFile(
       Path specificationFile,
       Map<AccessibleObject, OperationSpecification> specificationMap,
-      MultiMap<OperationSignature, Method> signatureToMethods) {
-    if (specificationFile.toString().toLowerCase().endsWith(".zip")) {
+      MultiMap<OperationSignature, Method> signatureToMethods)
+      throws RandoopSpecificationError {
+    if (specificationFile.toString().toLowerCase(Locale.getDefault()).endsWith(".zip")) {
       readSpecificationZipFile(specificationFile, specificationMap, signatureToMethods);
       return;
     }
@@ -206,7 +285,8 @@ public class SpecificationCollection {
 
         // Check for bad input
         if (operation == null) {
-          throw new Error("operation is null for specification " + specification);
+          throw new RandoopSpecificationError(
+              "operation is null for specification " + specification);
         }
         String duplicateName = specification.getIdentifiers().duplicateName();
         if (duplicateName != null) {
@@ -223,13 +303,13 @@ public class SpecificationCollection {
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(
-          "Unable to read specification file " + specificationFile, e);
+          "Unable to read specification file " + Util.pathAndAbsolute(specificationFile), e);
     } catch (RandoopSpecificationError e) {
       e.setFile(specificationFile);
       throw e;
-    } catch (Throwable e) {
+    } catch (RuntimeException | LinkageError e) {
       System.out.println("Bad specification file:");
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       throw new RandoopSpecificationError("Bad specification file " + specificationFile, e);
     }
   }
@@ -242,16 +322,20 @@ public class SpecificationCollection {
    *     OperationSpecification} objects
    * @param specificationMap side-effected by this method
    * @param signatureToMethods side-effected by this method
+   * @throws RandoopSpecificationError if a subfile of the zip file is malformed
    */
+  @SuppressWarnings("PMD.UseDiamondOperator") // Java can't infer SimpleFileVisitor<Path>.
   private static void readSpecificationZipFile(
       Path specificationZipFile,
       final Map<AccessibleObject, OperationSpecification> specificationMap,
-      final MultiMap<OperationSignature, Method> signatureToMethods) {
+      final MultiMap<OperationSignature, Method> signatureToMethods)
+      throws RandoopSpecificationError {
     Map<String, ?> myEmptyMap = Collections.emptyMap();
-    FileSystem zipFS;
-    try {
-      URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
-      zipFS = FileSystems.newFileSystem(uri, myEmptyMap);
+    URI uri = URI.create("jar:" + specificationZipFile.toUri().toString());
+    // A file visitor cannot throw RandoopSpecificationError, so the visitor stores the first error
+    // here and terminates the walk; this method throws the error after the walk.
+    RandoopSpecificationError[] specificationError = new RandoopSpecificationError[1];
+    try (FileSystem zipFS = FileSystems.newFileSystem(uri, myEmptyMap)) {
       for (Path root : zipFS.getRootDirectories()) {
         Files.walkFileTree(
             root,
@@ -260,7 +344,12 @@ public class SpecificationCollection {
               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                   throws IOException {
                 // You can do anything you want with the path here
-                readSpecificationFile(file, specificationMap, signatureToMethods);
+                try {
+                  readSpecificationFile(file, specificationMap, signatureToMethods);
+                } catch (RandoopSpecificationError e) {
+                  specificationError[0] = e;
+                  return FileVisitResult.TERMINATE;
+                }
                 return FileVisitResult.CONTINUE;
               }
 
@@ -273,10 +362,16 @@ public class SpecificationCollection {
                 return super.preVisitDirectory(dir, attrs);
               }
             });
+        if (specificationError[0] != null) {
+          break;
+        }
       }
     } catch (IOException e) {
       throw new RandoopSpecificationError(
-          "Unable to read specification file " + specificationZipFile, e);
+          "Unable to read specification file " + Util.pathAndAbsolute(specificationZipFile), e);
+    }
+    if (specificationError[0] != null) {
+      throw specificationError[0];
     }
   }
 
@@ -301,8 +396,10 @@ public class SpecificationCollection {
    * @param executable the reflection object for a constructor or method
    * @return the {@link ExecutableSpecification} for the specifications of the given method or
    *     constructor
+   * @throws RandoopSpecificationError if an expression in the specification does not compile
    */
-  public ExecutableSpecification getExecutableSpecification(Executable executable) {
+  public ExecutableSpecification getExecutableSpecification(Executable executable)
+      throws RandoopSpecificationError {
 
     // Check if executable already has an ExecutableSpecification object
     ExecutableSpecification execSpec = getExecutableSpecificationCache.get(executable);

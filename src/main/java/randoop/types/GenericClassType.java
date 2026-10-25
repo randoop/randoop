@@ -1,13 +1,14 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 
 /**
- * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
- * instantiating with a {@link Substitution}.
+ * Represents the type of a generic class. The type parameters are all type variables. Related to
+ * concrete {@link InstantiatedType} by instantiating with a {@link Substitution}.
  */
 public class GenericClassType extends ParameterizedType {
 
@@ -24,12 +25,7 @@ public class GenericClassType extends ParameterizedType {
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new ArrayList<>();
-
-    for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      TypeVariable variable = TypeVariable.forType(v);
-      this.parameters.add(variable);
-    }
+    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
   }
 
   /**
@@ -42,7 +38,7 @@ public class GenericClassType extends ParameterizedType {
    * @return true if two generic classes have the same rawtype, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -66,14 +62,11 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public InstantiatedType substitute(Substitution substitution) {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
-      ReferenceType referenceType = substitution.get(variable);
-      if (referenceType == null) {
-        referenceType = variable;
-      }
-      argumentList.add(TypeArgument.forType(referenceType));
-    }
+    List<TypeArgument> argumentList =
+        CollectionsPlume.mapList(
+            (TypeVariable variable) ->
+                TypeArgument.forType(substitution.getOrDefault(variable, variable)),
+            parameters);
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -92,15 +85,11 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    List<ClassOrInterfaceType> interfaceTypes = new ArrayList<>();
-    for (Class<?> c : rawType.getInterfaces()) {
-      interfaceTypes.add(ClassOrInterfaceType.forClass(c));
-    }
-    return interfaceTypes;
+    return CollectionsPlume.mapList(ClassOrInterfaceType::forClass, rawType.getInterfaces());
   }
 
   /**
-   * Return the directly-implemented interface types for this generic class type, instantiated by
+   * Returns the directly-implemented interface types for this generic class type, instantiated by
    * the given type {@link Substitution}.
    *
    * <p><i>This method is not public.</i> It is used when finding the interfaces of an {@link
@@ -113,11 +102,10 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of instantiated directly-implemented interface types of this type
    */
   List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type).substitute(substitution));
-    }
-    return interfaces;
+    return CollectionsPlume.mapList(
+        (java.lang.reflect.Type type) ->
+            ClassOrInterfaceType.forType(type).substitute(substitution),
+        rawType.getGenericInterfaces());
   }
 
   @Override
@@ -140,11 +128,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
-    if (superclass != null) {
-      return ClassOrInterfaceType.forClass(superclass);
-    } else {
-      return JavaTypes.OBJECT_TYPE;
-    }
+    return superclass == null ? null : ClassOrInterfaceType.forClass(superclass);
   }
 
   /**
@@ -172,11 +156,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable v : parameters) {
-      argumentList.add(TypeArgument.forType(v));
-    }
-    return argumentList;
+    return CollectionsPlume.mapList(TypeArgument::forType, parameters);
   }
 
   /**
@@ -199,11 +179,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
-    if (typeArguments.length != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.length != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -224,11 +205,12 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
-    if (typeArguments.size() != this.getTypeParameters().size()) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    if (typeArguments.size() != typeParameters.size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = new Substitution(this.getTypeParameters(), typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
@@ -275,13 +257,32 @@ public class GenericClassType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
 
-    return super.isSubtypeOf(otherType)
-        || (otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass()));
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+    if (otherType.runtimeClassIs(this.getRuntimeClass())) {
+      if (otherType.isRawtype()) {
+        return true;
+      }
+      if (otherType instanceof InstantiatedType) {
+        boolean allWildcards = true;
+        for (TypeArgument argument : ((InstantiatedType) otherType).getTypeArguments()) {
+          if (!(argument instanceof WildcardArgument)) {
+            allWildcards = false;
+            break;
+          }
+        }
+        if (allWildcards) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
@@ -76,6 +77,7 @@ public class ExecutableBooleanExpression {
    *     it uses dummy variable names x0, x1, instead of formal parameter names.
    * @param comment the comment describing the expression
    * @param compiler the compiler to used to compile the expression method
+   * @throws RandoopSpecificationError if the expression does not compile
    */
   ExecutableBooleanExpression(
       RawSignature signature,
@@ -83,7 +85,8 @@ public class ExecutableBooleanExpression {
       String expressionSource,
       String contractSource,
       String comment,
-      SequenceCompiler compiler) {
+      SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     this(
         createMethod(signature, declarations, expressionSource, compiler), comment, contractSource);
   }
@@ -102,7 +105,7 @@ public class ExecutableBooleanExpression {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -134,14 +137,17 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Indicate whether this expression is satisfied by the given values.
+   * Returns true if this expression is satisfied by the given values.
    *
    * @param values the values to check the expression against
    * @return true if this expression is satisfied by the values, false otherwise
+   * @throws RandoopSpecificationError if the expression cannot be evaluated
    */
-  public boolean check(Object[] values) {
+  public boolean check(Object[] values) throws RandoopSpecificationError {
     try {
-      return (boolean) expressionMethod.invoke(null, values);
+      @SuppressWarnings("nullness:unboxing.of.nullable") // reflection
+      boolean result = (boolean) expressionMethod.invoke(null, values);
+      return result;
     } catch (IllegalAccessException e) {
       throw new RandoopSpecificationError("Failure executing expression method", e);
     } catch (InvocationTargetException e) {
@@ -152,23 +158,24 @@ public class ExecutableBooleanExpression {
               contractSource, comment, e.getCause());
       if (GenInputsAbstract.ignore_condition_exception) {
         if (!GenInputsAbstract.ignore_condition_exception_quiet) {
-          System.out.printf(
-              "Failure executing expression method; fix the specification.%n" + messageDetails);
+          System.out.println("Failure executing expression method; fix the specification.");
+          System.out.println(messageDetails);
           e.printStackTrace(System.out);
         }
         return false;
       } else {
         throw new RandoopSpecificationError(
-            String.format(
-                    "Failure executing expression method.%n"
-                        + "Fix the specification or pass --ignore-condition-exception=true .%n")
+            "Failure executing expression method; fix the specification"
+                // + " or pass --ignore-condition-exception=true "
+                + "."
+                + System.lineSeparator()
                 + messageDetails);
       }
     }
   }
 
   /**
-   * Return the code comment for this expression.
+   * Returns the code comment for this expression.
    *
    * @return the code comment for this expression
    */
@@ -177,7 +184,7 @@ public class ExecutableBooleanExpression {
   }
 
   /**
-   * Return the Java source code for this expression. Arguments to the expression follow the {@link
+   * Returns the Java source code for this expression. Arguments to the expression follow the {@link
    * randoop.contract.ObjectContract} convention where parameters (including the receiver, if any)
    * are represented by {@code x0}, ..., {@code xn} for some number {@code n}. If the operation has
    * a return value it will be {@code xn} (the last, extra variable).
@@ -203,13 +210,15 @@ public class ExecutableBooleanExpression {
    *     format of {@link ExecutableBooleanExpression#getContractSource()}
    * @param compiler the compiler to use to compile the expression class
    * @return the {@code Method} object for {@code contractSource}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
   // package-private to enable test code to call it
   static Method createMethod(
       RawSignature signature,
       String parameterDeclaration,
       String expressionSource,
-      SequenceCompiler compiler) {
+      SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     String packageName = signature.getPackageName();
     String classname = classNameGenerator.next(); // ignore the class name in the signature
     String classText =
@@ -251,7 +260,7 @@ public class ExecutableBooleanExpression {
     if (packageName != null) {
       packageDeclaration = "package " + packageName + ";" + Globals.lineSep + Globals.lineSep;
     }
-    return UtilPlume.joinLines(
+    return StringsPlume.joinLines(
         packageDeclaration + "public class " + expressionClassName + " {",
         "  public static boolean " + methodName + parameterDeclarations + " throws Throwable {",
         "    return " + expressionText + ";",
@@ -273,6 +282,7 @@ public class ExecutableBooleanExpression {
     msg.append(Globals.lineSep);
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
+        @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
         String diagMessage = diag.getMessage(null);
         if (diagMessage.contains("unreported exception")) {
           diagMessage =
@@ -285,7 +295,7 @@ public class ExecutableBooleanExpression {
                 "%d:%d: %s%n", diag.getLineNumber(), diag.getColumnNumber(), diagMessage));
       }
     }
-    msg.append(String.format("%nClass Declaration:%n%s", classText));
+    msg.append(String.format("%nClass being compiled:%n%s", classText));
     return msg.toString();
   }
 }

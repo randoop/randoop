@@ -114,7 +114,8 @@ public class GenericTypesTest {
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
-          "type argument java.lang.Integer does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
+          "type argument java.lang.Integer does not match parameter bound"
+              + " randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -135,8 +136,8 @@ public class GenericTypesTest {
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
-          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter bound "
-              + "randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
+          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter"
+              + " bound randoop.types.GenericsExamples$Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 
@@ -159,7 +160,8 @@ public class GenericTypesTest {
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
-          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter bound randoop.types.GenericsExamples$Variable1<T>",
+          "type argument randoop.types.GenericsExamples$Variable1Ext does not match parameter"
+              + " bound randoop.types.GenericsExamples$Variable1<T>",
           e.getMessage());
     }
 
@@ -231,13 +233,13 @@ public class GenericTypesTest {
     assertStrictSubtype(typeC, typeIB);
     assertStrictSubtype(typeC, typeB);
 
-    assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOf(JavaTypes.OBJECT_TYPE));
+    assertTrue(JavaTypes.OBJECT_TYPE.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
   }
 
   /** Assert that {@code subtype} is a strict subtype of {@code supertype}. */
   private static void assertStrictSubtype(Type subtype, Type supertype) {
-    assertTrue(subtype.isSubtypeOf(supertype));
-    assertFalse(supertype.isSubtypeOf(subtype));
+    assertTrue(subtype.isSubtypeOfOrEqualTo(supertype));
+    assertFalse(supertype.isSubtypeOfOrEqualTo(subtype));
   }
 
   @Test
@@ -252,7 +254,7 @@ public class GenericTypesTest {
     GenericClassType genericSuperType = GenericClassType.forClass(Superclass.class);
     InstantiatedType stringSuperType = genericSuperType.instantiate(stringSetType);
 
-    assertTrue(subtype.isSubtypeOf(stringSuperType));
+    assertTrue(subtype.isSubtypeOfOrEqualTo(stringSuperType));
     assertEquals(stringSuperType, subtype.getSuperclass());
 
     // try with example inspired by java.util.stream.Stream (which was introduced in Java 8)
@@ -262,7 +264,7 @@ public class GenericTypesTest {
     InstantiatedType stringBaseStreamType =
         genericBaseStreamType.instantiate(JavaTypes.STRING_TYPE, stringStreamType);
 
-    assertTrue(stringStreamType.isSubtypeOf(stringBaseStreamType));
+    assertTrue(stringStreamType.isSubtypeOfOrEqualTo(stringBaseStreamType));
     assertEquals(JavaTypes.OBJECT_TYPE, stringStreamType.getSuperclass());
     assertTrue(stringStreamType.getInterfaces().contains(stringBaseStreamType));
   }

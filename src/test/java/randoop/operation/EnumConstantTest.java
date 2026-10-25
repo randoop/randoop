@@ -114,7 +114,8 @@ public class EnumConstantTest {
           errorPrefix1
               + badValue
               + errorPrefix2
-              + " The value given \"FOUR\" is not a constant of the enum randoop.operation.SimpleEnumForTests.";
+              + " The value given \"FOUR\" is not a constant of the enum"
+              + " randoop.operation.SimpleEnumForTests.";
       assertEquals(msg, e.getMessage());
     }
     try {
@@ -159,12 +160,13 @@ public class EnumConstantTest {
     NormalExecution exec = new NormalExecution(SimpleEnumForTests.ONE, 0);
     NormalExecution actual = (NormalExecution) ec1.execute(new Object[0]);
     assertEquals(actual.getRuntimeValue(), exec.getRuntimeValue());
-    assertEquals(actual.getExecutionTime(), exec.getExecutionTime());
+    assertEquals(actual.getExecutionTimeNanos(), exec.getExecutionTimeNanos());
 
     // code generation
     // need a sequence where variable lives
     String expected =
-        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;";
+        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 ="
+            + " randoop.operation.SimpleEnumForTests.TWO;";
     Statement st = new Statement(ec2);
     Sequence seq = new Sequence().extend(ec2, new ArrayList<Variable>());
     Variable var = new Variable(seq, 0);

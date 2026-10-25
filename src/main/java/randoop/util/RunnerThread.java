@@ -1,9 +1,12 @@
 package randoop.util;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 public class RunnerThread extends Thread {
 
   // Fields assigned when calling setup(..)
-  private ReflectionCode code;
+  private @MonotonicNonNull ReflectionCode code;
 
   // Fields assigned when calling run()
   boolean runFinished;
@@ -21,7 +24,11 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  RunnerThread(ThreadGroup threadGroup) {
+  @SuppressWarnings({
+    "initialization:method.invocation", // needed for CF 3.49.4 and earlier
+    "PMD.ConstructorCallsOverridableMethod"
+  })
+  RunnerThread(@Nullable ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
@@ -30,27 +37,34 @@ public class RunnerThread extends Thread {
   }
 
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP) throw new IllegalStateException();
-    if (code == null) throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP) {
+      throw new IllegalStateException();
+    }
+    if (code == null) {
+      throw new IllegalArgumentException("code cannot be null.");
+    }
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN) throw new IllegalStateException();
+    if (state != NextCallMustBe.RUN) {
+      throw new IllegalStateException();
+    }
     runFinished = false;
     executeReflectionCode();
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  /** Runs the {@link ReflectionCode} that this thread was set up with. */
+  private void executeReflectionCode() {
     code.runReflectionCode();
   }
 
   /**
-   * Return the ReflectionCode that is being, or was, run.
+   * Returns the ReflectionCode that is being, or was, run.
    *
    * @return the ReflectionCode that is being, or was, run
    */

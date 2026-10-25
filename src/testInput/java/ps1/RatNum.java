@@ -131,7 +131,7 @@ public class RatNum {
    * is treated in a special manner by several arithmetic operations,
    * such as the comparison and equality operators.  See the
    * <a href="http://java.sun.com/docs/books/jls/second_edition/html/typesVariables.doc.html#9208">
-   * Java Language Specification, section 4.2.3</a>, for more details.
+   * Java Language Specification, section 4.2.6</a>, for more details.
    */
   public double approx() {
     checkRep();
@@ -308,7 +308,7 @@ public class RatNum {
       // not NaN, and no slash, must be an Integer
       return new RatNum(Integer.parseInt(ratStr));
     } else {
-      // slash, need to parse the two parts seperately
+      // slash, need to parse the two parts separately
       int n = Integer.parseInt(ratStr.substring(0, slashLoc));
       int d = Integer.parseInt(ratStr.substring(slashLoc + 1, ratStr.length()));
       return new RatNum(n, d);

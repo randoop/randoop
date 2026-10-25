@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a type variable introduced by capture conversion over a wildcard type argument.
@@ -12,7 +13,7 @@ import java.util.Objects;
  * from a wildcard using the wildcard bound to determine the initial upper or lower bound. The
  * {@link #convert(TypeVariable, Substitution)} method is then used to update the bounds to match
  * the definition in JLS section 5.1.10, <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
  * Conversion</a>.
  */
 class CaptureTypeVariable extends TypeVariable {
@@ -32,6 +33,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
+  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
     this.varID = count++;
@@ -69,7 +71,7 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -97,7 +99,7 @@ class CaptureTypeVariable extends TypeVariable {
    * parameters of the generic type, and applying the implied substitution between the type
    * parameters and capture conversion argument list. Implements the clauses of the JLS section
    * 5.1.10, <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
    * Conversion</a>.
    *
    * <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
@@ -125,7 +127,7 @@ class CaptureTypeVariable extends TypeVariable {
     if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
-      List<ParameterBound> boundList = new ArrayList<>();
+      List<ParameterBound> boundList = new ArrayList<>(2);
       boundList.add(parameterBound);
       boundList.add(getUpperTypeBound());
       setUpperBound(new IntersectionTypeBound(boundList));

@@ -1,5 +1,7 @@
 package randoop;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Represents the outcome of executing one statement in a sequence, including:
  *
@@ -12,17 +14,21 @@ package randoop;
 public abstract class ExecutionOutcome {
 
   /** The execution time, in nanoseconds. */
-  private final long executionTime;
+  private final long executionTimeNanos;
 
   /**
    * The standard output and error output of executing the sequence. Only populated if {@link
    * randoop.main.GenInputsAbstract#capture_output} is true.
    */
-  String output = null;
+  @Nullable String output = null;
 
-  /** @param executionTime the execution time, in nanoseconds */
-  public ExecutionOutcome(long executionTime) {
-    this.executionTime = executionTime;
+  /**
+   * Creates a new ExecutionOutcome.
+   *
+   * @param executionTimeNanos the execution time, in nanoseconds
+   */
+  protected ExecutionOutcome(long executionTimeNanos) {
+    this.executionTimeNanos = executionTimeNanos;
   }
 
   /**
@@ -30,8 +36,8 @@ public abstract class ExecutionOutcome {
    *
    * @return the execution time for the statement, in nanoseconds
    */
-  public long getExecutionTime() {
-    return executionTime;
+  public long getExecutionTimeNanos() {
+    return executionTimeNanos;
   }
 
   /**
@@ -48,7 +54,11 @@ public abstract class ExecutionOutcome {
    *
    * @return the statement output
    */
-  public String get_output() {
+  public @Nullable String get_output() {
     return output;
   }
+
+  // Force subclasses to override this method.
+  @Override
+  public abstract String toString();
 }

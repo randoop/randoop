@@ -10,6 +10,9 @@ dist/
 src/docs/api
 TAGS
 
+# Obtained via Git
+.plume-scripts
+
 # IDE-specific ignores
 # lists comes from import, and running project build
 
@@ -29,9 +32,14 @@ bin/
 # NetBeans
 /.nb-gradle/
 
+# VS Code
+.vscode
+
 # Temporary file
 gradle-build-output.txt
 scripts/dockerdir
 
 # rg needs this:  https://github.com/BurntSushi/ripgrep/issues/1040
 .git/
+
+.factorypath

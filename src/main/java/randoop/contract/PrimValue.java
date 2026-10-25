@@ -2,7 +2,8 @@ package randoop.contract;
 
 import java.util.Arrays;
 import java.util.Objects;
-import org.plumelib.util.UtilPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 import randoop.sequence.StringTooLongException;
 import randoop.sequence.Value;
 import randoop.types.JavaTypes;
@@ -28,11 +29,11 @@ public final class PrimValue extends ObjectContract {
    */
   public final Object value;
 
-  /** Whether to use {@code ==} or {@code .equals()} to test for equality. */
+  /** If true, use {@code ==} or {@code .equals()} to test for equality. */
   private final EqualityMode equalityMode;
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -89,7 +90,7 @@ public final class PrimValue extends ObjectContract {
 
   @Override
   public String toString() {
-    return "randoop.PrimValue, value=" + UtilPlume.escapeJava(value.toString());
+    return "randoop.PrimValue, value=" + StringsPlume.escapeJava(value.toString());
   }
 
   @Override
@@ -109,25 +110,21 @@ public final class PrimValue extends ObjectContract {
     }
 
     if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
-      StringBuilder b = new StringBuilder();
-      b.append("org.junit.Assert.assertEquals(");
+      StringBuilder b = new StringBuilder(128);
       // First add a message
-      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+      b.append("org.junit.Assert.assertEquals(\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
-          .append("+ \"'\", ");
-      b.append("x0");
-      b.append(", ");
+          .append("+ \"'\", x0, ");
       b.append(Value.toCodeString(value));
       // Close assert.
       b.append(");");
       return b.toString();
     } else if (equalityMode.equals(EqualityMode.EQUALSEQUALS)) {
-      StringBuilder b = new StringBuilder();
-      b.append("org.junit.Assert.assertTrue(");
-      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+      StringBuilder b = new StringBuilder(128);
+      b.append("org.junit.Assert.assertTrue(\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
-          .append("+ \"'\", ");
-      b.append("x0 == ").append(Value.toCodeString(value));
+          .append("+ \"'\", x0 == ")
+          .append(Value.toCodeString(value));
       b.append(");");
       return b.toString();
     } else {

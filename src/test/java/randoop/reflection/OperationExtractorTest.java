@@ -9,12 +9,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.reflection.VisibilityPredicate.IS_PUBLIC;
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -28,11 +29,11 @@ import randoop.types.Substitution;
 public class OperationExtractorTest {
 
   @Test
-  public void concreteClassTest() {
+  public void concreteClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
@@ -58,11 +59,11 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void genericClassTest() {
+  public void genericClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
@@ -79,12 +80,12 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void memberOfGenericTest() {
+  public void memberOfGenericTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
@@ -116,18 +117,18 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void memberExtendingEnclosingTest() {
+  public void memberExtendingEnclosingTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericWithInnerSub$Inner";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     assertFalse(classType.isParameterized());
     final Collection<TypedOperation> operations =
         OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
@@ -135,25 +136,25 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void partialInstantiationTest() {
+  public void partialInstantiationTest() throws RandoopSpecificationError {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
         new ReflectionManager(
-            new VisibilityPredicate.PackageVisibilityPredicate(
+            new AccessibilityPredicate.PackageAccessibilityPredicate(
                 this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
     assertFalse(classType.isParameterized());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
@@ -162,19 +163,19 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void inaccessibleArgumentTest() {
-    VisibilityPredicate visibility = IS_PUBLIC;
-    String classname = "randoop.reflection.visibilitytest.InaccessibleArgumentInput";
+  public void inaccessibleArgumentTest() throws RandoopSpecificationError {
+    AccessibilityPredicate accessibility = IS_PUBLIC;
+    String classname = "randoop.reflection.accessibilitytest.InaccessibleArgumentInput";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
 
     final Collection<TypedOperation> operations =
-        OperationExtractor.operations(c, new DefaultReflectionPredicate(), visibility);
+        OperationExtractor.operations(c, new DefaultReflectionPredicate(), accessibility);
     assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(
@@ -183,8 +184,10 @@ public class OperationExtractorTest {
           anyOf(
               is(
                   equalTo(
-                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
-              is(equalTo("randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard")),
+                      "randoop.reflection.accessibilitytest.InaccessibleArgumentInput.mTypeVariable")),
+              is(
+                  equalTo(
+                      "randoop.reflection.accessibilitytest.InaccessibleArgumentInput.mWildcard")),
               is(equalTo("java.lang.Object.getClass"))));
     }
   }

@@ -5,16 +5,22 @@ import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
 /** Checks that calling compareTo() on an object does not throw an exception. */
-public class CompareToReturnsNormally extends ObjectContract {
+public final class CompareToReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
+  /** Private constructor to enforce singleton. */
   private CompareToReturnsNormally() {}
 
   public static CompareToReturnsNormally getInstance() {
     return instance;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({
+    "unchecked",
+    "rawtypes",
+    "PMD.UselessPureMethodCall" // called to see if it throws
+  })
   @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
@@ -24,7 +30,6 @@ public class CompareToReturnsNormally extends ObjectContract {
       try {
         ((Comparable) o).compareTo(o);
       } catch (Exception e) {
-        // If exception is thrown
         return false;
       }
     }
@@ -56,11 +61,6 @@ public class CompareToReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.compareTo()");
-    b.append(");");
-    return b.toString();
+    return "x0.compareTo(x0);";
   }
 }
