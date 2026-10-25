@@ -16,16 +16,6 @@ public final class CollectionsExt {
     throw new IllegalStateException("no instances");
   }
 
-  /**
-   * Returns the element of the collection at the given position in iteration order.
-   *
-   * @param <T> the type of the collection elements
-   * @param s a non-empty collection
-   * @param index a non-negative index less than the size of the collection
-   * @return the {@code index}th element that an iterator over {@code s} yields
-   * @throws IllegalArgumentException if {@code s} is null or empty, or {@code index} is out of
-   *     bounds
-   */
   /*package*/ static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
     if (s == null) {
       throw new IllegalArgumentException("s cannot be null.");

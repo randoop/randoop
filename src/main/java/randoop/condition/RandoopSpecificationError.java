@@ -16,7 +16,6 @@ public class RandoopSpecificationError extends Exception {
   @SuppressWarnings("serial") // TODO: use a serializable type.
   private Path file = null;
 
-  /** The local message (ignoring the message of the cause), or null to use the superclass's. */
   private String thisMessage = null;
 
   /**

@@ -16,14 +16,6 @@ import randoop.types.TypeTuple;
  * not done in reflection.
  */
 public class TypedClassOperationWithCast extends TypedClassOperation {
-  /**
-   * Creates a TypedClassOperationWithCast with no specification.
-   *
-   * @param op the operation
-   * @param declaringType the declaring type of the operation
-   * @param inputTypes the input types of the operation
-   * @param outputType the output type of the operation
-   */
   /*package*/ TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,
@@ -32,15 +24,6 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     this(op, declaringType, inputTypes, outputType, null);
   }
 
-  /**
-   * Creates a TypedClassOperationWithCast.
-   *
-   * @param op the operation
-   * @param declaringType the declaring type of the operation
-   * @param inputTypes the input types of the operation
-   * @param outputType the output type of the operation
-   * @param execSpec the specification of the operation, or null
-   */
   /*package*/ TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,

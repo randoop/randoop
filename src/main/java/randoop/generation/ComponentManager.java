@@ -348,11 +348,6 @@ public class ComponentManager {
     return result;
   }
 
-  /**
-   * Returns the type instantiator for the general components.
-   *
-   * @return the type instantiator for the general components
-   */
   /*package*/ TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
   }

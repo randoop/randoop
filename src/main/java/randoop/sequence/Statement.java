@@ -25,12 +25,11 @@ public final class Statement {
   /** The operation (method call, constructor call, primitive values declaration, etc.). */
   private final TypedOperation operation;
 
-  /**
-   * The list of values used as input to the statement.
-   *
-   * <p>NOTE that the inputs to a statement are not a list of Variables, but a list of
-   * RelativeNegativeIndex objects. See that class for an explanation.
-   */
+  // The list of values used as input to the statement.
+  //
+  // NOTE that the inputs to a statement are not a list
+  // of Variables, but a list of RelativeNegativeIndex objects.
+  // See that class for an explanation.
   /*package*/ final List<RelativeNegativeIndex> inputs;
 
   /**

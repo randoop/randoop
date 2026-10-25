@@ -135,30 +135,14 @@ public abstract class ReflectionCode {
     /** ID for serializing this class. */
     private static final long serialVersionUID = -7508201027241079866L;
 
-    /**
-     * Creates a ReflectionCodeException.
-     *
-     * @param msg the detail message
-     */
     /*package*/ ReflectionCodeException(String msg) {
       super(msg);
     }
 
-    /**
-     * Creates a ReflectionCodeException.
-     *
-     * @param msg the detail message
-     * @param cause the cause
-     */
     /*package*/ ReflectionCodeException(String msg, Throwable cause) {
       super(msg, cause);
     }
 
-    /**
-     * Creates a ReflectionCodeException.
-     *
-     * @param cause the cause
-     */
     /*package*/ ReflectionCodeException(Throwable cause) {
       super(cause);
     }

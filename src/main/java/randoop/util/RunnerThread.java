@@ -9,7 +9,6 @@ public class RunnerThread extends Thread {
   private @MonotonicNonNull ReflectionCode code;
 
   // Fields assigned when calling run()
-  /** True if the most recent call to run() has completed normally. */
   /*package*/ boolean runFinished;
 
   // The state of the thread.
