@@ -1,5 +1,7 @@
 package randoop.instrument;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /** Exception representing an error in a replacement file. */
 class ReplacementFileException extends Exception {
 
@@ -23,7 +25,25 @@ class ReplacementFileException extends Exception {
    * @param lineText the text of the line where the error occurred
    */
   ReplacementFileException(String msg, String filename, int lineNumber, String lineText) {
-    super(msg);
+    this(msg, filename, lineNumber, lineText, null);
+  }
+
+  /**
+   * Creates a {@link ReplacementFileException} with the message and causing exception.
+   *
+   * @param msg the exception message
+   * @param filename the replacement file name
+   * @param lineNumber the line of the file where the error occurred
+   * @param lineText the text of the line where the error occurred
+   * @param cause the causing exception, or null
+   */
+  ReplacementFileException(
+      @Nullable String msg,
+      String filename,
+      int lineNumber,
+      String lineText,
+      @Nullable Throwable cause) {
+    super(msg, cause);
     this.filename = filename;
     this.lineNumber = lineNumber;
     this.lineText = lineText;
