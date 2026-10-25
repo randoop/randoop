@@ -93,7 +93,7 @@ public final class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        String[] target_args = options.parse(true, tokenize(agentArgs));
         if (target_args.length > 0) {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
@@ -308,25 +308,86 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   * Creates an argument string using absolute paths for the replacement and exclusion files.
    *
    * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
    * files used in the original use of the agent.
    *
    * @param replacementFilePath the {@code Path} for the replacement file
-   * @param exclusionFilePath the {@code Path} for the replacement file
+   * @param exclusionFilePath the {@code Path} for the file of packages not to transform
    * @return the argument string for the current run using absolute paths
    */
-  private static String createAgentArgs(
+  static String createAgentArgs(
       @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
-    StringJoiner result = new StringJoiner(",");
+    // tokenize() splits the argument string at whitespace that is not quoted.
+    StringJoiner result = new StringJoiner(" ");
     if (replacementFilePath != null) {
-      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+      result.add("--replacement-file=" + quote(replacementFilePath.toAbsolutePath().toString()));
     }
     if (exclusionFilePath != null) {
-      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+      result.add("--dont-transform=" + quote(exclusionFilePath.toAbsolutePath().toString()));
     }
     return result.toString();
+  }
+
+  /**
+   * Splits an agent argument string into arguments. Arguments are separated by whitespace. Within
+   * an argument, text between a pair of single quotes or a pair of double quotes may contain
+   * whitespace; the quotes themselves are removed. This is the inverse of {@link #quote}.
+   *
+   * @param args the agent argument string
+   * @return the arguments in {@code args}
+   */
+  static String[] tokenize(String args) {
+    // Options.tokenize() retains the quote characters, which is why this method removes them.
+    String[] result = Options.tokenize(args);
+    for (int i = 0; i < result.length; i++) {
+      result[i] = unquote(result[i]);
+    }
+    return result;
+  }
+
+  /**
+   * Removes the quote characters from a token returned by {@link Options#tokenize}. Text between a
+   * pair of single quotes or a pair of double quotes is retained literally.
+   *
+   * @param token a token returned by {@link Options#tokenize}
+   * @return the token, with its quote characters removed
+   */
+  private static String unquote(String token) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < token.length()) {
+      char ch = token.charAt(i);
+      if (ch == '\'' || ch == '"') {
+        int close = token.indexOf(ch, i + 1);
+        if (close == -1) {
+          close = token.length();
+        }
+        result.append(token, i + 1, close);
+        i = close + 1;
+      } else {
+        result.append(ch);
+        i++;
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Quotes a value so that {@link #tokenize} treats it as part of a single argument and yields it
+   * unchanged.
+   *
+   * @param value a value
+   * @return {@code value}, quoted if necessary
+   */
+  static String quote(String value) {
+    // Options.tokenize() splits at any character for which Character.isWhitespace() is true.
+    if (value.chars().anyMatch(ch -> Character.isWhitespace(ch) || ch == '\'' || ch == '"')) {
+      // Each single quote ends the quoted text, appears within double quotes, and resumes it.
+      return "'" + value.replace("'", "'\"'\"'") + "'";
+    }
+    return value;
   }
 
   /**
