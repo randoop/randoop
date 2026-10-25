@@ -50,6 +50,31 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void badSignatureMethodTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badsignaturereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "badsignaturereplacement.txt:2: Bad original signature: Bad parameter type \"\" in"
+            + " signature: randoop.MethodReplacements.getAgentPath(int,) for line:"
+            + " randoop.MethodReplacements.getAgentPath(int,)"
+            + " randoop.mock.java.awt.Component.show()";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void badMethodNameMethodTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badmethodnamereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "badmethodnamereplacement.txt:2: Bad original signature: Method signature expected, bad"
+            + " fully-qualified method name \"foo\": foo(int) for line:"
+            + " foo(int) randoop.mock.java.awt.Component.show()";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void badArgTypeMethodTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/badargumenttypereplacement.txt");
     thrown.expect(ReplacementFileException.class);

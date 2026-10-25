@@ -26,9 +26,16 @@ import org.plumelib.util.StringsPlume;
  */
 public final class MethodSignature implements Comparable<MethodSignature> {
 
-  /** Matches a fully-qualified method name. */
+  /**
+   * Matches a fully-qualified method name: a fully-qualified class name, a period, and a method
+   * name or {@code <init>}.
+   */
   private static final Pattern FULL_METHOD_NAME =
-      Pattern.compile(ReplacementFileReader.FULL_METHOD_NAME);
+      Pattern.compile(
+          ReplacementFileReader.DOT_DELIMITED_IDS
+              + "\\.(?:"
+              + ReplacementFileReader.ID_STRING
+              + "|<init>)");
 
   /** The fully-qualified class name. */
   private final String classname;
@@ -89,11 +96,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * Creates a {@link MethodSignature} object from string representations of its method name and
    * types.
    *
-   * @param fullMethodName fully-qualified name of method
+   * @param fullMethodName fully-qualified name of method; must contain a period
    * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
+  private static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
     String classname = fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
@@ -109,9 +116,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
-   * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
-   * not include a return type.
+   * <p>The signature string must start with the fully-qualified classname, followed by a period,
+   * the method name, and then the fully-qualified parameter types in parentheses. The method name
+   * must be a Java identifier or {@code <init>}. The parameter types are separated by commas, and
+   * whitespace is permitted around them. No text, not even whitespace, may precede the classname or
+   * follow the closing parenthesis. Note that a signature does not include a return type.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
@@ -119,7 +128,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
-    if (parenPos < 1) {
+    if (parenPos < 0) {
       throw new IllegalArgumentException(
           "Method signature expected, did not find beginning parenthesis: " + signature);
     }
