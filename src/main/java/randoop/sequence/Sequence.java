@@ -421,6 +421,12 @@ public final class Sequence {
     return !activeFlags.isEmpty();
   }
 
+  /**
+   * Returns true if the given statement's result is active.
+   *
+   * @param i the index of a statement in this sequence
+   * @return true if the given statement's result is active
+   */
   boolean isActive(int i) {
     return activeFlags.get(i);
   }
@@ -813,6 +819,12 @@ public final class Sequence {
     return new Variable(this, index);
   }
 
+  /**
+   * Throws an exception if the given index is not the index of a statement in this sequence.
+   *
+   * @param i an index
+   * @throws IllegalArgumentException if {@code i} is out of range
+   */
   void checkIndex(int i) {
     if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");

@@ -28,13 +28,9 @@ public class ProgressDisplay extends Thread {
    */
   private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
-  /** How progress messages are displayed. */
   public enum Mode {
-    /** Each message overwrites the previous one on a single line. */
     SINGLE_LINE_OVERWRITE,
-    /** Each message appears on its own line. */
     MULTILINE,
-    /** No messages are displayed. */
     NO_DISPLAY
   }
 

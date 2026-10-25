@@ -23,6 +23,7 @@ class WildcardType extends ParameterType {
   /** True if this wildcard has an upper bound ({@code extends}), false if a lower bound. */
   private final boolean hasUpperBound;
 
+  /** Do not create a wildcard type without a bound. */
   private WildcardType() {
     //  do not create object
     this.hasUpperBound = false;

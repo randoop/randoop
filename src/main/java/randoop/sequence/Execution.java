@@ -53,10 +53,20 @@ public final class Execution {
     return outcomes.get(i);
   }
 
+  /**
+   * Records that the execution covered the given class.
+   *
+   * @param c a class that the execution covered
+   */
   void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
+  /**
+   * Returns the classes that the execution covered.
+   *
+   * @return the classes that the execution covered
+   */
   Set<Class<?>> getCoveredClasses() {
     return coveredClasses;
   }
