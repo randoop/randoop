@@ -200,8 +200,9 @@ public class ProgressDisplay extends Thread {
    * @return true iff no progress output should be displayed
    */
   private boolean noProgressOutput() {
-    return GenInputsAbstract.progressintervalmillis <= 0
-        && GenInputsAbstract.progressintervalsteps <= 0;
+    return outputMode == Mode.NO_DISPLAY
+        || (GenInputsAbstract.progressintervalmillis <= 0
+            && GenInputsAbstract.progressintervalsteps <= 0);
   }
 
   /** Clear the display; good to do before printing to System.out. */
