@@ -41,7 +41,8 @@ public final class RunCommand {
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
-    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
+    // Disable quoting:  each element of `args` is already a separate argument.
+    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length), false);
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
     DefaultExecutor executor =

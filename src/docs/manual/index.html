@@ -1554,6 +1554,27 @@ default set of replacements</a>.
 You can <a href="#replacecall-replacement-definition">define additional replacements</a>.
 
 
+<p id="replacecall-options">
+To give the agent more than one option, separate the options with whitespace.
+Because the <code>-javaagent</code> argument then contains whitespace, quote
+it on the command line.
+(Alternatively, separate the options with commas.)
+The agent removes single and double quotes from its options:
+text between a pair of single quotes or a pair of double quotes is retained
+literally, including any whitespace or the other kind of quote.
+Therefore, to give a filename that contains whitespace, a single quote, or a
+double quote, enclose the filename in quotes:  in double quotes if the
+filename contains a single quote, and otherwise in single quotes.
+For example (the
+<a href="#replacecall-load-exclusions"><code>--dont-transform</code></a> and
+<a href="#replacecall-replacement-definition"><code>--replacement-file</code></a>
+options are described below):
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt --replacement-file='my replacements.txt'"
+</pre>
+
+
 <h3 id="replacecall-disable-default">Disabling default replacements</h3>
 
 <p>
