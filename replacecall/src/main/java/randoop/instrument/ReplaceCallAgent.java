@@ -180,7 +180,9 @@ public final class ReplaceCallAgent {
 
       /*
        * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
-       * arguments, but in a different working directory.
+       * files, but in a different working directory.  It does not use the debugging options:  each
+       * test run would overwrite this run's debugging output, and Randoop interprets the test runs'
+       * standard output and standard error.
        */
       MethodReplacements.setAgentPath(getAgentPath());
       MethodReplacements.setAgentArgs(createAgentArgs());
@@ -299,22 +301,18 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an agent argument string that is equivalent to the current values of the options, but
-   * in which every file and directory name is absolute. Thus, the argument string has the same
-   * effect regardless of the working directory.
+   * Creates an agent argument string that gives the current replacement file and exclusion file,
+   * using absolute file names. Thus, the argument string has the same effect regardless of the
+   * working directory.
    *
-   * @return an agent argument string that is equivalent to the current values of the options
+   * <p>The argument string omits the debugging options {@code --debug}, {@code --debug-directory},
+   * and {@code --verbose}.
+   *
+   * @return an agent argument string that gives the current replacement file and exclusion file
    */
   static String createAgentArgs() {
     // tokenize() splits the argument string at whitespace that is not quoted.
     StringJoiner result = new StringJoiner(" ");
-    if (debug) {
-      result.add("--debug");
-      result.add("--debug-directory=" + quote(debugPath.toString()));
-    }
-    if (verbose) {
-      result.add("--verbose");
-    }
     if (replacement_file != null) {
       result.add("--replacement-file=" + quote(replacement_file.toAbsolutePath().toString()));
     }
