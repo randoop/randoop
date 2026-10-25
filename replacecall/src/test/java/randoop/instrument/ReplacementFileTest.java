@@ -82,6 +82,33 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void instanceMethodReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/instancemethodreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
+  }
+
+  @Test
+  public void receiverReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/receiverreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "receiverreplacement.txt:2: Replacement method java.lang.Math.abs(int) must have parameter"
+            + " types (java.lang.String) and return type int");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void returnTypeReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/returntypereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "returntypereplacement.txt:2: Replacement method java.lang.Math.abs(int) must have"
+            + " parameter types (int) and return type void");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void missingClassClassTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);

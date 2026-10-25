@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,15 +24,18 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.ArraysPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.EntryReader.CommentFormat;
 import org.plumelib.util.EntryReader.EntryFormat;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
@@ -175,7 +179,7 @@ public final class ReplacementFileReader {
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
    * @throws ReplacementException if either signature is badly-formed, or if the replacement method
-   *     is not static and non-private
+   *     is not static and non-private, or if its parameter and return types do not fit the original
    * @throws ClassNotFoundException if either class cannot be found
    * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
@@ -209,6 +213,33 @@ public final class ReplacementFileReader {
     if (!replacementMethod.isStatic() || replacementMethod.isPrivate()) {
       throw new ReplacementException(
           "Replacement method must be static and non-private: " + replacement);
+    }
+
+    // The agent calls the replacement with a descriptor derived from the call of the original.
+    Method originalMethod = original.toMethod();
+    @SuppressWarnings("signature:assignment") // toMethod() found the class by this name
+    @BinaryName String originalClassname = original.getClassname();
+    Type[] expectedParams;
+    Type expectedReturn;
+    if (original.getName().equals("<init>")) {
+      // The replacement creates the object.
+      expectedParams = original.getParameterTypes();
+      expectedReturn = new ObjectType(originalClassname);
+    } else if (originalMethod.isStatic()) {
+      expectedParams = original.getParameterTypes();
+      expectedReturn = originalMethod.getReturnType();
+    } else {
+      // The receiver becomes the first argument.
+      expectedParams =
+          ArraysPlume.prepend(new ObjectType(originalClassname), original.getParameterTypes());
+      expectedReturn = originalMethod.getReturnType();
+    }
+    if (!Arrays.equals(replacementMethod.getArgumentTypes(), expectedParams)
+        || !replacementMethod.getReturnType().equals(expectedReturn)) {
+      throw new ReplacementException(
+          String.format(
+              "Replacement method %s must have parameter types (%s) and return type %s",
+              replacement, StringsPlume.join(", ", expectedParams), expectedReturn));
     }
 
     addReplacement(replacementMap, original, replacement);
