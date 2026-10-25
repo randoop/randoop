@@ -7,13 +7,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.Test;
 import org.plumelib.options.Options;
+import org.plumelib.options.Options.ArgException;
 
 /** Tests for {@link ReplaceCallAgent}. */
 public class ReplaceCallAgentTest {
 
   @Test
   @SuppressWarnings("nullness:monotonic") // restores the options' original values, possibly null
-  public void createAgentArgsTest() {
+  public void createAgentArgsTest() throws ArgException {
     Path origReplacementFile = ReplaceCallAgent.replacement_file;
     Path origDontTransform = ReplaceCallAgent.dont_transform;
     try {
@@ -27,7 +28,7 @@ public class ReplaceCallAgentTest {
       ReplaceCallAgent.replacement_file = Paths.get("other");
       ReplaceCallAgent.dont_transform = Paths.get("other");
       String[] targetArgs =
-          new Options(ReplaceCallAgent.class).parse(true, ReplaceCallAgent.tokenize(args));
+          new Options(ReplaceCallAgent.class).parse(ReplaceCallAgent.tokenize(args));
 
       assertArrayEquals(new String[0], targetArgs);
       assertEquals(replacementFile.toAbsolutePath(), ReplaceCallAgent.replacement_file);
