@@ -1158,14 +1158,12 @@ public class GenTests extends GenInputsAbstract {
         parseFixtureFile(GenInputsAbstract.junit_before_all, "before-all", errors);
     beforeEachFixtureBody =
         parseFixtureFile(GenInputsAbstract.junit_before_each, "before-each", errors);
-    for (String error : errors) {
-      System.out.println(error);
-    }
     return errors.isEmpty();
   }
 
   /**
-   * Parses the fixture text in the given file.
+   * Parses the fixture text in the given file. If the fixture text cannot be parsed, prints a
+   * message and adds it to {@code errors}.
    *
    * @param filename the file containing the fixture text, or null
    * @param fixtureKind the kind of fixture, such as "after-all", for use in error messages
@@ -1178,8 +1176,11 @@ public class GenTests extends GenInputsAbstract {
     try {
       return JUnitCreator.parseFixture(getFileText(filename));
     } catch (ParseException e) {
-      errors.add(
-          String.format("Error in %s fixture file %s: %s", fixtureKind, filename, e.getMessage()));
+      String error =
+          String.format("Error in %s fixture file %s: %s", fixtureKind, filename, e.getMessage());
+      // Print the message now, because getFileText exits if a later fixture file cannot be read.
+      System.out.println(error);
+      errors.add(error);
       return null;
     }
   }

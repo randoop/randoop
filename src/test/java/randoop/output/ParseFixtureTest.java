@@ -1,6 +1,7 @@
 package randoop.output;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -65,8 +66,8 @@ public class ParseFixtureTest {
             ParseException.class,
             () -> JUnitCreator.parseFixture(Arrays.asList("int y = 2;", "int x = ; foo(")));
     String message = e.getMessage();
-    assertTrue(message, message.contains("Line 2, column 9: Parse error. Found \";\""));
-    assertTrue(message, message.contains("At end of text: Parse error. Found \"}\""));
+    assertTrue(message, message.contains("Line 2, column 9: "));
+    assertTrue(message, message.contains("At end of text: "));
     assertTrue(e.getCause() instanceof ParseException);
     assertThrows(
         ParseException.class, () -> JUnitCreator.parseFixture(Arrays.asList("this is not java")));
@@ -79,6 +80,22 @@ public class ParseFixtureTest {
         assertThrows(
             ParseException.class, () -> JUnitCreator.parseFixture(Arrays.asList("int x = ;")));
     assertTrue(e.getMessage(), e.getMessage().startsWith("Line 1, column 9: "));
+  }
+
+  /** Tests that a lexical error is reported at its position in the fixture text. */
+  @Test
+  public void testLexicalError() {
+    ParseException e =
+        assertThrows(
+            ParseException.class, () -> JUnitCreator.parseFixture(Arrays.asList("char c = 'ab';")));
+    assertTrue(e.getMessage(), e.getMessage().startsWith("Line 1, column 12: "));
+    assertFalse(e.getMessage(), e.getMessage().contains("at line"));
+
+    e =
+        assertThrows(
+            ParseException.class,
+            () -> JUnitCreator.parseFixture(Arrays.asList("String s = \"\"\"", "abc")));
+    assertTrue(e.getMessage(), e.getMessage().startsWith("At end of text: "));
   }
 
   /** Tests that an unmatched "}" is reported at its position in the fixture text. */

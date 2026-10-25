@@ -45,12 +45,13 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.VoidType;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
@@ -613,20 +614,27 @@ public final class JUnitCreator {
       return result.getResult().get();
     }
     StringJoiner message = new StringJoiner(Globals.lineSep);
-    List<Throwable> causes = new ArrayList<>();
     for (Problem problem : result.getProblems()) {
       message.add(describeFixtureProblem(problem, bodyText.size()));
-      problem.getCause().ifPresent(causes::add);
     }
     ParseException exception = new ParseException(message.toString());
-    if (!causes.isEmpty()) {
-      exception.initCause(causes.get(0));
-      for (Throwable cause : causes.subList(1, causes.size())) {
+    for (Problem problem : result.getProblems()) {
+      Throwable cause = problem.getCause().orElse(null);
+      if (cause == null) {
+        continue;
+      }
+      if (exception.getCause() == null) {
+        exception.initCause(cause);
+      } else {
         exception.addSuppressed(cause);
       }
     }
     throw exception;
   }
+
+  /** Matches a position in a JavaParser message, such as " at line 3, column 1". */
+  private static final Pattern MESSAGE_POSITION =
+      Pattern.compile("\\s+at line (\\d+), column (\\d+)");
 
   /**
    * Returns a description of a problem in fixture text, including its position in the fixture text.
@@ -655,21 +663,30 @@ public final class JUnitCreator {
       }
     }
 
-    int line;
-    int column;
+    // The position of the problem in the block.
+    Position position;
     if (token != null) {
-      line = token.beginLine;
-      column = token.beginColumn;
+      position = new Position(token.beginLine, token.beginColumn);
     } else {
-      Position begin =
+      position =
           problem.getLocation().flatMap(TokenRange::toRange).map(range -> range.begin).orElse(null);
-      if (begin == null) {
-        return message;
+    }
+    // Some messages, such as those for lexical errors, contain a position in the block.  Remove it,
+    // because it is not a position in the fixture text.
+    Matcher matcher = MESSAGE_POSITION.matcher(message);
+    if (matcher.find()) {
+      if (position == null) {
+        position =
+            new Position(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
       }
-      line = begin.line;
-      column = begin.column;
+      message = matcher.replaceFirst("");
+    }
+    if (position == null) {
+      return message;
     }
 
+    int line = position.line;
+    int column = position.column;
     if (line > numLines) {
       return "At end of text: " + message + " (Randoop adds \"}\" after the fixture text.)";
     }
