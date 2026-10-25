@@ -67,7 +67,7 @@ public class ReplacementFileTest {
     thrown.expect(ReplacementFileException.class);
     String msg =
         "badmethodnamereplacement.txt:2: Bad original signature: Method signature expected, bad"
-            + " fully-qualified method name \"foo\": foo(int) for line:"
+            + " fully-qualified method name \"foo\" for line:"
             + " foo(int) randoop.mock.java.awt.Component.show()";
     thrown.expectMessage(msg);
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);

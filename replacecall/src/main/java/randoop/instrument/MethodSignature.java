@@ -140,7 +140,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     }
     if (!signature.endsWith(")")) {
       throw new IllegalArgumentException(
-          "Method signature expected, does not end with closing parenthesis: " + signature);
+          "Method signature expected, does not end with closing parenthesis");
     }
     String paramString = signature.substring(parenPos + 1, signature.length() - 1).trim();
     // The limit -1 makes split() retain trailing empty strings, so trailing commas are rejected.
@@ -148,6 +148,9 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     @FqBinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
     for (String parameter : parameters) {
+      if (parameter.isEmpty()) {
+        throw new IllegalArgumentException("Empty parameter type");
+      }
       if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
