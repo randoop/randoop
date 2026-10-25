@@ -26,9 +26,9 @@ New command-line arguments:
 
 New command-line arguments to the replacecall agent:
 
-* `--replacecall-exclude` disables a default replacement
-* `--replacecall-exclude-file` disables the default replacements listed in a
-  file
+* `--disable-default-replacement` disables a default replacement
+* `--disable-default-replacements-file` disables the default replacements
+  listed in a file
 
 ## Version 4.3.4 (June 6, 2025)
 

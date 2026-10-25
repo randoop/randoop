@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.nio.file.Files;
@@ -39,8 +40,8 @@ import randoop.MethodReplacements;
  * documentation</a> for the file format.) Default replacements are given in an internal resource
  * file {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
  * --replacement-file} command-line argument. A user replacement may override a default replacement.
- * The {@code --replacecall-exclude} and {@code --replacecall-exclude-file} command-line arguments
- * disable individual default replacements.
+ * The {@code --disable-default-replacement} and {@code --disable-default-replacements-file}
+ * command-line arguments disable individual default replacements.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
@@ -85,12 +86,13 @@ public final class ReplaceCallAgent {
 
   /**
    * Default replacements that should not be used. Each value is the signature of an original
-   * method, in the format used in replacement files, such as {@code java.lang.System.exit(int)}.
-   * The signature must not contain whitespace. This option may be given multiple times.
+   * method, in the format used in replacement files, such as {@code java.lang.System.exit(int)}. If
+   * the signature contains whitespace, enclose it in quotes. This option may be given multiple
+   * times.
    */
   @SuppressWarnings("WeakerAccess")
   @Option("method whose default replacement should not be used")
-  public static List<String> replacecall_exclude = new ArrayList<>();
+  public static List<String> disable_default_replacement = new ArrayList<>();
 
   /**
    * File listing default replacements that should not be used. Each line is the signature of an
@@ -99,7 +101,7 @@ public final class ReplaceCallAgent {
    */
   @SuppressWarnings("WeakerAccess")
   @Option("file listing methods whose default replacements should not be used, one per line")
-  public static @MonotonicNonNull Path replacecall_exclude_file = null;
+  public static @MonotonicNonNull Path disable_default_replacements_file = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -114,7 +116,7 @@ public final class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        String[] target_args = options.parse(true, tokenize(agentArgs));
         if (target_args.length > 0) {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
@@ -191,12 +193,11 @@ public final class ReplaceCallAgent {
         }
       }
 
-      // Remove the default replacements that the user excluded.
+      // Remove the default replacements that the user disabled.
       Set<MethodSignature> unmatched =
-          removeExcludedReplacements(replacementMap, readExcludedSignatures());
+          removeDisabledReplacements(replacementMap, readDisabledSignatures());
       if (!unmatched.isEmpty()) {
-        System.err.printf(
-            "No default replacement exists for replacecall exclusion(s): %s%n", unmatched);
+        System.err.printf("Cannot disable nonexistent default replacement(s): %s%n", unmatched);
         System.exit(1); // Exit on bad user input.
       }
 
@@ -226,8 +227,8 @@ public final class ReplaceCallAgent {
           createAgentArgs(
               replacementFilePath,
               exclusionFilePath,
-              replacecall_exclude,
-              replacecall_exclude_file));
+              disable_default_replacement,
+              disable_default_replacements_file));
 
       /*
       if (debug) {
@@ -256,32 +257,33 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Returns the signatures given by the {@code --replacecall-exclude} and {@code
-   * --replacecall-exclude-file} command-line options. Exits if a signature cannot be parsed or the
-   * file cannot be read.
+   * Returns the signatures given by the {@code --disable-default-replacement} and {@code
+   * --disable-default-replacements-file} command-line options. Exits if a signature cannot be
+   * parsed or the file cannot be read.
    *
    * @return the signatures of the methods whose default replacements should not be used
    */
-  private static Set<MethodSignature> readExcludedSignatures() {
+  private static Set<MethodSignature> readDisabledSignatures() {
     Set<MethodSignature> result = new LinkedHashSet<>();
-    for (String signature : replacecall_exclude) {
-      addExcludedSignature(result, signature, "--replacecall-exclude");
+    for (String signature : disable_default_replacement) {
+      addDisabledSignature(result, signature, "--disable-default-replacement");
     }
-    if (replacecall_exclude_file != null) {
+    if (disable_default_replacements_file != null) {
       try (EntryReader reader =
           new EntryReader(
-              Files.newBufferedReader(replacecall_exclude_file, UTF_8),
-              replacecall_exclude_file.toString(),
+              Files.newBufferedReader(disable_default_replacements_file, UTF_8),
+              disable_default_replacements_file.toString(),
               EntryFormat.DEFAULT,
-              CommentFormat.SHELL,
+              CommentFormat.C,
               null)) {
         for (String line : reader) {
-          addExcludedSignature(result, line, reader.getFileName() + ":" + reader.getLineNumber());
+          addDisabledSignature(result, line, reader.getFileName() + ":" + reader.getLineNumber());
         }
-      } catch (IOException e) {
+      } catch (IOException | UncheckedIOException e) {
+        // EntryReader's iterator wraps an IOException in an UncheckedIOException.
         System.err.printf(
-            "Error reading replacecall exclusion file %s:%n %s%n",
-            replacecall_exclude_file, e.getMessage());
+            "Error reading disabled default replacements file %s:%n %s%n",
+            disable_default_replacements_file, e.getMessage());
         System.exit(1); // Exit on bad user input.
       }
     }
@@ -296,7 +298,7 @@ public final class ReplaceCallAgent {
    * @param text the method signature, in the format used in replacement files
    * @param source where the text came from, for error messages
    */
-  private static void addExcludedSignature(
+  private static void addDisabledSignature(
       Set<MethodSignature> signatures, String text, String source) {
     String trimmed = text.trim();
     if (trimmed.isEmpty()) {
@@ -305,7 +307,7 @@ public final class ReplaceCallAgent {
     try {
       signatures.add(MethodSignature.of(trimmed));
     } catch (IllegalArgumentException e) {
-      System.err.printf("Bad replacecall exclusion in %s: %s%n", source, e.getMessage());
+      System.err.printf("Bad disabled default replacement in %s: %s%n", source, e.getMessage());
       System.exit(1); // Exit on bad user input.
     }
   }
@@ -314,13 +316,13 @@ public final class ReplaceCallAgent {
    * Removes the replacements for the given methods from the replacement map.
    *
    * @param replacementMap the map from original methods to their replacements; is side-effected
-   * @param excluded the original methods whose replacements to remove
-   * @return the elements of {@code excluded} that are not keys of {@code replacementMap}
+   * @param disabled the original methods whose replacements to remove
+   * @return the elements of {@code disabled} that are not keys of {@code replacementMap}
    */
-  static Set<MethodSignature> removeExcludedReplacements(
-      Map<MethodSignature, MethodSignature> replacementMap, Set<MethodSignature> excluded) {
+  static Set<MethodSignature> removeDisabledReplacements(
+      Map<MethodSignature, MethodSignature> replacementMap, Set<MethodSignature> disabled) {
     Set<MethodSignature> unmatched = new LinkedHashSet<>();
-    for (MethodSignature signature : excluded) {
+    for (MethodSignature signature : disabled) {
       if (replacementMap.remove(signature) == null) {
         unmatched.add(signature);
       }
@@ -423,31 +425,93 @@ public final class ReplaceCallAgent {
    *
    * @param replacementFilePath the {@code Path} for the replacement file
    * @param exclusionFilePath the {@code Path} for the file of packages not to transform
-   * @param excludedSignatures the values of the {@code --replacecall-exclude} command-line option
-   * @param excludedSignaturesFilePath the {@code Path} for the file of methods whose default
+   * @param disabledSignatures the values of the {@code --disable-default-replacement} command-line
+   *     option
+   * @param disabledSignaturesFilePath the {@code Path} for the file of methods whose default
    *     replacements should not be used
    * @return the argument string for the current run using absolute paths
    */
   static String createAgentArgs(
       @Nullable Path replacementFilePath,
       @Nullable Path exclusionFilePath,
-      List<String> excludedSignatures,
-      @Nullable Path excludedSignaturesFilePath) {
-    // Options.tokenize() splits the argument string at whitespace.
+      List<String> disabledSignatures,
+      @Nullable Path disabledSignaturesFilePath) {
+    // tokenize() splits the argument string at whitespace that is not quoted.
     StringJoiner result = new StringJoiner(" ");
     if (replacementFilePath != null) {
-      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+      result.add("--replacement-file=" + quote(replacementFilePath.toAbsolutePath().toString()));
     }
     if (exclusionFilePath != null) {
-      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+      result.add("--dont-transform=" + quote(exclusionFilePath.toAbsolutePath().toString()));
     }
-    for (String signature : excludedSignatures) {
-      result.add("--replacecall-exclude=" + signature.trim());
+    for (String signature : disabledSignatures) {
+      result.add("--disable-default-replacement=" + quote(signature.trim()));
     }
-    if (excludedSignaturesFilePath != null) {
-      result.add("--replacecall-exclude-file=" + excludedSignaturesFilePath.toAbsolutePath());
+    if (disabledSignaturesFilePath != null) {
+      result.add(
+          "--disable-default-replacements-file="
+              + quote(disabledSignaturesFilePath.toAbsolutePath().toString()));
     }
     return result.toString();
+  }
+
+  /**
+   * Splits an agent argument string into arguments. Arguments are separated by whitespace. Within
+   * an argument, text between a pair of single quotes or a pair of double quotes may contain
+   * whitespace; the quotes themselves are removed. This is the inverse of {@link #quote}.
+   *
+   * @param args the agent argument string
+   * @return the arguments in {@code args}
+   */
+  static String[] tokenize(String args) {
+    // Options.tokenize() retains the quote characters, which is why this method removes them.
+    String[] result = Options.tokenize(args);
+    for (int i = 0; i < result.length; i++) {
+      result[i] = unquote(result[i]);
+    }
+    return result;
+  }
+
+  /**
+   * Removes the quote characters from a token returned by {@link Options#tokenize}. Text between a
+   * pair of single quotes or a pair of double quotes is retained literally.
+   *
+   * @param token a token returned by {@link Options#tokenize}
+   * @return the token, with its quote characters removed
+   */
+  private static String unquote(String token) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < token.length()) {
+      char ch = token.charAt(i);
+      if (ch == '\'' || ch == '"') {
+        int close = token.indexOf(ch, i + 1);
+        if (close == -1) {
+          close = token.length();
+        }
+        result.append(token, i + 1, close);
+        i = close + 1;
+      } else {
+        result.append(ch);
+        i++;
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Quotes a value so that {@link #tokenize} treats it as part of a single argument and yields it
+   * unchanged.
+   *
+   * @param value a value
+   * @return {@code value}, quoted if necessary
+   */
+  static String quote(String value) {
+    if (!value.matches("[^\\s'\"]*")) {
+      // Each single quote ends the quoted text, appears within double quotes, and resumes it.
+      return "'" + value.replace("'", "'\"'\"'") + "'";
+    }
+    return value;
   }
 
   /**

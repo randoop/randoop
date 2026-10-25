@@ -14,13 +14,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
-import org.plumelib.options.Options;
 
 /** Tests for {@link ReplaceCallAgent}. */
 public class ReplaceCallAgentTest {
 
   @Test
-  public void removeExcludedReplacementsTest() throws IOException, ReplacementFileException {
+  public void removeDisabledReplacementsTest() throws IOException, ReplacementFileException {
     Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(defaultFile);
     int originalSize = map.size();
@@ -29,8 +28,8 @@ public class ReplaceCallAgentTest {
     assertTrue(map.containsKey(exit));
     assertFalse(map.containsKey(size));
 
-    Set<MethodSignature> excluded = new LinkedHashSet<>(Arrays.asList(exit, size));
-    Set<MethodSignature> unmatched = ReplaceCallAgent.removeExcludedReplacements(map, excluded);
+    Set<MethodSignature> disabled = new LinkedHashSet<>(Arrays.asList(exit, size));
+    Set<MethodSignature> unmatched = ReplaceCallAgent.removeDisabledReplacements(map, disabled);
 
     assertEquals(Collections.singleton(size), unmatched);
     assertFalse(map.containsKey(exit));
@@ -40,22 +39,22 @@ public class ReplaceCallAgentTest {
 
   @Test
   public void createAgentArgsTest() {
-    Path replacementFile = Paths.get("replacements.txt");
+    Path replacementFile = Paths.get("my replacements.txt");
     Path dontTransformFile = Paths.get("dont-transform.txt");
-    Path excludeFile = Paths.get("exclude.txt");
+    Path disabledFile = Paths.get("don't \"replace\".txt");
     String args =
         ReplaceCallAgent.createAgentArgs(
             replacementFile,
             dontTransformFile,
-            Arrays.asList("java.lang.System.exit(int)", "a.B.m(int,java.lang.String)"),
-            excludeFile);
+            Arrays.asList("java.lang.System.exit(int)", "a.B.m(int, java.lang.String)"),
+            disabledFile);
     String[] expected = {
       "--replacement-file=" + replacementFile.toAbsolutePath(),
       "--dont-transform=" + dontTransformFile.toAbsolutePath(),
-      "--replacecall-exclude=java.lang.System.exit(int)",
-      "--replacecall-exclude=a.B.m(int,java.lang.String)",
-      "--replacecall-exclude-file=" + excludeFile.toAbsolutePath()
+      "--disable-default-replacement=java.lang.System.exit(int)",
+      "--disable-default-replacement=a.B.m(int, java.lang.String)",
+      "--disable-default-replacements-file=" + disabledFile.toAbsolutePath()
     };
-    assertArrayEquals(expected, Options.tokenize(args));
+    assertArrayEquals(expected, ReplaceCallAgent.tokenize(args));
   }
 }

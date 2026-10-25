@@ -3,6 +3,7 @@ package randoop.instrument;
 import java.lang.instrument.IllegalClassFormatException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -24,6 +25,18 @@ import org.plumelib.util.StringsPlume;
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
 public final class MethodSignature implements Comparable<MethodSignature> {
+
+  /**
+   * Matches a fully-qualified method name: a fully-qualified class name, a period, and a method
+   * name or {@code <init>}.
+   */
+  @SuppressWarnings("regex:argument") // concatenation of regexes and a group
+  private static final Pattern FULL_METHOD_NAME =
+      Pattern.compile(
+          ReplacementFileReader.DOT_DELIMITED_IDS
+              + "\\.(?:"
+              + ReplacementFileReader.ID_STRING
+              + "|<init>)");
 
   /** The fully-qualified class name. */
   private final String classname;
@@ -123,10 +136,21 @@ public final class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, did not find beginning parenthesis: " + signature);
     }
     String fullMethodName = signature.substring(0, parenPos);
+    if (!FULL_METHOD_NAME.matcher(fullMethodName).matches()) {
+      throw new IllegalArgumentException(
+          "Method signature expected, bad fully-qualified method name \""
+              + fullMethodName
+              + "\": "
+              + signature);
+    }
     int lastParenPos = signature.lastIndexOf(')');
     if (lastParenPos < parenPos + 1) {
       throw new IllegalArgumentException(
           "Method signature expected, mismatched parenthesis: " + signature);
+    }
+    if (lastParenPos != signature.length() - 1) {
+      throw new IllegalArgumentException(
+          "Method signature expected, text after closing parenthesis: " + signature);
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment") // dynamically checked just below

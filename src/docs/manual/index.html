@@ -53,7 +53,7 @@ The Randoop homepage is
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
           <li><a href="#replacecall-disable-default">Disabling default replacements</a></li>
-          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#replacecall-load-exclusions">Classes that are not transformed</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
@@ -1558,40 +1558,45 @@ You can <a href="#replacecall-replacement-definition">define additional replacem
 
 <p>
 To disable a default replacement, pass the signature of the original method to the
-<code>--replacecall-exclude</code> command-line option.
+<code>--disable-default-replacement</code> command-line option.
 (By contrast, the <a href="#replacecall-load-exclusions"><code>--dont-transform</code></a>
 command-line option prevents all replacements in the classes of given packages.)
 The signature is a <a href="#fully-qualified-signature">Randoop fully-qualified signature</a>,
-as in a <a href="#replacecall-replacement-definition">replacement file</a>,
-and it must not contain whitespace.
+as in a <a href="#replacecall-replacement-definition">replacement file</a>.
+If the signature contains whitespace, enclose it in single quotes.
 You may give the option multiple times.
-For example, to let tests call the real <code>System.exit</code>,
-use this command-line argument (the quotes prevent the shell from interpreting the parentheses):
+For example, by default every <code>java.util.Random</code> object
+that is created without a seed uses a seed of 0.
+To let such objects be seeded randomly,
+use this command-line argument (the double quotes prevent the shell from interpreting the
+parentheses and angle brackets):
 </p>
 <pre>
-"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacecall-exclude=java.lang.System.exit(int)"
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--disable-default-replacement=java.util.Random.&lt;init&gt;()"
 </pre>
 
 <p>
 Alternately, list the signatures in a file, one per line, and pass the file to the
-<code>--replacecall-exclude-file=<em>filename</em></code> command-line option.
-(Blank lines and <code>#</code>-style comments are ignored.)
+<code>--disable-default-replacements-file=<em>filename</em></code> command-line option.
+(Blank lines and <code>//</code>-style comments are ignored.)
 For example, the file might contain:
 </p>
 <pre>
-java.lang.System.exit(int)
+// Use randomly-seeded Random objects.
+java.util.Random.&lt;init&gt;()
+// Show the real message dialogs.
 javax.swing.JOptionPane.showMessageDialog(java.awt.Component, java.lang.Object)
 </pre>
 
 <p>
-It is an error to exclude a method that has no default replacement.
+It is an error to disable a default replacement that does not exist.
 When a default replacement is disabled, Randoop may call the original method directly.
 These options affect only the default replacements, not the ones in a
 file given by <code>--replacement-file</code>.
 </p>
 
 
-<h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
+<h3 id="replacecall-load-exclusions">Classes that are not transformed</h3>
 
 <p>
 There are some classes that the replacecall agent should not transform.
