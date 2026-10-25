@@ -75,7 +75,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @throws RandoopSpecificationError if an expression in a specification does not compile
    */
   public static List<TypedOperation> operations(Class<?> clazz) throws RandoopSpecificationError {
-    return operations(clazz, new DefaultReflectionPredicate(), AccessibilityPredicate.IS_PUBLIC);
+    return operations(ClassOrInterfaceType.forClass(clazz));
   }
 
   /**
