@@ -210,10 +210,14 @@ public final class ReplacementFileReader {
       try {
         constructor.toMethod();
       } catch (ClassNotFoundException e2) {
-        throw new ClassNotFoundException(
-            String.format(
-                "Neither class %s nor class %s found",
-                original.getClassname(), constructor.getClassname()));
+        ClassNotFoundException notFound =
+            new ClassNotFoundException(
+                String.format(
+                    "Class %s not found (nor class %s, for a constructor)",
+                    original.getClassname(), constructor.getClassname()),
+                e);
+        notFound.addSuppressed(e2);
+        throw notFound;
       }
       original = constructor;
     }

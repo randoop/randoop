@@ -93,9 +93,29 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingconstructorclass.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "missingconstructorclass.txt:2: Neither class alpha.beta nor class alpha.beta.Gamma found"
-            + " for line: alpha.beta.Gamma(int)"
+        "missingconstructorclass.txt:2: Class alpha.beta not found (nor class alpha.beta.Gamma,"
+            + " for a constructor) for line: alpha.beta.Gamma(int)"
             + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void inheritedConstructorTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/inheritedconstructor.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "inheritedconstructor.txt:2: Constructor java.lang.Integer.<init>() not found for line:"
+            + " java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void instanceReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/instancereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "instancereplacement.txt:2: Replacement method must be static and non-private:"
+            + " java.lang.Object.hashCode()");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
