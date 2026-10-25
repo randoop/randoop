@@ -1639,7 +1639,8 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </pre>
 
 <p>
-  A replacement method must be static and non-private.
+  A replacement method must be public and static, and it must be declared in a
+  public class (not an interface).
   (Therefore, replacement classes don't need to be instantiated.)
 </p>
 <ul>

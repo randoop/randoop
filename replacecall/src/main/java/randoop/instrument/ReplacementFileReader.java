@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +24,14 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.ArraysPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.EntryReader.CommentFormat;
 import org.plumelib.util.EntryReader.EntryFormat;
@@ -56,8 +59,9 @@ public final class ReplacementFileReader {
    * anything in parentheses. The parentheses are expected to contain argument types, but the
    * pattern permits anything.
    *
-   * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
-   * constructors is unnecessary.
+   * <p>The pattern permits the {@code <init>} notation for constructors in both the original and
+   * the replacement signature. A constructor cannot be a replacement, but matching one lets {@link
+   * #addMethodReplacement} report a precise error instead of a format error.
    */
   private static final String SIGNATURE_STRING =
       DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
@@ -167,7 +171,10 @@ public final class ReplacementFileReader {
 
   /**
    * Adds a method replacement described by a pair of method signatures to the replacement map.
-   * Verifies that both signatures are well-formed and correspond to a method that exists.
+   * Verifies that both signatures are well-formed and correspond to a method that exists, and that
+   * the replacement method can be called in place of the original: it is public and static, it is
+   * declared in a public class (not an interface), and its parameter and return types match those
+   * of the original.
    *
    * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
    *
@@ -175,7 +182,7 @@ public final class ReplacementFileReader {
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
    * @throws ReplacementException if either signature is badly-formed, or if the replacement method
-   *     is not static and non-private
+   *     cannot be called in place of the original
    * @throws ClassNotFoundException if either class cannot be found
    * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
@@ -196,7 +203,7 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad original signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    original.toMethod();
+    Method originalMethod = original.toMethod();
 
     MethodSignature replacement;
     try {
@@ -206,9 +213,50 @@ public final class ReplacementFileReader {
     }
     // Call toMethod() instead of exists() to get more precise error messages.
     Method replacementMethod = replacement.toMethod();
-    if (!replacementMethod.isStatic() || replacementMethod.isPrivate()) {
+
+    // The replacement is called via invokestatic from instrumented classes in arbitrary packages.
+    if (!replacementMethod.isPublic() || !replacementMethod.isStatic()) {
       throw new ReplacementException(
-          "Replacement method must be static and non-private: " + replacement);
+          "Replacement method must be public and static: " + replacement);
+    }
+    JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
+    if (replacementClass == null) {
+      throw new ClassNotFoundException("Class " + replacement.getClassname() + " not found");
+    }
+    if (!replacementClass.isPublic()) {
+      throw new ReplacementException(
+          "Replacement class must be public: " + replacement.getClassname());
+    }
+    // The transformer emits a Methodref, which cannot refer to an interface method.
+    if (replacementClass.isInterface()) {
+      throw new ReplacementException(
+          "Replacement class must not be an interface: " + replacement.getClassname());
+    }
+
+    // The transformer builds the replacement call's descriptor from the original call, so the
+    // replacement must have exactly the corresponding parameter and return types.
+    @SuppressWarnings("signature:assignment") // the replacement file contains binary names
+    @BinaryName String originalClassname = original.getClassname();
+    ObjectType originalType = new ObjectType(originalClassname);
+    Type[] expectedParameterTypes;
+    Type expectedReturnType;
+    if (original.getName().equals("<init>")) {
+      expectedParameterTypes = original.getParameterTypes();
+      expectedReturnType = originalType;
+    } else if (originalMethod.isStatic()) {
+      expectedParameterTypes = original.getParameterTypes();
+      expectedReturnType = originalMethod.getReturnType();
+    } else {
+      expectedParameterTypes = ArraysPlume.prepend(originalType, original.getParameterTypes());
+      expectedReturnType = originalMethod.getReturnType();
+    }
+    if (!Arrays.equals(replacementMethod.getArgumentTypes(), expectedParameterTypes)
+        || !replacementMethod.getReturnType().equals(expectedReturnType)) {
+      String msg =
+          String.format(
+              "Replacement method %s must have parameter types %s and return type %s",
+              replacement, Arrays.toString(expectedParameterTypes), expectedReturnType);
+      throw new ReplacementException(msg);
     }
 
     addReplacement(replacementMap, original, replacement);
