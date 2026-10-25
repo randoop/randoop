@@ -100,12 +100,13 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void inheritedConstructorTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/inheritedconstructor.txt");
+  public void inheritedConstructorShorthandTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/inheritedconstructorshorthand.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "inheritedconstructor.txt:2: Constructor java.lang.Integer.<init>() not found for line:"
-            + " java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+        "inheritedconstructorshorthand.txt:2: Constructor java.lang.Integer.<init>() not found"
+            + " for line: java.lang.Integer() randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 
