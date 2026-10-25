@@ -52,7 +52,7 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
-          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#replacecall-load-exclusions">Classes that are not transformed</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
@@ -1553,7 +1553,7 @@ default set of replacements</a>.
 You can <a href="#replacecall-replacement-definition">define additional replacements</a>.
 
 
-<h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
+<h3 id="replacecall-load-exclusions">Classes that are not transformed</h3>
 
 <p>
 There are some classes that the replacecall agent should not transform.
@@ -1626,7 +1626,8 @@ Each line of a replacement file is one of:
   <li>two whitespace-separated method signatures without return types (replace
     the first method by the second); each method signature is
     a <a href="#fully-qualified-signature">Randoop fully-qualified
-    signature</a>.
+    signature</a>, except that a constructor is written as
+    <code>package-name.classname.&lt;init&gt;(argument-list)</code>.
   </li>
 </ul>
 
