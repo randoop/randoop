@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -133,7 +132,6 @@ public final class ReplaceCallAgent {
       }
 
       // If user-provided package exclusion file, load user package exclusions
-      Path exclusionFilePath = null;
       if (dont_transform != null) {
         String dont_transform_string = dont_transform.toString();
         try (Reader dont_transform_reader = Files.newBufferedReader(dont_transform, UTF_8)) {
@@ -145,8 +143,6 @@ public final class ReplaceCallAgent {
               "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
           System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
         }
-        // Get path for exclusions file to use in argument string given to Randoop
-        exclusionFilePath = dont_transform;
       }
 
       /*
@@ -172,7 +168,6 @@ public final class ReplaceCallAgent {
 
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
-      Path replacementFilePath = null;
       if (replacement_file != null) {
         try {
           replacementMap.putAll(ReplacementFileReader.readReplacements(replacement_file));
@@ -181,18 +176,14 @@ public final class ReplaceCallAgent {
               "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
           System.exit(1);
         }
-        assert replacement_file != null : "@AssumeAssertion(nullness): no side effects above";
-        // Get path for replacement file to use in argument string given to Randoop.
-        replacementFilePath = replacement_file;
       }
 
       /*
        * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
-       * file inputs on the command-line. The paths for the files are made absolute and then the
-       * argument string is rebuilt.
+       * arguments, but in a different working directory.
        */
       MethodReplacements.setAgentPath(getAgentPath());
-      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+      MethodReplacements.setAgentArgs(createAgentArgs());
 
       /*
       if (debug) {
@@ -308,24 +299,27 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an argument string using absolute paths for the replacement and exclusion files.
+   * Creates an agent argument string that is equivalent to the current values of the options, but
+   * in which every file and directory name is absolute. Thus, the argument string has the same
+   * effect regardless of the working directory.
    *
-   * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
-   * files used in the original use of the agent.
-   *
-   * @param replacementFilePath the {@code Path} for the replacement file
-   * @param exclusionFilePath the {@code Path} for the file of packages not to transform
-   * @return the argument string for the current run using absolute paths
+   * @return an agent argument string that is equivalent to the current values of the options
    */
-  static String createAgentArgs(
-      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
+  static String createAgentArgs() {
     // tokenize() splits the argument string at whitespace that is not quoted.
     StringJoiner result = new StringJoiner(" ");
-    if (replacementFilePath != null) {
-      result.add("--replacement-file=" + quote(replacementFilePath.toAbsolutePath().toString()));
+    if (debug) {
+      result.add("--debug");
+      result.add("--debug-directory=" + quote(debugPath.toString()));
     }
-    if (exclusionFilePath != null) {
-      result.add("--dont-transform=" + quote(exclusionFilePath.toAbsolutePath().toString()));
+    if (verbose) {
+      result.add("--verbose");
+    }
+    if (replacement_file != null) {
+      result.add("--replacement-file=" + quote(replacement_file.toAbsolutePath().toString()));
+    }
+    if (dont_transform != null) {
+      result.add("--dont-transform=" + quote(dont_transform.toAbsolutePath().toString()));
     }
     return result.toString();
   }
@@ -333,7 +327,8 @@ public final class ReplaceCallAgent {
   /**
    * Splits an agent argument string into arguments. Arguments are separated by whitespace. Within
    * an argument, text between a pair of single quotes or a pair of double quotes may contain
-   * whitespace; the quotes themselves are removed. This is the inverse of {@link #quote}.
+   * whitespace; the quotes themselves are removed. Where an argument contains a value quoted by
+   * {@link #quote}, the result contains the original, unquoted value.
    *
    * @param args the agent argument string
    * @return the arguments in {@code args}
