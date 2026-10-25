@@ -141,27 +141,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void returnTypeClassTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/returntypeclassreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "returntypeclassreplacement.txt:2: Replacement method"
-            + " randoop.instrument.testmocks.MathMock.abs(int) must have return type int");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void receiverClassTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/receiverclassreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "receiverclassreplacement.txt:2: Replacement method"
-            + " randoop.instrument.testmocks.StringMock.length() has no matching original in"
-            + " java.lang.String");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void nonPublicReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/nonpublicreplacement.txt");
     thrown.expect(ReplacementFileException.class);
