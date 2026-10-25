@@ -41,13 +41,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 @SuppressWarnings("deprecation") // TODO: fix. "new ClassOrInterfaceType()" does not handle generics
-public class JUnitCreator {
+public final class JUnitCreator {
 
   /** An instance of a Java parser. */
   static JavaParser javaParser = new JavaParser();
@@ -105,6 +106,36 @@ public class JUnitCreator {
   /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
 
+  /**
+   * The definition of {@code assertArrayEquals(boolean[], boolean[])}. Needed if Randoop's
+   * generated tests are run under JUnit 4.11 or earlier. JUnit version 4.11 contains {@code
+   * assertArrayEquals} for other types of arrays, but not for boolean arrays.
+   */
+  private static final String BOOLEAN_ARRAY_EQUALS_METHOD =
+      StringsPlume.joinLines(
+          "public void assertBooleanArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
+          "  if (expectedArray.length != actualArray.length) {",
+          "    throw new AssertionError(\"Array lengths differ: \"",
+          "        + expectedArray.length + \" != \" + actualArray.length);",
+          "  }",
+          "  for (int i = 0; i < expectedArray.length; i++) {",
+          "    if (expectedArray[i] != actualArray[i]) {",
+          "      throw new AssertionError(\"Arrays differ at index \" + i + \": \"",
+          "          + expectedArray[i] + \" != \" + actualArray[i]);",
+          "    }",
+          "  }",
+          "}");
+
+  /**
+   * Create a JUnitCreator object.
+   *
+   * @param junit_package_name the package name for the generated test classes
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class
+   * @param afterAllBody the Java text for AfterAll method of generated test class
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class
+   * @param afterEachBody the Java text for AfterEach method of generated test class
+   * @return the JUnitCreator object
+   */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
       BlockStmt beforeAllBody,
@@ -128,6 +159,11 @@ public class JUnitCreator {
     return junitCreator;
   }
 
+  /**
+   * Creates a JUnitCreator. Clients should call {@link #getTestCreator}.
+   *
+   * @param packageName the package name for the generated test classes
+   */
   private JUnitCreator(String packageName) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
@@ -257,6 +293,14 @@ public class JUnitCreator {
         bodyDeclarations.add(fixture);
       }
     }
+
+    // If boolean array assert is enabled, add assertBooleanArrayEquals(boolean[], boolean[]) method
+    // to the test class.
+    // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
+    // when running the generated tests.
+    MethodDeclaration assertBooleanArrayEqualsMethod =
+        javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
+    bodyDeclarations.add(assertBooleanArrayEqualsMethod);
 
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
@@ -436,7 +480,10 @@ public class JUnitCreator {
 
       String testVariable = instanceNameGen.next();
       ClassOrInterfaceType testClassType = new ClassOrInterfaceType(testClass);
-      @SuppressWarnings("deprecation") // "new ClassOrInterfaceType()" does not handle generics
+      @SuppressWarnings({
+        "deprecation", // "new ClassOrInterfaceType()" does not handle generics
+        "PMD.UseDiamondOperator" // cannot infer for an empty list
+      })
       VariableDeclarator variableDecl =
           new VariableDeclarator(
               testClassType,
@@ -525,11 +572,11 @@ public class JUnitCreator {
       return null;
     }
     StringBuilder blockText = new StringBuilder();
-    blockText.append("{").append(Globals.lineSep);
+    blockText.append('{').append(Globals.lineSep);
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append("}");
+    blockText.append(Globals.lineSep).append('}');
     return javaParser.parseBlock(blockText.toString()).getResult().get();
   }
 }

@@ -4,8 +4,9 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
 /** Exception for compilation of Java classes given as {@code String}. */
-public class SequenceCompilerException extends Throwable {
+public class SequenceCompilerException extends RuntimeException {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -1901576275093767250L;
 
   /** The source text for the class. */
@@ -50,7 +51,7 @@ public class SequenceCompilerException extends Throwable {
   }
 
   /**
-   * Get the source text for the class being compiled when this exception was thrown.
+   * Returns the source text for the class being compiled when this exception was thrown.
    *
    * @return the source text for the class that was being compiled
    */
@@ -59,7 +60,7 @@ public class SequenceCompilerException extends Throwable {
   }
 
   /**
-   * Return the compiler diagnostics.
+   * Returns the compiler diagnostics.
    *
    * @return the compiler diagnostics
    */

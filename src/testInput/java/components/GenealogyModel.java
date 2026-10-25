@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -62,7 +62,7 @@ public class GenealogyModel implements TreeModel {
     }
 
 
-//////////////// Fire events //////////////////////////////////////////////
+// //////////////// Fire events //////////////////////////////////////////////
 
     /**
      * The only event raised by this model is TreeStructureChanged with the
@@ -70,7 +70,7 @@ public class GenealogyModel implements TreeModel {
      */
     protected void fireTreeStructureChanged(Person oldRoot) {
         int len = treeModelListeners.size();
-        TreeModelEvent e = new TreeModelEvent(this, 
+        TreeModelEvent e = new TreeModelEvent(this,
                                               new Object[] {oldRoot});
         for (TreeModelListener tml : treeModelListeners) {
             tml.treeStructureChanged(e);
@@ -78,7 +78,7 @@ public class GenealogyModel implements TreeModel {
     }
 
 
-//////////////// TreeModel interface implementation ///////////////////////
+// //////////////// TreeModel interface implementation ///////////////////////
 
     /**
      * Adds a listener for the TreeModelEvent posted after the tree changes.
@@ -108,10 +108,10 @@ public class GenealogyModel implements TreeModel {
         Person p = (Person)parent;
         if (showAncestors) {
             int count = 0;
-            if (p.getFather() != null) { 
+            if (p.getFather() != null) {
                 count++;
             }
-            if (p.getMother() != null) { 
+            if (p.getMother() != null) {
                 count++;
             }
             return count;

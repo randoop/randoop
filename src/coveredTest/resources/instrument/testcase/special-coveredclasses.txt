@@ -1,2 +1,0 @@
-instrument.testcase.AbstractTarget
-instrument.testcase.InterfaceTarget

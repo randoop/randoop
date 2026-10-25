@@ -4,13 +4,14 @@ import static randoop.reflection.TypeInstantiator.TypeVariableUse;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a Java primitive type. Corresponds to primitive types as defined in JLS <a
  * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-PrimitiveType">section
  * 4.2</a>.
  */
-public class PrimitiveType extends Type {
+public final class PrimitiveType extends Type {
 
   /** The runtime class of the primitive type. */
   private final Class<?> runtimeClass;
@@ -47,7 +48,7 @@ public class PrimitiveType extends Type {
    *     otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -64,12 +65,13 @@ public class PrimitiveType extends Type {
   }
 
   @Override
-  public String getFqName() {
+  public @Nullable String getFqName() {
     return runtimeClass.getCanonicalName();
   }
 
   @Override
-  public String getBinaryName() {
+  @SuppressWarnings("nullness:return") // primitives have a non-null canonical name
+  public /*@NonNull*/ String getBinaryName() {
     return runtimeClass.getCanonicalName();
   }
 
@@ -146,7 +148,7 @@ public class PrimitiveType extends Type {
    * of JLS for JavaSE 8</a>.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return otherType.isPrimitive()
         && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
   }

@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
+import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -29,6 +31,9 @@ import randoop.util.Randomness;
 
 /** Instantiates type parameters from a set of input types. */
 public class TypeInstantiator {
+
+  /** If true, log information about instantiation. */
+  private static final boolean debug = false;
 
   // This field is side-effected by aliases held outside the class.
   /**
@@ -52,14 +57,17 @@ public class TypeInstantiator {
    * Instantiate the given operation by choosing type arguments for its type parameters.
    *
    * @param operation the generic operation to instantiate
-   * @return an instantiated version of the operation
+   * @return an instantiated version of the operation, or null
    */
-  public TypedClassOperation instantiate(TypedClassOperation operation) {
+  public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
 
     // if declaring type of operation is generic, select instantiation
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    if (debug) {
+      Log.logPrintf("instantiate(%s), isgeneric=%s%n", operation, declaringType.isGeneric());
+    }
     if (declaringType.isGeneric()) {
       Substitution substitution;
 
@@ -69,7 +77,7 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic()
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
-        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+        if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
           substitution = instantiateClass(declaringType);
@@ -77,6 +85,10 @@ public class TypeInstantiator {
       } else { // otherwise, select from existing one
         substitution = selectSubstitution(declaringType);
       }
+      if (debug) {
+        Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);
+      }
+
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
@@ -87,8 +99,11 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      Log.logPrintf("Applying capture conversion to %s%n", operation);
+      Log.logPrintf(
+          "Applying capture conversion to %s%n", StringsPlume.toStringAndClass(operation));
       operation = operation.applyCaptureConversion();
+      Log.logPrintf(
+          "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
       operation = instantiateOperationTypes(operation);
@@ -168,7 +183,7 @@ public class TypeInstantiator {
    * @param type the type to be instantiated
    * @return a substitution instantiating the given type; null if none is found
    */
-  private Substitution instantiateClass(ClassOrInterfaceType type) {
+  private @Nullable Substitution instantiateClass(ClassOrInterfaceType type) {
     boolean tryPrevious = Randomness.weightedCoinFlip(0.5);
 
     if (tryPrevious) {
@@ -360,8 +375,9 @@ public class TypeInstantiator {
 
     // There may be generics in the return type that didn't exist in an formal parameter.
     // An example is Collections.emptyList().
-    if (operation.getOutputType().isReferenceType()) {
-      Type paramType = operation.getOutputType().substitute(substitution);
+    Type outputType = operation.getOutputType();
+    if (outputType.isReferenceType()) {
+      Type paramType = outputType.substitute(substitution);
       if (paramType.isGeneric()) {
         substitution =
             selectSubstitution(((ReferenceType) paramType).getTypeParameters(), substitution);

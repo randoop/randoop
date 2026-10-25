@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.DeclarationExtractor;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
@@ -49,7 +50,7 @@ public class EnumReflectionTest {
    * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test
-  public void simpleEnumTest() {
+  public void simpleEnumTest() throws RandoopSpecificationError {
     Class<?> se = SimpleEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(se);
 
@@ -89,7 +90,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void innerEnumTest() {
+  public void innerEnumTest() throws RandoopSpecificationError {
     Class<?> pc = PlayingCard.class;
 
     List<Enum<?>> include = new ArrayList<>();
@@ -121,7 +122,7 @@ public class EnumReflectionTest {
   }
 
   @Test
-  public void innerEnumWithMethodsTest() {
+  public void innerEnumWithMethodsTest() throws RandoopSpecificationError {
     Class<?> cwim = ClassWithInnerEnum.class;
 
     List<TypedOperation> include = new ArrayList<>();
@@ -160,7 +161,7 @@ public class EnumReflectionTest {
 
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void enumAsPredicateTest() {
+  public void enumAsPredicateTest() throws RandoopSpecificationError {
     Class<?> c = EnumAsPredicate.class;
     assertTrue(c.isEnum());
 
@@ -194,11 +195,12 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : c.getMethods()) {
-      Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
+    for (Method publicMethod : c.getMethods()) {
+      Set<TypedClassOperation> opSet = overrideMap.get(publicMethod.getName());
       if (opSet != null) {
         TypedClassOperation actualEnumOp =
-            createMethodCall(m, enumType).substitute(interfaceType.getTypeSubstitution());
+            createMethodCall(publicMethod, enumType)
+                .substitute(interfaceType.getTypeSubstitution());
         include.add(actualEnumOp);
       }
     }
@@ -238,7 +240,7 @@ public class EnumReflectionTest {
    * at least package level.
    */
   @Test
-  public void valueEnum() {
+  public void valueEnum() throws RandoopSpecificationError {
     Class<?> coin = Coin.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(coin);
 
@@ -262,14 +264,16 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : coin.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (m.getName().equals("value")) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(mc));
+    for (Method publicMethod : coin.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (publicMethod.getName().equals("value")) {
+        assertTrue(
+            "enum method " + publicMethod.toGenericString() + " should occur", actual.contains(mc));
         count++;
       } else {
         assertFalse(
-            "enum method " + m.toGenericString() + " should not occur", actual.contains(mc));
+            "enum method " + publicMethod.toGenericString() + " should not occur",
+            actual.contains(mc));
       }
     }
     assertEquals(count, actual.size());
@@ -282,7 +286,7 @@ public class EnumReflectionTest {
    */
   @SuppressWarnings("GetClassOnEnum")
   @Test
-  public void abstractMethodEnum() {
+  public void abstractMethodEnum() throws RandoopSpecificationError {
     Class<?> op = OperatorEnum.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(op);
 
@@ -299,9 +303,9 @@ public class EnumReflectionTest {
       }
     }
 
-    for (Method m : op.getMethods()) {
-      TypedOperation mc = createMethodCall(m, declaringType);
-      if (overrides.contains(m.getName())) {
+    for (Method publicMethod : op.getMethods()) {
+      TypedOperation mc = createMethodCall(publicMethod, declaringType);
+      if (overrides.contains(publicMethod.getName())) {
         assertTrue("enum method " + mc + " should occur", actual.contains(mc));
         count++;
       } else {
@@ -312,7 +316,7 @@ public class EnumReflectionTest {
     assertEquals(count, actual.size());
   }
 
-  private List<TypedOperation> getConcreteOperations(Class<?> c) {
+  private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     Set<ClassOrInterfaceType> classTypes =
         DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
     return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);

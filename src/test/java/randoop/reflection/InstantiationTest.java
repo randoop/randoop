@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -87,12 +89,12 @@ public class InstantiationTest {
     assertEquals(methodNames.size(), methodCount);
   }
 
-  /**
+  /*
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
    * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
    * C_BST<String>}.
    *
-   * <p>it should be possible for it to pass with {@code B_BST}.
+   * <p>It should be possible for it to pass with {@code B_BST}.
    */
   /*
   @Test
@@ -290,6 +292,10 @@ public class InstantiationTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     return model;
@@ -359,8 +365,7 @@ public class InstantiationTest {
     if (type.isClassOrInterfaceType()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       if (!(classType.isGeneric() || classType.hasWildcard())) {
-        typeSet.add(classType);
-        typeSet.addAll(classType.getSuperTypes());
+        typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
   }

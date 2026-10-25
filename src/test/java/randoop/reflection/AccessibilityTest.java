@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
+import randoop.condition.RandoopSpecificationError;
 import randoop.field.AccessibleField;
 import randoop.operation.CallableOperation;
 import randoop.operation.ConstructorCall;
@@ -43,7 +44,8 @@ public class AccessibilityTest {
    * same package
    */
   @Test
-  public void testStandardPackagePrivateAccessibility() throws ClassNotFoundException {
+  public void testStandardPackagePrivateAccessibility()
+      throws ClassNotFoundException, RandoopSpecificationError {
 
     Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
@@ -153,7 +155,8 @@ public class AccessibilityTest {
    * public accessibility
    */
   @Test
-  public void testPublicOnlyPackagePrivateAccessibility() throws ClassNotFoundException {
+  public void testPublicOnlyPackagePrivateAccessibility()
+      throws ClassNotFoundException, RandoopSpecificationError {
     Class<?> c = Class.forName("randoop.reflection.accessibilitytest.PackagePrivateClass");
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
@@ -252,7 +255,7 @@ public class AccessibilityTest {
    * same package
    */
   @Test
-  public void testStandardAccessibility() {
+  public void testStandardAccessibility() throws RandoopSpecificationError {
     Class<?> c = PublicClass.class;
     ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
@@ -356,7 +359,7 @@ public class AccessibilityTest {
    * public accessibility
    */
   @Test
-  public void testPublicOnlyAccessibility() {
+  public void testPublicOnlyAccessibility() throws RandoopSpecificationError {
     Class<?> c = PublicClass.class;
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
@@ -534,7 +537,8 @@ public class AccessibilityTest {
   private List<TypedOperation> getConcreteOperations(
       Class<?> c,
       ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate) {
+      AccessibilityPredicate accessibilityPredicate)
+      throws RandoopSpecificationError {
     Set<ClassOrInterfaceType> classTypes =
         DeclarationExtractor.classTypes(c, reflectionPredicate, accessibilityPredicate);
     final List<TypedOperation> operations =

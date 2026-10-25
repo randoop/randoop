@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -29,7 +30,7 @@ public class EnumConstant extends CallableOperation {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -88,7 +89,7 @@ public class EnumConstant extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append(declaringType.getFqName()).append(".").append(this.value.name());
+    b.append(declaringType.getFqName()).append('.').append(this.value.name());
   }
 
   /**
@@ -191,9 +192,9 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * value
+   * Returns the object for the value of this enum constant.
    *
-   * @return object for value of enum constant
+   * @return the object for value of this enum constant
    */
   public Enum<?> value() {
     return this.value;
@@ -217,7 +218,6 @@ public class EnumConstant extends CallableOperation {
    * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type
    */
-  @SuppressWarnings("mustcall:return") // generic type inference problem?
   private static Enum<?> valueOf(Class<?> type, String valueName) {
     for (Object obj : type.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;

@@ -25,14 +25,16 @@ public class TestCoverageInfo {
   }
 
   public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
-    if (totalBranches < 0) throw new IllegalArgumentException();
+    if (totalBranches < 0) {
+      throw new IllegalArgumentException();
+    }
     branchTrue = new int[totalBranches];
     branchFalse = new int[totalBranches];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 
   private String getCoverageInfo() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(64);
     int totalBranchesCovered = 0;
     int totalBranches = 0;
     for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
@@ -43,27 +45,25 @@ public class TestCoverageInfo {
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
       double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
-      b.append(
-          (methodSignature == null ? "other" : methodSignature)
-              + ": "
-              + branchesCovered
-              + "/"
-              + branchesInMethod
-              + " ("
-              + percentCovered
-              + "%)"
-              + Globals.lineSep);
+      b.append((methodSignature == null ? "other" : methodSignature));
+      b.append(": ");
+      b.append(branchesCovered);
+      b.append("/");
+      b.append(branchesInMethod);
+      b.append(" (");
+      b.append(percentCovered);
+      b.append("%)");
+      b.append(Globals.lineSep);
     }
     double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
-    b.append(
-        "TOTAL :"
-            + totalBranchesCovered
-            + "/"
-            + totalBranches
-            + " ("
-            + totalPercent
-            + "%)"
-            + Globals.lineSep);
+    b.append("TOTAL :");
+    b.append(totalBranchesCovered);
+    b.append("/");
+    b.append(totalBranches);
+    b.append(" (");
+    b.append(totalPercent);
+    b.append("%)");
+    b.append(Globals.lineSep);
     return b.toString();
   }
 
@@ -91,19 +91,34 @@ public class TestCoverageInfo {
 
     try {
       return getCoverageInfoObject(clazz).getCoverageInfo();
+    } catch (RandoopBug e) {
+      throw e;
     } catch (Exception e) {
       throw new RandoopBug(e);
     }
   }
 
-  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
-      throws IllegalArgumentException,
-          SecurityException,
-          IllegalAccessException,
-          NoSuchFieldException {
-    Field f = clazz.getDeclaredField("randoopCoverageInfo");
-    f.setAccessible(true);
-    return (TestCoverageInfo) f.get(null);
+  /**
+   * Returns the test coverage information that is stored in static field {@code
+   * randoopCoverageInfo} of the given class.
+   *
+   * @param clazz the class whose coverage information to obtain
+   * @return the test coverage information for the class
+   */
+  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz) {
+    try {
+      Field f = clazz.getDeclaredField("randoopCoverageInfo");
+      f.setAccessible(true);
+      TestCoverageInfo result = (TestCoverageInfo) f.get(null);
+      if (result == null) {
+        throw new RandoopBug("randoopCoverageInfo field is null in class " + clazz);
+      }
+      return result;
+    } catch (NoSuchFieldException e) {
+      throw new RandoopBug("Class " + clazz + " lacks the field randoopCoverageInfo", e);
+    } catch (IllegalAccessException e) {
+      throw new RandoopBug("this can't happen", e);
+    }
   }
 
   private static boolean isInstrumented(Class<?> clazz) {

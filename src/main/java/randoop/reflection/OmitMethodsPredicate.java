@@ -13,7 +13,7 @@ import randoop.util.Log;
 // will also be omitted (because otherwise a variable myObject might hold a MyClass, and a call
 // myObject.toString() might dispatch to my.package.MyClass.toString).
 //
-// There is not currently a way to omit just one implementation and not all its overrdden
+// There is not currently a way to omit just one implementation and not all its overridden
 // implementations.
 //
 // There is not currently a way to omit a given instance method implementation m, plus also all
@@ -35,8 +35,8 @@ import randoop.util.Log;
 // that were omitted and the methods that remain in the model.
 
 /**
- * Tests whether the {@link RawSignature} of an operation is matched by an omit. If so, the
- * operation should be omitted from the operation set.
+ * This class tests whether the {@link RawSignature} of an operation is matched by an omit. If so,
+ * the operation should be omitted from the operation set.
  *
  * <p>A pattern matches an operation representing a constructor, if the pattern matches the {@link
  * RawSignature} of the operation. A pattern matches an operation representing a method, if the
@@ -68,7 +68,7 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Indicates whether an omit pattern matches the raw signature of the method, either in the
+   * Returns true if an omit pattern matches the raw signature of the method, either in the
    * declaring class of the method or in a supertype.
    *
    * @param operation the operation for the method or constructor
@@ -96,7 +96,7 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Indicates whether an omit pattern matches the raw signature of the constructor.
+   * Returns true if an omit pattern matches the raw signature of the constructor.
    *
    * @param operation the operation for the method
    * @return true if the signature of the constructor is matched by an omit pattern, false otherwise
@@ -107,8 +107,8 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Indicates whether an omit pattern matches the raw signature of the method in either the
-   * declaring class of the method or a supertype.
+   * Returns true if an omit pattern matches the raw signature of the method in either the declaring
+   * class of the method or a supertype.
    *
    * @param operation the operation for the method
    * @return true if the signature of the method in the current class or a superclass is matched by
@@ -125,7 +125,7 @@ public class OmitMethodsPredicate {
 
     // Search the type and its supertypes that have the method.
 
-    for (ClassOrInterfaceType type : operation.getDeclaringType().getAllSupertypesInclusive()) {
+    for (ClassOrInterfaceType type : operation.getDeclaringType().getSupertypesInclusive()) {
       if (logOmit) {
         Log.logPrintf("shouldOmit looking in %s for %s%n", type, signature.getName());
       }

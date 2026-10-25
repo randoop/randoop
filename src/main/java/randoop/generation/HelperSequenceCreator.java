@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -33,8 +34,6 @@ import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.types.WildcardArgument;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
 
 /**
  * Contains static methods that create Sequences.
@@ -42,10 +41,11 @@ import randoop.util.SimpleList;
  * <p>The only two methods that are currently externally used are {@link #createArraySequence} and
  * {@link #createCollection}.
  */
-class HelperSequenceCreator {
+final class HelperSequenceCreator {
 
+  /** Do not instantiate. */
   private HelperSequenceCreator() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -59,19 +59,19 @@ class HelperSequenceCreator {
    * @param collectionType the query type
    * @return the singleton list containing the compatible sequence
    */
-  static SimpleList<Sequence> createArraySequence(
-      ComponentManager components, Type collectionType) {
+  static SIList<Sequence> createArraySequence(ComponentManager components, Type collectionType) {
 
+    // The returned sequence has length less than this.
     final int MAX_LENGTH = 7;
 
     if (!collectionType.isArray()) {
-      return new SimpleArrayList<>(0);
+      return SIList.empty();
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
     Type componentType = arrayType.getComponentType();
 
-    SimpleList<Sequence> candidates;
+    SIList<Sequence> candidates;
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
@@ -93,13 +93,14 @@ class HelperSequenceCreator {
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
-      SimpleArrayList<Sequence> seqList = new SimpleArrayList<>(1);
-      if (!GenInputsAbstract.forbid_null) {
-        if (!Randomness.weightedCoinFlip(0.5)) {
-          seqList.add(
-              new Sequence()
-                  .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
-        }
+      SIList<Sequence> seqList;
+      if (!GenInputsAbstract.forbid_null && !Randomness.weightedCoinFlip(0.5)) {
+        seqList =
+            SIList.singleton(
+                new Sequence()
+                    .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
+      } else {
+        seqList = SIList.empty();
       }
       length = seqList.size();
       candidates = seqList;
@@ -111,9 +112,7 @@ class HelperSequenceCreator {
         TupleSequence.createElementsSequence(candidates, length, componentType);
     Sequence s = createAnArray(elementsSequence, componentType, length);
     assert s != null;
-    SimpleArrayList<Sequence> l = new SimpleArrayList<>(1);
-    l.add(s);
-    return l;
+    return SIList.singleton(s);
   }
 
   /**
@@ -149,7 +148,7 @@ class HelperSequenceCreator {
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
 
-    SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
+    SIList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     // TODO: It seems this could create a very long list.
     // TODO: Changing this to
     //   int length = Randomness.nextRandomInt(candidates.size()) + 1;
@@ -202,7 +201,21 @@ class HelperSequenceCreator {
     }
   }
 
+  /** Extends a sequence by one or more statements that add an element to a collection or array. */
+  @SuppressWarnings("PMD.ImplicitFunctionalInterface")
   private interface SequenceExtender {
+    /**
+     * Returns {@code addSequence}, extended by one or more statements that add one element to the
+     * collection or array.
+     *
+     * @param addSequence the sequence to extend
+     * @param creationIndex the index, in {@code addSequence}, of the variable holding the
+     *     collection or array
+     * @param index the index, in {@code addSequence}, of the variable holding the element to add
+     * @param i the position within the collection or array at which to add the element; the
+     *     collection implementation ignores it, because it appends the element via {@code add}
+     * @return {@code addSequence}, extended to add the element
+     */
     Sequence extend(Sequence addSequence, int creationIndex, int index, int i);
   }
 
@@ -370,7 +383,7 @@ class HelperSequenceCreator {
    */
   private static InstantiatedType getImplementingTypeForCollection(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
-    if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
+    if (elementType.getGenericClassType().isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)
         && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingTypeForCollection(elementType);
       List<TypeArgument> elementTypeArgs = elementType.getTypeArguments();

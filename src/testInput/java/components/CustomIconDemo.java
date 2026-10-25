@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -35,7 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/* 
+/*
  * CustomIconDemo.java (based on ButtonDemo.java) requires the following files:
  *    ArrowIcon.java
  *    images/middle.gif
@@ -75,7 +75,7 @@ public class CustomIconDemo extends JPanel
         b2.setToolTipText("This middle button does nothing when you click it.");
         b3.setToolTipText("Click this button to enable the middle button.");
 
-        //Add Components to this container, using the default FlowLayout. 
+        //Add Components to this container, using the default FlowLayout.
         add(b1);
         add(b2);
         add(b3);
@@ -86,7 +86,7 @@ public class CustomIconDemo extends JPanel
             b2.setEnabled(false);
             b1.setEnabled(false);
             b3.setEnabled(true);
-        } else { 
+        } else {
             b2.setEnabled(true);
             b1.setEnabled(true);
             b3.setEnabled(false);
@@ -94,7 +94,7 @@ public class CustomIconDemo extends JPanel
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
-    protected static ImageIcon createImageIcon(String path, 
+    protected static ImageIcon createImageIcon(String path,
                                                String description) {
         java.net.URL imgURL = CustomIconDemo.class.getResource(path);
         if (imgURL != null) {
@@ -104,7 +104,7 @@ public class CustomIconDemo extends JPanel
             return null;
         }
     }
-    
+
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the

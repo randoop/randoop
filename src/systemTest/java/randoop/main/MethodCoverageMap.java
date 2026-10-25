@@ -1,8 +1,10 @@
 package randoop.main;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,14 +45,14 @@ class MethodCoverageMap {
    *
    * @param execFile the output of the JaCoCo javaagent
    * @param classesDirectory the root directory for the class files
-   * @return the method coverage map for
+   * @return the method coverage map
    * @throws IOException if unable to load the exec file
    */
   static MethodCoverageMap collectCoverage(String execFile, Path classesDirectory)
       throws IOException {
     MethodCoverageMap coverageMap = new MethodCoverageMap();
     ExecFileLoader fileLoader = new ExecFileLoader();
-    try (FileInputStream in = new FileInputStream(execFile)) {
+    try (InputStream in = Files.newInputStream(Paths.get(execFile))) {
       fileLoader.load(in);
     }
 
@@ -76,7 +78,7 @@ class MethodCoverageMap {
   }
 
   /**
-   * Return the set of names for covered methods of the class.
+   * Returns the set of names for covered methods of the class.
    *
    * @param classname the class name
    * @return the set of method names for covered methods

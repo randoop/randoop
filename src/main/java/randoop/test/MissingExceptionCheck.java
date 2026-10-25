@@ -3,6 +3,8 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -37,7 +39,7 @@ public class MissingExceptionCheck implements Check {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -55,10 +57,10 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public String toString() {
-    StringBuilder result =
-        new StringBuilder("MissingExceptionCheck at line " + index + Globals.lineSep);
+    StringJoiner result = new StringJoiner(Globals.lineSep);
+    result.add("MissingExceptionCheck at line " + index);
     for (List<ThrowsClause> set : expected) {
-      result.append(set.toString()).append(Globals.lineSep);
+      result.add(set.toString());
     }
     return result.toString();
   }

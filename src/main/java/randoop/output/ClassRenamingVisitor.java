@@ -6,8 +6,9 @@ import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.commons.io.FilenameUtils;
 import randoop.main.Minimize;
@@ -17,8 +18,9 @@ import randoop.util.Util;
 
 /** JavaParser visitor to rename classes. */
 public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
-  /** The new name. */
+  /** The old name. */
   private final String oldName;
+
   /** The new name. */
   private final String newName;
 
@@ -46,9 +48,9 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
     }
   }
 
-  ///
-  /// Static methods
-  ///
+  //
+  // Static methods
+  //
 
   /** An instance of a Java parser. */
   private static final JavaParser javaParser = new JavaParser();
@@ -63,7 +65,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
   public static Path copyAndRename(Path file, String newClassName) {
 
     CompilationUnit compilationUnit;
-    try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
+    try (InputStream inputStream = Files.newInputStream(file)) {
       ParseResult<CompilationUnit> parseCompilationUnit = javaParser.parse(inputStream);
       if (parseCompilationUnit.isSuccessful()) {
         compilationUnit = parseCompilationUnit.getResult().get();

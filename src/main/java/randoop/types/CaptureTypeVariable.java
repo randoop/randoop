@@ -5,6 +5,7 @@ import static randoop.reflection.TypeInstantiator.TypeVariableUse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a type variable introduced by capture conversion over a wildcard type argument.
@@ -34,6 +35,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
+  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
     this.varID = count++;
@@ -71,7 +73,7 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }

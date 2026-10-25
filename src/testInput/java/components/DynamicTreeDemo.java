@@ -27,12 +27,12 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
 /*
- * This code is based on an example provided by Richard Stanford, 
+ * This code is based on an example provided by Richard Stanford,
  * a tutorial reader.
  */
 
@@ -46,18 +46,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class DynamicTreeDemo extends JPanel 
+public class DynamicTreeDemo extends JPanel
                              implements ActionListener {
     private int newNodeSuffix = 1;
     private static String ADD_COMMAND = "add";
     private static String REMOVE_COMMAND = "remove";
     private static String CLEAR_COMMAND = "clear";
-    
+
     private DynamicTree treePanel;
 
     public DynamicTreeDemo() {
         super(new BorderLayout());
-        
+
         //Create the components.
         treePanel = new DynamicTree();
         populateTree(treePanel);
@@ -65,11 +65,11 @@ public class DynamicTreeDemo extends JPanel
         JButton addButton = new JButton("Add");
         addButton.setActionCommand(ADD_COMMAND);
         addButton.addActionListener(this);
-        
+
         JButton removeButton = new JButton("Remove");
         removeButton.setActionCommand(REMOVE_COMMAND);
         removeButton.addActionListener(this);
-        
+
         JButton clearButton = new JButton("Clear");
         clearButton.setActionCommand(CLEAR_COMMAND);
         clearButton.addActionListener(this);
@@ -80,7 +80,7 @@ public class DynamicTreeDemo extends JPanel
 
         JPanel panel = new JPanel(new GridLayout(0,3));
         panel.add(addButton);
-        panel.add(removeButton); 
+        panel.add(removeButton);
         panel.add(clearButton);
 	add(panel, BorderLayout.SOUTH);
     }
@@ -102,10 +102,10 @@ public class DynamicTreeDemo extends JPanel
         treePanel.addObject(p2, c1Name);
         treePanel.addObject(p2, c2Name);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        
+
         if (ADD_COMMAND.equals(command)) {
             //Add button clicked
             treePanel.addObject("New Node " + newNodeSuffix++);

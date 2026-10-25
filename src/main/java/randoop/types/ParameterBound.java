@@ -22,14 +22,14 @@ import org.plumelib.util.CollectionsPlume;
  * </pre>
  *
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
- * ParameterBound} class hierarchy is simplified to use this {@link ReferenceType} objects as
- * bounds. Intersection types (which includes the greatest lower bound construction used in capture
+ * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
+ * bounds. Intersection types (which include the greatest lower bound construction used in capture
  * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
  * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
- * being {@link JavaTypes#NULL_TYPE}, and the default upperbound being {@link
+ * being {@link JavaTypes#NULL_TYPE}, and the default upper bound being {@link
  * JavaTypes#OBJECT_TYPE}.
  *
  * @see EagerReferenceBound
@@ -37,6 +37,9 @@ import org.plumelib.util.CollectionsPlume;
  * @see LazyParameterBound
  */
 public abstract class ParameterBound {
+
+  /** Creates a ParameterBound. */
+  public ParameterBound() {}
 
   /**
    * Constructs a parameter bound given a {@link ReferenceType}.
@@ -66,11 +69,11 @@ public abstract class ParameterBound {
     }
 
     if (bounds.length == 1) {
-      return ParameterBound.forType(variableSet, bounds[0]);
+      return forType(variableSet, bounds[0]);
     } else {
       List<ParameterBound> boundList =
           CollectionsPlume.mapList(
-              (java.lang.reflect.Type type) -> ParameterBound.forType(variableSet, type), bounds);
+              (java.lang.reflect.Type type) -> forType(variableSet, type), bounds);
       return new IntersectionTypeBound(boundList);
     }
   }
@@ -126,7 +129,7 @@ public abstract class ParameterBound {
   public abstract List<TypeVariable> getTypeParameters();
 
   /**
-   * Indicates whether the given (reflection) type reference represents a type in which a type
+   * Returns true if the given (reflection) type reference represents a type in which a type
    * variable occurs.
    *
    * @param type the reflection type
@@ -173,7 +176,7 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type is a type variable.
+   * Returns true if the type is a type variable.
    *
    * @param type the type to test
    * @return true if the type is a type variable, false otherwise
@@ -183,21 +186,21 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type of this bound has a wildcard type argument.
+   * Returns true if the type of this bound has a wildcard type argument.
    *
    * @return true, if this bound has a wildcard argument, and false otherwise
    */
   abstract boolean hasWildcard();
 
   /**
-   * Indicates whether the type of this bound has a capture variable.
+   * Returns true if the type of this bound has a capture variable.
    *
    * @return true iff this bound has a capture variable
    */
   abstract boolean hasCaptureVariable();
 
   /**
-   * Indicates whether the type of this bound is generic.
+   * Returns true if the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
@@ -206,7 +209,7 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the type of this bound is generic.
+   * Returns true if the type of this bound is generic.
    *
    * @param ignoreWildcards if true, ignore wildcards; that is, treat wildcards as not making the
    *     operation generic
@@ -215,7 +218,7 @@ public abstract class ParameterBound {
   public abstract boolean isGeneric(boolean ignoreWildcards);
 
   /**
-   * Indicates whether this bound is a lower bound of the given argument type.
+   * Returns true if this bound is a lower bound of the given argument type.
    *
    * @param argType the concrete argument type
    * @param subst the substitution
@@ -224,7 +227,7 @@ public abstract class ParameterBound {
   public abstract boolean isLowerBound(Type argType, Substitution subst);
 
   /**
-   * Tests whether this is a lower bound on the type of a given bound with respect to a type
+   * Returns true if this is a lower bound on the type of a given bound with respect to a type
    * substitution. The body is approximately:
    *
    * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
@@ -239,19 +242,19 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicate whether this bound is {@code Object}.
+   * Returns true if this bound is {@code Object}.
    *
    * @return true if this bound is {@code Object}, false otherwise
    */
   public abstract boolean isObject();
 
   /**
-   * Indicates whether the type of this bound is a subtype of the type of the given bound.
+   * Returns true if the type of this bound is a subtype of the type of the given bound.
    *
    * @param boundType the other bound
    * @return true if this type is a subtype of the other bound, false otherwise
    */
-  public abstract boolean isSubtypeOf(ParameterBound boundType);
+  public abstract boolean isSubtypeOfOrEqualTo(ParameterBound boundType);
 
   /**
    * Determines if this bound is an upper bound for the argument type.
@@ -264,8 +267,8 @@ public abstract class ParameterBound {
   public abstract boolean isUpperBound(Type argType, Substitution subst);
 
   /**
-   * Indicates whether this bound is an upper bound on the type of the given bound with respect to
-   * the type substitution.
+   * Returns true if this bound is an upper bound on the type of the given bound with respect to the
+   * type substitution.
    *
    * @param bound the other bound
    * @param substitution the type substitution
@@ -274,7 +277,7 @@ public abstract class ParameterBound {
   abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
 
   /**
-   * Indicates whether this bound is a type variable.
+   * Returns true if this bound is a type variable.
    *
    * @return true if this bound is a type variable, false otherwise
    */

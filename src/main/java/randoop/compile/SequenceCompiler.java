@@ -21,13 +21,15 @@ import javax.tools.ToolProvider;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
 import org.checkerframework.checker.mustcall.qual.MustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.BinaryName;
-import org.checkerframework.checker.signature.qual.BinaryNameWithoutPackage;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
+import org.checkerframework.checker.signature.qual.Identifier;
 import org.plumelib.reflection.ReflectionPlume;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 import randoop.main.RandoopUsageError;
+import randoop.util.Log;
 
 /**
  * Compiles a Java class given as a {@code String}.
@@ -42,20 +44,21 @@ import randoop.main.RandoopUsageError;
    * If non-null, do verbose output for compilation failures where the Java source code contains the
    * string.
    */
-  private static final String debugCompilationFailure = null;
+  public static final @Nullable String debugCompilationFailure = null;
 
   /** The options to the compiler. */
   private final List<String> compilerOptions;
 
-  /** the Java compiler */
+  /** The Java compiler. */
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>(0));
+    this(new ArrayList<>(0));
   }
 
   /**
@@ -91,7 +94,7 @@ import randoop.main.RandoopUsageError;
   }
 
   /**
-   * Indicates whether the given class is compilable.
+   * Returns true if the given class is compilable.
    *
    * @param packageName the package name for the class, null if default package
    * @param classname the simple name of the class
@@ -101,7 +104,7 @@ import randoop.main.RandoopUsageError;
   public boolean isCompilable(
       final String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    boolean result = compile(packageName, classname, javaSource, diagnostics);
+    boolean result = compile(classname, javaSource, diagnostics);
 
     // Compilation can create multiple .class files; this only deletes the main one.
     Path dir = Paths.get((packageName == null) ? "." : packageName.replace(".", "/"));
@@ -131,37 +134,31 @@ import randoop.main.RandoopUsageError;
   /**
    * Compiles the given class. If this method returns normally, compilation was successful.
    *
-   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  private void compile(final String packageName, final String classname, final String javaSource)
-      throws SequenceCompilerException {
+  private void compile(final String classname, final String javaSource) {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-    boolean success = compile(packageName, classname, javaSource, diagnostics);
+    boolean success = compile(classname, javaSource, diagnostics);
     if (!success) {
       throw new SequenceCompilerException("Compilation failed", javaSource, diagnostics);
     }
   }
 
   /**
-   * A helper method for the {@link #compile(String, String, String)} and {@link
-   * #isCompilable(String, String, String)} methods: compiles the given class using the given
-   * diagnostics collector.
+   * A helper method for the {@link #compile(String, String)} and {@link #isCompilable(String,
+   * String, String)} methods: compiles the given class using the given diagnostics collector.
    *
-   * @param packageName the package of the class, null if default package
    * @param classname the simple name of the class
    * @param javaSource the source text of the class
    * @param diagnostics the {@code DiagnosticsCollector} object to use for the compilation. Always
    *     use a new diagnostics collector each compilation to avoid accumulating errors.
    * @return true if the class source is successfully compiled, false otherwise
    */
-  @SuppressWarnings("UnusedVariable") // TODO: remove packageName formal parameter
   private boolean compile(
-      final String packageName,
       final String classname,
       final String javaSource,
       DiagnosticCollector<JavaFileObject> diagnostics) {
@@ -171,13 +168,42 @@ import randoop.main.RandoopUsageError;
     sources.add(source);
     JavaCompiler.CompilationTask task =
         compiler.getTask(
-            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
-    Boolean succeeded = task.call();
-    return (succeeded != null && succeeded);
+            null, fileManager, diagnostics, new ArrayList<>(compilerOptions), null, sources);
+    Boolean succeededBoxed = task.call();
+    boolean succeeded = (succeededBoxed != null && succeededBoxed);
+
+    // Write the diagnostics to the log if compilation failed.
+    if (!succeeded) {
+      boolean headerPrinted = false;
+      String sourceUri = source.toUri().toString();
+      for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+        int lineNumber = (int) diagnostic.getLineNumber();
+        if (!headerPrinted) {
+          Log.logPrintf("%nCompilation failed, see below for details:%n");
+          headerPrinted = true;
+        }
+
+        String message;
+        try {
+          @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
+          String message_temp = diagnostic.getMessage(null);
+          message = message_temp;
+        } catch (Throwable t) {
+          message = diagnostic.toString();
+        }
+        if (lineNumber == Diagnostic.NOPOS) {
+          Log.logPrintf("Error in %s: %s%n", sourceUri, message);
+        } else {
+          Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+        }
+      }
+    }
+
+    return succeeded;
   }
 
   /**
-   * Compiles the given class, leads it, and returns the Class object. If this method returns
+   * Compiles the given class, loads it, and returns the Class object. If this method returns
    * normally, compilation was successful.
    *
    * @param packageName the package of the class, null if default package
@@ -188,10 +214,9 @@ import randoop.main.RandoopUsageError;
    */
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
-      final @BinaryNameWithoutPackage String classname,
-      final String javaSource)
-      throws SequenceCompilerException {
-    compile(packageName, classname, javaSource);
+      final @Identifier String classname,
+      final String javaSource) {
+    compile(classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
     File dir = new File("").getAbsoluteFile();
     return loadClassFile(dir, fqName);
@@ -222,7 +247,7 @@ import randoop.main.RandoopUsageError;
    * @return the fully-qualified class name constructed from the arguments
    */
   @BinaryName String fullyQualifiedName(
-      @DotSeparatedIdentifiers String packageName, @BinaryNameWithoutPackage String classname) {
+      @DotSeparatedIdentifiers String packageName, @Identifier String classname) {
     @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
     return result;

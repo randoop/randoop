@@ -3,15 +3,15 @@ package randoop.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
 
 /**
  * Implements the Orienteering component, as described by the paper "GRT: Program-Analysis-Guided
- * Random Testing" by Ma et. al (appears in ASE 2015):
+ * Random Testing" by Ma et al. (appears in ASE 2015):
  * https://people.kth.se/~artho/papers/lei-ase2015.pdf .
  *
  * <p>Biases input selection towards sequences that have lower execution cost. Execution cost is
@@ -29,7 +29,7 @@ import randoop.util.SimpleList;
  * by zero when computing weights.
  *
  * <p>The GRT paper also does not describe how to handle input sequences that have not yet been
- * selected. We start ecah input sequences with a selection count of 1 to prevent division by zero
+ * selected. We start each input sequence with a selection count of 1 to prevent division by zero
  * when computing weights.
  */
 public class OrienteeringSelection extends InputSequenceSelector {
@@ -39,7 +39,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
   /**
    * Map from a sequence to its weight. For every sequence s, {@code weightMap.get(s) ==
    * sequenceDetailsMap.get(s).getWeight()}. This is needed because {@code
-   * Randomneess#randomMemberWeighted} takes a {@code Map<T, Double>} as an argument.
+   * Randomness#randomMemberWeighted} takes a {@code Map<T, Double>} as an argument.
    */
   private final Map<Sequence, Double> weightMap = new HashMap<>();
 
@@ -49,7 +49,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
     private final double methodSizeSqrt;
 
     /** The execution time of the sequence, in nanoseconds. */
-    private final long executionTime;
+    private final long executionTimeNanos;
 
     /** Number of times this sequence has been selected by {@link OrienteeringSelection}. */
     private int selectionCount;
@@ -64,21 +64,21 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * Create a SequenceDetails for the given sequence, but using the given execution time.
      *
      * @param sequence a sequence
-     * @param executionTime execution time in nanoseconds
+     * @param executionTimeNanos execution time in nanoseconds
      */
-    SequenceDetails(Sequence sequence, long executionTime) {
-      this(methodSizeSquareRoot(sequence), executionTime);
+    SequenceDetails(Sequence sequence, long executionTimeNanos) {
+      this(methodSizeSquareRoot(sequence), executionTimeNanos);
     }
 
     /**
      * Create a SequenceDetails.
      *
      * @param methodSizeSqrt the square root of the number of method calls
-     * @param executionTime the execution time, in nanoseconds
+     * @param executionTimeNanos the execution time, in nanoseconds
      */
-    public SequenceDetails(double methodSizeSqrt, long executionTime) {
+    public SequenceDetails(double methodSizeSqrt, long executionTimeNanos) {
       this.methodSizeSqrt = methodSizeSqrt;
-      this.executionTime = executionTime;
+      this.executionTimeNanos = executionTimeNanos;
       // Prevent division by zero: start the count at 1.
       this.selectionCount = 1;
       updateWeight();
@@ -110,8 +110,8 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * each execution of seq. However, we assume that every execution time for a sequence is the
      * same as the first execution.
      */
-    private void updateWeight() {
-      weight = 1.0 / (selectionCount * executionTime * methodSizeSqrt);
+    private void updateWeight(@UnknownInitialization SequenceDetails this) {
+      weight = 1.0 / (selectionCount * executionTimeNanos * methodSizeSqrt);
     }
   }
 
@@ -137,7 +137,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public Sequence selectInputSequence(SIList<Sequence> candidates) {
     // One could imagine caching the total weight to avoid this iteration over the list.  However,
     // this candidate list is provided by the client, there are many such lists, and we don't want
     // to inject code into all the places that the list may be computed.  Also, there might be
@@ -161,19 +161,15 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * @param candidates list of candidate sequences
    * @return the total weight of the input candidate list
    */
-  private double computeTotalWeightForCandidates(SimpleList<Sequence> candidates) {
+  private double computeTotalWeightForCandidates(SIList<Sequence> candidates) {
     double totalWeight = 0;
     for (int i = 0; i < candidates.size(); i++) {
       Sequence candidate = candidates.get(i);
       SequenceDetails details = sequenceDetailsMap.get(candidate);
       if (details == null) {
         // This might be a literal that was created by ComponentManager.getSequencesForType().
-        throw new Error(
-            String.format(
-                "candidate is not in sequenceDetailsMap.%n"
-                    + "candidate [%s]:%n%s%nEnd of candidate.%n"
-                    + "sequenceDetailsMap:%n%s%nEnd of sequenceDetailsMap%n",
-                candidate.getClass(), candidate, CollectionsPlume.mapToString(sequenceDetailsMap)));
+        createdExecutableSequence(new ExecutableSequence(candidate));
+        details = sequenceDetailsMap.get(candidate);
       }
       totalWeight += details.getWeight();
     }
@@ -191,7 +187,10 @@ public class OrienteeringSelection extends InputSequenceSelector {
    */
   @Override
   public void createdExecutableSequence(ExecutableSequence eSeq) {
-    assert eSeq.exectime > 0;
+    // For sequences with negligible run times
+    if (eSeq.exectime <= 0) {
+      eSeq.exectime = 1;
+    }
     createSequenceDetailsWithExecutionTime(eSeq.sequence, eSeq.exectime);
   }
 
@@ -200,17 +199,17 @@ public class OrienteeringSelection extends InputSequenceSelector {
    * corresponding execution time.
    *
    * @param sequence the sequence to add
-   * @param executionTime the execution time of the sequence, in nanoseconds
+   * @param executionTimeNanos the execution time of the sequence, in nanoseconds
    */
-  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTime) {
-    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTime);
+  private void createSequenceDetailsWithExecutionTime(Sequence sequence, long executionTimeNanos) {
+    SequenceDetails sequenceDetails = new SequenceDetails(sequence, executionTimeNanos);
 
     sequenceDetailsMap.put(sequence, sequenceDetails);
     weightMap.put(sequence, sequenceDetails.getWeight());
   }
 
   /**
-   * Returns the the square root of the number of method call statements within the given sequence.
+   * Returns the square root of the number of method call statements within the given sequence.
    *
    * <p>To prevent division by zero, we use 1 for a sequence with no method calls.
    *

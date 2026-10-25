@@ -4,16 +4,26 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import org.checkerframework.checker.formatter.qual.FormatMethod;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 
 /** Static methods that log to GenInputsAbstract.log, if that is non-null. */
 public final class Log {
 
+  /** Do not instantiate. */
   private Log() {
     throw new IllegalStateException("no instance");
   }
 
+  /**
+   * Returns true if logging is enabled.
+   *
+   * @return true if logging is enabled
+   */
+  @SuppressWarnings("nullness:flowexpr.parse.error") // TEMPORARY, to mask a bug
+  @EnsuresNonNullIf(expression = "GenInputsAbstract.log", result = true)
   public static boolean isLoggingOn() {
     return GenInputsAbstract.log != null;
   }
@@ -25,7 +35,7 @@ public final class Log {
    * @param args arguments to the format string
    */
   @FormatMethod
-  public static void logPrintf(String fmt, Object... args) {
+  public static void logPrintf(String fmt, @Nullable Object... args) {
     if (!isLoggingOn()) {
       return;
     }
@@ -35,9 +45,9 @@ public final class Log {
       msg = String.format(fmt, args);
     } catch (Throwable t) {
       logPrintf("A user-defined toString() method failed.%n");
-      Class<?>[] argTypes = new Class<?>[args.length];
+      @Nullable Class<?>[] argTypes = new Class<?>[args.length];
       for (int i = 0; i < args.length; i++) {
-        argTypes[i] = args[i].getClass();
+        argTypes[i] = args[i] == null ? null : args[i].getClass();
       }
       logPrintf("  fmt = %s%n", fmt);
       logPrintf("  arg types = %s%n", Arrays.toString(argTypes));

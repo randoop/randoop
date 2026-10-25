@@ -98,10 +98,11 @@ public class MinimizerTests {
 
     // Compare obtained and expected output.
     if (!FileUtils.contentEqualsIgnoreEOL(outputFile.toFile(), expectedFile.toFile(), null)) {
-      System.out.println("expectedFile:");
+      System.out.println("---------------- expectedFile: ----------------");
       System.out.println(FileUtils.readFileToString(expectedFile.toFile(), (String) null));
-      System.out.println("outputFile:");
+      System.out.println("---------------- outputFile: ----------------");
       System.out.println(FileUtils.readFileToString(outputFile.toFile(), (String) null));
+      System.out.println("---------------- End of files. ----------------");
       throw new Error("Files differ (see output above): " + expectedFile + " " + outputFile);
     }
   }

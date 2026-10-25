@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -41,7 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-/* 
+/*
  * ButtonDemo.java requires the following files:
  *   images/right.gif
  *   images/middle.gif
@@ -111,8 +111,8 @@ public class ButtonDemo extends JPanel
     }
 
     /**
-     * Create the GUI and show it.  For thread safety, 
-     * this method should be invoked from the 
+     * Create the GUI and show it.  For thread safety,
+     * this method should be invoked from the
      * event-dispatching thread.
      */
     private static void createAndShowGUI() {
@@ -136,7 +136,7 @@ public class ButtonDemo extends JPanel
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI(); 
+                createAndShowGUI();
             }
         });
     }

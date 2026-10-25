@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.plumelib.util.ClassDeterministic;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
+import randoop.condition.RandoopSpecificationError;
 import randoop.util.Log;
 
 /**
@@ -91,8 +92,9 @@ public class ReflectionManager {
    * once.
    *
    * @param c the {@link Class} object to be visited
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  public void apply(Class<?> c) {
+  public void apply(Class<?> c) throws RandoopSpecificationError {
     for (ClassVisitor visitor : visitors) {
       apply(visitor, c);
     }
@@ -106,8 +108,9 @@ public class ReflectionManager {
    *
    * @param visitor the {@link ClassVisitor} to apply to the class
    * @param c the class
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  public void apply(ClassVisitor visitor, Class<?> c) {
+  public void apply(ClassVisitor visitor, Class<?> c) throws RandoopSpecificationError {
     logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
     boolean classIsAccessible = predicate.isAccessible(c);
@@ -144,12 +147,13 @@ public class ReflectionManager {
       // inherited ones).
 
       Method[] deterministicMethods = ClassDeterministic.getMethods(c);
-      Set<Method> methods =
-          new HashSet<>(CollectionsPlume.mapCapacity(deterministicMethods.length));
+      Set<Method> methods = new HashSet<>(MapsP.mapCapacity(deterministicMethods.length));
       for (Method m : deterministicMethods) {
+        Log.logPrintf("ReflectionManager.apply considering method %s%n", m);
         methods.add(m);
         if (isAccessible(m)) {
           if (classIsAccessible || Modifier.isStatic(m.getModifiers())) {
+            Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
           } else {
             logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
@@ -183,7 +187,7 @@ public class ReflectionManager {
 
       // member types
       for (Class<?> ic : ClassDeterministic.getDeclaredClasses(c)) {
-        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(c.getModifiers()))) {
+        if (isAccessible(ic) && (classIsAccessible || Modifier.isStatic(ic.getModifiers()))) {
           applyTo(visitor, ic);
         }
       }
@@ -226,9 +230,10 @@ public class ReflectionManager {
    *
    * @param visitor the {@link ClassVisitor}
    * @param c the enum class object from which constants and methods are extracted
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  @SuppressWarnings("GetClassOnEnum")
-  private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+  @SuppressWarnings({"GetClassOnEnum"}) // c is an enum class
+  private void applyToEnum(ClassVisitor visitor, Class<?> c) throws RandoopSpecificationError {
     // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
@@ -250,8 +255,7 @@ public class ReflectionManager {
         }
       }
     }
-    // get any inherited methods also declared in anonymous class of some
-    // constant
+    // Get any inherited methods also declared in anonymous class of some constant.
     for (Method m : ClassDeterministic.getMethods(c)) {
       if (isAccessible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
@@ -284,8 +288,9 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param c the member class to be visited
+   * @throws RandoopSpecificationError if a specification for a member is malformed
    */
-  private void applyTo(ClassVisitor v, Class<?> c) {
+  private void applyTo(ClassVisitor v, Class<?> c) throws RandoopSpecificationError {
     logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
@@ -295,8 +300,9 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param co the constructor to be visited
+   * @throws RandoopSpecificationError if a specification for the constructor is malformed
    */
-  private void applyTo(ClassVisitor v, Constructor<?> co) {
+  private void applyTo(ClassVisitor v, Constructor<?> co) throws RandoopSpecificationError {
     logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
@@ -306,14 +312,15 @@ public class ReflectionManager {
    *
    * @param v the {@link ClassVisitor}
    * @param m the method to be visited
+   * @throws RandoopSpecificationError if a specification for the method is malformed
    */
-  private void applyTo(ClassVisitor v, Method m) {
+  private void applyTo(ClassVisitor v, Method m) throws RandoopSpecificationError {
     logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 
   /**
-   * Apply a visitor to a enum value.
+   * Apply a visitor to an enum value.
    *
    * @param v the {@link ClassVisitor}
    * @param e the enum value to be visited
@@ -344,7 +351,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a method, its parameter types, and its return type are all accessible.
+   * Returns true if a method, its parameter types, and its return type are all accessible.
    *
    * @param m the method to check for accessibility
    * @return true if the method, each parameter type, and the return type are all accessible; and
@@ -370,7 +377,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a constructor and each of its parameter types are accessible.
+   * Returns true if a constructor and each of its parameter types are accessible.
    *
    * @param c the constructor
    * @return true if the constructor and each parameter type are accessible; false, otherwise
@@ -392,8 +399,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a {@code java.lang.reflect.Type} is a type accessible by to the generated
-   * tests.
+   * Returns true if a {@code java.lang.reflect.Type} is a type accessible to the generated tests.
    *
    * @param type the type to check
    * @return true if the type is accessible, false otherwise

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
@@ -23,7 +25,7 @@ import org.plumelib.util.StringsPlume;
 public class RawSignature {
 
   /** The package name of the class; null for the unnamed package. */
-  private final @DotSeparatedIdentifiers String packageName;
+  private final @Nullable @DotSeparatedIdentifiers String packageName;
 
   /** The name of the declaring class of the method. */
   private final String classname;
@@ -43,10 +45,15 @@ public class RawSignature {
    * @param packageName the package name of the class. The unnamed package is indicated by null.
    * @param classname the name of the class
    * @param name the method name; for a constructor, same as the classname
-   * @param parameterTypes the method parameter types, including the receiver type if any
+   * @param parameterTypes the method parameter types, including the receiver type if any; is stored
+   *     directly without copying, so the client should not change it after the call
    */
+  @SuppressWarnings({
+    "this-escape", // checkRep() does not leak this
+    "PMD.ArrayIsStoredDirectly"
+  })
   public RawSignature(
-      @DotSeparatedIdentifiers String packageName,
+      @Nullable @DotSeparatedIdentifiers String packageName,
       String classname,
       String name,
       Class<?>[] parameterTypes) {
@@ -54,7 +61,11 @@ public class RawSignature {
     this.classname = classname;
     this.name = name;
     this.parameterTypes = parameterTypes;
+    checkRep();
+  }
 
+  /** Check the representation invariants of this. */
+  private final void checkRep(@UnknownInitialization RawSignature this) {
     if (Objects.equals(packageName, "")) {
       throw new Error(
           "Represent the default package by `null`, not the empty string: " + toStringDebug());
@@ -77,9 +88,10 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code executable}
    */
   public static RawSignature of(Method executable) {
-    Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
-    String fullclassname = executable.getDeclaringClass().getName();
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = getPackageName(declaringPackage);
+    String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
 
@@ -94,9 +106,10 @@ public class RawSignature {
    * @return the {@link RawSignature} object for {@code executable}
    */
   public static RawSignature of(Constructor<?> executable) {
-    Package classPackage = executable.getDeclaringClass().getPackage();
-    String packageName = RawSignature.getPackageName(classPackage);
-    String fullclassname = executable.getDeclaringClass().getName();
+    Class<?> declaringClass = executable.getDeclaringClass();
+    Package declaringPackage = declaringClass.getPackage();
+    String packageName = getPackageName(declaringPackage);
+    String fullclassname = declaringClass.getName();
     String classname =
         (packageName == null) ? fullclassname : fullclassname.substring(packageName.length() + 1);
     String fullname = executable.getName();
@@ -106,7 +119,7 @@ public class RawSignature {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -133,7 +146,8 @@ public class RawSignature {
    */
   @Override
   public String toString() {
-    List<String> typeNames = CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
+    List<@NonNull String> typeNames =
+        CollectionsPlume.mapList(Class::getCanonicalName, parameterTypes);
     return ((packageName == null) ? "" : packageName + ".")
         + (classname.equals(name) ? name : classname + "." + name)
         + "("
@@ -141,7 +155,12 @@ public class RawSignature {
         + ")";
   }
 
-  public String toStringDebug() {
+  /**
+   * Returns a string representation of this that shows all of its fields. For debugging.
+   *
+   * @return a verbose string representation of this
+   */
+  public final String toStringDebug(@UnknownInitialization RawSignature this) {
     StringJoiner result = new StringJoiner(System.lineSeparator());
     result.add("RawSignature{");
     result.add("  packageName = " + packageName);
@@ -153,16 +172,16 @@ public class RawSignature {
   }
 
   /**
-   * Return package name for method in this signature.
+   * Returns package name for method in this signature.
    *
    * @return the package name for this signature, null if default package
    */
-  public @DotSeparatedIdentifiers String getPackageName() {
+  public @Nullable @DotSeparatedIdentifiers String getPackageName() {
     return packageName;
   }
 
   /**
-   * Return the class name for method in this signature.
+   * Returns the class name for method in this signature.
    *
    * @return the class name for this signature
    */
@@ -171,7 +190,7 @@ public class RawSignature {
   }
 
   /**
-   * Return the method name for this signature.
+   * Returns the method name for this signature.
    *
    * @return the method name for this signature
    */
@@ -210,10 +229,11 @@ public class RawSignature {
   }
 
   /**
-   * Return the array of parameter types for this signature.
+   * Returns the array of parameter types for this signature.
    *
-   * @return the array of parameter types for this signature
+   * @return the array of parameter types for this signature, which the client should not modify
    */
+  @SuppressWarnings("PMD.MethodReturnsInternalArray")
   public Class<?>[] getParameterTypes() {
     return parameterTypes;
   }
@@ -228,7 +248,9 @@ public class RawSignature {
    */
   public static @Nullable @DotSeparatedIdentifiers String getPackageName(
       @Nullable Package aPackage) {
-    if (aPackage == null) return null;
+    if (aPackage == null) {
+      return null;
+    }
     String result = aPackage.getName();
     if (result.equals("")) {
       return null;

@@ -1,7 +1,10 @@
 package randoop.condition;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * The executable version of an {@link randoop.condition.specification.OperationSpecification}. It
@@ -44,10 +47,7 @@ public class ExecutableSpecification {
 
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {
-    this(
-        new ArrayList<ExecutableBooleanExpression>(0),
-        new ArrayList<GuardPropertyPair>(0),
-        new ArrayList<GuardThrowsPair>(0));
+    this(new ArrayList<>(0), new ArrayList<>(0), new ArrayList<>(0));
   }
 
   /**
@@ -75,9 +75,10 @@ public class ExecutableSpecification {
    * @param args the argument values to test the guard expressions; always includes a receiver (null
    *     for static methods)
    * @return the table with entries for this operation
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] args) {
+  public ExpectedOutcomeTable checkPrestate(Object[] args) throws RandoopSpecificationError {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (ExecutableSpecification execSpec : parentList) {
@@ -101,8 +102,10 @@ public class ExecutableSpecification {
    *
    * @param args the argument values; always includes a receiver (null for static methods)
    * @param table the table to which the created entry is to be added
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private void checkPrestate(Object[] args, ExpectedOutcomeTable table) {
+  private void checkPrestate(Object[] args, ExpectedOutcomeTable table)
+      throws RandoopSpecificationError {
     boolean preconditionCheck = checkPreExpressions(args);
     List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
     ExecutableBooleanExpression postCondition = checkGuardPropertyPairs(args);
@@ -116,8 +119,9 @@ public class ExecutableSpecification {
    *
    * @param args the argument values
    * @return false if any local precondition fails on the argument values, true if all succeed
+   * @throws RandoopSpecificationError if a precondition cannot be evaluated
    */
-  private boolean checkPreExpressions(Object[] args) {
+  private boolean checkPreExpressions(Object[] args) throws RandoopSpecificationError {
     for (ExecutableBooleanExpression preCondition : preExpressions) {
       if (!preCondition.check(args)) {
         return false;
@@ -131,9 +135,10 @@ public class ExecutableSpecification {
    * {@link ThrowsClause} to the set of expected exceptions.
    *
    * @param args the argument values
-   * @return the set of exceptions for which the guard expression evaluated to true
+   * @return the list of exceptions for which the guard expression evaluated to true
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) {
+  private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) throws RandoopSpecificationError {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
       ExecutableBooleanExpression guard = pair.guard;
@@ -152,8 +157,10 @@ public class ExecutableSpecification {
    * @param args the argument values
    * @return the property for the first {@link GuardPropertyPair} for which the guard expression
    *     evaluates to true; null if there is none
+   * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args) {
+  private @Nullable ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args)
+      throws RandoopSpecificationError {
     for (GuardPropertyPair gpPair : guardPropertyPairs) {
       ExecutableBooleanExpression guard = gpPair.guard;
       if (guard.check(args)) {
@@ -161,6 +168,37 @@ public class ExecutableSpecification {
       }
     }
     return null;
+  }
+
+  /**
+   * Merges two ExecutableSpecifications into a new one that contains the union of their components.
+   *
+   * @param spec1 the first ExecutableSpecification to merge
+   * @param spec2 the second ExecutableSpecification to merge
+   * @return a new ExecutableSpecification that is the result of the merge
+   */
+  public static ExecutableSpecification merge(
+      ExecutableSpecification spec1, ExecutableSpecification spec2) {
+    // Merge and remove duplicates for preExpressions
+    Set<ExecutableBooleanExpression> mergedPreExpressionsSet =
+        new LinkedHashSet<>(spec1.preExpressions);
+    mergedPreExpressionsSet.addAll(spec2.preExpressions);
+    List<ExecutableBooleanExpression> mergedPreExpressions =
+        new ArrayList<>(mergedPreExpressionsSet);
+
+    // Merge and remove duplicates for guardPropertyPairs
+    Set<GuardPropertyPair> mergedGuardPropertyPairsSet =
+        new LinkedHashSet<>(spec1.guardPropertyPairs);
+    mergedGuardPropertyPairsSet.addAll(spec2.guardPropertyPairs);
+    List<GuardPropertyPair> mergedGuardPropertyPairs = new ArrayList<>(mergedGuardPropertyPairsSet);
+
+    // Merge and remove duplicates for guardThrowsPairs
+    Set<GuardThrowsPair> mergedGuardThrowsPairsSet = new LinkedHashSet<>(spec1.guardThrowsPairs);
+    mergedGuardThrowsPairsSet.addAll(spec2.guardThrowsPairs);
+    List<GuardThrowsPair> mergedGuardThrowsPairs = new ArrayList<>(mergedGuardThrowsPairsSet);
+
+    return new ExecutableSpecification(
+        mergedPreExpressions, mergedGuardPropertyPairs, mergedGuardThrowsPairs);
   }
 
   /**
@@ -173,8 +211,8 @@ public class ExecutableSpecification {
   }
 
   /**
-   * Indicates whether the full specification is empty: this {@link ExecutableSpecification}, and
-   * any member of the parent list, has no guard expresions, no property pairs, and no throws pairs.
+   * Returns true if the full specification is empty: this {@link ExecutableSpecification}, and any
+   * member of the parent list, has no guard expressions, no property pairs, and no throws pairs.
    *
    * @return true if there are no guard expressions, or property or throws pairs in this or the
    *     parent list, false otherwise

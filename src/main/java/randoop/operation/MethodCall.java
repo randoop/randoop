@@ -5,10 +5,11 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
-import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.Type;
@@ -18,10 +19,10 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper for a
- * reflective Method object, and caches values of computed reflective calls.
+ * Represents a call to a method. It holds a reflective {@link java.lang.reflect.Method} object. It
+ * caches values of computed reflective calls.
  *
- * <p>An an {@link Operation}, a call to a non-static method<br>
+ * <p>As an {@link Operation}, a call to a non-static method<br>
  * {@code T mname (T1,...,Tn)}<br>
  * of class C can be represented formally as an operation<br>
  * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.<br>
@@ -31,27 +32,19 @@ import randoop.util.ReflectionExecutor;
  *
  * <p>The execution of a {@code MethodCall} executes the enclosed {@link Method} given values for
  * the inputs.
- *
- * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
 
+  /** The method that is called by this MethodCall. */
   private final Method method;
+
+  /** True if the method is static. */
   private final boolean isStatic;
 
   /**
-   * getMethod returns Method object of this MethodCall.
+   * Creates an object corresponding to a call to the given method.
    *
-   * @return {@link Method} object called by this {@link MethodCall}
-   */
-  public Method getMethod() {
-    return this.method;
-  }
-
-  /**
-   * MethodCall creates an object corresponding to the given reflective method.
-   *
-   * @param method the reflective method object
+   * @param method the method to be called
    */
   public MethodCall(Method method) {
     if (method == null) {
@@ -64,9 +57,48 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * toString outputs a text representation of the method call.
+   * Returns what this calls.
    *
-   * @return string representation of the enclosed method
+   * @return what this calls
+   */
+  public Method getMethod() {
+    return this.method;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMethodCall() {
+    return true;
+  }
+
+  @Override
+  public Method getReflectionObject() {
+    return method;
+  }
+
+  @Override
+  public String getName() {
+    return method.getName();
+  }
+
+  /**
+   * Returns a string representation of the method, but not of a method call.
+   *
+   * @return string representation of the method
    */
   @Override
   public String toString() {
@@ -74,12 +106,11 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc}
+   * Adds code for calling this to the given {@link StringBuilder}.
    *
-   * <p>Issues the code that corresponds to calling the method with the provided {@link Variable}
-   * objects as arguments.
-   *
-   * @param inputVars is the list of actual arguments to be printed
+   * @param inputVars the list of actual arguments to for the call
+   * @param sb the StringBuilder to which the output is appended
+   * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
   public void appendCode(
@@ -89,45 +120,50 @@ public final class MethodCall extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder sb) {
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    // The name of the method.
+    String methodName = getMethod().getName();
+
     if (isStatic()) {
+      // In the generated Java code, the "receiver" (before the method name) for a static method
+      // call is the class name.
       sb.append(declaringType.getCanonicalName().replace('$', '.'));
     } else {
-      Type expectedType = inputTypes.get(0);
-      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+      // In the generated Java code, the receiver is an expression.
+      String receiverVar = isStatic() ? null : inputVars.get(0).getName();
+      Type receiverFormalType = inputTypes.get(0);
+      if (receiverFormalType.isPrimitive()) {
         sb.append("((")
-            .append(expectedType.getFqName())
-            .append(")")
-            .append(receiverString)
-            .append(")");
+            .append(receiverFormalType.getFqName())
+            .append(')')
+            .append(receiverVar)
+            .append(')');
       } else {
-        sb.append(receiverString);
+        sb.append(receiverVar);
       }
     }
 
-    sb.append(".");
-    sb.append(getMethod().getName()).append("(");
+    sb.append('.');
+    sb.append(methodName);
 
+    StringJoiner arguments = new StringJoiner(", ", "(", ")");
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i > startIndex) {
-        sb.append(", ");
-      }
-
       // CASTING.
-      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
-        // Cast if the variable and input types are not identical.
-        sb.append("(").append(inputTypes.get(i).getFqName()).append(")");
+      String cast;
+      if (inputVars.get(i).getType().equals(inputTypes.get(i))) {
+        cast = "";
+      } else {
+        // Cast if the argument and formal parameter types are not identical.
+        cast = "(" + inputTypes.get(i).getFqName() + ") ";
       }
-
       String param = getArgumentString(inputVars.get(i));
-      sb.append(param);
+      arguments.add(cast + param);
     }
-    sb.append(")");
+    sb.append(arguments.toString());
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }
@@ -143,30 +179,21 @@ public final class MethodCall extends CallableOperation {
     return Objects.hash(method);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a {@link NormalExecution} with return value if execution was normal, otherwise a {@link
-   *     ExceptionalExecution} if an exception was thrown
-   */
   @Override
   public ExecutionOutcome execute(Object[] input) {
 
     Log.logPrintf("MethodCall.execute: this = %s%n", this);
 
     Object receiver = null;
-    int paramsLength = input.length;
     int paramsStartIndex = 0;
     if (!isStatic()) {
       receiver = input[0];
-      paramsLength--;
       paramsStartIndex = 1;
     }
 
-    Object[] params = new Object[paramsLength];
-    for (int i = 0; i < params.length; i++) {
-      params[i] = input[i + paramsStartIndex];
-      if (Log.isLoggingOn()) {
+    Object[] params = Arrays.copyOfRange(input, paramsStartIndex, input.length);
+    if (Log.isLoggingOn()) {
+      for (int i = 0; i < params.length; i++) {
         Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
       }
     }
@@ -176,11 +203,6 @@ public final class MethodCall extends CallableOperation {
     return ReflectionExecutor.executeReflectionCode(code);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if this method is static, and false otherwise
-   */
   @Override
   public boolean isStatic() {
     return isStatic;
@@ -189,18 +211,23 @@ public final class MethodCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * <p>The descriptor for a method is a string representing the method signature.
+   * <p>Returns a string representation of the signature.
    *
    * <p>Examples: java.util.ArrayList.get(int) java.util.ArrayList.add(int,java.lang.Object)
+   *
+   * @return the signature of this
+   * @see #parse(String)
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
-    sb.append(method.getDeclaringClass().getName()).append(".");
-    sb.append(method.getName()).append("(");
+    sb.append(method.getDeclaringClass().getName());
+    sb.append('.');
+    sb.append(method.getName());
+    sb.append("(");
     Class<?>[] params = method.getParameterTypes();
     TypeArguments.getTypeArgumentString(sb, params);
-    sb.append(")");
+    sb.append(')');
     return sb.toString();
   }
 
@@ -210,7 +237,7 @@ public final class MethodCall extends CallableOperation {
    * parse(op.toParsableString()).equals(op)} for Operation op.
    *
    * @param signature a string descriptor
-   * @return the method call operation for the given string descriptor
+   * @return the call operation for the given string descriptor
    * @throws OperationParseException if s does not match expected descriptor
    * @see OperationParser#parse(String)
    */
@@ -244,14 +271,15 @@ public final class MethodCall extends CallableOperation {
     try {
       typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     } catch (OperationParseException e) {
-      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"");
+      throw new OperationParseException(e.getMessage() + " while parsing \"" + signature + "\"", e);
     }
-    Method m = null;
+    Class<?> runtimeClass = classType.getRuntimeClass();
+    Method m;
     try {
-      m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
+      m = runtimeClass.getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
       try {
-        m = classType.getRuntimeClass().getMethod(opname, typeArguments);
+        m = runtimeClass.getMethod(opname, typeArguments);
       } catch (NoSuchMethodException e2) {
         String msg =
             "Method "
@@ -266,49 +294,38 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    return TypedClassOperation.forMethod(m);
+    try {
+      return TypedClassOperation.forMethod(m);
+    } catch (RandoopSpecificationError e) {
+      throw new OperationParseException(
+          "Bad specification derived from annotations on \"" + signature + "\": " + e.getMessage(),
+          e);
+    }
   }
 
   /**
    * {@inheritDoc}
    *
-   * @return true always, since this is a method call
-   */
-  @Override
-  public boolean isMessage() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return true always, since this is a method call
-   */
-  @Override
-  public boolean isMethodCall() {
-    return true;
-  }
-
-  @Override
-  public String getName() {
-    return method.getName();
-  }
-
-  @Override
-  public Method getReflectionObject() {
-    return method;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
+   * <p>Determines whether this satisfies the given predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
-   * @return true only if the method in this object satisfies the canUse(Method) of predicate
+   * @return true if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {
     return reflectionPredicate.test(method);
+  }
+
+  /**
+   * Returns true if the method takes one argument of its own type. It might be a zero-argument
+   * instance method, or a static method whose single parameter type matches the declaring class.
+   *
+   * @param m a Method
+   * @return true if the method takes one argument
+   */
+  public static boolean isUnarySelfType(Method m) {
+    return Modifier.isStatic(m.getModifiers())
+        ? m.getParameterCount() == 1 && m.getParameters()[0].getType().equals(m.getDeclaringClass())
+        : m.getParameterCount() == 0;
   }
 }

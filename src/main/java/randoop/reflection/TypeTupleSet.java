@@ -18,7 +18,7 @@ import randoop.types.TypeVariable;
  */
 class TypeTupleSet {
 
-  /** The list of type lists (tuples) */
+  /** The list of type lists (tuples). */
   private List<List<ReferenceType>> typeTuples;
 
   /** The length of tuples in the set. */
@@ -27,7 +27,7 @@ class TypeTupleSet {
   /** Creates a tuple set with a single empty tuple. */
   TypeTupleSet() {
     this.typeTuples = new ArrayList<>(1);
-    this.typeTuples.add(new ArrayList<ReferenceType>(0));
+    this.typeTuples.add(new ArrayList<>(0));
     this.tupleLength = 0;
   }
 

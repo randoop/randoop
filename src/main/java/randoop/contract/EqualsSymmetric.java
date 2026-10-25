@@ -7,8 +7,10 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
 public final class EqualsSymmetric extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
+  /** Private constructor to enforce singleton. */
   private EqualsSymmetric() {}
 
   public static EqualsSymmetric getInstance() {
@@ -50,14 +52,13 @@ public final class EqualsSymmetric extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(Globals.lineSep);
     b.append("// This assertion (symmetry of equals) fails ");
     b.append(Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x1) == x1.equals(x0)");
-    b.append(");");
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.equals(x1) == x1.equals(x0));");
     return b.toString();
   }
 }

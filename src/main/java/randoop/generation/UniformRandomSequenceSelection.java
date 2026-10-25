@@ -1,11 +1,14 @@
 package randoop.generation;
 
+import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
 
 /** Select sequences uniformly at random. */
 public class UniformRandomSequenceSelection extends InputSequenceSelector {
+
+  /** Creates a UniformRandomSequenceSelection. */
+  public UniformRandomSequenceSelection() {}
 
   /**
    * Pick randomly with uniform probability, a sequence from the candidate list.
@@ -14,7 +17,7 @@ public class UniformRandomSequenceSelection extends InputSequenceSelector {
    * @return the chosen sequence
    */
   @Override
-  public Sequence selectInputSequence(SimpleList<Sequence> candidates) {
+  public Sequence selectInputSequence(SIList<Sequence> candidates) {
     return Randomness.randomMember(candidates);
   }
 }

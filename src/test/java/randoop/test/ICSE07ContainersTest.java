@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
@@ -29,6 +30,7 @@ import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.sequence.Sequence;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -74,7 +76,8 @@ public class ICSE07ContainersTest {
       List<Class<?>> classList,
       List<Pattern> omitMethodPatterns,
       IStopper stopper,
-      Set<String> excludeNames) {
+      Set<String> excludeNames)
+      throws RandoopSpecificationError {
 
     System.out.println("ICSE 2006 container: " + name);
     System.out.println("GenInputsAbstract.clear=" + GenInputsAbstract.clear);
@@ -100,8 +103,9 @@ public class ICSE07ContainersTest {
     assertFalse(model.isEmpty());
     System.out.println("Number of operations: " + model.size());
 
-    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals(SeedSequences.defaultSeeds().size(), componentMgr.numGeneratedSequences());
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, accessibility);
+    assertEquals(seeds.size(), componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
@@ -117,7 +121,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testFibHeap() throws IOException {
+  public void testFibHeap() throws IOException, RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -148,7 +152,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinTree() {
+  public void testBinTree() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -176,7 +180,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testTreeMap() {
+  public void testTreeMap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 
@@ -206,7 +210,7 @@ public class ICSE07ContainersTest {
   }
 
   @Test
-  public void testBinomialHeap() {
+  public void testBinomialHeap() throws RandoopSpecificationError {
     randoop.util.Randomness.setSeed(0);
     ReflectionExecutor.resetStatistics();
 

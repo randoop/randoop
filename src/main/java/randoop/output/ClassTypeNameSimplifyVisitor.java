@@ -10,6 +10,10 @@ import java.util.Optional;
 
 /** JavaParser Visitor to simplify type names. */
 public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
+
+  /** Creates a ClassTypeNameSimplifyVisitor. */
+  public ClassTypeNameSimplifyVisitor() {}
+
   /**
    * Visit every class or interface type. Simplify the type name by removing the scope component if
    * the visited object is of the same type as that contained in the argument that is passed in.
@@ -27,8 +31,7 @@ public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInte
       classType.setScope(null);
     }
 
-    // If the class type is a generic types, visit each one of the
-    // parameter types as well.
+    // If the class type is a generic type, visit each type argument.
 
     Optional<NodeList<Type>> oTypes = classType.getTypeArguments();
     if (oTypes.isPresent()) {

@@ -2,6 +2,8 @@ package randoop.types;
 
 import static randoop.reflection.TypeInstantiator.TypeVariableUse;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
  * return values, and is not a type. However, we need to pretend that it is to be able to represent
@@ -10,18 +12,25 @@ import static randoop.reflection.TypeInstantiator.TypeVariableUse;
  * <p>The decision to have {@code void} be a separate "type" is counter to the fact that the
  * reflection method {@code Class.isPrimitive()} returns true for {@code void}.
  */
-public class VoidType extends Type {
+public final class VoidType extends Type {
 
+  /** The single canonical instance of this class. */
   private static final VoidType value = new VoidType();
 
+  /** Creates a new VoidType. */
   private VoidType() {}
 
+  /**
+   * Returns a VoidType. Actually, always returns the single canonical VoidType.
+   *
+   * @return a VoidType
+   */
   public static VoidType getVoidType() {
     return value;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (!(obj instanceof VoidType)) {
       return false;
     }
@@ -64,7 +73,7 @@ public class VoidType extends Type {
    * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     return false;
   }
 

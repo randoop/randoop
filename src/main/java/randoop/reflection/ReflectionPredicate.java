@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public interface ReflectionPredicate {
 
   /**
-   * Indicate whether Randoop should use a class.
+   * Returns true if Randoop should use a class.
    *
    * @param c the class to test
    * @return true if the class meets the predicate criteria, false otherwise
@@ -19,7 +19,7 @@ public interface ReflectionPredicate {
   boolean test(Class<?> c);
 
   /**
-   * Indicate whether Randoop should use a method.
+   * Returns true if Randoop should use a method.
    *
    * @param m the method to test
    * @return true if the method meets the predicate criteria, false otherwise
@@ -27,7 +27,7 @@ public interface ReflectionPredicate {
   boolean test(Method m);
 
   /**
-   * Indicate whether Randoop should use a constructor.
+   * Returns true if Randoop should use a constructor.
    *
    * @param m the constructor to test
    * @return true if the constructor meets the predicate criteria, false otherwise
@@ -35,7 +35,7 @@ public interface ReflectionPredicate {
   boolean test(Constructor<?> m);
 
   /**
-   * Indicate whether Randoop should use a field.
+   * Returns true if Randoop should use a field.
    *
    * @param f the field to test
    * @return true if the field meets the predicate criteria, false otherwise

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
-import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.MapsP;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
@@ -29,7 +29,7 @@ import randoop.util.Util;
  * (which has preconditions, postconditions, and throws conditions) to its executable version,
  * {@link ExecutableSpecification}.
  */
-public class SpecificationTranslator {
+public final class SpecificationTranslator {
 
   /** The base name of dummy variables used by {@link randoop.contract.ObjectContract}. */
   private static final String DUMMY_VARIABLE_BASE_NAME = "x";
@@ -198,9 +198,12 @@ public class SpecificationTranslator {
     for (Class<?> parameterType : parameterTypes) {
       methodName.add(RawSignature.classToIdentifier(parameterType));
     }
+
     return new RawSignature(
         packageName,
-        (receiverAType == null) ? "ClassName" : receiverAType.getSimpleName(),
+        (receiverAType == null || receiverAType.getSimpleName().isEmpty())
+            ? "ClassName"
+            : receiverAType.getSimpleName(),
         methodName.toString(),
         expressionParameterTypes);
   }
@@ -233,8 +236,7 @@ public class SpecificationTranslator {
    * @return the map from the parameter names to dummy variables
    */
   private static Map<String, String> createReplacementMap(List<String> parameterNames) {
-    Map<String, String> replacementMap =
-        new HashMap<>(CollectionsPlume.mapCapacity(parameterNames));
+    Map<String, String> replacementMap = new HashMap<>(MapsP.mapCapacity(parameterNames));
     for (int i = 0; i < parameterNames.size(); i++) {
       replacementMap.put(parameterNames.get(i), DUMMY_VARIABLE_BASE_NAME + i);
     }
@@ -249,9 +251,11 @@ public class SpecificationTranslator {
    * @param specification the specification to translate
    * @param compiler the sequence compiler to use to create expression methods
    * @return the {@link ExecutableSpecification} for the given specification
+   * @throws RandoopSpecificationError if an expression in the specification does not compile
    */
   public static ExecutableSpecification createExecutableSpecification(
-      Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
+      Executable executable, OperationSpecification specification, SequenceCompiler compiler)
+      throws RandoopSpecificationError {
     SpecificationTranslator st = createTranslator(executable, specification, compiler);
     return new ExecutableSpecification(
         st.getGuardExpressions(specification.getPreconditions()),
@@ -267,8 +271,10 @@ public class SpecificationTranslator {
    *     ExecutableBooleanExpression}
    * @return the list of {@link ExecutableBooleanExpression} objects obtained by converting each
    *     {@link Precondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions) {
+  private List<ExecutableBooleanExpression> getGuardExpressions(List<Precondition> preconditions)
+      throws RandoopSpecificationError {
     List<ExecutableBooleanExpression> guardExpressions = new ArrayList<>(preconditions.size());
     for (Precondition precondition : preconditions) {
       try {
@@ -292,9 +298,11 @@ public class SpecificationTranslator {
    *     GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     Postcondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private ArrayList<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions) {
-    ArrayList<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
+  private List<GuardPropertyPair> getReturnConditions(List<Postcondition> postconditions)
+      throws RandoopSpecificationError {
+    List<GuardPropertyPair> returnConditions = new ArrayList<>(postconditions.size());
     for (Postcondition postcondition : postconditions) {
       try {
         ExecutableBooleanExpression guard = create(postcondition.getGuard());
@@ -320,9 +328,11 @@ public class SpecificationTranslator {
    *     GuardPropertyPair} objects
    * @return the list of {@link GuardPropertyPair} objects obtained by converting each {@link
    *     ThrowsCondition}
+   * @throws RandoopSpecificationError if an expression does not compile
    */
-  private ArrayList<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions) {
-    ArrayList<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
+  private List<GuardThrowsPair> getThrowsConditions(List<ThrowsCondition> throwsConditions)
+      throws RandoopSpecificationError {
+    List<GuardThrowsPair> throwsPairs = new ArrayList<>(throwsConditions.size());
     for (ThrowsCondition throwsCondition : throwsConditions) {
       ClassOrInterfaceType exceptionType;
       try {
@@ -367,8 +377,9 @@ public class SpecificationTranslator {
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
-  private ExecutableBooleanExpression create(Guard expression) {
+  private ExecutableBooleanExpression create(Guard expression) throws RandoopSpecificationError {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         prestateExpressionSignature,
@@ -387,8 +398,9 @@ public class SpecificationTranslator {
    * @param expression the {@link randoop.condition.specification.AbstractBooleanExpression} to be
    *     converted
    * @return the {@link ExecutableBooleanExpression} object for {@code expression}
+   * @throws RandoopSpecificationError if the expression does not compile
    */
-  public ExecutableBooleanExpression create(Property expression) {
+  public ExecutableBooleanExpression create(Property expression) throws RandoopSpecificationError {
     String contractText = Util.replaceWords(expression.getConditionSource(), replacementMap);
     return new ExecutableBooleanExpression(
         poststateExpressionSignature,
@@ -400,7 +412,7 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Return the prestate expression method parameter declaration string. Includes parentheses.
+   * Returns the prestate expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *
@@ -411,7 +423,7 @@ public class SpecificationTranslator {
   }
 
   /**
-   * Return the poststate expression method parameter declaration string. Includes parentheses.
+   * Returns the poststate expression method parameter declaration string. Includes parentheses.
    *
    * <p>Only used for testing.
    *
@@ -435,8 +447,6 @@ public class SpecificationTranslator {
 
   /**
    * Returns the compiler from this object.
-   *
-   * <p>Only used for testing. ||||||| merged common ancestors
    *
    * <p>Only used for testing.
    *

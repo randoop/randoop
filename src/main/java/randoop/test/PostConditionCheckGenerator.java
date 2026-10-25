@@ -2,10 +2,12 @@ package randoop.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.condition.ExecutableBooleanExpression;
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.DummyVariable;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
@@ -13,7 +15,7 @@ import randoop.sequence.Variable;
 /** Checks the given post-conditions after the last statement of a sequence. */
 public class PostConditionCheckGenerator extends TestCheckGenerator {
 
-  /** the post-conditions */
+  /** The post-conditions. */
   private final List<ExecutableBooleanExpression> postConditions;
 
   /**
@@ -34,10 +36,11 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
    *
    * @param eseq the sequence for which checks are generated
    * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the
-   *     post-condition fails on the sequence, an {@code null} otherwise
+   *     post-condition fails on the sequence, a {@code null} otherwise
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome result = eseq.getResult(finalIndex);
     if (result instanceof NotExecuted) {
@@ -68,8 +71,8 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     }
   }
 
-  private Object[] addNullReceiver(Object[] values) {
-    Object[] args = new Object[values.length + 1];
+  private @Nullable Object[] addNullReceiver(Object[] values) {
+    @Nullable Object[] args = new Object[values.length + 1];
     args[0] = null;
     System.arraycopy(values, 0, args, 1, values.length);
     return args;

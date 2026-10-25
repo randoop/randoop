@@ -10,6 +10,10 @@ import java.util.Set;
 
 /** Visitor for Class types in JavaParser AST. */
 public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceType>> {
+
+  /** Creates a ClassTypeVisitor. */
+  public ClassTypeVisitor() {}
+
   /**
    * If the class or interface type is in a package that's not visible by default, add the type to
    * the set of types that is passed in as an argument. For instance, suppose that the type {@code
@@ -25,8 +29,7 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
   @Override
   public void visit(ClassOrInterfaceType n, Set<ClassOrInterfaceType> params) {
 
-    // If the class type is a generic types, visit each one of the
-    // parameter types as well.
+    // If the class type is a generic type, visit each type argument.
 
     if (n.getTypeArguments().isPresent()) {
       for (Type argType : n.getTypeArguments().get()) {
@@ -43,9 +46,9 @@ public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceTyp
       }
     }
 
-    // Add the type to the set if it's not a visible type be default.
-    if (n.getScope() != null) {
-      // Add a copy, so that modifying removing the scope later won't
+    // Add the type to the set if it's not a visible type by default.
+    if (n.getScope().isPresent()) {
+      // Add a copy, so that removing the scope later won't
       // affect this instance which is used for comparisons only.
       params.add(n.clone());
     }

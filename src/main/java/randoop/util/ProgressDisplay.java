@@ -46,6 +46,7 @@ public class ProgressDisplay extends Thread {
    * @param generator the test generator
    * @param outputMode the output mode
    */
+  @SuppressWarnings("this-escape") // setDaemon probably doesn't leak this
   public ProgressDisplay(AbstractGenerator generator, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
@@ -57,18 +58,26 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Return the progress message.
+   * Returns the progress message.
    *
-   * @param withTime whether to include time and memory usage
+   * @param withTime if true, include time and memory usage
    * @return the progress message
    */
   public String message(boolean withTime) {
     return "Progress update: steps="
-        + generator.num_steps
+        + generator.numAttemptedSequences()
+        + ", null steps="
+        + generator.null_steps
         + ", test inputs generated="
-        + generator.num_sequences_generated
+        + generator.numGeneratedSequences()
         + ", failing inputs="
         + generator.num_failing_sequences
+        + ", invalid inputs="
+        + generator.invalidSequenceCount
+        + ", tests="
+        + generator.numOutputSequences()
+        + ", error-revealing tests="
+        + generator.numErrorSequences()
         + (withTime
             ? ("      ("
                 + Instant.now()
@@ -156,8 +165,9 @@ public class ProgressDisplay extends Thread {
     System.exit(1);
   }
 
+  /** Prints, to standard output, the stack trace of every live thread. */
   private void printAllStackTraces() {
-    for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
+    for (Map.Entry<Thread, StackTraceElement[]> trace : getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
       System.out.println("Stack trace:");
@@ -171,12 +181,13 @@ public class ProgressDisplay extends Thread {
 
   /** When the most recent step completed. */
   private long lastStepTime = System.currentTimeMillis();
+
   /** The step number of the most recent step. */
   private long lastNumSteps = 0;
 
   /** Set {@code lastStepTime} to when the most recent step completed. */
   private void updateLastStepTime() {
-    long seqs = generator.num_steps;
+    long seqs = generator.numAttemptedSequences();
     if (seqs > lastNumSteps) {
       lastStepTime = System.currentTimeMillis();
       lastNumSteps = seqs;
@@ -184,7 +195,7 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Return true iff no progress output should be displayed.
+   * Returns true iff no progress output should be displayed.
    *
    * @return true iff no progress output should be displayed
    */
@@ -195,7 +206,9 @@ public class ProgressDisplay extends Thread {
 
   /** Clear the display; good to do before printing to System.out. */
   public void clear() {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
     System.out.print("\r" + StringsPlume.rpad("", 199)); // erase about 200 characters of text
@@ -207,10 +220,12 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    *
-   * @param withTime whether to print time and memory usage
+   * @param withTime if true, print time and memory usage
    */
   public void display(boolean withTime) {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     display(message(withTime));
   }
 
@@ -220,7 +235,9 @@ public class ProgressDisplay extends Thread {
    * @param message the message to display
    */
   private void display(String message) {
-    if (noProgressOutput()) return;
+    if (noProgressOutput()) {
+      return;
+    }
     synchronized (print_synchro) {
       System.out.print(
           (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + message);

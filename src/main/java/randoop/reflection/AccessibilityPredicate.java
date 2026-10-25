@@ -11,39 +11,47 @@ public abstract class AccessibilityPredicate {
 
   /** A predicate that returns true for public elements. */
   public static AccessibilityPredicate IS_PUBLIC = new PublicAccessibilityPredicate();
+
   /** A predicate that returns true for non-private elements. */
   public static AccessibilityPredicate IS_NOT_PRIVATE = new NotPrivateAccessibilityPredicate();
+
   /** A predicate that always returns true. */
   public static AccessibilityPredicate IS_ANY = new AnyAccessibilityPredicate();
 
+  /** Creates an AccessibilityPredicate. */
+  public AccessibilityPredicate() {}
+
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Class} accessible.
+   * Returns true if this AccessibilityPredicate considers a {@link Class} accessible.
    *
    * @param c the class object to check
-   * @return whether this considers the class to be accessible
+   * @return true if this considers the class to be accessible
    */
   public abstract boolean isAccessible(Class<?> c);
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Method} or {@link
-   * Constructor} accessible. Does not test the accessibility of the containing class.
+   * Returns true if this AccessibilityPredicate considers a {@link Method} or {@link Constructor}
+   * accessible. Does not test the accessibility of the containing class.
    *
    * @param e the method/constructor object to check
-   * @return whether this considers the method/constructor to be accessible
+   * @return true if this considers the method/constructor to be accessible
    */
   public abstract boolean isAccessible(Executable e);
 
   /**
-   * Determines whether this AccessibilityPredicate considers a {@link Field} accessible. Does not
-   * test the accessibility of the containing class.
+   * Returns true if this AccessibilityPredicate considers a {@link Field} accessible. Does not test
+   * the accessibility of the containing class.
    *
    * @param f the field object to check
-   * @return whether this considers the field to be accessible
+   * @return true if this considers the field to be accessible
    */
   public abstract boolean isAccessible(Field f);
 
-  /** AnyAccessibilityPredicate is a {@link AccessibilityPredicate} that always returns true. */
-  private static class AnyAccessibilityPredicate extends AccessibilityPredicate {
+  /** AnyAccessibilityPredicate is an {@link AccessibilityPredicate} that always returns true. */
+  private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new AnyAccessibilityPredicate. */
+    private AnyAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -82,10 +90,13 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * PublicAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the case
+   * PublicAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the case
    * that the class/method/constructor/field is public.
    */
-  private static class PublicAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new PublicAccessibilityPredicate. */
+    private PublicAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -94,7 +105,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 
@@ -118,8 +130,11 @@ public abstract class AccessibilityPredicate {
       return isAccessible(f.getModifiers() & Modifier.fieldModifiers());
     }
 
-    /*
-     * Checks whether the provided modifiers indicate public bit is set.
+    /**
+     * Returns true if the provided modifiers indicate public bit is set.
+     *
+     * @param mods Java modifier bits
+     * @return true if the public bit is set
      */
     private boolean isAccessible(int mods) {
       return Modifier.isPublic(mods);
@@ -146,7 +161,7 @@ public abstract class AccessibilityPredicate {
    * in the given package. So, this class does not implement Java's full accessibility rules; those
    * for subclasses and default-accessibility are not relevant to this predicate.
    */
-  public static class PackageAccessibilityPredicate extends AccessibilityPredicate {
+  public static final class PackageAccessibilityPredicate extends AccessibilityPredicate {
 
     /** The package name from which to test accessibility of elements. */
     private final String packageName;
@@ -218,10 +233,13 @@ public abstract class AccessibilityPredicate {
   }
 
   /**
-   * NotPrivateAccessibilityPredicate is a {@link AccessibilityPredicate} that returns true in the
+   * NotPrivateAccessibilityPredicate is an {@link AccessibilityPredicate} that returns true in the
    * case that the class/method/constructor/field is not declared to be private.
    */
-  private static class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+  private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
+
+    /** Creates a new NotPrivateAccessibilityPredicate. */
+    private NotPrivateAccessibilityPredicate() {}
 
     /**
      * {@inheritDoc}
@@ -230,7 +248,8 @@ public abstract class AccessibilityPredicate {
      */
     @Override
     public boolean isAccessible(Class<?> c) {
-      return (c.getDeclaringClass() == null || isAccessible(c.getDeclaringClass()))
+      Class<?> declaringClass = c.getDeclaringClass();
+      return (declaringClass == null || isAccessible(declaringClass))
           && isAccessible(c.getModifiers() & Modifier.classModifiers());
     }
 

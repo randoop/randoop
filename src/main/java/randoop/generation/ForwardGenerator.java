@@ -2,18 +2,26 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
+import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
+import randoop.condition.RandoopSpecificationError;
+import randoop.generation.literaltfidf.LiteralStatistics;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
+import randoop.generation.literaltfidf.TfIdfSelector;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.NonreceiverTerm;
@@ -27,6 +35,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
+import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
@@ -35,12 +44,9 @@ import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.SimpleArrayList;
-import randoop.util.SimpleList;
 
 /** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
@@ -77,6 +83,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /** How to select the method to use for creating a new sequence. */
   private final TypedOperationSelector operationSelector;
+
+  /**
+   * If {@link GenInputsAbstract#literal_tfidf} is true, this map stores TfIdfSelectors for each
+   * scope, used to select literals from the component manager's literal statistics. A scope is a
+   * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
+   */
+  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -125,7 +138,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Set<TypedOperation> sideEffectFreeMethods,
       GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
-      IStopper stopper,
+      @Nullable IStopper stopper,
       Set<ClassOrInterfaceType> classesUnderTest) {
     super(operations, limits, componentManager, stopper);
 
@@ -148,6 +161,7 @@ public class ForwardGenerator extends AbstractGenerator {
     switch (GenInputsAbstract.input_selection) {
       case ORIENTEERING:
         inputSequenceSelector =
+            // The argument is the sequences *so far*, probably just literals and seeds.
             new OrienteeringSelection(componentManager.getAllGeneratedSequences());
         break;
       case SMALL_TESTS:
@@ -158,6 +172,20 @@ public class ForwardGenerator extends AbstractGenerator {
         break;
       default:
         throw new Error("Unhandled --input-selection: " + GenInputsAbstract.input_selection);
+    }
+
+    if (GenInputsAbstract.literal_tfidf) {
+      assert scopeToTfIdfSelectors == null;
+      scopeToTfIdfSelectors = new HashMap<>();
+    }
+
+    if (GenInputsAbstract.grt_fuzzing) {
+      Set<TypedOperation> sideEffectingMethods =
+          new HashSet<>(
+              CollectionsPlume.filter(
+                  allOperations, op -> !this.sideEffectFreeMethods.contains(op)));
+      GrtObjectFuzzer.getInstance()
+          .initialize(sideEffectingMethods, this.componentManager, this.inputSequenceSelector);
     }
   }
 
@@ -180,7 +208,12 @@ public class ForwardGenerator extends AbstractGenerator {
   private void initializeRuntimePrimitivesSeen() {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
-      es.execute(new DummyVisitor(), new DummyCheckGenerator());
+      try {
+        es.execute(new DummyVisitor(), new DummyCheckGenerator());
+      } catch (RandoopSpecificationError e) {
+        // A primitive sequence contains no call that has a specification.
+        throw new RandoopBug("specification error for primitive sequence " + s, e);
+      }
       NormalExecution e = (NormalExecution) es.getResult(0);
       Object runtimeValue = e.getRuntimeValue();
       runtimePrimitivesSeen.add(runtimeValue);
@@ -188,14 +221,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public @Nullable ExecutableSequence step() {
+  public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
-    final int nanoPerMilli = 1000000;
-    final long nanoPerOne = 1000000000L;
+    final int nanoPerMilli = 1_000_000;
+    final long nanoPerOne = 1_000_000_000L;
     // 1 second, in nanoseconds
-    final long timeWarningLimit = 1 * nanoPerOne;
+    final long timeWarningLimitNanos = 1 * nanoPerOne;
 
-    long startTime = System.nanoTime();
+    long startTimeNanos = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       componentManager.clearGeneratedSequences();
@@ -208,19 +241,19 @@ public class ForwardGenerator extends AbstractGenerator {
     ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
-      long gentime = System.nanoTime() - startTime;
-      if (gentime > timeWarningLimit) {
+      long gentimeNanos = System.nanoTime() - startTimeNanos;
+      if (gentimeNanos > timeWarningLimitNanos) {
         System.out.printf(
-            "Long generation time %d msec for null sequence.%n", gentime / nanoPerMilli);
+            "%nLong generation time %d msec for null sequence.%n", gentimeNanos / nanoPerMilli);
       }
       return null;
     }
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
-      long gentime = System.nanoTime() - startTime;
-      if (gentime > timeWarningLimit) {
-        System.out.printf("Long generation time %d msec for%n", gentime / nanoPerMilli);
+      long gentimeNanos = System.nanoTime() - startTimeNanos;
+      if (gentimeNanos > timeWarningLimitNanos) {
+        System.out.printf("%nLong generation time %d msec for%n", gentimeNanos / nanoPerMilli);
         System.out.println(eSeq.sequence);
       }
       return null;
@@ -228,14 +261,25 @@ public class ForwardGenerator extends AbstractGenerator {
 
     setCurrentSequence(eSeq.sequence);
 
-    long gentime1 = System.nanoTime() - startTime;
+    long gentimeNanos1 = System.nanoTime() - startTimeNanos;
 
     // Useful for debugging non-terminating sequences.
     // System.out.printf("step() is considering: %n%s%n%n", eSeq.sequence);
 
     eSeq.execute(executionVisitor, checkGenerator);
 
-    startTime = System.nanoTime(); // reset start time.
+    // Dynamic type casting permits calling methods that do not exist on the declared type.
+    if (GenInputsAbstract.cast_to_run_time_type && eSeq.isNormalExecution()) {
+      boolean eSeqCasted = eSeq.castToRunTimeType();
+
+      // Re-execute the sequence after applying dynamic type casting.
+      if (eSeqCasted) {
+        setCurrentSequence(eSeq.sequence);
+        eSeq.execute(executionVisitor, checkGenerator);
+      }
+    }
+
+    startTimeNanos = System.nanoTime(); // reset start time.
 
     inputSequenceSelector.createdExecutableSequence(eSeq);
 
@@ -245,17 +289,19 @@ public class ForwardGenerator extends AbstractGenerator {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
-    long gentime2 = System.nanoTime() - startTime;
+    long gentimeNanos2 = System.nanoTime() - startTimeNanos;
 
-    eSeq.gentime = gentime1 + gentime2;
+    eSeq.gentimeNanos = gentimeNanos1 + gentimeNanos2;
 
-    if (eSeq.gentime > timeWarningLimit) {
+    if (eSeq.gentimeNanos > timeWarningLimitNanos) {
       System.out.printf(
           "Long generation time %d msec (= %d + %d) for%n",
-          eSeq.gentime / nanoPerMilli, gentime1 / nanoPerMilli, gentime2 / nanoPerMilli);
+          eSeq.gentimeNanos / nanoPerMilli,
+          gentimeNanos1 / nanoPerMilli,
+          gentimeNanos2 / nanoPerMilli);
       System.out.println(eSeq.sequence);
     }
-    if (eSeq.exectime > 10 * timeWarningLimit) {
+    if (eSeq.exectime > 10 * timeWarningLimitNanos) {
       System.out.printf("Long execution time %d sec for%n", eSeq.exectime / nanoPerOne);
       System.out.println(eSeq.sequence);
     }
@@ -264,7 +310,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public LinkedHashSet<Sequence> getAllSequences() {
+  public Set<Sequence> getAllSequences() {
     return this.allSequences;
   }
 
@@ -416,7 +462,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private @Nullable ExecutableSequence createNewUniqueSequence() {
 
     Log.logPrintf("-------------------------------------------%n");
     if (Log.isLoggingOn()) {
@@ -649,18 +695,17 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than to repeatedly
     // extend S.)
 
-    // This might be shorter than inputTypes if some value is re-used as two inputs.
+    // This might be shorter than inputTypes if some value is reused as two inputs.
     List<Sequence> sequences = new ArrayList<>();
 
     // The total size of S
     int totStatements = 0;
 
-    // Variables to
-    // be used as inputs to the statement, represented as indices into S (ie, a reference to the
-    // statement that declares the variable).  [TODO: Is this an index into S or into `sequences`?].
-    // Upon successful completion
-    // of this method, variables will contain inputTypes.size() variables.
-    // Note additionally that for every i in variables, 0 <= i < |S|.
+    // Variables to be used as inputs to the statement, represented as indices into S (ie, a
+    // reference to the statement that declares the variable).  [TODO: Is this an index into S or
+    // into `sequences`?].
+    // Upon successful completion of this method, variables will contain inputTypes.size()
+    // variables.  Note additionally that for every i in variables, 0 <= i < |S|.
     //
     // For example, given as statement a method M(T1)/T2 that takes as input
     // a value of type T1 and returns a value of type T2, this method might
@@ -669,7 +714,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // T0 var0 = new T0(); T1 var1 = var0.getT1();
     //
     // and the singleton list [0] that represents variable var1.
-    List<Integer> variables = new ArrayList<>();
+    List<Integer> inputVars = new ArrayList<>();
 
     // [Optimization]
     // The following two variables improve efficiency in the loop below when
@@ -680,6 +725,7 @@ public class ForwardGenerator extends AbstractGenerator {
     SubTypeSet types = new SubTypeSet(false);
     MultiMap<Type, Integer> typesToVars = new MultiMap<>(inputTypes.size());
 
+    // This loop populates `inputVars` and `sequences`.
     for (int i = 0; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
 
@@ -694,21 +740,22 @@ public class ForwardGenerator extends AbstractGenerator {
         // For each type T in S compatible with inputTypes[i], add all the indices in S of type T.
         Set<Type> matches = types.getMatches(inputType);
         // candidateVars is the indices that can serve as input to the i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<>(matches.size());
+        List<SIList<Integer>> candidateVars = new ArrayList<>(matches.size());
         for (Type match : matches) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(new SimpleArrayList<Integer>(typesToVars.getValues(match)));
+          // TODO: eliminate the need for the copy performed by `new ArrayList`.
+          candidateVars.add(SIList.from(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
+        SIList<Integer> candidateVars2 = SIList.concat(candidateVars);
         if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
-          variables.add(randVar);
+          inputVars.add(randVar);
           continue;
         }
       }
@@ -716,16 +763,49 @@ public class ForwardGenerator extends AbstractGenerator {
       // The user may have requested that we use null values as inputs with some given frequency.
       // If this is the case, then use null instead with some probability.
       if (!isReceiver
+          && !GenInputsAbstract.forbid_null
           && GenInputsAbstract.null_ratio != 0
           && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
         Log.logPrintf("Using null as input.%n");
         TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
         Sequence seq = new Sequence().extend(st, Collections.emptyList());
-        variables.add(totStatements);
+        inputVars.add(totStatements);
         sequences.add(seq);
         assert seq.size() == 1;
         totStatements++;
         continue;
+      }
+
+      // If literal-tf-idf is enabled and we are determining an argument for a class
+      // operation, use TF-IDF weighted selection for literals under some probability.
+      if (GenInputsAbstract.literal_tfidf
+          && (operation instanceof TypedClassOperation && !isReceiver)
+          && Randomness.weightedCoinFlip(GenInputsAbstract.literal_tfidf_probability)) {
+
+        ClassOrInterfaceType declaringType = ((TypedClassOperation) operation).getDeclaringType();
+
+        // Get candidate sequences, from the appropriate scope, that create values of type
+        // inputTypes[i].
+        Type neededType = operation.getInputTypes().get(i);
+        Log.logPrintf("tf-idf is selecting a literal of type %s%n", neededType);
+        SIList<Sequence> candidates =
+            componentManager.getLiteralSequences(neededType, declaringType);
+
+        // `selectTfidfSequence()` requires `scopeToTfIdfSelectors` to be non-null.
+        // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
+        // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
+        assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
+        if (componentManager.scopeToLiteralStatistics != null) {
+          Sequence seq =
+              selectTfidfSequence(
+                  candidates, declaringType, componentManager.scopeToLiteralStatistics);
+          if (seq != null) {
+            inputVars.add(totStatements);
+            sequences.add(seq);
+            totStatements += seq.size();
+            continue;
+          }
+        }
       }
 
       // If we got here, it means we will not attempt to use null or a value already defined in S,
@@ -733,7 +813,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // We will do this by assembling a list of candidate sequences (stored in the list declared
       // immediately below) that create one or more values of the appropriate type,
       // randomly selecting a single sequence from this list, and appending it to S.
-      SimpleList<Sequence> candidates;
+      SIList<Sequence> candidates;
 
       // We use one of two ways to gather candidate sequences, but the second
       // case below is by far the most common.
@@ -744,34 +824,31 @@ public class ForwardGenerator extends AbstractGenerator {
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
         Log.logPrintf("Array creation heuristic: will create helper array of type %s%n", inputType);
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
-        SimpleList<Sequence> l2 =
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
+        SIList<Sequence> l2 =
             HelperSequenceCreator.createArraySequence(componentManager, inputType);
-        candidates = new ListOfLists<>(l1, l2);
+        candidates = SIList.concat(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
       } else if (inputType.isParameterized()
           && ((InstantiatedType) inputType)
               .getGenericClassType()
-              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+              .isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)) {
         InstantiatedType classType = (InstantiatedType) inputType;
 
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i, isReceiver);
+        SIList<Sequence> l1 = componentManager.getSequencesForParam(operation, i, isReceiver);
         Log.logPrintf("Collection creation heuristic: will create helper of type %s%n", classType);
-        SimpleArrayList<Sequence> l2 = new SimpleArrayList<>(1);
         Sequence creationSequence =
             HelperSequenceCreator.createCollection(componentManager, classType);
-        if (creationSequence != null) {
-          l2.add(creationSequence);
-        }
-        candidates = new ListOfLists<>(l1, l2);
+        SIList<Sequence> l2 = SIList.singletonOrEmpty(creationSequence);
+        candidates = SIList.concat(l1, l2);
 
       } else {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         Log.logPrintf("Will query component set for objects of type %s%n", inputType);
-        candidates = componentManager.getSequencesForType(operation, i, isReceiver);
+        candidates = componentManager.getSequencesForParam(operation, i, isReceiver);
       }
       assert candidates != null;
       Log.logPrintf("number of candidate components: %s%n", candidates.size());
@@ -792,7 +869,7 @@ public class ForwardGenerator extends AbstractGenerator {
               "Found no sequences of required type; will use null as " + i + "-th input%n");
           TypedOperation st = TypedOperation.createNullOrZeroInitializationForType(inputType);
           Sequence seq = new Sequence().extend(st, Collections.emptyList());
-          variables.add(totStatements);
+          inputVars.add(totStatements);
           sequences.add(seq);
           assert seq.size() == 1;
           totStatements++;
@@ -805,8 +882,21 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       VarAndSeq varAndSeq = randomVariable(candidates, inputType, isReceiver);
-      Variable randomVariable = varAndSeq.var;
-      Sequence chosenSeq = varAndSeq.seq;
+      Variable randomVariable = varAndSeq.getVariable();
+      Sequence chosenSeq = varAndSeq.getSequence();
+
+      // Fuzz the inputs for method calls and constructors.
+      // See `randoop.generation.GrtFuzzer` for details.
+      if (GenInputsAbstract.grt_fuzzing) {
+        // Record the offset of the fuzzed variable in the sequence relative to the un-fuzzed
+        // variable. This ensures the correct fuzzed variable is used as the input.
+        GrtFuzzer fuzzer = GrtFuzzer.getFuzzer(inputType);
+        if (fuzzer != null) {
+          VarAndSeq fuzzedVarAndSeq = fuzzer.fuzz(chosenSeq, randomVariable);
+          chosenSeq = fuzzedVarAndSeq.getSequence();
+          randomVariable = fuzzedVarAndSeq.getVariable();
+        }
+      }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
@@ -823,35 +913,24 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      variables.add(totStatements + randomVariable.index);
+      inputVars.add(totStatements + randomVariable.index);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();
     }
 
-    return new InputsAndSuccessFlag(true, sequences, variables);
-  }
-
-  // A pair of a variable and a sequence
-  private static class VarAndSeq {
-    final Variable var;
-    final Sequence seq;
-
-    VarAndSeq(Variable var, Sequence seq) {
-      this.var = var;
-      this.seq = seq;
-    }
+    return new InputsAndSuccessFlag(true, sequences, inputVars);
   }
 
   /**
-   * Return a variable of the given type.
+   * Returns a variable of the given type.
    *
    * @param candidates sequences, each of which produces a value of type {@code inputType}; that is,
    *     each would be a legal return value
    * @param inputType the type of the chosen variable/sequence
-   * @param isReceiver whether the value will be used as a receiver
+   * @param isReceiver true if the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(SimpleList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  VarAndSeq randomVariable(SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
@@ -886,19 +965,20 @@ public class ForwardGenerator extends AbstractGenerator {
       if (isReceiver
           && (chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization()
               || randomVariable.getType().isPrimitive())) {
+        Type randomVariableType = randomVariable.getType();
+        Statement creatingStatement = chosenSeq.getCreatingStatement(randomVariable);
         System.out.println();
         System.out.println("Selected null or a primitive as the receiver for a method call.");
         // System.out.printf("  operation = %s%n", operation);
         System.out.printf("  isReceiver = %s%n", isReceiver);
         System.out.printf("  randomVariable = %s%n", randomVariable);
-        System.out.printf("    getType() = %s%n", randomVariable.getType());
-        System.out.printf("    isPrimitive = %s%n", randomVariable.getType().isPrimitive());
+        System.out.printf("    getType() = %s%n", randomVariableType);
+        System.out.printf("    isPrimitive = %s%n", randomVariableType.isPrimitive());
         System.out.printf("  chosenSeq = {%n%s}%n", chosenSeq);
-        System.out.printf(
-            "    getCreatingStatement = %s%n", chosenSeq.getCreatingStatement(randomVariable));
+        System.out.printf("    getCreatingStatement = %s%n", creatingStatement);
         System.out.printf(
             "    isNonreceivingInitialization = %s%n",
-            chosenSeq.getCreatingStatement(randomVariable).isNonreceivingInitialization());
+            creatingStatement.isNonreceivingInitialization());
         continue;
         // throw new RandoopBug(
         //     "Selected null or primitive value as the receiver for a method call");
@@ -911,8 +991,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Try every element of the list, in order.
     int numCandidates = candidates.size();
     List<VarAndSeq> validResults = new ArrayList<>(numCandidates);
-    for (int i = 0; i < numCandidates; i++) { // SimpleList has no iterator
-      Sequence s = candidates.get(i);
+    for (Sequence s : candidates) {
       Variable randomVariable = s.randomVariableForTypeLastStatement(inputType, isReceiver);
       validResults.add(new VarAndSeq(randomVariable, s));
     }
@@ -937,7 +1016,7 @@ public class ForwardGenerator extends AbstractGenerator {
             ";" + Globals.lineSep + "    ",
             String.join(
                 ", ",
-                "steps: " + num_steps,
+                "steps: " + numAttemptedSequences(),
                 "null steps: " + null_steps,
                 "num_sequences_generated: " + num_sequences_generated),
             String.join(
@@ -958,5 +1037,56 @@ public class ForwardGenerator extends AbstractGenerator {
                 "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
                 "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
         + ")";
+  }
+
+  /**
+   * Selects one sequence from {@code candidates} using TF-IDF weights computed for the scope
+   * associated with {@code type}. Returns {@code null} if {@code candidates} is empty or the scope
+   * has no literal statistics.
+   *
+   * @param candidates candidate sequences that produce values of the needed type
+   * @param type the type whose scope determines the TF-IDF statistics
+   * @param scopeToLiteralStatistics provider of literal statistics and scope resolution
+   * @return the TF-IDF-weighted choice, or {@code null} if unavailable
+   */
+  private @Nullable Sequence selectTfidfSequence(
+      SIList<Sequence> candidates,
+      ClassOrInterfaceType type,
+      ScopeToLiteralStatistics scopeToLiteralStatistics) {
+
+    int numCandidates = candidates.size();
+    if (numCandidates == 0) {
+      return null;
+    }
+    if (numCandidates == 1) {
+      return candidates.get(0);
+    }
+
+    // Resolve the selection scope first.
+    @Nullable Object scope = scopeToLiteralStatistics.getScope(type);
+
+    if (Log.isLoggingOn()) {
+      Log.logPrintf("TF-IDF selecting from %d candidates: %s%n", candidates.size(), candidates);
+      Log.logPrintf("TF-IDF selector cache (by scope): %s%n", scopeToTfIdfSelectors);
+      Log.logPrintf("Resolved selection scope: %s%n", scope);
+    }
+
+    TfIdfSelector tfIdfSelector = scopeToTfIdfSelectors.get(scope);
+    if (tfIdfSelector == null) {
+      // No selector is cached for this scope. We need to:
+      // 1. Get literal statistics.
+      // 2. Construct a TfIdfSelector (expensive, because it processes statistics for weighted
+      //    selection).
+
+      LiteralStatistics literalStats = scopeToLiteralStatistics.getLiteralStatistics(type);
+      // If the scope has no literals (i.e., the class had no extractable constants from bytecode),
+      // TF-IDF selection is not possible, so return null to fall back to default literal selection.
+      if (literalStats.isEmpty()) {
+        return null;
+      }
+      tfIdfSelector =
+          scopeToTfIdfSelectors.computeIfAbsent(scope, __ -> new TfIdfSelector(literalStats));
+    }
+    return tfIdfSelector.selectSequence(candidates);
   }
 }

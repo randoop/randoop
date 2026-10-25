@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.CollectionsPlume;
 
@@ -31,11 +32,11 @@ import org.plumelib.util.CollectionsPlume;
  * </pre>
  *
  * <p>The {@code classname} must be the declaring class of the method. (For a constructor, the
- * {@code classname} and operation {@code name} will be identical.) If named class is not the
+ * {@code classname} and operation {@code name} will be identical.) If the named class is not the
  * declaring class of the method, the method will not be found, and the enclosing specification will
  * not be used.
  */
-public class OperationSignature {
+public final class OperationSignature {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
   // tools
@@ -53,10 +54,7 @@ public class OperationSignature {
   private final List<@ClassGetName String> parameterTypes;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings({
-    "unused",
-    "signature" // dummy value in default constructor for Gson
-  })
+  @SuppressWarnings({"unused", "signature"}) // dummy constructor for Gson serialization
   private OperationSignature() {
     this.classname = "";
     this.name = "";
@@ -148,7 +146,7 @@ public class OperationSignature {
    * @param op the method or constructor
    * @return an {@link OperationSignature} if {@code op} is a constructor or method, null if field
    */
-  public static OperationSignature of(AccessibleObject op) {
+  public static @Nullable OperationSignature of(AccessibleObject op) {
     if (op instanceof Field) {
       return null;
     } else if (op instanceof Method) {
@@ -161,7 +159,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of the declaring class of this {@link OperationSignature}.
+   * Returns the name of the declaring class of this {@link OperationSignature}.
    *
    * @return the name of the declaring class of this operation
    */
@@ -170,7 +168,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the name of this {@link OperationSignature}.
+   * Returns the name of this {@link OperationSignature}.
    *
    * @return the name of this operation
    */
@@ -179,7 +177,7 @@ public class OperationSignature {
   }
 
   /**
-   * Return the list of parameter type names for this {@link OperationSignature}.
+   * Returns the list of parameter type names for this {@link OperationSignature}.
    *
    * @return the list of parameter type names for this operation
    */
@@ -188,7 +186,7 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} represents a constructor.
+   * Returns true if this {@link OperationSignature} represents a constructor.
    *
    * @return {@code true} if this {@link OperationSignature} represents a constructor, {@code false}
    *     otherwise
@@ -214,11 +212,11 @@ public class OperationSignature {
   }
 
   /**
-   * Indicates whether this {@link OperationSignature} is a valid representation of a method or
+   * Returns true if this {@link OperationSignature} is a valid representation of a method or
    * constructor.
    *
    * @return {@code true} if the class and operation names are both non-null, non-empty and the type
-   *     name list is non-null.
+   *     name list is non-null
    */
   public boolean isValid() {
     return classname != null
@@ -234,13 +232,12 @@ public class OperationSignature {
    * @param classes the array of {@code Class<?>} objects
    * @return the list of fully-qualified type names for the objects in {@code classes}
    */
-  @SuppressWarnings("signature:return") // type inference problem
   private static List<@ClassGetName String> getTypeNames(Class<?>[] classes) {
     return CollectionsPlume.mapList(Class::getName, classes);
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

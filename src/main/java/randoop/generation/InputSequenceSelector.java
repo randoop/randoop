@@ -1,18 +1,22 @@
 package randoop.generation;
 
+import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.util.SimpleList;
 
 /** Interface for selecting sequences as input for creating new sequences. */
 public abstract class InputSequenceSelector {
+
+  /** Creates an InputSequenceSelector. */
+  public InputSequenceSelector() {}
+
   /**
    * Choose a sequence used as input for creating a new sequence.
    *
    * @param candidates sequences to choose from
    * @return the chosen sequence
    */
-  public abstract Sequence selectInputSequence(SimpleList<Sequence> candidates);
+  public abstract Sequence selectInputSequence(SIList<Sequence> candidates);
 
   /**
    * A hook that is called after a new sequence has been created and executed.
@@ -21,5 +25,8 @@ public abstract class InputSequenceSelector {
    *
    * @param eSeq the recently executed sequence which is new and unique, and has just been executed
    */
-  public void createdExecutableSequence(ExecutableSequence eSeq) {}
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+  public void createdExecutableSequence(ExecutableSequence eSeq) {
+    // The default implementation does nothing. Subclasses may override it to add behavior.
+  }
 }

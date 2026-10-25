@@ -6,9 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import org.plumelib.util.CollectionsPlume;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.MapsP;
 import org.plumelib.util.StringsPlume;
 import randoop.condition.ExecutableSpecification;
+import randoop.main.RandoopBug;
 import randoop.reflection.RawSignature;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -27,7 +30,7 @@ public class TypedClassOperation extends TypedOperation {
   private final ClassOrInterfaceType declaringType;
 
   /** The cached value of {@link #getRawSignature()}. */
-  private RawSignature rawSignature = null;
+  private @MonotonicNonNull RawSignature rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -61,13 +64,13 @@ public class TypedClassOperation extends TypedOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      ExecutableSpecification execSpec) {
+      @Nullable ExecutableSpecification execSpec) {
     super(operation, inputTypes, outputType, execSpec);
     this.declaringType = declaringType;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -187,8 +190,7 @@ public class TypedClassOperation extends TypedOperation {
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> inputTypeParams = getInputTypes().getTypeParameters();
     // This set, and the returned list, is likely to be very small.
-    Set<TypeVariable> paramSet =
-        new LinkedHashSet<>(CollectionsPlume.mapCapacity(inputTypeParams.size()));
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(MapsP.mapCapacity(inputTypeParams.size()));
     paramSet.addAll(inputTypeParams);
     if (getOutputType().isReferenceType()) {
       paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
@@ -202,7 +204,7 @@ public class TypedClassOperation extends TypedOperation {
    * @return this operation's fully qualified signature if it is a method or constructor call, null
    *     otherwise
    */
-  public String getFullyQualifiedSignature() {
+  public @Nullable String getFullyQualifiedSignature() {
     if (!this.isConstructorCall() && !this.isMethodCall()) {
       return null;
     }
@@ -210,10 +212,8 @@ public class TypedClassOperation extends TypedOperation {
     Package classPackage = this.declaringType.getPackage();
     String packageName = RawSignature.getPackageName(classPackage);
     String classname = this.getDeclaringType().getRawtype().getUnqualifiedBinaryName();
-    String name =
-        this.getUnqualifiedBinaryName().equals("<init>")
-            ? classname
-            : this.getUnqualifiedBinaryName();
+    String unqualifiedBinaryName = this.getUnqualifiedBinaryName();
+    String name = unqualifiedBinaryName.equals("<init>") ? classname : unqualifiedBinaryName;
 
     Iterator<Type> inputTypeIterator = inputTypes.iterator();
     List<String> typeNames = new ArrayList<>(inputTypes.size());
@@ -234,16 +234,17 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns the {@link RawSignature} for this operation if it is a method or constructor call.
+   * Returns the {@link RawSignature} for this operation, which must be a method or constructor
+   * call.
    *
-   * @return the {@link RawSignature} of this method or constructor operation, null if this is
-   *     another kind of operation
+   * @return the {@link RawSignature} of this method or constructor operation
    */
   public RawSignature getRawSignature() {
     // XXX Awkward: either refactor operations, or allow RawSignature to represent fields, probably
     // both.
     if (!this.isConstructorCall() && !this.isMethodCall()) {
-      return null;
+      throw new RandoopBug(
+          String.format("Don't call getRawSignature on %s [%s]", this, this.getClass()));
     }
     if (rawSignature == null) {
       Package classPackage = this.declaringType.getPackage();
