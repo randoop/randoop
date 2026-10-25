@@ -70,10 +70,8 @@ public class ArrayCreation extends CallableOperation {
     assert input.length == 1 : "requires array dimension as input";
     @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
     int length = ((Integer) input[0]).intValue();
-    long startTimeNanos = System.nanoTime();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
-    long durationNanos = System.nanoTime() - startTimeNanos;
-    return new NormalExecution(theArray, durationNanos);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override

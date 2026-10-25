@@ -66,14 +66,12 @@ public final class InitializedArrayCreation extends CallableOperation {
       throw new IllegalArgumentException(
           "Too many arguments: " + statementInput.length + ", capacity: " + length);
     }
-    long startTimeNanos = System.nanoTime();
     assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) {
       Array.set(theArray, i, statementInput[i]);
     }
-    long durationNanos = System.nanoTime() - startTimeNanos;
-    return new NormalExecution(theArray, durationNanos);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
