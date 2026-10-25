@@ -194,6 +194,25 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns the signature string for this {@link MethodSignature} in the format of Randoop's {@code
+   * randoop.reflection.RawSignature#toString()}. That format differs from {@link #toString()}: a
+   * constructor is written {@code pkg.C(argument-list)} rather than {@code
+   * pkg.C.<init>(argument-list)}, a parameter type is written as a canonical name, with "." rather
+   * than "$" before the name of a nested class, and parameter types are separated by "," without a
+   * space.
+   *
+   * @return the signature string for this {@link MethodSignature} in Randoop's format
+   */
+  String toRawSignatureString() {
+    String[] typeNames = new String[paramTypes.length];
+    for (int i = 0; i < paramTypes.length; i++) {
+      typeNames[i] = paramTypes[i].toString().replace('$', '.');
+    }
+    String executableName = name.equals("<init>") ? classname : classname + "." + name;
+    return executableName + "(" + String.join(",", typeNames) + ")";
+  }
+
+  /**
    * Returns the fully-qualified class name of this {@link MethodSignature}.
    *
    * @return the fully-qualified class name of this {@link MethodSignature}
