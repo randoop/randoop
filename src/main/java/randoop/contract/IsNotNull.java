@@ -43,7 +43,7 @@ public final class IsNotNull extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  /*package*/ static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

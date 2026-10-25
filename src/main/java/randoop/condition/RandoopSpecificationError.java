@@ -14,10 +14,10 @@ public class RandoopSpecificationError extends Exception {
 
   /** Which file was being read when the error occurred. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  /*package*/ Path file = null;
+  private Path file = null;
 
   /** The local message (ignoring the message of the cause), or null to use the superclass's. */
-  /*package*/ String thisMessage = null;
+  private String thisMessage = null;
 
   /**
    * Create a {@link RandoopSpecificationError} with the given message.

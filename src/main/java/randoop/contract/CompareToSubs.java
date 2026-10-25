@@ -50,7 +50,7 @@ public final class CompareToSubs extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  /*package*/ static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(
               JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
