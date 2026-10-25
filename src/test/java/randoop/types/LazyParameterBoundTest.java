@@ -23,6 +23,9 @@ public class LazyParameterBoundTest {
    */
   static class Unbounded<V> {}
 
+  /** A field whose type has a wildcard argument for a type parameter with a recursive bound. */
+  SelfFirstArgumentBound<?> wildcardField;
+
   /**
    * Returns the type parameter of {@link SelfFirstArgumentBound}.
    *
@@ -57,5 +60,16 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(Map.class)
             .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testCaptureConversion() throws NoSuchFieldException {
+    InstantiatedType wildcardType =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                LazyParameterBoundTest.class.getDeclaredField("wildcardField").getGenericType());
+    InstantiatedType capturedType = wildcardType.applyCaptureConversion();
+    // The capture variable's bound is Map<capture, String>, which refers to the capture variable.
+    assertEquals(1, capturedType.getTypeParameters().size());
   }
 }
