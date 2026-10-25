@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.junit.Test;
 
-/** Tests the bounds that {@link ParameterBound} creates for type parameters. */
+/** Tests the construction of type parameters and their bounds. */
 public class ParameterBoundTest {
 
   /**
@@ -31,6 +31,32 @@ public class ParameterBoundTest {
    * @param <U> the type parameter
    */
   interface MutualB<U extends MutualA<?>> {}
+
+  /**
+   * A type parameter whose bound is a class nested in this class.
+   *
+   * @param <T> the type parameter
+   */
+  static class EnclosingBound<T extends EnclosingBound.Inner> {
+    /** A class nested in {@link EnclosingBound}. */
+    static class Inner {}
+  }
+
+  /**
+   * A type parameter whose bound has the raw declaring class as a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("rawtypes")
+  static class RawSelfArgumentBound<T extends Comparable<RawSelfArgumentBound>> {}
+
+  /**
+   * A type parameter with the same bound as {@link RawSelfArgumentBound}.
+   *
+   * @param <V> the type parameter
+   */
+  @SuppressWarnings("rawtypes")
+  static class OtherRawSelfArgumentBound<V extends Comparable<RawSelfArgumentBound>> {}
 
   /**
    * A type parameter whose bound contains a different type parameter.
@@ -74,6 +100,18 @@ public class ParameterBoundTest {
   public void testMutuallyRecursiveBounds() {
     assertEquals(1, GenericClassType.forClass(MutualA.class).getTypeParameters().size());
     assertEquals(1, GenericClassType.forClass(MutualB.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testEnclosingBound() {
+    assertEquals(1, GenericClassType.forClass(EnclosingBound.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testRawSelfArgumentBound() {
+    TypeVariable t = typeParameter(RawSelfArgumentBound.class, 0);
+    TypeVariable v = typeParameter(OtherRawSelfArgumentBound.class, 0);
+    assertTrue(v.isInstantiationOf(t));
   }
 
   @Test
