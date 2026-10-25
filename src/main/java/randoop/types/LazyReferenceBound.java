@@ -1,6 +1,10 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,31 +12,53 @@ import java.util.Set;
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
- * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ * {@code java.lang.reflect.Type}.
+ *
+ * <p>The bounds of a type variable in the bound type might refer back to this bound. This class
+ * behaves like {@link EagerReferenceBound}, except that {@link #getTypeParameters()} does not
+ * examine the bounds of those type variables, {@link #substitute(Substitution)} does not substitute
+ * into this bound again when it reaches this bound through those type variables, and {@link
+ * #isUpperBound(ParameterBound, Substitution)} assumes that a check that reaches this bound again
+ * succeeds. Any of these would otherwise result in nonterminating calls.
  *
  * <p>Objects of this class are created by {@link ReferenceBound#forSubstitutedType(ReferenceType)}
  * when applying a substitution to a bound yields a type that contains a type variable.
  */
-class LazyReferenceBound extends ReferenceBound {
+class LazyReferenceBound extends EagerReferenceBound {
+
+  /** The bounds that {@link #substitute(Substitution)} is currently substituting into. */
+  private static final ThreadLocal<Set<LazyReferenceBound>> beingSubstituted =
+      ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
+
+  /**
+   * The checks that {@link #isUpperBound(ParameterBound, Substitution)} is currently performing.
+   * Each is a list of the receiver and the two arguments. Substitution creates copies of type
+   * variables, so a repeated check is equal to, but not identical to, the earlier check.
+   */
+  private static final ThreadLocal<Set<List<Object>>> beingChecked =
+      ThreadLocal.withInitial(HashSet::new);
 
   LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
   @Override
-  public ReferenceBound substitute(Substitution substitution) {
+  public EagerReferenceBound substitute(Substitution substitution) {
     // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
-      if (substitution.get(parameter) == null) {
-        return this;
-      }
+    // Substituting into a type variable substitutes into its bounds, which might be this bound.
+    Set<LazyReferenceBound> inProgress = beingSubstituted.get();
+    if (!inProgress.add(this)) {
+      return this;
     }
-
-    ReferenceType referenceType = getBoundType().substitute(substitution);
+    ReferenceType referenceType;
+    try {
+      referenceType = getBoundType().substitute(substitution);
+    } finally {
+      inProgress.remove(this);
+    }
 
     if (referenceType.equals(getBoundType())) {
       return this;
@@ -41,8 +67,12 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound applyCaptureConversion() {
-    return null;
+  public LazyReferenceBound applyCaptureConversion() {
+    ReferenceType referenceType = getBoundType().applyCaptureConversion();
+    if (referenceType.equals(getBoundType())) {
+      return this;
+    }
+    return new LazyReferenceBound(referenceType);
   }
 
   @Override
@@ -88,26 +118,18 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isLowerBound(argType, substitution);
-  }
-
-  @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
-    return false;
-  }
-
-  @Override
-  public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isUpperBound(argType, substitution);
-  }
-
-  @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
-    return false;
+    // Checking a type variable checks its bounds, which might be this bound. As for any recursive
+    // bound, assume that the inner check succeeds.
+    Set<List<Object>> inProgress = beingChecked.get();
+    List<Object> check = Arrays.asList(this, bound, substitution);
+    if (!inProgress.add(check)) {
+      return true;
+    }
+    try {
+      return super.isUpperBound(bound, substitution);
+    } finally {
+      inProgress.remove(check);
+    }
   }
 }

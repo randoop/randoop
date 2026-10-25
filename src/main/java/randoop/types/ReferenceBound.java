@@ -26,7 +26,7 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param type the type that results from applying a substitution to a bound
    * @return a lazy bound if {@code type} contains a type variable, an eager bound otherwise
    */
-  static ReferenceBound forSubstitutedType(ReferenceType type) {
+  static EagerReferenceBound forSubstitutedType(ReferenceType type) {
     if (type.isGeneric()) {
       return new LazyReferenceBound(type);
     }

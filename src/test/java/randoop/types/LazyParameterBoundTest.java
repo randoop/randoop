@@ -1,6 +1,7 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -71,9 +72,9 @@ public class LazyParameterBoundTest {
     TypeVariable t = selfFirstArgumentBoundParameter();
     ParameterBound bound =
         t.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE));
-    assertTrue(
+    assertFalse(
         "bound " + bound + " should be eager since it contains no type variable",
-        bound instanceof EagerReferenceBound);
+        bound instanceof LazyReferenceBound);
     assertEquals(
         GenericClassType.forClass(Map.class)
             .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE),
