@@ -25,8 +25,7 @@ public class ObjectCache {
 
     // If runtime value is in object cache, clear active flag.
     if (!this.sm.add(e.getRuntimeValue())) {
-      Log.logPrintf(
-          "Making index %d inactive (already created an object equal to %dth output).%n", i, i);
+      Log.logPrintf("Making index %d inactive (not a new value)%n", i);
       eseq.sequence.clearActiveFlag(i);
     } else {
       Log.logPrintf("Making index %d active (new value)%n", i);
