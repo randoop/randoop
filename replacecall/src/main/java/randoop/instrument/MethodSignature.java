@@ -229,7 +229,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
    * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
    * If the class exists, but the method is not found, it checks to see if there is a superclass and
-   * repeats the search process.
+   * repeats the search process. Constructors are not inherited, so it does not search superclasses
+   * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -266,6 +267,10 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         }
       }
 
+      if (this.name.equals("<init>")) {
+        throw new NoSuchMethodException("Constructor " + this + " not found");
+      }
+
       // Method not found; perhaps inherited from superclass.
       // Cannot use "currentClass = currentClass.getSuperClass()" because the superclass might
       // not have been loaded into BCEL yet.
@@ -293,6 +298,17 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         | IllegalClassFormatException e) {
       return false;
     }
+  }
+
+  /**
+   * Returns the signature of the constructor of the class whose fully-qualified name is the
+   * fully-qualified method name of this {@link MethodSignature}. For example, if this represents
+   * method {@code Class(int)} of class {@code pkg}, the result is {@code pkg.Class.<init>(int)}.
+   *
+   * @return the constructor signature whose class name is the full method name of this
+   */
+  MethodSignature toConstructorSignature() {
+    return new MethodSignature(classname + "." + name, "<init>", paramTypes);
   }
 
   /**

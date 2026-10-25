@@ -56,8 +56,8 @@ public final class ReplacementFileReader {
    * anything in parentheses. The parentheses are expected to contain argument types, but the
    * pattern permits anything.
    *
-   * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
-   * constructors is unnecessary.
+   * <p>The original method may be a constructor, written as {@code classname.<init>(...)} or as
+   * {@code classname(...)}. A replacement is always a static method.
    */
   private static final String SIGNATURE_STRING =
       DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
@@ -169,7 +169,9 @@ public final class ReplacementFileReader {
    * Adds a method replacement described by a pair of method signatures to the replacement map.
    * Verifies that both signatures are well-formed and correspond to a method that exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. In
+   * addition, the original signature may be a constructor written as {@code
+   * package-name.classname(argument-list)}.
    *
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
@@ -195,7 +197,28 @@ public final class ReplacementFileReader {
       throw new ReplacementException("Bad original signature", e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
-    original.toMethod();
+    try {
+      original.toMethod();
+    } catch (ClassNotFoundException e) {
+      if (original.getName().equals("<init>")) {
+        throw e;
+      }
+      // The signature might be a constructor written as package-name.classname(argument-list).
+      MethodSignature constructor = original.toConstructorSignature();
+      try {
+        constructor.toMethod();
+      } catch (ClassNotFoundException e2) {
+        ClassNotFoundException notFound =
+            new ClassNotFoundException(
+                String.format(
+                    "Class %s not found (nor class %s, for a constructor)",
+                    original.getClassname(), constructor.getClassname()),
+                e);
+        notFound.addSuppressed(e2);
+        throw notFound;
+      }
+      original = constructor;
+    }
 
     MethodSignature replacement;
     try {
