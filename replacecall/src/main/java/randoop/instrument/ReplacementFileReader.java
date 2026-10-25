@@ -192,7 +192,7 @@ public final class ReplacementFileReader {
     try {
       original = MethodSignature.of(originalSignature);
     } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad original signature", e);
+      throw new ReplacementException("Bad original signature: " + e.getMessage(), e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
     original.toMethod();
@@ -201,7 +201,7 @@ public final class ReplacementFileReader {
     try {
       replacement = MethodSignature.of(replacementSignature);
     } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad replacement signature", e);
+      throw new ReplacementException("Bad replacement signature: " + e.getMessage(), e);
     }
     // Call toMethod() instead of exists() to get more precise error messages.
     replacement.toMethod();
