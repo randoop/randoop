@@ -83,8 +83,9 @@ class EagerReferenceBound extends ReferenceBound {
     if (bound instanceof ReferenceBound) {
       return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
     }
-    // An intersection is never a lower bound, and a LazyParameterBound cannot be compared without
-    // first substituting for its type variables.
+    // `bound` is an intersection or a LazyParameterBound.  An intersection is never a type
+    // variable's lower bound, and a LazyParameterBound cannot be compared without first
+    // substituting for its type variables.
     return false;
   }
 
