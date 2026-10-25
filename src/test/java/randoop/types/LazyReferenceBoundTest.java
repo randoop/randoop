@@ -25,7 +25,7 @@ public class LazyReferenceBoundTest {
    *
    * @param <T> the type parameter
    */
-  static class SelfBound<T extends Map<T, String>> {}
+  static class SelfBound<T extends Comparable<T>> {}
 
   /**
    * A class whose second type parameter has a bound that contains both type parameters.
@@ -33,13 +33,11 @@ public class LazyReferenceBoundTest {
    * @param <K> the first type parameter
    * @param <V> the second type parameter
    */
-  static class SelfAndKeyBound<K, V extends Map<V, K>> {}
+  static class KeyAndSelfBound<K, V extends Map<K, V>> {}
 
-  /**
-   * A map whose keys have the type of the map, so it satisfies the bounds of both classes above.
-   */
+  /** A map whose values have the type of the map, so it satisfies the bound of the class above. */
   @SuppressWarnings("serial")
-  static class SelfKeyedMap extends HashMap<SelfKeyedMap, String> {}
+  static class SelfValuedMap extends HashMap<String, SelfValuedMap> {}
 
   /**
    * A class with a field whose type has a wildcard argument and a type variable.
@@ -54,8 +52,16 @@ public class LazyReferenceBoundTest {
   /** A field whose type has a wildcard argument for {@link SelfBound}. */
   SelfBound<?> selfBoundField;
 
-  /** A field whose type has wildcard arguments for {@link SelfAndKeyBound}. */
-  SelfAndKeyBound<?, ?> selfAndKeyBoundField;
+  /** A field whose type has wildcard arguments for {@link KeyAndSelfBound}. */
+  KeyAndSelfBound<?, ?> keyAndSelfBoundField;
+
+  /** The first type parameter of {@link TwoParameters}. */
+  private static final TypeVariable V =
+      GenericClassType.forClass(TwoParameters.class).getTypeParameters().get(0);
+
+  /** The second type parameter of {@link TwoParameters}. */
+  private static final TypeVariable W =
+      GenericClassType.forClass(TwoParameters.class).getTypeParameters().get(1);
 
   /**
    * Returns a capture variable from the capture conversion of the type of the given field.
@@ -75,14 +81,6 @@ public class LazyReferenceBoundTest {
     return (TypeVariable)
         ((ReferenceArgument) capturedType.getTypeArguments().get(index)).getReferenceType();
   }
-
-  /** The first type parameter of {@link TwoParameters}. */
-  private static final TypeVariable V =
-      GenericClassType.forClass(TwoParameters.class).getTypeParameters().get(0);
-
-  /** The second type parameter of {@link TwoParameters}. */
-  private static final TypeVariable W =
-      GenericClassType.forClass(TwoParameters.class).getTypeParameters().get(1);
 
   @Test
   public void testSubstituteArray() {
@@ -140,11 +138,11 @@ public class LazyReferenceBoundTest {
 
   @Test
   public void testCanBeInstantiatedByWithPartialSubstitution() throws NoSuchFieldException {
-    // The bound is Map<capture, otherCapture>; instantiating capture leaves otherCapture unmapped.
-    TypeVariable capture = captureVariable("selfAndKeyBoundField", 1);
+    // The bound is Map<otherCapture, capture>; instantiating capture leaves otherCapture unmapped.
+    TypeVariable capture = captureVariable("keyAndSelfBoundField", 1);
     assertTrue(
         "bound " + capture.getUpperTypeBound() + " should be lazy",
         capture.getUpperTypeBound() instanceof LazyReferenceBound);
-    assertTrue(capture.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfKeyedMap.class)));
+    assertTrue(capture.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfValuedMap.class)));
   }
 }
