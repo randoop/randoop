@@ -1551,6 +1551,7 @@ To use it:
 Randoop uses a <a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/resources/default-replacements.txt">
 default set of replacements</a>.
 You can <a href="#replacecall-replacement-definition">define additional replacements</a>.
+</p>
 
 
 <h3 id="replacecall-untransformed-classes">Classes that are not transformed</h3>
@@ -1568,8 +1569,9 @@ The replacecall agent never modifies
 <ul>
   <li>Randoop, including the agent</li>
   <li>JUnit and Hamcrest</li>
-  <li>Gradle</li>
-  <li>Classes in <code>rt.jar</code>, except in packages <code>java.awt</code> and <code>javax.swing</code></li>
+  <li>JDK classes loaded by the bootstrap class loader or by the platform
+  (in Java 8, extension) class loader, except in packages
+  <code>java.awt</code> and <code>javax.swing</code></li>
 </ul>
 <p>
 (The exact rules appear in the Randoop source code in method
@@ -1602,7 +1604,7 @@ The package name is used to match the prefix of the fully-qualified classname.
 
 <p>
 For diagnostic output (such as to see what classes are being transformed),
-run the agent with the <code>--debug</code> flag
+run the agent with the <code>--debug</code> flag.
 </p>
 <pre>
 -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--debug
@@ -1659,7 +1661,7 @@ An example mock class is
 <code>&lt;init&gt;</code> method),
 then the replacement method should have the same
 parameter types, and its return type is the class that contains the
-constructor.
+constructor.</li>
 </ul>
 
 <p>
