@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.plumelib.util.CollectionsPlume;
@@ -81,13 +80,18 @@ public abstract class ParameterBound {
    * types that are represented by {@code Class} objects, or {@code
    * java.lang.reflect.ParameterizedType} objects.
    *
-   * @param variableSet the set of type variables bound by this type
+   * @param variableSet the set of type variables bound by this type; empty for a wildcard bound
    * @param type the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper bound
    */
   static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
+      // A type parameter bound is lazy because an eager one might construct the declaring class,
+      // which recurses infinitely on a declaration such as `Builder<T extends Builder<?>>`.
+      if (variableSet.isEmpty()) {
+        return new EagerReferenceBound(ParameterizedType.forType(type));
+      }
       return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {
@@ -122,53 +126,6 @@ public abstract class ParameterBound {
    * @return the list of {@code TypeVariable} objects in this bound
    */
   public abstract List<TypeVariable> getTypeParameters();
-
-  /**
-   * Returns true if the given (reflection) type reference represents a type in which a type
-   * variable occurs.
-   *
-   * @param type the reflection type
-   * @param variableSet the set of variables
-   * @return true if the type has a type variable, and false otherwise
-   */
-  private static boolean hasTypeVariable(
-      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {
-    if (isTypeVariable(type)) {
-      java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable) type;
-      if (variableSet.contains(variable)) {
-        return true;
-      }
-      Set<java.lang.reflect.TypeVariable<?>> recursiveSet = new HashSet<>(variableSet);
-      recursiveSet.add(variable);
-      for (java.lang.reflect.Type boundType : variable.getBounds()) {
-        if (hasTypeVariable(boundType, recursiveSet)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasTypeVariable(argType, variableSet)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof java.lang.reflect.WildcardType) {
-      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
-        if (hasTypeVariable(boundType, variableSet)) {
-          return true;
-        }
-      }
-      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
-        if (hasTypeVariable(boundType, variableSet)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
   /**
    * Returns true if the type is a type variable.
