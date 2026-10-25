@@ -61,7 +61,7 @@ configure<PublishingExtension> {
             providers
               .gradleProperty("RELEASE_REPOSITORY_URL")
               .getOrElse("https://ossrh-staging-api.central.sonatype.com/service/local/")
-          }
+          },
         )
       credentials {
         username = providers.gradleProperty("SONATYPE_NEXUS_USERNAME").orNull
