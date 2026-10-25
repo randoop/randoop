@@ -16,11 +16,15 @@ public class ObjectCache {
    * Put the ith value created by the given sequence in this object cache.
    *
    * @param eseq the sequence that creates values
-   * @param i the index of the value to put in this cache
+   * @param i the index of the value to put in this cache; its execution must have completed
+   *     normally
    */
   public void setActiveFlags(ExecutableSequence eseq, int i) {
 
-    assert eseq.getResult(i) instanceof NormalExecution;
+    if (!(eseq.getResult(i) instanceof NormalExecution)) {
+      throw new IllegalArgumentException(
+          String.format("Index %d did not execute normally: %s", i, eseq.getResult(i)));
+    }
     NormalExecution e = (NormalExecution) eseq.getResult(i);
 
     // If runtime value is in object cache, clear active flag.
