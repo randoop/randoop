@@ -278,7 +278,7 @@ tasks.withType<JavaCompile>().configureEach {
         "-g",
         "-nowarn",
         "-Xlint:-classfile,-options",
-      )
+      ),
     )
   } else {
     options.compilerArgs.addAll(
@@ -287,7 +287,7 @@ tasks.withType<JavaCompile>().configureEach {
         "-Werror",
         "-Xlint",
         "-Xlint:-classfile,-options",
-      )
+      ),
     )
   }
 }
