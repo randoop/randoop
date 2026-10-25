@@ -1,0 +1,2 @@
+// bad replacement file for testing
+java.lang.String randoop.instrument.ReplacementTestMethods$MissingReceiverClass

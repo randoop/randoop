@@ -156,6 +156,30 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void wrongReturnClassReplacementTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/wrongreturnclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "wrongreturnclassreplacement.txt:2: Replacement method"
+            + " randoop.instrument.ReplacementTestMethods$WrongReturnClass.nextInt(java.util.Random)"
+            + " must have return type int");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void missingReceiverClassReplacementTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/missingreceiverclassreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "missingreceiverclassreplacement.txt:2: Replacement method"
+            + " randoop.instrument.ReplacementTestMethods$MissingReceiverClass.compareTo(java.lang.String)"
+            + " has no matching original in java.lang.String");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void missingClassClassTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/missingclass.txt");
     thrown.expect(ReplacementFileException.class);
