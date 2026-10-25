@@ -26,17 +26,9 @@ import org.plumelib.util.StringsPlume;
  */
 public final class MethodSignature implements Comparable<MethodSignature> {
 
-  /**
-   * Matches a fully-qualified method name: a fully-qualified class name, a period, and a method
-   * name or {@code <init>}.
-   */
-  @SuppressWarnings("regex:argument") // concatenation of regexes and a group
+  /** Matches a fully-qualified method name. */
   private static final Pattern FULL_METHOD_NAME =
-      Pattern.compile(
-          ReplacementFileReader.DOT_DELIMITED_IDS
-              + "\\.(?:"
-              + ReplacementFileReader.ID_STRING
-              + "|<init>)");
+      Pattern.compile(ReplacementFileReader.FULL_METHOD_NAME);
 
   /** The fully-qualified class name. */
   private final String classname;
@@ -103,10 +95,6 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
-    if (dotPos < 1) {
-      throw new IllegalArgumentException(
-          "Fully-qualified method name expected, no period found: " + fullMethodName);
-    }
     String classname = fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
@@ -143,18 +131,15 @@ public final class MethodSignature implements Comparable<MethodSignature> {
               + "\": "
               + signature);
     }
-    int lastParenPos = signature.lastIndexOf(')');
-    if (lastParenPos < parenPos + 1) {
+    if (!signature.endsWith(")")) {
       throw new IllegalArgumentException(
-          "Method signature expected, mismatched parenthesis: " + signature);
+          "Method signature expected, does not end with closing parenthesis: " + signature);
     }
-    if (lastParenPos != signature.length() - 1) {
-      throw new IllegalArgumentException(
-          "Method signature expected, text after closing parenthesis: " + signature);
-    }
-    String paramString = signature.substring(parenPos + 1, lastParenPos).trim();
+    String paramString = signature.substring(parenPos + 1, signature.length() - 1).trim();
+    // The limit -1 makes split() retain trailing empty strings, so trailing commas are rejected.
     @SuppressWarnings("signature:assignment") // dynamically checked just below
-    @FqBinaryName String[] parameters = paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*");
+    @FqBinaryName String[] parameters =
+        paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
     for (String parameter : parameters) {
       if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException(

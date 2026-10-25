@@ -52,6 +52,13 @@ public final class ReplacementFileReader {
   public static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
+   * Regex to match a fully-qualified method name: a fully-qualified class name, a period, and a
+   * method name or {@code <init>}.
+   */
+  static final @Regex String FULL_METHOD_NAME =
+      DOT_DELIMITED_IDS + "\\.(?:" + ID_STRING + "|<init>)";
+
+  /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
    * anything in parentheses. The parentheses are expected to contain argument types, but the
    * pattern permits anything.
@@ -59,8 +66,7 @@ public final class ReplacementFileReader {
    * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
    * constructors is unnecessary.
    */
-  private static final String SIGNATURE_STRING =
-      DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = FULL_METHOD_NAME + "\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
