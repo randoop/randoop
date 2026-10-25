@@ -320,7 +320,7 @@ public abstract class AbstractGenerator {
         Log.logPrintf("%nseq before run:%n%s%n", eSeq);
       }
 
-      if (GenInputsAbstract.progressintervalsteps != -1
+      if (GenInputsAbstract.progressintervalsteps > 0
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
         progressDisplay.display(!GenInputsAbstract.deterministic);
       }
