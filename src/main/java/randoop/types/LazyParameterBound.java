@@ -64,7 +64,7 @@ class LazyParameterBound extends ParameterBound {
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
-        return forSubstitutedType(referenceType);
+        return ReferenceBound.forSubstitutedType(referenceType);
       }
       return this;
     }
@@ -82,26 +82,11 @@ class LazyParameterBound extends ParameterBound {
       }
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      return forSubstitutedType(new InstantiatedType(classType, argumentList));
+      return ReferenceBound.forSubstitutedType(new InstantiatedType(classType, argumentList));
     }
 
     throw new RandoopBug(
         "lazy parameter bounds should be either a type variable or parameterized type");
-  }
-
-  /**
-   * Returns a bound for the given type, which results from applying a substitution to this bound.
-   * The bound is lazy if the type contains a type variable, because the bounds of that type
-   * variable might refer back to the type.
-   *
-   * @param type the type that results from applying a substitution to this bound
-   * @return a lazy bound if {@code type} contains a type variable, an eager bound otherwise
-   */
-  private static ReferenceBound forSubstitutedType(ReferenceType type) {
-    if (type.isGeneric()) {
-      return new LazyReferenceBound(type);
-    }
-    return new EagerReferenceBound(type);
   }
 
   /**
@@ -111,7 +96,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument
+   * @return the type argument, or null if the substitution does not map a type variable in {@code
+   *     type}
    */
   private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
@@ -127,6 +113,9 @@ class LazyParameterBound extends ParameterBound {
           CollectionsPlume.mapList(
               (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
               ((ParameterizedType) type).getActualTypeArguments());
+      if (argumentList.contains(null)) {
+        return null;
+      }
 
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());

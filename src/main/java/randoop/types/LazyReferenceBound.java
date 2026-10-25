@@ -11,8 +11,8 @@ import java.util.Set;
  * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
  * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substituted bound contains a type variable.
+ * <p>Objects of this class are created by {@link ReferenceBound#forSubstitutedType(ReferenceType)}
+ * when applying a substitution to a bound yields a type that contains a type variable.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -37,21 +37,7 @@ class LazyReferenceBound extends ReferenceBound {
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-
-    if (getBoundType().isVariable()) {
-      if (referenceType.isVariable()) {
-        return new LazyReferenceBound(referenceType);
-      }
-      return new EagerReferenceBound(referenceType);
-    }
-
-    if (getBoundType().isParameterized()) {
-      // XXX technically, need to check if variable argument was replaced by variable
-      // if so should return new LazyReferenceBound(referenceType)
-      // But highly unlikely so for now only including code to do else case
-      return new EagerReferenceBound(referenceType);
-    }
-    return this;
+    return forSubstitutedType(referenceType);
   }
 
   @Override
