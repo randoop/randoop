@@ -16,9 +16,10 @@ import randoop.NotExecuted;
  */
 public final class Execution {
 
-  // The execution outcome of each statement.
+  /** The execution outcome of each statement. */
   final List<ExecutionOutcome> outcomes;
 
+  /** The instrumented classes that were covered by the execution. */
   private Set<Class<?>> coveredClasses;
 
   /**

@@ -195,10 +195,17 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     return result;
   }
 
+  /** An iterator over the types in a tuple. It does not support {@link #remove}. */
   private static class TypeIterator implements Iterator<Type> {
 
+    /** The underlying iterator, to which this delegates. */
     private Iterator<Type> iterator;
 
+    /**
+     * Creates an iterator that delegates to the given iterator but does not support removal.
+     *
+     * @param iterator the underlying iterator
+     */
     public TypeIterator(Iterator<Type> iterator) {
       this.iterator = iterator;
     }

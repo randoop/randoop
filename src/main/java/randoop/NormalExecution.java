@@ -33,6 +33,12 @@ public class NormalExecution extends ExecutionOutcome {
     this.result = result;
   }
 
+  /**
+   * Returns the runtime value that the statement returned, or null for a void method call. This is
+   * the actual object, whose state may have changed since the statement was executed.
+   *
+   * @return the value created by executing the statement
+   */
   public @Nullable Object getRuntimeValue() {
     return this.result;
   }

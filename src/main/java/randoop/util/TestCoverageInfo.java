@@ -7,15 +7,28 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.main.RandoopBug;
 
+/**
+ * Branch coverage information for a class that has been instrumented for branch coverage. An
+ * instrumented class stores an instance of this class in its static field {@code
+ * randoopCoverageInfo}.
+ */
 public class TestCoverageInfo {
 
+  /** For each branch index, the number of times the branch condition evaluated to true. */
   public final int[] branchTrue;
+
+  /** For each branch index, the number of times the branch condition evaluated to false. */
   public final int[] branchFalse;
+
+  /** Maps a method signature to the indices of the branches in that method. */
   public final Map<String, Set<Integer>> methodToIndices;
 
-  // A pair of: branches covered, total branches in method
+  /** The number of branches covered in a method, and the total number of branches in it. */
   private static class BranchCov {
+    /** The number of branches covered in the method. */
     final int covered;
+
+    /** The total number of branches in the method. */
     final int inMethod;
 
     BranchCov(int covered, int inMethod) {
@@ -24,6 +37,12 @@ public class TestCoverageInfo {
     }
   }
 
+  /**
+   * Creates a {@code TestCoverageInfo} in which no branch has been covered.
+   *
+   * @param totalBranches the number of branches; must be non-negative
+   * @param map maps a method signature to the indices of the branches in that method
+   */
   public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
     if (totalBranches < 0) {
       throw new IllegalArgumentException();
@@ -83,6 +102,14 @@ public class TestCoverageInfo {
     return new BranchCov(branchesCovered, totalBranches);
   }
 
+  /**
+   * Returns a human-readable report of the branch coverage of the given class: the number and
+   * fraction of branches covered in each method and in total.
+   *
+   * @param clazz the class whose coverage to report
+   * @return a report of the branch coverage of the class, or a message stating that the class is
+   *     not instrumented for branch coverage
+   */
   public static String getCoverageInfo(Class<?> clazz) {
 
     if (!isInstrumented(clazz)) {

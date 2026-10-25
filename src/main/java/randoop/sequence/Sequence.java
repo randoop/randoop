@@ -147,6 +147,14 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
+  /**
+   * Creates a sequence that extends the sequence underlying {@code elementsSequence} with one call
+   * to the given operation, using the outputs of {@code elementsSequence} as the inputs.
+   *
+   * @param operation the operation for the sequence
+   * @param elementsSequence the sequence whose outputs are the inputs to the operation
+   * @return the sequence that applies the operation to the outputs of {@code elementsSequence}
+   */
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs =
         CollectionsPlume.mapList(
@@ -404,6 +412,11 @@ public final class Sequence {
    */
   private BitSet activeFlags;
 
+  /**
+   * Returns true if any statement in this sequence is active.
+   *
+   * @return true if any statement in this sequence is active
+   */
   public boolean hasActiveFlags() {
     return !activeFlags.isEmpty();
   }
@@ -416,10 +429,16 @@ public final class Sequence {
     activeFlags.set(0, this.size());
   }
 
+  /** Marks every statement in this sequence as inactive. */
   public void clearAllActiveFlags() {
     activeFlags.clear(0, this.size());
   }
 
+  /**
+   * Marks the statement at the given index as inactive.
+   *
+   * @param i the index of the statement to mark inactive
+   */
   public void clearActiveFlag(int i) {
     activeFlags.clear(i);
   }

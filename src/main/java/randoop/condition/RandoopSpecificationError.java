@@ -16,6 +16,10 @@ public class RandoopSpecificationError extends Exception {
   @SuppressWarnings("serial") // TODO: use a serializable type.
   Path file = null;
 
+  /**
+   * The local message for this exception, which overrides the message passed to the constructor. If
+   * null, the message passed to the constructor is used.
+   */
   String thisMessage = null;
 
   /**

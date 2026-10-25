@@ -144,6 +144,7 @@ public abstract class AbstractGenerator {
   /** Visitor to generate checks for a sequence. */
   protected TestCheckGenerator checkGenerator;
 
+  /** Records, for each operation, the outcomes of the sequences that end with that operation. */
   protected OperationHistoryLogInterface operationHistory;
 
   /**

@@ -30,10 +30,13 @@ public final class ConstructorCall extends CallableOperation {
   /** The constructor that is called by this ConstructorCall. */
   private final Constructor<?> constructor;
 
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
+  /**
+   * The cached hash code of this ConstructorCall, for improved performance. Valid only if {@link
+   * #hashCodeComputed} is true; computed upon the first invocation of {@link #hashCode}.
+   */
   private int hashCodeCached = 0;
+
+  /** True if {@link #hashCodeCached} has been computed. */
   private boolean hashCodeComputed = false;
 
   /**

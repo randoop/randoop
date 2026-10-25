@@ -141,28 +141,36 @@ public class GenTests extends GenInputsAbstract {
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
+  /** The name of this command. */
   private static final String command = "gentests";
 
+  /** A one-line description of this command. */
   private static final String pitch = "Generates unit tests for a set of classes.";
 
+  /** The usage of this command, shown in its documentation. */
   private static final String commandGrammar = "gentests OPTIONS";
 
+  /** Constraints on the command-line arguments, shown in this command's documentation. */
   private static final String where =
       "At least one of `--testjar', `--classlist', `--testclass', or `--methodlist' is"
           + " specified.";
 
+  /** A summary of what this command does. */
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
           + "error-revealing tests and regression tests. ";
 
+  /** A description of this command's input. */
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
           + "via the `--testjar', `--classlist', or `--testclass' options.";
 
+  /** A description of this command's output. */
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
           + "an error-revealing test suite and a regression test suite.";
 
+  /** An example invocation of this command. */
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
@@ -173,9 +181,28 @@ public class GenTests extends GenInputsAbstract {
   /** The prefix for test method names. */
   public static final @Regex(0) @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
+  /**
+   * The body of the fixture method to run once after all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set.
+   */
   private BlockStmt afterAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run after each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_after_each}. Null if that option is not set.
+   */
   private BlockStmt afterEachFixtureBody;
+
+  /**
+   * The body of the fixture method to run once before all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set.
+   */
   private BlockStmt beforeAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run before each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_before_each}. Null if that option is not set.
+   */
   private BlockStmt beforeEachFixtureBody;
 
   static {
@@ -196,6 +223,7 @@ public class GenTests extends GenInputsAbstract {
             + "To produce different tests across runs, use the --randomseed option.");
   }
 
+  /** The command-line options for this command. */
   private static Options options =
       new Options(
           GenTests.class,

@@ -4,10 +4,20 @@ import randoop.NormalExecution;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
+/**
+ * A cache of the values created by sequences. A value that is equal to a previously-cached value is
+ * marked inactive in the sequence that created it.
+ */
 public class ObjectCache {
 
+  /** Records the values seen so far, and determines whether a value is new. */
   private StateMatcher sm;
 
+  /**
+   * Creates a new ObjectCache.
+   *
+   * @param sm records the values seen so far, and determines whether a value is new
+   */
   public ObjectCache(StateMatcher sm) {
     this.sm = sm;
   }

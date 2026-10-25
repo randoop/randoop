@@ -83,6 +83,11 @@ public final class SequenceCollection {
     }
   }
 
+  /**
+   * Returns the number of sequences in this collection.
+   *
+   * @return the number of sequences in this collection
+   */
   public int size() {
     return sequenceCount;
   }
@@ -370,6 +375,12 @@ public final class SequenceCollection {
     return result;
   }
 
+  /**
+   * Returns a type instantiator that instantiates type parameters using the types of the sequences
+   * in this collection and their supertypes.
+   *
+   * @return a type instantiator for the types in this collection
+   */
   public TypeInstantiator getTypeInstantiator() {
     return new TypeInstantiator(typesAndSupertypes);
   }

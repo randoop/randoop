@@ -15,9 +15,18 @@ import randoop.types.TypeTuple;
  * (List<String>[])(Array.newInstance(componentType, length)); }
  */
 public class ReflectionArrayCreation extends CallableOperation {
+  /** The component type of the array to create. */
   private final Type elementType;
+
+  /** The length of the array to create. */
   private final int length;
 
+  /**
+   * Creates an operation that creates an array of the given type and length via reflection.
+   *
+   * @param arrayType the type of the array to create
+   * @param length the length of the array to create
+   */
   public ReflectionArrayCreation(ArrayType arrayType, int length) {
     this.elementType = arrayType.getComponentType();
     this.length = length;

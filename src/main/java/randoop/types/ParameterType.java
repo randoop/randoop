@@ -55,10 +55,20 @@ public abstract class ParameterType extends ReferenceType {
     return this.getFqName();
   }
 
+  /**
+   * Returns the lower bound on this type.
+   *
+   * @return the lower bound on this type
+   */
   public ParameterBound getLowerTypeBound() {
     return lowerBound;
   }
 
+  /**
+   * Returns the upper bound on this type.
+   *
+   * @return the upper bound on this type
+   */
   public ParameterBound getUpperTypeBound() {
     return upperBound;
   }

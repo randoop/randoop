@@ -15,15 +15,34 @@ import randoop.util.Util;
  */
 public abstract class CommandHandler {
 
+  /** The name of the command, which is the first argument given to Randoop. */
   public String fcommand;
+
+  /** A one-line description of the command. */
   public String fpitch;
+
+  /** The usage of the command, shown in its documentation. */
   public String fcommandGrammar;
+
+  /** Constraints on the command-line arguments, shown in the command's documentation. */
   public String fwhere;
+
+  /** A summary of what the command does. */
   public String fsummary;
+
+  /** Notes about the command, shown in its documentation. */
   public List<String> fnotes;
+
+  /** A description of the command's input. */
   public String finput;
+
+  /** A description of the command's output. */
   public String foutput;
+
+  /** An example invocation of the command. */
   public String fexample;
+
+  /** The command-line options that the command accepts, or null if none. */
   public Options foptions;
 
   /**
@@ -150,6 +169,11 @@ public abstract class CommandHandler {
     }
   }
 
+  /**
+   * Prints a plain-text usage message for the command, including its documentation and options.
+   *
+   * @param out the output stream for printing the usage message
+   */
   public final void usageMessage(PrintStream out) {
 
     out.println();

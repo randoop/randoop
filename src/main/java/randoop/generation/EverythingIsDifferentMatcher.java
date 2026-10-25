@@ -1,5 +1,9 @@
 package randoop.generation;
 
+/**
+ * A {@link StateMatcher} that considers every object to be different from all previously-seen
+ * objects, so {@link #add} always returns true.
+ */
 public class EverythingIsDifferentMatcher implements StateMatcher {
 
   /** The number of calls to {@link #add} on this matcher. */

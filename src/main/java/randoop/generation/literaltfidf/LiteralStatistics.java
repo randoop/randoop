@@ -113,12 +113,16 @@ public class LiteralStatistics {
    *
    * @return all pairs of ({@link Sequence}, {@link LiteralUses})
    */
+  @SuppressWarnings("PMD.CommentRequired") // Error Prone forbids Javadoc in anonymous classes
   public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
     return () -> // This line makes the method return an Iterable rather than an Iterator.
         // An Iterable can be used in a foreach loop, but an Iterator cannot.
         new Iterator<Map.Entry<Sequence, LiteralUses>>() {
+          // Iterates over the per-type maps in literalUsesByType.
           private final Iterator<Map<Sequence, LiteralUses>> outer =
               literalUsesByType.values().iterator();
+
+          // Iterates over the entries of the current per-type map.
           private Iterator<Map.Entry<Sequence, LiteralUses>> inner = Collections.emptyIterator();
 
           @Override
