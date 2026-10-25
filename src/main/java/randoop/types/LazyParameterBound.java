@@ -82,7 +82,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
