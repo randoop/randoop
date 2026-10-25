@@ -1605,12 +1605,17 @@ run the agent with the <code>--debug</code> flag
 -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--debug
 </pre>
 
-<p>
+<p id="replacecall-options">
 To give the agent more than one option, separate the options with whitespace.
 Because the <code>-javaagent</code> argument then contains whitespace, quote
 it on the command line.
-To give a filename that contains whitespace, enclose the filename in single
-or double quotes.
+(Alternatively, separate the options with commas.)
+The agent removes single and double quotes from its options:
+text between a pair of single quotes or a pair of double quotes is retained
+literally, including any whitespace or the other kind of quote.
+Therefore, to give a filename that contains whitespace, a single quote, or a
+double quote, enclose the filename in quotes:  in double quotes if the
+filename contains a single quote, and otherwise in single quotes.
 For example (the <code>--replacement-file</code> option is described
 <a href="#replacecall-replacement-definition">below</a>):
 </p>
