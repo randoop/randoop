@@ -299,11 +299,26 @@ class LazyParameterBound extends ParameterBound {
     return b.isUpperBound(argType, substitution);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if the substitution does not instantiate this bound.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    throw new LazyBoundException();
-    // assert false : " not quite sure what to do with lazy type bound";
-    // return false;
+    ParameterBound b = this.substitute(substitution);
+    return !b.equals(this) && b.isUpperBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, because the type of this bound cannot be determined without a substitution
+   * for its type variables.
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound) {
+    return false;
   }
 
   @Override

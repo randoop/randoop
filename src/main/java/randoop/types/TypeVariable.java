@@ -74,9 +74,13 @@ public abstract class TypeVariable extends ParameterType {
       TypeVariable otherVariable = (TypeVariable) otherType;
       Substitution substitution = getSubstitution(otherVariable, this);
       boolean lowerboundOk =
-          otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
+          otherVariable
+              .getLowerTypeBound()
+              .isLowerBound(resolveSelfReferences(getLowerTypeBound()), substitution);
       boolean upperboundOk =
-          otherVariable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
+          otherVariable
+              .getUpperTypeBound()
+              .isUpperBound(resolveSelfReferences(getUpperTypeBound()), substitution);
       return lowerboundOk && upperboundOk;
     }
 
@@ -93,6 +97,19 @@ public abstract class TypeVariable extends ParameterType {
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
+  }
+
+  /**
+   * Returns the given bound of this variable, with this variable substituted for itself. For
+   * example, the bound of {@code T extends Comparable<T>} is a {@link LazyParameterBound}; the
+   * result is a {@link ReferenceBound} whose type, {@code Comparable<T>}, can be compared with
+   * other types.
+   *
+   * @param bound a bound of this variable
+   * @return the bound, with references to this variable resolved
+   */
+  ParameterBound resolveSelfReferences(ParameterBound bound) {
+    return bound.substitute(getSubstitution(this, this));
   }
 
   /**
