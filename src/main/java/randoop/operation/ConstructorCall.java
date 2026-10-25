@@ -31,15 +31,6 @@ public final class ConstructorCall extends CallableOperation {
   private final Constructor<?> constructor;
 
   /**
-   * The cached hash code of this ConstructorCall, for improved performance. Valid only if {@link
-   * #hashCodeComputed} is true; computed upon the first invocation of {@link #hashCode}.
-   */
-  private int hashCodeCached = 0;
-
-  /** True if {@link #hashCodeCached} has been computed. */
-  private boolean hashCodeComputed = false;
-
-  /**
    * Creates object corresponding to the given reflection constructor.
    *
    * @param constructor reflective object for a constructor
@@ -157,11 +148,7 @@ public final class ConstructorCall extends CallableOperation {
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.constructor.hashCode();
-    }
-    return hashCodeCached;
+    return this.constructor.hashCode();
   }
 
   @Override

@@ -5,8 +5,8 @@ import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
 /**
- * A cache of the values created by sequences. A value that is equal to a previously-cached value is
- * marked inactive in the sequence that created it.
+ * A cache of the values created by sequences. A value that is not new, according to the cache's
+ * {@link StateMatcher}, is marked inactive in the sequence that created it.
  */
 public class ObjectCache {
 

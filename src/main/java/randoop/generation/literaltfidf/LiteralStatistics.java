@@ -1,10 +1,7 @@
 package randoop.generation.literaltfidf;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.plumelib.util.SIList;
 import randoop.generation.ComponentManager;
 import randoop.reflection.LiteralFileReader;
@@ -113,34 +110,10 @@ public class LiteralStatistics {
    *
    * @return all pairs of ({@link Sequence}, {@link LiteralUses})
    */
-  @SuppressWarnings("PMD.CommentRequired") // Error Prone forbids Javadoc in anonymous classes
   public Iterable<Map.Entry<Sequence, LiteralUses>> literalUsesEntries() {
     return () -> // This line makes the method return an Iterable rather than an Iterator.
         // An Iterable can be used in a foreach loop, but an Iterator cannot.
-        new Iterator<Map.Entry<Sequence, LiteralUses>>() {
-          // Iterates over the per-type maps in literalUsesByType.
-          private final Iterator<Map<Sequence, LiteralUses>> outer =
-              literalUsesByType.values().iterator();
-
-          // Iterates over the entries of the current per-type map.
-          private Iterator<Map.Entry<Sequence, LiteralUses>> inner = Collections.emptyIterator();
-
-          @Override
-          public boolean hasNext() {
-            while (!inner.hasNext() && outer.hasNext()) {
-              inner = outer.next().entrySet().iterator();
-            }
-            return inner.hasNext();
-          }
-
-          @Override
-          public Map.Entry<Sequence, LiteralUses> next() {
-            if (!hasNext()) {
-              throw new NoSuchElementException();
-            }
-            return inner.next();
-          }
-        };
+        literalUsesByType.values().stream().flatMap(m -> m.entrySet().stream()).iterator();
   }
 
   // ///////////////////////////////////////////////////////////////////////////
