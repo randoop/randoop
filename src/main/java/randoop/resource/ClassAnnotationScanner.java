@@ -15,6 +15,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.TypeReference;
 import org.plumelib.reflection.Signatures;
+import randoop.main.RandoopBug;
 
 /**
  * ClassAnnotationScanner is a ClassVisitor that collects methods that are annotated with specific
@@ -81,16 +82,15 @@ public class ClassAnnotationScanner extends ClassVisitor {
       String signature,
       String superName,
       String[] interfaces) {
-    if (className == null) {
-      // Then this is the outermost class we look at.
-      className = Signatures.internalFormToBinaryName(name);
-      super.visit(version, access, name, signature, superName, interfaces);
-    } else {
-      ClassAnnotationScanner nestedClassScanner =
-          new ClassAnnotationScanner(api, desiredAnnotations);
-      nestedClassScanner.visit(version, access, name, signature, superName, interfaces);
-      matchingSignatures.addAll(nestedClassScanner.getMethodsWithDesiredAnnotations());
+    // ASM calls `visit` once per class file, and a nested class is in its own class file.
+    if (className != null) {
+      throw new RandoopBug(
+          String.format(
+              "ClassAnnotationScanner visited %s after %s; use a new scanner for each class file",
+              name, className));
     }
+    className = Signatures.internalFormToBinaryName(name);
+    super.visit(version, access, name, signature, superName, interfaces);
   }
 
   /** MethodAnnotationScanner captures the methods that have our desired annotation. */
