@@ -336,8 +336,7 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    Substitution completeSubstitution = completeSubstitution(substitution);
-    ParameterBound b = instantiate(completeSubstitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
     return b != null && b.isLowerBound(argType, substitution);
   }
 
@@ -363,8 +362,7 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    Substitution completeSubstitution = completeSubstitution(substitution);
-    ParameterBound b = instantiate(completeSubstitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
     return b != null && b.isUpperBound(argType, substitution);
   }
 
