@@ -31,7 +31,7 @@ import randoop.util.Log;
  *
  * <ul>
  *   <li>Seed sequences supplied at construction time, which are preserved across calls to {@link
- *       #clearGeneratedSequences()}, and
+ *       #clearGeneratedSequences()} and are not counted by {@link #numGeneratedSequences()}, and
  *   <li>Sequences generated during the current run.
  * </ul>
  *
@@ -54,6 +54,12 @@ public class ComponentManager {
   // "gral" probably stands for "general".
   private SequenceCollection gralComponents;
 
+  /**
+   * The number of sequences that {@link #addGeneratedSequence} has added to {@link #gralComponents}
+   * since this was created or since the last call to {@link #clearGeneratedSequences}.
+   */
+  private int numGeneratedSequences = 0;
+
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
@@ -62,16 +68,10 @@ public class ComponentManager {
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
    *
-   * <p>Seeds are all contained in {@link #gralComponents}. This set is kept to restore seeds if the
-   * client calls {@link #clearGeneratedSequences}.
+   * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
+   * the client calls {@link #clearGeneratedSequences}.
    */
-  private final Set<Sequence> gralSeeds;
-
-  /**
-   * The number of calls to {@link #addGeneratedSequence} since this was created or since the last
-   * call to {@link #clearGeneratedSequences}.
-   */
-  private int numGeneratedSequences = 0;
+  private final Collection<Sequence> gralSeeds;
 
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
@@ -137,25 +137,15 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of (non-seed) sequences added to the manager since it was created or since
-   * the last call to {@link #clearGeneratedSequences}.
+   * Returns the number of sequences that {@link #addGeneratedSequence} has added to this manager
+   * since it was created or since the last call to {@link #clearGeneratedSequences}. Seed sequences
+   * are not counted, nor are sequences that {@link #addGeneratedSequence} did not store because
+   * they have no active outputs.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
   public int numGeneratedSequences() {
     return numGeneratedSequences;
-  }
-
-  /**
-   * Add a general seed sequence, which can be used as input to any method in any class and which
-   * is not removed by {@link #clearGeneratedSequences}.
-   *
-   * @param seq the sequence
-   */
-  public void addSeedSequence(Sequence seq) {
-    if (gralSeeds.add(seq)) {
-      gralComponents.add(seq);
-    }
   }
 
   /**
@@ -198,8 +188,9 @@ public class ComponentManager {
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
-    gralComponents.add(sequence);
-    numGeneratedSequences++;
+    if (gralComponents.add(sequence)) {
+      numGeneratedSequences++;
+    }
   }
 
   /**

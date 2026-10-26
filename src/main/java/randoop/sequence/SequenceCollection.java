@@ -173,9 +173,12 @@ public final class SequenceCollection {
    * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
+   * @return true if this collection changed; that is, if {@code sequence} has at least one active
+   *     output
    */
   @RequiresNonNull("this.sequenceMap")
-  public void add(Sequence sequence) {
+  public boolean add(Sequence sequence) {
+    boolean changed = false;
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -195,9 +198,11 @@ public final class SequenceCollection {
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
+        changed = true;
       }
     }
     checkRep();
+    return changed;
   }
 
   /**

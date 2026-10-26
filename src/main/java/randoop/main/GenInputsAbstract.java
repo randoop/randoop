@@ -838,13 +838,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static InputSelectionMode input_selection = InputSelectionMode.UNIFORM;
 
   /**
-   * Clear the component set each time it contains the given number of inputs.
+   * Clear the component set each time this many generated sequences have been added to it since it
+   * was last cleared. Seed sequences are not counted. Must be positive.
    *
    * <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
    * new tests. Setting this variable to a small number can sometimes result in a greater variety of
    * tests generated during a single run.
    */
-  @Option("Clear the component set when it gets this big")
+  @Option("Clear the component set after this many sequences are added to it")
   public static int clear = 100_000_000;
 
   /**
@@ -1088,6 +1089,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
       } else {
         null_ratio = 0;
       }
+    }
+
+    if (clear <= 0) {
+      throw new RandoopUsageError("--clear must be greater than zero but was " + clear);
     }
 
     if (maxsize <= 0) {
