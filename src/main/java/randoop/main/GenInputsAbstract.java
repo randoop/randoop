@@ -42,7 +42,8 @@ import randoop.util.Util;
 public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
-   * Creates a GenInputsAbstract. No arguments should be null.
+   * Creates a GenInputsAbstract. Every argument other than {@code command} and {@code options} may
+   * be null, which means that the information is undocumented.
    *
    * @param command the name of the command
    * @param pitch the description of the command
@@ -58,14 +59,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -248,9 +249,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean only_test_public_members = false;
 
   /**
-   * If true, Randoop prints a warning and continues when a class specified by the user cannot be
-   * found or cannot be loaded (for example, because its static initializer throws an exception). If
-   * false, Randoop exits with an error in that case.
+   * If true, Randoop prints a warning and continues when a class named via {@code --testclass},
+   * {@code --classlist}, or {@code --require-covered-classes} cannot be found or cannot be loaded
+   * (for example, because its static initializer throws an exception). If false, Randoop exits with
+   * an error in that case.
+   *
+   * <p>This option does not affect classes found via {@code --testjar} or {@code --test-package}.
    */
   @Option("Warn about, rather than fail on, user-specified classes that cannot be found or loaded")
   public static boolean silently_ignore_bad_class_names = false;
@@ -848,6 +852,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
    * new tests. Setting this variable to a small number can sometimes result in a greater variety of
    * tests generated during a single run.
+   *
+   * <p>Must be positive.
    */
   @Option("Clear the component set when it gets this big")
   public static int clear = 100_000_000;
@@ -857,11 +863,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
    * that is slow due to thrashing and garbage collection.
+   *
+   * <p>Must be positive.
    */
   @Option("Clear the component set when Randoop uses this much memory")
   public static long clear_memory = 4_000_000_000L; // default: 4G
 
-  /** Maximum number of tests to write to each JUnit file. */
+  /**
+   * Maximum number of tests to write to each JUnit file.
+   *
+   * <p>Must be positive.
+   */
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
@@ -1073,16 +1085,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
   /**
-   * If true, then with probability 0.1, after extending a sequence with a method call, Randoop
-   * repeats that call a random number of times (fewer than 100).
+   * If true, then with probability 0.1, after extending a sequence with an operation (such as a
+   * method call, constructor call, or field access), Randoop repeats that operation a random number
+   * of times (fewer than 100).
    */
   // ///////////////////////////////////////////////////////////////////
-  // This is only here to keep the ICSE07ContainersTest working
-  // TODO Need to decide to keep the heuristic that uses this in
-  // /////////////////////////////////////////////////////////////////// ForwardGenerator
+  // This is only here to keep the ICSE07ContainersTest working.
+  // TODO: Decide whether to keep the heuristic in ForwardGenerator that uses this.
   @OptionGroup(value = "Pacheco thesis", unpublicized = true)
   @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times")
+  @Option("Use heuristic that may randomly repeat an operation several times")
   public static boolean repeat_heuristic = false;
 
   /** Check that the options given satisfy any specified constraints, and fail if they do not. */
@@ -1106,6 +1118,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (maxsize <= 0) {
       throw new RandoopUsageError(
           "Maximum sequence size --maxsize must be greater than zero but was " + maxsize);
+    }
+
+    if (clear <= 0) {
+      throw new RandoopUsageError("--clear must be greater than zero but was " + clear);
+    }
+
+    if (clear_memory <= 0) {
+      throw new RandoopUsageError(
+          "--clear-memory must be greater than zero but was " + clear_memory);
+    }
+
+    if (testsperfile <= 0) {
+      throw new RandoopUsageError(
+          "--testsperfile must be greater than zero but was " + testsperfile);
     }
 
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {

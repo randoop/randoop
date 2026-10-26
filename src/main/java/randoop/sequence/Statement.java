@@ -180,7 +180,8 @@ public final class Statement {
    * @param inputs list of objects to use as inputs to execution
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs) {
+  @SuppressWarnings("nullness:argument") // operations do not yet declare that inputs may be null
+  public ExecutionOutcome execute(@Nullable Object[] inputs) {
     return operation.execute(inputs);
   }
 

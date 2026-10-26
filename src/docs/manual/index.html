@@ -1026,9 +1026,12 @@ accessible field is used unless it is omitted by this or the <code>--omit-field<
 <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
 used to determine which members will be used in tests. [default: false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
-             If true, Randoop prints a warning and continues when a class specified by the user cannot be
-found or cannot be loaded (for example, because its static initializer throws an exception). If
-false, Randoop exits with an error in that case. [default: false]
+             If true, Randoop prints a warning and continues when a class named via <code>--testclass</code>,
+<code>--classlist</code>, or <code>--require-covered-classes</code> cannot be found or cannot be loaded
+(for example, because its static initializer throws an exception). If false, Randoop exits with
+an error in that case.
+
+<p>This option does not affect classes found via <code>--testjar</code> or <code>--test-package</code>. [default: false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
 different executions.
@@ -1341,17 +1344,23 @@ old tests are chosen, from among all existing tests. [default: UNIFORM]
 
 <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
 new tests. Setting this variable to a small number can sometimes result in a greater variety of
-tests generated during a single run. [default: 100000000]
+tests generated during a single run.
+
+<p>Must be positive. [default: 100000000]
             <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
              Clear the component set each time Randoop uses this much memory.
 
 <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
-that is slow due to thrashing and garbage collection. [default: 4000000000]
+that is slow due to thrashing and garbage collection.
+
+<p>Must be positive. [default: 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
             <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>.
-             Maximum number of tests to write to each JUnit file. [default: 500]
+             Maximum number of tests to write to each JUnit file.
+
+<p>Must be positive. [default: 500]
             <li id="option:error-test-basename"><b>--error-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default: ErrorTest]
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
@@ -2658,8 +2667,14 @@ a long-running sequence will prevent Randoop from creating new tests.
 Two possible reasons for a long-running test are:
 </p>
 <ul>
-  <li>Randoop is executing a test that contains nonterminating behavior,
-    or that takes very long to execute.
+  <li>Randoop is executing a test that
+    <ul>
+      <li>contains nonterminating behavior; for example, some implementations
+        of <code>equals()</code>, <code>hashCode()</code>, etc. do not terminate
+        when a collection contains itself, or</li>
+      <li>takes very long to execute.  For example, maybe Randoop passed a value
+        much larger than expected, causing long run times.</li>
+    </ul>
     See "<a href="#nontermination">Randoop does not terminate</a>".
   </li>
   <li>
