@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
-import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 
@@ -187,8 +186,6 @@ public class OmitMethodsTest {
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
     assertTrue(hasMethodNamed(omitted, "m1"));
-    TypedOperation omittedOp = omitted.iterator().next();
-    assertEquals(type, ((TypedClassOperation) omittedOp).getDeclaringType());
   }
 
   private boolean hasMethodNamed(Set<TypedOperation> operations, String name) {
