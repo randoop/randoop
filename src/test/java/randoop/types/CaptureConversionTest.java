@@ -1,11 +1,13 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
@@ -61,6 +63,53 @@ public class CaptureConversionTest {
         JDKTypes.LIST_TYPE,
         ArrayType.ofComponentType(ReferenceType.forClass(Integer.class)),
         listOperations);
+  }
+
+  /** A class with fields whose types have wildcards nested in their type arguments. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class NestedWildcards {
+    /** A parameterized type whose type argument contains a wildcard but is not one. */
+    List<List<?>> listOfListOfWildcard;
+
+    /** A parameterized type with one wildcard type argument and one that contains a wildcard. */
+    Map<?, List<?>> mapToListOfWildcard;
+  }
+
+  /**
+   * Returns the type of the given field of {@link NestedWildcards}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static InstantiatedType nestedWildcardsFieldType(String name) {
+    try {
+      return (InstantiatedType)
+          Type.forType(NestedWildcards.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /** Tests that capture conversion leaves unchanged a type argument that is not a wildcard. */
+  @Test
+  public void captureNestedWildcardArgumentTest() {
+    InstantiatedType type = nestedWildcardsFieldType("listOfListOfWildcard");
+    assertEquals(type, type.applyCaptureConversion());
+    assertFalse(type.isSubtypeOfOrEqualTo(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * Tests that capture conversion replaces a wildcard type argument but leaves unchanged a type
+   * argument that contains a wildcard.
+   */
+  @Test
+  public void captureWildcardAndNestedWildcardArgumentsTest() {
+    InstantiatedType type = nestedWildcardsFieldType("mapToListOfWildcard");
+    InstantiatedType captured = type.applyCaptureConversion();
+    List<TypeArgument> capturedArguments = captured.getTypeArguments();
+    assertTrue(
+        ((ReferenceArgument) capturedArguments.get(0)).getReferenceType().isCaptureVariable());
+    assertEquals(type.getTypeArguments().get(1), capturedArguments.get(1));
   }
 
   /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
