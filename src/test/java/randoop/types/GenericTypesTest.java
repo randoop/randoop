@@ -294,4 +294,28 @@ public class GenericTypesTest {
     assertTrue(list.isAssignableFrom(arraylist));
     assertFalse(arraylist.isAssignableFrom(list));
   }
+
+  /**
+   * A class whose second type parameter is bounded by its first.
+   *
+   * @param <U> the bound of {@code T}
+   * @param <T> a type parameter bounded by {@code U}
+   */
+  static class VariableBounded<U, T extends U> {}
+
+  /**
+   * A class whose type parameter has a recursive bound.
+   *
+   * @param <W> a type parameter with a recursive bound
+   */
+  static class RecursivelyBounded<W extends Comparable<W>> {}
+
+  @Test
+  public void testInstantiateWithSameVariable() {
+    TypeVariable w = GenericClassType.forClass(RecursivelyBounded.class).getTypeParameters().get(0);
+    InstantiatedType instantiated =
+        GenericClassType.forClass(VariableBounded.class).instantiate(w, w);
+    assertEquals(
+        w, ((ReferenceArgument) instantiated.getTypeArguments().get(1)).getReferenceType());
+  }
 }

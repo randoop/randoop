@@ -96,9 +96,16 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      if (!argType.isReferenceType()) {
+        return false;
+      }
+      // A type variable is an upper bound of itself.  canBeInstantiatedBy does not test this, and
+      // it is false for a type variable with a recursive bound such as `W extends Comparable<W>`.
+      if (TypeVariable.isSameVariable((ReferenceType) argType, thisBoundType)) {
+        return true;
+      }
       // The substitution does not replace the type variable, so it stands for an unknown type.
-      return argType.isReferenceType()
-          && ((TypeVariable) thisBoundType).canBeInstantiatedBy((ReferenceType) argType);
+      return ((TypeVariable) thisBoundType).canBeInstantiatedBy((ReferenceType) argType);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
