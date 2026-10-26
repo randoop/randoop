@@ -63,6 +63,27 @@ public class TypeInstantiatorTest {
   private static <K, V extends Map<K, V>> void kOnlyInBound(List<V> list) {}
 
   /**
+   * A method in which only {@code T} is related to the bound of a capture variable.
+   *
+   * @param <T> the element type of {@code c}
+   * @param <A> an unrelated type
+   * @param <B> an unrelated type
+   * @param <C> an unrelated type
+   * @param <D> an unrelated type
+   * @param c a collection
+   * @param a an A
+   * @param b a B
+   * @param cc a C
+   * @param d a D
+   * @return a list
+   */
+  @SuppressWarnings("UnusedMethod") // used via reflection
+  private static <T, A, B, C, D> List<T> unrelatedVariables(
+      Collection<? extends T> c, A a, B b, C cc, D d) {
+    return null;
+  }
+
+  /**
    * Returns the types of the fields of {@link InputTypes}, and all their supertypes.
    *
    * @return the types of the fields of {@link InputTypes}, and all their supertypes
@@ -162,6 +183,41 @@ public class TypeInstantiatorTest {
       }
       instantiations++;
       assertEquals(nodeType, typeArgument(instantiated.getInputTypes().get(0)));
+    }
+    assertTrue("no instantiation found", instantiations > 0);
+  }
+
+  /**
+   * In {@code <T, A, B, C, D> List<T> unrelatedVariables(Collection<? extends T> c, A a, B b, C cc,
+   * D d)}, only {@code T} is related to the bound of the capture variable. The instantiator
+   * searches the instantiations of {@code T}, and selects the instantiations of the other variables
+   * independently, rather than enumerating every combination of instantiations of all the
+   * variables.
+   */
+  @Test(timeout = 10000)
+  public void testUnrelatedVariablesAreSelectedIndependently() throws Exception {
+    Method m =
+        TypeInstantiatorTest.class.getDeclaredMethod(
+            "unrelatedVariables",
+            Collection.class,
+            Object.class,
+            Object.class,
+            Object.class,
+            Object.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
+    int instantiations = 0;
+    for (int i = 0; i < 100; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(operation);
+      if (instantiated == null) {
+        continue;
+      }
+      instantiations++;
+      ReferenceType argElementType = typeArgument(instantiated.getInputTypes().get(0));
+      ReferenceType resultElementType = typeArgument(instantiated.getOutputType());
+      assertTrue(
+          "bad instantiation: " + instantiated,
+          argElementType.isSubtypeOfOrEqualTo(resultElementType));
     }
     assertTrue("no instantiation found", instantiations > 0);
   }

@@ -484,35 +484,38 @@ public class TypeInstantiator {
     // on other parameters
     List<TypeVariable> genericParameters = new ArrayList<>(typeParameters.size());
 
-    // parameters with nongeneric bounds can be selected independently, but may be used by
+    // parameters with nongeneric bounds that occur in the bounds of generic parameters
     List<TypeVariable> nongenericParameters = new ArrayList<>(typeParameters.size());
 
-    // wildcard capture variables without generic bounds can be selected independently, and
-    // may not be used in the bounds of another parameter.
-    List<TypeVariable> captureParameters = new ArrayList<>(typeParameters.size());
+    // parameters with nongeneric bounds that occur in no bound of another parameter, such as
+    // wildcard capture variables without generic bounds; they can be selected independently
+    List<TypeVariable> independentParameters = new ArrayList<>(typeParameters.size());
 
     for (TypeVariable variable : typeParameters) {
       if (variable.hasGenericBound() || occursInBounds(variable, dependents)) {
         genericParameters.add(variable);
-      } else {
-        if (variable.isCaptureVariable()) {
-          captureParameters.add(variable);
-        } else {
+      }
+    }
+    for (TypeVariable variable : typeParameters) {
+      if (!genericParameters.contains(variable)) {
+        if (occursInBounds(variable, genericParameters)) {
           nongenericParameters.add(variable);
+        } else {
+          independentParameters.add(variable);
         }
       }
     }
 
     // If any of the type variables has a generic bound, assumes there are dependencies and
-    // enumerates all possible substitutions and tests them. Otherwise, independently selects an
-    // instantiating type for each variable.
+    // enumerates all possible substitutions for the generic parameters and the parameters in their
+    // bounds, and tests them.  Independently selects an instantiating type for each other variable.
 
     // These are the candidates that this routine will return.
     List<Substitution> result = new ArrayList<>();
     if (!genericParameters.isEmpty()) {
       // if there are type parameters with generic bounds
       if (!nongenericParameters.isEmpty()) {
-        // if there are type parameters with non-generic bounds, these may be variables in
+        // if there are type parameters with non-generic bounds that are variables in
         // generic-bounded parameters
 
         List<List<ReferenceType>> nongenCandidates = candidateTypes(nongenericParameters);
@@ -542,22 +545,18 @@ public class TypeInstantiator {
       if (result.isEmpty()) {
         return result;
       }
-    } else if (!nongenericParameters.isEmpty()) {
-      // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectSubstitutionIndependently(nongenericParameters, substitution);
-      if (substitution == null) {
-        return Collections.emptyList();
-      }
+    } else {
       result.add(substitution);
     }
 
-    // Can always select captured wildcards independently.  Augment each existing candidate.
-    if (!captureParameters.isEmpty()) {
-      if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+    // Select the independent parameters once, and augment each existing candidate.
+    if (!independentParameters.isEmpty()) {
+      Substitution independent =
+          selectSubstitutionIndependently(independentParameters, new Substitution());
+      if (independent == null) {
+        return Collections.emptyList();
       }
+      result.replaceAll(s -> s.extend(independent));
     }
 
     return result;
