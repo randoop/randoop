@@ -2,6 +2,8 @@ package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -48,7 +50,17 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
   }
 
   @Override
-  public void componentsCleared() {
-    weightMap.clear();
+  public void componentsCleared(Set<Sequence> retainedSequences) {
+    weightMap.keySet().retainAll(retainedSequences);
+  }
+
+  /**
+   * Returns the weight of the given sequence, or null if this has not computed it.
+   *
+   * @param sequence a sequence
+   * @return the weight of the sequence, or null
+   */
+  @Nullable Double getWeight(Sequence sequence) {
+    return weightMap.get(sequence);
   }
 }
