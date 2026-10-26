@@ -529,7 +529,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The default value for the {@code --attempted-limit}, {@code --generated-limit}, and {@code
    * --output-limit} command-line options.
    */
-  private static int LIMIT_DEFAULT = 100_000_000;
+  public static final int LIMIT_DEFAULT = 100_000_000;
 
   /** Maximum number of attempts to generate a test method candidate. */
   @Option("Maximum number of attempts to generate a candidate test")
@@ -1005,7 +1005,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean progressdisplay = true;
 
   /** Default value for progressintervalmillis; helps to see if user has set it. */
-  public static long PROGRESSINTERVALMILLIS_DEFAULT = 60_000;
+  public static final long PROGRESSINTERVALMILLIS_DEFAULT = 60_000;
 
   /** Display a progress message every &lt;int&gt; milliseconds; -1 means no display. */
   @Option("Display progress message every <int> milliseconds; -1 means no display.")
