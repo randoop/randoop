@@ -1332,8 +1332,8 @@ public class RandoopSystemTest {
     RandoopOptions options = createRandoopOptions(testEnvironment);
     // The agent's default replacements include the java.util.Random() constructor.
     options.addTestClass("java.util.Random");
-    // The default omit patterns also omit java.util.Random(); disable them so that only the
-    // agent's list of replaced methods causes Randoop to omit it.
+    // The default omit patterns also list java.util.Random(); disable them so that only the agent's
+    // list of replaced methods causes Randoop to omit it.
     options.setFlag("omit-methods-no-defaults");
     options.setFlag("no-error-revealing-tests");
     options.setOption("generated_limit", "100");
