@@ -28,6 +28,13 @@ public class LazyParameterBoundTest {
   static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   /**
+   * A type parameter whose bound contains the type parameter as the bound of a wildcard.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfWildcardArgumentBound<T extends Comparable<? super T>> {}
+
+  /**
    * A type parameter whose bound contains another type parameter nested in a type argument.
    *
    * @param <U> the type parameter that occurs in the bound
@@ -116,6 +123,18 @@ public class LazyParameterBoundTest {
             .instantiate(
                 GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteWildcardBoundVariable() {
+    TypeVariable t =
+        GenericClassType.forClass(SelfWildcardArgumentBound.class).getTypeParameters().get(0);
+    TypeVariable v = GenericClassType.forClass(Unbounded.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
     assertEquals(Collections.singletonList(v), bound.getTypeParameters());
   }
 
