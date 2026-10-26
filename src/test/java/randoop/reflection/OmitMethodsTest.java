@@ -176,15 +176,7 @@ public class OmitMethodsTest {
     assertHasMethod("m2", extractor.getOperations());
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
-<<<<<<< HEAD
     assertHasMethod("G.m1", omitted);
-||||||| 15db5205b
-    assertTrue(hasMethodNamed(omitted, "m1"));
-    TypedOperation omittedOp = omitted.iterator().next();
-    assertEquals(type, ((TypedClassOperation) omittedOp).getDeclaringType());
-=======
-    assertTrue(hasMethodNamed(omitted, "m1"));
->>>>>>> 5b63a18307b80cfa04f7430fbf227a620ab2f231
   }
 
   /**
