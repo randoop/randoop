@@ -321,7 +321,7 @@ public abstract class AbstractGenerator {
       }
 
       if (GenInputsAbstract.progressdisplay
-          && GenInputsAbstract.progressintervalsteps != -1
+          && GenInputsAbstract.progressintervalsteps > 0
           && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
         progressDisplay.display(!GenInputsAbstract.deterministic);
       }

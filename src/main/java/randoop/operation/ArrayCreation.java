@@ -71,10 +71,8 @@ public class ArrayCreation extends CallableOperation {
     assert input.length == 1 : "requires array dimension as input";
     @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
     int length = ((Integer) input[0]).intValue();
-    long startTimeMillis = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
-    long totalTime = System.currentTimeMillis() - startTimeMillis;
-    return new NormalExecution(theArray, totalTime);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
