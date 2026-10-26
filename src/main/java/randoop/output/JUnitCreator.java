@@ -2,8 +2,6 @@ package randoop.output;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -43,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -576,7 +573,7 @@ public final class JUnitCreator {
    *
    * @param bodyText the lines of code that form the body of the block, or null
    * @return a block statement containing the given code, or null if {@code bodyText} is null
-   * @throws ParseException if the code cannot be parsed; its message describes the problems
+   * @throws ParseException if the code cannot be parsed
    */
   public static @Nullable BlockStmt parseFixture(@Nullable List<String> bodyText)
       throws ParseException {
@@ -589,13 +586,6 @@ public final class JUnitCreator {
       blockText.append(line).append(Globals.lineSep);
     }
     blockText.append(Globals.lineSep).append('}');
-    ParseResult<BlockStmt> result = javaParser.parseBlock(blockText.toString());
-    if (!result.isSuccessful() || !result.getResult().isPresent()) {
-      throw new ParseException(
-          result.getProblems().stream()
-              .map(Problem::getVerboseMessage)
-              .collect(Collectors.joining(Globals.lineSep)));
-    }
-    return result.getResult().get();
+    return javaParser.parseBlock(blockText.toString()).getResult().get();
   }
 }
