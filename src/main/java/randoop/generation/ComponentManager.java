@@ -68,9 +68,6 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  /** The size of {@link #gralComponents} when it contains only the seed sequences. */
-  private final int gralSeedsSize;
-
   /**
    * The primitive values of the seed and literal sequences, which {@link #clearGeneratedSequences}
    * retains. Null until first needed.
