@@ -100,8 +100,20 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
+    if (boundType instanceof GenericArrayType) {
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      ReferenceType arrayType = ((ReferenceArgument) typeArgument).getReferenceType();
+      if (((ArrayType) arrayType).getComponentType().isVariable()) {
+        return new LazyReferenceBound(arrayType);
+      }
+      return new EagerReferenceBound(arrayType);
+    }
+
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        "lazy parameter bounds should be a type variable, parameterized type, or array type");
   }
 
   /**
@@ -400,6 +412,17 @@ class LazyParameterBound extends ParameterBound {
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
     return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * cannot be determined without a substitution for its type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isLowerBound(JavaTypes.NULL_TYPE, substitution);
   }
 
   @Override

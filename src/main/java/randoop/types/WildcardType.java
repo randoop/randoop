@@ -154,44 +154,6 @@ class WildcardType extends ParameterType {
     return this;
   }
 
-  /**
-   * If this type has an upper bound, checks for containment cases:
-   *
-   * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
-   *   <li>{@code ? extends Object} contains {@code ? super S}
-   * </ul>
-   *
-   * The first two are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the case
-   *
-   * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   * </ul>
-   *
-   * A {@code ? super T} wildcard does not contain any {@code ? extends S} wildcard, including
-   * {@code ?} (JLS section 4.5.1).
-   *
-   * @param otherType the type to check for
-   * @return true if this type contains the other type, false otherwise
-   */
-  public boolean contains(WildcardType otherType) {
-    if (this.hasUpperBound) {
-      if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound());
-      } else {
-        return this.getUpperTypeBound().isObject();
-      }
-    } else {
-      if (otherType.hasUpperBound) {
-        return false;
-      } else {
-        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
-      }
-    }
-  }
-
   @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return getTypeBound().isGeneric(ignoreWildcards);

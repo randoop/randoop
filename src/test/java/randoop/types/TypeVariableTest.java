@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -470,6 +471,55 @@ public class TypeVariableTest {
   abstract static class ComparableToOther implements Comparable<String> {}
 
   /**
+   * Mutually recursive type parameters.
+   *
+   * @param <X> a type parameter whose bound refers to {@code Y}
+   * @param <Y> a type parameter whose bound refers to {@code X}
+   */
+  static class ComparableToListBound<X extends Comparable<Y>, Y extends List<X>> {}
+
+  /** A class that satisfies the bounds of {@link ComparableToListBound}, with Y := ArrayList. */
+  abstract static class ComparableToListOfSelf
+      implements Comparable<java.util.ArrayList<ComparableToListOfSelf>> {}
+
+  /**
+   * A type parameter {@code Y} bounded by a list of a sibling.
+   *
+   * @param <X> the element type
+   * @param <Y> a type parameter bounded by {@code List<X>}
+   */
+  static class ListBound<X, Y extends List<X>> {}
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array of the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class ArrayWildcardBound<T extends Collection<? extends T[]>> {}
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array of the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class OtherArrayWildcardBound<T extends Collection<? extends T[]>> {}
+
+  /**
+   * A class with a generic method whose type parameter's bound refers to the class's type
+   * parameter.
+   *
+   * @param <E> the class's type parameter
+   */
+  static class Outer<E> {
+    /**
+     * A generic method.
+     *
+     * @param <T> a type parameter bounded by a list of the class's type parameter
+     */
+    <T extends List<E>> void m() {}
+  }
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -735,5 +785,47 @@ public class TypeVariableTest {
     // List<X> satisfies Y's bound, although X occurs in the replacement for Y.
     assertNotNull(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(list.instantiate(x), y));
+  }
+
+  @Test
+  public void testMutuallyRecursiveInstantiation() {
+    TypeVariable x = typeParameter(ComparableToListBound.class, 0);
+    // X := ComparableToListOfSelf and Y := ArrayList<ComparableToListOfSelf>.
+    assertTrue(x.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToListOfSelf.class)));
+    assertFalse(x.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testIdentitySubstitutionKeepsCopy() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(listOfString, ((ReferenceBound) copy.getUpperTypeBound()).getBoundType());
+    // A copy is the same type variable as the original.
+    assertEquals(y, copy);
+    assertEquals(y.hashCode(), copy.hashCode());
+    // Mapping the type variable to itself keeps the copy's bound.
+    TypeVariable result = (TypeVariable) copy.substitute(new Substitution(y, y));
+    assertEquals(listOfString, ((ReferenceBound) result.getUpperTypeBound()).getBoundType());
+  }
+
+  @Test
+  public void testArrayInWildcardInLazyBound() {
+    TypeVariable t = typeParameter(ArrayWildcardBound.class);
+    assertTrue(t.isInstantiationOf(typeParameter(OtherArrayWildcardBound.class)));
+    assertFalse(
+        t.canBeInstantiatedBy(
+            GenericClassType.forClass(java.util.ArrayList.class)
+                .instantiate(JavaTypes.OBJECT_TYPE)));
+  }
+
+  @Test
+  public void testEnclosingTypeParameterStandsForItself() throws NoSuchMethodException {
+    TypeVariable t =
+        TypeVariable.forType(Outer.class.getDeclaredMethod("m").getTypeParameters()[0]);
+    // E is fixed in Outer, so List<String> is not known to be a List<E>.
+    assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
   }
 }

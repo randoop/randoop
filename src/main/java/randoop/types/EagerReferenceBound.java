@@ -79,17 +79,6 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof ReferenceBound) {
-      return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
-    }
-    // `bound` is an intersection or a LazyParameterBound.  An intersection is never a type
-    // variable's lower bound, and a LazyParameterBound cannot be compared without first
-    // substituting for its type variables.
-    return false;
-  }
-
-  @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
