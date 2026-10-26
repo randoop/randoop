@@ -121,4 +121,15 @@ class LazyReferenceBound extends EagerReferenceBound {
   List<TypeVariable> getLazyTypeParameters() {
     return getTypeParameters();
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * contains type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
+  }
 }
