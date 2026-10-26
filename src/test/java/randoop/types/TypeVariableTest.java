@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -520,6 +521,13 @@ public class TypeVariableTest {
      * @param <T> a type parameter bounded by a list of the class's type parameter
      */
     <T extends List<E>> void m() {}
+
+    /**
+     * A generic inner class.
+     *
+     * @param <T> a type parameter bounded by {@code E}
+     */
+    class Inner<T extends E> {}
   }
 
   /**
@@ -899,5 +907,46 @@ public class TypeVariableTest {
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
+  }
+
+  /**
+   * A type parameter whose lazy bound has a sibling in a nested type argument, before the type
+   * parameter.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<List<S>, T>}
+   */
+  static class NestedSiblingFirst<S, T extends Map<List<S>, T>> {}
+
+  /**
+   * A type parameter whose lazy bound has a sibling in a nested type argument, after the type
+   * parameter.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<T, List<S>>}
+   */
+  static class NestedSiblingLast<S, T extends Map<T, List<S>>> {}
+
+  @Test
+  public void testSubstituteCopyForOriginal() {
+    TypeVariable e = typeParameter(Outer.class, 0);
+    TypeVariable t = typeParameter(Outer.Inner.class, 0);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(e, JavaTypes.STRING_TYPE));
+    // Substituting a copy with other bounds yields that copy.
+    TypeVariable result = (TypeVariable) t.substitute(new Substitution(t, copy));
+    assertEquals(copy.getUpperTypeBound(), result.getUpperTypeBound());
+  }
+
+  @Test
+  public void testLazyTypeParametersOfNestedSibling() {
+    for (Class<?> c : Arrays.asList(NestedSiblingFirst.class, NestedSiblingLast.class)) {
+      List<TypeVariable> parameters = GenericClassType.forClass(c).getTypeParameters();
+      TypeVariable s = parameters.get(0);
+      TypeVariable t = parameters.get(1);
+      ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(parameters, s, t));
+      // The result does not depend on the order of the type arguments.
+      assertTrue(bound instanceof LazyReferenceBound);
+      assertTrue(bound.getLazyTypeParameters().contains(s));
+    }
   }
 }
