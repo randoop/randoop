@@ -118,7 +118,7 @@ public class Substitution {
 
   @Override
   public int hashCode() {
-    return Objects.hash(map);
+    return Objects.hashCode(map);
   }
 
   @Override

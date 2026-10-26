@@ -51,7 +51,7 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   @Override
   public int hashCode() {
-    return Objects.hash(boundType.toString());
+    return Objects.hashCode(boundType.toString());
   }
 
   @Override
