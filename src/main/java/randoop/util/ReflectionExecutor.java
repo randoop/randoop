@@ -181,9 +181,12 @@ public final class ReflectionExecutor {
       // If test doesn't finish in time, suspend it.
       runnerThread.join(call_timeout_millis);
 
-      // Test isAlive() rather than runFinished.  A thread that terminated by throwing has
-      // runFinished == false, but it did not time out.
-      if (runnerThread.isAlive()) {
+      boolean alive = runnerThread.isAlive();
+      // Read `thrown` after `isAlive()`:  if the thread has terminated, then `thrown` is final.
+      Throwable thrown = runnerThread.thrown;
+      // A thread that has set `runFinished` or `thrown` is done running the code and did not time
+      // out, even if it is still alive (for example, running its uncaught exception handler).
+      if (alive && thrown == null && !runnerThread.runFinished) {
         Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
         // TODO: is it possible to log the test being executed?
         // (Maybe not here, but it has been previously logged.)
@@ -195,8 +198,6 @@ public final class ReflectionExecutor {
         throw new TimeoutException();
       }
 
-      // The thread has terminated, so `thrown` is final.
-      Throwable thrown = runnerThread.thrown;
       if (thrown != null) {
         rethrow(code, thrown);
       }
