@@ -75,7 +75,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(runtimeType);
+    return Objects.hashCode(runtimeType);
   }
 
   @Override
