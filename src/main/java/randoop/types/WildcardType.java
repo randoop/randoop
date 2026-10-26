@@ -164,15 +164,14 @@ class WildcardType extends ParameterType {
    * </ul>
    *
    * The first two are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
+   * {@code ? extends Object}. Otherwise, checks for the case
    *
    * <ul>
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
    *
-   * The last two being equivalent from the perspective of reflection.
+   * A {@code ? super T} wildcard does not contain any {@code ? extends S} wildcard, including
+   * {@code ?} (JLS section 4.5.1).
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
@@ -186,37 +185,10 @@ class WildcardType extends ParameterType {
       }
     } else {
       if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+        return false;
       } else {
         return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
       }
-    }
-  }
-
-  /**
-   * Returns true if this wildcard type contains the given reference type, as a type argument (JLS
-   * section 4.5.1):
-   *
-   * <ul>
-   *   <li>{@code ? extends T} contains {@code S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? super T} contains {@code S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   * </ul>
-   *
-   * Returns false if the bound of this wildcard type is not a {@link ReferenceBound}.
-   *
-   * @param otherType the type to check for
-   * @return true if this type contains the other type, false otherwise
-   */
-  public boolean contains(ReferenceType otherType) {
-    ParameterBound bound = getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
-    if (hasUpperBound) {
-      return otherType.isSubtypeOfOrEqualTo(boundType);
-    } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
     }
   }
 

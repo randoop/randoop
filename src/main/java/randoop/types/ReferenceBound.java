@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.types.LazyParameterBound.LazyBoundException;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -117,52 +118,287 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return bound.hasUpperBound(boundType.substitute(substitution));
+    // Mapping each type variable that the substitution does not replace to itself makes it an
+    // unknown.
+    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+    return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
   }
 
   @Override
-  boolean hasUpperBound(ReferenceType upperBound) {
-    if (boundType.isVariable()) {
-      if (boundType.equals(upperBound)) {
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    return isSubtypeOrEqual(boundType, upperBound, substitution);
+  }
+
+  // The following methods compare types in which some type variables stand for unknown types, as
+  // determined by getUnknown, and every other type variable stands for itself.  They differ from
+  // ReferenceType.isSubtypeOfOrEqualTo, which treats a raw type as a subtype of every parameterized
+  // type that contains a type variable, and from isUpperBound(Type, Substitution), which treats
+  // every type variable in the bound as an unknown.  They are approximate:  they do not require two
+  // occurrences of an unknown to stand for the same type.
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}.
+   *
+   * @param type the possible subtype
+   * @param otherType the possible supertype, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOrEqual(
+      ReferenceType type, ReferenceType otherType, Substitution substitution) {
+    if (isSameVariable(type, otherType) || otherType.isObject()) {
+      return true;
+    }
+    TypeVariable unknown = getUnknown(otherType, substitution);
+    if (unknown != null) {
+      // The unknown may be the type or any of its supertypes.
+      if (satisfiesBound(type, unknown, substitution)) {
         return true;
       }
-      // An upper bound of a type variable's upper bound is an upper bound of the type variable.
-      TypeVariable variable = (TypeVariable) boundType;
-      return TypeVariable.resolveTypeVariables(variable.getUpperTypeBound())
-          .hasUpperBound(upperBound);
+      if (type instanceof ClassOrInterfaceType) {
+        for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+          if (satisfiesBound(supertype, unknown, substitution)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      if (!type.isVariable()) {
+        return false;
+      }
+      // Try the supertypes of the type variable, below.
     }
-    return isSubtypeOrEqual(boundType, upperBound);
+    if (type.isVariable()) {
+      // An upper bound of a type variable's upper bound is an upper bound of the type variable.
+      return ((TypeVariable) type)
+          .getResolvedUpperTypeBound()
+          .hasUpperBound(otherType, substitution);
+    }
+    if (otherType.isVariable()) {
+      // A type variable that stands for itself is a supertype of its lower bound.
+      ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
+      if (!(lowerBound instanceof ReferenceBound)) {
+        return false;
+      }
+      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && isSubtypeOrEqual(type, lowerBoundType, substitution);
+    }
+    if (type.isArray() && otherType.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      Type otherComponentType = ((ArrayType) otherType).getComponentType();
+      if (componentType.isReferenceType() && otherComponentType.isReferenceType()) {
+        return isSubtypeOrEqual(
+            (ReferenceType) componentType, (ReferenceType) otherComponentType, substitution);
+      }
+      return componentType.equals(otherComponentType);
+    }
+    if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      InstantiatedType supertype =
+          ((ClassOrInterfaceType) type)
+              .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+      if (supertype == null) {
+        return false;
+      }
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
+      // section 4.10.2).
+      try {
+        supertype = supertype.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        return false;
+      }
+      List<TypeArgument> typeArguments = supertype.getTypeArguments();
+      List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
+      for (int i = 0; i < typeArguments.size(); i++) {
+        if (!contains(otherTypeArguments.get(i), typeArguments.get(i), substitution)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return type.isSubtypeOfOrEqualTo(otherType);
   }
 
   /**
-   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. A type variable
-   * in either type stands for itself. This differs from {@link
-   * ParameterBound#isUpperBound(Type,Substitution)}, which treats type variables in the bound as
-   * unknowns to be instantiated, and from {@link ReferenceType#isSubtypeOfOrEqualTo(Type)}, which
-   * treats a raw type as a subtype of a parameterized type.
+   * Returns true if the type argument {@code otherArgument} contains {@code argument} (JLS section
+   * 4.5.1).
    *
-   * @param type the possible subtype
-   * @param otherType the possible supertype
-   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   * @param otherArgument the possibly containing type argument, which may contain unknowns
+   * @param argument the possibly contained type argument
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code otherArgument} contains {@code argument}
    */
-  private static boolean isSubtypeOrEqual(ReferenceType type, ReferenceType otherType) {
-    if (!(otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType)) {
-      return type.isSubtypeOfOrEqualTo(otherType);
+  private static boolean contains(
+      TypeArgument otherArgument, TypeArgument argument, Substitution substitution) {
+    if (!(argument instanceof ReferenceArgument)) {
+      // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
+      // wildcard is contained only by an identical wildcard.
+      return otherArgument.equals(argument);
     }
-    InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-    InstantiatedType supertype =
-        ((ClassOrInterfaceType) type)
-            .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
-    if (supertype == null) {
+    ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
+    if (otherArgument instanceof ReferenceArgument) {
+      return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
+    }
+    WildcardArgument wildcard = (WildcardArgument) otherArgument;
+    ParameterBound bound = wildcard.getTypeBound();
+    if (!(bound instanceof ReferenceBound)) {
       return false;
     }
-    List<TypeArgument> typeArguments = supertype.getTypeArguments();
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (wildcard.hasUpperBound()) {
+      // ? extends B contains T if T <: B.
+      return isSubtypeOrEqual(type, boundType, substitution);
+    }
+    // ? super B contains T if B <: T.
+    return canBeSubtype(boundType, type, substitution);
+  }
+
+  /**
+   * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
+   * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
+   * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
+   * upper bound.
+   *
+   * @param lowerType the possible subtype, which may be an unknown
+   * @param type the possible supertype
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code lowerType} is, or can be chosen to be, a subtype of {@code type}
+   */
+  private static boolean canBeSubtype(
+      ReferenceType lowerType, ReferenceType type, Substitution substitution) {
+    TypeVariable unknown = getUnknown(lowerType, substitution);
+    if (unknown == null) {
+      return isSubtypeOrEqual(lowerType, type, substitution);
+    }
+    if (satisfiesBound(type, unknown, substitution)) {
+      return true;
+    }
+    if (type.isVariable()) {
+      ParameterBound lowerBound = ((TypeVariable) type).getResolvedLowerTypeBound();
+      if (lowerBound instanceof ReferenceBound) {
+        ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+        if (!lowerBoundType.equals(JavaTypes.NULL_TYPE)
+            && satisfiesBound(lowerBoundType, unknown, substitution)) {
+          return true;
+        }
+      }
+    }
+    ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
+    if (!(unknownBound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType unknownBoundType =
+        ((ReferenceBound) unknownBound).getBoundType().substitute(substitution);
+    return isSubtypeOrEqual(unknownBoundType, type, substitution)
+        && satisfiesBound(unknownBoundType, unknown, substitution);
+  }
+
+  /**
+   * Returns true if {@code type} is the same type as {@code otherType}.
+   *
+   * @param type a type
+   * @param otherType a type, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code type} is the same type as {@code otherType}
+   */
+  private static boolean isSameType(
+      ReferenceType type, ReferenceType otherType, Substitution substitution) {
+    if (isSameVariable(type, otherType)) {
+      return true;
+    }
+    TypeVariable unknown = getUnknown(otherType, substitution);
+    if (unknown != null) {
+      return satisfiesBound(type, unknown, substitution);
+    }
+    if (type.isArray() && otherType.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      Type otherComponentType = ((ArrayType) otherType).getComponentType();
+      if (componentType.isReferenceType() && otherComponentType.isReferenceType()) {
+        return isSameType(
+            (ReferenceType) componentType, (ReferenceType) otherComponentType, substitution);
+      }
+      return componentType.equals(otherComponentType);
+    }
+    if (!(type instanceof InstantiatedType && otherType instanceof InstantiatedType)) {
+      return false;
+    }
+    InstantiatedType instantiatedType = (InstantiatedType) type;
+    InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+    if (!instantiatedType
+        .getGenericClassType()
+        .equals(otherInstantiatedType.getGenericClassType())) {
+      return false;
+    }
+    List<TypeArgument> typeArguments = instantiatedType.getTypeArguments();
     List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
     for (int i = 0; i < typeArguments.size(); i++) {
-      if (!otherTypeArguments.get(i).contains(typeArguments.get(i))) {
+      TypeArgument otherTypeArgument = otherTypeArguments.get(i);
+      boolean same =
+          otherTypeArgument instanceof WildcardArgument
+              ? otherTypeArgument.equals(typeArguments.get(i))
+              : contains(otherTypeArgument, typeArguments.get(i), substitution);
+      if (!same) {
         return false;
       }
     }
     return true;
+  }
+
+  /**
+   * Returns true if the two types are equal, or are the same declared type variable. Substitution
+   * creates a copy of a type variable whose bounds differ, such as by having a lazy part resolved,
+   * and {@link ExplicitTypeVariable#equals(Object)} compares bounds.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the two types are equal or are the same declared type variable
+   */
+  private static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+    if (type instanceof ExplicitTypeVariable && otherType instanceof ExplicitTypeVariable) {
+      return ((ExplicitTypeVariable) type)
+          .getReflectionTypeVariable()
+          .equals(((ExplicitTypeVariable) otherType).getReflectionTypeVariable());
+    }
+    return type.equals(otherType);
+  }
+
+  /**
+   * If the given type is a type variable that stands for an unknown type, returns the equivalent
+   * type variable that the substitution maps. Otherwise returns null. A type variable stands for an
+   * unknown type if the substitution maps it to itself.
+   *
+   * @param type a type
+   * @param substitution the type substitution
+   * @return the type variable, if {@code type} stands for an unknown type; otherwise null
+   */
+  private static @Nullable TypeVariable getUnknown(ReferenceType type, Substitution substitution) {
+    if (!type.isVariable()) {
+      return null;
+    }
+    for (TypeVariable variable : substitution.keySet()) {
+      if (isSameVariable(variable, type)) {
+        ReferenceType replacement = substitution.get(variable);
+        return replacement != null && isSameVariable(variable, replacement) ? variable : null;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns true if the unknown type that {@code unknown} stands for can be {@code type}: that is,
+   * if {@code type} satisfies the upper bound of {@code unknown}.
+   *
+   * @param type the type
+   * @param unknown a type variable that stands for an unknown type
+   * @param substitution the type substitution, which maps {@code unknown} to itself
+   * @return true if {@code type} satisfies the upper bound of {@code unknown}
+   */
+  private static boolean satisfiesBound(
+      ReferenceType type, TypeVariable unknown, Substitution substitution) {
+    // Replacing the unknown by the type ensures termination, because there are fewer unknowns.
+    return unknown
+        .getUpperTypeBound()
+        .isUpperBound(new EagerReferenceBound(type), substitution.replace(unknown, type));
   }
 }

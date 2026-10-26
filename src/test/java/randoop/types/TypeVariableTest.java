@@ -1,6 +1,8 @@
 package randoop.types;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
@@ -224,6 +226,239 @@ public class TypeVariableTest {
   static class MutualBound<S extends Comparable<T>, T extends List<S>> {}
 
   /**
+   * A type parameter bounded by another type parameter that has a bound.
+   *
+   * @param <W> the bound of {@code V}
+   * @param <V> the type parameter
+   */
+  static class BoundedVariableBound<W extends Number, V extends W> {}
+
+  /**
+   * A type parameter bounded by a parameterized type with a nested type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class CollectionListStringBound<T extends Collection<List<String>>> {}
+
+  /**
+   * A type parameter whose bound contains a wildcard whose bound refers to the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class CollectionListSelfBound<T extends Collection<? extends List<T>>> {}
+
+  /**
+   * A type parameter whose self-referential bound contains an array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayBound<T extends java.util.Map<T, T[]>> {}
+
+  /**
+   * A type parameter whose self-referential bound contains an array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class OtherSelfArrayBound<T extends java.util.Map<T, T[]>> {}
+
+  /**
+   * A type parameter bounded by {@code Map<?, ?>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class MapWildcardBound<T extends java.util.Map<?, ?>> {}
+
+  /**
+   * A class in the style of a fluent assertion library, whose type parameter {@code SELF} refers to
+   * its sibling {@code ACTUAL}.
+   *
+   * @param <SELF> the type of this assertion
+   * @param <ACTUAL> the type of the value under test
+   */
+  abstract static class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, ACTUAL> {}
+
+  /**
+   * A subclass of {@link AbstractAssert} that passes its own type parameters to it.
+   *
+   * @param <SELF> the type of this assertion
+   * @param <ACTUAL> the type of the value under test
+   */
+  abstract static class AbstractObjectAssert<
+          SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL>
+      extends AbstractAssert<SELF, ACTUAL> {}
+
+  /**
+   * A type parameter bounded by an {@link AbstractAssert} whose value type is {@code String}.
+   *
+   * @param <SELF> the type parameter
+   */
+  static class StringAssertBound<SELF extends AbstractAssert<SELF, String>> {}
+
+  /** A concrete instantiation of {@link AbstractAssert}. */
+  static class ConcreteAssert extends AbstractAssert<ConcreteAssert, String> {}
+
+  /**
+   * A generic interface with two type parameters.
+   *
+   * @param <X> the first type parameter
+   * @param <Y> the second type parameter
+   */
+  interface Related<X, Y> {}
+
+  /** A class that is related to itself and to {@code String}. */
+  static class RelatedToString implements Related<RelatedToString, String> {}
+
+  /**
+   * A type parameter bounded by {@link RelatedToString}.
+   *
+   * @param <T> the type parameter
+   */
+  static class RelatedToStringBound<T extends RelatedToString> {}
+
+  /**
+   * A type parameter {@code V} bounded by its sibling {@code S}, whose bound refers to a sibling
+   * {@code B} that does not occur in the bound of {@code V}.
+   *
+   * @param <S> a type parameter whose bound refers to {@code B}
+   * @param <B> a type parameter
+   * @param <V> a type parameter bounded by {@code S}
+   */
+  static class SiblingOfSiblingBound<S extends Related<S, B>, B, V extends S> {}
+
+  /** A class that is related to itself and to {@code Integer}. */
+  static class RelatedToInteger implements Related<RelatedToInteger, Integer> {}
+
+  /**
+   * A type parameter bounded by {@link RelatedToInteger}.
+   *
+   * @param <T> the type parameter
+   */
+  static class RelatedToIntegerBound<T extends RelatedToInteger> {}
+
+  /**
+   * Like {@link SiblingOfSiblingBound}, but {@code B} has a bound.
+   *
+   * @param <S> a type parameter whose bound refers to {@code B}
+   * @param <B> a type parameter bounded by {@code Number}
+   * @param <V> a type parameter bounded by {@code S}
+   */
+  static class SiblingOfBoundedSiblingBound<
+      S extends Related<S, B>, B extends Number, V extends S> {}
+
+  /**
+   * A type parameter bounded by {@code List<? extends Integer>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListExtendsIntegerBound<T extends List<? extends Integer>> {}
+
+  /**
+   * A type parameter bounded by {@code List<? extends String>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListExtendsStringBound<T extends List<? extends String>> {}
+
+  /**
+   * A type parameter bounded by {@code List<? super Integer>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListSuperIntegerBound<T extends List<? super Integer>> {}
+
+  /**
+   * A type parameter bounded by {@code List<? super Number>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListSuperNumberBound<T extends List<? super Number>> {}
+
+  /**
+   * A type parameter bounded by {@code List<? super String>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListSuperStringBound<T extends List<? super String>> {}
+
+  /**
+   * A type parameter bounded by {@code List<Object>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListObjectBound<T extends List<Object>> {}
+
+  /**
+   * A type parameter bounded by {@code List<String[]>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListStringArrayBound<T extends List<String[]>> {}
+
+  /**
+   * A type parameter bounded by {@code List<Number[]>}.
+   *
+   * @param <T> the type parameter
+   */
+  static class ListNumberArrayBound<T extends List<Number[]>> {}
+
+  /**
+   * A type parameter {@code T} whose bound has a wildcard bounded by a sibling.
+   *
+   * @param <B> the bound of the wildcard
+   * @param <T> the type parameter
+   */
+  static class ExtendsSiblingBound<B extends Number, T extends List<? extends B>> {}
+
+  /**
+   * A type parameter {@code T} whose bound has a wildcard with a sibling as its lower bound.
+   *
+   * @param <B> the lower bound of the wildcard
+   * @param <T> the type parameter
+   */
+  static class SuperSiblingBound<B extends Number, T extends List<? super B>> {}
+
+  /**
+   * A type parameter {@code T} whose bound has a sibling as a type argument.
+   *
+   * @param <S> the type argument
+   * @param <T> the type parameter
+   */
+  static class SiblingArgumentBound<S extends Number, T extends List<S>> {}
+
+  /**
+   * A type parameter {@code T} whose bound has an array of a sibling as a type argument.
+   *
+   * @param <S> the component type
+   * @param <T> the type parameter
+   */
+  static class SiblingArrayBound<S extends Comparable<S>, T extends List<S[]>> {}
+
+  /**
+   * A type parameter {@code T} whose bound has as a type argument a sibling with a self-referential
+   * bound.
+   *
+   * @param <S> the type argument
+   * @param <T> the type parameter
+   */
+  static class SelfComparableSiblingArgumentBound<S extends Comparable<S>, T extends List<S>> {}
+
+  /**
+   * A type parameter {@code U} bounded by a sibling with a self-referential bound.
+   *
+   * @param <S> the bound of {@code U}
+   * @param <U> the type parameter
+   */
+  static class SelfComparableSiblingBound<S extends Comparable<S>, U extends S> {}
+
+  /**
+   * Mutually recursive type parameters that {@code String} satisfies.
+   *
+   * @param <S> a type parameter whose bound refers to {@code T}
+   * @param <T> a type parameter whose bound refers to {@code S}
+   */
+  static class MutualComparableBound<S extends Comparable<T>, T extends Comparable<S>> {}
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -334,7 +569,142 @@ public class TypeVariableTest {
     assertTrue(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
     assertTrue(t.isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
     assertFalse(t.isInstantiationOf(typeParameter(ComparableWildcardBound.class)));
-    // MutualBound.T's bound is List<S>, and String does not satisfy S's bound Comparable<T>.
+    // MutualBound.T's bound is List<S>.  S stands for an unknown type that must satisfy its bound
+    // Comparable<T>, with ListStringBound.T for T.  S would have to be String, and String is not a
+    // Comparable<ListStringBound.T>.
     assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testBoundedVariableBound() {
+    TypeVariable v = typeParameter(BoundedVariableBound.class, 1);
+    assertTrue(typeParameter(NumberBound.class).isInstantiationOf(v));
+    assertTrue(typeParameter(IntegerBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(ComparableIntegerBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(v));
+  }
+
+  @Test
+  public void testNestedTypeArgument() {
+    TypeVariable t = typeParameter(CollectionListSelfBound.class);
+    assertFalse(typeParameter(CollectionListStringBound.class).isInstantiationOf(t));
+    assertTrue(
+        typeParameter(CollectionListStringBound.class)
+            .isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
+  }
+
+  @Test
+  public void testArrayInBound() {
+    TypeVariable t = typeParameter(SelfArrayBound.class);
+    assertTrue(t.isInstantiationOf(typeParameter(OtherSelfArrayBound.class)));
+    assertTrue(t.isInstantiationOf(typeParameter(MapWildcardBound.class)));
+    assertFalse(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
+  }
+
+  @Test
+  public void testSiblingTypeParameter() {
+    TypeVariable self = typeParameter(AbstractAssert.class, 0);
+    assertTrue(typeParameter(AbstractObjectAssert.class, 0).isInstantiationOf(self));
+    assertTrue(typeParameter(StringAssertBound.class).isInstantiationOf(self));
+    assertFalse(typeParameter(SelfComparableBound.class).isInstantiationOf(self));
+
+    assertTrue(self.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteAssert.class)));
+    assertFalse(self.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSiblingOfSiblingTypeParameter() {
+    TypeVariable v = typeParameter(SiblingOfSiblingBound.class, 2);
+    // S := RelatedToString and B := String satisfy the bounds.
+    assertTrue(typeParameter(RelatedToStringBound.class).isInstantiationOf(v));
+    assertFalse(typeParameter(NumberBound.class).isInstantiationOf(v));
+
+    // B := String does not satisfy B's bound Number, but B := Integer does.
+    TypeVariable bounded = typeParameter(SiblingOfBoundedSiblingBound.class, 2);
+    assertFalse(typeParameter(RelatedToStringBound.class).isInstantiationOf(bounded));
+    assertTrue(typeParameter(RelatedToIntegerBound.class).isInstantiationOf(bounded));
+  }
+
+  @Test
+  public void testWildcardBoundedBySibling() {
+    TypeVariable t = typeParameter(ExtendsSiblingBound.class, 1);
+    assertTrue(typeParameter(ListExtendsIntegerBound.class).isInstantiationOf(t));
+    assertFalse(typeParameter(ListExtendsStringBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testSuperWildcardContainment() {
+    TypeVariable t = typeParameter(ListSuperIntegerBound.class);
+    // List<?> may be a List<String>, which is not a List<? super Integer>.
+    assertFalse(typeParameter(ListWildcardBound.class).isInstantiationOf(t));
+    assertTrue(typeParameter(ListSuperNumberBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testWildcardInSiblingArgument() {
+    TypeVariable t = typeParameter(SiblingArgumentBound.class, 1);
+    // S may be the capture of ? extends Integer, but not of ? extends String.
+    assertTrue(typeParameter(ListExtendsIntegerBound.class).isInstantiationOf(t));
+    assertFalse(typeParameter(ListExtendsStringBound.class).isInstantiationOf(t));
+
+    // The capture of ? extends String is a Comparable<String>, not a Comparable of itself.
+    TypeVariable selfComparable = typeParameter(SelfComparableSiblingArgumentBound.class, 1);
+    assertTrue(typeParameter(ListStringBound.class).isInstantiationOf(selfComparable));
+    assertFalse(typeParameter(ListExtendsStringBound.class).isInstantiationOf(selfComparable));
+  }
+
+  @Test
+  public void testSuperWildcardOfSibling() {
+    TypeVariable t = typeParameter(SuperSiblingBound.class, 1);
+    // B := Number makes ? super B contain Object.
+    assertTrue(typeParameter(ListObjectBound.class).isInstantiationOf(t));
+    // No B that is a Number is a subtype of String.
+    assertFalse(typeParameter(ListSuperStringBound.class).isInstantiationOf(t));
+    // B := Integer makes ? super B contain the capture of ? super Integer.
+    assertTrue(typeParameter(ListSuperIntegerBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testArrayOfSibling() {
+    TypeVariable t = typeParameter(SiblingArrayBound.class, 1);
+    assertTrue(typeParameter(ListStringArrayBound.class).isInstantiationOf(t));
+    assertFalse(typeParameter(ListNumberArrayBound.class).isInstantiationOf(t));
+  }
+
+  @Test
+  public void testSiblingIsThisVariable() {
+    TypeVariable u = typeParameter(SelfComparableSiblingBound.class, 1);
+    // S := SelfComparableBound.T satisfies S's bound Comparable<S>.
+    assertTrue(typeParameter(SelfComparableBound.class).isInstantiationOf(u));
+    assertFalse(typeParameter(ComparableStringBound.class).isInstantiationOf(u));
+    // U is a Comparable<S>, not a Comparable<U>.
+    assertFalse(u.isInstantiationOf(typeParameter(SelfComparableBound.class)));
+  }
+
+  @Test
+  public void testInstantiatingSubstitutionForMutuallyRecursiveBound() {
+    assertNull(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+            JavaTypes.STRING_TYPE, typeParameter(MutualBound.class, 0)));
+    assertNotNull(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+            JavaTypes.STRING_TYPE, typeParameter(MutualComparableBound.class, 0)));
+  }
+
+  @Test
+  public void testLazyReferenceBoundToUnmappedVariable() {
+    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class));
+    assertTrue(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.OBJECT_TYPE, new Substitution()));
+  }
+
+  @Test
+  public void testCopyWithResolvedBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
+    assertTrue(copy.isInstantiationOf(t));
+    assertTrue(t.isInstantiationOf(copy));
+    assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
   }
 }
