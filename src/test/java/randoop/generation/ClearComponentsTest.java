@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.SIList;
 import randoop.condition.RandoopSpecificationError;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
@@ -130,6 +131,37 @@ public class ClearComponentsTest {
     selector.componentsCleared(Collections.singleton(seed));
     assertNotNull(selector.getWeight(seed));
     assertNull(selector.getWeight(generated));
+  }
+
+  /** A CLASS literal does not prevent adding its value to the component set. */
+  @Test
+  public void classLiteralDoesNotSuppressGeneratedValue() {
+    assertTrue(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.CLASS));
+  }
+
+  /** An ALL literal prevents adding its value to the component set. */
+  @Test
+  public void allLiteralSuppressesGeneratedValue() {
+    assertFalse(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.ALL));
+  }
+
+  /**
+   * Returns true if {@link ComponentManager#addPrimitiveValueIfNew} adds a value that is a literal
+   * of {@link Box} to the component set.
+   *
+   * @param literalsLevel the value for {@link GenInputsAbstract#literals_level}
+   * @return true if {@link ComponentManager#addPrimitiveValueIfNew} adds the value
+   */
+  private static boolean addsValueThatIsALiteral(
+      GenInputsAbstract.ClassLiteralsMode literalsLevel) {
+    GenInputsAbstract.literals_level = literalsLevel;
+    Sequence literal = Sequence.createSequenceForPrimitive(4242);
+    ScopeToLiteralStatistics literals = new ScopeToLiteralStatistics();
+    literals.incrementNumUses(ClassOrInterfaceType.forClass(Box.class), literal, 1);
+    ComponentManager componentMgr = new ComponentManager(IS_PUBLIC);
+    componentMgr.setScopeToLiteralStatistics(literals);
+    componentMgr.addPrimitiveValueIfNew(4242);
+    return componentMgr.getAllGeneratedSequences().contains(literal);
   }
 
   /**

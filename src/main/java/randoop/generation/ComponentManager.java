@@ -58,12 +58,13 @@ public class ComponentManager {
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   /**
-   * The primitive values of the seed and literal sequences, which {@link #clearGeneratedSequences}
-   * retains. Null until first needed.
+   * The primitive values of the retained sequences that every operation can select: the seed
+   * sequences, and the literal sequences if {@link GenInputsAbstract#literals_level} is {@code
+   * ALL}. Null until first needed.
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private @Nullable Set<Object> retainedPrimitiveValues = null;
+  private @Nullable Set<Object> globalRetainedPrimitiveValues = null;
 
   /**
    * The primitive values added by {@link #addPrimitiveValueIfNew} since the component set was last
@@ -216,29 +217,39 @@ public class ComponentManager {
   // This is called in OperationModel.addClassLiterals().
   public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
-    retainedPrimitiveValues = null;
+    globalRetainedPrimitiveValues = null;
   }
 
   /**
-   * If the component set has no sequence for the given primitive value, adds one.
+   * Unless every operation can already select a sequence for the given primitive value, adds one to
+   * the component set.
    *
    * @param value a primitive wrapper or a String
    */
   void addPrimitiveValueIfNew(Object value) {
-    if (!getRetainedPrimitiveValues().contains(value) && generatedPrimitiveValues.add(value)) {
+    if (!getGlobalRetainedPrimitiveValues().contains(value)
+        && generatedPrimitiveValues.add(value)) {
       addGeneratedSequence(Sequence.createSequenceForPrimitive(value));
     }
   }
 
   /**
-   * Returns the primitive values of the seed and literal sequences.
+   * Returns the primitive values of the retained sequences that every operation can select: the
+   * seed sequences, and the literal sequences if {@link GenInputsAbstract#literals_level} is {@code
+   * ALL}. A {@code CLASS} or {@code PACKAGE} literal is not included, because operations outside
+   * its scope cannot select it.
    *
-   * @return the primitive values of the seed and literal sequences
+   * @return the primitive values of the retained sequences that every operation can select
    */
-  private Set<Object> getRetainedPrimitiveValues() {
-    if (retainedPrimitiveValues == null) {
+  private Set<Object> getGlobalRetainedPrimitiveValues() {
+    if (globalRetainedPrimitiveValues == null) {
+      Set<Sequence> sequences = new LinkedHashSet<>(gralSeeds);
+      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL
+          && scopeToLiteralStatistics != null) {
+        sequences.addAll(scopeToLiteralStatistics.getAllSequences());
+      }
       Set<Object> result = new LinkedHashSet<>();
-      for (Sequence s : getRetainedSequences()) {
+      for (Sequence s : sequences) {
         Type outType = s.getLastVariable().getType();
         Statement lastStatement = s.getStatement(s.size() - 1);
         if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
@@ -246,24 +257,9 @@ public class ComponentManager {
           result.add(lastStatement.getValue());
         }
       }
-      retainedPrimitiveValues = Collections.unmodifiableSet(result);
+      globalRetainedPrimitiveValues = Collections.unmodifiableSet(result);
     }
-    return retainedPrimitiveValues;
-  }
-
-  /**
-   * Returns the sequences that {@link #clearGeneratedSequences} retains: the seed sequences, and
-   * the literal sequences if literals are enabled.
-   *
-   * @return the seed and literal sequences
-   */
-  Set<Sequence> getRetainedSequences() {
-    Set<Sequence> result = new LinkedHashSet<>(gralSeeds);
-    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
-        && scopeToLiteralStatistics != null) {
-      result.addAll(scopeToLiteralStatistics.getAllSequences());
-    }
-    return result;
+    return globalRetainedPrimitiveValues;
   }
 
   /**
@@ -381,6 +377,11 @@ public class ComponentManager {
         .getSequencesForType(neededType);
   }
 
+  /**
+   * Returns the type instantiator for the current component set.
+   *
+   * @return the type instantiator for the current component set
+   */
   TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
   }
