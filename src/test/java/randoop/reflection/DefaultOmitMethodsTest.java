@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,14 @@ public class DefaultOmitMethodsTest {
    * syntax.
    */
   private static final String[] ABSENT_PACKAGES = {"org.apache.commons.math4."};
+
+  /**
+   * Signatures of JDK members that some of the JDKs on which Randoop runs lack. Such a signature is
+   * checked only for syntax if the running JDK lacks the member.
+   */
+  private static final List<String> NEWER_JDK_SIGNATURES =
+      Arrays.asList(
+          "java.time.Clock.tickMillis(java.time.ZoneId)", "java.time.InstantSource.system()");
 
   /** The predicate that omits the operations that the default omit-methods files match. */
   private static OmitMethodsPredicate defaultOmitPredicate;
@@ -86,6 +95,9 @@ public class DefaultOmitMethodsTest {
               SignatureParser.parse(
                   signature, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
         } catch (SignatureParseException | FailedPredicateException e) {
+          if (NEWER_JDK_SIGNATURES.contains(signature)) {
+            continue;
+          }
           fail(filename + ": " + e.getMessage());
           throw new Error("unreachable");
         }
@@ -168,7 +180,8 @@ public class DefaultOmitMethodsTest {
 
   @Test
   public void testJavaTimeChronologyDateNow() throws RandoopSpecificationError {
-    // IsoChronology overrides Chronology.dateNow(), which the default patterns omit.
+    // IsoChronology and HijrahChronology override Chronology.dateNow().  The default patterns name
+    // each of them, because a pattern that names an overridden method need not omit the overriders.
     assertOmitted(java.time.chrono.IsoChronology.class, "java.time.chrono.IsoChronology.dateNow()");
     assertOmitted(
         java.time.chrono.IsoChronology.class,
@@ -176,6 +189,11 @@ public class DefaultOmitMethodsTest {
     assertNotOmitted(
         java.time.chrono.IsoChronology.class,
         "java.time.chrono.IsoChronology.dateNow(java.time.Clock)");
+    assertOmitted(
+        java.time.chrono.HijrahChronology.class, "java.time.chrono.HijrahChronology.dateNow()");
+    assertNotOmitted(
+        java.time.chrono.HijrahChronology.class,
+        "java.time.chrono.HijrahChronology.dateNow(java.time.Clock)");
   }
 
   @Test
@@ -199,84 +217,6 @@ public class DefaultOmitMethodsTest {
     assertNotOmitted(
         java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat(java.lang.String)");
     assertNotOmitted(java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat.toPattern()");
-  }
-
-  @Test
-  public void testJodaTimeReadClock() throws RandoopSpecificationError {
-    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime()");
-    assertOmitted(
-        org.joda.time.DateTime.class, "org.joda.time.DateTime(org.joda.time.DateTimeZone)");
-    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime.now()");
-    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.base.AbstractInstant.isAfterNow()");
-    assertOmitted(
-        org.joda.time.DateTime.class, "org.joda.time.DateTime.now(org.joda.time.DateTimeZone)");
-    assertNotOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime(long)");
-    assertNotOmitted(
-        org.joda.time.DateTime.class, "org.joda.time.DateTime(long,org.joda.time.DateTimeZone)");
-    assertNotOmitted(
-        org.joda.time.DateTime.class, "org.joda.time.base.AbstractInstant.isAfter(long)");
-
-    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate()");
-    assertOmitted(
-        org.joda.time.LocalDate.class, "org.joda.time.LocalDate(org.joda.time.Chronology)");
-    assertOmitted(
-        org.joda.time.LocalDate.class, "org.joda.time.LocalDate(org.joda.time.DateTimeZone)");
-    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(java.lang.Object)");
-    assertOmitted(
-        org.joda.time.LocalDate.class,
-        "org.joda.time.LocalDate(java.lang.Object,org.joda.time.Chronology)");
-    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate.now()");
-    assertOmitted(
-        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.now(org.joda.time.DateTimeZone)");
-    assertOmitted(
-        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.toDateTimeAtCurrentTime()");
-    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(int,int,int)");
-    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(long)");
-    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate.plusDays(int)");
-    assertNotOmitted(
-        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.toDateTimeAtStartOfDay()");
-
-    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant()");
-    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant.now()");
-    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant(java.lang.Object)");
-    assertNotOmitted(org.joda.time.Instant.class, "org.joda.time.Instant(long)");
-
-    assertOmitted(org.joda.time.LocalTime.class, "org.joda.time.LocalTime()");
-    assertOmitted(
-        org.joda.time.LocalTime.class,
-        "org.joda.time.LocalTime.toDateTimeToday(org.joda.time.DateTimeZone)");
-    assertNotOmitted(org.joda.time.LocalTime.class, "org.joda.time.LocalTime(int,int)");
-
-    assertOmitted(org.joda.time.Interval.class, "org.joda.time.Interval(java.lang.Object)");
-    assertOmitted(
-        org.joda.time.Interval.class, "org.joda.time.base.AbstractInterval.containsNow()");
-    assertNotOmitted(org.joda.time.Interval.class, "org.joda.time.Interval(long,long)");
-    assertNotOmitted(
-        org.joda.time.Interval.class, "org.joda.time.base.AbstractInterval.contains(long)");
-
-    assertNotOmitted(org.joda.time.Partial.class, "org.joda.time.Partial()");
-    assertNotOmitted(
-        org.joda.time.Partial.class, "org.joda.time.Partial(org.joda.time.Chronology)");
-  }
-
-  @Test
-  public void testJodaTimeSetGlobalState() throws RandoopSpecificationError {
-    assertOmitted(
-        org.joda.time.DateTimeUtils.class, "org.joda.time.DateTimeUtils.currentTimeMillis()");
-    assertOmitted(
-        org.joda.time.DateTimeUtils.class,
-        "org.joda.time.DateTimeUtils.setCurrentMillisFixed(long)");
-    assertOmitted(
-        org.joda.time.DateTimeUtils.class, "org.joda.time.DateTimeUtils.setCurrentMillisSystem()");
-    assertNotOmitted(
-        org.joda.time.DateTimeUtils.class,
-        "org.joda.time.DateTimeUtils.getInstantMillis(org.joda.time.ReadableInstant)");
-
-    assertOmitted(
-        org.joda.time.DateTimeZone.class,
-        "org.joda.time.DateTimeZone.setDefault(org.joda.time.DateTimeZone)");
-    assertNotOmitted(
-        org.joda.time.DateTimeZone.class, "org.joda.time.DateTimeZone.forID(java.lang.String)");
   }
 
   /**

@@ -32,7 +32,7 @@
 ^\Qjava.time.Clock.tickSeconds(java.time.ZoneId)\E$
 ^\Qjava.time.InstantSource.system()\E$
 ^\Qjava.time.\E(Instant|LocalDate|LocalDateTime|LocalTime|MonthDay|OffsetDateTime|OffsetTime|Year|YearMonth|ZonedDateTime|chrono\.HijrahDate|chrono\.JapaneseDate|chrono\.MinguoDate|chrono\.ThaiBuddhistDate)\Q.now(\E(\Qjava.time.ZoneId\E)?\Q)\E$
-^\Qjava.time.chrono.Chronology.dateNow(\E(\Qjava.time.ZoneId\E)?\Q)\E$
+^\Qjava.time.chrono.\E(Chronology|HijrahChronology|IsoChronology|JapaneseChronology|MinguoChronology|ThaiBuddhistChronology)\Q.dateNow(\E(\Qjava.time.ZoneId\E)?\Q)\E$
 ^\Qjava.util.AbstractList.hashCode()\E$
 ^\Qjava.util.AbstractSet.hashCode()\E$
 ^\Qjava.util.Arrays.deepHashCode(java.lang.Object[])\E$
@@ -51,7 +51,6 @@
 ^\Qjava.util.Calendar.getInstance(java.util.TimeZone,java.util.Locale)\E$
 ^\Qjava.util.Collection.hashCode()\E$
 ^\Qjava.util.Collections.shuffle(java.util.List)\E$
-^\Qjava.util.Date()\E$
 ^\Qjava.util.GregorianCalendar()\E$
 ^\Qjava.util.GregorianCalendar(java.util.Locale)\E$
 ^\Qjava.util.GregorianCalendar(java.util.TimeZone)\E$
