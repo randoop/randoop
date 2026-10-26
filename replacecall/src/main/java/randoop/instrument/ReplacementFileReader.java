@@ -198,6 +198,8 @@ public final class ReplacementFileReader {
    * exists. A signature such as {@code C(int)}, with no period before the parenthesis, is a
    * constructor of class {@code C} in the unnamed package.
    *
+   * <p>A nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
+   *
    * @param signatureString the original signature, as written in a replacement file
    * @return the signature of the method or constructor that {@code signatureString} denotes, which
    *     exists
@@ -221,7 +223,7 @@ public final class ReplacementFileReader {
     }
     MethodSignature signature;
     try {
-      signature = MethodSignature.of(fullSignatureString);
+      signature = MethodSignature.of(fullSignatureString).resolveNestedClassnames();
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad original signature", e);
     }
@@ -231,7 +233,7 @@ public final class ReplacementFileReader {
       return signature;
     }
 
-    MethodSignature constructor = signature.toConstructorSignature();
+    MethodSignature constructor = signature.toConstructorSignature().resolveNestedClassnames();
     // Mention the constructor interpretation only if the name looks like a class name.
     boolean mentionConstructor = Character.isUpperCase(signature.getName().charAt(0));
     if (classExists(signature.getClassname())) {
@@ -279,9 +281,35 @@ public final class ReplacementFileReader {
   }
 
   /**
+   * Returns the binary name of the class that the given class name denotes, or null if the class
+   * name denotes no class on the classpath. As in a Randoop fully-qualified signature, a nested
+   * class may be written with "." instead of "$"; for example, {@code java.util.Map.Entry} denotes
+   * {@code java.util.Map$Entry}.
+   *
+   * @param classname a class name, possibly with "." in place of "$"
+   * @return the binary name of the class that {@code classname} denotes, or null if there is none
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  static @Nullable @BinaryName String resolveClassname(String classname)
+      throws IllegalClassFormatException {
+    String candidate = classname;
+    while (!classExists(candidate)) {
+      int dotPos = candidate.lastIndexOf('.');
+      if (dotPos == -1) {
+        return null;
+      }
+      candidate = candidate.substring(0, dotPos) + "$" + candidate.substring(dotPos + 1);
+    }
+    @SuppressWarnings("signature:assignment") // names a class on the classpath
+    @BinaryName String result = candidate;
+    return result;
+  }
+
+  /**
    * Parses a method signature and verifies that the method exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. A
+   * nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
    *
    * @param signature the method signature
    * @param role the role of the method in a replacement, such as "original" or "replacement"; used
@@ -291,14 +319,16 @@ public final class ReplacementFileReader {
    */
   private static MethodSignature parseExistingMethod(String signature, String role)
       throws ReplacementException {
-    MethodSignature result;
+    MethodSignature parsed;
     try {
-      result = MethodSignature.of(signature);
+      parsed = MethodSignature.of(signature);
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad " + role + " signature", e);
     }
+    MethodSignature result;
     // Call toMethod() instead of exists() to get more precise error messages.
     try {
+      result = parsed.resolveNestedClassnames();
       result.toMethod();
     } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
       throw new ReplacementException("Bad " + role + " method", e);

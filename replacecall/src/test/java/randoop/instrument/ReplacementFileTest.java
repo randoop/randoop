@@ -194,6 +194,27 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void nestedClassDotTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nestedclassdot.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(3, map.size());
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)"),
+        map.get(
+            MethodSignature.of(
+                "java.util.AbstractMap$SimpleEntry.<init>(java.lang.Object,java.lang.Object)")));
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newSimpleEntry(java.util.Map$Entry)"),
+        map.get(
+            MethodSignature.of("java.util.AbstractMap$SimpleEntry.<init>(java.util.Map$Entry)")));
+    assertEquals(
+        MethodSignature.of("randoop.instrument.SampleReplacements$Middle$Inner.make()"),
+        map.get(MethodSignature.of("randoop.instrument.SampleReplacements$Middle$Inner.<init>()")));
+  }
+
+  @Test
   public void methodOrConstructorTypoTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/methodorconstructortypo.txt");
     thrown.expect(ReplacementFileException.class);
