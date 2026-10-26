@@ -64,6 +64,16 @@ public class ExplicitTypeVariable extends TypeVariable {
     return this.variable;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the reflection type variable for this type parameter
+   */
+  @Override
+  Object getIdentity() {
+    return this.variable;
+  }
+
   @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return true;
@@ -72,6 +82,11 @@ public class ExplicitTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && TypeVariable.isSameVariable(this, type)) {
+      // The substitution maps this type variable to itself.  Keep this copy and its bounds, rather
+      // than the substitution's copy.
+      type = null;
+    }
     if (type != null && !type.isVariable()) {
       return type;
     }
