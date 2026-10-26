@@ -179,7 +179,12 @@ public final class ReplacementFileReader {
       String replacementSignature)
       throws ReplacementException {
 
-    MethodSignature original = parseExistingMethod(originalSignature, "original");
+    MethodSignature original;
+    try {
+      original = resolveOriginal(originalSignature);
+    } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
+      throw new ReplacementException("Bad original method", e);
+    }
     MethodSignature replacement = parseExistingMethod(replacementSignature, "replacement");
     addReplacement(replacementMap, original, replacement);
   }
@@ -303,7 +308,8 @@ public final class ReplacementFileReader {
   /**
    * Parses a method signature and verifies that the method exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. A
+   * nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
    *
    * @param signature the method signature
    * @param role the role of the method in a replacement, such as "original" or "replacement"; used
@@ -313,14 +319,16 @@ public final class ReplacementFileReader {
    */
   private static MethodSignature parseExistingMethod(String signature, String role)
       throws ReplacementException {
-    MethodSignature result;
+    MethodSignature parsed;
     try {
-      result = MethodSignature.of(signature);
+      parsed = MethodSignature.of(signature);
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad " + role + " signature", e);
     }
+    MethodSignature result;
     // Call toMethod() instead of exists() to get more precise error messages.
     try {
+      result = parsed.resolveNestedClassnames();
       result.toMethod();
     } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
       throw new ReplacementException("Bad " + role + " method", e);
@@ -694,10 +702,8 @@ public final class ReplacementFileReader {
     try {
       return getJavaClassFromClassname(classname);
     } catch (ReplacementException e) {
-      Throwable cause = e.getCause();
       IllegalClassFormatException unreadable =
-          new IllegalClassFormatException(
-              "Unable to read " + classname + ": " + (cause == null ? e.getMessage() : cause));
+          new IllegalClassFormatException("Unable to read " + classname);
       unreadable.initCause(e);
       throw unreadable;
     }
