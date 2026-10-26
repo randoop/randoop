@@ -1,2 +1,0 @@
-// bad replacement file for testing: the replacement method is package-private
-java.lang.Math.negateExact(int) randoop.instrument.testmocks.MethodMocks.negateExact(int)

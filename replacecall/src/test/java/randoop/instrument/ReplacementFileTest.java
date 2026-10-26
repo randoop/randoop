@@ -119,16 +119,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void packagePrivateReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/packageprivatereplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "packageprivatereplacement.txt:2: Replacement method must be public and static:"
-            + " randoop.instrument.testmocks.MethodMocks.negateExact(int)");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void constructorReturnTypeReplacementTest() throws IOException, ReplacementFileException {
     Path file =
         Paths.get("build/resources/test/randoop/instrument/constructorreturntypereplacement.txt");

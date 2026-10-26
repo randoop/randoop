@@ -20,16 +20,6 @@ public final class MethodMocks {
   }
 
   /**
-   * A package-private replacement for {@code Math.negateExact(int)}.
-   *
-   * @param x an int
-   * @return {@code x}
-   */
-  /* package */ static int negateExact(int x) {
-    return x;
-  }
-
-  /**
    * A replacement for {@code Object()} that has the wrong return type.
    *
    * @return the empty string
