@@ -381,6 +381,11 @@ public class ComponentManager {
         .getSequencesForType(neededType);
   }
 
+  /**
+   * Returns the type instantiator for the current component set.
+   *
+   * @return the type instantiator for the current component set
+   */
   TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
   }
