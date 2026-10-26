@@ -10,9 +10,15 @@
 ^\Qorg.apache.commons.math4.util.FastMath.random()\E$
 # Dates
 ^\Qjava.util.Date()\E$
-^\Qorg.joda.time.DateTime.now()\E$
-^\Qorg.joda.time.LocalDate()\E$
-^\Qorg.joda.time.LocalDate(org.joda.time.DateTimeZone)\E$
-^\Qorg.joda.time.LocalDate(org.joda.time.Chronology)\E$
-^\Qorg.joda.time.LocalDate.now(
+# Joda-Time operations that read the clock, including every constructor whose only argument, if
+# any, is a Chronology or a DateTimeZone.  Many other Joda-Time operations read the clock when an
+# argument is null, such as Interval(null, null); these patterns do not omit them.
+^\Qorg.joda.time.\E(DateMidnight|DateTime|LocalDate|LocalDateTime|LocalTime|MonthDay|MutableDateTime|TimeOfDay|YearMonth|YearMonthDay)\Q(\E(\Qorg.joda.time.Chronology\E|\Qorg.joda.time.DateTimeZone\E)?\Q)\E$
+^\Qorg.joda.time.Instant()\E$
+^\Qorg.joda.time.\E(DateMidnight|DateTime|Instant|LocalDate|LocalDateTime|LocalTime|MonthDay|MutableDateTime|YearMonth)\Q.now(\E
+^\Qorg.joda.time.\E(LocalDate|YearMonthDay)\Q.toDateTimeAtCurrentTime(\E
+^\Qorg.joda.time.\E(LocalTime|TimeOfDay)\Q.toDateTimeToday(\E
+^\Qorg.joda.time.base.AbstractInstant.\E(isAfterNow|isBeforeNow|isEqualNow)\Q()\E$
+^\Qorg.joda.time.base.AbstractInterval.\E(containsNow|isAfterNow|isBeforeNow)\Q()\E$
+^\Qorg.joda.time.DateTimeUtils.currentTimeMillis()\E$
 # Other
