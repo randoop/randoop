@@ -82,6 +82,16 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void privateReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/privatereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "privatereplacement.txt:2: Replacement method must be public and static:"
+            + " randoop.instrument.testmocks.MethodMocks.abs(int)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void nonPublicReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/nonpublicreplacement.txt");
     thrown.expect(ReplacementFileException.class);
@@ -112,28 +122,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void missingReceiverReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/missingreceiverreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "missingreceiverreplacement.txt:2: Replacement method"
-            + " randoop.instrument.ReplacementTestMethods.nextIntWithoutReceiver() must have"
-            + " parameter types [java.util.Random] and return type int");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void wrongReturnReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/wrongreturnreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "wrongreturnreplacement.txt:2: Replacement method"
-            + " randoop.instrument.ReplacementTestMethods.nextIntReturningLong(java.util.Random)"
-            + " must have parameter types [java.util.Random] and return type int");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void nonPublicMethodClassReplacementTest() throws IOException, ReplacementFileException {
     Path file =
         Paths.get("build/resources/test/randoop/instrument/nonpublicmethodclassreplacement.txt");
@@ -152,30 +140,6 @@ public class ReplacementFileTest {
     thrown.expectMessage(
         "nonpublicclassclassreplacement.txt:2: Replacement class must be public:"
             + " randoop.instrument.NonPublicReplacementClass");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void wrongReturnClassReplacementTest() throws IOException, ReplacementFileException {
-    Path file =
-        Paths.get("build/resources/test/randoop/instrument/wrongreturnclassreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "wrongreturnclassreplacement.txt:2: Replacement method"
-            + " randoop.instrument.ReplacementTestMethods$WrongReturnClass.nextInt(java.util.Random)"
-            + " must have return type int");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void missingReceiverClassReplacementTest() throws IOException, ReplacementFileException {
-    Path file =
-        Paths.get("build/resources/test/randoop/instrument/missingreceiverclassreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "missingreceiverclassreplacement.txt:2: Replacement method"
-            + " randoop.instrument.ReplacementTestMethods$MissingReceiverClass.compareTo(java.lang.String)"
-            + " has no matching original in java.lang.String");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 

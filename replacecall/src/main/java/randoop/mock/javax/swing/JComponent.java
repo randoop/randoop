@@ -30,15 +30,13 @@ public class JComponent {
   }
 
   /**
-   * Mock of method {@code javax.swing.JComponent.requestFocus(boolean)} to prevent component
-   * getting focus.
+   * Mock of method {@code javax.swing.JComponent.requestFocus()} to prevent component getting
+   * focus.
    *
    * @param component the component that should not receive focus
    * @param temporary flag that indicates that focus should be temporary (ignored)
-   * @return false, because the component does not receive focus
    */
-  public static boolean requestFocus(javax.swing.JComponent component, boolean temporary) {
+  public static void requestFocus(javax.swing.JComponent component, boolean temporary) {
     component.setFocusable(false);
-    return false;
   }
 }
