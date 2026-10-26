@@ -318,4 +318,32 @@ public class GenericTypesTest {
     assertEquals(
         w, ((ReferenceArgument) instantiated.getTypeArguments().get(1)).getReferenceType());
   }
+
+  /**
+   * A class whose second type parameter is bounded by its first.
+   *
+   * @param <Z> a type parameter bounded by {@code Number}
+   * @param <X> a type parameter bounded by {@code Z}
+   */
+  static class NumberVariableBounded<Z extends Number, X extends Z> {}
+
+  @Test
+  public void testInstantiateWithSubstitutedVariable() {
+    GenericClassType variableBounded = GenericClassType.forClass(VariableBounded.class);
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NumberVariableBounded.class).getTypeParameters();
+    TypeVariable z = parameters.get(0);
+    TypeVariable x = parameters.get(1);
+    // T's bound U becomes Z, which stands for itself.  Integer is not a subtype of Z.
+    try {
+      variableBounded.instantiate(z, JavaTypes.INT_TYPE.toBoxedPrimitive());
+      fail("Integer is not a subtype of Z");
+    } catch (IllegalArgumentException e) {
+      // expected
+    }
+    // X is a subtype of Z.
+    variableBounded.instantiate(z, x);
+    variableBounded.instantiate(
+        ClassOrInterfaceType.forClass(Number.class), JavaTypes.INT_TYPE.toBoxedPrimitive());
+  }
 }

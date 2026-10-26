@@ -104,6 +104,12 @@ class EagerReferenceBound extends ReferenceBound {
       if (TypeVariable.isSameVariable((ReferenceType) argType, thisBoundType)) {
         return true;
       }
+      if (!TypeVariable.isSameVariable(getBoundType(), thisBoundType)) {
+        // The substitution replaced this bound by a type variable, which stands for itself.  The
+        // argument must be a subtype of it.
+        return new EagerReferenceBound((ReferenceType) argType)
+            .hasUpperBound(thisBoundType, new Substitution());
+      }
       // The substitution does not replace the type variable, so it stands for an unknown type.
       return ((TypeVariable) thisBoundType).canBeInstantiatedBy((ReferenceType) argType);
     }
