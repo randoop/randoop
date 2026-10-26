@@ -244,6 +244,7 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation(libs.commons.codec)
   testImplementation(libs.hamcrest.all)
+  testImplementation(libs.joda.time)
   configurations["junit"].dependencies.forEach { testImplementation(it) }
   testImplementation(sourceSets["testInput"].output)
 

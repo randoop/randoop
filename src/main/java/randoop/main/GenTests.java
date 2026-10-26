@@ -338,8 +338,7 @@ public class GenTests extends GenInputsAbstract {
       omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+      omit_methods.addAll(defaultOmitMethodsPatterns());
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
@@ -1201,12 +1200,25 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
+   * Returns the omit-methods patterns that Randoop uses unless {@code --omit-methods-no-defaults}
+   * is supplied.
+   *
+   * @return the default omit-methods patterns
+   */
+  public static List<Pattern> defaultOmitMethodsPatterns() {
+    List<Pattern> result = new ArrayList<>();
+    result.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+    result.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+    return result;
+  }
+
+  /**
    * Returns patterns read from the given resource.
    *
    * @param filename the resource from which to read
    * @return contents of the resource, as a list of Patterns
    */
-  private List<Pattern> readPatternsFromResource(String filename) {
+  private static List<Pattern> readPatternsFromResource(String filename) {
     try (InputStream inputStream = GenTests.class.getResourceAsStream(filename)) {
       return readPatterns(inputStream, filename);
     } catch (IOException e) {
@@ -1221,7 +1233,7 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file name to use in diagnostic messages
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readPatterns(InputStream is, String filename) {
+  private static List<Pattern> readPatterns(InputStream is, String filename) {
     // Read method omissions from user-provided file
     try (EntryReader er =
         new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
@@ -1237,7 +1249,7 @@ public class GenTests extends GenInputsAbstract {
    * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
-  private List<Pattern> readPatterns(EntryReader er) {
+  private static List<Pattern> readPatterns(EntryReader er) {
     List<Pattern> result = new ArrayList<>();
     for (String line : er) {
       String trimmed = line.trim();
@@ -1267,25 +1279,16 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
-   * matches that string (with spaces removed).
+   * Converts a signature string to a {@code Pattern} that matches the {@link
+   * RawSignature#toString()} of the same method or constructor. The signature string may contain
+   * spaces, and it may name a constructor as {@code C.<init>(...)}.
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
-  private static Pattern signatureToPattern(String signatureString) {
-    // TODO: Why doesn't this use Regex.quote()?
-    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
-    @Regex String patternString =
-        signatureString
-            .replaceAll(" ", "")
-            .replaceAll("\\.", "\\\\.")
-            .replaceAll("\\(", "\\\\(")
-            .replaceAll("\\)", "\\\\)")
-            .replaceAll("\\$", "\\\\$")
-            .replaceAll("\\[", "\\\\[")
-            .replaceAll("\\]", "\\\\]");
-    return Pattern.compile(patternString);
+  static Pattern signatureToPattern(String signatureString) {
+    String rawSignature = signatureString.replace(" ", "").replace(".<init>(", "(");
+    return Pattern.compile("^" + Pattern.quote(rawSignature) + "$");
   }
 
   /**
