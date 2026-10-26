@@ -23,7 +23,6 @@ public class RandoopGenerationError extends RuntimeException {
    * @param exception the exception thrown during generation
    */
   RandoopGenerationError(TypedOperation operation, Throwable exception) {
-    super();
     this.operation = operation;
     this.exception = exception;
   }
