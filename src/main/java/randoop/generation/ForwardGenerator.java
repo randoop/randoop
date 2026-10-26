@@ -189,7 +189,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
-    inputSequenceSelector.componentsCleared();
+    inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
   }
 
   @Override
@@ -202,9 +202,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear
-        || (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-            && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory)) {
+    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear) {
+      clearComponents();
+    }
+    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
       clearComponents();
     }
 
