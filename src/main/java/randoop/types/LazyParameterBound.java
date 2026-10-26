@@ -20,6 +20,12 @@ class LazyParameterBound extends ParameterBound {
   private final java.lang.reflect.Type boundType;
 
   /**
+   * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
+   * instead of reading this field.
+   */
+  private @Nullable List<TypeVariable> typeParameters = null;
+
+  /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
    * @param boundType the reflection type for this bound
@@ -82,7 +88,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -172,7 +178,26 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return getTypeParameters(boundType);
+    return new ArrayList<>(getTypeParameterList());
+  }
+
+  /**
+   * Returns the type variables in this bound. The result must not be modified.
+   *
+   * @return the type variables in this bound
+   */
+  private List<TypeVariable> getTypeParameterList() {
+    List<TypeVariable> result = typeParameters;
+    if (result == null) {
+      result = getTypeParameters(boundType);
+      typeParameters = result;
+    }
+    return result;
+  }
+
+  @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    return getTypeParameters();
   }
 
   /**
@@ -266,14 +291,16 @@ class LazyParameterBound extends ParameterBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
+   */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
-    if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
-    }
-    return b.isLowerBound(argType, substitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
+    return b != null && b.isLowerBound(argType, substitution);
   }
 
   @Override
@@ -292,16 +319,44 @@ class LazyParameterBound extends ParameterBound {
    * {@inheritDoc}
    *
    * <p>This generic type bound is satisfied by a concrete type if the concrete type formed by
-   * applying the substitution to this generic bound is satisfied by the concrete type.
+   * applying the substitution to this generic bound is satisfied by the concrete type. A type
+   * variable in this bound that the substitution does not replace stands for an unknown type, which
+   * may be any type that satisfies its bound.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
+    return b != null && b.isUpperBound(argType, substitution);
+  }
+
+  /**
+   * Returns the given substitution, extended to map to itself each type variable in this bound that
+   * it does not map. Such a type variable then stands for an unknown type when the substituted
+   * bound is compared with a type.
+   *
+   * @param substitution a type substitution
+   * @return a substitution that maps every type variable in this bound
+   */
+  private Substitution completeSubstitution(Substitution substitution) {
+    return substitution.extendWithIdentity(getTypeParameterList());
+  }
+
+  /**
+   * Applies a substitution that maps every type variable in this bound, as returned by {@link
+   * #completeSubstitution(Substitution)}. Returns null, and fails an assertion, if the result is
+   * still this bound, which happens only for a kind of type that {@link #substitute(Substitution)}
+   * does not handle. Comparing the unchanged bound would recurse forever.
+   *
+   * @param completeSubstitution a substitution that maps every type variable in this bound
+   * @return this bound with the substitution applied, or null
+   */
+  private @Nullable ParameterBound instantiate(Substitution completeSubstitution) {
+    ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
+      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
+      return null;
     }
-    return b.isUpperBound(argType, substitution);
+    return b;
   }
 
   @Override
