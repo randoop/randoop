@@ -311,6 +311,28 @@ class LazyParameterBound extends ParameterBound {
     // return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if the substitution does not instantiate this bound.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return !b.equals(this) && b.isLowerBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * cannot be determined without a substitution for its type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
+  }
+
   @Override
   public boolean isVariable() {
     return boundType instanceof java.lang.reflect.TypeVariable;
