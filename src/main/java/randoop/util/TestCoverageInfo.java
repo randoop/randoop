@@ -14,16 +14,19 @@ import randoop.main.RandoopBug;
  */
 public class TestCoverageInfo {
 
-  /** For each branch index, the number of times the branch condition evaluated to true. */
+  /** For each branch condition index, the number of times the condition evaluated to true. */
   public final int[] branchTrue;
 
-  /** For each branch index, the number of times the branch condition evaluated to false. */
+  /** For each branch condition index, the number of times the condition evaluated to false. */
   public final int[] branchFalse;
 
-  /** Maps a method signature to the indices of the branches in that method. */
+  /** Maps a method signature to the indices of the branch conditions in that method. */
   public final Map<String, Set<Integer>> methodToIndices;
 
-  /** The number of branches covered in a method, and the total number of branches in it. */
+  /**
+   * The number of branches covered in a method, and the total number of branches in it. Each branch
+   * condition has two branches: one for each outcome.
+   */
   private static class BranchCov {
     /** The number of branches covered in the method. */
     final int covered;
@@ -46,15 +49,15 @@ public class TestCoverageInfo {
   /**
    * Creates a {@code TestCoverageInfo} in which no branch has been covered.
    *
-   * @param totalBranches the number of branches; must be non-negative
-   * @param map maps a method signature to the indices of the branches in that method
+   * @param totalConditions the number of branch conditions; must be non-negative
+   * @param map maps a method signature to the indices of the branch conditions in that method
    */
-  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
-    if (totalBranches < 0) {
+  public TestCoverageInfo(int totalConditions, Map<String, Set<Integer>> map) {
+    if (totalConditions < 0) {
       throw new IllegalArgumentException();
     }
-    branchTrue = new int[totalBranches];
-    branchFalse = new int[totalBranches];
+    branchTrue = new int[totalConditions];
+    branchFalse = new int[totalConditions];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 
@@ -69,27 +72,29 @@ public class TestCoverageInfo {
       int branchesInMethod = covAndTot.inMethod;
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
-      double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
       b.append((methodSignature == null ? "other" : methodSignature));
       b.append(": ");
-      b.append(branchesCovered);
-      b.append("/");
-      b.append(branchesInMethod);
-      b.append(" (");
-      b.append(percentCovered);
-      b.append("%)");
+      b.append(coverageString(branchesCovered, branchesInMethod));
       b.append(Globals.lineSep);
     }
-    double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
     b.append("TOTAL :");
-    b.append(totalBranchesCovered);
-    b.append("/");
-    b.append(totalBranches);
-    b.append(" (");
-    b.append(totalPercent);
-    b.append("%)");
+    b.append(coverageString(totalBranchesCovered, totalBranches));
     b.append(Globals.lineSep);
     return b.toString();
+  }
+
+  /**
+   * Returns a string such as "3/4 (75%)" that reports how many of the given branches are covered.
+   *
+   * @param covered the number of branches covered
+   * @param total the total number of branches
+   * @return a string reporting the number and percentage of branches covered
+   */
+  private static String coverageString(int covered, int total) {
+    if (total == 0) {
+      return "0/0";
+    }
+    return String.format("%d/%d (%d%%)", covered, total, Math.round(100.0 * covered / total));
   }
 
   private BranchCov getCoverageInfo(String methodSignature) {
@@ -110,7 +115,7 @@ public class TestCoverageInfo {
 
   /**
    * Returns a human-readable report of the branch coverage of the given class: the number and
-   * fraction of branches covered in each method and in total.
+   * percentage of branches covered in each method and in total.
    *
    * @param clazz the class whose coverage to report
    * @return a report of the branch coverage of the class, or a message stating that the class is

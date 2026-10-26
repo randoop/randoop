@@ -2,6 +2,7 @@ package randoop.util;
 
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.util.ReflectionCode.ReflectionCodeException;
 
 /**
  * A thread that runs a {@link ReflectionCode}. To run the code in this thread, call {@link #setup}
@@ -15,8 +16,14 @@ public class RunnerThread extends Thread {
   /** The code to run. Set by {@link #setup}. */
   private @MonotonicNonNull ReflectionCode code;
 
-  /** True if the most recent call to {@link #run} has completed. Set by {@link #run}. */
+  /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
   boolean runFinished;
+
+  /**
+   * The exception, indicating a bug in Randoop, that the most recent call to {@link #run} threw, or
+   * null if it threw none. Set by {@link #run}.
+   */
+  @Nullable ReflectionCodeException reflectionCodeException;
 
   /** The state of the thread: which method must be called next. */
   private NextCallMustBe state;
@@ -42,6 +49,7 @@ public class RunnerThread extends Thread {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
+    this.reflectionCodeException = null;
     this.state = NextCallMustBe.SETUP;
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
@@ -70,7 +78,13 @@ public class RunnerThread extends Thread {
       throw new IllegalStateException();
     }
     runFinished = false;
-    executeReflectionCode();
+    reflectionCodeException = null;
+    try {
+      executeReflectionCode();
+    } catch (ReflectionCodeException e) {
+      reflectionCodeException = e;
+      throw e;
+    }
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }
