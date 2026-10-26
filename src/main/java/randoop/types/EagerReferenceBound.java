@@ -79,6 +79,15 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof EagerReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
+    }
+    assert false : "not handling EagerReferenceBound subtype of other bound type";
+    return false;
+  }
+
+  @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
