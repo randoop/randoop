@@ -62,9 +62,6 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  /** The size of {@link #gralComponents} when it contains only the seed sequences. */
-  private final int gralSeedsSize;
-
   /**
    * The primitive values of the seed and literal sequences, which {@link #clearGeneratedSequences}
    * retains. Null until first needed.
@@ -138,7 +135,6 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
-    this.gralSeedsSize = gralComponents.size();
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
   }
@@ -157,14 +153,13 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences stored by this manager, not counting seed sequences. A sequence
-   * is counted once for each usable value of its last statement (the result, the receiver, and the
-   * arguments), so a sequence may be counted more than once.
+   * Returns the number of sequences stored by this manager.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
+  // FIXME subtract size of seeds!
   public int numGeneratedSequences() {
-    return gralComponents.size() - gralSeedsSize;
+    return gralComponents.size();
   }
 
   /**
