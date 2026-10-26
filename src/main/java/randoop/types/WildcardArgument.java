@@ -81,20 +81,6 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(argType);
   }
 
-  /**
-   * Applies a capture conversion to the bound of this {@link WildcardArgument}.
-   *
-   * @return this wildcard argument with capture conversion applied to the type bound
-   * @see ReferenceType#applyCaptureConversion()
-   */
-  public WildcardArgument applyCaptureConversion() {
-    WildcardType wildcardType = argumentType.applyCaptureConversion();
-    if (wildcardType.equals(argumentType)) {
-      return this;
-    }
-    return new WildcardArgument(wildcardType);
-  }
-
   @Override
   public boolean contains(TypeArgument argument) {
     return argument.isWildcard()

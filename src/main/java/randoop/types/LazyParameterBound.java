@@ -82,7 +82,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -200,35 +200,6 @@ class LazyParameterBound extends ParameterBound {
       }
     }
     return variableList;
-  }
-
-  @Override
-  boolean hasWildcard() {
-    return hasWildcard(boundType);
-  }
-
-  /**
-   * Returns true if the given type has a wildcard.
-   *
-   * <p>Does not examine the bounds of type variables. Capture conversion leaves a type variable
-   * unchanged, and a type variable's bound may refer to the type variable itself.
-   *
-   * @param type the type to test
-   * @return true if the given type has a wildcard
-   */
-  private static boolean hasWildcard(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.WildcardType) {
-      return true;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType)) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   /**

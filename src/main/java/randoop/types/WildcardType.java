@@ -144,16 +144,6 @@ class WildcardType extends ParameterType {
     return new WildcardType(bound, hasUpperBound);
   }
 
-  @Override
-  public WildcardType applyCaptureConversion() {
-    if (getTypeBound().hasWildcard()) {
-      EagerReferenceBound convertedType =
-          (EagerReferenceBound) getTypeBound().applyCaptureConversion();
-      return new WildcardType(convertedType, this.hasUpperBound);
-    }
-    return this;
-  }
-
   /**
    * If this type has an upper bound, checks for containment cases:
    *
@@ -190,6 +180,11 @@ class WildcardType extends ParameterType {
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean hasWildcard() {
+    return true;
   }
 
   @Override

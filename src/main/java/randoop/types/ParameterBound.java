@@ -184,13 +184,6 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Returns true if the type of this bound has a wildcard type argument.
-   *
-   * @return true, if this bound has a wildcard argument, and false otherwise
-   */
-  abstract boolean hasWildcard();
-
-  /**
    * Returns true if the type of this bound has a capture variable.
    *
    * @return true iff this bound has a capture variable

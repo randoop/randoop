@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,42 +84,55 @@ public class CaptureConversionTest {
     InstantiatedType type =
         (InstantiatedType)
             Type.forType(SuperSelfComparable.class.getDeclaredField("superT").getGenericType());
-    InstantiatedType captured = type.applyCaptureConversion();
-    TypeArgument argument = captured.getTypeArguments().get(0);
-    assertTrue(((ReferenceArgument) argument).getReferenceType().isCaptureVariable());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertEquals(wildcard.getTypeBound(), capture.getLowerTypeBound());
+    assertTrue(capture.getUpperTypeBound().isObject());
   }
 
   /**
-   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument,
-   * where the bound of T contains a wildcard.
+   * A class with a field whose type has a wildcard type argument, whose bound contains a wildcard
+   * whose bound is a type parameter.
    *
    * @param <T> a type parameter whose bound contains a wildcard
-   * @param <U> a type parameter that does not occur in the field's type
    */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  static class SuperWildcardComparable<T extends Comparable<? super T>, U> {
-    /**
-     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
-     * whose bound contains a wildcard.
-     */
-    Comparable<? super T> superT;
+  static class ExtendsSuperWildcardComparable<T extends Comparable<? super T>> {
+    /** A parameterized type whose wildcard type argument has a bound that contains a wildcard. */
+    List<? extends Comparable<? super T>> extendsSuperT;
   }
 
   /**
-   * Tests capture when the wildcard bound is a lazy type variable whose bound contains a wildcard.
-   * The substitution omits T, so the bound of the wildcard remains a {@link LazyParameterBound}.
+   * Tests capture when the wildcard bound is a parameterized type with a wildcard argument. Capture
+   * conversion leaves the wildcard bound unchanged.
    */
   @Test
-  public void captureLazyWildcardBoundTest() throws NoSuchFieldException {
-    java.lang.reflect.Type fieldType =
-        SuperWildcardComparable.class.getDeclaredField("superT").getGenericType();
-    TypeVariable u = TypeVariable.forType(SuperWildcardComparable.class.getTypeParameters()[1]);
-    ParameterBound bound =
-        new LazyParameterBound(fieldType).substitute(new Substitution(u, JavaTypes.STRING_TYPE));
-    InstantiatedType type = (InstantiatedType) ((EagerReferenceBound) bound).getBoundType();
-    InstantiatedType captured = type.applyCaptureConversion();
-    TypeArgument argument = captured.getTypeArguments().get(0);
-    assertTrue(((ReferenceArgument) argument).getReferenceType().isCaptureVariable());
+  public void captureNestedWildcardBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(
+                ExtendsSuperWildcardComparable.class
+                    .getDeclaredField("extendsSuperT")
+                    .getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertEquals(
+        new IntersectionTypeBound(
+            Arrays.asList(ParameterBound.forType(JavaTypes.OBJECT_TYPE), wildcard.getTypeBound())),
+        capture.getUpperTypeBound());
+  }
+
+  /**
+   * Returns the capture variable that is the sole type argument of the given type.
+   *
+   * @param type a parameterized type with one type argument, which is a capture variable
+   * @return the type argument of {@code type}
+   */
+  private static CaptureTypeVariable getCaptureVariable(InstantiatedType type) {
+    TypeArgument argument = type.getTypeArguments().get(0);
+    ReferenceType referenceType = ((ReferenceArgument) argument).getReferenceType();
+    assertTrue(referenceType.isCaptureVariable());
+    return (CaptureTypeVariable) referenceType;
   }
 
   /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
