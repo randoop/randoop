@@ -76,7 +76,8 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
-  private final TypeInstantiator instantiator;
+  /** Instantiates generic operations, using the types in the component set. */
+  private TypeInstantiator instantiator;
 
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
@@ -92,12 +93,21 @@ public class ForwardGenerator extends AbstractGenerator {
   private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
-   * The set of all primitive values seen during generation and execution of sequences. This set is
-   * used to tell if a new primitive value has been generated, to add the value to the components.
+   * The set of all primitive values seen during generation and execution of sequences, since the
+   * component set was last cleared. This set is used to tell if a new primitive value has been
+   * generated, to add the value to the components.
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
+  private Set<Object> runtimePrimitivesSeen;
+
+  /**
+   * The primitive values in the component set when this generator was created: those of the seed
+   * sequences and literals. Clearing the component set retains these sequences.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> initialRuntimePrimitives;
 
   /**
    * Create a forward generator.
@@ -145,7 +155,9 @@ public class ForwardGenerator extends AbstractGenerator {
     this.sideEffectFreeMethods = sideEffectFreeMethods;
     this.instantiator = componentManager.getTypeInstantiator();
 
-    initializeRuntimePrimitivesSeen();
+    this.initialRuntimePrimitives =
+        Collections.unmodifiableSet(computeRuntimePrimitives(componentManager));
+    this.runtimePrimitivesSeen = new LinkedHashSet<>(initialRuntimePrimitives);
 
     switch (GenInputsAbstract.method_selection) {
       case UNIFORM:
@@ -200,12 +212,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
-   * used to determine new values that should be added to the component set. The component set
-   * initially contains a set of primitive sequences; this method puts those primitives in this set.
+   * Returns the values of the primitive sequences in the given component set.
+   *
+   * @param componentManager a component set
+   * @return the values of the primitive sequences in the component set
    */
   // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
+  private static Set<Object> computeRuntimePrimitives(ComponentManager componentManager) {
+    Set<Object> result = new LinkedHashSet<>();
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
       try {
@@ -215,9 +229,19 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new RandoopBug("specification error for primitive sequence " + s, e);
       }
       NormalExecution e = (NormalExecution) es.getResult(0);
-      Object runtimeValue = e.getRuntimeValue();
-      runtimePrimitivesSeen.add(runtimeValue);
+      result.add(e.getRuntimeValue());
     }
+    return result;
+  }
+
+  /**
+   * Removes all generated sequences from the component set, retaining seeds and literals, and
+   * resets the state that depends on the component set.
+   */
+  void clearComponents() {
+    componentManager.clearGeneratedSequences();
+    instantiator = componentManager.getTypeInstantiator();
+    runtimePrimitivesSeen = new LinkedHashSet<>(initialRuntimePrimitives);
   }
 
   @Override
@@ -230,13 +254,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0
+    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear
         || (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
             && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory)) {
-      componentManager.clearGeneratedSequences();
-      // Forget runtime primitives that were in the cleared pool, so they can be added again.
-      runtimePrimitivesSeen.clear();
-      initializeRuntimePrimitivesSeen();
+      clearComponents();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
