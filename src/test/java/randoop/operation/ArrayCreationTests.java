@@ -3,6 +3,7 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
@@ -88,5 +89,30 @@ public class ArrayCreationTests {
     ArrayType arrayType = ArrayType.ofComponentType(JavaTypes.INT_TYPE);
     InitializedArrayCreation arrayCreation = new InitializedArrayCreation(arrayType, 3);
     assertThrows(IllegalArgumentException.class, () -> arrayCreation.execute(new Object[] {1, 2}));
+  }
+
+  @Test
+  public void testAppendCodeWrongNumberOfElements() {
+    Type elementType = JavaTypes.INT_TYPE;
+    ArrayType arrayType = ArrayType.ofComponentType(elementType);
+    InitializedArrayCreation arrayCreation = new InitializedArrayCreation(arrayType, 2);
+    TypeTuple inputTypes = new TypeTuple(Arrays.asList(elementType, elementType));
+    Sequence seq =
+        new Sequence()
+            .extend(
+                new TypedTermOperation(
+                    new NonreceiverTerm(elementType, 1), new TypeTuple(), elementType));
+    Variable var0 = new Variable(seq, 0);
+    StringBuilder b = new StringBuilder();
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            arrayCreation.appendCode(
+                arrayType, inputTypes, arrayType, Collections.singletonList(var0), b));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            arrayCreation.appendCode(
+                arrayType, inputTypes, arrayType, Arrays.asList(var0, var0, var0), b));
   }
 }
