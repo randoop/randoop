@@ -123,7 +123,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(enclosingType);
+    return Objects.hashCode(enclosingType);
   }
 
   /**

@@ -18,7 +18,9 @@ public abstract class ParameterType extends ReferenceType {
   /** The upper bound on this type. */
   private ParameterBound upperBound;
 
-  /** Creates a parameter type whose lower bound is null and whose upper bound is Object. */
+  /**
+   * Creates a parameter type whose lower bound is the null type and whose upper bound is Object.
+   */
   ParameterType() {
     super();
     this.lowerBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);

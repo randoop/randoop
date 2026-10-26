@@ -15,7 +15,7 @@ public class RunnerThread extends Thread {
   /** The code to run. Set by {@link #setup}. */
   private @MonotonicNonNull ReflectionCode code;
 
-  /** True if the most recent call to {@link #run} has completed. Set by {@link #run}. */
+  /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
   boolean runFinished;
 
   /** The state of the thread: which method must be called next. */

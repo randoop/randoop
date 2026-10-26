@@ -39,6 +39,7 @@ plugins {
   alias(libs.plugins.com.gorylenko.gradle.git.properties)
 
   // The `pmd` plugin is applied to all projects, including this one, below.
+  // To run on all projects: `.gradlew pmdMain`
 }
 
 val isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17

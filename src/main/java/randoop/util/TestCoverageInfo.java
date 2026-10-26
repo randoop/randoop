@@ -14,16 +14,19 @@ import randoop.main.RandoopBug;
  */
 public class TestCoverageInfo {
 
-  /** For each branch index, the number of times the branch condition evaluated to true. */
+  /** For each branch condition index, the number of times the condition evaluated to true. */
   public final int[] branchTrue;
 
-  /** For each branch index, the number of times the branch condition evaluated to false. */
+  /** For each branch condition index, the number of times the condition evaluated to false. */
   public final int[] branchFalse;
 
-  /** Maps a method signature to the indices of the branches in that method. */
+  /** Maps a method signature to the indices of the branch conditions in that method. */
   public final Map<String, Set<Integer>> methodToIndices;
 
-  /** The number of branches covered in a method, and the total number of branches in it. */
+  /**
+   * The number of branches covered in a method, and the total number of branches in it. Each branch
+   * condition has two branches: one for each outcome.
+   */
   private static class BranchCov {
     /** The number of branches covered in the method. */
     final int covered;
@@ -46,15 +49,15 @@ public class TestCoverageInfo {
   /**
    * Creates a {@code TestCoverageInfo} in which no branch has been covered.
    *
-   * @param totalBranches the number of branches; must be non-negative
-   * @param map maps a method signature to the indices of the branches in that method
+   * @param totalConditions the number of branch conditions; must be non-negative
+   * @param map maps a method signature to the indices of the branch conditions in that method
    */
-  public TestCoverageInfo(int totalBranches, Map<String, Set<Integer>> map) {
-    if (totalBranches < 0) {
+  public TestCoverageInfo(int totalConditions, Map<String, Set<Integer>> map) {
+    if (totalConditions < 0) {
       throw new IllegalArgumentException();
     }
-    branchTrue = new int[totalBranches];
-    branchFalse = new int[totalBranches];
+    branchTrue = new int[totalConditions];
+    branchFalse = new int[totalConditions];
     methodToIndices = Collections.unmodifiableMap(map);
   }
 

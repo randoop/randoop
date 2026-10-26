@@ -40,7 +40,8 @@ public final class JarReader {
    *
    * @param jarName the name of the jar file
    * @param packageName the package name, in dotted form
-   * @return the names of the class files in the given package
+   * @return the names of the class files whose names start with the given package name; these
+   *     include classes in subpackages
    * @throws IOException if there is a problem reading the jar file
    */
   public static List<String> getClassNamesInPackage(String jarName, String packageName)
