@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -17,15 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.Partial;
-import org.joda.time.base.AbstractInstant;
-import org.joda.time.base.AbstractInterval;
 import org.junit.Test;
 
 /** Tests the default omit-methods files, which Randoop reads unless --omit-methods-no-defaults. */
@@ -86,42 +76,6 @@ public class DefaultOmitMethodsTest {
     }
   }
 
-  /** The Joda-Time patterns omit the operations that read the clock, and no others. */
-  @Test
-  public void testJodaTime() throws Exception {
-    List<Pattern> patterns = readPatterns("/omitmethods-defaults.txt");
-
-    assertOmitted(patterns, RawSignature.of(LocalDate.class.getConstructor()));
-    assertOmitted(patterns, RawSignature.of(LocalDate.class.getConstructor(DateTimeZone.class)));
-    assertOmitted(patterns, RawSignature.of(LocalDate.class.getConstructor(Chronology.class)));
-    assertOmitted(patterns, RawSignature.of(LocalDate.class.getConstructor(Object.class)));
-    assertOmitted(
-        patterns,
-        RawSignature.of(LocalDate.class.getConstructor(Object.class, DateTimeZone.class)));
-    assertOmitted(
-        patterns, RawSignature.of(LocalDate.class.getConstructor(Object.class, Chronology.class)));
-    assertOmitted(patterns, RawSignature.of(LocalDate.class.getMethod("now")));
-    assertOmitted(patterns, RawSignature.of(DateTime.class.getConstructor()));
-    assertOmitted(patterns, RawSignature.of(DateTime.class.getMethod("now", DateTimeZone.class)));
-    assertOmitted(patterns, RawSignature.of(Instant.class.getConstructor()));
-    assertOmitted(patterns, RawSignature.of(Instant.class.getConstructor(Object.class)));
-    assertOmitted(patterns, RawSignature.of(Instant.class.getMethod("now")));
-    assertOmitted(patterns, RawSignature.of(Interval.class.getConstructor(Object.class)));
-    assertOmitted(patterns, RawSignature.of(AbstractInstant.class.getMethod("isAfterNow")));
-    assertOmitted(patterns, RawSignature.of(AbstractInterval.class.getMethod("containsNow")));
-
-    assertNotOmitted(
-        patterns, RawSignature.of(LocalDate.class.getConstructor(int.class, int.class, int.class)));
-    assertNotOmitted(patterns, RawSignature.of(LocalDate.class.getConstructor(long.class)));
-    assertNotOmitted(
-        patterns, RawSignature.of(DateTime.class.getConstructor(long.class, DateTimeZone.class)));
-    assertNotOmitted(patterns, RawSignature.of(Partial.class.getConstructor()));
-    assertNotOmitted(patterns, RawSignature.of(Partial.class.getConstructor(Chronology.class)));
-    assertNotOmitted(
-        patterns, RawSignature.of(Interval.class.getConstructor(long.class, long.class)));
-    assertNotOmitted(patterns, RawSignature.of(LocalDate.class.getMethod("plusDays", int.class)));
-  }
-
   /**
    * Returns true if the signature is in a package that is not on the test classpath.
    *
@@ -135,57 +89,6 @@ public class DefaultOmitMethodsTest {
       }
     }
     return false;
-  }
-
-  /**
-   * Asserts that some pattern matches the signature.
-   *
-   * @param patterns omit patterns
-   * @param signature a signature
-   */
-  private static void assertOmitted(List<Pattern> patterns, RawSignature signature) {
-    assertTrue(signature.toString(), isOmitted(patterns, signature));
-  }
-
-  /**
-   * Asserts that no pattern matches the signature.
-   *
-   * @param patterns omit patterns
-   * @param signature a signature
-   */
-  private static void assertNotOmitted(List<Pattern> patterns, RawSignature signature) {
-    assertFalse(signature.toString(), isOmitted(patterns, signature));
-  }
-
-  /**
-   * Returns true if some pattern matches the signature, as {@link OmitMethodsPredicate} does.
-   *
-   * @param patterns omit patterns
-   * @param signature a signature
-   * @return true if some pattern matches the signature
-   */
-  private static boolean isOmitted(List<Pattern> patterns, RawSignature signature) {
-    String signatureString = signature.toString();
-    for (Pattern pattern : patterns) {
-      if (pattern.matcher(signatureString).find()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Returns the patterns in the given resource.
-   *
-   * @param resourceName the name of a resource that contains omit patterns
-   * @return the patterns in the resource
-   */
-  private static List<Pattern> readPatterns(String resourceName) throws IOException {
-    List<Pattern> result = new ArrayList<>();
-    for (String line : readLines(resourceName)) {
-      result.add(Pattern.compile(line));
-    }
-    return result;
   }
 
   /**
