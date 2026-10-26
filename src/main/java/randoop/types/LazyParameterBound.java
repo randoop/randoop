@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
@@ -204,16 +205,30 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return hasWildcard(boundType);
+    return hasWildcard(boundType, new HashSet<>());
   }
 
-  private static boolean hasWildcard(java.lang.reflect.Type type) {
+  /**
+   * Returns true if the given type has a wildcard, either directly or in the bound of a type
+   * variable that it contains.
+   *
+   * @param type the type to test
+   * @param visited the type variables whose bounds have already been examined; examining a bound
+   *     again would not terminate for a recursive bound such as {@code T extends Comparable<T>}
+   * @return true if the given type has a wildcard
+   */
+  private static boolean hasWildcard(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
     if (type instanceof java.lang.reflect.WildcardType) {
       return true;
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasWildcard(bound)) {
+      java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable<?>) type;
+      if (!visited.add(variable)) {
+        return false;
+      }
+      for (java.lang.reflect.Type bound : variable.getBounds()) {
+        if (hasWildcard(bound, visited)) {
           return true;
         }
       }
@@ -222,7 +237,7 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType)) {
+        if (hasWildcard(argType, visited)) {
           return true;
         }
       }
@@ -230,34 +245,14 @@ class LazyParameterBound extends ParameterBound {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, because the bound is a {@code java.lang.reflect.Type}, which cannot contain a
+   * capture variable.
+   */
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType);
-  }
-
-  /**
-   * Returns true if the given type has a capture variable.
-   *
-   * @param type the type to test
-   * @return true if the given type has a capture variable
-   */
-  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasCaptureVariable(bound)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType)) {
-          return true;
-        }
-      }
-    }
     return false;
   }
 

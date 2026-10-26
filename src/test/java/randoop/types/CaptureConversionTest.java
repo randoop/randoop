@@ -63,6 +63,28 @@ public class CaptureConversionTest {
         listOperations);
   }
 
+  /**
+   * A field whose type is a wildcard type with a type variable in its bound.
+   *
+   * @param <T> a type parameter with a self-referential bound
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperSelfComparable<T extends Comparable<T>> {
+    /** A wildcard type whose lower bound is a type parameter with a self-referential bound. */
+    Comparable<? super T> superT;
+  }
+
+  /** Tests capture when the wildcard bound is a type variable with a self-referential bound. */
+  @Test
+  public void captureSelfComparableBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(SuperSelfComparable.class.getDeclaredField("superT").getGenericType());
+    InstantiatedType captured = type.applyCaptureConversion();
+    TypeArgument argument = captured.getTypeArguments().get(0);
+    assertTrue(((ReferenceArgument) argument).getReferenceType().isCaptureVariable());
+  }
+
   /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
   @Test
   public void captureStringContainerTest() {
