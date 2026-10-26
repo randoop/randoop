@@ -12,22 +12,32 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
-public class Globals {
+public final class Globals {
+
+  /** Do not instantiate. */
+  private Globals() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /** The version number for Randoop. */
   public static final String RANDOOP_VERSION = "4.3.4";
 
   /** The system-specific line separator string. */
-  @SuppressWarnings("regex:assignment") // needed with CF 3.49.4 and earlier
   public static final @Regex(0) String lineSep = System.lineSeparator();
 
   /** A PrintStream whose contents are ignored. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
 
   /** Discards anything written to it. */
-  private static class NullOutputStream extends OutputStream {
+  private static final class NullOutputStream extends OutputStream {
+    /** Creates a new NullOutputStream. */
+    public NullOutputStream() {}
+
     @Override
-    public void write(@PolySigned int b) throws IOException {}
+    public void write(@PolySigned int b) throws IOException {
+      // The null stream consumes and ignores all data.
+    }
   }
 
   /**

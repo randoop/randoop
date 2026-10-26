@@ -4,8 +4,9 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A TestChecks reprents a set of Checks, and possibly a single ExceptionCheck.
+ * A TestChecks represents a set of Checks, and possibly a single ExceptionCheck.
  *
+ * @param <T> the type of checks in this
  * @see RegressionChecks
  * @see ErrorRevealingChecks
  * @see InvalidChecks
@@ -25,13 +26,6 @@ public interface TestChecks<T extends TestChecks<T>> {
    * @return all checks with passing status
    */
   Set<Check> checks();
-
-  /**
-   * Add a check to this set.
-   *
-   * @param ck the check object to add to this set of checks
-   */
-  void add(Check ck);
 
   /**
    * Returns true if this object has checks.
@@ -61,12 +55,4 @@ public interface TestChecks<T extends TestChecks<T>> {
    * @return the expected exception check, null otherwise
    */
   @Nullable ExceptionCheck getExceptionCheck();
-
-  /**
-   * Returns the intersection of checks in this set and another set.
-   *
-   * @param other the {@code TestChecks} to compare with
-   * @return the checks common to this set of checks and those in {@code other}
-   */
-  T commonChecks(T other);
 }

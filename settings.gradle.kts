@@ -1,4 +1,6 @@
 // The project should be called "randoop", instead of the directory name
 rootProject.name = "randoop"
+
 include("covered-class")
+
 include("replacecall")

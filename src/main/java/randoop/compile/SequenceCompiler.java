@@ -53,11 +53,12 @@ import randoop.util.Log;
   private final JavaCompiler compiler;
 
   /** The {@code FileManager} for this compiler. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
   private final @Owning JavaFileManager fileManager;
 
   /** Creates a {@link SequenceCompiler}. */
   public SequenceCompiler() {
-    this(new ArrayList<String>(0));
+    this(new ArrayList<>(0));
   }
 
   /**
@@ -137,8 +138,7 @@ import randoop.util.Log;
    * @param javaSource the source text of the class
    * @throws SequenceCompilerException if the compilation fails
    */
-  private void compile(final String classname, final String javaSource)
-      throws SequenceCompilerException {
+  private void compile(final String classname, final String javaSource) {
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
@@ -168,43 +168,42 @@ import randoop.util.Log;
     sources.add(source);
     JavaCompiler.CompilationTask task =
         compiler.getTask(
-            null, fileManager, diagnostics, new ArrayList<String>(compilerOptions), null, sources);
-    Boolean succeeded = task.call();
+            null, fileManager, diagnostics, new ArrayList<>(compilerOptions), null, sources);
+    Boolean succeededBoxed = task.call();
+    boolean succeeded = (succeededBoxed != null && succeededBoxed);
 
-    // Write the diagnostics to log if compilation failed
-    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-      int lineNumber = (int) diagnostic.getLineNumber();
+    // Write the diagnostics to the log if compilation failed.
+    if (!succeeded) {
+      boolean headerPrinted = false;
+      String sourceUri = source.toUri().toString();
+      for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+        int lineNumber = (int) diagnostic.getLineNumber();
+        if (!headerPrinted) {
+          Log.logPrintf("%nCompilation failed, see below for details:%n");
+          headerPrinted = true;
+        }
 
-      // Ignore diagnostics that don't have a line number.
-      // Often times, these are notes about the compilation process.
-      if (lineNumber == Diagnostic.NOPOS) {
-        continue;
-      }
-
-      Log.logPrintf("%nCompilation failed, see below for details:%n");
-
-      String message;
-      try {
-        @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
-        String message_temp = diagnostic.getMessage(null);
-        message = message_temp;
-      } catch (Throwable t) {
-        message = diagnostic.toString();
-      }
-
-      if (source == null) {
-        Log.logPrintf("Error on line %d: %s%n", lineNumber, message);
-      } else {
-        String sourceUri = source.toUri().toString();
-        Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+        String message;
+        try {
+          @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
+          String message_temp = diagnostic.getMessage(null);
+          message = message_temp;
+        } catch (Throwable t) {
+          message = diagnostic.toString();
+        }
+        if (lineNumber == Diagnostic.NOPOS) {
+          Log.logPrintf("Error in %s: %s%n", sourceUri, message);
+        } else {
+          Log.logPrintf("Error on line %d in %s: %s%n", lineNumber, sourceUri, message);
+        }
       }
     }
 
-    return (succeeded != null && succeeded);
+    return succeeded;
   }
 
   /**
-   * Compiles the given class, leads it, and returns the Class object. If this method returns
+   * Compiles the given class, loads it, and returns the Class object. If this method returns
    * normally, compilation was successful.
    *
    * @param packageName the package of the class, null if default package
@@ -216,8 +215,7 @@ import randoop.util.Log;
   public Class<?> compileAndLoad(
       final @DotSeparatedIdentifiers String packageName,
       final @Identifier String classname,
-      final String javaSource)
-      throws SequenceCompilerException {
+      final String javaSource) {
     compile(classname, javaSource);
     String fqName = fullyQualifiedName(packageName, classname);
     File dir = new File("").getAbsoluteFile();

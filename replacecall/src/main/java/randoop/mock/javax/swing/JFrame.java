@@ -51,7 +51,7 @@ public class JFrame {
 
   /**
    * Mock of {@code javax.swing.JFrame.toFront()} to avoid scenario where a dialog could assume
-   * focus by moving to the front (this only applies to some dialoging systems).
+   * focus by moving to the front (this only applies to some windowing systems).
    *
    * @param frame the frame that shouldn't assume focus
    */

@@ -17,7 +17,7 @@ public class ConditionMethodTest {
   public org.junit.rules.ExpectedException thrown = org.junit.rules.ExpectedException.none();
 
   @Test
-  public void testSimpleConditionMethod() {
+  public void testSimpleConditionMethod() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(null, "SimpleCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
@@ -27,7 +27,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testSingleArgumentMethod() {
+  public void testSingleArgumentMethod() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(null, "SingleArgumentCondition", "test", new Class<?>[] {String.class});
     ExecutableBooleanExpression simple =
@@ -37,7 +37,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testWrongIdentifier() {
+  public void testWrongIdentifier() throws RandoopSpecificationError {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongIdentifierCondition", "test", new Class<?>[] {String.class});
@@ -45,7 +45,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testWrongType() {
+  public void testWrongType() throws RandoopSpecificationError {
     thrown.expect(RandoopSpecificationError.class);
     RawSignature signature =
         new RawSignature(null, "WrongTypeCondition", "test", new Class<?>[] {String.class});
@@ -53,7 +53,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testErrorThrown() {
+  public void testErrorThrown() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -81,7 +81,7 @@ public class ConditionMethodTest {
   }
 
   @Test
-  public void testThrowableThrown() {
+  public void testThrowableThrown() throws RandoopSpecificationError {
     RawSignature signature =
         new RawSignature(
             "randoop.condition",
@@ -109,7 +109,8 @@ public class ConditionMethodTest {
   }
 
   private ExecutableBooleanExpression createCondition(
-      RawSignature signature, String declarations, String conditionText, String comment) {
+      RawSignature signature, String declarations, String conditionText, String comment)
+      throws RandoopSpecificationError {
     Method method =
         ExecutableBooleanExpression.createMethod(
             signature, declarations, conditionText, getCompiler());

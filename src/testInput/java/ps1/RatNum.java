@@ -308,7 +308,7 @@ public class RatNum {
       // not NaN, and no slash, must be an Integer
       return new RatNum(Integer.parseInt(ratStr));
     } else {
-      // slash, need to parse the two parts seperately
+      // slash, need to parse the two parts separately
       int n = Integer.parseInt(ratStr.substring(0, slashLoc));
       int d = Integer.parseInt(ratStr.substring(slashLoc + 1, ratStr.length()));
       return new RatNum(n, d);

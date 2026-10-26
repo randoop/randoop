@@ -14,6 +14,7 @@ import randoop.Globals;
 /** Helpers for assertions, and stuff... */
 public final class Util {
 
+  /** Do not instantiate. */
   private Util() {
     throw new IllegalStateException("no instance");
   }
@@ -22,7 +23,7 @@ public final class Util {
    * Returns true if a and b are equal (both true or both false).
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second boolean to test
    * @return true if a and b are equal
    */
   public static boolean iff(boolean a, boolean b) {
@@ -33,7 +34,7 @@ public final class Util {
    * Returns true if a is false or b is true.
    *
    * @param a first boolean to test
-   * @param b second bject to test
+   * @param b second boolean to test
    * @return true if a is false or b is true
    */
   public static boolean implies(boolean a, boolean b) {
@@ -67,13 +68,21 @@ public final class Util {
   public static String convertToHexString(String unicodeString) {
     char[] chars = unicodeString.toCharArray();
     StringBuilder output = new StringBuilder();
-    for (int i = 0; i < chars.length; i++) {
+    for (char c : chars) {
       output.append("\\u");
-      String hex = Integer.toHexString(chars[i]);
-      if (hex.length() < 4) output.append("0");
-      if (hex.length() < 3) output.append("0");
-      if (hex.length() < 2) output.append("0");
-      if (hex.length() < 1) output.append("0");
+      String hex = Integer.toHexString(c);
+      if (hex.length() < 4) {
+        output.append('0');
+      }
+      if (hex.length() < 3) {
+        output.append('0');
+      }
+      if (hex.length() < 2) {
+        output.append('0');
+      }
+      if (hex.length() < 1) {
+        output.append('0');
+      }
 
       output.append(hex);
     }
@@ -88,7 +97,9 @@ public final class Util {
    * @return the number of times the pattern appears in the text
    */
   public static int occurCount(StringBuilder text, String pattern) {
-    if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
+    if (pattern.length() == 0) {
+      throw new IllegalArgumentException("empty pattern");
+    }
     int i = 0;
     int currIdx = text.indexOf(pattern);
     while (currIdx != -1) {
@@ -109,7 +120,9 @@ public final class Util {
    * @return a string representation of the formatted paragraph, include line separators
    */
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
-    if (string == null) throw new IllegalArgumentException("string cannot be null.");
+    if (string == null) {
+      throw new IllegalArgumentException("string cannot be null.");
+    }
     if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
     }
@@ -120,10 +133,10 @@ public final class Util {
 
     boolean firstLine = true;
     while (true) {
-      // Determine line's length (exclusive of intent if any)
+      // Determine line's length (exclusive of indent if any)
       int lineLength = firstLine ? colWidth : colWidth - indentWidth;
 
-      if (lineLength > string.length()) {
+      if (lineLength >= string.length()) {
         if (!firstLine) {
           b.append(indentString);
         }

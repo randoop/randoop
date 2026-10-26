@@ -2,7 +2,7 @@ changequote dnl
 changequote(`[',`]')dnl
 changecom([], [Disable comments, that is, expand within them.])dnl
 ifelse([The built-in "dnl" macro means "discard to next line".,])dnl
-define([canary_version], [24])dnl
+define([canary_version], [25])dnl
 dnl
 dnl
 ifelse([Each macro takes one argument, the JDK version.])dnl
@@ -18,8 +18,10 @@ ifelse($1,canary_version,,[    dependsOn:
     steps:
       - checkout: self
         fetchDepth: 25
-      - bash: ./scripts/test-nonSystemTest.sh
-        displayName: test-nonSystemTest.sh])dnl
+      - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-nonSystemTest.sh
+        displayName: test-nonSystemTest.sh
+        env:
+          TERM: dumb])dnl
 dnl
 define([systemTest_job], [dnl
   - job: systemTest_jdk$1
@@ -33,8 +35,10 @@ ifelse($1,canary_version,,[    dependsOn:
     steps:
       - checkout: self
         fetchDepth: 25
-      - bash: ./scripts/test-systemTest.sh
-        displayName: test-systemTest.sh])dnl
+      - bash: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
+        displayName: test-systemTest.sh
+        env:
+          TERM: dumb])dnl
 dnl
 define([misc_job], [dnl
   - job: misc
@@ -45,7 +49,9 @@ define([misc_job], [dnl
       - checkout: self
         fetchDepth: 25
       - bash: ./scripts/test-misc.sh
-        displayName: test-misc.sh])dnl
+        displayName: test-misc.sh
+        env:
+          TERM: dumb])dnl
 dnl
 ifelse([
 Local Variables:

@@ -8,11 +8,35 @@ set -o verbose
 set -o xtrace
 export SHELLOPTS
 
-# Download dependencies, trying a second time if there is a failure.
-(./gradlew --write-verification-metadata sha256 help --dry-run \
-  || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run))
+# Don't override JAVA_HOME because the system tests use JAVA_HOME to run Randoop.
+# Instead find a Java 21 or 25 to pass with -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}" to
+# Gradle.
+# Prefer an OS-appropriate default only if JAVA21_HOME is unset and exists.
+if [ -z "${JAVA21_HOME:-}" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    CANDIDATE="$(/usr/libexec/java_home -v 21 2> /dev/null || true)"
+    [ -n "$CANDIDATE" ] && export JAVA21_HOME="$CANDIDATE"
+  elif [ -d /usr/lib/jvm/java-21-openjdk-amd64 ]; then
+    export JAVA21_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  fi
+fi
+if [ -n "${JAVA21_HOME:-}" ] && [ -x "${JAVA21_HOME}/bin/javac" ]; then
+  export JAVA_GRADLE_HOME="${JAVA21_HOME}"
+fi
+if [ -z "${JAVA_GRADLE_HOME:-}" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    CANDIDATE="$(/usr/libexec/java_home -v 25 2> /dev/null || true)"
+    [ -n "$CANDIDATE" ] && export JAVA_GRADLE_HOME="$CANDIDATE"
+  elif [ -d /usr/lib/jvm/java-25-openjdk-amd64 ]; then
+    export JAVA_GRADLE_HOME=/usr/lib/jvm/java-25-openjdk-amd64
+  fi
+fi
 
-./gradlew assemble
+# Download dependencies, trying a second time if there is a failure.
+(./gradlew --write-verification-metadata sha256 help --dry-run -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}" \
+  || (sleep 60 && ./gradlew --write-verification-metadata sha256 help --dry-run -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"))
+
+./gradlew assemble -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"
 
 # Need GUI for running runDirectSwingTest.
 # Run xvfb.
@@ -23,7 +47,7 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile "$PIDFILE" --make-pidfile --background --exec $XVFB -- "$XVFBARGS"
 sleep 3 # give xvfb some time to start
 
-./gradlew --info systemTest
+./gradlew --info systemTest -Dorg.gradle.java.home="${JAVA_GRADLE_HOME}"
 
 # Stop xvfb as 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --pidfile "$PIDFILE" || true

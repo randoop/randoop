@@ -58,7 +58,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   private @MonotonicNonNull InputSequenceSelector inputSequenceSelector;
 
   /**
-   * Get the singleton instance of {@link GrtObjectFuzzer}.
+   * Returns the singleton instance of {@link GrtObjectFuzzer}.
    *
    * @return the singleton instance
    */
@@ -67,7 +67,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   }
 
   /** Creates a GrtObjectFuzzer. The client must call {@link #initialize}. */
-  // This constructor is private to to enforce the singleton pattern.
+  // This constructor is private to enforce the singleton pattern.
   private GrtObjectFuzzer() {
     // nothing to do; `initialize()` does the initialization.
   }
@@ -90,7 +90,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       TypeTuple inputTypes = op.getInputTypes();
       for (int i = 0; i < inputTypes.size(); i++) {
         Type type = inputTypes.get(i).getRawtype();
-        rawTypeToSideEffectingOps.computeIfAbsent(type, k -> new ArrayList<>()).add(op);
+        rawTypeToSideEffectingOps.computeIfAbsent(type, __ -> new ArrayList<>()).add(op);
       }
     }
     this.componentManager = cm;
@@ -283,14 +283,14 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
       if (typeToFuzz instanceof ClassOrInterfaceType) {
         // Include the type itself and all supertypes.
         for (ClassOrInterfaceType ancestor :
-            ((ClassOrInterfaceType) typeToFuzz).getAllSupertypesInclusive()) {
+            ((ClassOrInterfaceType) typeToFuzz).getSupertypesInclusive()) {
           List<TypedOperation> ops = rawTypeToSideEffectingOps.get(ancestor.getRawtype());
           if (ops != null) {
             opsSet.addAll(ops);
           }
         }
       } else {
-        // Not a ClassOrInterfaceType, so it as an array: only consider the raw type itself.
+        // Not a ClassOrInterfaceType, so it is an array: only consider the raw type itself.
         List<TypedOperation> ops = rawTypeToSideEffectingOps.get(rawType);
         if (ops != null) {
           opsSet.addAll(ops);

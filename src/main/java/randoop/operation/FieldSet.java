@@ -18,7 +18,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation} that acts like a
+ * FieldSetter is an adapter for an {@link AccessibleField} as a {@link Operation} that acts like a
  * setter for the field.
  *
  * @see AccessibleField
@@ -116,7 +116,7 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return declaringType.getFqName() + ".<set>(" + field.getName() + ")";
+    return declaringType.getBinaryName() + ".<set>(" + field.getName() + ")";
   }
 
   /**

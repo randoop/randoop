@@ -101,8 +101,7 @@ public final class Sequence {
    */
   public static Sequence zero(Type c) {
     return new Sequence()
-        .extend(
-            TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>(0));
+        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<>(0));
   }
 
   /**
@@ -112,7 +111,9 @@ public final class Sequence {
    * @return a {@link Sequence} consisting of a statement created with the object
    */
   public static Sequence createSequenceForPrimitive(Object value) {
-    if (value == null) throw new IllegalArgumentException("value is null");
+    if (value == null) {
+      throw new IllegalArgumentException("value is null");
+    }
     Type type = Type.forValue(value);
 
     if (!type.isNonreceiverType()) {
@@ -141,7 +142,7 @@ public final class Sequence {
    */
   public static Sequence createSequence(
       TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
-    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    Sequence inputSequence = concatenate(inputSequences);
     List<Variable> inputs = CollectionsPlume.mapList(inputSequence::getVariable, indexes);
     return inputSequence.extend(operation, inputs);
   }
@@ -303,6 +304,15 @@ public final class Sequence {
   }
 
   /**
+   * The last statement in the sequence.
+   *
+   * @return the last statement of this sequence
+   */
+  public Statement getLastStatement() {
+    return getStatement(this.statements.size() - 1);
+  }
+
+  /**
    * The value created by the last statement in the sequence.
    *
    * @return the variable assigned to by the last statement of this sequence
@@ -319,7 +329,9 @@ public final class Sequence {
    */
   @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
-    if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
+    if (value.sequence != this) {
+      throw new IllegalArgumentException("value.owner != this");
+    }
     return statements.get(value.index);
   }
 
@@ -337,7 +349,7 @@ public final class Sequence {
 
   /**
    * Returns the Java source code representation of this sequence with values substituted for simple
-   * initializations. Similar to * {@link ExecutableSequence#toCodeString()} except does not include
+   * initializations. Similar to {@link ExecutableSequence#toCodeString()} except does not include
    * checks.
    *
    * @return a string containing Java code for this sequence
@@ -422,7 +434,9 @@ public final class Sequence {
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
       int statementPosition, Variable v) {
-    if (v.index >= statementPosition) throw new IllegalArgumentException();
+    if (v.index >= statementPosition) {
+      throw new IllegalArgumentException();
+    }
     return new RelativeNegativeIndex(-(statementPosition - v.index));
   }
 
@@ -581,7 +595,6 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
-      verifyDifferentToString("size", other);
       return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
@@ -592,50 +605,10 @@ public final class Sequence {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        verifyDifferentToString("statement index " + i, other);
         return false;
       }
     }
     return true;
-  }
-
-  /**
-   * Throws an exception if this sequence's {@link #toString} equals the given sequence's.
-   *
-   * @param message a diagnostic message
-   * @param other a sequence whose {@link #toString} to compare to this
-   */
-  private void verifyDifferentToString(String message, Sequence other) {
-    // This method `verifyDifferentToString` is not a useful test, because there can be two tests
-    // that differ only in the receiver type of an operation.  For instance, suppose that A is a
-    // supertype of B.  Then one test might choose the operation A.f and the other test might choose
-    // the operation B.f, with the same arguments.  The printed representation of the two tests is
-    // identical, so long as f is not static.  (This example is actually a duplicate that we do not
-    // want, since the two tests will dispatch to the same implementation at run time, but for now
-    // Randoop can produce it, so this method is disabled.)
-    if (true) { // "if (true)" because with just "return;" the compiler complains about dead code.
-      return;
-    }
-
-    if (!GenInputsAbstract.debug_checks) {
-      return;
-    }
-    // Previously was
-    //   if (this.toParsableString().equals(other.toParsableString()))
-    // but that does not make enough distinctions between different sequences.
-    if (this.toString().equals(other.toString())) {
-      throw new IllegalStateException(
-          message
-              + " :"
-              + System.lineSeparator()
-              + this.toString()
-              + ";;; "
-              + other.toString()
-              + ";;; "
-              + this.toParsableString()
-              + ";;; "
-              + other.toParsableString());
-    }
   }
 
   /** This sequence's hash code, cached to avoid recomputation. */
@@ -650,7 +623,7 @@ public final class Sequence {
   /**
    * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
    * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
-   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
+   * each sequence's hashCode). Otherwise, hashCode computation used to be a hotspot.
    *
    * @param statements the list of statements over which to compute the hash code
    * @return the sum of the hash codes of the statements in the sequence
@@ -674,7 +647,7 @@ public final class Sequence {
   }
 
   /**
-   * An list of all the statements in this sequence.
+   * A list of all the statements in this sequence.
    *
    * @return the list of all statements in this sequence
    */
@@ -786,15 +759,11 @@ public final class Sequence {
               "In rVFTLS, no candidates for %svariable with input type %s from statement %s",
               (onlyReceivers ? "receiver " : ""), type, lastStatement));
     }
-    if (possibleVars.size() == 1) {
-      return possibleVars.get(0);
-    } else {
-      return Randomness.randomMember(possibleVars);
-    }
+    return Randomness.randomMember(possibleVars);
   }
 
   /**
-   * Choose one of the statements that produces a values of type {@code type}.
+   * Choose one of the statements that produces a value of type {@code type}.
    *
    * @param type return a sequence of this type
    * @param onlyReceivers if true, only return a sequence that is appropriate to use as a method
@@ -821,12 +790,7 @@ public final class Sequence {
           "Failed to select variable with input type " + type + " from sequence " + this);
     }
 
-    int index;
-    if (possibleIndices.size() == 1) {
-      index = possibleIndices.get(0);
-    } else {
-      index = Randomness.randomMember(possibleIndices);
-    }
+    int index = Randomness.randomMember(possibleIndices);
     return new Variable(this, index);
   }
 
@@ -1065,7 +1029,6 @@ public final class Sequence {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        System.out.println("operation string: " + opStr);
         // Parse operation.
         TypedOperation operation;
         try {
@@ -1077,7 +1040,7 @@ public final class Sequence {
 
         // Find input variables from their names.
         String[] inVars = new String[0];
-        if (!inVarsStr.trim().isEmpty()) {
+        if (!inVarsStr.isEmpty()) {
           // One or more input vars.
           inVars = inVarsStr.split("\\s");
         }
@@ -1100,9 +1063,9 @@ public final class Sequence {
                 "(Statement "
                     + statementCount
                     + ") input variable name "
-                    + newVar
+                    + inVar
                     + " is not declared by a previous statement.";
-            throw new IllegalArgumentException(msg);
+            throw new SequenceParseException(msg, statements, statementCount);
           }
           inputs.add(sequence.getVariable(index));
         }
@@ -1114,7 +1077,7 @@ public final class Sequence {
     } catch (RuntimeException e) {
       // Saw some other exception that is not a parse error.
       // Throw an error, giving information on the problem.
-      StringBuilder b = new StringBuilder();
+      StringBuilder b = new StringBuilder(128);
       b.append(
               "Error while parsing the following list of strings as a sequence (error was at"
                   + " index ")
@@ -1240,7 +1203,7 @@ public final class Sequence {
 
   /**
    * Returns the operation from which this sequence was constructed. (Also known as the operation in
-   * the last statement of this sequence.
+   * the last statement of this sequence.)
    *
    * @return the last operation of this sequence
    */
@@ -1255,8 +1218,8 @@ public final class Sequence {
    * a statement are values created by earlier statements. Instead of using a Variable to represent
    * such inputs, we use a RelativeNegativeIndex, which is just a wrapper for an integer. The
    * integer represents a negative offset from the statement index in which this
-   * RelativeNegativeIndex lives, and the offset points to the statement that created the values
-   * that is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
+   * RelativeNegativeIndex lives, and the offset points to the statement that created the value that
+   * is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
    * created by the N-th statement above me".
    *
    * <p>For example, the sequence

@@ -6,6 +6,7 @@ package randoop.main;
  */
 public class RandoopCommandError extends RandoopUsageError {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
 
   /**

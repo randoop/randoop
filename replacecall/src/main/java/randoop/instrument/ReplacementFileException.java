@@ -1,7 +1,7 @@
 package randoop.instrument;
 
 /** Exception representing an error in a replacement file. */
-class ReplacementFileException extends Throwable {
+class ReplacementFileException extends Exception {
 
   private static final long serialVersionUID = 20250811;
 

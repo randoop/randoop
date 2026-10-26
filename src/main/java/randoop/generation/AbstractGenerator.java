@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.plumelib.util.UtilPlume;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -29,8 +32,8 @@ import randoop.util.predicate.AlwaysFalse;
  * Algorithm template for implementing a test generator.
  *
  * <p>The main generation loop is defined in method {@code createAndClassifySequences()}, which
- * repeatedly generates a new sequence, determines if it a failing sequence, and stops the process
- * when the time or sequence limit expires. The process of generating a new sequences is left
+ * repeatedly generates a new sequence, determines if it is a failing sequence, and stops the
+ * process when the time or sequence limit expires. The process of generating a new sequence is left
  * abstract.
  *
  * @see ForwardGenerator
@@ -151,13 +154,13 @@ public abstract class AbstractGenerator {
    * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
-   *     {@code new ComponentManager()}.
+   *     {@code new ComponentManager(IS_PUBLIC)}.
    * @param stopper optional, additional stopping criterion for the generator. Can be null.
    */
   protected AbstractGenerator(
       List<TypedOperation> operations,
       GenInputsAbstract.Limits limits,
-      ComponentManager componentManager,
+      @Nullable ComponentManager componentManager,
       IStopper stopper) {
     assert operations != null;
 
@@ -168,7 +171,7 @@ public abstract class AbstractGenerator {
     this.outputTest = new AlwaysFalse<>();
 
     if (componentManager == null) {
-      this.componentManager = new ComponentManager();
+      this.componentManager = new ComponentManager(IS_PUBLIC);
     } else {
       this.componentManager = componentManager;
     }
@@ -245,8 +248,9 @@ public abstract class AbstractGenerator {
    * Attempt to generate a test (a sequence).
    *
    * @return a test sequence, may be null
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public abstract @Nullable ExecutableSequence step();
+  public abstract @Nullable ExecutableSequence step() throws RandoopSpecificationError;
 
   /**
    * Returns the count of attempts to generate a sequence so far.
@@ -288,8 +292,9 @@ public abstract class AbstractGenerator {
    *
    * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
+   * @throws RandoopSpecificationError if a specification expression cannot be evaluated
    */
-  public void createAndClassifySequences() {
+  public void createAndClassifySequences() throws RandoopSpecificationError {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
@@ -395,7 +400,7 @@ public abstract class AbstractGenerator {
   // TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
     List<ExecutableSequence> unique_seqs = new ArrayList<>(outRegressionSeqs.size());
-    subsumed_sequences = new LinkedHashSet<Sequence>();
+    subsumed_sequences = new LinkedHashSet<>();
     for (ExecutableSequence es : outRegressionSeqs) {
       subsumed_sequences.addAll(es.componentSequences);
     }

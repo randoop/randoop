@@ -91,7 +91,7 @@ public interface Operation {
   /**
    * Predicate to indicate whether this object represents an unchecked cast.
    *
-   * @return true if the this object is a cast, and false otherwise
+   * @return true if this object is a cast, and false otherwise
    */
   boolean isUncheckedCast();
 

@@ -14,6 +14,7 @@ import org.plumelib.util.MapsP;
  * assignment tests.
  */
 public final class PrimitiveTypes {
+  /** Do not instantiate. */
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");
   }
@@ -117,7 +118,7 @@ public final class PrimitiveTypes {
       throw new IllegalArgumentException("types must be primitive");
     }
 
-    // check identity and primitive  widening
+    // check identity and primitive widening
     return source.equals(target) || isSubtype(source, target);
   }
 
@@ -140,7 +141,7 @@ public final class PrimitiveTypes {
    * @return true if the first type is a subtype of the second type
    */
   public static boolean isSubtype(Class<?> first, Class<?> second) {
-    if (!first.isPrimitive() && !second.isPrimitive()) {
+    if (!first.isPrimitive() || !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
     Set<Class<?>> superTypes = wideningTable.get(first);

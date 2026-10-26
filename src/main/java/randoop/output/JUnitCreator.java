@@ -48,7 +48,7 @@ import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 @SuppressWarnings("deprecation") // TODO: fix. "new ClassOrInterfaceType()" does not handle generics
-public class JUnitCreator {
+public final class JUnitCreator {
 
   /** An instance of a Java parser. */
   static JavaParser javaParser = new JavaParser();
@@ -159,6 +159,11 @@ public class JUnitCreator {
     return junitCreator;
   }
 
+  /**
+   * Creates a JUnitCreator. Clients should call {@link #getTestCreator}.
+   *
+   * @param packageName the package name for the generated test classes
+   */
   private JUnitCreator(String packageName) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
@@ -475,7 +480,10 @@ public class JUnitCreator {
 
       String testVariable = instanceNameGen.next();
       ClassOrInterfaceType testClassType = new ClassOrInterfaceType(testClass);
-      @SuppressWarnings("deprecation") // "new ClassOrInterfaceType()" does not handle generics
+      @SuppressWarnings({
+        "deprecation", // "new ClassOrInterfaceType()" does not handle generics
+        "PMD.UseDiamondOperator" // cannot infer for an empty list
+      })
       VariableDeclarator variableDecl =
           new VariableDeclarator(
               testClassType,
@@ -564,11 +572,11 @@ public class JUnitCreator {
       return null;
     }
     StringBuilder blockText = new StringBuilder();
-    blockText.append("{").append(Globals.lineSep);
+    blockText.append('{').append(Globals.lineSep);
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append("}");
+    blockText.append(Globals.lineSep).append('}');
     return javaParser.parseBlock(blockText.toString()).getResult().get();
   }
 }

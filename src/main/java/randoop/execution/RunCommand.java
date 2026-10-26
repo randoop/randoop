@@ -19,7 +19,12 @@ import randoop.util.Log;
  * Class providing the {@link #run(List, Path, long)} method to run a command in a separate process
  * with a timeout.
  */
-public class RunCommand {
+public final class RunCommand {
+
+  /** Do not instantiate. */
+  private RunCommand() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Runs the given command synchronously in the given directory using the given timeout. If the
@@ -32,8 +37,7 @@ public class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeoutMillis)
-      throws CommandException {
+  static Status run(List<String> command, Path workingDirectory, long timeoutMillis) {
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
@@ -151,11 +155,11 @@ public class RunCommand {
     }
 
     /**
-     * Print to sb the lines, or say how many lines there were.
+     * Print to {@code sb} the lines, or say how many lines there were.
      *
      * @param source the source of the lines, such as "stdout" or "stderr"
      * @param lines the lines
-     * @param sb where to print the represenation
+     * @param sb where to print the representation
      */
     private void describeLines(String source, List<String> lines, StringBuilder sb) {
       if (lines.size() <= 2) {
@@ -163,7 +167,7 @@ public class RunCommand {
         sb.append(source);
         sb.append("=\"");
         sb.append(StringsPlume.joinLines(lines));
-        sb.append("\"");
+        sb.append('\"');
         sb.append(Globals.lineSep);
       } else {
         sb.append(", ");
@@ -175,11 +179,12 @@ public class RunCommand {
   }
 
   /**
-   * Exception representing an error that occured while running a process with {@link
+   * Exception representing an error that occurred while running a process with {@link
    * RunCommand#run(List, Path, long)}.
    */
-  public static class CommandException extends Throwable {
+  public static class CommandException extends RuntimeException {
 
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 736230736083495268L;
 
     /**

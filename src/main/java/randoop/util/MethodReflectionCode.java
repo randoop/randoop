@@ -28,7 +28,10 @@ public final class MethodReflectionCode extends ReflectionCode {
    * @param receiver the receiver, or null for a static method
    * @param inputs the arguments that the method is applied to
    */
-  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
+  @SuppressWarnings({
+    "deprecation", // AccessibleObject.isAccessible() has no replacement in Java 8.
+    "PMD.ArrayIsStoredDirectly"
+  })
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
     this.receiver = receiver;
     this.method = method;
@@ -64,6 +67,8 @@ public final class MethodReflectionCode extends ReflectionCode {
         throw new ReflectionCodeException(
             "receiver was null - expected NPE from call to: " + method);
       }
+    } catch (ReflectionCodeException e) {
+      throw e;
     } catch (NullPointerException e) {
       this.exceptionThrown = e;
     } catch (InvocationTargetException e) {
@@ -72,16 +77,21 @@ public final class MethodReflectionCode extends ReflectionCode {
     } catch (Throwable e) {
       // Any other exception indicates Randoop should not have called the method in this way.
       int numArgs = (receiver == null ? 0 : 1) + inputs.length;
-      String message =
+      StringBuilder sb = new StringBuilder();
+      sb.append(
           String.format(
-              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument"));
+              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument")));
       if (receiver != null) {
-        message += lineSep + "  receiver: " + StringsPlume.toStringAndClass(receiver);
+        sb.append(lineSep);
+        sb.append("  receiver: ");
+        sb.append(StringsPlume.toStringAndClass(receiver));
       }
       for (Object input : inputs) {
-        message += lineSep + "  " + StringsPlume.toStringAndClass(input);
+        sb.append(lineSep);
+        sb.append("  ");
+        sb.append(StringsPlume.toStringAndClass(input));
       }
-      throw new ReflectionCodeException(message, e);
+      throw new ReflectionCodeException(sb.toString(), e);
     }
   }
 

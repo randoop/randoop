@@ -15,6 +15,9 @@ import randoop.types.TypeTuple;
  */
 public abstract class CallableOperation implements Operation {
 
+  /** Creates a CallableOperation. */
+  public CallableOperation() {}
+
   @Override
   public boolean isStatic() {
     return false;
@@ -56,8 +59,8 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Returns true if reflective object contained in an {@link Operation} satisfies the predicate.
-   * Since there is no reflective object in an {@code CallableOperation}, returns false.
+   * Returns true if the reflective object contained in an {@link Operation} satisfies the
+   * predicate. Since there is no reflective object in a {@code CallableOperation}, returns false.
    *
    * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked
    * @return false as there is no object to check
@@ -68,7 +71,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Performs this operation using the array of input values. Returns the results of execution as an
+   * Performs this operation using the array of input values. Returns the results of execution as a
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
@@ -128,6 +131,13 @@ public abstract class CallableOperation implements Operation {
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
 
+  /**
+   * Returns the reflection object (such as a {@code Method} or {@code Constructor}) that this
+   * operation invokes, or null if this operation is not implemented by a reflection object.
+   *
+   * @return the reflection object for this operation, or null if there is none
+   */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
   public @Nullable AccessibleObject getReflectionObject() {
     return null;
   }

@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -42,7 +42,7 @@ public class MyInternalFrame extends JInternalFrame {
     static final int xOffset = 30, yOffset = 30;
 
     public MyInternalFrame() {
-        super("Document #" + (++openFrameCount), 
+        super("Document #" + (++openFrameCount),
               true, //resizable
               true, //closable
               true, //maximizable

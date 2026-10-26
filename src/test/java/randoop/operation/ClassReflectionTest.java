@@ -8,6 +8,7 @@ import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 import java.util.List;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
@@ -27,13 +28,13 @@ public class ClassReflectionTest {
   //   assertEquals(5, actual.size());
   // }
 
-  private List<TypedOperation> getConcreteOperations(Class<?> c) {
+  private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     return OperationExtractor.operations(
         c, new DefaultReflectionPredicate(), OmitMethodsPredicate.NO_OMISSION, IS_PUBLIC);
   }
 
   @Test
-  public void innerClassTest() {
+  public void innerClassTest() throws RandoopSpecificationError {
     Class<?> outer = randoop.test.ClassWithInnerClass.class;
     Class<?> inner;
     try {

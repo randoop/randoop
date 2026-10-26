@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -48,18 +48,18 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GenealogyExample extends JPanel 
+public class GenealogyExample extends JPanel
                               implements ActionListener {
     GenealogyTree tree;
     private static String SHOW_ANCESTOR_CMD = "showAncestor";
 
     public GenealogyExample() {
         super(new BorderLayout());
-        
+
         //Construct the panel with the toggle buttons.
-        JRadioButton showDescendant = 
+        JRadioButton showDescendant =
                 new JRadioButton("Show descendants", true);
-        final JRadioButton showAncestor = 
+        final JRadioButton showAncestor =
                 new JRadioButton("Show ancestors");
         ButtonGroup bGroup = new ButtonGroup();
         bGroup.add(showDescendant);
@@ -81,10 +81,10 @@ public class GenealogyExample extends JPanel
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    /** 
+    /**
      * Required by the ActionListener interface.
      * Handle events on the showDescendant and
-     * showAncestore buttons. 
+     * showAncestore buttons.
      */
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand() == SHOW_ANCESTOR_CMD) {
@@ -93,7 +93,7 @@ public class GenealogyExample extends JPanel
             tree.showAncestor(false);
         }
     }
-    
+
     /**
      *  Constructs the genealogy graph used by the model.
      */

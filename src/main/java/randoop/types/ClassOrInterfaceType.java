@@ -2,12 +2,12 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
@@ -24,7 +24,7 @@ import org.plumelib.util.StringsPlume;
  * </pre>
  *
  * InterfaceType is syntactically the same as ClassType. Therefore, {@code ClassType} and {@code
- * InterfaceType} do not exist as subclasses of this class, Rather, the subclasses of this type
+ * InterfaceType} do not exist as subclasses of this class. Rather, the subclasses of this type
  * distinguish between types with parameters ({@link ParameterizedType}), and types without ({@link
  * NonParameterizedType}).
  */
@@ -38,6 +38,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * static type).
    */
   protected @Nullable ClassOrInterfaceType enclosingType = null;
+
+  /** Creates a ClassOrInterfaceType. */
+  public ClassOrInterfaceType() {}
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -61,7 +64,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     Class<?> enclosingClass = classType.getEnclosingClass();
     if (enclosingClass != null) {
-      type.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+      type.enclosingType = forClass(enclosingClass);
     }
     return type;
   }
@@ -83,7 +86,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // treat these as Class<?>
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        return ClassOrInterfaceType.forClass(rawType);
+        return forClass(rawType);
       }
       return ParameterizedType.forType(t);
     }
@@ -307,8 +310,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+    Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }
@@ -345,28 +347,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract ClassOrInterfaceType getSuperclass();
 
   /**
-   * Returns the set of all of the supertypes of this type.
-   *
-   * @return the set of all supertypes of this type
-   */
-  public Collection<ClassOrInterfaceType> getSuperTypes() {
-    Collection<ClassOrInterfaceType> supertypes = new ArrayList<>();
-    if (this.isObject()) {
-      return supertypes;
-    }
-    ClassOrInterfaceType superclass = this.getSuperclass();
-    if (superclass != null) {
-      supertypes.add(superclass);
-      supertypes.addAll(superclass.getSuperTypes());
-    }
-    for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
-      supertypes.add(interfaceType);
-      supertypes.addAll(interfaceType.getSuperTypes());
-    }
-    return supertypes;
-  }
-
-  /**
    * Returns the immediate supertypes of this type.
    *
    * @return the immediate supertypes of this type
@@ -387,21 +367,52 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns all supertypes of this type, including itself.
+   * Returns a set of all of the strict supertypes of this type. The result contains no duplicates
+   * and does not contain this type itself.
    *
-   * @return all supertypes of this type, including itself
+   * @return the set of all supertypes of this type
    */
-  public Collection<ClassOrInterfaceType> getAllSupertypesInclusive() {
-    LinkedHashSet<ClassOrInterfaceType> result = new LinkedHashSet<>();
+  public Set<ClassOrInterfaceType> getSupertypesStrict() {
+    return getSupertypes(false);
+  }
 
+  /**
+   * Returns a set containing this type and all its supertypes. The result contains no duplicates.
+   *
+   * @return this type and all its supertypes
+   */
+  public Set<ClassOrInterfaceType> getSupertypesInclusive() {
+    return getSupertypes(true);
+  }
+
+  /**
+   * Returns a set containing the supertypes of this type. If {@code includeSelf} is true, the set
+   * also contains this type itself; otherwise it contains only the strict supertypes. The set
+   * contains no duplicates.
+   *
+   * @param includeSelf if true, the result contains this type as well as all supertypes
+   * @return the set of all supertypes of this type
+   */
+  public Set<ClassOrInterfaceType> getSupertypes(boolean includeSelf) {
+    Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
     Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>();
     worklist.add(this);
     while (!worklist.isEmpty()) {
-      ClassOrInterfaceType type = worklist.remove();
-      if (result.add(type)) {
-        // result did not already contain the element
-        worklist.addAll(type.getImmediateSupertypes());
+      ClassOrInterfaceType t = worklist.remove();
+      if (result.add(t)) {
+        // An interface may be added to the worklist multiple times, but it will only appear
+        // once in the result.  It doesn't seem worthwhile to test, here, whether the interface
+        // has already been seen, since adding it to the result set does that same test.
+        // Processing interfaces before classes does reduce duplication within the worklist.
+        worklist.addAll(t.getInterfaces());
+        ClassOrInterfaceType superclass = t.getSuperclass();
+        if (superclass != null) {
+          worklist.add(superclass);
+        }
       }
+    }
+    if (!includeSelf) {
+      result.remove(this);
     }
     return result;
   }
@@ -451,7 +462,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if this class is a member of another class. (see <a
+   * Returns true if this class is a member of another class. (See <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.5">JLS section
    * 8.5</a>).
    *

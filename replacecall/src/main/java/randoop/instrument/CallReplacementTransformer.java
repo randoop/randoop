@@ -26,9 +26,9 @@ import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.bcelutil.BcelUtil;
 import org.plumelib.bcelutil.InstructionListUtils;
 import org.plumelib.bcelutil.SimpleLog;
+import org.plumelib.util.ArraysPlume;
 
 /**
  * The {@code CallReplacementTransformer} replaces each call to method m1 by a call to method m2. It
@@ -79,7 +79,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   /**
    * {@inheritDoc}
    *
-   * <p>Transforms the given class class by replacing calls to methods with corresponding calls as
+   * <p>Transforms the given class by replacing calls to methods with corresponding calls as
    * determined by {@link #replacementMap}.
    *
    * <p>Excludes bootloaded classes that are not AWT/Swing classes. Other exclusions are determined
@@ -170,7 +170,7 @@ public class CallReplacementTransformer extends InstructionListUtils
   }
 
   /**
-   * Returns true if the class loader is the bootstrap loader or by the first classloader. The first
+   * Returns true if the class loader is the bootstrap loader or the first classloader. The first
    * classloader will either be a user-provided boot loader, or the extension class loader. Since
    * the predicate is for performance, we don't make the extra check to determine if the user has
    * given a boot loader.
@@ -229,7 +229,7 @@ public class CallReplacementTransformer extends InstructionListUtils
     }
   }
 
-  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<NewInstInfo>();
+  private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<>();
 
   /**
    * Processes each method in the given class replacing any specified calls. The replacements are
@@ -241,6 +241,7 @@ public class CallReplacementTransformer extends InstructionListUtils
    *     expected
    * @throws IOException if there is trouble with writing to a file
    */
+  @SuppressWarnings("PMD.ExceptionAsFlowControl")
   private boolean transformClass(ClassGen cg) throws IllegalClassFormatException, IOException {
     // Have we modified this class?
     boolean transformed = false;
@@ -479,7 +480,7 @@ public class CallReplacementTransformer extends InstructionListUtils
       }
       // verify the next instruction after the new is a dup
       if (top.new_inst.getNext().getInstruction().getOpcode() != Const.DUP) {
-        // oops; we expect NEW to be immediatly followed by DUP
+        // oops; we expect NEW to be immediately followed by DUP
         throw new IllegalClassFormatException("Unable to find NEW DUP pair.");
       }
       delete_instructions(mg, top.new_inst, top.new_inst.getNext());
@@ -513,7 +514,7 @@ public class CallReplacementTransformer extends InstructionListUtils
           // array. This argument has already been explicitly pushed onto the stack, so modifying
           // the call signature is enough.
           Type[] arguments =
-              BcelUtil.prependToArray(instanceType, origInvocation.getArgumentTypes(pool));
+              ArraysPlume.prepend(instanceType, origInvocation.getArgumentTypes(pool));
           newInvocation =
               ifact.createInvoke(
                   newSig.getClassname(),

@@ -2,10 +2,12 @@ changequote dnl
 changequote(`[',`]')dnl
 changecom([], [Disable comments, that is, expand within them.])dnl
 ifelse([The built-in "dnl" macro means "discard to next line".,])dnl
-define([canary_version], [24])dnl
+define([canary_version], [25])dnl
 ifelse([each macro takes two arguments, the OS name and the JDK version])dnl
 dnl
 define([circleci_boilerplate_pre], [dnl
+    environment:
+      TERM: dumb
     resource_class: large
 
     steps:
@@ -24,7 +26,7 @@ define([circleci_boilerplate_pre], [dnl
 
       - restore_cache:
           keys:
-            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+            - gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 ])dnl
@@ -33,7 +35,7 @@ define([circleci_boilerplate_post], [
       - save_cache:
           paths:
             - ~/.gradle
-          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle" }}
+          key: gradle-v2-{{ .Branch }}-{{ checksum "build.gradle.kts" }}
 ])dnl
 dnl
 define([circleci_test_results], [dnl
@@ -54,7 +56,7 @@ define([nonSystemTest_job], [dnl
     docker:
       - image: mdernst/randoop-ubuntu-jdk$1
 circleci_boilerplate_pre
-      - run: ./scripts/test-nonSystemTest.sh
+      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-nonSystemTest.sh
 circleci_boilerplate_post
 circleci_test_results
 ])dnl
@@ -65,7 +67,7 @@ define([systemTest_job], [dnl
       - image: mdernst/randoop-ubuntu-jdk$1
 circleci_boilerplate_pre
       - run:
-          command: ./scripts/test-systemTest.sh
+          command: export ORG_GRADLE_PROJECT_jdkTestVersion=$1 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 circleci_boilerplate_post
 circleci_test_results
