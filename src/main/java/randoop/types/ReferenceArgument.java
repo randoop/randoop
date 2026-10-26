@@ -77,22 +77,11 @@ public final class ReferenceArgument extends TypeArgument {
   /**
    * {@inheritDoc}
    *
-   * <p>Considers cases:
-   *
-   * <ul>
-   *   <li>{@code T} contains {@code T}
-   *   <li>{@code T} contains {@code ? extends T}
-   *   <li>{@code T} contains {@code ? super T}
-   * </ul>
+   * <p>A type argument that is not a wildcard contains only the same type.
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
-    if (otherArgument.isWildcard()) {
-      ParameterBound boundType = ((WildcardArgument) otherArgument).getTypeBound();
-      return boundType.equals(new EagerReferenceBound(referenceType));
-    } else {
-      return referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
-    }
+    return Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**
