@@ -177,7 +177,7 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public int hashCode() {
-    return Objects.hash(method);
+    return Objects.hashCode(method);
   }
 
   @Override

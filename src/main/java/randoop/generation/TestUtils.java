@@ -155,7 +155,10 @@ public final class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+    try (@SuppressWarnings({
+          "JdkObsolete",
+          "PreferCharsetOverload"
+        }) // The replacement requires JDK 11.
         PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
       setOperationLog(pw, generator);
     } catch (IOException e) {

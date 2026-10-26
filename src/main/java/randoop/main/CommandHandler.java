@@ -42,11 +42,12 @@ public abstract class CommandHandler {
   /** An example invocation of the command. */
   public String fexample;
 
-  /** The command-line options that the command accepts, or null if none. */
+  /** The command-line options that the command accepts. */
   public Options foptions;
 
   /**
-   * No arguments should be null.
+   * Creates a CommandHandler. Every argument other than {@code command} and {@code options} may be
+   * null, which means that the information is undocumented.
    *
    * @param command the name of the command
    * @param pitch the description of the command

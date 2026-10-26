@@ -56,7 +56,10 @@ public final class SequenceCollection {
    */
   private Set<Type> typesAndSupertypes = new TreeSet<>();
 
-  /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
+  /**
+   * Number of (type, sequence) entries in the collection: sum of sizes of all values in
+   * sequenceMap.
+   */
   private int sequenceCount = 0;
 
   /**
@@ -84,9 +87,11 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns the number of sequences in this collection.
+   * Returns the number of (type, sequence) entries in this collection. {@link #add} adds one entry
+   * for each active value of the sequence's last statement, so this number may exceed the number of
+   * distinct sequences in this collection.
    *
-   * @return the number of sequences in this collection
+   * @return the number of (type, sequence) entries in this collection
    */
   public int size() {
     return sequenceCount;

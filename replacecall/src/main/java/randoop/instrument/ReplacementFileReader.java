@@ -428,7 +428,8 @@ public final class ReplacementFileReader {
       try {
         @SuppressWarnings({
           "JdkObsolete",
-          "PMD.UseStandardCharsets"
+          "PMD.UseStandardCharsets",
+          "PreferCharsetOverload"
         }) // The replacement requires JDK 11+.
         Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
         path = pathTmp;

@@ -4,15 +4,18 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A thread that runs a {@link ReflectionCode}. Clients must alternate calls to {@link #setup} and
- * {@link #run}.
+ * A thread that runs a {@link ReflectionCode}. To run the code in this thread, call {@link #setup}
+ * and then {@link #start}. A thread can be started only once.
+ *
+ * <p>Calls to {@link #setup} and {@link #run} must alternate. {@link #start} calls {@link #run} in
+ * this thread; a direct call to {@link #run} executes the code in the calling thread.
  */
 public class RunnerThread extends Thread {
 
   /** The code to run. Set by {@link #setup}. */
   private @MonotonicNonNull ReflectionCode code;
 
-  /** True if the most recent call to {@link #run} has completed. Set by {@link #run}. */
+  /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
   /*package*/ boolean runFinished;
 
   /** The state of the thread: which method must be called next. */

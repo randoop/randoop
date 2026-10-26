@@ -6,16 +6,16 @@ import org.plumelib.util.StringsPlume;
 /**
  * Means that the statement that this result represents completed normally.
  *
- * <p>Method r.getRuntimeVariable() returns the runtime value that the statement returns (null for
- * void method calls).
+ * <p>Method r.getRuntimeValue() returns the runtime value that the statement returns (null for void
+ * method calls, and for statements whose value is null).
  *
- * <p>IMPORTANT NOTE: The object returned by getRuntimeVariable() is the actual runtime object
- * created during execution of the sequence (call it s). This means that if you invoke s.execute(v)
- * and then you invoke s.getResult(i).getRuntimeVariable(), the state of the object you get is the
- * FINAL state of the object after s finished executing, NOT the state of the object after the i-th
- * statement was executed. Similarly, if you invoke getRuntimeVariable() sometime in the middle of
- * the execution of s (e.g. you're an ExecutionVisitor and you invoke getRuntimeVariable()), you'll
- * get the state in whatever state it is at that point in the execution.
+ * <p>IMPORTANT NOTE: The object returned by getRuntimeValue() is the actual runtime object created
+ * during execution of the sequence (call it s). This means that if you invoke s.execute(v) and then
+ * you invoke s.getResult(i).getRuntimeValue(), the state of the object you get is the FINAL state
+ * of the object after s finished executing, NOT the state of the object after the i-th statement
+ * was executed. Similarly, if you invoke getRuntimeValue() sometime in the middle of the execution
+ * of s (e.g. you're an ExecutionVisitor and you invoke getRuntimeValue()), you'll get the state in
+ * whatever state it is at that point in the execution.
  */
 public class NormalExecution extends ExecutionOutcome {
 
@@ -34,10 +34,11 @@ public class NormalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Returns the runtime value that the statement returned, or null for a void method call. This is
-   * the actual object, whose state may have changed since the statement was executed.
+   * Returns the runtime value that the statement returned. This is null if the statement is a void
+   * method call or if the statement's value is null. This is the actual object, whose state may
+   * have changed since the statement was executed.
    *
-   * @return the value created by executing the statement
+   * @return the value created by executing the statement, or null
    */
   public @Nullable Object getRuntimeValue() {
     return this.result;
