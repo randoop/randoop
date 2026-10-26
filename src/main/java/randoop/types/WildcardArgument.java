@@ -54,7 +54,7 @@ public class WildcardArgument extends TypeArgument {
 
   @Override
   public int hashCode() {
-    return Objects.hash(argumentType);
+    return Objects.hashCode(argumentType);
   }
 
   @Override
