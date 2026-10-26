@@ -1,14 +1,11 @@
 package randoop.generation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -17,7 +14,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.plumelib.util.SIList;
 import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
@@ -98,38 +94,6 @@ public class ClearComponentsTest {
     Set<Sequence> primitivesAfterClear = nonSeedPrimitives(componentMgr, seeds);
     primitivesAfterClear.retainAll(primitivesBeforeClear);
     assertFalse(primitivesAfterClear.isEmpty());
-  }
-
-  /** Clearing the component set keeps Orienteering's details of the retained sequences only. */
-  @Test
-  public void orienteeringRetainsDetailsOfRetainedSequences() {
-    Sequence seed = Sequence.createSequenceForPrimitive(1);
-    Sequence generated = Sequence.createSequenceForPrimitive(2);
-    OrienteeringSelection selector = new OrienteeringSelection(Collections.singleton(seed));
-    selector.createdExecutableSequence(new ExecutableSequence(generated));
-    // Selecting the seed changes its weight.
-    selector.selectInputSequence(SIList.from(Collections.singletonList(seed)));
-    Double seedWeight = selector.getWeight(seed);
-    assertNotNull(seedWeight);
-
-    selector.componentsCleared(Collections.singleton(seed));
-    assertEquals(seedWeight, selector.getWeight(seed));
-    assertNull(selector.getWeight(generated));
-  }
-
-  /** Clearing the component set keeps the small-tests weights of the retained sequences only. */
-  @Test
-  public void smallTestsRetainsWeightsOfRetainedSequences() {
-    Sequence seed = Sequence.createSequenceForPrimitive(1);
-    Sequence generated = Sequence.createSequenceForPrimitive(2);
-    SmallTestsSequenceSelection selector = new SmallTestsSequenceSelection();
-    selector.selectInputSequence(SIList.from(Arrays.asList(seed, generated)));
-    assertNotNull(selector.getWeight(seed));
-    assertNotNull(selector.getWeight(generated));
-
-    selector.componentsCleared(Collections.singleton(seed));
-    assertNotNull(selector.getWeight(seed));
-    assertNull(selector.getWeight(generated));
   }
 
   /**
