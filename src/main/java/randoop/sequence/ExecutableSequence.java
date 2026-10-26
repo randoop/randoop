@@ -378,6 +378,14 @@ public class ExecutableSequence {
     }
   }
 
+  /**
+   * Returns the run-time values of the given variables, from the execution of this sequence. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
   public Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
@@ -719,6 +727,12 @@ public class ExecutableSequence {
     return getResult(i) instanceof NormalExecution;
   }
 
+  /**
+   * Returns the index of the first statement whose execution did not terminate normally.
+   *
+   * @return the index of the first statement that did not execute normally, or -1 if every
+   *     statement executed normally
+   */
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
       if (!isNormalExecution(i)) {
@@ -728,6 +742,11 @@ public class ExecutableSequence {
     return -1;
   }
 
+  /**
+   * Returns true if every statement of this sequence terminated normally.
+   *
+   * @return true if every statement of this sequence terminated normally
+   */
   public boolean isNormalExecution() {
     return getNonNormalExecutionIndex() == -1;
   }

@@ -14,10 +14,14 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
  */
 public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
-  // This uses a MultiMap just because that is an existing checkpointing data structure.
-  // The value is always true in this mapping, never false.
+  /**
+   * The representation of this set: its keys are the elements of this set. The value is always true
+   * in this mapping, never false. This uses a MultiMap just because that is an existing
+   * checkpointing data structure.
+   */
   public final CheckpointingMultiMap<E, Boolean> map;
 
+  /** Creates a new, empty CheckpointingSet. */
   public CheckpointingSet() {
     super();
     this.map = new CheckpointingMultiMap<>();

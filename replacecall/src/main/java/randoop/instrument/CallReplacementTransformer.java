@@ -220,16 +220,30 @@ public class CallReplacementTransformer extends InstructionListUtils
     return false;
   }
 
+  /** Information about a NEW instruction: its handle and the class it instantiates. */
   private static class NewInstInfo {
+    /** The NEW instruction. */
     InstructionHandle new_inst;
+
+    /** The name of the class that the NEW instruction instantiates. */
     String new_class;
 
+    /**
+     * Creates a NewInstInfo.
+     *
+     * @param new_inst the NEW instruction
+     * @param new_class the name of the class that the NEW instruction instantiates
+     */
     public NewInstInfo(InstructionHandle new_inst, String new_class) {
       this.new_inst = new_inst;
       this.new_class = new_class;
     }
   }
 
+  /**
+   * The NEW instructions, in the method being transformed, whose matching {@code <init>} call has
+   * not yet been processed. The most recent is on top.
+   */
   private Deque<NewInstInfo> new_inst_stack = new ArrayDeque<>();
 
   /**

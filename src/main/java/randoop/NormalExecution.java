@@ -7,7 +7,7 @@ import org.plumelib.util.StringsPlume;
  * Means that the statement that this result represents completed normally.
  *
  * <p>Method r.getRuntimeVariable() returns the runtime value that the statement returns (null for
- * void method calls).
+ * void method calls, and for statements whose value is null).
  *
  * <p>IMPORTANT NOTE: The object returned by getRuntimeVariable() is the actual runtime object
  * created during execution of the sequence (call it s). This means that if you invoke s.execute(v)
@@ -33,6 +33,13 @@ public class NormalExecution extends ExecutionOutcome {
     this.result = result;
   }
 
+  /**
+   * Returns the runtime value that the statement returned. This is null if the statement is a void
+   * method call or if the statement's value is null. This is the actual object, whose state may
+   * have changed since the statement was executed.
+   *
+   * @return the value created by executing the statement, or null
+   */
   public @Nullable Object getRuntimeValue() {
     return this.result;
   }
