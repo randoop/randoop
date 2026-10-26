@@ -117,9 +117,10 @@ public abstract class ReferenceBound extends ParameterBound {
   // The following methods compare types in which some type variables stand for unknown types, as
   // determined by Substitution.isUnknown, and every other type variable stands for itself.  They
   // differ from ReferenceType.isSubtypeOfOrEqualTo, which treats a raw type as a subtype of every
-  // parameterized type that contains a type variable, and from isUpperBound(Type, Substitution),
-  // which treats every type variable in the bound as an unknown.  They are approximate:  they do
-  // not require two occurrences of an unknown to stand for the same type.
+  // parameterized type that contains a type variable, and from
+  // EagerReferenceBound.isUpperBound(Type, Substitution), which treats every type variable in the
+  // bound as an unknown when neither the bound nor the argument is a type variable.  They are
+  // approximate:  they do not require two occurrences of an unknown to stand for the same type.
 
   /**
    * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}.

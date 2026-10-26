@@ -19,6 +19,7 @@ import static randoop.types.GenericsExamples.Variable1Ext3;
 import static randoop.types.GenericsExamples.Variable1Ext4;
 import static randoop.types.GenericsExamples.Variable2;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -310,6 +311,22 @@ public class GenericTypesTest {
    */
   static class RecursivelyBounded<W extends Comparable<W>> {}
 
+  /**
+   * A class whose type parameters are a type variable with a recursive bound and a type variable
+   * bounded by it.
+   *
+   * @param <W> a type parameter with a recursive bound
+   * @param <X> a type parameter bounded by {@code W}
+   */
+  static class TwoVariables<W extends Comparable<W>, X extends W> {}
+
+  /**
+   * A class whose type parameter is bounded by {@code Number}.
+   *
+   * @param <N> a type parameter bounded by {@code Number}
+   */
+  static class NumberBounded<N extends Number> {}
+
   @Test
   public void testInstantiateWithSameVariable() {
     TypeVariable w = GenericClassType.forClass(RecursivelyBounded.class).getTypeParameters().get(0);
@@ -317,5 +334,52 @@ public class GenericTypesTest {
         GenericClassType.forClass(VariableBounded.class).instantiate(w, w);
     assertEquals(
         w, ((ReferenceArgument) instantiated.getTypeArguments().get(1)).getReferenceType());
+  }
+
+  @Test
+  public void testInstantiateWithVariables() {
+    GenericClassType variableBounded = GenericClassType.forClass(VariableBounded.class);
+    List<TypeVariable> twoVariables =
+        GenericClassType.forClass(TwoVariables.class).getTypeParameters();
+    TypeVariable w = twoVariables.get(0);
+    TypeVariable x = twoVariables.get(1);
+    TypeVariable n = GenericClassType.forClass(NumberBounded.class).getTypeParameters().get(0);
+    ReferenceType comparableOfW = GenericClassType.forClass(Comparable.class).instantiate(w);
+    ReferenceType string = JavaTypes.STRING_TYPE;
+    ReferenceType integer = NonParameterizedType.forClass(Integer.class);
+    ReferenceType number = NonParameterizedType.forClass(Number.class);
+
+    // Each of these is legal Java.
+    variableBounded.instantiate(w, x);
+    variableBounded.instantiate(comparableOfW, w);
+    variableBounded.instantiate(number, n);
+    variableBounded.instantiate(number, integer);
+    GenericClassType.forClass(RecursivelyBounded.class).instantiate(w);
+    GenericClassType.forClass(NumberBounded.class).instantiate(n);
+
+    // None of these is legal Java.
+    assertNotInstantiable(variableBounded, w, string);
+    assertNotInstantiable(variableBounded, w, integer);
+    assertNotInstantiable(variableBounded, n, integer);
+    assertNotInstantiable(variableBounded, x, w);
+    assertNotInstantiable(variableBounded, integer, number);
+    assertNotInstantiable(GenericClassType.forClass(RecursivelyBounded.class), x);
+    assertNotInstantiable(GenericClassType.forClass(NumberBounded.class), w);
+  }
+
+  /**
+   * Asserts that instantiating the given generic class with the given type arguments fails.
+   *
+   * @param genericClass a generic class
+   * @param typeArguments type arguments that do not satisfy the bounds of {@code genericClass}
+   */
+  private static void assertNotInstantiable(
+      GenericClassType genericClass, ReferenceType... typeArguments) {
+    try {
+      genericClass.instantiate(typeArguments);
+      fail("instantiated " + genericClass + " with " + Arrays.toString(typeArguments));
+    } catch (IllegalArgumentException e) {
+      // expected
+    }
   }
 }
