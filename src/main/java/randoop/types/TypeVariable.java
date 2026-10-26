@@ -127,7 +127,7 @@ public abstract class TypeVariable extends ParameterType {
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
-    } else {
+    } else if (canTestBound(getLowerTypeBound())) {
       substitution = getSubstitution(this, otherType);
       if (!getLowerTypeBound().isLowerBound(otherType, substitution)) {
         return false;
@@ -140,9 +140,29 @@ public abstract class TypeVariable extends ParameterType {
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
-    } else {
+    } else if (canTestBound(getUpperTypeBound())) {
       substitution = getSubstitution(this, otherType);
       if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the given bound of this variable can be tested by a substitution that
+   * instantiates only this variable. A lazy bound cannot, if it mentions another type variable.
+   *
+   * @param bound a bound of this variable
+   * @return true if {@code bound} can be tested by a substitution that instantiates only this
+   *     variable
+   */
+  boolean canTestBound(ParameterBound bound) {
+    if (!(bound instanceof LazyParameterBound)) {
+      return true;
+    }
+    for (TypeVariable variable : bound.getTypeParameters()) {
+      if (!variable.isSameVariable(this)) {
         return false;
       }
     }
@@ -160,6 +180,16 @@ public abstract class TypeVariable extends ParameterType {
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
+
+  /**
+   * Returns true if this and the given type variable are the same variable, possibly with different
+   * bounds. For example, applying a substitution to the bounds of a type variable yields the same
+   * variable with different bounds, which is not {@code equals()} to the original.
+   *
+   * @param other a type variable
+   * @return true if this and {@code other} are the same variable
+   */
+  public abstract boolean isSameVariable(TypeVariable other);
 
   public abstract TypeVariable createCopyWithBounds(
       ParameterBound lowerBound, ParameterBound upperBound);

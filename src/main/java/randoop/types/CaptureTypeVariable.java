@@ -195,6 +195,11 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
+  public boolean isSameVariable(TypeVariable other) {
+    return other instanceof CaptureTypeVariable && varID == ((CaptureTypeVariable) other).varID;
+  }
+
+  @Override
   public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
     return new CaptureTypeVariable(this.varID, this.wildcard, lowerBound, upperBound);
   }

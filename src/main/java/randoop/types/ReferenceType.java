@@ -182,8 +182,12 @@ public abstract class ReferenceType extends Type {
     if (goalType.isVariable()) {
       TypeVariable variable = (TypeVariable) goalType;
       Substitution substitution = new Substitution(variable, instantiatedType);
-      if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
-          && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
+      ParameterBound lowerBound = variable.getLowerTypeBound();
+      ParameterBound upperBound = variable.getUpperTypeBound();
+      if ((!variable.canTestBound(lowerBound)
+              || lowerBound.isLowerBound(instantiatedType, substitution))
+          && (!variable.canTestBound(upperBound)
+              || upperBound.isUpperBound(instantiatedType, substitution))) {
         return substitution;
       }
     }
