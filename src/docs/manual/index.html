@@ -1339,17 +1339,23 @@ old tests are chosen, from among all existing tests. [default: UNIFORM]
 
 <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
 new tests. Setting this variable to a small number can sometimes result in a greater variety of
-tests generated during a single run. [default: 100000000]
+tests generated during a single run.
+
+<p>Must be positive. [default: 100000000]
             <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
              Clear the component set each time Randoop uses this much memory.
 
 <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
-that is slow due to thrashing and garbage collection. [default: 4000000000]
+that is slow due to thrashing and garbage collection.
+
+<p>Must be positive. [default: 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
             <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>.
-             Maximum number of tests to write to each JUnit file. [default: 500]
+             Maximum number of tests to write to each JUnit file.
+
+<p>Must be positive. [default: 500]
             <li id="option:error-test-basename"><b>--error-test-basename=</b><i>string</i>.
              Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default: ErrorTest]
             <li id="option:regression-test-basename"><b>--regression-test-basename=</b><i>string</i>.
@@ -2660,8 +2666,14 @@ a long-running sequence will prevent Randoop from creating new tests.
 Two possible reasons for a long-running test are:
 </p>
 <ul>
-  <li>Randoop is executing a test that contains nonterminating behavior,
-    or that takes very long to execute.
+  <li>Randoop is executing a test that
+    <ul>
+      <li>contains nonterminating behavior; for example, some implementations
+        of <code>equals()</code>, <code>hashCode()</code>, etc. do not terminate
+        when a collection contains itself, or</li>
+      <li>takes very long to execute.  For example, maybe Randoop passed a value
+        much larger than expected, causing long run times.</li>
+    </ul>
     See "<a href="#nontermination">Randoop does not terminate</a>".
   </li>
   <li>
