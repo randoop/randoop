@@ -314,7 +314,8 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Nullable Object[] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -386,12 +387,13 @@ public class ExecutableSequence {
    * @param inputs the variables whose values to return
    * @return the run-time values of the given variables, in the same order
    */
-  public Object[] getRuntimeInputs(List<Variable> inputs) {
+  public @Nullable Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
-    Object[] ros = getRuntimeValuesForVars(inputs, outcome);
+  private @Nullable Object[] getRuntimeInputs(
+      List<ExecutionOutcome> outcome, List<Variable> inputs) {
+    @Nullable Object[] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
@@ -409,13 +411,14 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+  public static @Nullable Object[] getRuntimeValuesForVars(
+      List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
-  private static Object[] getRuntimeValuesForVars(
+  private static @Nullable Object[] getRuntimeValuesForVars(
       List<Variable> vars, List<ExecutionOutcome> execution) {
-    Object[] runtimeObjects = new Object[vars.size()];
+    @Nullable Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
@@ -554,7 +557,7 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      Sequence s, List<ExecutionOutcome> outcome, int index, @Nullable Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that

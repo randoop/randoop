@@ -1,6 +1,7 @@
 package randoop.condition;
 
 import java.nio.file.Path;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Indicates a problem creating {@link ExecutableBooleanExpression} (usually a syntax error in the
@@ -12,15 +13,15 @@ public class RandoopSpecificationError extends Exception {
   /** ID for serializing this class. */
   private static final long serialVersionUID = 3517219213949862963L;
 
-  /** Which file was being read when the error occurred. */
+  /** Which file was being read when the error occurred, or null if unknown. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  Path file = null;
+  @Nullable Path file = null;
 
   /**
    * The local message for this exception, which overrides the message passed to the constructor. If
    * null, the message passed to the constructor is used.
    */
-  String thisMessage = null;
+  @Nullable String thisMessage = null;
 
   /**
    * Create a {@link RandoopSpecificationError} with the given message.
@@ -64,7 +65,7 @@ public class RandoopSpecificationError extends Exception {
    *
    * @return the local message (ignoring the message of the cause), or null if none has been set
    */
-  public String getThisMessage() {
+  public @Nullable String getThisMessage() {
     return thisMessage;
   }
 

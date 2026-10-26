@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -183,27 +184,31 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * The body of the fixture method to run once after all tests, parsed from the file named by
-   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set.
+   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
    */
-  private BlockStmt afterAllFixtureBody;
+  private @Nullable BlockStmt afterAllFixtureBody;
 
   /**
    * The body of the fixture method to run after each test, parsed from the file named by {@link
-   * GenInputsAbstract#junit_after_each}. Null if that option is not set.
+   * GenInputsAbstract#junit_after_each}. Null if that option is not set, if the fixture has not yet
+   * been parsed, or if it could not be parsed.
    */
-  private BlockStmt afterEachFixtureBody;
+  private @Nullable BlockStmt afterEachFixtureBody;
 
   /**
    * The body of the fixture method to run once before all tests, parsed from the file named by
-   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set.
+   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
    */
-  private BlockStmt beforeAllFixtureBody;
+  private @Nullable BlockStmt beforeAllFixtureBody;
 
   /**
    * The body of the fixture method to run before each test, parsed from the file named by {@link
-   * GenInputsAbstract#junit_before_each}. Null if that option is not set.
+   * GenInputsAbstract#junit_before_each}. Null if that option is not set, if the fixture has not
+   * yet been parsed, or if it could not be parsed.
    */
-  private BlockStmt beforeEachFixtureBody;
+  private @Nullable BlockStmt beforeEachFixtureBody;
 
   static {
     notes = new ArrayList<>(4);
@@ -1178,37 +1183,39 @@ public class GenTests extends GenInputsAbstract {
    * @return true if all fixtures were read without error, false, otherwise
    */
   private boolean createFixtureCode() {
-    boolean badFixtureText = false;
+    List<String> errors = new ArrayList<>();
+    afterAllFixtureBody = parseFixtureFile(GenInputsAbstract.junit_after_all, "after-all", errors);
+    afterEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_after_each, "after-each", errors);
+    beforeAllFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_all, "before-all", errors);
+    beforeEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_each, "before-each", errors);
+    return errors.isEmpty();
+  }
 
+  /**
+   * Parses the fixture text in the given file. If the fixture text cannot be parsed, prints a
+   * message and adds it to {@code errors}.
+   *
+   * @param filename the file containing the fixture text, or null
+   * @param fixtureKind the kind of fixture, such as "after-all", for use in error messages
+   * @param errors a list to which this adds a message if the fixture text cannot be parsed
+   * @return the parsed fixture text, or null if {@code filename} is null or the fixture text cannot
+   *     be parsed
+   */
+  private static BlockStmt parseFixtureFile(
+      String filename, String fixtureKind, List<String> errors) {
     try {
-      afterAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+      return JUnitCreator.parseFixture(getFileText(filename));
     } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
+      String error =
+          String.format("Error in %s fixture file %s: %s", fixtureKind, filename, e.getMessage());
+      // Print the message now, because getFileText exits if a later fixture file cannot be read.
+      System.out.println(error);
+      errors.add(error);
+      return null;
     }
-    try {
-      afterEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
-    } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
-    } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
-    } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    return !badFixtureText;
   }
 
   /**
