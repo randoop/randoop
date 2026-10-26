@@ -128,4 +128,16 @@ public class ReplacementFileTest {
         ReplacementFileReader.readReplacements(defaultFile);
     assertEquals(75, map.size());
   }
+
+  @Test
+  public void jcommanderReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/jcommanderreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
+    assertEquals(
+        MethodSignature.of(
+            "randoop.mock.com.beust.jcommander.internal.Console.readPassword("
+                + "com.beust.jcommander.internal.Console, boolean)"),
+        map.get(MethodSignature.of("com.beust.jcommander.internal.Console.readPassword(boolean)")));
+  }
 }
