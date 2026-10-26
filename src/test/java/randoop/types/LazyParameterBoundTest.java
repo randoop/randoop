@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -62,5 +63,15 @@ public class LazyParameterBoundTest {
     assertTrue(bound instanceof LazyParameterBound);
     // There is no array of the null type, so the substitution does not instantiate the bound.
     assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+  }
+
+  @Test
+  public void testCompareNullTypeForArrayComponent() {
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    // There is no array of the null type, so no type satisfies the substituted bound.
+    Substitution substitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+    assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, substitution));
   }
 }
