@@ -154,44 +154,6 @@ class WildcardType extends ParameterType {
     return this;
   }
 
-  /**
-   * If this type has an upper bound, checks for containment cases:
-   *
-   * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
-   * </ul>
-   *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
-   *
-   * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
-   * </ul>
-   *
-   * The last two being equivalent from the perspective of reflection.
-   *
-   * @param otherType the type to check for
-   * @return true if this type contains the other type, false otherwise
-   */
-  public boolean contains(WildcardType otherType) {
-    if (this.hasUpperBound) {
-      if (otherType.hasUpperBound
-          && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
-        return true;
-      }
-    } else {
-      if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-      } else {
-        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
-      }
-    }
-    return false;
-  }
-
   @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return getTypeBound().isGeneric(ignoreWildcards);
