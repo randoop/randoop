@@ -24,6 +24,10 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+In a replacecall replacement file, a constructor may be written as
+`package-name.classname(argument-list)`, as in a Randoop fully-qualified
+signature, and a nested class may be written with "." instead of "$".
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.

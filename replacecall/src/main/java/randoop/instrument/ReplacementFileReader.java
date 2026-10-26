@@ -219,7 +219,8 @@ public final class ReplacementFileReader {
    * @return the signature of the method or constructor that {@code signatureString} denotes, which
    *     exists
    * @throws ReplacementException if the signature is badly-formed
-   * @throws ClassNotFoundException if no interpretation of the signature names an existing class
+   * @throws ClassNotFoundException if no interpretation of the signature names an existing class,
+   *     or if a superclass that is searched is not on the classpath
    * @throws IllegalClassFormatException if a class cannot be read
    * @throws NoSuchMethodException if the method or constructor does not exist
    */
@@ -254,9 +255,10 @@ public final class ReplacementFileReader {
       try {
         signature.toMethod();
         return signature;
-      } catch (NoSuchMethodException e) {
+      } catch (NoSuchMethodException | ClassNotFoundException | IllegalClassFormatException e) {
+        // The method lookup searches superclasses, which might be missing or unreadable.
         if (!classExists(constructor.getClassname())) {
-          if (!mentionConstructor) {
+          if (!mentionConstructor || !(e instanceof NoSuchMethodException)) {
             throw e;
           }
           NoSuchMethodException withConstructor =
