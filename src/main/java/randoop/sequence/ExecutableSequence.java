@@ -799,7 +799,7 @@ public class ExecutableSequence {
     if (checks == null) {
       throw new Error("hashCode() called prematurely");
     }
-    return Objects.hash(sequence.hashCode(), checks.hashCode());
+    return Objects.hash(sequence, checks);
   }
 
   @Override
