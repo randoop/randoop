@@ -49,7 +49,9 @@ public final class JarReader {
     ArrayList<String> classes = new ArrayList<>();
 
     // The trailing "/" prevents matching a sibling package whose name has the same prefix.
-    String prefix = packageName.isEmpty() ? "" : packageName.replace('.', '/') + "/";
+    String packagePath = packageName.replace('.', '/');
+    String prefix =
+        packagePath.isEmpty() || packagePath.endsWith("/") ? packagePath : packagePath + "/";
     if (debug) {
       System.out.println("Jar " + jarName + " looking for " + prefix);
     }
@@ -63,11 +65,13 @@ public final class JarReader {
         if (jarEntry == null) {
           break;
         }
-        if (jarEntry.getName().startsWith(prefix) && jarEntry.getName().endsWith(".class")) {
+        String entryName = jarEntry.getName();
+        if (entryName.startsWith(prefix) && entryName.endsWith(".class")) {
+          String className = entryName.replace('/', '.');
           if (debug) {
-            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+            System.out.println(className);
           }
-          classes.add(jarEntry.getName().replaceAll("/", "\\."));
+          classes.add(className);
         }
       }
     }

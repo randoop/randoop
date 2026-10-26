@@ -42,7 +42,8 @@ import randoop.util.Util;
 public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
-   * Creates a GenInputsAbstract. No arguments should be null.
+   * Creates a GenInputsAbstract. Every argument other than {@code command} and {@code options} may
+   * be null, which means that the information is undocumented.
    *
    * @param command the name of the command
    * @param pitch the description of the command
@@ -58,14 +59,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }

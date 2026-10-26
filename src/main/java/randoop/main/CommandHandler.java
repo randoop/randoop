@@ -74,10 +74,10 @@ public abstract class CommandHandler {
       @Nullable String example,
       Options options) {
 
-    if ((command == null)) {
+    if (command == null) {
       throw new IllegalArgumentException("command cannot be null.");
     }
-    if ((options == null)) {
+    if (options == null) {
       throw new IllegalArgumentException("options cannot be null.");
     }
 
@@ -165,7 +165,7 @@ public abstract class CommandHandler {
       out.println("}}}");
       out.println();
     }
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("*Notes:*");
       out.println();
       for (String note : fnotes) {
@@ -216,7 +216,7 @@ public abstract class CommandHandler {
           Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("Notes:");
       out.println();
       for (int i = 0; i < fnotes.size(); i++) {

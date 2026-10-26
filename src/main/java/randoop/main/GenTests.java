@@ -184,25 +184,29 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * The body of the fixture method to run once after all tests, parsed from the file named by
-   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set.
+   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
    */
   private @Nullable BlockStmt afterAllFixtureBody;
 
   /**
    * The body of the fixture method to run after each test, parsed from the file named by {@link
-   * GenInputsAbstract#junit_after_each}. Null if that option is not set.
+   * GenInputsAbstract#junit_after_each}. Null if that option is not set, if the fixture has not yet
+   * been parsed, or if it could not be parsed.
    */
   private @Nullable BlockStmt afterEachFixtureBody;
 
   /**
    * The body of the fixture method to run once before all tests, parsed from the file named by
-   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set.
+   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
    */
   private @Nullable BlockStmt beforeAllFixtureBody;
 
   /**
    * The body of the fixture method to run before each test, parsed from the file named by {@link
-   * GenInputsAbstract#junit_before_each}. Null if that option is not set.
+   * GenInputsAbstract#junit_before_each}. Null if that option is not set, if the fixture has not
+   * yet been parsed, or if it could not be parsed.
    */
   private @Nullable BlockStmt beforeEachFixtureBody;
 

@@ -314,7 +314,8 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Nullable Object[] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -556,7 +557,7 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      Sequence s, List<ExecutionOutcome> outcome, int index, @Nullable Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
