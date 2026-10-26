@@ -66,13 +66,11 @@ public final class InitializedArrayCreation extends CallableOperation {
       throw new IllegalArgumentException(
           "Wrong number of arguments: " + statementInput.length + ", expected: " + length);
     }
-    long startTime = System.currentTimeMillis();
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) {
       Array.set(theArray, i, statementInput[i]);
     }
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(theArray, totalTime);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
