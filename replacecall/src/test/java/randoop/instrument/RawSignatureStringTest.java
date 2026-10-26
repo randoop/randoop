@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-/** Tests for {@link MethodSignature}. */
-public class MethodSignatureTest {
+/** Tests for {@link MethodSignature#toRawSignatureString}. */
+public class RawSignatureStringTest {
 
   @Test
   public void methodRawSignatureStringTest() {
