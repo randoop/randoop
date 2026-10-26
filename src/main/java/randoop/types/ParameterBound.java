@@ -236,8 +236,18 @@ public abstract class ParameterBound {
    * @return true iff this bound is a lower bound on the type of the given bound
    */
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    return false;
+    return bound.hasLowerBound(this, substitution);
   }
+
+  /**
+   * Returns true if the given bound is a lower bound on every type that has this bound as a lower
+   * bound.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound on every type whose lower bound is this
+   */
+  abstract boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution);
 
   /**
    * Returns true if this bound is {@code Object}.
