@@ -64,13 +64,16 @@ public class CaptureConversionTest {
   }
 
   /**
-   * A field whose type is a wildcard type with a type variable in its bound.
+   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument.
    *
    * @param <T> a type parameter with a self-referential bound
    */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   static class SuperSelfComparable<T extends Comparable<T>> {
-    /** A wildcard type whose lower bound is a type parameter with a self-referential bound. */
+    /**
+     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
+     * with a self-referential bound.
+     */
     Comparable<? super T> superT;
   }
 

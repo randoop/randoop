@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
@@ -19,6 +20,11 @@ class LazyParameterBound extends ParameterBound {
 
   /** The type for this bound. */
   private final java.lang.reflect.Type boundType;
+
+  /**
+   * Whether {@link #boundType} contains a wildcard; computed on first use by {@link #hasWildcard}.
+   */
+  private @MonotonicNonNull Boolean hasWildcard = null;
 
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
@@ -205,7 +211,10 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return hasWildcard(boundType, new HashSet<>());
+    if (hasWildcard == null) {
+      hasWildcard = hasWildcard(boundType, new HashSet<>());
+    }
+    return hasWildcard;
   }
 
   /**
@@ -213,8 +222,9 @@ class LazyParameterBound extends ParameterBound {
    * variable that it contains.
    *
    * @param type the type to test
-   * @param visited the type variables whose bounds have already been examined; examining a bound
-   *     again would not terminate for a recursive bound such as {@code T extends Comparable<T>}
+   * @param visited the type variables whose bounds are being examined or have been examined;
+   *     examining a bound again would not terminate for a recursive bound such as {@code T extends
+   *     Comparable<T>}
    * @return true if the given type has a wildcard
    */
   private static boolean hasWildcard(
