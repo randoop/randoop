@@ -141,7 +141,7 @@ public class ClearComponentsTest {
     ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
     ForwardGenerator gen = createGenerator(Box.class, componentMgr);
 
-    // The test predicate rejects every sequence, so no sequence is output.
+    // step() does not classify the sequences that it returns, so no sequence is output.
     Set<Sequence> createdBeforeClear = new HashSet<>();
     for (int i = 0; i < 100; i++) {
       ExecutableSequence eSeq = gen.step();
