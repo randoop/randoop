@@ -1,2 +1,0 @@
-// bad replacement file for testing: the replacement does not return the constructed class
-java.lang.Object() randoop.mock.java.util.RandomReplace.randomWithSeedZero()

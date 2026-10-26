@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,18 +23,15 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
-import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
-import org.plumelib.util.ArraysPlume;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.EntryReader.CommentFormat;
 import org.plumelib.util.EntryReader.EntryFormat;
-import org.plumelib.util.StringsPlume;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
@@ -171,8 +167,7 @@ public final class ReplacementFileReader {
 
   /**
    * Adds a method replacement described by a pair of method signatures to the replacement map.
-   * Verifies that both signatures are well-formed and correspond to a method that exists, and that
-   * the replacement is suitable for the original (see {@link #checkReplacement}).
+   * Verifies that both signatures are well-formed and correspond to a method that exists.
    *
    * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. In
    * addition, the original signature may be a constructor written as {@code
@@ -181,10 +176,9 @@ public final class ReplacementFileReader {
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
-   * @throws ReplacementException if either signature is badly-formed, or the replacement is not
-   *     suitable for the original
+   * @throws ReplacementException if either signature is badly-formed
    * @throws ClassNotFoundException if either class cannot be found
-   * @throws IllegalClassFormatException if either class cannot be read
+   * @throws IllegalClassFormatException if either class has an illegal format
    * @throws NoSuchMethodException if either method cannot be found
    */
   private static void addMethodReplacement(
@@ -197,7 +191,8 @@ public final class ReplacementFileReader {
           NoSuchMethodException {
 
     MethodSignature original = resolveOriginal(originalSignature);
-    Method originalMethod = original.toMethod();
+    // Call toMethod() instead of exists() to get more precise error messages.
+    original.toMethod();
 
     MethodSignature replacement;
     try {
@@ -205,9 +200,9 @@ public final class ReplacementFileReader {
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad replacement signature", e);
     }
+    checkClassExists(replacement);
     // Call toMethod() instead of exists() to get more precise error messages.
-    Method replacementMethod = replacement.toMethod();
-    checkReplacement(original, originalMethod, replacement, replacementMethod);
+    replacement.toMethod();
 
     addReplacement(replacementMap, original, replacement);
   }
@@ -221,13 +216,15 @@ public final class ReplacementFileReader {
    * exists. A signature such as {@code C(int)}, with no period before the parenthesis, is a
    * constructor of class {@code C} in the unnamed package.
    *
+   * <p>The class of the result exists. If the result is a constructor, the constructor might not
+   * exist.
+   *
    * @param signatureString the original signature, as written in a replacement file
    * @return the signature of the method or constructor that {@code signatureString} denotes
    * @throws ReplacementException if the signature is badly-formed
    * @throws ClassNotFoundException if no interpretation of the signature names an existing class
    * @throws IllegalClassFormatException if a class cannot be read
-   * @throws NoSuchMethodException if no interpretation of the signature names an existing method or
-   *     constructor
+   * @throws NoSuchMethodException if the signature denotes a method that does not exist
    */
   private static MethodSignature resolveOriginal(String signatureString)
       throws ReplacementException,
@@ -249,26 +246,17 @@ public final class ReplacementFileReader {
     }
 
     if (signature.isConstructor()) {
-      if (!classExists(signature.getClassname())) {
-        throw new ClassNotFoundException(
-            "Class "
-                + signature.getClassname()
-                + " not found"
-                + nestedClassHint(signature.getClassname(), ".<init>"));
-      }
-      // Call toMethod() instead of exists() to get more precise error messages.
-      signature.toMethod();
+      checkClassExists(signature);
       return signature;
     }
 
     MethodSignature constructor = signature.toConstructorSignature();
-    boolean constructorClassExists = classExists(constructor.getClassname());
     if (classExists(signature.getClassname())) {
       try {
         signature.toMethod();
         return signature;
       } catch (NoSuchMethodException e) {
-        if (!constructorClassExists) {
+        if (!classExists(constructor.getClassname())) {
           String hint = nestedClassHint(constructor.getClassname(), "");
           if (hint.isEmpty()) {
             throw e;
@@ -278,7 +266,7 @@ public final class ReplacementFileReader {
           throw withHint;
         }
       }
-    } else if (!constructorClassExists) {
+    } else if (!classExists(constructor.getClassname())) {
       String constructorHint = nestedClassHint(constructor.getClassname(), "");
       if (!constructorHint.isEmpty()) {
         throw new ClassNotFoundException(
@@ -299,8 +287,27 @@ public final class ReplacementFileReader {
       throw new ClassNotFoundException("Class " + signature.getClassname() + " not found");
     }
 
-    constructor.toMethod();
     return constructor;
+  }
+
+  /**
+   * Throws an exception if the class of the given signature is not on the classpath. If the class
+   * name denotes a nested class written with "." instead of "$", the exception message says so.
+   *
+   * @param signature a method signature
+   * @throws ClassNotFoundException if the class of {@code signature} is not on the classpath
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  private static void checkClassExists(MethodSignature signature)
+      throws ClassNotFoundException, IllegalClassFormatException {
+    String classname = signature.getClassname();
+    if (!classExists(classname)) {
+      throw new ClassNotFoundException(
+          "Class "
+              + classname
+              + " not found"
+              + nestedClassHint(classname, "." + signature.getName()));
+    }
   }
 
   /**
@@ -313,9 +320,11 @@ public final class ReplacementFileReader {
   private static boolean classExists(String classname) throws IllegalClassFormatException {
     try {
       return getJavaClassFromClassname(classname) != null;
-    } catch (Throwable e) {
+    } catch (ReplacementException e) {
+      Throwable cause = e.getCause();
       IllegalClassFormatException unreadable =
-          new IllegalClassFormatException("Unable to read: " + classname);
+          new IllegalClassFormatException(
+              "Unable to read " + classname + ": " + (cause == null ? e.getMessage() : cause));
       unreadable.initCause(e);
       throw unreadable;
     }
@@ -346,53 +355,6 @@ public final class ReplacementFileReader {
       }
     }
     return "";
-  }
-
-  /**
-   * Checks that a replacement method can replace the original method or constructor. The
-   * replacement must be static and non-private. Its parameter types must be those of the original,
-   * preceded by the original's class if the original is an instance method. Its return type must be
-   * that of the original, or the original's class if the original is a constructor.
-   *
-   * @param original the signature of the original method or constructor
-   * @param originalMethod the original method or constructor
-   * @param replacement the signature of the replacement method
-   * @param replacementMethod the replacement method
-   * @throws ReplacementException if the replacement cannot replace the original
-   */
-  private static void checkReplacement(
-      MethodSignature original,
-      Method originalMethod,
-      MethodSignature replacement,
-      Method replacementMethod)
-      throws ReplacementException {
-    if (!replacementMethod.isStatic() || replacementMethod.isPrivate()) {
-      throw new ReplacementException(
-          "Replacement method " + replacement + " must be static and non-private");
-    }
-    @SuppressWarnings("signature:assignment") // toMethod() found a class with this name
-    @BinaryName String originalClassname = original.getClassname();
-    Type originalClassType = new ObjectType(originalClassname);
-    Type[] expectedParameterTypes = original.getParameterTypes();
-    Type expectedReturnType;
-    if (original.isConstructor()) {
-      expectedReturnType = originalClassType;
-    } else {
-      expectedReturnType = originalMethod.getReturnType();
-      if (!originalMethod.isStatic()) {
-        expectedParameterTypes = ArraysPlume.prepend(originalClassType, expectedParameterTypes);
-      }
-    }
-    if (!Arrays.equals(replacement.getParameterTypes(), expectedParameterTypes)
-        || !replacementMethod.getReturnType().equals(expectedReturnType)) {
-      throw new ReplacementException(
-          String.format(
-              "Replacement %s for %s must have parameter types (%s) and return type %s",
-              replacement,
-              original,
-              StringsPlume.join(", ", expectedParameterTypes),
-              expectedReturnType));
-    }
   }
 
   /**

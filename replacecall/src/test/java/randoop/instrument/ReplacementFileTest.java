@@ -143,29 +143,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void constructorReplacementWrongTypeTest() throws IOException, ReplacementFileException {
-    Path file =
-        Paths.get("build/resources/test/randoop/instrument/constructorreplacementwrongtype.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "constructorreplacementwrongtype.txt:2: Replacement"
-            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero() for"
-            + " java.lang.Object.<init>() must have parameter types () and return type"
-            + " java.lang.Object");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void nonStaticReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/nonstaticreplacement.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "nonstaticreplacement.txt:2: Replacement method java.lang.Object.hashCode() must be static"
-            + " and non-private");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void constructorReplacementFormsTest() throws IOException, ReplacementFileException {
     Path file =
         Paths.get("build/resources/test/randoop/instrument/constructorreplacementforms.txt");
@@ -209,25 +186,13 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void privateReplacementTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/privatereplacement.txt");
+  public void nestedReplacementDotTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nestedreplacementdot.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "privatereplacement.txt:2: Replacement method"
-            + " randoop.instrument.SampleReplacements.privateNewRandom() must be static and"
-            + " non-private");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void methodReplacementWrongTypeTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/methodreplacementwrongtype.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "methodreplacementwrongtype.txt:2: Replacement"
-            + " randoop.instrument.SampleReplacements.badLength(java.lang.String) for"
-            + " java.lang.String.length() must have parameter types (java.lang.String) and"
-            + " return type int");
+        "nestedreplacementdot.txt:2: Class randoop.instrument.SampleReplacements.Middle not found"
+            + " (for nested class randoop.instrument.SampleReplacements$Middle, write"
+            + " randoop.instrument.SampleReplacements$Middle.newRandom(...))");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 

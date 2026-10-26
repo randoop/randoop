@@ -1,2 +1,0 @@
-// bad replacement file for testing: the replacement is not static
-java.lang.Math.random() java.lang.Object.hashCode()

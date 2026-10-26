@@ -1627,6 +1627,13 @@ Each line of a replacement file is one of:
     the first method by the second); each method signature is
     a <a href="#fully-qualified-signature">Randoop fully-qualified
     signature</a>.
+    In a replacement file, a class name is a binary name: write a nested
+    class with "$", as in
+    <code>java.util.AbstractMap$SimpleEntry(java.lang.Object,java.lang.Object)</code>.
+    A constructor may also be written
+    as <code>package-name.classname.&lt;init&gt;(argument-list)</code>.
+    For a class in the unnamed package, omit <code>package-name.</code>, as
+    in <code>MyClass(int)</code>.
   </li>
 </ul>
 

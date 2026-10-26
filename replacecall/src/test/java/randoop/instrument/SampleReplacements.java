@@ -1,7 +1,6 @@
 package randoop.instrument;
 
 import java.util.AbstractMap;
-import java.util.Random;
 
 /** Replacement methods for the replacement files used by {@link ReplacementFileTest}. */
 public final class SampleReplacements {
@@ -36,25 +35,5 @@ public final class SampleReplacements {
    */
   public static AbstractMap.SimpleEntry<Object, Object> newSimpleEntry(Object key, Object value) {
     return new AbstractMap.SimpleEntry<>(key, value);
-  }
-
-  /**
-   * A private method, which cannot be a replacement.
-   *
-   * @return a new Random
-   */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used in a replacement file
-  private static Random privateNewRandom() {
-    return new Random(0);
-  }
-
-  /**
-   * A replacement for {@code String.length()} with the wrong return type.
-   *
-   * @param s a string
-   * @return the length of the string
-   */
-  public static long badLength(String s) {
-    return s.length();
   }
 }

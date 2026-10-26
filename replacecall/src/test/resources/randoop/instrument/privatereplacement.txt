@@ -1,2 +1,0 @@
-// bad replacement file for testing: the replacement is private
-java.util.Random() randoop.instrument.SampleReplacements.privateNewRandom()
