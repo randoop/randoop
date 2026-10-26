@@ -123,7 +123,7 @@ public abstract class TypeVariable extends ParameterType {
     // A type variable is a subtype of any supertype of its upper bound, in which the type variable
     // stands for itself.  For example, `W extends Comparable<W>` is a subtype of `Comparable<W>`.
     return otherType.isReferenceType()
-        && ReferenceBound.isSubtypeOrEqual(this, (ReferenceType) otherType);
+        && Subtyping.isSubtypeOrEqual(this, (ReferenceType) otherType);
   }
 
   /**
