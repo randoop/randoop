@@ -1,10 +1,12 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -100,4 +102,31 @@ public class ClassOrInterfaceTypeTest {
   class C extends B implements K {}
 
   class D extends C {}
+
+  /** Declares a method whose parameter type mentions a type variable. */
+  static class TypeVariableHolder {
+    /**
+     * A method whose parameter type mentions a type variable.
+     *
+     * @param <T> the element type
+     * @param list a list
+     */
+    static <T> void m(List<T> list) {}
+  }
+
+  @Test
+  public void rawtypeIsNotSubtypeOfParameterizedTypeTest() throws NoSuchMethodException {
+    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
+    NonParameterizedType rawList = listType.getRawtype();
+    assertTrue(rawList.isSubtypeOfOrEqualTo(listType));
+
+    // A raw type is assignable to a parameterized type only by unchecked conversion, and it is not
+    // a subtype of it, even if the parameterized type mentions a type variable.
+    Type listOfT =
+        Type.forType(
+            TypeVariableHolder.class.getDeclaredMethod("m", List.class)
+                .getGenericParameterTypes()[0]);
+    assertTrue(listOfT instanceof InstantiatedType);
+    assertFalse(rawList.isSubtypeOfOrEqualTo(listOfT));
+  }
 }

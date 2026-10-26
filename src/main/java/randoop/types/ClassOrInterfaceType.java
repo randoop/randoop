@@ -516,7 +516,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
+    // A raw type is a subtype of its generic class type, such as `List<E>`.  It is not a subtype of
+    // a parameterized type, such as `List<T>` for a type variable `T`, even though the
+    // parameterized type is generic.
+    if ((this instanceof NonParameterizedType) && otherType instanceof GenericClassType) {
       Class<?> thisClass = this.getRuntimeClass();
       Class<?> otherClass = otherType.getRuntimeClass();
       if (thisClass == otherClass) {
