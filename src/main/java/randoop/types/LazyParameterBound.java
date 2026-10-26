@@ -20,6 +20,12 @@ class LazyParameterBound extends ParameterBound {
   private final java.lang.reflect.Type boundType;
 
   /**
+   * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
+   * instead of reading this field.
+   */
+  private @Nullable List<TypeVariable> typeParameters = null;
+
+  /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
    * @param boundType the reflection type for this bound
@@ -48,7 +54,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundType);
+    return Objects.hashCode(boundType);
   }
 
   @Override
@@ -85,8 +91,17 @@ class LazyParameterBound extends ParameterBound {
       return ReferenceBound.forSubstitutedType(new InstantiatedType(classType, argumentList));
     }
 
+    if (boundType instanceof GenericArrayType) {
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      // An EagerReferenceBound, because LazyReferenceBound does not substitute into array types.
+      return new EagerReferenceBound(((ReferenceArgument) typeArgument).getReferenceType());
+    }
+
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        "lazy parameter bounds should be a type variable, parameterized type, or array type");
   }
 
   /**
@@ -179,7 +194,21 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return getTypeParameters(boundType);
+    return new ArrayList<>(getTypeParameterList());
+  }
+
+  /**
+   * Returns the type variables in this bound. The result must not be modified.
+   *
+   * @return the type variables in this bound
+   */
+  private List<TypeVariable> getTypeParameterList() {
+    List<TypeVariable> result = typeParameters;
+    if (result == null) {
+      result = getTypeParameters(boundType);
+      typeParameters = result;
+    }
+    return result;
   }
 
   @Override
@@ -330,7 +359,11 @@ class LazyParameterBound extends ParameterBound {
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     Substitution completeSubstitution = completeSubstitution(substitution);
     ParameterBound b = instantiate(completeSubstitution);
-    return b != null && b.isUpperBound(bound, completeSubstitution);
+    // Compare the instantiated bound directly.  Calling b.isUpperBound would apply the
+    // substitution again, which can change b, such as by substituting into the bounds of a type
+    // variable that the substitution put in b.
+    return b instanceof ReferenceBound
+        && bound.hasUpperBound(((ReferenceBound) b).getBoundType(), completeSubstitution);
   }
 
   /**
@@ -342,7 +375,7 @@ class LazyParameterBound extends ParameterBound {
    * @return a substitution that maps every type variable in this bound
    */
   private Substitution completeSubstitution(Substitution substitution) {
-    return substitution.extendWithIdentity(getTypeParameters());
+    return substitution.extendWithIdentity(getTypeParameterList());
   }
 
   /**
@@ -372,6 +405,28 @@ class LazyParameterBound extends ParameterBound {
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
     return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if the substitution does not instantiate this bound.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return !b.equals(this) && b.isLowerBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * cannot be determined without a substitution for its type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
   }
 
   @Override

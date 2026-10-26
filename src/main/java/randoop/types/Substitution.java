@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -29,6 +29,19 @@ public class Substitution {
    * #map}: those that are type parameters as opposed to other type variables such as wildcards.
    */
   private Map<Type, ReferenceType> rawMap;
+
+  /**
+   * The identities of the type variables that occur in a type that this substitution maps a
+   * different type variable to; null if not yet computed. Use {@link #getReplacementVariables()}
+   * instead of reading this field.
+   */
+  private @Nullable Set<Object> replacementVariables = null;
+
+  /**
+   * The declarations of the type parameters that this substitution maps to a different type; null
+   * if not yet computed. Use {@link #getInstantiatedDeclarations()} instead of reading this field.
+   */
+  private @Nullable Set<GenericDeclaration> instantiatedDeclarations = null;
 
   /** Create an empty substitution. */
   public Substitution() {
@@ -105,7 +118,7 @@ public class Substitution {
 
   @Override
   public int hashCode() {
-    return Objects.hash(map);
+    return Objects.hashCode(map);
   }
 
   @Override
@@ -138,22 +151,6 @@ public class Substitution {
     return true;
   }
 
-  /** Throws an exception if its arguments are different non-null values. */
-  private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
-      (v1, v2) -> {
-        if (v1 == null) {
-          return v2;
-        }
-        if (v2 == null) {
-          return v1;
-        }
-        if (v1.equals(v2)) {
-          return v1;
-        }
-        throw new IllegalArgumentException(
-            String.format("Substitutions map a key to distinct types %s and %s", v1, v2));
-      };
-
   /**
    * Creates a new substitution that contains the mappings of this substitution, extended by the
    * given mappings. If this and the additional mappings contain the same type variable, both must
@@ -177,10 +174,14 @@ public class Substitution {
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
-      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
-    }
-    for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
-      result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+      ReferenceType existing = result.get(entry.getKey());
+      if (existing == null) {
+        result.put(entry.getKey(), entry.getValue());
+      } else if (!existing.equals(entry.getValue())) {
+        throw new IllegalArgumentException(
+            String.format(
+                "Substitutions map a key to distinct types %s and %s", existing, entry.getValue()));
+      }
     }
     return result;
   }
@@ -194,56 +195,157 @@ public class Substitution {
    * @return a copy of this substitution that maps {@code parameter} to {@code argument}
    */
   Substitution replace(TypeVariable parameter, ReferenceType argument) {
+    ReferenceType oldArgument = get(parameter);
     Substitution result = new Substitution(this);
     result.put(parameter, argument);
+    // Update the caches instead of recomputing them, if this substitution did not replace the
+    // type variable by a different type.
+    if ((oldArgument == null || TypeVariable.isSameVariable(oldArgument, parameter))
+        && !TypeVariable.isSameVariable(argument, parameter)) {
+      Set<Object> oldReplacementVariables = replacementVariables;
+      if (oldReplacementVariables != null) {
+        Set<Object> newReplacementVariables = new HashSet<>(oldReplacementVariables);
+        for (TypeVariable variable : argument.getTypeParameters()) {
+          newReplacementVariables.add(variable.getIdentity());
+        }
+        result.replacementVariables = newReplacementVariables;
+      }
+      Set<GenericDeclaration> oldInstantiatedDeclarations = instantiatedDeclarations;
+      if (oldInstantiatedDeclarations != null) {
+        Set<GenericDeclaration> newInstantiatedDeclarations =
+            new HashSet<>(oldInstantiatedDeclarations);
+        GenericDeclaration declaration = getDeclaration(parameter);
+        if (declaration != null) {
+          newInstantiatedDeclarations.add(declaration);
+        }
+        result.instantiatedDeclarations = newInstantiatedDeclarations;
+      }
+    }
     return result;
   }
 
   /**
    * Returns a substitution that extends this one by mapping to itself each of the given type
-   * variables that this one does not map and that does not occur in a type that this one maps a
-   * different type variable to. Returns this substitution if there is no such type variable.
+   * variables that this one does not map. Returns this substitution if it maps all of them.
    *
    * @param variables type variables
-   * @return a substitution that maps each of {@code variables} that does not occur in a replacement
+   * @return a substitution that maps each of {@code variables}
    */
   Substitution extendWithIdentity(Collection<TypeVariable> variables) {
-    Set<Object> replacementVariables = new HashSet<>();
-    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
-      if (!variableIdentity(entry.getKey()).equals(variableIdentity(entry.getValue()))) {
-        for (TypeVariable variable : entry.getValue().getTypeParameters()) {
-          replacementVariables.add(variableIdentity(variable));
-        }
-      }
-    }
     // A copy of this substitution, made when the first variable is added.
     Substitution result = null;
     for (TypeVariable variable : variables) {
-      Object identity = variableIdentity(variable);
-      Substitution current = result == null ? this : result;
-      boolean isMapped = current.map.containsKey(variable) || current.rawMap.containsKey(identity);
-      if (!isMapped && !replacementVariables.contains(identity)) {
+      if ((result == null ? this : result).get(variable) == null) {
         if (result == null) {
           result = new Substitution(this);
         }
         result.put(variable, variable);
       }
     }
-    return result == null ? this : result;
+    if (result == null) {
+      return this;
+    }
+    // Mapping a type variable to itself changes neither cache.
+    result.replacementVariables = replacementVariables;
+    result.instantiatedDeclarations = instantiatedDeclarations;
+    return result;
   }
 
   /**
-   * Returns an object that identifies the given type: for a type parameter, its reflection type
-   * variable, which is shared by copies of the type parameter whose bounds differ; for any other
-   * type, the type itself.
+   * Returns true if the given type is a type variable that stands for an unknown type when types
+   * are compared. That is the case if this substitution maps the type variable to itself, the type
+   * variable does not occur in the type that this substitution maps a different type variable to,
+   * and the type variable is a type parameter of a declaration whose type parameters this
+   * substitution instantiates, such as a sibling of a type parameter that is being instantiated.
+   * Every other type variable, such as a type parameter of an enclosing class, stands for itself.
    *
    * @param type a type
-   * @return an object that identifies {@code type}
+   * @return true if {@code type} stands for an unknown type
    */
-  private static Object variableIdentity(ReferenceType type) {
-    return type instanceof ExplicitTypeVariable
-        ? ((ExplicitTypeVariable) type).getReflectionTypeVariable()
-        : type;
+  boolean isUnknown(ReferenceType type) {
+    if (!(type instanceof TypeVariable)) {
+      return false;
+    }
+    TypeVariable variable = (TypeVariable) type;
+    GenericDeclaration declaration = getDeclaration(variable);
+    ReferenceType replacement = get(variable);
+    return declaration != null
+        && replacement != null
+        && TypeVariable.isSameVariable(variable, replacement)
+        && !getReplacementVariables().contains(variable.getIdentity())
+        && getInstantiatedDeclarations().contains(declaration);
+  }
+
+  /**
+   * Returns the declaration of the given type variable, if it is a type parameter.
+   *
+   * @param variable a type variable
+   * @return the declaration of {@code variable}, or null if it is not a type parameter
+   */
+  private static @Nullable GenericDeclaration getDeclaration(TypeVariable variable) {
+    return variable instanceof ExplicitTypeVariable
+        ? ((ExplicitTypeVariable) variable).getReflectionTypeVariable().getGenericDeclaration()
+        : null;
+  }
+
+  /**
+   * Returns the identities of the type variables that occur in a type that this substitution maps a
+   * different type variable to.
+   *
+   * @return the identities of the type variables that occur in a replacement
+   * @see TypeVariable#getIdentity()
+   */
+  private Set<Object> getReplacementVariables() {
+    Set<Object> result = replacementVariables;
+    if (result == null) {
+      result = new HashSet<>();
+      for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+        if (!TypeVariable.isSameVariable(entry.getKey(), entry.getValue())) {
+          for (TypeVariable variable : entry.getValue().getTypeParameters()) {
+            result.add(variable.getIdentity());
+          }
+        }
+      }
+      replacementVariables = result;
+    }
+    return result;
+  }
+
+  /**
+   * Returns the declarations of the type parameters that this substitution maps to a different
+   * type.
+   *
+   * @return the declarations of the type parameters that this substitution instantiates
+   */
+  private Set<GenericDeclaration> getInstantiatedDeclarations() {
+    Set<GenericDeclaration> result = instantiatedDeclarations;
+    if (result == null) {
+      result = new HashSet<>();
+      for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+        GenericDeclaration declaration = getDeclaration(entry.getKey());
+        if (declaration != null && !TypeVariable.isSameVariable(entry.getKey(), entry.getValue())) {
+          result.add(declaration);
+        }
+      }
+      instantiatedDeclarations = result;
+    }
+    return result;
+  }
+
+  /**
+   * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
+   * that is, to the type variable that is the key of the entry.
+   *
+   * @param variable a type variable
+   * @return true if this substitution maps {@code variable} to itself
+   */
+  boolean mapsToItself(TypeVariable variable) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (TypeVariable.isSameVariable(entry.getKey(), variable)) {
+        return entry.getKey().equals(entry.getValue());
+      }
+    }
+    return false;
   }
 
   /**
@@ -255,6 +357,10 @@ public class Substitution {
    *     type for the variable
    */
   public @Nullable ReferenceType get(TypeVariable parameter) {
+    // Look up a type parameter by its reflection type variable, which copies of it share.
+    if (parameter instanceof ExplicitTypeVariable) {
+      return rawMap.get(((ExplicitTypeVariable) parameter).getReflectionTypeVariable());
+    }
     return map.get(parameter);
   }
 
@@ -268,7 +374,8 @@ public class Substitution {
    *     there is no type for the variable
    */
   public ReferenceType getOrDefault(TypeVariable parameter, ReferenceType defaultValue) {
-    return map.getOrDefault(parameter, defaultValue);
+    ReferenceType result = get(parameter);
+    return result == null ? defaultValue : result;
   }
 
   /**
@@ -306,7 +413,14 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
+    if (typeParameter instanceof ExplicitTypeVariable
+        && rawMap.containsKey(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable())) {
+      // Replace the entry for a copy of the type variable.
+      map.keySet().removeIf(key -> TypeVariable.isSameVariable(key, typeParameter));
+    }
     map.put(typeParameter, type);
+    replacementVariables = null;
+    instantiatedDeclarations = null;
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
     }

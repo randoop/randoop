@@ -168,6 +168,10 @@ public abstract class ParameterBound {
         }
       }
     }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return hasTypeVariable(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType(), variableSet);
+    }
     if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
@@ -236,18 +240,39 @@ public abstract class ParameterBound {
   public abstract boolean isLowerBound(Type argType, Substitution subst);
 
   /**
-   * Returns true if this is a lower bound on the type of a given bound with respect to a type
-   * substitution. The body is approximately:
-   *
-   * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
-   * </pre>
+   * Returns true if this bound, after applying the substitution to it, is a lower bound on the type
+   * of the given bound. The substitution is not applied to the given bound.
    *
    * @param bound the other bound
-   * @param substitution the type substitution
+   * @param substitution the type substitution to apply to this bound
    * @return true iff this bound is a lower bound on the type of the given bound
    */
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    return false;
+    return bound.hasLowerBound(this, substitution);
+  }
+
+  /**
+   * Returns true if the given bound, after applying the substitution to it, is a lower bound on the
+   * type of this bound. The substitution is not applied to this bound. {@code
+   * b.hasLowerBound(lowerBound, substitution)} is equivalent to {@code lowerBound.isLowerBound(b,
+   * substitution)}.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound on the type of this bound
+   */
+  abstract boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution);
+
+  /**
+   * Returns true if this bound, after applying the substitution to it, is the null type.
+   *
+   * @param substitution the type substitution to apply to this bound
+   * @return true if this bound is the null type
+   */
+  final boolean isNullType(Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return b instanceof ReferenceBound
+        && ((ReferenceBound) b).getBoundType().equals(JavaTypes.NULL_TYPE);
   }
 
   /**
@@ -279,10 +304,10 @@ public abstract class ParameterBound {
    * Returns true if this bound is an upper bound on the type of the given bound with respect to the
    * type substitution.
    *
-   * <p>A type variable in this bound that the substitution does not replace by a different type
-   * stands for an unknown type that may be any type that satisfies the variable's upper bound. An
-   * example is another type parameter of the declaration of the variable whose bound this is. Every
-   * other type variable, such as one in the given bound, stands for itself.
+   * <p>Some type variables in this bound stand for unknown types, which may be any types that
+   * satisfy their bounds; see {@link Substitution#isUnknown(ReferenceType)}. An example is another
+   * type parameter of the declaration of the variable whose bound this is. Every other type
+   * variable, such as one in the given bound, stands for itself.
    *
    * @param bound the other bound
    * @param substitution the type substitution
@@ -295,9 +320,8 @@ public abstract class ParameterBound {
    * bound.
    *
    * @param upperBound the possible upper bound, to which {@code substitution} has been applied
-   * @param substitution the type substitution; a type variable in {@code upperBound} that it maps
-   *     to itself stands for an unknown type, as in {@link #isUpperBound(ParameterBound,
-   *     Substitution)}
+   * @param substitution the type substitution, which determines which type variables in {@code
+   *     upperBound} stand for unknown types (see {@link Substitution#isUnknown(ReferenceType)})
    * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
    */
   abstract boolean hasUpperBound(ReferenceType upperBound, Substitution substitution);

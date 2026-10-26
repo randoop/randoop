@@ -79,13 +79,11 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof ReferenceBound) {
-      return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof EagerReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
     }
-    // `bound` is an intersection or a LazyParameterBound.  An intersection is never a type
-    // variable's lower bound, and a LazyParameterBound cannot be compared without first
-    // substituting for its type variables.
+    assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }
 
@@ -96,9 +94,7 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not replace the type variable, so it stands for an unknown type.
-      return argType.isReferenceType()
-          && ((TypeVariable) thisBoundType).canBeInstantiatedBy((ReferenceType) argType);
+      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
