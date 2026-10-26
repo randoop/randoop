@@ -24,6 +24,10 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+With `--usethreads`, a bug in Randoop that is revealed while executing a test
+is reported (as it is without `--usethreads`).  Previously, Randoop treated it
+as a timeout, discarded the test, and continued generating tests.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
