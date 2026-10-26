@@ -257,10 +257,11 @@ public final class ReplaceCallAgent {
     if (disable_default_replacements_file != null) {
       String filename = disable_default_replacements_file.toString();
       try (Reader fileReader = Files.newBufferedReader(disable_default_replacements_file, UTF_8)) {
-        forEachEntry(
+        EntryFileReader.forEachEntry(
             fileReader,
             filename,
-            (entry, location) -> addDisabledSignature(result, entry, location));
+            (entry, lineNumber) ->
+                addDisabledSignature(result, entry, filename + ":" + lineNumber));
       } catch (IOException e) {
         System.err.printf(
             "Error reading disabled default replacements file %s:%n %s%n",
@@ -288,7 +289,8 @@ public final class ReplaceCallAgent {
     try {
       signatures.add(MethodSignature.of(trimmed));
     } catch (IllegalArgumentException e) {
-      System.err.printf("Bad disabled default replacement in %s: %s%n", source, e.getMessage());
+      System.err.printf(
+          "Bad disabled default replacement %s in %s: %s%n", trimmed, source, e.getMessage());
       System.exit(1); // Exit on bad user input.
     }
   }
