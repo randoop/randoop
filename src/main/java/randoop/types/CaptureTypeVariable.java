@@ -70,6 +70,16 @@ class CaptureTypeVariable extends TypeVariable {
     return wildcard;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the ID of this capture variable
+   */
+  @Override
+  Object getIdentity() {
+    return this.varID;
+  }
+
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -173,6 +183,11 @@ class CaptureTypeVariable extends TypeVariable {
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
+    }
+    if (type != null && isSameVariable(this, type)) {
+      // The bounds of this variable may refer to this variable, as in `Capture0 extends
+      // Comparable<Capture0>`.  Replacing this variable by itself in them would not terminate.
+      return substitute(substitution.without(this));
     }
     // otherwise, apply to bounds
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);

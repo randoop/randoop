@@ -490,6 +490,61 @@ public class TypeVariableTest {
     return GenericClassType.forClass(c).getTypeParameters().get(index);
   }
 
+  /**
+   * Fields whose types are used in tests.
+   *
+   * @param <T> a type parameter with a self-referential bound
+   * @param <U> a type parameter with no bound
+   * @param <E> a type parameter with a self-referential bound
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes<T extends Comparable<T>, U, E extends Enum<E>> {
+    /** A wildcard type whose lower bound is a type parameter. */
+    Comparable<? super T> superT;
+
+    /** A wildcard type whose lower bound is a type parameter with no bound. */
+    Comparable<? super U> superU;
+
+    /** The bound of {@code E}. */
+    Enum<E> enumE;
+
+    /** A wildcard type whose lower bound is a parameterized type. */
+    Comparable<? super Comparable<Object>> superComparableObject;
+
+    /** An unbounded wildcard type. */
+    Comparable<?> comparableWildcard;
+
+    /** A wildcard type whose type parameter has a self-referential bound. */
+    SelfComparableBound<?> selfComparableWildcard;
+  }
+
+  /**
+   * Returns the type of a field of {@link FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static ReferenceType fieldType(String name) {
+    try {
+      return (ReferenceType) Type.forType(FieldTypes.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  /**
+   * Returns the capture variable for the single wildcard argument of the type of a field of {@link
+   * FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the capture variable for the wildcard argument of the field's type
+   */
+  private static TypeVariable captureVariable(String name) {
+    InstantiatedType captured = ((InstantiatedType) fieldType(name)).applyCaptureConversion();
+    return (TypeVariable)
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+  }
+
   @Test
   public void testSubtypeOfRecursiveBound() {
     TypeVariable w = typeParameter(SelfComparableBound.class);
@@ -499,6 +554,56 @@ public class TypeVariableTest {
     assertTrue(
         typeParameter(NumberBound.class)
             .isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  @Test
+  public void testSubtypeOfIntersectionBound() {
+    TypeVariable t = typeParameter(NumberSelfComparableBound.class);
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+    assertTrue(t.isSubtypeOfOrEqualTo(GenericClassType.forClass(Comparable.class).instantiate(t)));
+  }
+
+  @Test
+  public void testSubtypeOfSelfEnumBound() {
+    assertTrue(typeParameter(FieldTypes.class, 2).isSubtypeOfOrEqualTo(fieldType("enumE")));
+  }
+
+  @Test
+  public void testSubtypeOfSuperWildcard() {
+    TypeVariable t = typeParameter(FieldTypes.class);
+    // T extends Comparable<T>, so T <: Comparable<? super T>.
+    assertTrue(t.isSubtypeOfOrEqualTo(fieldType("superT")));
+    // That would require Comparable<Object> <: T.
+    assertFalse(t.isSubtypeOfOrEqualTo(fieldType("superComparableObject")));
+    // The lower bound of the capture of `? super U` is U.
+    assertTrue(typeParameter(FieldTypes.class, 1).isSubtypeOfOrEqualTo(captureVariable("superU")));
+  }
+
+  @Test
+  public void testSubtypeOfVariable() {
+    TypeVariable w = typeParameter(BoundedVariableBound.class, 0);
+    TypeVariable v = typeParameter(BoundedVariableBound.class, 1);
+    assertTrue(v.isSubtypeOfOrEqualTo(w));
+    assertFalse(w.isSubtypeOfOrEqualTo(v));
+  }
+
+  @Test
+  public void testCaptureVariableSubtype() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    assertFalse(capture.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+    assertTrue(capture.isSubtypeOfOrEqualTo(fieldType("comparableWildcard")));
+    assertTrue(capture.isSubtypeOfOrEqualTo(comparable.instantiate(capture)));
+  }
+
+  @Test
+  public void testCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertFalse(capture.equals(copy));
+    assertTrue(TypeVariable.isSameVariable(capture, copy));
   }
 
   @Test

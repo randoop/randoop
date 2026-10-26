@@ -121,6 +121,21 @@ public abstract class ReferenceBound extends ParameterBound {
   // which treats every type variable in the bound as an unknown.  They are approximate:  they do
   // not require two occurrences of an unknown to stand for the same type.
 
+  /** A substitution that maps no type variable, so every type variable stands for itself. */
+  private static final Substitution EMPTY_SUBSTITUTION = new Substitution();
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. Every type
+   * variable stands for itself.
+   *
+   * @param type the possible subtype
+   * @param otherType the possible supertype
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  static boolean isSubtypeOrEqual(ReferenceType type, ReferenceType otherType) {
+    return isSubtypeOrEqual(type, otherType, EMPTY_SUBSTITUTION);
+  }
+
   /**
    * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}.
    *
@@ -153,11 +168,12 @@ public abstract class ReferenceBound extends ParameterBound {
       }
       // Try the supertypes of the type variable, below.
     }
-    if (type.isVariable()) {
+    if (type.isVariable()
+        && ((TypeVariable) type)
+            .getResolvedUpperTypeBound()
+            .hasUpperBound(otherType, substitution)) {
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
-      return ((TypeVariable) type)
-          .getResolvedUpperTypeBound()
-          .hasUpperBound(otherType, substitution);
+      return true;
     }
     if (otherType.isVariable()) {
       // A type variable that stands for itself is a supertype of its lower bound.
@@ -168,6 +184,11 @@ public abstract class ReferenceBound extends ParameterBound {
       ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && isSubtypeOrEqual(type, lowerBoundType, substitution);
+    }
+    if (type.isVariable()) {
+      // Every supertype of a type variable, other than a type variable, is a supertype of its
+      // upper bound.
+      return false;
     }
     if (type.isArray() && otherType.isArray()) {
       Type componentType = ((ArrayType) type).getComponentType();
