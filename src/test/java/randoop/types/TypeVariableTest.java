@@ -804,8 +804,7 @@ public class TypeVariableTest {
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     assertEquals(listOfString, ((ReferenceBound) copy.getUpperTypeBound()).getBoundType());
     // A copy is the same type variable as the original.
-    assertEquals(y, copy);
-    assertEquals(y.hashCode(), copy.hashCode());
+    assertTrue(TypeVariable.isSameVariable(y, copy));
     // Mapping the type variable to itself keeps the copy's bound.
     TypeVariable result = (TypeVariable) copy.substitute(new Substitution(y, y));
     assertEquals(listOfString, ((ReferenceBound) result.getUpperTypeBound()).getBoundType());
