@@ -105,11 +105,8 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
-      ReferenceType arrayType = ((ReferenceArgument) typeArgument).getReferenceType();
-      if (((ArrayType) arrayType).getComponentType().isVariable()) {
-        return new LazyReferenceBound(arrayType);
-      }
-      return new EagerReferenceBound(arrayType);
+      // An EagerReferenceBound, because LazyReferenceBound does not substitute into array types.
+      return new EagerReferenceBound(((ReferenceArgument) typeArgument).getReferenceType());
     }
 
     throw new RandoopBug(
