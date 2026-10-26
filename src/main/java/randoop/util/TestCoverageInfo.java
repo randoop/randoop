@@ -44,27 +44,30 @@ public class TestCoverageInfo {
       int branchesInMethod = covAndTot.inMethod;
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
-      double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
       b.append((methodSignature == null ? "other" : methodSignature));
       b.append(": ");
-      b.append(branchesCovered);
-      b.append("/");
-      b.append(branchesInMethod);
-      b.append(" (");
-      b.append(percentCovered);
-      b.append("%)");
+      b.append(coverageString(branchesCovered, branchesInMethod));
       b.append(Globals.lineSep);
     }
-    double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
     b.append("TOTAL :");
-    b.append(totalBranchesCovered);
-    b.append("/");
-    b.append(totalBranches);
-    b.append(" (");
-    b.append(totalPercent);
-    b.append("%)");
+    b.append(coverageString(totalBranchesCovered, totalBranches));
     b.append(Globals.lineSep);
     return b.toString();
+  }
+
+  /**
+   * Returns a string such as "3/4 (75%)" that reports how many of the given branches are covered.
+   * The percentage is rounded down, so it is 100% only if every branch is covered.
+   *
+   * @param covered the number of branches covered
+   * @param total the total number of branches
+   * @return a string reporting the number and percentage of branches covered
+   */
+  private static String coverageString(int covered, int total) {
+    if (total == 0) {
+      return "0/0 (n/a)";
+    }
+    return String.format("%d/%d (%d%%)", covered, total, 100L * covered / total);
   }
 
   private BranchCov getCoverageInfo(String methodSignature) {
