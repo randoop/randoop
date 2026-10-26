@@ -949,35 +949,4 @@ public class TypeVariableTest {
       assertTrue(bound.getLazyTypeParameters().contains(s));
     }
   }
-
-  /** A class that is comparable to itself. */
-  abstract static class ComparableToSelf implements Comparable<ComparableToSelf> {}
-
-  /** A subclass of a class that is comparable to itself. */
-  abstract static class SubclassOfComparableToSelf extends ComparableToSelf {}
-
-  @Test
-  public void testUnknownVariableBoundBySupertype() {
-    // X extends Comparable<X> cannot be SubclassOfComparableToSelf, but it can be ComparableToSelf.
-    ParameterBound bound = new EagerReferenceBound(typeParameter(SelfComparableBound.class));
-    assertTrue(
-        bound.isUpperBound(
-            ClassOrInterfaceType.forClass(SubclassOfComparableToSelf.class), new Substitution()));
-    assertFalse(bound.isUpperBound(JavaTypes.OBJECT_TYPE, new Substitution()));
-
-    // The capture of ? super Number can be Number, a supertype of Integer.
-    InstantiatedType listOfSuperNumber =
-        GenericClassType.forClass(List.class)
-            .instantiate(
-                new WildcardType(
-                    ParameterBound.forType(ClassOrInterfaceType.forClass(Number.class)), false));
-    ReferenceType capture =
-        ((ReferenceArgument) listOfSuperNumber.applyCaptureConversion().getTypeArguments().get(0))
-            .getReferenceType();
-    ParameterBound captureBound = new EagerReferenceBound(capture);
-    assertTrue(
-        captureBound.isUpperBound(
-            ClassOrInterfaceType.forClass(Integer.class), new Substitution()));
-    assertFalse(captureBound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
-  }
 }
