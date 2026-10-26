@@ -383,7 +383,7 @@ public class GenTests extends GenInputsAbstract {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
-    if (silently_ignore_bad_class_names) {
+    if (ignore_bad_class_names) {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 

@@ -546,7 +546,7 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.test.ClassWithInnerClass");
     options.addTestClass("randoop.test.ClassWithInnerClass$A");
     options.setOption("generated_limit", "40");
-    options.setFlag("silently-ignore-bad-class-names");
+    options.setFlag("ignore-bad-class-names");
     options.setOption("unchecked-exception", "ERROR");
     options.setOption("npe-on-null-input", "ERROR");
     options.setOption("npe-on-non-null-input", "ERROR");

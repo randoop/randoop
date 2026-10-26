@@ -4,6 +4,10 @@
 
 Randoop compiles under Java 21-26 and runs under Java 8-26.
 
+Renamed command-line argument `--silently-ignore-bad-class-names` to
+`--ignore-bad-class-names`, because Randoop prints a warning for each class that
+cannot be found or loaded.  The old name still works.
+
 New command-line arguments:
 
 * `--call-non-sut-methods` calls methods outside the system under test to
