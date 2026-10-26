@@ -171,7 +171,6 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutException if execution times out
-   * @throws RandoopBug if execution reveals a bug in Randoop
    */
   @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
@@ -186,10 +185,6 @@ public final class ReflectionExecutor {
 
       // If test doesn't finish in time, suspend it.
       runnerThread.join(call_timeout_millis);
-
-      if (runnerThread.reflectionCodeException != null) { // bug in Randoop
-        throw new RandoopBug("code=" + code, runnerThread.reflectionCodeException);
-      }
 
       if (!runnerThread.runFinished) {
         Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
