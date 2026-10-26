@@ -49,7 +49,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(list);
+    return Objects.hashCode(list);
   }
 
   @Override
