@@ -2,6 +2,8 @@ package randoop.output;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -41,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
@@ -71,16 +75,16 @@ public final class JUnitCreator {
   private Map<String, Integer> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
-  private BlockStmt beforeAllBody = null;
+  private @Nullable BlockStmt beforeAllBody = null;
 
   /** The Java text for AfterAll method of generated test class. */
-  private BlockStmt afterAllBody = null;
+  private @Nullable BlockStmt afterAllBody = null;
 
   /** The Java text for BeforeEach method of generated test class. */
-  private BlockStmt beforeEachBody = null;
+  private @Nullable BlockStmt beforeEachBody = null;
 
   /** The Java text for AfterEach method of generated test class. */
-  private BlockStmt afterEachBody = null;
+  private @Nullable BlockStmt afterEachBody = null;
 
   /** The JUnit annotation for the BeforeAll option. */
   private static final String BEFORE_ALL = "BeforeClass";
@@ -130,18 +134,18 @@ public final class JUnitCreator {
    * Create a JUnitCreator object.
    *
    * @param junit_package_name the package name for the generated test classes
-   * @param beforeAllBody the Java text for BeforeAll method of generated test class
-   * @param afterAllBody the Java text for AfterAll method of generated test class
-   * @param beforeEachBody the Java text for BeforeEach method of generated test class
-   * @param afterEachBody the Java text for AfterEach method of generated test class
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class, or null
+   * @param afterAllBody the Java text for AfterAll method of generated test class, or null
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class, or null
+   * @param afterEachBody the Java text for AfterEach method of generated test class, or null
    * @return the JUnitCreator object
    */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
-      BlockStmt beforeAllBody,
-      BlockStmt afterAllBody,
-      BlockStmt beforeEachBody,
-      BlockStmt afterEachBody) {
+      @Nullable BlockStmt beforeAllBody,
+      @Nullable BlockStmt afterAllBody,
+      @Nullable BlockStmt beforeEachBody,
+      @Nullable BlockStmt afterEachBody) {
     assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
@@ -572,9 +576,10 @@ public final class JUnitCreator {
    *
    * @param bodyText the lines of code that form the body of the block, or null
    * @return a block statement containing the given code, or null if {@code bodyText} is null
-   * @throws ParseException if the code cannot be parsed
+   * @throws ParseException if the code cannot be parsed; its message describes the problems
    */
-  public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
+  public static @Nullable BlockStmt parseFixture(@Nullable List<String> bodyText)
+      throws ParseException {
     if (bodyText == null) {
       return null;
     }
@@ -584,6 +589,13 @@ public final class JUnitCreator {
       blockText.append(line).append(Globals.lineSep);
     }
     blockText.append(Globals.lineSep).append('}');
-    return javaParser.parseBlock(blockText.toString()).getResult().get();
+    ParseResult<BlockStmt> result = javaParser.parseBlock(blockText.toString());
+    if (!result.isSuccessful() || !result.getResult().isPresent()) {
+      throw new ParseException(
+          result.getProblems().stream()
+              .map(Problem::getVerboseMessage)
+              .collect(Collectors.joining(Globals.lineSep)));
+    }
+    return result.getResult().get();
   }
 }

@@ -1073,16 +1073,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
   /**
-   * If true, then with probability 0.1, after extending a sequence with a method call, Randoop
-   * repeats that call a random number of times (fewer than 100).
+   * If true, then with probability 0.1, after extending a sequence with an operation (such as a
+   * method call, constructor call, or field access), Randoop repeats that operation a random number
+   * of times (fewer than 100).
    */
   // ///////////////////////////////////////////////////////////////////
-  // This is only here to keep the ICSE07ContainersTest working
-  // TODO Need to decide to keep the heuristic that uses this in
-  // /////////////////////////////////////////////////////////////////// ForwardGenerator
+  // This is only here to keep the ICSE07ContainersTest working.
+  // TODO: Decide whether to keep the heuristic in ForwardGenerator that uses this.
   @OptionGroup(value = "Pacheco thesis", unpublicized = true)
   @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times")
+  @Option("Use heuristic that may randomly repeat an operation several times")
   public static boolean repeat_heuristic = false;
 
   /** Check that the options given satisfy any specified constraints, and fail if they do not. */

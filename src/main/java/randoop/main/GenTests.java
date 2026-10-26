@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -185,25 +186,25 @@ public class GenTests extends GenInputsAbstract {
    * The body of the fixture method to run once after all tests, parsed from the file named by
    * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set.
    */
-  private BlockStmt afterAllFixtureBody;
+  private @Nullable BlockStmt afterAllFixtureBody;
 
   /**
    * The body of the fixture method to run after each test, parsed from the file named by {@link
    * GenInputsAbstract#junit_after_each}. Null if that option is not set.
    */
-  private BlockStmt afterEachFixtureBody;
+  private @Nullable BlockStmt afterEachFixtureBody;
 
   /**
    * The body of the fixture method to run once before all tests, parsed from the file named by
    * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set.
    */
-  private BlockStmt beforeAllFixtureBody;
+  private @Nullable BlockStmt beforeAllFixtureBody;
 
   /**
    * The body of the fixture method to run before each test, parsed from the file named by {@link
    * GenInputsAbstract#junit_before_each}. Null if that option is not set.
    */
-  private BlockStmt beforeEachFixtureBody;
+  private @Nullable BlockStmt beforeEachFixtureBody;
 
   static {
     notes = new ArrayList<>(4);
@@ -1184,28 +1185,28 @@ public class GenTests extends GenInputsAbstract {
       afterAllFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
     } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      System.out.println("Error in after-all fixture text:" + Globals.lineSep + e.getMessage());
       badFixtureText = true;
     }
     try {
       afterEachFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
     } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      System.out.println("Error in after-each fixture text:" + Globals.lineSep + e.getMessage());
       badFixtureText = true;
     }
     try {
       beforeAllFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
     } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      System.out.println("Error in before-all fixture text:" + Globals.lineSep + e.getMessage());
       badFixtureText = true;
     }
     try {
       beforeEachFixtureBody =
           JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
     } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      System.out.println("Error in before-each fixture text:" + Globals.lineSep + e.getMessage());
       badFixtureText = true;
     }
     return !badFixtureText;

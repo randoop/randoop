@@ -76,6 +76,9 @@ public abstract class CommandHandler {
     if ((command == null)) {
       throw new IllegalArgumentException("command cannot be null.");
     }
+    if ((options == null)) {
+      throw new IllegalArgumentException("options cannot be null.");
+    }
 
     this.fcommand = command;
     this.fpitch = pitch == null ? "undocumented" : pitch;
@@ -223,10 +226,8 @@ public abstract class CommandHandler {
       }
     }
     out.println();
-    if (foptions != null) {
-      out.println("OPTIONS:");
-      out.println();
-      out.println(foptions.usage(false));
-    }
+    out.println("OPTIONS:");
+    out.println();
+    out.println(foptions.usage(false));
   }
 }

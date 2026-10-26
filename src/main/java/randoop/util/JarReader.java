@@ -34,23 +34,23 @@ public final class JarReader {
   }
 
   /**
-   * Returns the names of the class files in the given jar file whose names start with the given
-   * package name. Each result is a jar entry name with "/" replaced by "." (for example, {@code
-   * "java.lang.Object.class"}).
+   * Returns the names of the class files in the given jar file that are in the given package or in
+   * one of its subpackages. Each result is a jar entry name with "/" replaced by "." (for example,
+   * {@code "java.lang.Object.class"}).
    *
    * @param jarName the name of the jar file
-   * @param packageName the package name, in dotted form
-   * @return the names of the class files whose names start with the given package name; these
-   *     include classes in subpackages
+   * @param packageName the package name, in dotted form; the empty string means the unnamed package
+   * @return the names of the class files in the given package or in one of its subpackages
    * @throws IOException if there is a problem reading the jar file
    */
   public static List<String> getClassNamesInPackage(String jarName, String packageName)
       throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 
-    packageName = packageName.replaceAll("\\.", "/");
+    // The trailing "/" prevents matching a sibling package whose name has the same prefix.
+    String prefix = packageName.isEmpty() ? "" : packageName.replace('.', '/') + "/";
     if (debug) {
-      System.out.println("Jar " + jarName + " looking for " + packageName);
+      System.out.println("Jar " + jarName + " looking for " + prefix);
     }
 
     try (InputStream fis = Files.newInputStream(Paths.get(jarName));
@@ -62,7 +62,7 @@ public final class JarReader {
         if (jarEntry == null) {
           break;
         }
-        if (jarEntry.getName().startsWith(packageName) && jarEntry.getName().endsWith(".class")) {
+        if (jarEntry.getName().startsWith(prefix) && jarEntry.getName().endsWith(".class")) {
           if (debug) {
             System.out.println(jarEntry.getName().replaceAll("/", "\\."));
           }
