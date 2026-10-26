@@ -133,16 +133,6 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void nestedConstructorDotTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/nestedconstructordot.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "nestedconstructordot.txt:2: Method SimpleEntry not found (for nested class"
-            + " java.util.AbstractMap$SimpleEntry, write java.util.AbstractMap$SimpleEntry(...))");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
   public void constructorReplacementFormsTest() throws IOException, ReplacementFileException {
     Path file =
         Paths.get("build/resources/test/randoop/instrument/constructorreplacementforms.txt");
@@ -164,35 +154,33 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void nestedInitDotTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/nestedinitdot.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "nestedinitdot.txt:2: Class java.util.AbstractMap.SimpleEntry not found (for nested class"
-            + " java.util.AbstractMap$SimpleEntry, write"
-            + " java.util.AbstractMap$SimpleEntry.<init>(...))");
+  public void nestedClassDotTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/nestedclassdot.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(3, map.size());
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)"),
+        map.get(
+            MethodSignature.of(
+                "java.util.AbstractMap$SimpleEntry.<init>(java.lang.Object,java.lang.Object)")));
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newSimpleEntry(java.util.Map$Entry)"),
+        map.get(
+            MethodSignature.of("java.util.AbstractMap$SimpleEntry.<init>(java.util.Map$Entry)")));
+    assertEquals(
+        MethodSignature.of("randoop.instrument.SampleReplacements$Middle$Inner.make()"),
+        map.get(MethodSignature.of("randoop.instrument.SampleReplacements$Middle$Inner.<init>()")));
   }
 
   @Test
-  public void doublyNestedConstructorDotTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/doublynestedconstructordot.txt");
+  public void methodOrConstructorTypoTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/methodorconstructortypo.txt");
     thrown.expect(ReplacementFileException.class);
     thrown.expectMessage(
-        "doublynestedconstructordot.txt:2: Class randoop.instrument.SampleReplacements.Middle.Inner"
-            + " not found (for nested class randoop.instrument.SampleReplacements$Middle$Inner,"
-            + " write randoop.instrument.SampleReplacements$Middle$Inner(...))");
-    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
-  }
-
-  @Test
-  public void nestedReplacementDotTest() throws IOException, ReplacementFileException {
-    Path file = Paths.get("build/resources/test/randoop/instrument/nestedreplacementdot.txt");
-    thrown.expect(ReplacementFileException.class);
-    thrown.expectMessage(
-        "nestedreplacementdot.txt:2: Class randoop.instrument.SampleReplacements.Middle not found"
-            + " (for nested class randoop.instrument.SampleReplacements$Middle, write"
-            + " randoop.instrument.SampleReplacements$Middle.newRandom(...))");
+        "methodorconstructortypo.txt:2: Method SimpleEntryy not found in class java.util.AbstractMap"
+            + " (nor class java.util.AbstractMap.SimpleEntryy, for a constructor)");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
   }
 

@@ -191,16 +191,13 @@ public final class ReplacementFileReader {
           NoSuchMethodException {
 
     MethodSignature original = resolveOriginal(originalSignature);
-    // Call toMethod() instead of exists() to get more precise error messages.
-    original.toMethod();
 
     MethodSignature replacement;
     try {
-      replacement = MethodSignature.of(replacementSignature);
+      replacement = MethodSignature.of(replacementSignature).resolveNestedClassnames();
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad replacement signature", e);
     }
-    checkClassExists(replacement);
     // Call toMethod() instead of exists() to get more precise error messages.
     replacement.toMethod();
 
@@ -216,15 +213,15 @@ public final class ReplacementFileReader {
    * exists. A signature such as {@code C(int)}, with no period before the parenthesis, is a
    * constructor of class {@code C} in the unnamed package.
    *
-   * <p>The class of the result exists. If the result is a constructor, the constructor might not
-   * exist.
+   * <p>A nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
    *
    * @param signatureString the original signature, as written in a replacement file
-   * @return the signature of the method or constructor that {@code signatureString} denotes
+   * @return the signature of the method or constructor that {@code signatureString} denotes, which
+   *     exists
    * @throws ReplacementException if the signature is badly-formed
    * @throws ClassNotFoundException if no interpretation of the signature names an existing class
    * @throws IllegalClassFormatException if a class cannot be read
-   * @throws NoSuchMethodException if the signature denotes a method that does not exist
+   * @throws NoSuchMethodException if the method or constructor does not exist
    */
   private static MethodSignature resolveOriginal(String signatureString)
       throws ReplacementException,
@@ -240,45 +237,39 @@ public final class ReplacementFileReader {
     }
     MethodSignature signature;
     try {
-      signature = MethodSignature.of(fullSignatureString);
+      signature = MethodSignature.of(fullSignatureString).resolveNestedClassnames();
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad original signature", e);
     }
 
     if (signature.isConstructor()) {
-      checkClassExists(signature);
+      signature.toMethod();
       return signature;
     }
 
-    MethodSignature constructor = signature.toConstructorSignature();
+    MethodSignature constructor = signature.toConstructorSignature().resolveNestedClassnames();
+    // Mention the constructor interpretation only if the name looks like a class name.
+    boolean mentionConstructor = Character.isUpperCase(signature.getName().charAt(0));
     if (classExists(signature.getClassname())) {
       try {
         signature.toMethod();
         return signature;
       } catch (NoSuchMethodException e) {
         if (!classExists(constructor.getClassname())) {
-          String hint = nestedClassHint(constructor.getClassname(), "");
-          if (hint.isEmpty()) {
+          if (!mentionConstructor) {
             throw e;
           }
-          NoSuchMethodException withHint = new NoSuchMethodException(e.getMessage() + hint);
-          withHint.initCause(e);
-          throw withHint;
+          NoSuchMethodException withConstructor =
+              new NoSuchMethodException(
+                  String.format(
+                      "Method %s not found in class %s (nor class %s, for a constructor)",
+                      signature.getName(), signature.getClassname(), constructor.getClassname()));
+          withConstructor.initCause(e);
+          throw withConstructor;
         }
       }
     } else if (!classExists(constructor.getClassname())) {
-      String constructorHint = nestedClassHint(constructor.getClassname(), "");
-      if (!constructorHint.isEmpty()) {
-        throw new ClassNotFoundException(
-            "Class " + constructor.getClassname() + " not found" + constructorHint);
-      }
-      String methodHint = nestedClassHint(signature.getClassname(), "." + signature.getName());
-      if (!methodHint.isEmpty()) {
-        throw new ClassNotFoundException(
-            "Class " + signature.getClassname() + " not found" + methodHint);
-      }
-      // Mention the constructor interpretation only if the name looks like a class name.
-      if (Character.isUpperCase(signature.getName().charAt(0))) {
+      if (mentionConstructor) {
         throw new ClassNotFoundException(
             String.format(
                 "Class %s not found (nor class %s, for a constructor)",
@@ -287,27 +278,8 @@ public final class ReplacementFileReader {
       throw new ClassNotFoundException("Class " + signature.getClassname() + " not found");
     }
 
+    constructor.toMethod();
     return constructor;
-  }
-
-  /**
-   * Throws an exception if the class of the given signature is not on the classpath. If the class
-   * name denotes a nested class written with "." instead of "$", the exception message says so.
-   *
-   * @param signature a method signature
-   * @throws ClassNotFoundException if the class of {@code signature} is not on the classpath
-   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
-   */
-  private static void checkClassExists(MethodSignature signature)
-      throws ClassNotFoundException, IllegalClassFormatException {
-    String classname = signature.getClassname();
-    if (!classExists(classname)) {
-      throw new ClassNotFoundException(
-          "Class "
-              + classname
-              + " not found"
-              + nestedClassHint(classname, "." + signature.getName()));
-    }
   }
 
   /**
@@ -318,43 +290,32 @@ public final class ReplacementFileReader {
    * @throws IllegalClassFormatException if the class is on the classpath but cannot be read
    */
   private static boolean classExists(String classname) throws IllegalClassFormatException {
-    try {
-      return getJavaClassFromClassname(classname) != null;
-    } catch (ReplacementException e) {
-      Throwable cause = e.getCause();
-      IllegalClassFormatException unreadable =
-          new IllegalClassFormatException(
-              "Unable to read " + classname + ": " + (cause == null ? e.getMessage() : cause));
-      unreadable.initCause(e);
-      throw unreadable;
-    }
+    return readJavaClass(classname) != null;
   }
 
   /**
-   * Returns a hint for when the given class name, which is not on the classpath, denotes a nested
-   * class written with "." instead of "$". For example, for {@code pkg.Outer.Inner} the hint
-   * suggests {@code pkg.Outer$Inner}.
+   * Returns the binary name of the class that the given class name denotes, or null if the class
+   * name denotes no class on the classpath. As in a Randoop fully-qualified signature, a nested
+   * class may be written with "." instead of "$"; for example, {@code java.util.Map.Entry} denotes
+   * {@code java.util.Map$Entry}.
    *
-   * @param classname a class name that is not on the classpath
-   * @param member the text that follows the class name in the suggested signature, such as {@code
-   *     ".<init>"}, {@code ".methodName"}, or the empty string
-   * @return a parenthesized hint with a leading space, or the empty string if no nested class is
-   *     found
+   * @param classname a class name, possibly with "." in place of "$"
+   * @return the binary name of the class that {@code classname} denotes, or null if there is none
    * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
    */
-  private static String nestedClassHint(String classname, String member)
+  static @Nullable @BinaryName String resolveClassname(String classname)
       throws IllegalClassFormatException {
     String candidate = classname;
-    for (int dotPos = candidate.lastIndexOf('.');
-        dotPos != -1;
-        dotPos = candidate.lastIndexOf('.')) {
-      candidate = candidate.substring(0, dotPos) + "$" + candidate.substring(dotPos + 1);
-      if (classExists(candidate)) {
-        return String.format(
-            " (for nested class %s, write %s%s(...))", candidate, candidate, member);
+    while (!classExists(candidate)) {
+      int dotPos = candidate.lastIndexOf('.');
+      if (dotPos == -1) {
+        return null;
       }
+      candidate = candidate.substring(0, dotPos) + "$" + candidate.substring(dotPos + 1);
     }
-    return "";
+    @SuppressWarnings("signature:assignment") // names a class on the classpath
+    @BinaryName String result = candidate;
+    return result;
   }
 
   /**
@@ -707,6 +668,28 @@ public final class ReplacementFileReader {
         e.printStackTrace(System.out);
       }
       throw new ReplacementException("Error reading class file: " + classFilename, e);
+    }
+  }
+
+  /**
+   * Returns a JavaClass object for the given class name, or null if the class is not on the
+   * classpath.
+   *
+   * @param classname name of class to find and load
+   * @return JavaClass object or null if not found
+   * @throws IllegalClassFormatException if the class is on the classpath but cannot be read
+   */
+  /*package-protected*/ static @Nullable JavaClass readJavaClass(String classname)
+      throws IllegalClassFormatException {
+    try {
+      return getJavaClassFromClassname(classname);
+    } catch (ReplacementException e) {
+      Throwable cause = e.getCause();
+      IllegalClassFormatException unreadable =
+          new IllegalClassFormatException(
+              "Unable to read " + classname + ": " + (cause == null ? e.getMessage() : cause));
+      unreadable.initCause(e);
+      throw unreadable;
     }
   }
 

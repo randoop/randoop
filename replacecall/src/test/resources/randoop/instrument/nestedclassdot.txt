@@ -1,0 +1,4 @@
+// replacement file for testing: nested classes written with "." instead of "$"
+java.util.AbstractMap.SimpleEntry(java.lang.Object,java.lang.Object) randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)
+java.util.AbstractMap.SimpleEntry.<init>(java.util.Map.Entry) randoop.instrument.SampleReplacements.newSimpleEntry(java.util.Map.Entry)
+randoop.instrument.SampleReplacements.Middle.Inner() randoop.instrument.SampleReplacements.Middle.Inner.make()

@@ -1,2 +1,0 @@
-// bad replacement file for testing: a nested class written with "." instead of "$"
-java.util.AbstractMap.SimpleEntry(java.lang.Object,java.lang.Object) randoop.mock.java.util.RandomReplace.randomWithSeedZero()

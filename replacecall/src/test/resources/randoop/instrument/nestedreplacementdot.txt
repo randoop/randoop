@@ -1,2 +1,0 @@
-// bad replacement file for testing: a nested replacement class written with "."
-java.util.Random() randoop.instrument.SampleReplacements.Middle.newRandom()

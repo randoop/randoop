@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.ArrayType;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
+import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -258,12 +260,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     String currentClassname = classname;
     while (true) {
       // Check that the class exists
-      JavaClass currentClass;
-      try {
-        currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
-      }
+      JavaClass currentClass = ReplacementFileReader.readJavaClass(currentClassname);
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
@@ -318,6 +315,47 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   MethodSignature toConstructorSignature() {
     return new MethodSignature(classname + "." + name, "<init>", paramTypes);
+  }
+
+  /**
+   * Returns the {@link MethodSignature} formed by replacing each class name in this, including in
+   * the parameter types, by the binary name of the class that it denotes (see {@link
+   * ReplacementFileReader#resolveClassname}). A class name that denotes no class on the classpath
+   * is unchanged.
+   *
+   * @return a new {@link MethodSignature} identical to this one except that each class name is the
+   *     binary name of a class on the classpath, where possible
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  MethodSignature resolveNestedClassnames() throws IllegalClassFormatException {
+    String resolvedClassname = ReplacementFileReader.resolveClassname(classname);
+    Type[] resolvedParamTypes = new Type[paramTypes.length];
+    for (int i = 0; i < paramTypes.length; i++) {
+      resolvedParamTypes[i] = resolveNestedClassnames(paramTypes[i]);
+    }
+    return new MethodSignature(
+        resolvedClassname == null ? classname : resolvedClassname, name, resolvedParamTypes);
+  }
+
+  /**
+   * Returns the type formed by replacing the class name in the given type by the binary name of the
+   * class that it denotes (see {@link ReplacementFileReader#resolveClassname}).
+   *
+   * @param type a type
+   * @return {@code type}, with the binary name of the class that it denotes, where possible
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  private static Type resolveNestedClassnames(Type type) throws IllegalClassFormatException {
+    if (type instanceof ArrayType) {
+      ArrayType arrayType = (ArrayType) type;
+      return new ArrayType(
+          resolveNestedClassnames(arrayType.getBasicType()), arrayType.getDimensions());
+    }
+    if (type instanceof ObjectType) {
+      String resolved = ReplacementFileReader.resolveClassname(((ObjectType) type).getClassName());
+      return resolved == null ? type : ObjectType.getInstance(resolved);
+    }
+    return type;
   }
 
   /**
