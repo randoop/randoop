@@ -865,7 +865,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when Randoop uses this much memory")
   public static long clear_memory = 4_000_000_000L; // default: 4G
 
-  /** Maximum number of tests to write to each JUnit file. */
+  /**
+   * Maximum number of tests to write to each JUnit file.
+   *
+   * <p>Must be positive.
+   */
   // ///////////////////////////////////////////////////////////////////
   @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
@@ -1111,6 +1115,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (clear_memory <= 0) {
       throw new RandoopUsageError(
           "--clear-memory must be greater than zero but was " + clear_memory);
+    }
+
+    if (testsperfile <= 0) {
+      throw new RandoopUsageError(
+          "--testsperfile must be greater than zero but was " + testsperfile);
     }
 
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
