@@ -110,4 +110,15 @@ class LazyReferenceBound extends EagerReferenceBound {
       }
     }
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the type variables at any depth of the bound type, as {@link #getTypeParameters()}
+   * does.
+   */
+  @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    return getTypeParameters();
+  }
 }

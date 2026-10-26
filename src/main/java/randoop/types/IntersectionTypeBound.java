@@ -55,7 +55,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundList);
+    return Objects.hashCode(boundList);
   }
 
   @Override

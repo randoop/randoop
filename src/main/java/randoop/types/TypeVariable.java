@@ -23,7 +23,7 @@ public abstract class TypeVariable extends ParameterType {
    * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
    * is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
+  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
@@ -263,8 +263,14 @@ public abstract class TypeVariable extends ParameterType {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
-    Set<List<ReferenceType>> inProgress = instantiationChecks.get();
-    List<ReferenceType> check = Arrays.asList(this, otherType);
+    // Identify type variables by identity, because substitution creates copies of them.
+    Set<List<Object>> inProgress = instantiationChecks.get();
+    List<Object> check =
+        Arrays.asList(
+            getIdentity(),
+            otherType instanceof TypeVariable
+                ? ((TypeVariable) otherType).getIdentity()
+                : otherType);
     if (!inProgress.add(check)) {
       return true;
     }
