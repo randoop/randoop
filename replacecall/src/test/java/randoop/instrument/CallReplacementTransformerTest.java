@@ -4,13 +4,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.beust.jcommander.internal.Console;
-import com.beust.jcommander.internal.DefaultConsole;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.bcel.classfile.JavaClass;
 import org.junit.Test;
 
 /** Tests for {@link CallReplacementTransformer}. */
@@ -26,6 +24,20 @@ public class CallReplacementTransformerTest {
      */
     public static char[] read(Console console) {
       return console.readPassword(false);
+    }
+  }
+
+  /** A console whose {@code readPassword} must not be called, because it should be replaced. */
+  public static class UnreadableConsole implements Console {
+    @Override
+    public void print(String msg) {}
+
+    @Override
+    public void println(String msg) {}
+
+    @Override
+    public char[] readPassword(boolean echoInput) {
+      throw new AssertionError("Console.readPassword was not replaced");
     }
   }
 
@@ -60,31 +72,17 @@ public class CallReplacementTransformerTest {
         new CallReplacementTransformer(map, Collections.emptySet());
 
     String className = PasswordReader.class.getName();
-    byte[] original = readClassFile(PasswordReader.class);
+    JavaClass javaClass = ReplacementFileReader.getJavaClassFromClassname(className);
+    assertNotNull("Cannot find " + className, javaClass);
+    byte[] original = javaClass.getBytes();
     ClassLoader loader = getClass().getClassLoader();
     byte[] transformed =
         transformer.transform(loader, className.replace('.', '/'), null, null, original);
     assertNotNull("No call was replaced", transformed);
 
-    // The unreplaced DefaultConsole.readPassword would read from standard input.
     Class<?> c = new BytesClassLoader(loader).define(className, transformed);
     char[] password =
-        (char[]) c.getMethod("read", Console.class).invoke(null, new DefaultConsole());
+        (char[]) c.getMethod("read", Console.class).invoke(null, new UnreadableConsole());
     assertArrayEquals(new char[0], password);
-  }
-
-  /**
-   * Returns the class file of the given class.
-   *
-   * @param c a class
-   * @return the class file of {@code c}
-   * @throws IOException if the class file cannot be read
-   */
-  private static byte[] readClassFile(Class<?> c) throws IOException {
-    String resource = "/" + c.getName().replace('.', '/') + ".class";
-    try (InputStream in = c.getResourceAsStream(resource)) {
-      assertNotNull("Cannot find " + resource, in);
-      return in.readAllBytes();
-    }
   }
 }
