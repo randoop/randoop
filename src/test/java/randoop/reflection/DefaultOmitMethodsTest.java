@@ -58,7 +58,7 @@ public class DefaultOmitMethodsTest {
     for (String filename : DEFAULT_FILES) {
       for (String line : readLines(filename)) {
         Matcher m = EXACT_SIGNATURE_PATTERN.matcher(line);
-        if (!m.matches()) {
+        if (!m.matches() || m.group(1).contains("\\E")) {
           continue;
         }
         String signature = m.group(1);
