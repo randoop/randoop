@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
@@ -20,11 +18,6 @@ class LazyParameterBound extends ParameterBound {
 
   /** The type for this bound. */
   private final java.lang.reflect.Type boundType;
-
-  /**
-   * Whether {@link #boundType} contains a wildcard; computed on first use by {@link #hasWildcard}.
-   */
-  private @MonotonicNonNull Boolean hasWildcard = null;
 
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
@@ -211,43 +204,26 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    if (hasWildcard == null) {
-      hasWildcard = hasWildcard(boundType, new HashSet<>());
-    }
-    return hasWildcard;
+    return hasWildcard(boundType);
   }
 
   /**
-   * Returns true if the given type has a wildcard, either directly or in the bound of a type
-   * variable that it contains.
+   * Returns true if the given type has a wildcard.
+   *
+   * <p>Does not examine the bounds of type variables. Capture conversion leaves a type variable
+   * unchanged, and a type variable's bound may refer to the type variable itself.
    *
    * @param type the type to test
-   * @param visited the type variables whose bounds are being examined or have been examined;
-   *     examining a bound again would not terminate for a recursive bound such as {@code T extends
-   *     Comparable<T>}
    * @return true if the given type has a wildcard
    */
-  private static boolean hasWildcard(
-      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
+  private static boolean hasWildcard(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.WildcardType) {
       return true;
-    }
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable<?>) type;
-      if (!visited.add(variable)) {
-        return false;
-      }
-      for (java.lang.reflect.Type bound : variable.getBounds()) {
-        if (hasWildcard(bound, visited)) {
-          return true;
-        }
-      }
-      return false;
     }
     if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType, visited)) {
+        if (hasWildcard(argType)) {
           return true;
         }
       }

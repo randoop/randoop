@@ -88,6 +88,39 @@ public class CaptureConversionTest {
     assertTrue(((ReferenceArgument) argument).getReferenceType().isCaptureVariable());
   }
 
+  /**
+   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument,
+   * where the bound of T contains a wildcard.
+   *
+   * @param <T> a type parameter whose bound contains a wildcard
+   * @param <U> a type parameter that does not occur in the field's type
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperWildcardComparable<T extends Comparable<? super T>, U> {
+    /**
+     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
+     * whose bound contains a wildcard.
+     */
+    Comparable<? super T> superT;
+  }
+
+  /**
+   * Tests capture when the wildcard bound is a lazy type variable whose bound contains a wildcard.
+   * The substitution omits T, so the bound of the wildcard remains a {@link LazyParameterBound}.
+   */
+  @Test
+  public void captureLazyWildcardBoundTest() throws NoSuchFieldException {
+    java.lang.reflect.Type fieldType =
+        SuperWildcardComparable.class.getDeclaredField("superT").getGenericType();
+    TypeVariable u = TypeVariable.forType(SuperWildcardComparable.class.getTypeParameters()[1]);
+    ParameterBound bound =
+        new LazyParameterBound(fieldType).substitute(new Substitution(u, JavaTypes.STRING_TYPE));
+    InstantiatedType type = (InstantiatedType) ((EagerReferenceBound) bound).getBoundType();
+    InstantiatedType captured = type.applyCaptureConversion();
+    TypeArgument argument = captured.getTypeArguments().get(0);
+    assertTrue(((ReferenceArgument) argument).getReferenceType().isCaptureVariable());
+  }
+
   /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
   @Test
   public void captureStringContainerTest() {
