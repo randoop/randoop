@@ -207,6 +207,22 @@ public final class ReplacementFileReader {
     if (replacementClass == null) {
       throw new ReplacementException("Replacement class not found: " + replacement.getClassname());
     }
+    checkReplacementIsCallable(replacementClass, replacementMethod, replacement);
+  }
+
+  /**
+   * Checks that a replacement method can be called, via {@code invokestatic}, from a class in any
+   * package.
+   *
+   * @param replacementClass the class named in the replacement's signature
+   * @param replacementMethod the replacement method
+   * @param replacement the signature of the replacement method
+   * @throws ReplacementException if the replacement method is not public and static, or if the
+   *     replacement class is not public or is an interface
+   */
+  private static void checkReplacementIsCallable(
+      JavaClass replacementClass, Method replacementMethod, MethodSignature replacement)
+      throws ReplacementException {
     if (!replacementMethod.isPublic() || !replacementMethod.isStatic()) {
       throw new ReplacementException(
           "Replacement method must be public and static: " + replacement);
