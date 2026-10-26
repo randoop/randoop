@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
@@ -20,6 +21,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
