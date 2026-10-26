@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import org.junit.Test;
 
 /** Tests the equality contract of {@link ReferenceBound} and its subclasses. */
@@ -45,9 +47,9 @@ public class ReferenceBoundTest {
     ParameterBound stringBound = ParameterBound.forType(JavaTypes.STRING_TYPE);
     ParameterBound intersection =
         new IntersectionTypeBound(
-            java.util.Arrays.asList(
+            Arrays.asList(
                 ParameterBound.forType(ReferenceType.forClass(Number.class)),
-                ParameterBound.forType(ReferenceType.forClass(java.io.Serializable.class))));
+                ParameterBound.forType(ReferenceType.forClass(Serializable.class))));
     // The bound of `T extends Comparable<T>`, which is lazy.
     ParameterBound lazyBound =
         GenericClassType.forClass(SelfComparable.class)
@@ -59,6 +61,7 @@ public class ReferenceBoundTest {
     assertTrue(nullBound.isLowerBound(lazyBound, new Substitution()));
     assertTrue(integerBound.isLowerBound(intersection, new Substitution()));
     assertFalse(stringBound.isLowerBound(intersection, new Substitution()));
+    assertFalse(integerBound.isLowerBound(lazyBound, new Substitution()));
   }
 
   /**
