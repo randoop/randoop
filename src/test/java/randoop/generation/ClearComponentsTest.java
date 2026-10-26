@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.plumelib.util.SIList;
@@ -71,8 +71,8 @@ public class ClearComponentsTest {
     optionsCache.saveState();
   }
 
-  @AfterClass
-  public static void restore() {
+  @After
+  public void restore() {
     optionsCache.restoreState();
   }
 
