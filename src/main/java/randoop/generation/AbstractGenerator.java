@@ -3,6 +3,7 @@ package randoop.generation;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -134,6 +135,9 @@ public abstract class AbstractGenerator {
    * sequences in the list.
    */
   public List<ExecutableSequence> outRegressionSeqs;
+
+  /** The sequences that have been classified as error or regression tests. */
+  protected final Set<Sequence> outputSequences = new HashSet<>();
 
   /**
    * A filter to determine whether a sequence should be added to the output sequence lists. Returns
@@ -345,8 +349,10 @@ public abstract class AbstractGenerator {
           operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
           num_failing_sequences++;
           outErrorSeqs.add(eSeq);
+          outputSequences.add(eSeq.sequence);
         } else {
           outRegressionSeqs.add(eSeq);
+          outputSequences.add(eSeq.sequence);
           newRegressionTestHook(eSeq.sequence);
         }
       } else {

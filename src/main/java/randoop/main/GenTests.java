@@ -1331,7 +1331,7 @@ public class GenTests extends GenInputsAbstract {
       Sequence subsequence = e.getSubsequence();
 
       /*
-       * Get the set of operations executed since the first execution of the flaky subsequence
+       * Get the set of operations executed since the most recent creation of the flaky subsequence
        */
       List<String> executedOperationTrace = new ArrayList<>();
       boolean flakySequenceFound = false;
@@ -1353,7 +1353,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       if (!executedOperationTrace.isEmpty()) {
-        Log.logPrintf("Operations performed since subsequence first executed:%n");
+        Log.logPrintf("Operations performed since subsequence was most recently created:%n");
         for (String opName : executedOperationTrace) {
           Log.logPrintf("%s%n", opName);
         }

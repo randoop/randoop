@@ -105,14 +105,18 @@ public class ClearComponentsTest {
     Set<Sequence> seeds = SeedSequences.defaultSeeds();
     ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
     ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    gen.setTestPredicate(eSeq -> true);
+    gen.limits.attempted_limit = 100;
 
+    gen.createAndClassifySequences();
     Set<Sequence> outputBeforeClear = new HashSet<>();
-    for (int i = 0; i < 100; i++) {
-      ExecutableSequence eSeq = gen.step();
-      if (eSeq != null) {
-        outputBeforeClear.add(eSeq.sequence);
-      }
+    for (ExecutableSequence eSeq : gen.outRegressionSeqs) {
+      outputBeforeClear.add(eSeq.sequence);
     }
+    for (ExecutableSequence eSeq : gen.outErrorSeqs) {
+      outputBeforeClear.add(eSeq.sequence);
+    }
+    assertFalse(outputBeforeClear.isEmpty());
     Set<Sequence> poolBeforeClear = new HashSet<>(componentMgr.getAllGeneratedSequences());
 
     gen.clearComponents();
@@ -128,6 +132,34 @@ public class ClearComponentsTest {
     recreated.retainAll(poolBeforeClear);
     recreated.retainAll(outputBeforeClear);
     assertFalse(recreated.isEmpty());
+  }
+
+  /** After a clear, a sequence that was created but not output before the clear can be output. */
+  @Test
+  public void sequencesNotOutputCanBeOutputAfterClear() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+
+    // The test predicate rejects every sequence, so no sequence is output.
+    Set<Sequence> createdBeforeClear = new HashSet<>();
+    for (int i = 0; i < 100; i++) {
+      ExecutableSequence eSeq = gen.step();
+      if (eSeq != null) {
+        createdBeforeClear.add(eSeq.sequence);
+      }
+    }
+
+    gen.clearComponents();
+
+    Set<Sequence> createdAgain = new HashSet<>();
+    for (int i = 0; i < 1000; i++) {
+      ExecutableSequence eSeq = gen.step();
+      if (eSeq != null && createdBeforeClear.contains(eSeq.sequence)) {
+        createdAgain.add(eSeq.sequence);
+      }
+    }
+    assertFalse(createdAgain.isEmpty());
   }
 
   /** A parameterless operation is used again after a clear. */
@@ -169,6 +201,7 @@ public class ClearComponentsTest {
       throws RandoopSpecificationError {
     Randomness.setSeed(0);
     GenInputsAbstract.literals_level = GenInputsAbstract.ClassLiteralsMode.NONE;
+    GenInputsAbstract.progressdisplay = false;
 
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     List<TypedOperation> operations =
