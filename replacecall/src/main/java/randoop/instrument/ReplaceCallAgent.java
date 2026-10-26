@@ -273,8 +273,8 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Parses a method signature and adds it to the given set. Does nothing if the text is blank.
-   * Exits if the text cannot be parsed.
+   * Parses a method signature and adds it to the given set. Exits if the text cannot be parsed,
+   * including if it is blank.
    *
    * @param signatures the set to which the parsed signature is added
    * @param text the method signature, in the format used in replacement files
@@ -283,14 +283,11 @@ public final class ReplaceCallAgent {
   private static void addDisabledSignature(
       Set<MethodSignature> signatures, String text, String source) {
     String trimmed = text.trim();
-    if (trimmed.isEmpty()) {
-      return;
-    }
     try {
       signatures.add(MethodSignature.of(trimmed));
     } catch (IllegalArgumentException e) {
       System.err.printf(
-          "Bad disabled default replacement %s in %s: %s%n", trimmed, source, e.getMessage());
+          "Bad disabled default replacement \"%s\" in %s: %s%n", trimmed, source, e.getMessage());
       System.exit(1); // Exit on bad user input.
     }
   }
