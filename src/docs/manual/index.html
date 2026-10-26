@@ -1564,6 +1564,8 @@ literally, including any whitespace or the other kind of quote.
 Therefore, to give a filename that contains whitespace, a single quote, or a
 double quote, enclose the filename in quotes:  in double quotes if the
 filename contains a single quote, and otherwise in single quotes.
+These quotes must reach the agent, so they are in addition to the quoting
+that the shell requires.
 For example (the
 <a href="#replacecall-load-exclusions"><code>--dont-transform</code></a> and
 <a href="#replacecall-replacement-definition"><code>--replacement-file</code></a>
@@ -1571,6 +1573,13 @@ options are described below):
 </p>
 <pre>
 "-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt --replacement-file='my replacements.txt'"
+</pre>
+<p>
+Within a double-quoted shell argument, escape the double quotes that enclose a
+filename containing a single quote:
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacement-file=\"don't replace.txt\""
 </pre>
 
 
