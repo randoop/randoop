@@ -339,15 +339,21 @@ public class Substitution {
 
   /**
    * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
-   * that is, to the type variable that is the key of the entry.
+   * that is, to the type variable that is the key of the entry, with the same bounds. A copy of a
+   * type variable with other bounds is equal to it, but is not the same.
    *
    * @param variable a type variable
    * @return true if this substitution maps {@code variable} to itself
    */
   boolean mapsToItself(TypeVariable variable) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
-      if (TypeVariable.isSameVariable(entry.getKey(), variable)) {
-        return entry.getKey().equals(entry.getValue());
+      TypeVariable key = entry.getKey();
+      if (key.equals(variable)) {
+        ReferenceType value = entry.getValue();
+        return value instanceof TypeVariable
+            && key.equals(value)
+            && key.getLowerTypeBound().equals(((TypeVariable) value).getLowerTypeBound())
+            && key.getUpperTypeBound().equals(((TypeVariable) value).getUpperTypeBound());
       }
     }
     return false;
