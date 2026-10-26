@@ -257,21 +257,21 @@ public class TypeVariableTest {
    *
    * @param <T> the type parameter
    */
-  static class SelfArrayBound<T extends java.util.Map<T, T[]>> {}
+  static class SelfArrayBound<T extends Map<T, T[]>> {}
 
   /**
    * A type parameter whose self-referential bound contains an array type.
    *
    * @param <T> the type parameter
    */
-  static class OtherSelfArrayBound<T extends java.util.Map<T, T[]>> {}
+  static class OtherSelfArrayBound<T extends Map<T, T[]>> {}
 
   /**
    * A type parameter bounded by {@code Map<?, ?>}.
    *
    * @param <T> the type parameter
    */
-  static class MapWildcardBound<T extends java.util.Map<?, ?>> {}
+  static class MapWildcardBound<T extends Map<?, ?>> {}
 
   /**
    * A class in the style of a fluent assertion library, whose type parameter {@code SELF} refers to
@@ -484,7 +484,7 @@ public class TypeVariableTest {
 
   /** A class that satisfies the bounds of {@link ComparableToListBound}, with Y := ArrayList. */
   abstract static class ComparableToListOfSelf
-      implements Comparable<java.util.ArrayList<ComparableToListOfSelf>> {}
+      implements Comparable<ArrayList<ComparableToListOfSelf>> {}
 
   /**
    * A type parameter {@code Y} bounded by a list of a sibling.
@@ -634,7 +634,7 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testMutuallyRecursiveBound() {
+  public void testInstantiationOfMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
     TypeVariable t = typeParameter(MutualBound.class, 1);
     assertTrue(s.isInstantiationOf(typeParameter(ComparableWildcardBound.class)));
@@ -676,12 +676,16 @@ public class TypeVariableTest {
   @Test
   public void testSiblingTypeParameter() {
     TypeVariable self = typeParameter(AbstractAssert.class, 0);
+    assertTrue(self.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteAssert.class)));
+    assertFalse(self.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testInstantiationOfSiblingTypeParameter() {
+    TypeVariable self = typeParameter(AbstractAssert.class, 0);
     assertTrue(typeParameter(AbstractObjectAssert.class, 0).isInstantiationOf(self));
     assertTrue(typeParameter(StringAssertBound.class).isInstantiationOf(self));
     assertFalse(typeParameter(SelfComparableBound.class).isInstantiationOf(self));
-
-    assertTrue(self.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteAssert.class)));
-    assertFalse(self.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 
   @Test
@@ -754,32 +758,44 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testInstantiatingSubstitutionForMutuallyRecursiveBound() {
-    assertNull(
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
-            JavaTypes.STRING_TYPE, typeParameter(MutualBound.class, 0)));
+  public void testMutuallyRecursiveBound() {
+    TypeVariable s = typeParameter(MutualBound.class, 0);
+    // S := String would need a T that is both a List<String> and the T in Comparable<T>.
+    assertFalse(s.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertNull(ReferenceType.getInstantiatingSubstitutionforTypeVariable(JavaTypes.STRING_TYPE, s));
+
+    TypeVariable comparableS = typeParameter(MutualComparableBound.class, 0);
+    // S := String and T := String.
+    assertTrue(comparableS.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     assertNotNull(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
-            JavaTypes.STRING_TYPE, typeParameter(MutualComparableBound.class, 0)));
+            JavaTypes.STRING_TYPE, comparableS));
   }
 
   @Test
   public void testLazyReferenceBoundToUnmappedVariable() {
-    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class));
+    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
     assertTrue(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
     assertFalse(bound.isUpperBound(JavaTypes.OBJECT_TYPE, new Substitution()));
   }
 
   @Test
   public void testCopyWithResolvedBound() {
-    TypeVariable t = typeParameter(SelfComparableBound.class);
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
     TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
-    assertTrue(copy.isInstantiationOf(t));
-    assertTrue(t.isInstantiationOf(copy));
+    assertTrue(TypeVariable.isSameVariable(t, copy));
     assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
     // The copy's bound refers to the copy itself, not to an unknown.
     assertFalse(copy.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
+  }
+
+  @Test
+  public void testInstantiationOfCopyWithResolvedBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
+    assertTrue(copy.isInstantiationOf(t));
+    assertTrue(t.isInstantiationOf(copy));
     assertFalse(typeParameter(ComparableStringBound.class).isInstantiationOf(copy));
   }
 
@@ -814,7 +830,6 @@ public class TypeVariableTest {
     InstantiatedType listOfString =
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     assertEquals(listOfString, ((ReferenceBound) copy.getUpperTypeBound()).getBoundType());
-    // A copy is the same type variable as the original.
     assertTrue(TypeVariable.isSameVariable(y, copy));
     // Mapping the type variable to itself keeps the copy's bound.
     TypeVariable result = (TypeVariable) copy.substitute(new Substitution(y, y));
@@ -822,13 +837,12 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testArrayInWildcardInLazyBound() {
+  public void testInstantiationOfArrayInWildcardInLazyBound() {
     TypeVariable t = typeParameter(ArrayWildcardBound.class);
     assertTrue(t.isInstantiationOf(typeParameter(OtherArrayWildcardBound.class)));
     assertFalse(
         t.canBeInstantiatedBy(
-            GenericClassType.forClass(java.util.ArrayList.class)
-                .instantiate(JavaTypes.OBJECT_TYPE)));
+            GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.OBJECT_TYPE)));
   }
 
   @Test
@@ -855,7 +869,7 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testInstantiateArrayInWildcardInLazyBound() {
+  public void testArrayInWildcardInLazyBound() {
     TypeVariable t = GenericClassType.forClass(ArrayWildcardBound.class).getTypeParameters().get(0);
     assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayCollection.class)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
