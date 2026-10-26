@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -57,7 +58,8 @@ public class ForwardExplorerTests {
     optionsCache.restoreState();
   }
 
-  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes)
+      throws RandoopSpecificationError {
     List<ClassOrInterfaceType> types = OperationExtractor.classListToTypeList(classes);
     return OperationExtractor.operations(types, new DefaultReflectionPredicate(), IS_PUBLIC);
   }
@@ -79,11 +81,11 @@ public class ForwardExplorerTests {
     classes.add(BiSort.class);
     // GenFailures.progressdisplay = false;
     // Log.log = new FileWriter("templog.txt");
-    int oldCallTimeout = ReflectionExecutor.call_timeout;
-    ReflectionExecutor.call_timeout = 500;
+    int oldCallTimeout = ReflectionExecutor.call_timeout_millis;
+    ReflectionExecutor.call_timeout_millis = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     GenInputsAbstract.progressintervalsteps = 100;
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =
@@ -99,7 +101,7 @@ public class ForwardExplorerTests {
     TestUtils.setAllLogs(explorer);
     explorer.createAndClassifySequences();
     explorer.getOperationHistory().outputTable();
-    ReflectionExecutor.call_timeout = oldCallTimeout;
+    ReflectionExecutor.call_timeout_millis = oldCallTimeout;
     GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
     for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
@@ -140,7 +142,7 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse(model.isEmpty());
     ForwardGenerator explorer =

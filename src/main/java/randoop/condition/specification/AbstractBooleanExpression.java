@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Abstract class representing boolean expressions that occur in {@link SpecificationClause}
@@ -10,6 +11,7 @@ import java.util.Objects;
  * @see Guard
  * @see Property
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractBooleanExpression {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
@@ -23,7 +25,7 @@ public abstract class AbstractBooleanExpression {
   private final String description;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings("unused")
+  @SuppressWarnings("unused") // dummy constructor for Gson serialization
   private AbstractBooleanExpression() {
     this.conditionSource = "";
     this.description = "";
@@ -42,7 +44,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   /**
-   * Return the description of this {@link AbstractBooleanExpression}.
+   * Returns the description of this {@link AbstractBooleanExpression}.
    *
    * @return the description of this condition
    */
@@ -51,7 +53,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   /**
-   * Return the condition text for this {@link AbstractBooleanExpression}.
+   * Returns the condition text for this {@link AbstractBooleanExpression}.
    *
    * @return the Java source code for this condition
    */
@@ -60,7 +62,7 @@ public abstract class AbstractBooleanExpression {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

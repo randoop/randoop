@@ -5,10 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
- * Represents a parameterized type as a generic class instantiated with type arguments.
+ * Represents a parameterized type as a generic class instantiated with type arguments (possibly
+ * wildcard type arguments).
  *
  * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
  * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
@@ -46,7 +48,7 @@ public class InstantiatedType extends ParameterizedType {
    * equal if they have the same raw type and the same type arguments.
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -76,11 +78,11 @@ public class InstantiatedType extends ParameterizedType {
    * Constructs a capture conversion for this type. If this type has wildcard type arguments, then
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
    * Conversion</a>.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
-   * href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
+   * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
@@ -95,7 +97,7 @@ public class InstantiatedType extends ParameterizedType {
       return this;
     }
 
-    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
         WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
@@ -226,9 +228,10 @@ public class InstantiatedType extends ParameterizedType {
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
-  public Substitution getTypeSubstitution() {
-    List<ReferenceType> arguments = new ArrayList<>();
-    for (TypeArgument arg : this.getTypeArguments()) {
+  public @Nullable Substitution getTypeSubstitution() {
+    List<TypeArgument> typeArgs = this.getTypeArguments();
+    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
+    for (TypeArgument arg : typeArgs) {
       if (!arg.isWildcard()) {
         arguments.add(((ReferenceArgument) arg).getReferenceType());
       }
@@ -289,9 +292,9 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Checks whether this type is an instantiation of the given instantiated type. This is only
+   * Returns true if this type is an instantiation of the given instantiated type. This is only
    * possible if this type is {@code A<T1,...,Tk>} where all {@code Ti} are instantiated by ground
-   * types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
+   * types (i.e., does not have type variables), the other type is {@code A<S1,...,Sk>}, and each
    * {@code Ti} matches {@code Si} for {@code i = 1,...,k} as follows:
    *
    * <ol>
@@ -335,7 +338,7 @@ public class InstantiatedType extends ParameterizedType {
       // isInstantiationOf("foo(Integer, String)", "foo(T,T)").
       return true;
     } else {
-      // otherType is not a ParameterizedType (not a InstantiatedType or GenericClassType)
+      // otherType is not a ParameterizedType (not an InstantiatedType or GenericClassType)
       if (super.isInstantiationOf(otherType)) {
         return true;
       }
@@ -344,9 +347,8 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    Substitution superResult =
-        ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
       return superResult;
     }
@@ -397,7 +399,7 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
-    return argType.isSubtypeOf(this);
+    return argType.isSubtypeOfOrEqualTo(this);
   }
 
   @Override
@@ -421,7 +423,7 @@ public class InstantiatedType extends ParameterizedType {
    * </ol>
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType.isParameterized()) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
@@ -449,17 +451,17 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    if (super.isSubtypeOf(otherType)) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
 
     // wildcard clause
     if (this.hasWildcard()) { // JLS 4.10.2
       // old note says this has to be tested first
-      return this.applyCaptureConversion().isSubtypeOf(otherType);
+      return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
-    return this.getRawtype().isSubtypeOf(otherType);
+    return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
   @Override

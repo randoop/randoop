@@ -1,10 +1,10 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
+import randoop.main.RandoopBug;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -29,7 +29,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }
@@ -51,7 +51,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
-  public String getCanonicalName() {
+  public @Nullable String getCanonicalName() {
     return this.getFqName();
   }
 
@@ -65,26 +65,43 @@ public abstract class ParameterType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    parameters.addAll(lowerBound.getTypeParameters());
-    parameters.addAll(upperBound.getTypeParameters());
-    return new ArrayList<>(parameters);
+    List<TypeVariable> lowerTypeParams = lowerBound.getTypeParameters();
+    List<TypeVariable> upperTypeParams = upperBound.getTypeParameters();
+    return CollectionsPlume.listUnion(lowerTypeParams, upperTypeParams);
+  }
+
+  @Override
+  public Class<?> getRuntimeClass() {
+    throw new RandoopBug(
+        String.format("no run-time class for a type variable %s [%s]", this, this.getClass()));
   }
 
   /**
    * {@inheritDoc}
    *
-   * @return null since type variables do not have a runtime class
+   * <p>Returns false: type variables are never primitive, boxed primitive, {@code String}, or
+   * {@code Class}, and calling the default implementation would invoke {@link #getRuntimeClass()}
+   * which throws for type variables.
    */
   @Override
-  public Class<?> getRuntimeClass() {
-    return null;
+  public boolean isNonreceiverType() {
+    return false;
   }
 
+  /**
+   * Sets the upper bound of this type parameter.
+   *
+   * @param upperBound the new upper bound
+   */
   void setUpperBound(ParameterBound upperBound) {
     this.upperBound = upperBound;
   }
 
+  /**
+   * Sets the lower bound of this type parameter.
+   *
+   * @param lowerBound the new lower bound
+   */
   void setLowerBound(ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
   }
@@ -100,7 +117,7 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   /**
-   * Return true if this has a generic bound
+   * Returns true if this has a generic bound.
    *
    * @return true if this has a generic bound
    */

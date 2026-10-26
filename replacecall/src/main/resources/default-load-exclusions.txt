@@ -1,0 +1,23 @@
+// This file contains default package exclusions for the replacecall agent.
+
+// Don't transform Java classes for which the transformation may lead to failures.
+sun.reflect.
+jdk.internal.reflect.
+com.sun.proxy.$Proxy.
+
+// Don't transform Randoop classes:
+randoop.
+replacecall.
+coveredclass.
+
+// or JUnit classes:
+junit.
+org.hamcrest.
+org.junit.
+
+// The following are library classes used by Randoop for which package relocation
+// is not applied, and for which replacing calls to System.exit causes failure.
+com.sun.tools.javac.
+com.sun.source.util.
+com.sun.source.tree.
+com.sun.tools.doclint.

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
@@ -39,12 +40,14 @@ public class CaptureConversionTest {
       containerOperations.add(TypedOperation.forMethod(c.getMethod("c", Container.class)));
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
   }
 
   /**
    * List tests check capture conversion where the type parameter of the generic type is bound by
-   * Object. In this case, the GLB is trivial
+   * Object. In this case, the GLB is trivial.
    */
   @Test
   public void captureStringTest() {
@@ -60,7 +63,7 @@ public class CaptureConversionTest {
         listOperations);
   }
 
-  /** Container tests involve a generic class with a type parameter T bound by Comparable<T> */
+  /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
   @Test
   public void captureStringContainerTest() {
     checkCapture(containerType, JavaTypes.STRING_TYPE, containerOperations);
@@ -69,7 +72,7 @@ public class CaptureConversionTest {
   /**
    * This test makes the wildcard bound be the class Nonsense, which does not implement
    * Comparable<Nonsense> but ends up with Container<Gibberish> where Gibberish extends Nonsense and
-   * implements Comparable<Gibberish>
+   * implements Comparable<Gibberish>.
    */
   @Test
   public void captureNonsenseContainerTest() {

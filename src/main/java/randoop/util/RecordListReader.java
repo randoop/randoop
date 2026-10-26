@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FilesPlume;
+import randoop.main.RandoopBug;
 
 /**
  * Reads a list of records from a text file, where a record is partially specified by the client of
@@ -23,13 +25,14 @@ import org.plumelib.util.FilesPlume;
  * Any lines within and between records, that are only whitespace or start with "#", are skipped.
  *
  * <p>This class's built-in functionality extracts records from a file. It then parses and processes
- * each record, using the RecordProcessor provided by the client. .
+ * each record, using the RecordProcessor provided by the client.
  */
 public class RecordListReader {
 
-  /** startMarker is "START <em>recordType</em>" */
+  /** The value of startMarker is "START <em>recordType</em>" */
   private final String startMarker;
-  /** endMarker is "END <em>recordType</em>" */
+
+  /** The value of endMarker is "END <em>recordType</em>" */
   private final String endMarker;
 
   /** The object in charge of doing whatever is to be done with the record. */
@@ -40,7 +43,9 @@ public class RecordListReader {
       throw new IllegalArgumentException(
           "No record type given: " + (recordType == null ? "null" : "\"\""));
     }
-    if (proc == null) throw new IllegalArgumentException("proc cannot be null.");
+    if (proc == null) {
+      throw new IllegalArgumentException("proc cannot be null.");
+    }
     this.processor = proc;
     this.startMarker = "START " + recordType;
     this.endMarker = "END " + recordType;
@@ -51,14 +56,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
     }
 
-    BufferedReader reader;
-    try {
-      reader = FilesPlume.newBufferedFileReader(inFile);
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile)) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(Path inFile) {
@@ -66,14 +68,11 @@ public class RecordListReader {
       throw new IllegalArgumentException("Null input file");
     }
 
-    BufferedReader reader;
-    try {
-      reader = FilesPlume.newBufferedFileReader(inFile.toFile());
+    try (BufferedReader reader = FilesPlume.newBufferedFileReader(inFile.toFile())) {
+      parse(reader);
     } catch (IOException e) {
       throw new Error(e);
     }
-
-    parse(reader);
   }
 
   public void parse(BufferedReader reader) {
@@ -100,19 +99,25 @@ public class RecordListReader {
     List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
-      if (line.length() == 0 || line.charAt(0) == '#') continue;
+      if (line.length() == 0 || line.charAt(0) == '#') {
+        throw new RandoopBug("Empty or comment line encountered: " + line);
+      }
       ret.add(line);
       line = nextNWCLine(reader);
     }
     return ret;
   }
 
-  private static String nextNWCLine(BufferedReader reader) throws IOException {
+  private static @Nullable String nextNWCLine(BufferedReader reader) throws IOException {
     String line = reader.readLine();
-    if (line != null) line = line.trim();
+    if (line != null) {
+      line = line.trim();
+    }
     while (line != null && (line.length() == 0 || line.indexOf('#') == 0)) {
       line = reader.readLine();
-      if (line != null) line = line.trim();
+      if (line != null) {
+        line = line.trim();
+      }
     }
     return line;
   }

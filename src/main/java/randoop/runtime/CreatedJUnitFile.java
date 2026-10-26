@@ -5,8 +5,11 @@ import java.nio.file.Path;
 /** A message indicating that Randoop created a specific JUnit file containing generated tests. */
 public class CreatedJUnitFile implements IMessage {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 3786576811718698647L;
 
+  /** The file that was created. */
+  @SuppressWarnings("serial") // TODO: use a serializable type.
   private final Path file;
 
   private final boolean isDriver;

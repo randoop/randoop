@@ -3,19 +3,26 @@ package randoop.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.checkerframework.checker.signedness.qual.Signed;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 
+/** Utility methods that operate on collections. */
 public final class CollectionsExt {
 
+  /** Do not instantiate. */
   private CollectionsExt() {
     throw new IllegalStateException("no instances");
   }
 
   static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
-    if (s == null) throw new IllegalArgumentException("s cannot be null.");
-    if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
+    if (s == null) {
+      throw new IllegalArgumentException("s cannot be null.");
+    }
+    if (s.isEmpty()) {
+      throw new IllegalArgumentException("s cannot be empty.");
+    }
     if (index >= s.size()) {
       throw new IllegalArgumentException(
           "Index " + index + " out of bounds for set of size " + s.size());
@@ -24,7 +31,9 @@ public final class CollectionsExt {
   }
 
   private static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
-    if (index < 0) throw new IllegalArgumentException("Index " + index + " out of bounds");
+    if (index < 0) {
+      throw new IllegalArgumentException("Index " + index + " out of bounds");
+    }
     int counter = 0;
     while (iter.hasNext()) {
       if (counter == index) {
@@ -42,7 +51,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
-  static String toStringInLines(Collection<?> c) {
+  static String toStringInLines(Collection<? extends @Signed Object> c) {
     if (c.isEmpty()) {
       return "";
     }
@@ -55,7 +64,7 @@ public final class CollectionsExt {
    * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
    */
-  private static List<String> toStringLines(Collection<?> c) {
+  private static List<String> toStringLines(Collection<? extends @Signed Object> c) {
     return CollectionsPlume.mapList(String::valueOf, c);
   }
 }

@@ -6,8 +6,10 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(null)==false}. */
 public final class EqualsToNullRetFalse extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 
+  /** Private constructor to enforce singleton. */
   private EqualsToNullRetFalse() {}
 
   public static EqualsToNullRetFalse getInstance() {
@@ -46,11 +48,10 @@ public final class EqualsToNullRetFalse extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!x0.equals(null)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !x0.equals(null));");
     return b.toString();
   }
 }

@@ -12,9 +12,11 @@ import randoop.types.TypeTuple;
  *  => (x0.compareTo(x2) > 0)
  * }</pre>
  */
-public class CompareToTransitive extends ObjectContract {
+public final class CompareToTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToTransitive instance = new CompareToTransitive();
 
+  /** Private constructor to enforce singleton. */
   private CompareToTransitive() {}
 
   public static CompareToTransitive getInstance() {
@@ -34,8 +36,10 @@ public class CompareToTransitive extends ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      return !(compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0)
-          || (compObj1.compareTo(compObj3) > 0);
+      if (compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0) {
+        return (compObj1.compareTo(compObj3) > 0);
+      }
+      return true;
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;
@@ -69,11 +73,10 @@ public class CompareToTransitive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!(x0.compareTo(x1)>0 && x1.compareTo(x2)>0) || x0.compareTo(x2)>0");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !(x0.compareTo(x1)>0 && x1.compareTo(x2)>0) || x0.compareTo(x2)>0);");
     return b.toString();
   }
 }

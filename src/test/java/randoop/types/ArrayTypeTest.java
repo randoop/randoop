@@ -123,7 +123,7 @@ public class ArrayTypeTest {
       assertFalse(
           Type.getTypeforFullyQualifiedName(innerClassNonArraySignature) instanceof ArrayType);
       assertFalse(Type.forFullyQualifiedName(innerClassNonArraySignature) == null);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       e.printStackTrace(System.out);
       Assert.fail();
     }
@@ -132,13 +132,13 @@ public class ArrayTypeTest {
     try {
       Type.forFullyQualifiedName(invalidArrayInnerClass);
       Assert.fail();
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       // Good
     }
     try {
       Type.getTypeforFullyQualifiedName(invalidArrayInnerClass);
       Assert.fail();
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       // Good
     }
   }

@@ -1,7 +1,7 @@
-# Long-running.  With sufficiently small arguments, can be fast.
+## Long-running.  With sufficiently small arguments, can be fast.
 # (nothing here at present)
 
-# Nondeterministic
+## Nondeterministic
 ^\Qjava7.util7.AbstractList.hashCode()\E$
 ^\Qjava7.util7.AbstractSet.hashCode()\E$
 ^\Qjava7.util7.Arrays.deepHashCode(java.lang.Object[])\E$
