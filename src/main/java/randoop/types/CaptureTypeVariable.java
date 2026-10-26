@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -74,8 +73,8 @@ class CaptureTypeVariable extends TypeVariable {
    * {@inheritDoc}
    *
    * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
-   * differ. Substitution creates a copy of a capture variable whose bounds differ, and the copy
-   * stands for the same capture variable.
+   * and wildcards differ. Substitution creates a copy of a capture variable whose bounds and
+   * wildcard differ, and the copy stands for the same capture variable.
    *
    * @return true if the capture variables are the same capture variable, false otherwise
    */
@@ -88,12 +87,12 @@ class CaptureTypeVariable extends TypeVariable {
       return false;
     }
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
-    return this.varID == variable.varID && this.wildcard.equals(variable.wildcard);
+    return this.varID == variable.varID;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard);
+    return Integer.hashCode(varID);
   }
 
   @Override

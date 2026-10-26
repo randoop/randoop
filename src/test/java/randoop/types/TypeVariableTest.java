@@ -668,6 +668,20 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubstitutedCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("superU");
+    // Substitution changes the lower bound of the capture of `? super U`, and its wildcard.
+    ReferenceType copy =
+        capture.substitute(
+            new Substitution(typeParameter(FieldTypes.class, 1), JavaTypes.STRING_TYPE));
+    assertTrue(copy instanceof CaptureTypeVariable);
+    assertEquals(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE), ((TypeVariable) copy).getLowerTypeBound());
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
+  }
+
+  @Test
   public void testSameBound() {
     assertTrue(
         typeParameter(ComparableStringBound.class)
