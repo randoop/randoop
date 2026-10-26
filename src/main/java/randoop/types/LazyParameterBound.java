@@ -121,7 +121,7 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument, or null if the substitution does not map a type variable in {@code
-   *     type}
+   *     type} or maps the component type of an array type to the null type
    */
   private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
@@ -160,6 +160,10 @@ class LazyParameterBound extends ParameterBound {
         return null;
       }
       ReferenceType componentType = ((ReferenceArgument) componentArgument).getReferenceType();
+      // There is no array of the null type.
+      if (componentType.equals(JavaTypes.NULL_TYPE)) {
+        return null;
+      }
       return TypeArgument.forType(ArrayType.ofComponentType(componentType));
     }
 
@@ -279,6 +283,9 @@ class LazyParameterBound extends ParameterBound {
         }
       }
     }
+    if (type instanceof GenericArrayType) {
+      return hasWildcard(((GenericArrayType) type).getGenericComponentType());
+    }
     return false;
   }
 
@@ -310,6 +317,9 @@ class LazyParameterBound extends ParameterBound {
         }
       }
     }
+    if (type instanceof GenericArrayType) {
+      return hasCaptureVariable(((GenericArrayType) type).getGenericComponentType());
+    }
     return false;
   }
 
@@ -326,8 +336,7 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    Substitution completeSubstitution = completeSubstitution(substitution);
-    ParameterBound b = instantiate(completeSubstitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
     return b != null && b.isLowerBound(argType, substitution);
   }
 
@@ -353,8 +362,7 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    Substitution completeSubstitution = completeSubstitution(substitution);
-    ParameterBound b = instantiate(completeSubstitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
     return b != null && b.isUpperBound(argType, substitution);
   }
 
@@ -389,9 +397,10 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Applies a substitution that maps every type variable in this bound, as returned by {@link
-   * #completeSubstitution(Substitution)}. Returns null, and fails an assertion, if the result is
-   * still this bound, which happens only for a kind of type that {@link #substitute(Substitution)}
-   * does not handle. Comparing the unchanged bound would recurse forever.
+   * #completeSubstitution(Substitution)}. Returns null if the result is still this bound, which
+   * happens if the substitution maps the component type of an array type to the null type, or for a
+   * kind of type that {@link #substitute(Substitution)} does not handle. Comparing the unchanged
+   * bound would recurse forever.
    *
    * @param completeSubstitution a substitution that maps every type variable in this bound
    * @return this bound with the substitution applied, or null
@@ -399,7 +408,6 @@ class LazyParameterBound extends ParameterBound {
   private @Nullable ParameterBound instantiate(Substitution completeSubstitution) {
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
-      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
       return null;
     }
     return b;
