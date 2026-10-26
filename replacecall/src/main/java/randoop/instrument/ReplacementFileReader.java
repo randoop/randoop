@@ -133,12 +133,8 @@ public final class ReplacementFileReader {
           try {
             addMethodReplacement(
                 replacementMap, signatureLineMatcher.group(1), signatureLineMatcher.group(2));
-          } catch (ReplacementException
-              | ClassNotFoundException
-              | IllegalClassFormatException
-              | NoSuchMethodException e) {
-            throw new ReplacementFileException(
-                e.getMessage(), filename, reader.getLineNumber(), line);
+          } catch (ReplacementException e) {
+            throw new ReplacementFileException(e, filename, reader.getLineNumber(), line);
           }
         } else {
           Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
@@ -153,8 +149,7 @@ public final class ReplacementFileReader {
                 | IOException
                 | ClassNotFoundException
                 | NoClassDefFoundError e) {
-              throw new ReplacementFileException(
-                  e.getMessage(), filename, reader.getLineNumber(), line);
+              throw new ReplacementFileException(e, filename, reader.getLineNumber(), line);
             }
           } else {
             String msg = "Error in replacement file: bad format";
@@ -177,44 +172,18 @@ public final class ReplacementFileReader {
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
-   * @throws ReplacementException if either signature is badly-formed, or if the replacement method
-   *     cannot be called from any class
-   * @throws ClassNotFoundException if either class cannot be found
-   * @throws IllegalClassFormatException if either class has an illegal format
-   * @throws NoSuchMethodException if either method cannot be found
+   * @throws ReplacementException if either signature is badly-formed or its method cannot be found,
+   *     or if the replacement method cannot be called from any class
    */
   private static void addMethodReplacement(
       Map<MethodSignature, MethodSignature> replacementMap,
       String originalSignature,
       String replacementSignature)
-      throws ReplacementException,
-          ClassNotFoundException,
-          IllegalClassFormatException,
-          NoSuchMethodException {
+      throws ReplacementException {
 
-    MethodSignature original;
-    try {
-      original = MethodSignature.of(originalSignature);
-    } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad original signature", e);
-    }
-    // Call toMethod() instead of exists() to get more precise error messages.
-    original.toMethod();
-
-    MethodSignature replacement;
-    try {
-      replacement = MethodSignature.of(replacementSignature);
-    } catch (IllegalArgumentException e) {
-      throw new ReplacementException("Bad replacement signature", e);
-    }
-    // Call toMethod() instead of exists() to get more precise error messages.
-    Method replacementMethod = replacement.toMethod();
-    JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
-    if (replacementClass == null) {
-      throw new ClassNotFoundException("Class " + replacement.getClassname() + " not found");
-    }
-    checkReplacementIsCallable(replacementClass, replacementMethod, replacement);
-
+    MethodSignature original = parseExistingMethod(originalSignature, "original");
+    MethodSignature replacement = parseExistingMethod(replacementSignature, "replacement");
+    checkReplacementIsCallable(replacement);
     addReplacement(replacementMap, original, replacement);
   }
 
@@ -222,15 +191,22 @@ public final class ReplacementFileReader {
    * Checks that a replacement method can be called, via {@code invokestatic}, from a class in any
    * package.
    *
-   * @param replacementClass the class named in the replacement's signature
-   * @param replacementMethod the replacement method
    * @param replacement the signature of the replacement method
-   * @throws ReplacementException if the replacement method is not public and static, or if the
-   *     replacement class is not public or is an interface
+   * @throws ReplacementException if the replacement method cannot be found, if it is not public and
+   *     static, or if the replacement class is not public or is an interface
    */
-  private static void checkReplacementIsCallable(
-      JavaClass replacementClass, Method replacementMethod, MethodSignature replacement)
+  private static void checkReplacementIsCallable(MethodSignature replacement)
       throws ReplacementException {
+    Method replacementMethod;
+    try {
+      replacementMethod = replacement.toMethod();
+    } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
+      throw new ReplacementException("Bad replacement method", e);
+    }
+    JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
+    if (replacementClass == null) {
+      throw new ReplacementException("Replacement class not found: " + replacement.getClassname());
+    }
     if (!replacementMethod.isPublic() || !replacementMethod.isStatic()) {
       throw new ReplacementException(
           "Replacement method must be public and static: " + replacement);
@@ -244,6 +220,34 @@ public final class ReplacementFileReader {
       throw new ReplacementException(
           "Replacement class must not be an interface: " + replacementClass.getClassName());
     }
+  }
+
+  /**
+   * Parses a method signature and verifies that the method exists.
+   *
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   *
+   * @param signature the method signature
+   * @param role the role of the method in a replacement, such as "original" or "replacement"; used
+   *     in error messages
+   * @return the {@link MethodSignature} for {@code signature}
+   * @throws ReplacementException if the signature is badly-formed or its method cannot be found
+   */
+  private static MethodSignature parseExistingMethod(String signature, String role)
+      throws ReplacementException {
+    MethodSignature result;
+    try {
+      result = MethodSignature.of(signature);
+    } catch (IllegalArgumentException e) {
+      throw new ReplacementException("Bad " + role + " signature", e);
+    }
+    // Call toMethod() instead of exists() to get more precise error messages.
+    try {
+      result.toMethod();
+    } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
+      throw new ReplacementException("Bad " + role + " method", e);
+    }
+    return result;
   }
 
   /**
@@ -463,7 +467,8 @@ public final class ReplacementFileReader {
       try {
         @SuppressWarnings({
           "JdkObsolete",
-          "PMD.UseStandardCharsets"
+          "PMD.UseStandardCharsets",
+          "PreferCharsetOverload"
         }) // The replacement requires JDK 11+.
         Path pathTmp = Paths.get(URLDecoder.decode(url.getPath(), "UTF-8"));
         path = pathTmp;
