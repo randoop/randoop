@@ -334,23 +334,12 @@ public class GenTests extends GenInputsAbstract {
       omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
-    List<String> replacedSignatures =
-        CollectionsPlume.mapList(
-            GenTests::replacecallSignatureToRawSignature, MethodReplacements.getSignatureList());
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omit_methods.addAll(
-          CollectionsPlume.mapList(GenTests::signatureToPattern, replacedSignatures));
+      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      List<Pattern> defaultOmitMethods = new ArrayList<>();
-      defaultOmitMethods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-      defaultOmitMethods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
-      if (GenInputsAbstract.dont_omit_replaced_methods) {
-        // A replacement can make a nondeterministic method deterministic.
-        defaultOmitMethods.removeIf(
-            pattern -> replacedSignatures.stream().anyMatch(sig -> pattern.matcher(sig).find()));
-      }
-      omit_methods.addAll(defaultOmitMethods);
+      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
@@ -1267,26 +1256,36 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Converts a signature string produced by the replacecall agent to the format of {@link
-   * RawSignature#toString()}. The replacecall agent names a constructor {@code <init>} and
-   * separates parameter types by a comma and a space.
+   * Creates a list of signature strings (see {@link RawSignature#toString()} to a list of {@code
+   * Pattern}.
    *
-   * @param signature a signature string produced by the replacecall agent
-   * @return {@code signature}, in the format of {@link RawSignature#toString()}
+   * @param signatures the list of signature strings
+   * @return the list of patterns for the signature strings
    */
-  private static String replacecallSignatureToRawSignature(String signature) {
-    return signature.replace(" ", "").replace(".<init>(", "(");
+  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
+    return CollectionsPlume.mapList(GenTests::signatureToPattern, signatures);
   }
 
   /**
-   * Converts a signature string (see {@link RawSignature#toString()}) to a {@code Pattern} that
-   * matches exactly that string.
+   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
+   * matches that string (with spaces removed).
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
   private static Pattern signatureToPattern(String signatureString) {
-    return Pattern.compile("^" + Pattern.quote(signatureString) + "$");
+    // TODO: Why doesn't this use Regex.quote()?
+    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
+    @Regex String patternString =
+        signatureString
+            .replaceAll(" ", "")
+            .replaceAll("\\.", "\\\\.")
+            .replaceAll("\\(", "\\\\(")
+            .replaceAll("\\)", "\\\\)")
+            .replaceAll("\\$", "\\\\$")
+            .replaceAll("\\[", "\\\\[")
+            .replaceAll("\\]", "\\\\]");
+    return Pattern.compile(patternString);
   }
 
   /**
