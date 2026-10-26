@@ -71,6 +71,13 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private boolean clearingForMemoryIsFutile = false;
 
+  /**
+   * The parameterless operations that have been removed from {@link #operations} since the
+   * component set was last cleared. Clearing the component set discards their results, so it
+   * restores them to {@link #operations}.
+   */
+  private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -205,6 +212,8 @@ public class ForwardGenerator extends AbstractGenerator {
     componentManager.clearGeneratedSequences();
     inputSequenceSelector.componentsCleared();
     sequencesSinceClear = new HashSet<>();
+    operations.addAll(removedParameterlessOperations);
+    removedParameterlessOperations.clear();
   }
 
   @Override
@@ -458,7 +467,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * from the list of operations. Such a method will return the same thing every time it is invoked
    * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
    * invoked, its result is in the pool and there is no need to call the operation again and so we
-   * will remove it from the list of operations.
+   * will remove it from the list of operations, until the component set is cleared.
    *
    * @return a new sequence, or null
    */
@@ -541,11 +550,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
     // same thing every time it is invoked. Since we have just invoked it, its result will be in the
-    // pool.
+    // pool until the pool is cleared.
     // There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
-      operations.remove(operation);
+      if (operations.remove(operation)) {
+        removedParameterlessOperations.add(operation);
+      }
     }
 
     // Discard if sequence is larger than size limit
