@@ -76,6 +76,29 @@ public class DefaultOmitMethodsTest {
     }
   }
 
+  @Test
+  public void testEnsureCapacity() throws IOException, NoSuchMethodException {
+    assertOmitted(RawSignature.of(java.util.ArrayList.class.getMethod("ensureCapacity", int.class)));
+    assertOmitted(RawSignature.of(StringBuilder.class.getMethod("ensureCapacity", int.class)));
+  }
+
+  /**
+   * Asserts that some pattern in the default omit-methods files matches the given signature.
+   *
+   * @param signature a signature
+   */
+  private static void assertOmitted(RawSignature signature) throws IOException {
+    String signatureString = signature.toString();
+    for (String filename : DEFAULT_FILES) {
+      for (String line : readLines(filename)) {
+        if (Pattern.compile(line).matcher(signatureString).find()) {
+          return;
+        }
+      }
+    }
+    fail("No default omit pattern matches " + signatureString);
+  }
+
   /**
    * Returns true if the signature is in a package that is not on the test classpath.
    *

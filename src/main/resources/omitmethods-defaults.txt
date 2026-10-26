@@ -1,5 +1,5 @@
 # Creates large data
-\bensuresCapacity\b
+\bensureCapacity\b
 # Creates infinite data
 ^\Qcom.google.common.collect.Iterators.cycle(
 
