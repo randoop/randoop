@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -95,24 +94,8 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
-    if (boundType instanceof GenericArrayType) {
-      ParameterBound componentBound =
-          new LazyParameterBound(((GenericArrayType) boundType).getGenericComponentType())
-              .substitute(substitution);
-      if (!(componentBound instanceof ReferenceBound)) {
-        return this;
-      }
-      ArrayType arrayType =
-          ArrayType.ofComponentType(((ReferenceBound) componentBound).getBoundType());
-      if (componentBound instanceof LazyReferenceBound) {
-        return new LazyReferenceBound(arrayType);
-      }
-      return new EagerReferenceBound(arrayType);
-    }
-
     throw new RandoopBug(
-        "lazy parameter bounds should be a type variable, parameterized type, or generic array"
-            + " type");
+        "lazy parameter bounds should be either a type variable or parameterized type");
   }
 
   /**
