@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -17,6 +18,13 @@ public abstract class TypeVariable extends ParameterType {
    * null if not yet computed. Use {@link #getBoundVariables()} instead of reading this field.
    */
   private @Nullable List<TypeVariable> boundVariables = null;
+
+  /**
+   * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
+   * is in progress, in the current thread.
+   */
+  private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * The upper bound of this variable, with references to type variables resolved; null if not yet
@@ -251,6 +259,29 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
+    // Checking a bound can check the same instantiation again, through mutually recursive bounds
+    // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
+    // that the inner check succeeds.
+    Set<List<ReferenceType>> inProgress = instantiationChecks.get();
+    List<ReferenceType> check = Arrays.asList(this, otherType);
+    if (!inProgress.add(check)) {
+      return true;
+    }
+    try {
+      return canBeInstantiatedByUnchecked(otherType);
+    } finally {
+      inProgress.remove(check);
+    }
+  }
+
+  /**
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
+   * Does not guard against recursion; see {@link #canBeInstantiatedBy(ReferenceType)}.
+   *
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  private boolean canBeInstantiatedByUnchecked(ReferenceType otherType) {
     Substitution substitution = getSubstitution(otherType);
     if (getLowerTypeBound().isVariable()) {
       ParameterBound boundType = getLowerTypeBound().substitute(substitution);

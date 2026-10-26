@@ -37,4 +37,34 @@ public class ReferenceBoundTest {
     assertFalse(new EagerReferenceBound(boundType).equals(new LazyReferenceBound(otherBoundType)));
     assertFalse(new LazyReferenceBound(otherBoundType).equals(new EagerReferenceBound(boundType)));
   }
+
+  @Test
+  public void testLowerBoundOfOtherBounds() {
+    ParameterBound nullBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);
+    ParameterBound integerBound = ParameterBound.forType(ReferenceType.forClass(Integer.class));
+    ParameterBound stringBound = ParameterBound.forType(JavaTypes.STRING_TYPE);
+    ParameterBound intersection =
+        new IntersectionTypeBound(
+            java.util.Arrays.asList(
+                ParameterBound.forType(ReferenceType.forClass(Number.class)),
+                ParameterBound.forType(ReferenceType.forClass(java.io.Serializable.class))));
+    // The bound of `T extends Comparable<T>`, which is lazy.
+    ParameterBound lazyBound =
+        GenericClassType.forClass(SelfComparable.class)
+            .getTypeParameters()
+            .get(0)
+            .getUpperTypeBound();
+
+    assertTrue(nullBound.isLowerBound(intersection, new Substitution()));
+    assertTrue(nullBound.isLowerBound(lazyBound, new Substitution()));
+    assertTrue(integerBound.isLowerBound(intersection, new Substitution()));
+    assertFalse(stringBound.isLowerBound(intersection, new Substitution()));
+  }
+
+  /**
+   * A class whose type parameter has a self-referential bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfComparable<T extends Comparable<T>> {}
 }

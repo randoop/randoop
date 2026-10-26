@@ -247,8 +247,18 @@ public abstract class ParameterBound {
    * @return true iff this bound is a lower bound on the type of the given bound
    */
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    return false;
+    return bound.hasLowerBound(this, substitution);
   }
+
+  /**
+   * Returns true if the given bound is a lower bound on every type that has this bound as a lower
+   * bound.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound on every type whose lower bound is this
+   */
+  abstract boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution);
 
   /**
    * Returns true if this bound is {@code Object}.
@@ -279,10 +289,10 @@ public abstract class ParameterBound {
    * Returns true if this bound is an upper bound on the type of the given bound with respect to the
    * type substitution.
    *
-   * <p>A type variable in this bound that the substitution does not replace by a different type
-   * stands for an unknown type that may be any type that satisfies the variable's upper bound. An
-   * example is another type parameter of the declaration of the variable whose bound this is. Every
-   * other type variable, such as one in the given bound, stands for itself.
+   * <p>Some type variables in this bound stand for unknown types, which may be any types that
+   * satisfy their bounds; see {@link Substitution#isUnknown(ReferenceType)}. An example is another
+   * type parameter of the declaration of the variable whose bound this is. Every other type
+   * variable, such as one in the given bound, stands for itself.
    *
    * @param bound the other bound
    * @param substitution the type substitution

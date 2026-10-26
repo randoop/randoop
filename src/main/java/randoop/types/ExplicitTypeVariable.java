@@ -82,6 +82,11 @@ public class ExplicitTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && TypeVariable.isSameVariable(this, type)) {
+      // The substitution maps this type variable to itself.  Keep this copy and its bounds, rather
+      // than the substitution's copy.
+      type = null;
+    }
     if (type != null && !type.isVariable()) {
       return type;
     }
