@@ -367,7 +367,11 @@ class LazyParameterBound extends ParameterBound {
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     Substitution completeSubstitution = completeSubstitution(substitution);
     ParameterBound b = instantiate(completeSubstitution);
-    return b != null && b.isUpperBound(bound, completeSubstitution);
+    // Compare the instantiated bound directly.  Calling b.isUpperBound would apply the
+    // substitution again, which can change b, such as by substituting into the bounds of a type
+    // variable that the substitution put in b.
+    return b instanceof ReferenceBound
+        && bound.hasUpperBound(((ReferenceBound) b).getBoundType(), completeSubstitution);
   }
 
   /**

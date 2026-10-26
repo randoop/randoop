@@ -242,7 +242,13 @@ public class Substitution {
         result.put(variable, variable);
       }
     }
-    return result == null ? this : result;
+    if (result == null) {
+      return this;
+    }
+    // Mapping a type variable to itself changes neither cache.
+    result.replacementVariables = replacementVariables;
+    result.instantiatedDeclarations = instantiatedDeclarations;
+    return result;
   }
 
   /**
