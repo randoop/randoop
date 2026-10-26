@@ -98,8 +98,7 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ReferenceType argReferenceType = (ReferenceType) argType;
-      if (thisBoundType.isVariable()
-          && TypeVariable.isSameVariable(thisBoundType, getBoundType())) {
+      if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
         // The substitution does not replace the type variable, so it stands for an unknown type.
         return canBeSupertype((TypeVariable) thisBoundType, argReferenceType);
       }
@@ -142,7 +141,7 @@ class EagerReferenceBound extends ReferenceBound {
    * @return true if {@code variable} can be instantiated by a supertype of {@code type}
    */
   private static boolean canBeSupertype(TypeVariable variable, ReferenceType type) {
-    if (TypeVariable.isSameVariable(type, variable) || variable.canBeInstantiatedBy(type)) {
+    if (type.equals(variable) || variable.canBeInstantiatedBy(type)) {
       return true;
     }
     if (variable instanceof ExplicitTypeVariable && type instanceof ClassOrInterfaceType) {

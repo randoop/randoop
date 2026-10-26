@@ -243,7 +243,7 @@ public class Substitution {
    */
   Substitution without(TypeVariable parameter) {
     Substitution result = new Substitution(this);
-    result.map.keySet().removeIf(key -> TypeVariable.isSameVariable(key, parameter));
+    result.map.remove(parameter);
     if (parameter instanceof ExplicitTypeVariable) {
       result.rawMap.remove(((ExplicitTypeVariable) parameter).getReflectionTypeVariable());
     }

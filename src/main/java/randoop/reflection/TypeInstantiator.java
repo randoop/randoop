@@ -383,12 +383,11 @@ public class TypeInstantiator {
    * @param variables a collection of type variables
    * @param variable a type variable
    * @return true if {@code variables} contains {@code variable}, possibly with different bounds
-   * @see TypeVariable#isSameVariable
    */
   private static boolean containsVariable(
       Collection<? extends TypeVariable> variables, TypeVariable variable) {
     for (TypeVariable v : variables) {
-      if (TypeVariable.isSameVariable(v, variable)) {
+      if (v.equals(variable)) {
         return true;
       }
     }
@@ -710,10 +709,7 @@ public class TypeInstantiator {
       List<TypeVariable> boundVariables = boundVariables(dependent);
       if (containsVariable(boundVariables, argument)
           && boundVariables.stream()
-              .allMatch(
-                  v ->
-                      TypeVariable.isSameVariable(v, argument)
-                          || containsVariable(substitution.keySet(), v))) {
+              .allMatch(v -> v.equals(argument) || containsVariable(substitution.keySet(), v))) {
         checked.add(dependent);
       }
     }
