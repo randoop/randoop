@@ -1,14 +1,23 @@
 package randoop.reflection;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -169,26 +178,133 @@ public class OmitMethodsPredicate {
       return result;
     }
     Class<?> declaringClass = m.getDeclaringClass();
+    Class<?>[] paramTypes = m.getParameterTypes();
+    Map<TypeVariable<?>, Type> typeArguments = supertypeTypeArguments(declaringClass);
     for (Class<?> supertype : strictSupertypes(declaringClass)) {
-      Method candidate;
-      try {
-        candidate = supertype.getDeclaredMethod(m.getName(), m.getParameterTypes());
-      } catch (NoSuchMethodException e) {
-        continue;
+      for (Method candidate : supertype.getDeclaredMethods()) {
+        if (!candidate.getName().equals(m.getName())
+            || candidate.getParameterCount() != paramTypes.length) {
+          continue;
+        }
+        int candidateMods = candidate.getModifiers();
+        if (Modifier.isStatic(candidateMods) || Modifier.isPrivate(candidateMods)) {
+          continue;
+        }
+        boolean isPackagePrivate =
+            !Modifier.isPublic(candidateMods) && !Modifier.isProtected(candidateMods);
+        if (isPackagePrivate
+            && !Objects.equals(declaringClass.getPackage(), supertype.getPackage())) {
+          continue;
+        }
+        if (hasParameterTypes(candidate, paramTypes, typeArguments)) {
+          result.add(candidate);
+        }
       }
-      int candidateMods = candidate.getModifiers();
-      if (Modifier.isStatic(candidateMods) || Modifier.isPrivate(candidateMods)) {
-        continue;
-      }
-      boolean isPackagePrivate =
-          !Modifier.isPublic(candidateMods) && !Modifier.isProtected(candidateMods);
-      if (isPackagePrivate
-          && !Objects.equals(declaringClass.getPackage(), supertype.getPackage())) {
-        continue;
-      }
-      result.add(candidate);
     }
     return result;
+  }
+
+  /**
+   * Returns true if the parameter types of {@code candidate}, as seen from a subclass, erase to
+   * {@code paramTypes}. For example, if class {@code Foo} implements {@code Comparable<Foo>}, then
+   * from {@code Foo}, the parameter types of {@code Comparable.compareTo(T)} erase to {@code
+   * [Foo]}.
+   *
+   * @param candidate a method declared in a supertype of the subclass
+   * @param paramTypes parameter types
+   * @param typeArguments the type arguments of the subclass's supertypes, as returned by {@link
+   *     #supertypeTypeArguments}
+   * @return true if the parameter types of {@code candidate}, as seen from the subclass, erase to
+   *     {@code paramTypes}
+   */
+  private static boolean hasParameterTypes(
+      Method candidate, Class<?>[] paramTypes, Map<TypeVariable<?>, Type> typeArguments) {
+    Type[] candidateParamTypes = candidate.getGenericParameterTypes();
+    if (candidateParamTypes.length != paramTypes.length) {
+      // The generic parameter types can omit synthetic parameters.
+      return Arrays.equals(candidate.getParameterTypes(), paramTypes);
+    }
+    for (int i = 0; i < paramTypes.length; i++) {
+      if (!erasure(candidateParamTypes[i], typeArguments).equals(paramTypes[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns the type arguments that the given class supplies, directly or transitively, to the type
+   * parameters of its strict supertypes. For example, if class {@code Foo} implements {@code
+   * Comparable<Foo>}, the result maps the type parameter {@code T} of {@code Comparable} to {@code
+   * Foo}. A type argument may refer to type parameters of other classes; {@link #erasure} resolves
+   * them. A supertype that is used as a raw type contributes no type arguments.
+   *
+   * @param c a class
+   * @return a map from type parameters of the strict supertypes of {@code c} to their type
+   *     arguments
+   */
+  private static Map<TypeVariable<?>, Type> supertypeTypeArguments(Class<?> c) {
+    Map<TypeVariable<?>, Type> result = new HashMap<>();
+    Set<Class<?>> visited = new HashSet<>();
+    List<Class<?>> worklist = new ArrayList<>();
+    worklist.add(c);
+    while (!worklist.isEmpty()) {
+      Class<?> current = worklist.remove(worklist.size() - 1);
+      List<Type> genericSupertypes = new ArrayList<>();
+      Type genericSuperclass = current.getGenericSuperclass();
+      if (genericSuperclass != null) {
+        genericSupertypes.add(genericSuperclass);
+      }
+      Collections.addAll(genericSupertypes, current.getGenericInterfaces());
+      for (Type genericSupertype : genericSupertypes) {
+        Class<?> rawSupertype;
+        if (genericSupertype instanceof ParameterizedType) {
+          ParameterizedType parameterized = (ParameterizedType) genericSupertype;
+          rawSupertype = (Class<?>) parameterized.getRawType();
+          TypeVariable<?>[] typeParameters = rawSupertype.getTypeParameters();
+          Type[] actualTypeArguments = parameterized.getActualTypeArguments();
+          for (int i = 0; i < typeParameters.length; i++) {
+            result.put(typeParameters[i], actualTypeArguments[i]);
+          }
+        } else {
+          rawSupertype = (Class<?>) genericSupertype;
+        }
+        if (visited.add(rawSupertype)) {
+          worklist.add(rawSupertype);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns the erasure of the given type, after replacing type parameters according to {@code
+   * typeArguments}.
+   *
+   * @param t a type
+   * @param typeArguments a map from type parameters to their type arguments
+   * @return the erasure of {@code t}
+   */
+  private static Class<?> erasure(Type t, Map<TypeVariable<?>, Type> typeArguments) {
+    if (t instanceof Class) {
+      return (Class<?>) t;
+    } else if (t instanceof ParameterizedType) {
+      return (Class<?>) ((ParameterizedType) t).getRawType();
+    } else if (t instanceof GenericArrayType) {
+      Class<?> componentErasure =
+          erasure(((GenericArrayType) t).getGenericComponentType(), typeArguments);
+      return Array.newInstance(componentErasure, 0).getClass();
+    } else if (t instanceof TypeVariable) {
+      Type typeArgument = typeArguments.get(t);
+      if (typeArgument != null) {
+        return erasure(typeArgument, typeArguments);
+      }
+      return erasure(((TypeVariable<?>) t).getBounds()[0], typeArguments);
+    } else if (t instanceof WildcardType) {
+      return erasure(((WildcardType) t).getUpperBounds()[0], typeArguments);
+    } else {
+      throw new IllegalArgumentException("Unexpected type: " + t + " [" + t.getClass() + "]");
+    }
   }
 
   /**
