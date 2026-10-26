@@ -104,8 +104,9 @@ class IntersectionTypeBound extends ParameterBound {
     return paramList;
   }
 
+  /*package*/
   @Override
-  /*package*/ boolean hasWildcard() {
+  boolean hasWildcard() {
     for (ParameterBound b : boundList) {
       if (b.hasWildcard()) {
         return true;
@@ -200,8 +201,9 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the argument bound has all of the member bounds of this object as an upper
    *     bound
    */
+  /*package*/
   @Override
-  /*package*/ boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     for (ParameterBound b : boundList) {
       if (!b.isUpperBound(bound, substitution)) {
         return false;

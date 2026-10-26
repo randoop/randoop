@@ -152,8 +152,9 @@ public class WildcardArgument extends TypeArgument {
     return argumentType.isGeneric(ignoreWildcards);
   }
 
+  /*package*/
   @Override
-  /*package*/ boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (this.equals(otherArgument)) {
       return true;
     }

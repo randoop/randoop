@@ -115,9 +115,10 @@ public final class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
+  /*package*/
   @SuppressWarnings("nullness:argument") // https://tinyurl.com/cfissue/4006
-  /*package*/ static Map<MethodSignature, MethodSignature> readReplacements(
-      @Owning Reader in, String filename) throws ReplacementFileException, IOException {
+  static Map<MethodSignature, MethodSignature> readReplacements(@Owning Reader in, String filename)
+      throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
     try (EntryReader reader =

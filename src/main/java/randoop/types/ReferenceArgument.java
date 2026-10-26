@@ -138,8 +138,9 @@ public final class ReferenceArgument extends TypeArgument {
     return referenceType.isGeneric(ignoreWildcards);
   }
 
+  /*package*/
   @Override
-  /*package*/ boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return false;
     }

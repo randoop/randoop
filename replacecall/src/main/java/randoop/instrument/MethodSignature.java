@@ -214,8 +214,9 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return the parameter types for this {@link MethodSignature}
    */
+  /*package*/
   @SuppressWarnings("PMD.MethodReturnsInternalArray")
-  /*package*/ Type[] getParameterTypes() {
+  Type[] getParameterTypes() {
     return paramTypes;
   }
 

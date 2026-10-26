@@ -247,9 +247,9 @@ public class ComponentManager {
    *     appropriate to use as a method call receiver
    * @return the sequences that create values of the given type
    */
+  /*package*/
   @SuppressWarnings("unchecked")
-  /*package*/ SIList<Sequence> getSequencesForParam(
-      TypedOperation operation, int i, boolean onlyReceivers) {
+  SIList<Sequence> getSequencesForParam(TypedOperation operation, int i, boolean onlyReceivers) {
 
     Type neededType = operation.getInputTypes().get(i);
 

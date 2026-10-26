@@ -203,8 +203,9 @@ class LazyParameterBound extends ParameterBound {
     return variableList;
   }
 
+  /*package*/
   @Override
-  /*package*/ boolean hasWildcard() {
+  boolean hasWildcard() {
     return hasWildcard(boundType);
   }
 
@@ -305,8 +306,9 @@ class LazyParameterBound extends ParameterBound {
     return b.isUpperBound(argType, substitution);
   }
 
+  /*package*/
   @Override
-  /*package*/ boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     throw new LazyBoundException();
     // assert false : " not quite sure what to do with lazy type bound";
     // return false;

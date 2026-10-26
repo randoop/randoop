@@ -63,8 +63,9 @@ public final class ReplaceCallAgent {
   public static @MonotonicNonNull String debug_directory;
 
   /** The path for the debug directory. Used by the logs in {@link CallReplacementTransformer}. */
+  /*package*/
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
-  /*package*/ static Path debugPath;
+  static Path debugPath;
 
   /** Print progress information, such as the arguments with which the agent is started. */
   @SuppressWarnings("WeakerAccess")
