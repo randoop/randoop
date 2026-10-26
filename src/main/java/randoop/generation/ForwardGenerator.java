@@ -230,13 +230,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear
-        || (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-            && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory)) {
+    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear) {
       componentManager.clearGeneratedSequences();
-      // Forget runtime primitives that were in the cleared pool, so they can be added again.
-      runtimePrimitivesSeen.clear();
-      initializeRuntimePrimitivesSeen();
+    }
+    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      componentManager.clearGeneratedSequences();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
