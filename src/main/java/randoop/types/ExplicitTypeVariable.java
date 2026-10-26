@@ -105,12 +105,6 @@ public class ExplicitTypeVariable extends TypeVariable {
   }
 
   @Override
-  public boolean isSameVariable(TypeVariable other) {
-    return other instanceof ExplicitTypeVariable
-        && variable.equals(((ExplicitTypeVariable) other).variable);
-  }
-
-  @Override
   public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
     return new ExplicitTypeVariable(this.variable, upperBound);
   }

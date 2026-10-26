@@ -388,7 +388,7 @@ public class TypeInstantiator {
   private static boolean containsVariable(
       Collection<? extends TypeVariable> variables, TypeVariable variable) {
     for (TypeVariable v : variables) {
-      if (v.isSameVariable(variable)) {
+      if (TypeVariable.isSameVariable(v, variable)) {
         return true;
       }
     }
@@ -711,7 +711,9 @@ public class TypeInstantiator {
       if (containsVariable(boundVariables, argument)
           && boundVariables.stream()
               .allMatch(
-                  v -> v.isSameVariable(argument) || containsVariable(substitution.keySet(), v))) {
+                  v ->
+                      TypeVariable.isSameVariable(v, argument)
+                          || containsVariable(substitution.keySet(), v))) {
         checked.add(dependent);
       }
     }
