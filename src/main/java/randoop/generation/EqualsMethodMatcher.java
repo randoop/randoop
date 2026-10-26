@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A {@link StateMatcher} that considers two objects to be the same state if they are equal
@@ -10,13 +11,13 @@ import java.util.Set;
 public class EqualsMethodMatcher implements StateMatcher {
 
   /** The distinct objects (according to {@code equals}) that have been added. */
-  private final Set<Object> cache = new LinkedHashSet<>();
+  private final Set<@Nullable Object> cache = new LinkedHashSet<>();
 
   /** Creates a EqualsMethodMatcher. */
   public EqualsMethodMatcher() {}
 
   @Override
-  public boolean add(Object object) {
+  public boolean add(@Nullable Object object) {
     try {
       return this.cache.add(object);
     } catch (Throwable e) {

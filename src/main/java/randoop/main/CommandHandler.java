@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
@@ -63,18 +64,21 @@ public abstract class CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected CommandHandler(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
 
-    if ((command == null)) {
+    if (command == null) {
       throw new IllegalArgumentException("command cannot be null.");
+    }
+    if (options == null) {
+      throw new IllegalArgumentException("options cannot be null.");
     }
 
     this.fcommand = command;
@@ -161,7 +165,7 @@ public abstract class CommandHandler {
       out.println("}}}");
       out.println();
     }
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("*Notes:*");
       out.println();
       for (String note : fnotes) {
@@ -212,7 +216,7 @@ public abstract class CommandHandler {
           Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("Notes:");
       out.println();
       for (int i = 0; i < fnotes.size(); i++) {
@@ -223,10 +227,8 @@ public abstract class CommandHandler {
       }
     }
     out.println();
-    if (foptions != null) {
-      out.println("OPTIONS:");
-      out.println();
-      out.println(foptions.usage(false));
-    }
+    out.println("OPTIONS:");
+    out.println();
+    out.println(foptions.usage(false));
   }
 }

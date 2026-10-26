@@ -49,7 +49,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     } else if (result instanceof NormalExecution) {
       ArrayList<Variable> inputs = new ArrayList<>(eseq.sequence.getInputs(finalIndex));
       inputs.add(eseq.sequence.getVariable(finalIndex));
-      Object[] inputValues = eseq.getRuntimeInputs(inputs);
+      @Nullable Object[] inputValues = eseq.getRuntimeInputs(inputs);
       if (eseq.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
         inputs.add(0, DummyVariable.DUMMY);
@@ -72,7 +72,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     }
   }
 
-  private @Nullable Object[] addNullReceiver(Object[] values) {
+  private @Nullable Object[] addNullReceiver(@Nullable Object[] values) {
     @Nullable Object[] args = new Object[values.length + 1];
     args[0] = null;
     System.arraycopy(values, 0, args, 1, values.length);
