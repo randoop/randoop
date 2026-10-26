@@ -47,8 +47,10 @@ final class EntryFileReader {
    */
   static <X extends Exception> void forEachEntry(
       @Owning Reader fileReader, String filename, EntryAction<X> action) throws IOException, X {
-    try (EntryReader reader =
-        new EntryReader(fileReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
+    // EntryReader.close() does not close the reader passed to its constructor.
+    try (Reader ownedReader = fileReader;
+        EntryReader reader =
+            new EntryReader(ownedReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
       for (String line : reader) {
         String entry = line.trim();
         if (!entry.isEmpty()) {
