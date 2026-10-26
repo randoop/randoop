@@ -459,6 +459,17 @@ public class TypeVariableTest {
   static class MutualComparableBound<S extends Comparable<T>, T extends Comparable<S>> {}
 
   /**
+   * A type parameter {@code Y} whose bound refers to a sibling with a self-referential bound.
+   *
+   * @param <X> a type parameter with a self-referential bound
+   * @param <Y> a type parameter bounded by a list of {@code X}
+   */
+  static class ListOfSelfComparableBound<X extends Comparable<X>, Y extends List<X>> {}
+
+  /** A class that is comparable to a different class. */
+  abstract static class ComparableToOther implements Comparable<String> {}
+
+  /**
    * Returns the first type parameter of the given generic class.
    *
    * @param c a generic class
@@ -706,5 +717,23 @@ public class TypeVariableTest {
     assertTrue(t.isInstantiationOf(copy));
     assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    // The copy's bound refers to the copy itself, not to an unknown.
+    assertFalse(copy.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
+    assertFalse(typeParameter(ComparableStringBound.class).isInstantiationOf(copy));
+  }
+
+  @Test
+  public void testSiblingInBoundOfCandidate() {
+    TypeVariable x = typeParameter(ListOfSelfComparableBound.class, 0);
+    TypeVariable y = typeParameter(ListOfSelfComparableBound.class, 1);
+    GenericClassType list = GenericClassType.forClass(List.class);
+    // X := ComparableToOther does not satisfy X's bound Comparable<X>.
+    assertFalse(
+        y.canBeInstantiatedBy(
+            list.instantiate(ClassOrInterfaceType.forClass(ComparableToOther.class))));
+    assertTrue(y.canBeInstantiatedBy(list.instantiate(JavaTypes.STRING_TYPE)));
+    // List<X> satisfies Y's bound, although X occurs in the replacement for Y.
+    assertNotNull(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(list.instantiate(x), y));
   }
 }

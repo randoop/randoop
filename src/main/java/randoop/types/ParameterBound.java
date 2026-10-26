@@ -295,9 +295,8 @@ public abstract class ParameterBound {
    * bound.
    *
    * @param upperBound the possible upper bound, to which {@code substitution} has been applied
-   * @param substitution the type substitution; a type variable in {@code upperBound} that it maps
-   *     to itself stands for an unknown type, as in {@link #isUpperBound(ParameterBound,
-   *     Substitution)}
+   * @param substitution the type substitution, which determines which type variables in {@code
+   *     upperBound} stand for unknown types (see {@link Substitution#isUnknown(ReferenceType)})
    * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
    */
   abstract boolean hasUpperBound(ReferenceType upperBound, Substitution substitution);

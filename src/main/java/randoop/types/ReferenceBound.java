@@ -115,11 +115,11 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   // The following methods compare types in which some type variables stand for unknown types, as
-  // determined by getUnknown, and every other type variable stands for itself.  They differ from
-  // ReferenceType.isSubtypeOfOrEqualTo, which treats a raw type as a subtype of every parameterized
-  // type that contains a type variable, and from isUpperBound(Type, Substitution), which treats
-  // every type variable in the bound as an unknown.  They are approximate:  they do not require two
-  // occurrences of an unknown to stand for the same type.
+  // determined by Substitution.isUnknown, and every other type variable stands for itself.  They
+  // differ from ReferenceType.isSubtypeOfOrEqualTo, which treats a raw type as a subtype of every
+  // parameterized type that contains a type variable, and from isUpperBound(Type, Substitution),
+  // which treats every type variable in the bound as an unknown.  They are approximate:  they do
+  // not require two occurrences of an unknown to stand for the same type.
 
   /**
    * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}.
@@ -131,11 +131,11 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   private static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isSameVariable(type, otherType) || otherType.isObject()) {
+    if (TypeVariable.isSameVariable(type, otherType) || otherType.isObject()) {
       return true;
     }
-    TypeVariable unknown = getUnknown(otherType, substitution);
-    if (unknown != null) {
+    if (substitution.isUnknown(otherType)) {
+      TypeVariable unknown = (TypeVariable) otherType;
       // The unknown may be the type or any of its supertypes.
       if (satisfiesBound(type, unknown, substitution)) {
         return true;
@@ -252,10 +252,10 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   private static boolean canBeSubtype(
       ReferenceType lowerType, ReferenceType type, Substitution substitution) {
-    TypeVariable unknown = getUnknown(lowerType, substitution);
-    if (unknown == null) {
+    if (!substitution.isUnknown(lowerType)) {
       return isSubtypeOrEqual(lowerType, type, substitution);
     }
+    TypeVariable unknown = (TypeVariable) lowerType;
     if (satisfiesBound(type, unknown, substitution)) {
       return true;
     }
@@ -289,12 +289,11 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isSameVariable(type, otherType)) {
+    if (TypeVariable.isSameVariable(type, otherType)) {
       return true;
     }
-    TypeVariable unknown = getUnknown(otherType, substitution);
-    if (unknown != null) {
-      return satisfiesBound(type, unknown, substitution);
+    if (substitution.isUnknown(otherType)) {
+      return satisfiesBound(type, (TypeVariable) otherType, substitution);
     }
     if (type.isArray() && otherType.isArray()) {
       Type componentType = ((ArrayType) type).getComponentType();
@@ -328,46 +327,6 @@ public abstract class ReferenceBound extends ParameterBound {
       }
     }
     return true;
-  }
-
-  /**
-   * Returns true if the two types are equal, or are the same declared type variable. Substitution
-   * creates a copy of a type variable whose bounds differ, such as by having a lazy part resolved,
-   * and {@link ExplicitTypeVariable#equals(Object)} compares bounds.
-   *
-   * @param type a type
-   * @param otherType a type
-   * @return true if the two types are equal or are the same declared type variable
-   */
-  private static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
-    if (type instanceof ExplicitTypeVariable && otherType instanceof ExplicitTypeVariable) {
-      return ((ExplicitTypeVariable) type)
-          .getReflectionTypeVariable()
-          .equals(((ExplicitTypeVariable) otherType).getReflectionTypeVariable());
-    }
-    return type.equals(otherType);
-  }
-
-  /**
-   * If the given type is a type variable that stands for an unknown type, returns the equivalent
-   * type variable that the substitution maps. Otherwise returns null. A type variable stands for an
-   * unknown type if the substitution maps it to itself.
-   *
-   * @param type a type
-   * @param substitution the type substitution
-   * @return the type variable, if {@code type} stands for an unknown type; otherwise null
-   */
-  private static @Nullable TypeVariable getUnknown(ReferenceType type, Substitution substitution) {
-    if (!type.isVariable()) {
-      return null;
-    }
-    for (TypeVariable variable : substitution.keySet()) {
-      if (isSameVariable(variable, type)) {
-        ReferenceType replacement = substitution.get(variable);
-        return replacement != null && isSameVariable(variable, replacement) ? variable : null;
-      }
-    }
-    return null;
   }
 
   /**

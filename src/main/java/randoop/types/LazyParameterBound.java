@@ -20,6 +20,12 @@ class LazyParameterBound extends ParameterBound {
   private final java.lang.reflect.Type boundType;
 
   /**
+   * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
+   * instead of reading this field.
+   */
+  private @Nullable List<TypeVariable> typeParameters = null;
+
+  /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
    * @param boundType the reflection type for this bound
@@ -187,7 +193,21 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return getTypeParameters(boundType);
+    return new ArrayList<>(getTypeParameterList());
+  }
+
+  /**
+   * Returns the type variables in this bound. The result must not be modified.
+   *
+   * @return the type variables in this bound
+   */
+  private List<TypeVariable> getTypeParameterList() {
+    List<TypeVariable> result = typeParameters;
+    if (result == null) {
+      result = getTypeParameters(boundType);
+      typeParameters = result;
+    }
+    return result;
   }
 
   @Override
@@ -350,7 +370,7 @@ class LazyParameterBound extends ParameterBound {
    * @return a substitution that maps every type variable in this bound
    */
   private Substitution completeSubstitution(Substitution substitution) {
-    return substitution.extendWithIdentity(getTypeParameters());
+    return substitution.extendWithIdentity(getTypeParameterList());
   }
 
   /**
