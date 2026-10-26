@@ -46,4 +46,9 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
     }
     return totalWeight;
   }
+
+  @Override
+  public void componentsCleared() {
+    weightMap.clear();
+  }
 }

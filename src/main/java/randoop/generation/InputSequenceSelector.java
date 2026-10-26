@@ -29,4 +29,15 @@ public abstract class InputSequenceSelector {
   public void createdExecutableSequence(ExecutableSequence eSeq) {
     // The default implementation does nothing. Subclasses may override it to add behavior.
   }
+
+  /**
+   * A hook that is called after the component set is cleared. It discards any information about
+   * sequences that are no longer in the component set.
+   *
+   * <p>The default implementation does nothing. Subclasses may override it to add behavior.
+   */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+  public void componentsCleared() {
+    // The default implementation does nothing. Subclasses may override it to add behavior.
+  }
 }
