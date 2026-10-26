@@ -263,6 +263,21 @@ public class ComponentManager {
   }
 
   /**
+   * Returns the sequences that {@link #clearGeneratedSequences} retains: the seed sequences, and
+   * the literal sequences if literals are enabled.
+   *
+   * @return the seed and literal sequences
+   */
+  Set<Sequence> getRetainedSequences() {
+    Set<Sequence> result = new LinkedHashSet<>(gralSeeds);
+    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
+        && scopeToLiteralStatistics != null) {
+      result.addAll(scopeToLiteralStatistics.getAllSequences());
+    }
+    return result;
+  }
+
+  /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
