@@ -191,10 +191,12 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(listOfString.isSubtypeOfOrEqualTo(listOfT));
 
     // `? extends List<T>` does not contain `? extends List<String>`.
-    WildcardType extendsListOfT =
-        new WildcardType(new EagerReferenceBound((ReferenceType) listOfT), true);
-    WildcardType extendsListOfString =
-        new WildcardType(new EagerReferenceBound((ReferenceType) listOfString), true);
+    WildcardArgument extendsListOfT =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound((ReferenceType) listOfT), true));
+    WildcardArgument extendsListOfString =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound((ReferenceType) listOfString), true));
     assertFalse(extendsListOfT.contains(extendsListOfString));
   }
 
