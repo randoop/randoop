@@ -16,7 +16,5 @@
 ^\Qjava7.util7.Arrays.hashCode(short[])\E$
 ^\Qjava7.util7.Collection.hashCode()\E$
 ^\Qjava7.util7.Collections.shuffle(java7.util7.List)\E$
-^\Qjava7.util7.Comparator.compare(java.lang.Object,java.lang.Object)\E$
 ^\Qjava7.util7.List.hashCode()\E$
-^\Qjava7.util7.Random()\E$
 ^\Qjava7.util7.Set.hashCode()\E$
