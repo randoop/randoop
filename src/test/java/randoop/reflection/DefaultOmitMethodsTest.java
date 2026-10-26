@@ -99,6 +99,47 @@ public class DefaultOmitMethodsTest {
   }
 
   @Test
+  public void testEnsureCapacity() throws IOException, NoSuchMethodException {
+    assertOmitted(
+        RawSignature.of(java.util.ArrayList.class.getMethod("ensureCapacity", int.class)));
+    assertOmitted(RawSignature.of(StringBuilder.class.getMethod("ensureCapacity", int.class)));
+  }
+
+  /** The default patterns for constructors and for methods with several parameters match. */
+  @Test
+  public void testConstructorsAndParameterLists() throws RandoopSpecificationError {
+    assertOmitted(java.util.Date.class, "java.util.Date()");
+    assertNotOmitted(java.util.Date.class, "java.util.Date(long)");
+    assertOmitted(java.util.Random.class, "java.util.Random()");
+    assertNotOmitted(java.util.Random.class, "java.util.Random(long)");
+    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate()");
+    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(long)");
+    assertOmitted(System.class, "java.lang.System.getProperty(java.lang.String,java.lang.String)");
+    assertOmitted(System.class, "java.lang.System.setProperty(java.lang.String,java.lang.String)");
+  }
+
+  /** {@code Partial()} is deterministic, so the default patterns do not omit it. */
+  @Test
+  public void testJodaTimePartial() throws RandoopSpecificationError {
+    assertNotOmitted(org.joda.time.Partial.class, "org.joda.time.Partial()");
+  }
+
+  /** A generic comparator. */
+  public static class GenericComparator<T> implements Comparator<T> {
+    @Override
+    public int compare(T o1, T o2) {
+      return 0;
+    }
+  }
+
+  @Test
+  public void testGenericComparator() throws RandoopSpecificationError {
+    assertNotOmitted(
+        GenericComparator.class,
+        "randoop.reflection.DefaultOmitMethodsTest$GenericComparator.compare(java.lang.Object,java.lang.Object)");
+  }
+
+  @Test
   public void testJavaTimeNow() throws RandoopSpecificationError {
     assertOmitted(java.time.LocalDate.class, "java.time.LocalDate.now()");
     assertOmitted(java.time.LocalDate.class, "java.time.LocalDate.now(java.time.ZoneId)");
@@ -138,12 +179,6 @@ public class DefaultOmitMethodsTest {
   }
 
   @Test
-  public void testJavaUtilDate() throws RandoopSpecificationError {
-    assertOmitted(java.util.Date.class, "java.util.Date()");
-    assertNotOmitted(java.util.Date.class, "java.util.Date(long)");
-  }
-
-  @Test
   public void testJavaUtilCalendar() throws RandoopSpecificationError {
     assertOmitted(java.util.GregorianCalendar.class, "java.util.GregorianCalendar()");
     assertOmitted(
@@ -164,21 +199,6 @@ public class DefaultOmitMethodsTest {
     assertNotOmitted(
         java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat(java.lang.String)");
     assertNotOmitted(java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat.toPattern()");
-  }
-
-  /** A generic comparator. */
-  public static class GenericComparator<T> implements Comparator<T> {
-    @Override
-    public int compare(T o1, T o2) {
-      return 0;
-    }
-  }
-
-  @Test
-  public void testGenericComparator() throws RandoopSpecificationError {
-    assertNotOmitted(
-        GenericComparator.class,
-        "randoop.reflection.DefaultOmitMethodsTest$GenericComparator.compare(java.lang.Object,java.lang.Object)");
   }
 
   @Test
@@ -257,6 +277,23 @@ public class DefaultOmitMethodsTest {
         "org.joda.time.DateTimeZone.setDefault(org.joda.time.DateTimeZone)");
     assertNotOmitted(
         org.joda.time.DateTimeZone.class, "org.joda.time.DateTimeZone.forID(java.lang.String)");
+  }
+
+  /**
+   * Asserts that some pattern in the default omit-methods files matches the given signature.
+   *
+   * @param signature a signature
+   */
+  private static void assertOmitted(RawSignature signature) throws IOException {
+    String signatureString = signature.toString();
+    for (String filename : DEFAULT_FILES) {
+      for (String line : readLines(filename)) {
+        if (Pattern.compile(line).matcher(signatureString).find()) {
+          return;
+        }
+      }
+    }
+    fail("No default omit pattern matches " + signatureString);
   }
 
   /**
