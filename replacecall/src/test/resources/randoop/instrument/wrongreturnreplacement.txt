@@ -1,2 +1,0 @@
-// bad replacement file for testing
-java.util.Random.nextInt() randoop.instrument.ReplacementTestMethods.nextIntReturningLong(java.util.Random)

@@ -22,25 +22,6 @@ public class ReplacementTestMethods {
     return 0;
   }
 
-  /**
-   * A replacement for {@code Random.nextInt()} that lacks the receiver parameter.
-   *
-   * @return 0
-   */
-  public static int nextIntWithoutReceiver() {
-    return 0;
-  }
-
-  /**
-   * A replacement for {@code Random.nextInt()} that has the wrong return type.
-   *
-   * @param r the receiver of the replaced call
-   * @return 0
-   */
-  public static long nextIntReturningLong(Random r) {
-    return 0;
-  }
-
   /** A replacement class for {@code Random} whose replacement method is not public. */
   public static class PackagePrivateMethodClass {
 
@@ -56,47 +37,6 @@ public class ReplacementTestMethods {
      * @return 0
      */
     static int nextInt(Random r) {
-      return 0;
-    }
-  }
-
-  /** A replacement class for {@code Random} whose replacement method has the wrong return type. */
-  public static class WrongReturnClass {
-
-    /** Do not instantiate. */
-    private WrongReturnClass() {
-      throw new UnsupportedOperationException("Do not instantiate");
-    }
-
-    /**
-     * A replacement for {@code Random.nextInt()} that has the wrong return type.
-     *
-     * @param r the receiver of the replaced call
-     * @return 0
-     */
-    public static long nextInt(Random r) {
-      return 0;
-    }
-  }
-
-  /**
-   * A replacement class for {@code String} whose replacement method has the parameters of an
-   * instance method, without the receiver parameter.
-   */
-  public static class MissingReceiverClass {
-
-    /** Do not instantiate. */
-    private MissingReceiverClass() {
-      throw new UnsupportedOperationException("Do not instantiate");
-    }
-
-    /**
-     * A replacement for {@code String.compareTo(String)} that lacks the receiver parameter.
-     *
-     * @param s the argument of the replaced call
-     * @return 0
-     */
-    public static int compareTo(String s) {
       return 0;
     }
   }
