@@ -38,6 +38,9 @@ import randoop.types.ClassOrInterfaceType;
  *       C
  *     q.D
  * </pre>
+ *
+ * <p>Class {@code p.ComparableInput} implements {@code Comparable<ComparableInput>} and declares
+ * {@code compareTo(ComparableInput)} and {@code compareTo(Integer)}.
  */
 public class OmitMethodsTest {
 
@@ -216,6 +219,35 @@ public class OmitMethodsTest {
         model
             .getOmitMethodsPredicate()
             .shouldOmit(TypedOperation.forMethod(M1Interface.class.getMethod("m1"))));
+  }
+
+  @Test
+  public void testOverriddenGenericMethod() throws Exception {
+    // ComparableInput.compareTo(ComparableInput) overrides Comparable.compareTo(T), whose erased
+    // parameter type is Object.
+    OperationModel model =
+        createModel(
+            Collections.singletonList("randoop.reflection.omitinputs.p.ComparableInput"),
+            P + "ComparableInput\\.compareTo\\(randoop");
+    assertTrue(
+        model
+            .getOmitMethodsPredicate()
+            .shouldOmit(
+                TypedOperation.forMethod(Comparable.class.getMethod("compareTo", Object.class))));
+  }
+
+  @Test
+  public void testOverloadOfOverriddenGenericMethod() throws Exception {
+    // ComparableInput.compareTo(Integer) does not override Comparable.compareTo(T).
+    OperationModel model =
+        createModel(
+            Collections.singletonList("randoop.reflection.omitinputs.p.ComparableInput"),
+            P + "ComparableInput\\.compareTo\\(java\\.lang\\.Integer\\)");
+    assertFalse(
+        model
+            .getOmitMethodsPredicate()
+            .shouldOmit(
+                TypedOperation.forMethod(Comparable.class.getMethod("compareTo", Object.class))));
   }
 
   @Test
