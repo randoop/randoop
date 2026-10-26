@@ -121,7 +121,7 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument, or null if the substitution does not map a type variable in {@code
-   *     type}
+   *     type} or maps the component type of an array type to the null type
    */
   private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
@@ -160,6 +160,10 @@ class LazyParameterBound extends ParameterBound {
         return null;
       }
       ReferenceType componentType = ((ReferenceArgument) componentArgument).getReferenceType();
+      // There is no array of the null type.
+      if (componentType.equals(JavaTypes.NULL_TYPE)) {
+        return null;
+      }
       return TypeArgument.forType(ArrayType.ofComponentType(componentType));
     }
 
@@ -279,6 +283,9 @@ class LazyParameterBound extends ParameterBound {
         }
       }
     }
+    if (type instanceof GenericArrayType) {
+      return hasWildcard(((GenericArrayType) type).getGenericComponentType());
+    }
     return false;
   }
 
@@ -309,6 +316,9 @@ class LazyParameterBound extends ParameterBound {
           return true;
         }
       }
+    }
+    if (type instanceof GenericArrayType) {
+      return hasCaptureVariable(((GenericArrayType) type).getGenericComponentType());
     }
     return false;
   }
