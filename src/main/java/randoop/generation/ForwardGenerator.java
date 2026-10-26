@@ -49,22 +49,24 @@ import randoop.util.Randomness;
 public class ForwardGenerator extends AbstractGenerator {
 
   /**
-   * The set of ALL sequences ever generated, including sequences that were executed and then
-   * discarded.
+   * The sequences created since the component set was last cleared (or since generation started),
+   * including sequences that were executed and then discarded. Randoop does not create a sequence
+   * in this set again. A sequence that was created before the last clear can be created again, to
+   * rebuild the component set, but is not output as a test again.
    *
-   * <p>This is ordered by most recent creation (a sequence that is created again moves to the end),
-   * to allow for flaky test history collection in {@link
+   * <p>Clearing the component set also clears this set, so that the memory for the sequences can be
+   * reclaimed.
+   *
+   * <p>This is ordered by creation, to allow for flaky test history collection in {@link
    * randoop.main.GenTests#printSequenceExceptionError(AbstractGenerator, SequenceExceptionError)}.
    */
-  private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
+  private LinkedHashSet<Sequence> sequencesSinceClear = new LinkedHashSet<>();
 
   /**
-   * The sequences created since the component set was last cleared, or null if it has never been
-   * cleared (in which case {@link #allSequences} contains exactly those sequences). Randoop does
-   * not create a sequence in this set again. A sequence that is in {@link #allSequences} but not in
-   * this set can be created again, to rebuild the component set, but is not output as a test again.
+   * The number of sequences created, including sequences that were executed and then discarded. A
+   * sequence that is created again after a clear is counted again.
    */
-  private @Nullable Set<Sequence> sequencesSinceClear = null;
+  private int numSequencesCreated = 0;
 
   /**
    * The parameterless operations that have been removed from {@link #operations} since the
@@ -78,14 +80,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
-   * components as {@link #allSequences}, in the same order, but stores them as strings obtained via
-   * the toCodeString() method.
+   * components as {@link #sequencesSinceClear}, in the same order, but stores them as strings
+   * obtained via the toCodeString() method.
    */
   private final List<String> allsequencesAsCode = new ArrayList<>();
 
   /**
    * Set and used only if {@link GenInputsAbstract#debug_checks}==true. This contains the same
-   * components as {@link #allSequences}, in the same order, but can be accessed by index.
+   * components as {@link #sequencesSinceClear}, in the same order, but can be accessed by index.
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
@@ -206,7 +208,9 @@ public class ForwardGenerator extends AbstractGenerator {
   void clearComponents() {
     componentManager.clearGeneratedSequences();
     inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
-    sequencesSinceClear = new HashSet<>();
+    sequencesSinceClear = new LinkedHashSet<>();
+    allsequencesAsCode.clear();
+    allsequencesAsList.clear();
     operations.addAll(removedParameterlessOperations);
     removedParameterlessOperations.clear();
   }
@@ -240,12 +244,8 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    if (sequencesSinceClear != null) {
-      sequencesSinceClear.add(eSeq.sequence);
-    }
-    // If the sequence was created before the component set was last cleared, move it to the end.
-    allSequences.remove(eSeq.sequence);
-    allSequences.add(eSeq.sequence);
+    sequencesSinceClear.add(eSeq.sequence);
+    numSequencesCreated++;
     randoopConsistencyTest2(eSeq.sequence);
 
     if (GenInputsAbstract.dontexecute) {
@@ -310,9 +310,15 @@ public class ForwardGenerator extends AbstractGenerator {
     return outputSequences.contains(eSeq.sequence) ? null : eSeq;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation returns the sequences generated since the component set was last
+   * cleared, in the order they were created.
+   */
   @Override
   public Set<Sequence> getAllSequences() {
-    return this.allSequences;
+    return this.sequencesSinceClear;
   }
 
   /**
@@ -560,7 +566,7 @@ public class ForwardGenerator extends AbstractGenerator {
     randoopConsistencyTests(newSequence);
 
     // Discard if sequence was already created since the component set was last cleared.
-    if ((sequencesSinceClear == null ? allSequences : sequencesSinceClear).contains(newSequence)) {
+    if (sequencesSinceClear.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf("Sequence discarded: the same sequence was previously created.%n");
       return null;
@@ -611,20 +617,17 @@ public class ForwardGenerator extends AbstractGenerator {
   // If debugging is enabled,
   // adds the string corresponding to the given newSequences to the
   // end of the list allSequencesAsCode. The latter list is intended to mirror
-  // the set allSequences, but stores strings instead of Sequences.
+  // the set sequencesSinceClear, but stores strings instead of Sequences.
   private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
-      String code = newSequence.toCodeString();
-      this.allsequencesAsCode.remove(code);
-      this.allsequencesAsList.remove(newSequence);
-      this.allsequencesAsCode.add(code);
+      this.allsequencesAsCode.add(newSequence.toCodeString());
       this.allsequencesAsList.add(newSequence);
     }
   }
 
   // Checks that the set allSequencesAsCode contains a set of strings
-  // equivalent to the sequences in allSequences.
+  // equivalent to the sequences in sequencesSinceClear.
   private void randoopConsistencyTests(Sequence newSequence) {
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -1005,7 +1008,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public int numGeneratedSequences() {
-    return allSequences.size();
+    return numSequencesCreated;
   }
 
   @Override
@@ -1020,7 +1023,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 "num_sequences_generated: " + num_sequences_generated),
             String.join(
                 ", ",
-                "allSequences: " + allSequences.size(),
+                "sequencesSinceClear: " + sequencesSinceClear.size(),
                 "regresson seqs: " + outRegressionSeqs.size(),
                 "error seqs: "
                     + outErrorSeqs.size()

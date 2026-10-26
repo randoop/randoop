@@ -198,6 +198,34 @@ public class ClearComponentsTest {
     assertFalse(createdAgain.isEmpty());
   }
 
+  /**
+   * Clearing the component set discards the generator's record of the sequences created before the
+   * clear, but they still count as generated.
+   */
+  @Test
+  public void clearDiscardsCreatedSequences() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+
+    for (int i = 0; i < 100; i++) {
+      gen.step();
+    }
+    int numCreatedBeforeClear = gen.numGeneratedSequences();
+    assertTrue(numCreatedBeforeClear > 0);
+    assertEquals(numCreatedBeforeClear, gen.getAllSequences().size());
+
+    gen.clearComponents();
+    assertTrue(gen.getAllSequences().isEmpty());
+    assertEquals(numCreatedBeforeClear, gen.numGeneratedSequences());
+
+    for (int i = 0; i < 100; i++) {
+      gen.step();
+    }
+    assertFalse(gen.getAllSequences().isEmpty());
+    assertEquals(numCreatedBeforeClear + gen.getAllSequences().size(), gen.numGeneratedSequences());
+  }
+
   /** A parameterless operation is used again after a clear. */
   @Test
   public void parameterlessOperationIsUsedAgainAfterClear() throws Exception {
