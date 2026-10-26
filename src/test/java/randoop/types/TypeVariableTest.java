@@ -491,6 +491,17 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubtypeOfRecursiveBound() {
+    TypeVariable w = typeParameter(SelfComparableBound.class);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    assertTrue(w.isSubtypeOfOrEqualTo(comparable.instantiate(w)));
+    assertFalse(w.isSubtypeOfOrEqualTo(comparable.instantiate(JavaTypes.STRING_TYPE)));
+    assertTrue(
+        typeParameter(NumberBound.class)
+            .isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  @Test
   public void testSameBound() {
     assertTrue(
         typeParameter(ComparableStringBound.class)
