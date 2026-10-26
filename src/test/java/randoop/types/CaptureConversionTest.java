@@ -144,10 +144,22 @@ public class CaptureConversionTest {
                     .getGenericType());
     WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
     CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
-    assertEquals(
-        new IntersectionTypeBound(
-            Arrays.asList(ParameterBound.forType(JavaTypes.OBJECT_TYPE), wildcard.getTypeBound())),
-        capture.getUpperTypeBound());
+    assertTrue(isGlbWithObject(capture.getUpperTypeBound(), wildcard.getTypeBound()));
+  }
+
+  /**
+   * Returns true if {@code bound} is equivalent to {@code glb(Object, other)}: that is, if it is
+   * {@code other} or the intersection of {@code Object} and {@code other}.
+   *
+   * @param bound the bound to test
+   * @param other the bound that {@code bound} should be equivalent to
+   * @return true if {@code bound} is {@code other}, possibly intersected with {@code Object}
+   */
+  private static boolean isGlbWithObject(ParameterBound bound, ParameterBound other) {
+    ParameterBound objectBound = ParameterBound.forType(JavaTypes.OBJECT_TYPE);
+    return bound.equals(other)
+        || bound.equals(new IntersectionTypeBound(Arrays.asList(objectBound, other)))
+        || bound.equals(new IntersectionTypeBound(Arrays.asList(other, objectBound)));
   }
 
   /**

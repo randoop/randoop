@@ -82,7 +82,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -161,13 +161,6 @@ class LazyParameterBound extends ParameterBound {
     }
 
     return null;
-  }
-
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    throw new LazyBoundException();
-    // assert false : "unable to do capture conversion on lazy bound " + this;
-    // return this;
   }
 
   @Override
