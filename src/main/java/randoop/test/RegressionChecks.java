@@ -1,10 +1,11 @@
 package randoop.test;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import randoop.main.RandoopBug;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** A set of checks, including at most one ExceptionCheck. */
 public class RegressionChecks implements TestChecks<RegressionChecks> {
@@ -12,12 +13,15 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   /** An empty, immutable set of regression checks. */
   public static RegressionChecks EMPTY = new RegressionChecks();
 
-  private Set<Check> checks;
-  private ExceptionCheck exceptionCheck;
+  /** The non-exception checks that this {@code RegressionChecks} represents. */
+  private final Set<Check> checks;
+
+  /** The exception check that this {@code RegressionChecks} represents, or null. */
+  private final @Nullable ExceptionCheck exceptionCheck;
 
   /** Create an empty set of regression checks. */
   public RegressionChecks() {
-    this.checks = new LinkedHashSet<>();
+    this.checks = Collections.emptySet();
     this.exceptionCheck = null;
   }
 
@@ -36,6 +40,21 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
     }
   }
 
+  /**
+   * Create a new RegressionCheck.
+   *
+   * @param checks the non-exception checks
+   * @param exceptionCheck the exception check, or null
+   */
+  public RegressionChecks(Collection<Check> checks, @Nullable ExceptionCheck exceptionCheck) {
+    if (checks.stream().anyMatch(ExceptionCheck.class::isInstance)) {
+      throw new IllegalArgumentException("checks must not contain ExceptionCheck instances");
+    }
+
+    this.checks = Collections.unmodifiableSet(new LinkedHashSet<>(checks));
+    this.exceptionCheck = exceptionCheck;
+  }
+
   @Override
   public int count() {
     int result = checks.size();
@@ -46,35 +65,10 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   }
 
   /**
-   * Adds the given check to the sequence.
-   *
-   * @throws IllegalArgumentException if the argument's class is {@code ExceptionCheck} and this
-   *     already contains such a check
-   */
-  @SuppressWarnings("ReferenceEquality")
-  @Override
-  public void add(Check check) {
-    if (this == EMPTY) {
-      throw new RandoopBug("Don't add to EMPTY");
-    }
-    if (check instanceof ExceptionCheck) {
-      if (exceptionCheck != null) {
-        throw new IllegalArgumentException(
-            "Sequence already has a check"
-                + " of type "
-                + exceptionCheck.getClass().getCanonicalName());
-      }
-      exceptionCheck = (ExceptionCheck) check;
-    } else {
-      checks.add(check);
-    }
-  }
-
-  /**
    * {@inheritDoc}
    *
    * @return map of non-exception checks in this object. each mapped to true, indicating it is
-   *     passing
+   *     passing.
    */
   @Override
   public Set<Check> checks() {
@@ -107,7 +101,7 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -127,20 +121,6 @@ public class RegressionChecks implements TestChecks<RegressionChecks> {
   @Override
   public int hashCode() {
     return Objects.hash(checks, exceptionCheck);
-  }
-
-  @Override
-  public RegressionChecks commonChecks(RegressionChecks other) {
-    RegressionChecks common = new RegressionChecks();
-    for (Check ck : checks) {
-      if (other.checks.contains(ck)) {
-        common.add(ck);
-      }
-    }
-    if (exceptionCheck.equals(other.exceptionCheck)) {
-      common.add(exceptionCheck);
-    }
-    return common;
   }
 
   /**

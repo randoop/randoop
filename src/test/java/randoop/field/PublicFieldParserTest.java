@@ -18,7 +18,7 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e.getMessage());
       throw new Error("unreachable");
     }
@@ -38,7 +38,7 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e);
       throw new Error("unreachable");
     }
@@ -60,7 +60,7 @@ public class PublicFieldParserTest {
     Type classType;
     try {
       classType = Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("couldn't load class: " + e);
       throw new Error("unreachable");
     }

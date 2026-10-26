@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
+import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
@@ -29,6 +31,9 @@ import randoop.util.Randomness;
 
 /** Instantiates type parameters from a set of input types. */
 public class TypeInstantiator {
+
+  /** If true, log information about instantiation. */
+  private static final boolean debug = false;
 
   // This field is side-effected by aliases held outside the class.
   /**
@@ -52,14 +57,17 @@ public class TypeInstantiator {
    * Instantiate the given operation by choosing type arguments for its type parameters.
    *
    * @param operation the generic operation to instantiate
-   * @return an instantiated version of the operation
+   * @return an instantiated version of the operation, or null
    */
-  public TypedClassOperation instantiate(TypedClassOperation operation) {
+  public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
 
     // if declaring type of operation is generic, select instantiation
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    if (debug) {
+      Log.logPrintf("instantiate(%s), isgeneric=%s%n", operation, declaringType.isGeneric());
+    }
     if (declaringType.isGeneric()) {
       Substitution substitution;
 
@@ -69,7 +77,7 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic()
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
-        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+        if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
           substitution = instantiateClass(declaringType);
@@ -77,6 +85,10 @@ public class TypeInstantiator {
       } else { // otherwise, select from existing one
         substitution = selectSubstitution(declaringType);
       }
+      if (debug) {
+        Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);
+      }
+
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
@@ -87,8 +99,11 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
-      Log.logPrintf("Applying capture conversion to %s%n", operation);
+      Log.logPrintf(
+          "Applying capture conversion to %s%n", StringsPlume.toStringAndClass(operation));
       operation = operation.applyCaptureConversion();
+      Log.logPrintf(
+          "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
       operation = instantiateOperationTypes(operation);
@@ -168,7 +183,7 @@ public class TypeInstantiator {
    * @param type the type to be instantiated
    * @return a substitution instantiating the given type; null if none is found
    */
-  private Substitution instantiateClass(ClassOrInterfaceType type) {
+  private @Nullable Substitution instantiateClass(ClassOrInterfaceType type) {
     boolean tryPrevious = Randomness.weightedCoinFlip(0.5);
 
     if (tryPrevious) {
@@ -216,7 +231,7 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitution(
       ClassOrInterfaceType type, ClassOrInterfaceType patternType) {
-    List<ReferenceType> matches = new ArrayList<>();
+    List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       if (inputType.isParameterized()
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
@@ -270,8 +285,9 @@ public class TypeInstantiator {
       }
     }
     // return types don't have to exist, but do need to have their type parameters instantiated
-    if (operation.getOutputType().isReferenceType()) {
-      Type paramType = operation.getOutputType().substitute(substitution);
+    Type outputType = operation.getOutputType();
+    if (outputType.isReferenceType()) {
+      Type paramType = outputType.substitute(substitution);
       if (paramType.isGeneric()) {
         typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
       }
@@ -291,7 +307,7 @@ public class TypeInstantiator {
     operation = operation.substitute(substitution);
     // An operation is generic if it has type variables.  This seems to assume that substitution
     // failed, because it left some type variables unreplaced.  Should that be an error?
-    if (operation.isGeneric(/*ignoreWildcards=*/ true)) {
+    if (operation.isGeneric(/* ignoreWildcards= */ true)) {
       return null;
     }
     return operation;
@@ -341,14 +357,14 @@ public class TypeInstantiator {
     // Partition parameters based on whether they might have independent bounds:
 
     // parameters with generic bounds may be dependent on other parameters
-    List<TypeVariable> genericParameters = new ArrayList<>();
+    List<TypeVariable> genericParameters = new ArrayList<>(typeParameters.size());
 
     // parameters with nongeneric bounds can be selected independently, but may be used by
-    List<TypeVariable> nongenericParameters = new ArrayList<>();
+    List<TypeVariable> nongenericParameters = new ArrayList<>(typeParameters.size());
 
     // wildcard capture variables without generic bounds can be selected independently, and
     // may not be used in the bounds of another parameter.
-    List<TypeVariable> captureParameters = new ArrayList<>();
+    List<TypeVariable> captureParameters = new ArrayList<>(typeParameters.size());
 
     for (TypeVariable variable : typeParameters) {
       if (variable.hasGenericBound()) {
@@ -383,7 +399,7 @@ public class TypeInstantiator {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericParameters, tuple);
           // apply selected substitution to all generic-bounded parameters
-          List<TypeVariable> parameters = new ArrayList<>();
+          List<TypeVariable> parameters = new ArrayList<>(genericParameters.size());
           for (TypeVariable variable : genericParameters) {
             ReferenceType paramType = variable.substitute(initialSubstitution);
             if (paramType.isVariable()) {
@@ -436,7 +452,7 @@ public class TypeInstantiator {
    */
   private Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
-    List<ReferenceType> selectedTypes = new ArrayList<>();
+    List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
     for (TypeVariable typeArgument : parameters) {
       List<ReferenceType> candidates = candidateTypes(typeArgument);
       if (candidates.isEmpty()) {
@@ -511,7 +527,7 @@ public class TypeInstantiator {
     ParameterBound lowerBound = getLowerBound(argument);
     ParameterBound upperBound = getUpperBound(argument);
 
-    List<ReferenceType> typeList = new ArrayList<>();
+    List<ReferenceType> typeList = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;

@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -36,7 +36,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-/* 
+/*
  * ScrollDemo.java requires these files:
  *   Rule.java
  *   Corner.java
@@ -74,7 +74,7 @@ public class ScrollDemo extends JPanel
         isMetric.setFont(new Font("SansSerif", Font.PLAIN, 11));
         isMetric.setMargin(new Insets(2,2,2,2));
         isMetric.addItemListener(this);
-        buttonCorner.add(isMetric); 
+        buttonCorner.add(isMetric);
 
         //Set up the scroll pane.
         picture = new ScrollablePicture(bee, columnView.getIncrement());

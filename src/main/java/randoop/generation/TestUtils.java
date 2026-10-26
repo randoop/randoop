@@ -5,18 +5,26 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.FileWriterWithName;
 import randoop.main.GenInputsAbstract;
+import randoop.main.RandoopUsageError;
+import randoop.util.Util;
 
 /**
  * Utility methods for setting up selection and operation-history logging in integration tests that
  * use a generator.
  */
-public class TestUtils {
+public final class TestUtils {
 
-  // Setting to true causes system test runNoOutputTest to fail.
+  /** Setting to true causes system test runNoOutputTest to fail. */
   static boolean debug = false;
+
+  /** Do not instantiate. */
+  private TestUtils() {
+    throw new UnsupportedOperationException("Do not instantiate");
+  }
 
   /**
    * Use system properties to set command-line arguments for logging.
@@ -48,8 +56,10 @@ public class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings(
-      "DefaultCharset") // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+  @SuppressWarnings({
+    "DefaultCharset", // TODO: make GenInputsAbstract.log a Writer; change command-line arguments.
+    "PMD.AvoidFileStream" // Fix after Java 8 is no longer supported
+  })
   public static void setRandoopLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setRandoopLog(" + filename + ")");
@@ -63,8 +73,8 @@ public class TestUtils {
     try {
       GenInputsAbstract.log = new FileWriterWithName(filename);
     } catch (IOException ioe) {
-      // TODO: clarify that this is a user error
-      throw new Error("Cannot write file " + filename, ioe);
+      throw new RandoopUsageError(
+          "Cannot write log file " + Util.filenameAndAbsolute(filename), ioe);
     }
   }
 
@@ -82,7 +92,10 @@ public class TestUtils {
    *
    * @param filename the file to write the log to; does nothing if filename is null
    */
-  @SuppressWarnings("DefaultCharset") // TODO: should specify a charset
+  @SuppressWarnings({
+    "DefaultCharset", // TODO: should specify a charset, fix after Java 8 is not supported
+    "PMD.AvoidFileStream" // Fix after Java 8 is no longer supported
+  })
   public static void setSelectionLog(@Nullable String filename) {
     if (debug) {
       System.out.println("setSelectionLog(" + filename + ")");
@@ -93,10 +106,13 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
+    // Do not use a try-with-resources statement: the writer must stay open for the whole run, so
+    // that Randomness can write to GenInputsAbstract.selection_log during generation. The writer is
+    // closed in GenTests after generation completes.
     try {
       setSelectionLog(new FileWriterWithName(filename));
     } catch (IOException e) {
-      throw new Error("problem creating FileWriter for " + filename, e);
+      throw new Error("problem creating selection log " + Util.filenameAndAbsolute(filename), e);
     }
   }
 
@@ -105,7 +121,7 @@ public class TestUtils {
    *
    * @param fw the FileWriter to write the log to; does nothing if fw is null
    */
-  public static void setSelectionLog(FileWriterWithName fw) {
+  public static void setSelectionLog(@Owning FileWriterWithName fw) {
     if (debug) {
       System.out.println("setSelectionLog(" + fw + ")");
     }
@@ -139,10 +155,11 @@ public class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try {
-      setOperationLog(new PrintWriter(new File(filename), UTF_8.name()), generator);
+    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+        PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
+      setOperationLog(pw, generator);
     } catch (IOException e) {
-      throw new Error("problem creating FileWriter for " + filename, e);
+      throw new Error("problem creating operation log " + Util.filenameAndAbsolute(filename), e);
     }
   }
 

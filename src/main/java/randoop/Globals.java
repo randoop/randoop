@@ -5,65 +5,79 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
+import org.checkerframework.checker.mustcall.qual.Owning;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.regex.qual.Regex;
+import org.checkerframework.checker.signedness.qual.PolySigned;
 import randoop.main.RandoopBug;
 
 /** Various general global variables used throughout Randoop. */
-public class Globals {
+public final class Globals {
 
-  /** The version number for Randoop. */
-  public static final String RANDOOP_VERSION = "4.2.6";
-
-  /** The system-specific line separator string. */
-  public static final String lineSep = System.lineSeparator();
-
-  /** A PrintStream whose contents are ignored. */
-  public static PrintStream blackHole;
-
-  /** Discards anything written to it. */
-  private static class NullOutputStream extends OutputStream {
-    @Override
-    public void write(int b) throws IOException {}
+  /** Do not instantiate. */
+  private Globals() {
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
-  // private static PrintStream realSystemErr;
+  /** The version number for Randoop. */
+  public static final String RANDOOP_VERSION = "4.3.4";
 
-  static {
-    blackHole = new PrintStream(new NullOutputStream());
-    // realSystemErr = System.err;
-    // System.setErr(blackHole);
+  /** The system-specific line separator string. */
+  public static final @Regex(0) String lineSep = System.lineSeparator();
+
+  /** A PrintStream whose contents are ignored. */
+  @SuppressWarnings("PMD.ModifierOrder") // `@Owning` isn't a type annotation, but should be.
+  public static @Owning PrintStream blackHole = new PrintStream(new NullOutputStream());
+
+  /** Discards anything written to it. */
+  private static final class NullOutputStream extends OutputStream {
+    /** Creates a new NullOutputStream. */
+    public NullOutputStream() {}
+
+    @Override
+    public void write(@PolySigned int b) throws IOException {
+      // The null stream consumes and ignores all data.
+    }
   }
 
   /**
-   * Return the version number for Randoop.
+   * Returns the version number for Randoop.
    *
    * @return the version number for Randoop
    */
   public static String getRandoopVersion() {
     Properties prop = new Properties();
-    boolean isRelease = Globals.class.getResourceAsStream("/this-is-a-randoop-release") != null;
-    if (isRelease) {
-      return RANDOOP_VERSION;
+    try (InputStream isReleaseStream =
+        Globals.class.getResourceAsStream("/this-is-a-randoop-release")) {
+      if (isReleaseStream != null) {
+        return RANDOOP_VERSION;
+      }
+    } catch (IOException e) {
+      throw new RandoopBug(e);
     }
-    InputStream inputStream = Globals.class.getResourceAsStream("/git.properties");
-    try {
+    try (@SuppressWarnings("nullness:assignment") // file git.properties exists
+        @NonNull InputStream inputStream = Globals.class.getResourceAsStream("/git.properties")) {
       prop.load(inputStream);
     } catch (IOException e) {
       throw new RandoopBug(e);
     }
 
+    @SuppressWarnings("nullness:dereference.of.nullable") // property git.dirty exists
     String localChanges = prop.getProperty("git.dirty").equals("true") ? ", local changes" : "";
+    @SuppressWarnings("nullness:dereference.of.nullable") // property git.commit.time exists
+    String commitTime = prop.getProperty("git.commit.time").substring(0, 10);
     return "\""
         + String.join(
             ", ",
             RANDOOP_VERSION + localChanges,
             "branch " + prop.getProperty("git.branch"),
             "commit " + prop.getProperty("git.commit.id.abbrev"),
-            prop.getProperty("git.commit.time").substring(0, 10))
+            commitTime)
         + "\"";
   }
 
   /**
-   * Return the Java classpath.
+   * Returns the Java classpath.
    *
    * @return the Java classpath
    */

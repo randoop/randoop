@@ -448,7 +448,7 @@ public class LinkedHashMap<K,V>
     /**
      * Returns <tt>true</tt> if this map should remove its eldest entry.
      * This method is invoked by <tt>put</tt> and <tt>putAll</tt> after
-     * inserting a new entry into the map.  It provides the implementor
+     * inserting a new entry into the map.  It provides the implementer
      * with the opportunity to remove the eldest entry each time a new one
      * is added.  This is useful if the map represents a cache: it allows
      * the map to reduce memory consumption by deleting stale entries.

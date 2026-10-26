@@ -6,12 +6,22 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-/** Implements an IMultiMap with a java.util.LinkedHashMap. */
-public class MultiMap<K, V> implements IMultiMap<K, V> {
+/**
+ * Implements an IMultiMap with a java.util.LinkedHashMap.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ */
+// @Signed so the keys and values can be printed.
+public class MultiMap<K extends @Signed Object, V extends @Signed Object>
+    implements IMultiMap<K, V> {
 
+  /** The backing map. */
   private final Map<K, Set<V>> map;
 
+  /** Creates a new, empty MultiMap. */
   public MultiMap() {
     map = new LinkedHashMap<>();
   }
@@ -20,9 +30,29 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
+  /**
+   * Returns an immutable, empty multimap.
+   *
+   * @param <K> the type of the keys
+   * @param <V> the type of the values
+   * @return an immutable, empty multimap
+   */
+  @SuppressWarnings({"unchecked"})
+  public static <K extends @Signed Object, V extends @Signed Object> MultiMap<K, V> empty() {
+    return EmptyMultiMap.instance;
+  }
+
+  /**
+   * Adds a key-values mapping to this multimap.
+   *
+   * @param key the key
+   * @param values the values
+   */
   public void put(K key, Collection<? extends V> values) {
-    if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<V>(values));
+    if (contains(key)) {
+      remove(key);
+    }
+    map.put(key, new LinkedHashSet<>(values));
   }
 
   public void addAll(Map<? extends K, ? extends V> m) {
@@ -101,5 +131,97 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
   @Override
   public String toString() {
     return map.toString();
+  }
+
+  /**
+   * An immutable, empty multimap.
+   *
+   * @param <K> the type of keys
+   * @param <V> the type of values
+   */
+  private static final class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
+      extends MultiMap<K, V> {
+
+    /** The canonical EmptyMultiMap. */
+    @SuppressWarnings({"rawtypes"})
+    public static EmptyMultiMap instance = new EmptyMultiMap<>();
+
+    /**
+     * Creates an immutable, empty multimap. Should only be called once, because all EmptyMultiMaps
+     * are the same.
+     */
+    private EmptyMultiMap() {
+      super(0);
+    }
+
+    @Override
+    public void put(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.put");
+    }
+
+    @Override
+    public void addAll(Map<? extends K, ? extends V> m) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(MultiMap<K, V> mmap) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public boolean add(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.add");
+    }
+
+    @Override
+    public boolean remove(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public boolean remove(K key) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public Set<V> getValues(K key) {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public Set<K> keySet() {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public boolean contains(K obj) {
+      return false;
+    }
+
+    @Override
+    public void clear() {
+      throw new UnsupportedOperationException("EmptyMultiMap.clear");
+    }
+
+    @Override
+    public int size() {
+      return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "{}";
+    }
   }
 }

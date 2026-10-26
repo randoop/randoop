@@ -2,13 +2,14 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a reference type as a type argument to a parameterized type. (See <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS Section
  * 4.5.1</a>.)
  */
-public class ReferenceArgument extends TypeArgument {
+public final class ReferenceArgument extends TypeArgument {
 
   /** The reference type for this argument. */
   private final ReferenceType referenceType;
@@ -37,7 +38,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -95,7 +96,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   /**
-   * Get the reference type for this type argument.
+   * Returns the reference type for this type argument.
    *
    * @return the reference type of this type argument
    */
@@ -121,7 +122,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   /**
-   * Indicates whether a {@code ReferenceArgument} is generic.
+   * Returns true if a {@code ReferenceArgument} is generic.
    *
    * @return true if the {@link ReferenceType} is generic, false otherwise
    */
@@ -142,7 +143,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
       return null;
     }

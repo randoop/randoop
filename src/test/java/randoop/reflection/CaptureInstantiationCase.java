@@ -2,7 +2,7 @@ package randoop.reflection;
 
 import java.util.Collection;
 
-/** based on problematic scenario from Apache Commons Collections */
+/** Based on problematic scenario from Apache Commons Collections. */
 public class CaptureInstantiationCase {
   public static class LocalPredicate<T> {
     public boolean test(T t) {

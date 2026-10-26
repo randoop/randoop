@@ -13,11 +13,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.plumelib.util.FilesPlume;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -39,7 +41,7 @@ import randoop.main.RandoopUsageError;
  *
  * <ul>
  *   <li>Writes the class.
- *   <li>Compiles and runs the tests to determine whether there are failing assertions.
+ *   <li>Compiles and runs the tests in a new JVM to determine whether there are failing assertions.
  *   <li>Replaces each failing assertion by a comment containing the code for the failing assertion.
  * </ul>
  *
@@ -66,7 +68,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * Matches a variable declaration. Capturing group 1 is through the "=", 2 is the type, 3 is the
    * initializer.
    */
-  private static final Pattern VARIABLE_DECLARATION_LINE =
+  @SuppressWarnings({"regex:argument", "regex:assignment"}) // string concatenation
+  private static final @Regex(3) Pattern VARIABLE_DECLARATION_LINE =
       Pattern.compile(
           "^([ \t]*"
               + ("(" + TYPE_REGEX + ")")
@@ -101,7 +104,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    *
    * @return the flaky test names
    */
-  public TreeSet<String> getFlakyTestNames() {
+  public Set<String> getFlakyTestNames() {
     return new TreeSet<>(flakyTestNames);
   }
 
@@ -114,8 +117,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * TestEnvironment}.
    */
   @Override
-  public Path writeClassCode(String packageName, String classname, String classSource)
-      throws RandoopOutputException {
+  public Path writeClassCode(String packageName, String classname, String classSource) {
     assert !Objects.equals(packageName, "");
 
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
@@ -181,8 +183,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   @Override
-  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode)
-      throws RandoopOutputException {
+  public Path writeUnmodifiedClassCode(String packageName, String classname, String javaCode) {
     return javaFileWriter.writeClassCode(packageName, classname, javaCode);
   }
 
@@ -214,15 +215,20 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         continue;
       }
 
+      @SuppressWarnings("nullness:argument") // needed in CF 3.49.4 and earlier
       String msg = diagnostic.getMessage(null);
       int lineNumber = (int) diagnostic.getLineNumber();
 
       if (msg.contains("is never thrown in body of corresponding try statement")) {
-        javaCodeLines[lineNumber - 1] = "// flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "// flaky (is never thrown in body of corresponding try statement): "
+                + javaCodeLines[lineNumber - 1];
       } else if (msg.contains("'try' without 'catch', 'finally' or resource declarations")) {
-        javaCodeLines[lineNumber - 1] = "{ // flaky: " + javaCodeLines[lineNumber - 1];
+        javaCodeLines[lineNumber - 1] =
+            "{ // flaky ('try' without 'catch', 'finally' or resource declarations): "
+                + javaCodeLines[lineNumber - 1];
       } else {
-        System.out.println("unhandled diagnostic: " + diagnostic.getMessage(null));
+        System.out.println("unhandled diagnostic: " + msg);
         compilationError( // sourceFile,
             destinationDir, javaCode, diagnostics, e);
       }
@@ -282,7 +288,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       String classname,
       String javaCode,
       Status status,
-      HashSet<String> flakyTests) {
+      Set<String> flakyTests) {
     assert !Objects.equals(packageName, "");
     String qualifiedClassname = packageName == null ? classname : packageName + "." + classname;
 
@@ -298,10 +304,19 @@ public class FailingAssertionCommentWriter implements CodeWriter {
     // Use same line break as used to write test class file.
     String[] javaCodeLines = javaCode.split(Globals.lineSep);
 
+    // TODO: These diagnostics are ugly.  Sometimes they are redundant, but sometimes they are
+    // essential for understanding why a test that succeeded reflectively failed after being written
+    // to a file.  Figure out how to produce output only when needed.
+    if (totalFailures > 0) {
+      for (String line : status.standardOutputLines) {
+        System.out.println(line);
+      }
+    }
+
     for (int failureCount = 0; failureCount < totalFailures; failureCount++) {
       // Read until beginning of failure
       Match failureHeaderMatch = readUntilMatch(lineIterator, FAILURE_HEADER_PATTERN);
-      String line = failureHeaderMatch.line;
+      String failureLine = failureHeaderMatch.line;
       String methodName = failureHeaderMatch.group;
 
       // Check that the method name in the failure message is a test method.
@@ -311,13 +326,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         System.out.printf("javaCode =%n%s%n", javaCode);
         System.out.printf("status =%n%s%n", status);
         System.out.println();
-        if (line.contains("initializationError")) {
+        if (failureLine.contains("initializationError")) {
           throw new RandoopBug(
               "Check configuration of test environment: "
                   + "initialization error of test in flaky-test filter: "
-                  + line);
+                  + failureLine);
         } else {
-          throw new RandoopBug("Bad method name " + methodName + " in flaky-test filter: " + line);
+          throw new RandoopBug(
+              "Bad method name " + methodName + " in flaky-test filter: " + failureLine);
         }
       }
 
@@ -325,7 +341,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
       // Search for the stacktrace entry corresponding to the test method, and capture the line
       // number.
-      Pattern linePattern =
+      @SuppressWarnings({"regex:argument", "regex:assignment"}) // string construction
+      @Regex(1) Pattern linePattern =
           Pattern.compile(
               String.format(
                   "\\s+at\\s+\\Q%s\\E\\.\\Q%s\\E\\(\\Q%s\\E\\.java:(\\d+)\\)",
@@ -389,7 +406,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         throw new RandoopUsageError(message.toString());
       }
 
-      javaCodeLines[lineNumber - 1] = flakyLineReplacement(javaCodeLines[lineNumber - 1]);
+      javaCodeLines[lineNumber - 1] =
+          flakyLineReplacement(javaCodeLines[lineNumber - 1], failureLine);
     }
 
     // TODO: For efficiency, have this method return the array and redo writeClass so that it writes
@@ -398,7 +416,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   }
 
   /**
-   * Return the number of JUnit failures, parsed from the JUnit output.
+   * Returns the number of JUnit failures, parsed from the JUnit output.
    *
    * @param lineIterator an iterator over the lines of JUnit output
    * @param status the result of running JUnit
@@ -420,7 +438,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
                   + "Please correct the classpath and re-run Randoop.");
         }
       }
-      StringBuilder errorMessage = new StringBuilder();
+      StringBuilder errorMessage = new StringBuilder(256);
       if (status.exitStatus == 137) {
         errorMessage.append("Exit status 137.  Probably interrupted or out of memory.");
         errorMessage.append(Globals.lineSep);
@@ -469,9 +487,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * version of the line that does no computation.
    *
    * @param flakyLine the line that throws an exception
-   * @return the line, with its computation commented out
+   * @param failure the reason for flakiness, which is put in a comment in the returned line
+   * @return the line, with its computation commented out and a failure reason in a comment
    */
-  private String flakyLineReplacement(String flakyLine) {
+  private String flakyLineReplacement(String flakyLine, String failure) {
     Matcher varDeclMatcher = VARIABLE_DECLARATION_LINE.matcher(flakyLine);
     if (varDeclMatcher.matches()) {
       String varType = varDeclMatcher.group(2);
@@ -498,9 +517,14 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         default:
           newInitializer = "null";
       }
-      return varDeclMatcher.group(1) + newInitializer + "; // flaky: " + varDeclMatcher.group(3);
+      return varDeclMatcher.group(1)
+          + newInitializer
+          + "; // flaky \""
+          + failure
+          + "\": "
+          + varDeclMatcher.group(3);
     } else {
-      return "// flaky: " + flakyLine;
+      return "// flaky \"" + failure + "\": " + flakyLine;
     }
   }
 
@@ -514,7 +538,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @return the pair containing the line and the text matching the first group
    * @throws RandoopBug if the iterator has no more lines, but the pattern hasn't been matched
    */
-  private Match readUntilMatch(Iterator<String> lineIterator, Pattern pattern) {
+  private Match readUntilMatch(Iterator<String> lineIterator, @Regex(1) Pattern pattern) {
     // Not a for loop because the iterator is side effected and passed around.
     while (lineIterator.hasNext()) {
       String line = lineIterator.next();
@@ -528,7 +552,9 @@ public class FailingAssertionCommentWriter implements CodeWriter {
 
   /** An exception that indicates that an expected pattern was not found. */
   private static class NotMatchedException extends RuntimeException {
+    /** ID for serializing this class. */
     private static final long serialVersionUID = 20171024;
+
     /** The pattern that was not found. */
     public final Pattern pattern;
 
@@ -559,8 +585,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
    * @throws FileCompiler.FileCompilerException if the file does not compile
    */
   private Path compileTestClass(
-      String packageName, String classname, String classSource, Path destinationDir)
-      throws FileCompiler.FileCompilerException {
+      String packageName, String classname, String classSource, Path destinationDir) {
     // TODO: The use of FileCompiler is temporary. Should be replaced by use of SequenceCompiler,
     // which will compile from source, once it is able to write the class file to disk.
     Path sourceFile;

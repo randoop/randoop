@@ -3,16 +3,18 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
  * Represents an intersection type bound on a type parameter in a class, interface, method or
  * constructor (see <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
- * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper
- * bounds ( <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS
- * section 5.1.10</a>).
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.4">JLS section
+ * 4.4</a>). Alternatively, in capture conversion, it may also represent the greatest lower bound of
+ * two upper bounds ( <a
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">JLS section
+ * 5.1.10</a>).
  *
  * <p>Java requires that an intersection type bound consist of class and interface types, with at
  * most one class, and if there is a class it appears in the conjunction term first. This class
@@ -21,7 +23,7 @@ import org.plumelib.util.StringsPlume;
  */
 class IntersectionTypeBound extends ParameterBound {
 
-  /** the list of type bounds for the intersection bound */
+  /** The list of type bounds for the intersection bound. */
   private List<ParameterBound> boundList;
 
   /**
@@ -40,7 +42,7 @@ class IntersectionTypeBound extends ParameterBound {
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
   // be reordered)
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -94,7 +96,7 @@ class IntersectionTypeBound extends ParameterBound {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
+    List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
     }
@@ -171,8 +173,8 @@ class IntersectionTypeBound extends ParameterBound {
    * @return false, always
    */
   @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "intersection type bound isSubTypeOf not implemented";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
+    assert false : "IntersectionTypeBound: isSubtypeOfOrEqualTo is not implemented";
     return false;
   }
 

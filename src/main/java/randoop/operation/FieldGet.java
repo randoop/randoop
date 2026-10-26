@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -16,7 +17,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * FieldGetter is an adapter that creates a {@link Operation} from a {@link AccessibleField} and
+ * FieldGetter is an adapter that creates a {@link Operation} from an {@link AccessibleField} and
  * behaves like a getter for the field.
  *
  * @see AccessibleField
@@ -96,7 +97,7 @@ public class FieldGet extends CallableOperation {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -150,7 +151,7 @@ public class FieldGet extends CallableOperation {
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     Type fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
-    List<Type> getInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>(1);
     if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
@@ -179,7 +180,7 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
+   * Returns true if enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
    *
    * @param reflectionPredicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this getter satisfies predicate.canUse

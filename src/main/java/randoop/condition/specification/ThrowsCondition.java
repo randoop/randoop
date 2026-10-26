@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 
 /**
@@ -34,10 +35,7 @@ public class ThrowsCondition extends SpecificationClause {
   private final @ClassGetName String exceptionType;
 
   /** Gson serialization requires a default constructor. */
-  @SuppressWarnings({
-    "unused",
-    "signature" // dummy value in default constructor for Gson
-  })
+  @SuppressWarnings({"unused", "signature"}) // dummy constructor for Gson serialization
   private ThrowsCondition() {
     super();
     this.exceptionType = "";
@@ -65,7 +63,7 @@ public class ThrowsCondition extends SpecificationClause {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

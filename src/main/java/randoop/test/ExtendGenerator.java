@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -33,14 +34,15 @@ public class ExtendGenerator extends TestCheckGenerator {
    *     return the checks object produced by the second generator
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     TestChecks<?> checks = firstGenerator.generateTestChecks(eseq);
     if (checks.hasInvalidBehavior() || checks.hasErrorBehavior()) {
       return checks;
     } else {
       TestChecks<?> secondChecks = secondGenerator.generateTestChecks(eseq);
       if (secondChecks.hasChecks()) {
-        return secondGenerator.generateTestChecks(eseq);
+        return secondChecks;
       }
       return checks;
     }

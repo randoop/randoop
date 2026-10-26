@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import randoop.CheckRep;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.CheckRepContract;
 import randoop.main.GenInputsAbstract;
 import randoop.test.ContractSet;
@@ -34,9 +35,11 @@ class CheckRepExtractor extends DefaultClassVisitor {
    * the contracts set.
    *
    * @param m the method
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
    */
   @Override
-  public void visit(Method m) {
+  public void visit(Method m) throws RandoopSpecificationError {
     if (m.getAnnotation(CheckRep.class) != null) {
       if (Modifier.isStatic(m.getModifiers())) {
         String msg =

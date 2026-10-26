@@ -1,8 +1,6 @@
 package randoop.main;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 import randoop.Globals;
@@ -33,11 +31,12 @@ public class Help extends CommandHandler {
     String[] args = null;
     try {
       args = foptions.parse(argsWithOptions);
-      if (args.length > 1) {
-        throw new ArgException("Unrecognized arguments: " + Arrays.toString(args));
-      }
     } catch (ArgException ae) {
       System.out.println("Error while parsing command-line arguments: " + ae.getMessage());
+      System.exit(1);
+    }
+    if (args.length > 1) {
+      System.out.println("Unrecognized arguments: " + Arrays.toString(args));
       System.exit(1);
     }
 
@@ -63,13 +62,10 @@ public class Help extends CommandHandler {
                     + "For a list of commands, invoke Randoop with argument: help"));
       }
 
+      // User wants help on a specific command.
       String command = args[0];
 
-      // User wants help on a specific command.
-      List<CommandHandler> allHandlers = new ArrayList<>();
-      allHandlers.addAll(Main.handlers);
-
-      for (CommandHandler h : allHandlers) {
+      for (CommandHandler h : Main.handlers) {
 
         if (h.fcommand.equals(command)) {
           h.usageMessage(System.out);

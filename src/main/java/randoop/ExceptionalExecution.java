@@ -3,14 +3,17 @@ package randoop;
 /** Means that the execution of a statement threw an exception. */
 public class ExceptionalExecution extends ExecutionOutcome {
 
+  /** The execution that caused this ExceptionalExecution. */
   private final Throwable exception;
 
   /**
+   * Creates an ExceptionalExecution.
+   *
    * @param exception the exception that was thrown
-   * @param executionTime the execution time, in nanoseconds
+   * @param executionTimeNanos the execution time, in nanoseconds
    */
-  public ExceptionalExecution(Throwable exception, long executionTime) {
-    super(executionTime);
+  public ExceptionalExecution(Throwable exception, long executionTimeNanos) {
+    super(executionTimeNanos);
     if (exception == null) {
       throw new IllegalArgumentException("exception must be non-null");
     }
@@ -18,7 +21,7 @@ public class ExceptionalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Return the exception.
+   * Returns the exception.
    *
    * @return the exception
    */

@@ -2,10 +2,11 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a reference type defined in <a
- * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+ * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
  *
  * <pre>
  *   ReferenceType:
@@ -17,6 +18,9 @@ import java.util.List;
  * This abstract type is used to mirror the grammar in the JLS.
  */
 public abstract class ReferenceType extends Type {
+
+  /** Creates a ReferenceType. */
+  public ReferenceType() {}
 
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object. Creates arrays,
@@ -94,7 +98,7 @@ public abstract class ReferenceType extends Type {
    * @return the type parameters for this type
    */
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
+    return new ArrayList<>(0);
   }
 
   /**
@@ -102,17 +106,17 @@ public abstract class ReferenceType extends Type {
    *
    * <p>For assignment to {@link ReferenceType}, checks for widening reference conversion when the
    * source type is also a reference type. See <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.5">section JLS
    * 5.1.5</a> for details.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return super.isAssignableFrom(sourceType)
-        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
+        || (sourceType.isReferenceType() && sourceType.isSubtypeOfOrEqualTo(this));
   }
 
   /**
-   * Indicates whether this type is a capture type variable as constructed by {@link
+   * Returns true if this type is a capture type variable as constructed by {@link
    * InstantiatedType#applyCaptureConversion()}. A capture type variable can only occur as a type
    * argument in an {@link InstantiatedType} constructed by {@link
    * InstantiatedType#applyCaptureConversion()}.
@@ -124,7 +128,7 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Indicates whether this type is an instantiation of a more general type.
+   * Returns true if this type is an instantiation of a more general type.
    *
    * <p>For a general {@link ReferenceType}, this is only true if the other type is the same, or the
    * other type is a type variable for which this type satisfies the bounds. Other cases are handled
@@ -149,16 +153,16 @@ public abstract class ReferenceType extends Type {
 
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type. The
-   * substitution will unify this type or a supertype of this type with the given goal type.
+   * instantiate operations of this type, possibly inherited from the goal type. The substitution
+   * will unify this type or a supertype of this type with the given goal type.
    *
    * <p>If there is no unifying substitution, returns {@code null}.
    *
    * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
-  public Substitution getInstantiatingSubstitution(ReferenceType goalType) {
-    return ReferenceType.getInstantiatingSubstitutionforTypeVariable(this, goalType);
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    return getInstantiatingSubstitutionforTypeVariable(this, goalType);
   }
 
   /**
@@ -170,7 +174,7 @@ public abstract class ReferenceType extends Type {
    * @return a substitution unifying this first type or a supertype of the first type with the goal
    *     type
    */
-  public static Substitution getInstantiatingSubstitutionforTypeVariable(
+  public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
     if (instantiatedType.equals(goalType)) {
       return new Substitution();
@@ -197,11 +201,15 @@ public abstract class ReferenceType extends Type {
    * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
-  public boolean isSubtypeOf(Type otherType) {
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType == null) {
-      throw new IllegalArgumentException("type may not be null");
+      throw new IllegalArgumentException("isSubtypeOfOrEqualTo: argument may not be null");
     }
 
-    return super.isSubtypeOf(otherType) || otherType.isObject();
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+
+    return otherType.isObject();
   }
 }
