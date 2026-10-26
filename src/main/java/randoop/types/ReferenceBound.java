@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.types.LazyParameterBound.LazyBoundException;
 
 /** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
@@ -117,7 +118,10 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return bound.hasUpperBound(boundType.substitute(substitution), substitution);
+    // Mapping each type variable that the substitution does not replace to itself makes it an
+    // unknown.
+    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+    return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
   }
 
   @Override
@@ -147,7 +151,22 @@ public abstract class ReferenceBound extends ParameterBound {
     }
     TypeVariable unknown = getUnknown(otherType, substitution);
     if (unknown != null) {
-      return satisfiesBound(type, unknown, substitution);
+      // The unknown may be the type or any of its supertypes.
+      if (satisfiesBound(type, unknown, substitution)) {
+        return true;
+      }
+      if (type instanceof ClassOrInterfaceType) {
+        for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+          if (satisfiesBound(supertype, unknown, substitution)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      if (!type.isVariable()) {
+        return false;
+      }
+      // Try the supertypes of the type variable, below.
     }
     if (type.isVariable()) {
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
@@ -156,8 +175,23 @@ public abstract class ReferenceBound extends ParameterBound {
           .hasUpperBound(otherType, substitution);
     }
     if (otherType.isVariable()) {
-      // Only the type variable itself is a subtype of a type variable that stands for itself.
-      return false;
+      // A type variable that stands for itself is a supertype of its lower bound.
+      ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
+      if (!(lowerBound instanceof ReferenceBound)) {
+        return false;
+      }
+      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && isSubtypeOrEqual(type, lowerBoundType, substitution);
+    }
+    if (type.isArray() && otherType.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      Type otherComponentType = ((ArrayType) otherType).getComponentType();
+      if (componentType.isReferenceType() && otherComponentType.isReferenceType()) {
+        return isSubtypeOrEqual(
+            (ReferenceType) componentType, (ReferenceType) otherComponentType, substitution);
+      }
+      return componentType.equals(otherComponentType);
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
@@ -165,6 +199,13 @@ public abstract class ReferenceBound extends ParameterBound {
           ((ClassOrInterfaceType) type)
               .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (supertype == null) {
+        return false;
+      }
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
+      // section 4.10.2).
+      try {
+        supertype = supertype.applyCaptureConversion();
+      } catch (LazyBoundException e) {
         return false;
       }
       List<TypeArgument> typeArguments = supertype.getTypeArguments();
@@ -190,18 +231,16 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   private static boolean contains(
       TypeArgument otherArgument, TypeArgument argument, Substitution substitution) {
-    if (otherArgument instanceof ReferenceArgument) {
-      ReferenceType otherType = ((ReferenceArgument) otherArgument).getReferenceType();
-      if (!(argument instanceof ReferenceArgument)) {
-        return getUnknown(otherType, substitution) != null;
-      }
-      return isSameType(((ReferenceArgument) argument).getReferenceType(), otherType, substitution);
-    }
-    WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    if (argument instanceof WildcardArgument) {
-      return wildcard.contains(argument);
+    if (!(argument instanceof ReferenceArgument)) {
+      // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
+      // wildcard is contained only by an identical wildcard.
+      return otherArgument.equals(argument);
     }
     ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
+    if (otherArgument instanceof ReferenceArgument) {
+      return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
+    }
+    WildcardArgument wildcard = (WildcardArgument) otherArgument;
     ParameterBound bound = wildcard.getTypeBound();
     if (!(bound instanceof ReferenceBound)) {
       return false;
@@ -212,11 +251,47 @@ public abstract class ReferenceBound extends ParameterBound {
       return isSubtypeOrEqual(type, boundType, substitution);
     }
     // ? super B contains T if B <: T.
-    TypeVariable unknown = getUnknown(boundType, substitution);
-    if (unknown != null) {
-      return satisfiesBound(type, unknown, substitution);
+    return canBeSubtype(boundType, type, substitution);
+  }
+
+  /**
+   * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
+   * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
+   * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
+   * upper bound.
+   *
+   * @param lowerType the possible subtype, which may be an unknown
+   * @param type the possible supertype
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code lowerType} is, or can be chosen to be, a subtype of {@code type}
+   */
+  private static boolean canBeSubtype(
+      ReferenceType lowerType, ReferenceType type, Substitution substitution) {
+    TypeVariable unknown = getUnknown(lowerType, substitution);
+    if (unknown == null) {
+      return isSubtypeOrEqual(lowerType, type, substitution);
     }
-    return boundType.isSubtypeOfOrEqualTo(type);
+    if (satisfiesBound(type, unknown, substitution)) {
+      return true;
+    }
+    if (type.isVariable()) {
+      ParameterBound lowerBound = ((TypeVariable) type).getResolvedLowerTypeBound();
+      if (lowerBound instanceof ReferenceBound) {
+        ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+        if (!lowerBoundType.equals(JavaTypes.NULL_TYPE)
+            && satisfiesBound(lowerBoundType, unknown, substitution)) {
+          return true;
+        }
+      }
+    }
+    ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
+    if (!(unknownBound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType unknownBoundType =
+        ((ReferenceBound) unknownBound).getBoundType().substitute(substitution);
+    return isSubtypeOrEqual(unknownBoundType, type, substitution)
+        && satisfiesBound(unknownBoundType, unknown, substitution);
   }
 
   /**
@@ -235,6 +310,15 @@ public abstract class ReferenceBound extends ParameterBound {
     TypeVariable unknown = getUnknown(otherType, substitution);
     if (unknown != null) {
       return satisfiesBound(type, unknown, substitution);
+    }
+    if (type.isArray() && otherType.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      Type otherComponentType = ((ArrayType) otherType).getComponentType();
+      if (componentType.isReferenceType() && otherComponentType.isReferenceType()) {
+        return isSameType(
+            (ReferenceType) componentType, (ReferenceType) otherComponentType, substitution);
+      }
+      return componentType.equals(otherComponentType);
     }
     if (!(type instanceof InstantiatedType && otherType instanceof InstantiatedType)) {
       return false;
@@ -280,10 +364,9 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
-   * If the given type is a type variable that stands for an unknown type, returns it, or the
-   * equivalent type variable that the substitution maps. Otherwise returns null. A type variable
-   * stands for an unknown type if the substitution does not replace it by a different type and does
-   * not replace a different type variable by it.
+   * If the given type is a type variable that stands for an unknown type, returns the equivalent
+   * type variable that the substitution maps. Otherwise returns null. A type variable stands for an
+   * unknown type if the substitution maps it to itself.
    *
    * @param type a type
    * @param substitution the type substitution
@@ -293,20 +376,13 @@ public abstract class ReferenceBound extends ParameterBound {
     if (!type.isVariable()) {
       return null;
     }
-    TypeVariable result = (TypeVariable) type;
     for (TypeVariable variable : substitution.keySet()) {
-      ReferenceType replacement = substitution.get(variable);
-      boolean isIdentity = replacement != null && isSameVariable(variable, replacement);
       if (isSameVariable(variable, type)) {
-        if (!isIdentity) {
-          return null;
-        }
-        result = variable;
-      } else if (!isIdentity && replacement != null && isSameVariable(replacement, type)) {
-        return null;
+        ReferenceType replacement = substitution.get(variable);
+        return replacement != null && isSameVariable(variable, replacement) ? variable : null;
       }
     }
-    return result;
+    return null;
   }
 
   /**
@@ -315,7 +391,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param type the type
    * @param unknown a type variable that stands for an unknown type
-   * @param substitution the type substitution, which does not replace {@code unknown}
+   * @param substitution the type substitution, which maps {@code unknown} to itself
    * @return true if {@code type} satisfies the upper bound of {@code unknown}
    */
   private static boolean satisfiesBound(

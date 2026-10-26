@@ -17,6 +17,18 @@ public abstract class TypeVariable extends ParameterType {
   private @Nullable List<TypeVariable> boundVariables = null;
 
   /**
+   * The upper bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedUpperTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedUpperBound = null;
+
+  /**
+   * The lower bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedLowerTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedLowerBound = null;
+
+  /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
@@ -80,9 +92,11 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isVariable()) {
       TypeVariable otherVariable = (TypeVariable) otherType;
       Substitution substitution = otherVariable.getSubstitution(this);
+      // Compare this variable, not its bound, so that an unknown in otherVariable's bound can be
+      // this variable.
       return otherVariable
               .getUpperTypeBound()
-              .isUpperBound(getResolvedUpperTypeBound(), substitution)
+              .isUpperBound(new EagerReferenceBound(this), substitution)
           && otherVariable
               .getLowerTypeBound()
               .isLowerBound(getResolvedLowerTypeBound(), substitution);
@@ -112,7 +126,12 @@ public abstract class TypeVariable extends ParameterType {
    * @return the upper bound of this variable, with references to type variables resolved
    */
   ParameterBound getResolvedUpperTypeBound() {
-    return getUpperTypeBound().substitute(getSubstitution(this));
+    ParameterBound result = resolvedUpperBound;
+    if (result == null) {
+      result = getUpperTypeBound().substitute(getSubstitution(this));
+      resolvedUpperBound = result;
+    }
+    return result;
   }
 
   /**
@@ -123,7 +142,12 @@ public abstract class TypeVariable extends ParameterType {
    * @see #getResolvedUpperTypeBound()
    */
   ParameterBound getResolvedLowerTypeBound() {
-    return getLowerTypeBound().substitute(getSubstitution(this));
+    ParameterBound result = resolvedLowerBound;
+    if (result == null) {
+      result = getLowerTypeBound().substitute(getSubstitution(this));
+      resolvedLowerBound = result;
+    }
+    return result;
   }
 
   /**
@@ -167,12 +191,16 @@ public abstract class TypeVariable extends ParameterType {
   void setUpperBound(ParameterBound upperBound) {
     super.setUpperBound(upperBound);
     boundVariables = null;
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
   }
 
   @Override
   void setLowerBound(ParameterBound lowerBound) {
     super.setLowerBound(lowerBound);
     boundVariables = null;
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
   }
 
   @Override
