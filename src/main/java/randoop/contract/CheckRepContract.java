@@ -54,7 +54,7 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public int hashCode() {
-    return Objects.hash(checkRepMethod);
+    return Objects.hashCode(checkRepMethod);
   }
 
   /**

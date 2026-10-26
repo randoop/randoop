@@ -42,7 +42,7 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public int hashCode() {
-    return Objects.hash(value);
+    return Objects.hashCode(value);
   }
 
   @Override

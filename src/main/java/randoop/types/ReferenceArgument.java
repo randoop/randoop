@@ -57,7 +57,7 @@ public final class ReferenceArgument extends TypeArgument {
 
   @Override
   public int hashCode() {
-    return Objects.hash(referenceType);
+    return Objects.hashCode(referenceType);
   }
 
   @Override
