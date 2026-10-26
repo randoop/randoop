@@ -147,6 +147,50 @@ public class TypeVariableTest {
     return GenericClassType.forClass(c).getTypeParameters().get(index);
   }
 
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard type whose type parameter has a self-referential bound. */
+    SelfComparableBound<?> selfComparableWildcard;
+  }
+
+  /**
+   * Returns the type of a field of {@link FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static ReferenceType fieldType(String name) {
+    try {
+      return (ReferenceType) Type.forType(FieldTypes.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  /**
+   * Returns the capture variable for the single wildcard argument of the type of a field of {@link
+   * FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the capture variable for the wildcard argument of the field's type
+   */
+  private static TypeVariable captureVariable(String name) {
+    InstantiatedType captured = ((InstantiatedType) fieldType(name)).applyCaptureConversion();
+    return (TypeVariable)
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+  }
+
+  @Test
+  public void testCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertFalse(capture.equals(copy));
+    assertTrue(TypeVariable.isSameVariable(capture, copy));
+  }
+
   @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
