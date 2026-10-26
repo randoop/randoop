@@ -388,9 +388,10 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Applies a substitution that maps every type variable in this bound, as returned by {@link
-   * #completeSubstitution(Substitution)}. Returns null, and fails an assertion, if the result is
-   * still this bound, which happens only for a kind of type that {@link #substitute(Substitution)}
-   * does not handle. Comparing the unchanged bound would recurse forever.
+   * #completeSubstitution(Substitution)}. Returns null if the result is still this bound, which
+   * happens if the substitution maps the component type of an array type to the null type, or for a
+   * kind of type that {@link #substitute(Substitution)} does not handle. Comparing the unchanged
+   * bound would recurse forever.
    *
    * @param completeSubstitution a substitution that maps every type variable in this bound
    * @return this bound with the substitution applied, or null
@@ -398,7 +399,6 @@ class LazyParameterBound extends ParameterBound {
   private @Nullable ParameterBound instantiate(Substitution completeSubstitution) {
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
-      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
       return null;
     }
     return b;
