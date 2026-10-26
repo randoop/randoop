@@ -11,9 +11,10 @@ import randoop.types.LazyParameterBound.LazyBoundException;
  * substitution that has no unknowns, these are the ordinary relations.
  *
  * <p>{@link ReferenceType#isSubtypeOfOrEqualTo(Type)} uses these relations, and additionally treats
- * a raw type as a subtype of every parameterized type that contains a type variable. {@link
- * ParameterBound#isUpperBound(Type, Substitution)} differs in that it treats every type variable in
- * the bound as an unknown.
+ * a raw type as a subtype of every parameterized type that contains a type variable.
+ *
+ * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
+ * which treats every type variable in the bound as an unknown.
  *
  * <p>These relations are approximate: they do not require two occurrences of an unknown to stand
  * for the same type.
