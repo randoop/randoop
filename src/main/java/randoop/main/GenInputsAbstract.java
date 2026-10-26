@@ -249,9 +249,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean only_test_public_members = false;
 
   /**
-   * If true, Randoop prints a warning and continues when a class specified by the user cannot be
-   * found or cannot be loaded (for example, because its static initializer throws an exception). If
-   * false, Randoop exits with an error in that case.
+   * If true, Randoop prints a warning and continues when a class named via {@code --testclass},
+   * {@code --classlist}, or {@code --require-covered-classes} cannot be found or cannot be loaded
+   * (for example, because its static initializer throws an exception). If false, Randoop exits with
+   * an error in that case.
+   *
+   * <p>This option does not affect classes found via {@code --testjar} or {@code --test-package}.
    */
   @Option("Warn about, rather than fail on, user-specified classes that cannot be found or loaded")
   public static boolean silently_ignore_bad_class_names = false;
