@@ -18,12 +18,23 @@ public class MethodSignatureTest {
   }
 
   @Test
+  public void nestedClassMethodRawSignatureStringTest() {
+    assertEquals(
+        "java.util.AbstractMap$SimpleEntry.getKey()",
+        MethodSignature.of("java.util.AbstractMap$SimpleEntry.getKey()").toRawSignatureString());
+    assertEquals(
+        "java.util.AbstractMap$SimpleEntry.equals(java.lang.Object)",
+        MethodSignature.of("java.util.AbstractMap$SimpleEntry.equals(java.lang.Object)")
+            .toRawSignatureString());
+  }
+
+  @Test
   public void constructorRawSignatureStringTest() {
     assertEquals(
         "java.util.Random()",
         MethodSignature.of("java.util.Random.<init>()").toRawSignatureString());
     assertEquals(
-        "java.util.AbstractMap$SimpleEntry(java.util.Map.Entry)",
+        "java.util.AbstractMap$SimpleEntry(java.util.Map$Entry)",
         MethodSignature.of("java.util.AbstractMap$SimpleEntry.<init>(java.util.Map$Entry)")
             .toRawSignatureString());
   }

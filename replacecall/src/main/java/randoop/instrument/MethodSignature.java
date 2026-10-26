@@ -195,18 +195,27 @@ public final class MethodSignature implements Comparable<MethodSignature> {
 
   /**
    * Returns the signature string for this {@link MethodSignature} in the format of Randoop's {@code
-   * randoop.reflection.RawSignature#toString()}. That format differs from {@link #toString()}: a
-   * constructor is written {@code pkg.C(argument-list)} rather than {@code
-   * pkg.C.<init>(argument-list)}, a parameter type is written as a canonical name, with "." rather
-   * than "$" before the name of a nested class, and parameter types are separated by "," without a
-   * space.
+   * randoop.reflection.RawSignature#toString()}, except that every class name is a binary name.
    *
-   * @return the signature string for this {@link MethodSignature} in Randoop's format
+   * <p>The format differs from {@link #toString()}: a constructor is written {@code
+   * pkg.C(argument-list)} rather than {@code pkg.C.<init>(argument-list)}, and parameter types are
+   * separated by "," without a space.
+   *
+   * <p>The format differs from {@code RawSignature#toString()} in how a parameter type is written.
+   * {@code RawSignature} writes the declaring class as a binary name (such as {@code
+   * java.util.AbstractMap$SimpleEntry}), but each parameter type as a canonical name (such as
+   * {@code java.util.Map.Entry}). This method writes both as binary names (such as {@code
+   * java.util.Map$Entry}), because a canonical name cannot be computed from a binary name without
+   * loading the class: a "$" in a binary name may separate the name of a nested class from the name
+   * of its enclosing class, or it may be part of a class name.
+   *
+   * @return the signature string for this {@link MethodSignature} in Randoop's format, with binary
+   *     names
    */
-  String toRawSignatureString() {
+  public String toRawSignatureString() {
     String[] typeNames = new String[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
-      typeNames[i] = paramTypes[i].toString().replace('$', '.');
+      typeNames[i] = Signatures.fieldDescriptorToBinaryName(paramTypes[i].getSignature());
     }
     String executableName = name.equals("<init>") ? classname : classname + "." + name;
     return executableName + "(" + String.join(",", typeNames) + ")";

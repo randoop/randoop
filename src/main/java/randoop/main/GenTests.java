@@ -1267,24 +1267,22 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
-   * matches that string (with spaces removed).
+   * Converts a signature string, in the format of {@link RawSignature#toString()} but possibly with
+   * binary names in place of canonical names, to a {@code Pattern} that matches exactly the {@link
+   * RawSignature#toString()} of the same constructor or method. Each "$" in the signature string
+   * matches either "$" or ".", because a "$" in a binary name may separate the name of a nested
+   * class from the name of its enclosing class, or it may be part of a class name.
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
-  private static Pattern signatureToPattern(String signatureString) {
-    // TODO: Why doesn't this use Regex.quote()?
-    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
-    @Regex String patternString =
-        signatureString
-            .replaceAll(" ", "")
-            .replaceAll("\\.", "\\\\.")
-            .replaceAll("\\(", "\\\\(")
-            .replaceAll("\\)", "\\\\)")
-            .replaceAll("\\$", "\\\\$")
-            .replaceAll("\\[", "\\\\[")
-            .replaceAll("\\]", "\\\\]");
+  public static Pattern signatureToPattern(String signatureString) {
+    StringJoiner patternJoiner = new StringJoiner("[.$]", "^", "$");
+    for (String part : signatureString.split("\\$", -1)) {
+      patternJoiner.add(Pattern.quote(part));
+    }
+    @SuppressWarnings("regex:assignment") // concatenation of quoted strings and "[.$]"
+    @Regex String patternString = patternJoiner.toString();
     return Pattern.compile(patternString);
   }
 
