@@ -269,7 +269,7 @@ public class CollectionGenerationTest {
       sequenceList = HelperSequenceCreator.createArraySequence(componentManager, arrayType);
       firstSequence = sequenceList.get(0);
       assertNotNull(firstSequence);
-    } while (firstSequence.size() <= 1);
+    } while (firstSequence.isEmpty());
 
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < firstSequence.size(); i++) {
