@@ -1095,6 +1095,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Maximum sequence size --maxsize must be greater than zero but was " + maxsize);
     }
 
+    if (clear_memory <= 0) {
+      throw new RandoopUsageError(
+          "--clear-memory must be greater than zero but was " + clear_memory);
+    }
+
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RandoopUsageError(
           "Invalid parameter combination:"

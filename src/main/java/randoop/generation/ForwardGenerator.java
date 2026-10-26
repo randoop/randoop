@@ -57,6 +57,13 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
 
+  /**
+   * True if clearing the component set did not reduce memory use below {@link
+   * GenInputsAbstract#clear_memory}. The memory that clearing does not free only grows, so
+   * thereafter Randoop does not clear the component set because of memory use.
+   */
+  private boolean clearingForMemoryIsFutile = false;
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -202,10 +209,19 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0
-        || (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-            && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory)) {
+    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       clearComponents();
+    } else if (!clearingForMemoryIsFutile
+        && SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      clearComponents();
+      if (SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+        clearingForMemoryIsFutile = true;
+        System.out.printf(
+            "%nClearing the component set did not reduce memory use below --clear-memory=%d."
+                + "%nRandoop will no longer clear the component set because of memory use.%n",
+            GenInputsAbstract.clear_memory);
+      }
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
