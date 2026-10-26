@@ -1007,4 +1007,72 @@ public class TypeVariableTest {
       assertTrue(bound.getLazyTypeParameters().contains(s));
     }
   }
+
+  /**
+   * A type parameter whose bound contains the type parameter, but not as the last type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfFirstArgumentBound<T extends Map<T, String>> {}
+
+  /**
+   * A class with a type parameter.
+   *
+   * @param <V> the type parameter
+   */
+  static class Unbounded<V> {}
+
+  /** A field whose type has a wildcard argument for a type parameter with a recursive bound. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SelfFirstArgumentBound<?> selfFirstArgumentWildcardField;
+
+  @Test
+  public void testSubstituteVariableIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(v, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testSubstituteConcreteTypeIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertFalse(
+        "bound " + bound + " should be eager since it contains no type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
+    InstantiatedType wildcardType =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                TypeVariableTest.class
+                    .getDeclaredField("selfFirstArgumentWildcardField")
+                    .getGenericType());
+    InstantiatedType capturedType = wildcardType.applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    // The capture variable's bound is Map<capture, String>, which refers to the capture variable.
+    ParameterBound bound = capture.getUpperTypeBound();
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(capture, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+  }
 }
