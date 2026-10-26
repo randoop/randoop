@@ -14,7 +14,7 @@ pmd = "7.26.0"
 
 checker = { group = "org.checkerframework", name = "checker", version.ref = "checker" }
 
-error-prone-core = "com.google.errorprone:error_prone_core:2.50.0"
+error-prone-core = "com.google.errorprone:error_prone_core:2.51.0"
 
 require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
@@ -48,9 +48,9 @@ hamcrest-all = { group = "org.hamcrest", name = "hamcrest-all", version.ref = "h
 
 commons-codec = "commons-codec:commons-codec:1.23.0"
 
-joda-time = "joda-time:joda-time:2.12.7"
-
 javassist = "org.javassist:javassist:3.+"
+
+joda-time = "joda-time:joda-time:2.12.7"
 
 [plugins]
 

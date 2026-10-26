@@ -8,9 +8,13 @@
 # Random number generation
 ^\Qorg.apache.commons.math4.genetics.GeneticAlgorithm.getRandomGenerator()\E$
 ^\Qorg.apache.commons.math4.util.FastMath.random()\E$
-# Joda-Time operations that always read the clock.  Many other Joda-Time operations read the clock
-# when an argument is null, such as Interval(null, null); these patterns do not omit them.
-^\Qorg.joda.time.\E(DateMidnight|DateTime|Instant|LocalDate|LocalDateTime|LocalTime|MonthDay|MutableDateTime|TimeOfDay|YearMonth|YearMonthDay)\Q(\E(\Qorg.joda.time.Chronology\E|\Qorg.joda.time.DateTimeZone\E)?\Q)\E$
+# Joda-Time operations that always read the clock:  now(), a constructor that has no instant
+# argument, and a constructor whose instant argument is null.  Many other Joda-Time operations read
+# the clock when an argument is null, such as Interval(null, null) and the methods whose
+# ReadableInstant argument may be null (meaning "now"); these patterns do not omit them, because
+# doing so would omit many deterministic calls.
+^org\.joda\.time\.(DateMidnight|DateTime|Instant|LocalDate|LocalDateTime|LocalTime|MonthDay|MutableDateTime|TimeOfDay|YearMonth|YearMonthDay)\(((java\.lang\.Object,)?org\.joda\.time\.(Chronology|DateTimeZone)|(java\.lang\.Object)?)\)$
+^org\.joda\.time\.(Interval|MutableInterval)\(java\.lang\.Object(,org\.joda\.time\.Chronology)?\)$
 ^\Qorg.joda.time.\E(DateMidnight|DateTime|Instant|LocalDate|LocalDateTime|LocalTime|MonthDay|MutableDateTime|YearMonth)\Q.now(\E
 ^\Qorg.joda.time.\E(LocalDate|YearMonthDay)\Q.toDateTimeAtCurrentTime(\E
 ^\Qorg.joda.time.\E(LocalTime|TimeOfDay)\Q.toDateTimeToday(\E

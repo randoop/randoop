@@ -334,11 +334,21 @@ public class GenTests extends GenInputsAbstract {
       omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
+    List<String> replacedSignatures =
+        CollectionsPlume.mapList(
+            GenTests::replacecallSignatureToRawSignature, MethodReplacements.getSignatureList());
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(
+          CollectionsPlume.mapList(GenTests::signatureToPattern, replacedSignatures));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      omit_methods.addAll(defaultOmitMethodsPatterns());
+      List<Pattern> defaultOmitMethods = defaultOmitMethodsPatterns();
+      if (GenInputsAbstract.dont_omit_replaced_methods) {
+        // A replacement can make a nondeterministic method deterministic.
+        defaultOmitMethods.removeIf(
+            pattern -> replacedSignatures.stream().anyMatch(sig -> pattern.matcher(sig).find()));
+      }
+      omit_methods.addAll(defaultOmitMethods);
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
@@ -1268,14 +1278,15 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates a list of signature strings (see {@link RawSignature#toString()} to a list of {@code
-   * Pattern}.
+   * Converts a signature string produced by the replacecall agent to the format of {@link
+   * RawSignature#toString()}. The replacecall agent names a constructor {@code <init>} and
+   * separates parameter types by a comma and a space.
    *
-   * @param signatures the list of signature strings
-   * @return the list of patterns for the signature strings
+   * @param signature a signature string produced by the replacecall agent
+   * @return {@code signature}, in the format of {@link RawSignature#toString()}
    */
-  private List<Pattern> createPatternsFromSignatures(List<String> signatures) {
-    return CollectionsPlume.mapList(GenTests::signatureToPattern, signatures);
+  private static String replacecallSignatureToRawSignature(String signature) {
+    return signature.replace(" ", "").replace(".<init>(", "(");
   }
 
   /**
@@ -1287,7 +1298,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the pattern to match {@code signatureString}
    */
   static Pattern signatureToPattern(String signatureString) {
-    String rawSignature = signatureString.replace(" ", "").replace(".<init>(", "(");
+    String rawSignature = replacecallSignatureToRawSignature(signatureString);
     return Pattern.compile("^" + Pattern.quote(rawSignature) + "$");
   }
 
