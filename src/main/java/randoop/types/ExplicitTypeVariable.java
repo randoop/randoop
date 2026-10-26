@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
@@ -22,11 +23,10 @@ public class ExplicitTypeVariable extends TypeVariable {
   /**
    * {@inheritDoc}
    *
-   * <p>Two type parameters are equal if they are the same declared type parameter, even if their
-   * bounds differ. Substitution creates a copy of a type parameter whose bounds differ, such as by
-   * having a lazy part resolved, and the copy stands for the same type parameter.
+   * <p>Checks that the type parameter is equal. This may be more restrictive than desired because
+   * equivalent TypeVariable objects from different instances of the same type may be distinct.
    *
-   * @return true if the type parameters are the same declared type parameter, false otherwise
+   * @return true if the type parameters are equal, false otherwise
    */
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -34,15 +34,15 @@ public class ExplicitTypeVariable extends TypeVariable {
       return true;
     }
     if (!(obj instanceof ExplicitTypeVariable)) {
-      return false;
+      return isAssignableFrom(null);
     }
     ExplicitTypeVariable t = (ExplicitTypeVariable) obj;
-    return variable.equals(t.variable);
+    return variable.equals(t.variable) && super.equals(t);
   }
 
   @Override
   public int hashCode() {
-    return variable.hashCode();
+    return Objects.hash(variable, super.hashCode());
   }
 
   @Override
@@ -61,6 +61,16 @@ public class ExplicitTypeVariable extends TypeVariable {
   }
 
   java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
+    return this.variable;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the reflection type variable for this type parameter
+   */
+  @Override
+  Object getIdentity() {
     return this.variable;
   }
 

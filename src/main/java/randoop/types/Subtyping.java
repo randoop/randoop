@@ -35,7 +35,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType) || otherType.isObject()) {
+    if (TypeVariable.isSameVariable(type, otherType) || otherType.isObject()) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -220,7 +220,7 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType)) {
+    if (TypeVariable.isSameVariable(type, otherType)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {

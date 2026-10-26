@@ -3,8 +3,10 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -21,7 +23,7 @@ public abstract class TypeVariable extends ParameterType {
    * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
    * is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
+  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
@@ -176,6 +178,35 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
+   * Returns an object that identifies this type variable. Substitution can create a copy of a type
+   * variable whose bounds differ, such as by having a lazy part resolved. {@link #equals(Object)}
+   * distinguishes the copy from the original, but they have the same identity.
+   *
+   * @return an object that identifies this type variable
+   */
+  Object getIdentity() {
+    return this;
+  }
+
+  /**
+   * Returns true if the two types are equal or are the same type variable, possibly with different
+   * bounds.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the two types are equal or are the same type variable
+   * @see #getIdentity()
+   */
+  static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+    if (type.equals(otherType)) {
+      return true;
+    }
+    return type instanceof TypeVariable
+        && otherType instanceof TypeVariable
+        && ((TypeVariable) type).getIdentity().equals(((TypeVariable) otherType).getIdentity());
+  }
+
+  /**
    * Returns the type variables in the lazy parts of the bounds of this variable, other than this
    * variable.
    *
@@ -185,11 +216,16 @@ public abstract class TypeVariable extends ParameterType {
   private List<TypeVariable> getBoundVariables() {
     List<TypeVariable> result = boundVariables;
     if (result == null) {
-      Set<TypeVariable> variables =
-          new LinkedHashSet<>(getLowerTypeBound().getLazyTypeParameters());
-      variables.addAll(getUpperTypeBound().getLazyTypeParameters());
-      variables.remove(this);
-      result = new ArrayList<>(variables);
+      // Keyed by identity, so that a copy of a type variable is not a separate entry.
+      Map<Object, TypeVariable> variables = new LinkedHashMap<>();
+      for (TypeVariable variable : getLowerTypeBound().getLazyTypeParameters()) {
+        variables.putIfAbsent(variable.getIdentity(), variable);
+      }
+      for (TypeVariable variable : getUpperTypeBound().getLazyTypeParameters()) {
+        variables.putIfAbsent(variable.getIdentity(), variable);
+      }
+      variables.remove(getIdentity());
+      result = new ArrayList<>(variables.values());
       boundVariables = result;
     }
     return result;
@@ -227,8 +263,14 @@ public abstract class TypeVariable extends ParameterType {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
-    Set<List<ReferenceType>> inProgress = instantiationChecks.get();
-    List<ReferenceType> check = Arrays.asList(this, otherType);
+    // Identify type variables by identity, because substitution creates copies of them.
+    Set<List<Object>> inProgress = instantiationChecks.get();
+    List<Object> check =
+        Arrays.asList(
+            getIdentity(),
+            otherType instanceof TypeVariable
+                ? ((TypeVariable) otherType).getIdentity()
+                : otherType);
     if (!inProgress.add(check)) {
       return true;
     }
