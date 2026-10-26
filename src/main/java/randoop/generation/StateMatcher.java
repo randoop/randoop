@@ -1,5 +1,9 @@
 package randoop.generation;
 
+/**
+ * A set of objects, in which an object is not added if it matches an object already in the set. The
+ * notion of matching depends on the implementation.
+ */
 public interface StateMatcher {
 
   /**
@@ -11,5 +15,10 @@ public interface StateMatcher {
    */
   boolean add(Object object);
 
+  /**
+   * Returns the number of objects in this matcher.
+   *
+   * @return the number of objects in this matcher
+   */
   int size();
 }
