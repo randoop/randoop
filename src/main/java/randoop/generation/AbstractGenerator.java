@@ -310,61 +310,64 @@ public abstract class AbstractGenerator {
     progressDisplay = new ProgressDisplay(this, progressDisplayMode);
     progressDisplay.start();
 
-    while (!shouldStop()) {
+    try {
+      while (!shouldStop()) {
 
-      num_steps++;
+        num_steps++;
 
-      ExecutableSequence eSeq = step();
+        ExecutableSequence eSeq = step();
 
-      if (dump_sequences) {
-        Log.logPrintf("%nseq before run:%n%s%n", eSeq);
-      }
-
-      if (GenInputsAbstract.progressintervalsteps > 0
-          && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
-        progressDisplay.display(!GenInputsAbstract.deterministic);
-      }
-
-      if (eSeq == null) {
-        null_steps++;
-        continue;
-      }
-
-      num_sequences_generated++;
-
-      boolean test;
-      try {
-        test = outputTest.test(eSeq);
-      } catch (Throwable t) {
-        System.out.printf(
-            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
-        throw t;
-      }
-      if (test) {
-        // Classify the sequence
-        if (eSeq.hasInvalidBehavior()) {
-          invalidSequenceCount++;
-        } else if (eSeq.hasFailure()) {
-          operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
-          num_failing_sequences++;
-          outErrorSeqs.add(eSeq);
-        } else {
-          outRegressionSeqs.add(eSeq);
-          newRegressionTestHook(eSeq.sequence);
+        if (dump_sequences) {
+          Log.logPrintf("%nseq before run:%n%s%n", eSeq);
         }
-      } else {
-        num_failed_output_test++;
+
+        if (GenInputsAbstract.progressintervalsteps > 0
+            && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
+          progressDisplay.display(!GenInputsAbstract.deterministic);
+        }
+
+        if (eSeq == null) {
+          null_steps++;
+          continue;
+        }
+
+        num_sequences_generated++;
+
+        boolean test;
+        try {
+          test = outputTest.test(eSeq);
+        } catch (Throwable t) {
+          System.out.printf(
+              "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
+          throw t;
+        }
+        if (test) {
+          // Classify the sequence
+          if (eSeq.hasInvalidBehavior()) {
+            invalidSequenceCount++;
+          } else if (eSeq.hasFailure()) {
+            operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
+            num_failing_sequences++;
+            outErrorSeqs.add(eSeq);
+          } else {
+            outRegressionSeqs.add(eSeq);
+            newRegressionTestHook(eSeq.sequence);
+          }
+        } else {
+          num_failed_output_test++;
+        }
+
+        if (dump_sequences) {
+          Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
+          Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
+          // componentManager.log();
+        }
       }
 
-      if (dump_sequences) {
-        Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
-        Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
-        // componentManager.log();
-      }
+      progressDisplay.display(!GenInputsAbstract.deterministic);
+    } finally {
+      progressDisplay.shouldStop = true;
     }
-
-    progressDisplay.display(!GenInputsAbstract.deterministic);
-    progressDisplay.shouldStop = true;
 
     if (GenInputsAbstract.progressdisplay) {
       System.out.println();
