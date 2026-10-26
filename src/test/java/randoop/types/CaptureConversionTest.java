@@ -91,6 +91,34 @@ public class CaptureConversionTest {
   }
 
   /**
+   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument,
+   * where the bounds of T and U refer to each other.
+   *
+   * @param <T> a type parameter whose bound refers to U
+   * @param <U> a type parameter whose bound refers to T
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperMutuallyComparable<T extends Comparable<U>, U extends Comparable<T>> {
+    /**
+     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
+     * with a mutually recursive bound.
+     */
+    Comparable<? super T> superT;
+  }
+
+  /** Tests capture when the wildcard bound is a type variable with a mutually recursive bound. */
+  @Test
+  public void captureMutuallyComparableBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(SuperMutuallyComparable.class.getDeclaredField("superT").getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertEquals(wildcard.getTypeBound(), capture.getLowerTypeBound());
+    assertTrue(capture.getUpperTypeBound().isObject());
+  }
+
+  /**
    * A class with a field whose type has a wildcard type argument, whose bound contains a wildcard
    * whose bound is a type parameter.
    *
