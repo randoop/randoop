@@ -342,7 +342,9 @@ public class GenTests extends GenInputsAbstract {
           CollectionsPlume.mapList(GenTests::signatureToPattern, replacedSignatures));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      List<Pattern> defaultOmitMethods = defaultOmitMethodsPatterns();
+      List<Pattern> defaultOmitMethods = new ArrayList<>();
+      defaultOmitMethods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+      defaultOmitMethods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
       if (GenInputsAbstract.dont_omit_replaced_methods) {
         // A replacement can make a nondeterministic method deterministic.
         defaultOmitMethods.removeIf(
@@ -1210,25 +1212,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Returns the omit-methods patterns that Randoop uses unless {@code --omit-methods-no-defaults}
-   * is supplied.
-   *
-   * @return the default omit-methods patterns
-   */
-  public static List<Pattern> defaultOmitMethodsPatterns() {
-    List<Pattern> result = new ArrayList<>();
-    result.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-    result.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
-    return result;
-  }
-
-  /**
    * Returns patterns read from the given resource.
    *
    * @param filename the resource from which to read
    * @return contents of the resource, as a list of Patterns
    */
-  private static List<Pattern> readPatternsFromResource(String filename) {
+  private List<Pattern> readPatternsFromResource(String filename) {
     try (InputStream inputStream = GenTests.class.getResourceAsStream(filename)) {
       return readPatterns(inputStream, filename);
     } catch (IOException e) {
@@ -1243,7 +1232,7 @@ public class GenTests extends GenInputsAbstract {
    * @param filename the file name to use in diagnostic messages
    * @return contents of the file, as a list of Patterns
    */
-  private static List<Pattern> readPatterns(InputStream is, String filename) {
+  private List<Pattern> readPatterns(InputStream is, String filename) {
     // Read method omissions from user-provided file
     try (EntryReader er =
         new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
@@ -1259,7 +1248,7 @@ public class GenTests extends GenInputsAbstract {
    * @param er the EntryReader to read from
    * @return contents of the file, as a list of Patterns
    */
-  private static List<Pattern> readPatterns(EntryReader er) {
+  private List<Pattern> readPatterns(EntryReader er) {
     List<Pattern> result = new ArrayList<>();
     for (String line : er) {
       String trimmed = line.trim();
@@ -1290,16 +1279,14 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Converts a signature string to a {@code Pattern} that matches the {@link
-   * RawSignature#toString()} of the same method or constructor. The signature string may contain
-   * spaces, and it may name a constructor as {@code C.<init>(...)}.
+   * Converts a signature string (see {@link RawSignature#toString()}) to a {@code Pattern} that
+   * matches exactly that string.
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
-  static Pattern signatureToPattern(String signatureString) {
-    String rawSignature = replacecallSignatureToRawSignature(signatureString);
-    return Pattern.compile("^" + Pattern.quote(rawSignature) + "$");
+  private static Pattern signatureToPattern(String signatureString) {
+    return Pattern.compile("^" + Pattern.quote(signatureString) + "$");
   }
 
   /**
