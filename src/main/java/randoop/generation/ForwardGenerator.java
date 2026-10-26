@@ -231,6 +231,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
       clearComponents();
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+        clearMemoryThreshold =
+            computeClearMemoryThreshold(
+                SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
+      }
     } else if (SystemPlume.usedMemory(false) > clearMemoryThreshold
         && SystemPlume.usedMemory(true) > clearMemoryThreshold) {
       clearComponents();
