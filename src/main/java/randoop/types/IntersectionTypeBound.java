@@ -55,7 +55,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundList);
+    return Objects.hashCode(boundList);
   }
 
   @Override
@@ -99,6 +99,15 @@ class IntersectionTypeBound extends ParameterBound {
     List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
+    }
+    return paramList;
+  }
+
+  @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    List<TypeVariable> paramList = new ArrayList<>();
+    for (ParameterBound b : boundList) {
+      paramList.addAll(b.getLazyTypeParameters());
     }
     return paramList;
   }

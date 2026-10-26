@@ -1,7 +1,9 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -78,10 +80,58 @@ class LazyReferenceBound extends ReferenceBound {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the type variables at any depth of the bound type, without examining their bounds,
+   * which might refer to this bound.
+   */
+  @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    Set<TypeVariable> parameters = new LinkedHashSet<>();
+    addTypeVariables(getBoundType(), parameters);
+    return new ArrayList<>(parameters);
+  }
+
+  /**
+   * Adds the type variables that occur in the given type to {@code parameters}. Does not examine
+   * the bounds of the type variables.
+   *
+   * @param type a type
+   * @param parameters the set to which to add the type variables
+   */
+  private static void addTypeVariables(ReferenceType type, Set<TypeVariable> parameters) {
+    if (type.isVariable()) {
+      parameters.add((TypeVariable) type);
+    } else if (type instanceof InstantiatedType) {
+      for (TypeArgument argument : ((InstantiatedType) type).getTypeArguments()) {
+        if (argument instanceof ReferenceArgument) {
+          addTypeVariables(((ReferenceArgument) argument).getReferenceType(), parameters);
+        } else {
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound) {
+            addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
+          }
+        }
+      }
+    } else if (type.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      if (componentType.isReferenceType()) {
+        addTypeVariables((ReferenceType) componentType, parameters);
+      }
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type, after substitution, may contain type variables, such as one that the
+   * substitution maps to itself. It is compared as an {@link EagerReferenceBound} would be.
+   */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isLowerBound(argType, substitution);
+    return new EagerReferenceBound(getBoundType().substitute(substitution))
+        .isLowerBound(argType, substitution);
   }
 
   @Override
@@ -90,10 +140,16 @@ class LazyReferenceBound extends ReferenceBound {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type, after substitution, may contain type variables, such as one that the
+   * substitution maps to itself. It is compared as an {@link EagerReferenceBound} would be.
+   */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isUpperBound(argType, substitution);
+    return new EagerReferenceBound(getBoundType().substitute(substitution))
+        .isUpperBound(argType, substitution);
   }
 
   @Override
