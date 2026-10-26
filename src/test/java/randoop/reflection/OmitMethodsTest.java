@@ -143,6 +143,19 @@ public class OmitMethodsTest {
   }
 
   @Test
+  public void testOverriddenMethodNotUnderTest() throws Exception {
+    // M1Interface is not under test, but the omit predicate omits M1Interface.m1 anyway, because
+    // G.m1 overrides it.
+    OperationModel model =
+        createModel(
+            Collections.singletonList("randoop.reflection.omitinputs.p.G"), P + "G\\.m1\\(\\)");
+    assertTrue(
+        model
+            .getOmitMethodsPredicate()
+            .shouldOmit(TypedOperation.forMethod(M1Interface.class.getMethod("m1"))));
+  }
+
+  @Test
   public void testOmittedOperations() throws RandoopSpecificationError {
     Pattern omitpattern = Pattern.compile(P + "G\\.m1\\(\\)");
     // m1 is declared in G.
@@ -219,6 +232,31 @@ public class OmitMethodsTest {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns an operation model for the given classes.
+   *
+   * @param classnames the classes under test
+   * @param omitRegex the omit-methods pattern, or null to omit nothing
+   * @return an operation model for the given classes
+   * @throws Exception if the operation model cannot be created
+   */
+  private static OperationModel createModel(
+      List<@ClassGetName String> classnames, @Nullable String omitRegex) throws Exception {
+    List<Pattern> omitMethods =
+        omitRegex == null
+            ? Collections.emptyList()
+            : Collections.singletonList(Pattern.compile(omitRegex));
+    return OperationModel.createModel(
+        IS_PUBLIC,
+        new DefaultReflectionPredicate(),
+        omitMethods,
+        new LinkedHashSet<>(classnames),
+        new LinkedHashSet<>(),
+        new ThrowClassNameError(),
+        new ArrayList<>(),
+        null);
   }
 
   /**
