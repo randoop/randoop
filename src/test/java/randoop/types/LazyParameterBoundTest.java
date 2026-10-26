@@ -29,38 +29,36 @@ public class LazyParameterBoundTest {
   }
 
   /**
-   * A type parameter whose bound contains a wildcard inside an array type.
+   * A type parameter whose self-referential bound contains a wildcard inside an array type.
    *
-   * @param <U> the type parameter that occurs in the bound
-   * @param <T> the type parameter with the bound
+   * @param <T> the type parameter
    */
-  static class WildcardInArrayBound<U, T extends List<Map<?, U>[]>> {}
+  static class WildcardInArrayBound<T extends List<Map<?, T>[]>> {}
 
   @Test
   public void testHasWildcardInArray() {
     ParameterBound bound =
         GenericClassType.forClass(WildcardInArrayBound.class)
             .getTypeParameters()
-            .get(1)
+            .get(0)
             .getUpperTypeBound();
     assertTrue(bound instanceof LazyParameterBound);
     assertTrue(bound.hasWildcard());
   }
 
   /**
-   * A type parameter whose bound contains an array of another type parameter.
+   * A type parameter whose self-referential bound contains an array of the type parameter.
    *
-   * @param <U> the type parameter that occurs in the bound
-   * @param <T> the type parameter with the bound
+   * @param <T> the type parameter
    */
-  static class ArrayArgumentBound<U, T extends List<U[]>> {}
+  static class ArrayArgumentBound<T extends List<T[]>> {}
 
   @Test
   public void testSubstituteNullTypeForArrayComponent() {
-    List<TypeVariable> parameters =
-        GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters();
-    ParameterBound bound = parameters.get(1).getUpperTypeBound();
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
     // There is no array of the null type, so the substitution does not instantiate the bound.
-    assertSame(bound, bound.substitute(new Substitution(parameters.get(0), JavaTypes.NULL_TYPE)));
+    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
   }
 }
