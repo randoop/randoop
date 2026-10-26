@@ -26,7 +26,7 @@ public class Dummy {
   }
 
   public int hashCode() {
-    return Objects.hash(theNumber);
+    return Objects.hashCode(theNumber);
   }
 
   public String toString() {
