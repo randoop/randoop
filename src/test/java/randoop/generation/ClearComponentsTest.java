@@ -91,43 +91,33 @@ public class ClearComponentsTest {
    */
   @Test
   public void clearForMemoryRaisesThreshold() throws Exception {
-    long savedClearMemory = GenInputsAbstract.clear_memory;
-    try {
-      // Every clear leaves more memory in use than this.
-      GenInputsAbstract.clear_memory = 1;
-      Set<Sequence> seeds = SeedSequences.defaultSeeds();
-      ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
-      ForwardGenerator gen = createGenerator(Adder.class, componentMgr);
+    // Every clear leaves more memory in use than this.
+    GenInputsAbstract.clear_memory = 1;
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Adder.class, componentMgr);
 
-      for (int i = 0; i < 100; i++) {
-        gen.step();
-      }
-      // If Randoop cleared the component set on every step, it would hold at most 2 generated
-      // sequences: the last one and the primitive value that it created.
-      assertTrue(componentMgr.getAllGeneratedSequences().size() > seeds.size() + 10);
-    } finally {
-      GenInputsAbstract.clear_memory = savedClearMemory;
+    for (int i = 0; i < 100; i++) {
+      gen.step();
     }
+    // If Randoop cleared the component set on every step, it would hold at most 2 generated
+    // sequences: the last one and the primitive value that it created.
+    assertTrue(componentMgr.getAllGeneratedSequences().size() > seeds.size() + 10);
   }
 
   /** Tests {@link ForwardGenerator#computeClearMemoryThreshold}. */
   @Test
   public void computeClearMemoryThreshold() {
-    long savedClearMemory = GenInputsAbstract.clear_memory;
-    try {
-      GenInputsAbstract.clear_memory = 1000;
-      // The clear reduced memory use to at most --clear-memory.
-      assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(400, 5000));
-      assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(1000, 5000));
-      // The clear did not reduce memory use to --clear-memory.
-      assertEquals(3000, ForwardGenerator.computeClearMemoryThreshold(2000, 4000));
-      assertEquals(4500, ForwardGenerator.computeClearMemoryThreshold(4000, 5000));
-      assertEquals(
-          Long.MAX_VALUE / 2 + 1000,
-          ForwardGenerator.computeClearMemoryThreshold(2000, Long.MAX_VALUE));
-    } finally {
-      GenInputsAbstract.clear_memory = savedClearMemory;
-    }
+    GenInputsAbstract.clear_memory = 1000;
+    // The clear reduced memory use to at most --clear-memory.
+    assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(400, 5000));
+    assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(1000, 5000));
+    // The clear did not reduce memory use to --clear-memory.
+    assertEquals(3000, ForwardGenerator.computeClearMemoryThreshold(2000, 4000));
+    assertEquals(4500, ForwardGenerator.computeClearMemoryThreshold(4000, 5000));
+    assertEquals(
+        Long.MAX_VALUE / 2 + 1000,
+        ForwardGenerator.computeClearMemoryThreshold(2000, Long.MAX_VALUE));
   }
 
   /** Clearing the component set keeps Orienteering's details of the retained sequences only. */
