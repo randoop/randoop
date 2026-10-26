@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UncheckedIOException;
 import java.lang.instrument.Instrumentation;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,15 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.function.BiConsumer;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.EntryReader.CommentFormat;
-import org.plumelib.util.EntryReader.EntryFormat;
 import randoop.MethodReplacements;
 
 /**
@@ -346,39 +341,12 @@ public final class ReplaceCallAgent {
   private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
       throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    forEachEntry(
+    EntryFileReader.forEachEntry(
         exclusionReader,
         filename,
-        (entry, location) ->
+        (entry, lineNumber) ->
             excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
-  }
-
-  /**
-   * Calls the given action on each entry of a file. An entry is a line, with leading and trailing
-   * whitespace removed. Blank lines and C-style ({@code //} and {@code /* ... *}{@code /}) comments
-   * are ignored.
-   *
-   * @param fileReader the reader for the file. Is closed by this method.
-   * @param filename the name of the file read by the reader
-   * @param action called on each entry and its location, in the form "filename:linenumber"
-   * @throws IOException if there is an error reading the file
-   */
-  private static void forEachEntry(
-      @Owning Reader fileReader, String filename, BiConsumer<String, String> action)
-      throws IOException {
-    try (EntryReader reader =
-        new EntryReader(fileReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
-      for (String line : reader) {
-        String entry = line.trim();
-        if (!entry.isEmpty()) {
-          action.accept(entry, reader.getFileName() + ":" + reader.getLineNumber());
-        }
-      }
-    } catch (UncheckedIOException e) {
-      // EntryReader's iterator wraps an IOException in an UncheckedIOException.
-      throw e.getCause();
-    }
   }
 
   /**
