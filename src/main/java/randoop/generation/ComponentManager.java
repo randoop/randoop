@@ -73,6 +73,9 @@ public class ComponentManager {
    */
   private final Collection<Sequence> gralSeeds;
 
+  /** The size of {@link #gralComponents} when it contains only the seed sequences. */
+  private final int gralSeedsSize;
+
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
    * matches the visibility rules chosen for the overall test package. This field exists so that if
@@ -119,6 +122,7 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
+    this.gralSeedsSize = gralComponents.size();
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
   }
