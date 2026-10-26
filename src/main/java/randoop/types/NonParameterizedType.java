@@ -208,6 +208,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return !isRawtype() && super.isGenericForm();
+  }
+
+  @Override
   public boolean isInterface() {
     return runtimeType.isInterface();
   }
@@ -220,6 +225,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public boolean isStatic() {
     return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Also returns true if {@code otherType} is the generic form of this type's class (see {@link
+   * ClassOrInterfaceType#isGenericForm()}). For example, raw {@code List} is a subtype of {@code
+   * List<E>}, and {@code Outer<String>.Inner} is a subtype of {@code Outer<T>.Inner}. This is not a
+   * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
+   * {@code List<T>} for a type variable {@code T}; it is assignable to one only by unchecked
+   * conversion.
+   */
+  @Override
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+    return otherType instanceof ClassOrInterfaceType
+        && otherType.runtimeClassIs(runtimeType)
+        && ((ClassOrInterfaceType) otherType).isGenericForm();
   }
 
   /**
