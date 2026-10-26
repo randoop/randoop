@@ -97,7 +97,8 @@ public class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean contains(TypeArgument argument) {
-    return Subtyping.contains(this, argument, new Substitution());
+    return argument.isWildcard()
+        && argumentType.contains(((WildcardArgument) argument).argumentType);
   }
 
   /**

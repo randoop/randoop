@@ -591,8 +591,8 @@ public class TypeVariableTest {
     TypeVariable copy =
         capture.createCopyWithBounds(
             capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-    assertFalse(capture.equals(copy));
-    assertTrue(TypeVariable.isSameVariable(capture, copy));
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
   }
 
   @Test
@@ -827,7 +827,7 @@ public class TypeVariableTest {
   public void testCopyWithResolvedBound() {
     TypeVariable t = typeParameter(SelfComparableBound.class, 0);
     TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
-    assertTrue(TypeVariable.isSameVariable(t, copy));
+    assertEquals(t, copy);
     assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
     // The copy's bound refers to the copy itself, not to an unknown.

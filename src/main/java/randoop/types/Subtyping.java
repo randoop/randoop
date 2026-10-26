@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
@@ -10,10 +9,10 @@ import randoop.types.LazyParameterBound.LazyBoundException;
  * Substitution#isUnknown(ReferenceType)}, and every other type variable stands for itself. With a
  * substitution that has no unknowns, these are the ordinary relations.
  *
- * <p>{@link ReferenceType#isSubtypeOfOrEqualTo(Type)} uses these relations, and additionally treats
- * a raw type as a subtype of every parameterized type that contains a type variable. {@link
- * ParameterBound#isUpperBound(Type, Substitution)} differs in that it treats every type variable in
- * the bound as an unknown.
+ * <p>These relations differ from {@link ReferenceType#isSubtypeOfOrEqualTo(Type)}, which treats a
+ * raw type as a subtype of every parameterized type that contains a type variable, and from {@link
+ * ParameterBound#isUpperBound(Type, Substitution)}, which treats every type variable in the bound
+ * as an unknown.
  *
  * <p>These relations are approximate: they do not require two occurrences of an unknown to stand
  * for the same type.
@@ -120,54 +119,27 @@ final class Subtyping {
    */
   static boolean contains(
       TypeArgument otherArgument, TypeArgument argument, Substitution substitution) {
+    if (!(argument instanceof ReferenceArgument)) {
+      // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
+      // wildcard is contained only by an identical wildcard.
+      return otherArgument.equals(argument);
+    }
+    ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
     if (otherArgument instanceof ReferenceArgument) {
-      // A type argument that is not a wildcard contains only the same type.
-      return argument instanceof ReferenceArgument
-          && isSameType(
-              ((ReferenceArgument) argument).getReferenceType(),
-              ((ReferenceArgument) otherArgument).getReferenceType(),
-              substitution);
+      return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    ReferenceType boundType = getBoundType(wildcard);
-    if (boundType == null) {
-      return otherArgument.equals(argument);
-    }
-    if (argument instanceof ReferenceArgument) {
-      ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
-      if (wildcard.hasUpperBound()) {
-        // ? extends B contains T if T <: B.
-        return isSubtypeOrEqual(type, boundType, substitution);
-      }
-      // ? super B contains T if B <: T.
-      return canBeSubtype(boundType, type, substitution);
-    }
-    WildcardArgument argumentWildcard = (WildcardArgument) argument;
-    ReferenceType argumentBoundType = getBoundType(argumentWildcard);
-    if (argumentBoundType == null) {
-      return otherArgument.equals(argument);
-    }
-    if (wildcard.hasUpperBound()) {
-      // ? extends B contains ? extends S if S <: B, and contains ? super S if B is Object.
-      ReferenceType argumentUpperBound =
-          argumentWildcard.hasUpperBound() ? argumentBoundType : JavaTypes.OBJECT_TYPE;
-      return isSubtypeOrEqual(argumentUpperBound, boundType, substitution);
-    }
-    // ? super B contains ? super S if B <: S, and does not contain ? extends S.
-    return !argumentWildcard.hasUpperBound()
-        && canBeSubtype(boundType, argumentBoundType, substitution);
-  }
-
-  /**
-   * Returns the type of the bound of the given wildcard, or null if the bound is not a {@link
-   * ReferenceBound}.
-   *
-   * @param wildcard a wildcard type argument
-   * @return the type of the bound of {@code wildcard}, or null
-   */
-  private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
     ParameterBound bound = wildcard.getTypeBound();
-    return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
+    if (!(bound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (wildcard.hasUpperBound()) {
+      // ? extends B contains T if T <: B.
+      return isSubtypeOrEqual(type, boundType, substitution);
+    }
+    // ? super B contains T if B <: T.
+    return canBeSubtype(boundType, type, substitution);
   }
 
   /**

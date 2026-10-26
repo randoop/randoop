@@ -73,13 +73,12 @@ class CaptureTypeVariable extends TypeVariable {
   /**
    * {@inheritDoc}
    *
-   * @return the ID of this capture variable
+   * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
+   * differ. Substitution creates a copy of a capture variable whose bounds differ, and the copy
+   * stands for the same capture variable.
+   *
+   * @return true if the capture variables are the same capture variable, false otherwise
    */
-  @Override
-  Object getIdentity() {
-    return this.varID;
-  }
-
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -89,14 +88,12 @@ class CaptureTypeVariable extends TypeVariable {
       return false;
     }
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
-    return this.varID == variable.varID
-        && this.wildcard.equals(variable.wildcard)
-        && super.equals(variable);
+    return this.varID == variable.varID && this.wildcard.equals(variable.wildcard);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, super.hashCode());
+    return Objects.hash(varID, wildcard);
   }
 
   @Override
