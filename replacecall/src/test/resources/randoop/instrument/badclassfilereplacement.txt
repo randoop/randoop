@@ -1,0 +1,2 @@
+// The original class file is not a valid class file
+randoop.instrument.NotAClass.m() randoop.mock.java.awt.Component.show()
