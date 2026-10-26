@@ -14,13 +14,13 @@ public class RandoopSpecificationError extends Exception {
 
   /** Which file was being read when the error occurred. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  Path file = null;
+  private Path file = null;
 
   /**
    * The local message for this exception, which overrides the message passed to the constructor. If
    * null, the message passed to the constructor is used.
    */
-  String thisMessage = null;
+  private String thisMessage = null;
 
   /**
    * Create a {@link RandoopSpecificationError} with the given message.

@@ -19,7 +19,7 @@ import randoop.util.Util;
 public final class TestUtils {
 
   /** Setting to true causes system test runNoOutputTest to fail. */
-  static boolean debug = false;
+  private static boolean debug = false;
 
   /** Do not instantiate. */
   private TestUtils() {

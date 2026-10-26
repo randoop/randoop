@@ -40,7 +40,8 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
