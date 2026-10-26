@@ -118,7 +118,7 @@ public class Substitution {
 
   @Override
   public int hashCode() {
-    return Objects.hash(map);
+    return Objects.hashCode(map);
   }
 
   @Override
@@ -258,7 +258,13 @@ public class Substitution {
         result.put(variable, variable);
       }
     }
-    return result == null ? this : result;
+    if (result == null) {
+      return this;
+    }
+    // Mapping a type variable to itself changes neither cache.
+    result.replacementVariables = replacementVariables;
+    result.instantiatedDeclarations = instantiatedDeclarations;
+    return result;
   }
 
   /**
@@ -340,6 +346,22 @@ public class Substitution {
       instantiatedDeclarations = result;
     }
     return result;
+  }
+
+  /**
+   * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
+   * that is, to the type variable that is the key of the entry.
+   *
+   * @param variable a type variable
+   * @return true if this substitution maps {@code variable} to itself
+   */
+  boolean mapsToItself(TypeVariable variable) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (TypeVariable.isSameVariable(entry.getKey(), variable)) {
+        return entry.getKey().equals(entry.getValue());
+      }
+    }
+    return false;
   }
 
   /**

@@ -7,10 +7,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
@@ -517,6 +521,13 @@ public class TypeVariableTest {
      * @param <T> a type parameter bounded by a list of the class's type parameter
      */
     <T extends List<E>> void m() {}
+
+    /**
+     * A generic inner class.
+     *
+     * @param <T> a type parameter bounded by {@code E}
+     */
+    class Inner<T extends E> {}
   }
 
   /**
@@ -942,5 +953,147 @@ public class TypeVariableTest {
         TypeVariable.forType(Outer.class.getDeclaredMethod("m").getTypeParameters()[0]);
     // E is fixed in Outer, so List<String> is not known to be a List<E>.
     assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
+  }
+
+  /** A class that satisfies the bound of {@link SelfArrayBound}. */
+  @SuppressWarnings("serial")
+  static class SelfArrayMap extends HashMap<SelfArrayMap, SelfArrayMap[]> {}
+
+  /** A class that satisfies the bound of {@link ArrayWildcardBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayCollection extends ArrayList<ArrayCollection[]> {}
+
+  @Test
+  public void testArrayInLazyBound() {
+    TypeVariable t = GenericClassType.forClass(SelfArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayMap.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testInstantiateArrayInWildcardInLazyBound() {
+    TypeVariable t = GenericClassType.forClass(ArrayWildcardBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayCollection.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A type parameter whose bound refers to an array of the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class ComparableToArrayBound<T extends Comparable<T[]>> {}
+
+  /** A class that satisfies the bound of {@link ComparableToArrayBound}. */
+  abstract static class ComparableToArray implements Comparable<ComparableToArray[]> {}
+
+  /**
+   * A type parameter {@code U} whose bound has a wildcard bounded by an array of a sibling.
+   *
+   * @param <T> the component type
+   * @param <U> the type parameter
+   */
+  static class ArrayOfSiblingBound<T, U extends Collection<? extends T[]>> {}
+
+  /**
+   * A type parameter, to substitute for another one.
+   *
+   * @param <V> the type parameter
+   */
+  static class OneParameter<V> {}
+
+  @Test
+  public void testSelfArrayInBound() {
+    TypeVariable t =
+        GenericClassType.forClass(ComparableToArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToArray.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSubstituteArrayInBoundTwice() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ArrayOfSiblingBound.class).getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    TypeVariable v = GenericClassType.forClass(OneParameter.class).getTypeParameters().get(0);
+    TypeVariable throughV =
+        (TypeVariable)
+            ((TypeVariable) u.substitute(new Substitution(t, v)))
+                .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
+    TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
+  }
+
+  /**
+   * A type parameter whose lazy bound has a sibling in a nested type argument, before the type
+   * parameter.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<List<S>, T>}
+   */
+  static class NestedSiblingFirst<S, T extends Map<List<S>, T>> {}
+
+  /**
+   * A type parameter whose lazy bound has a sibling in a nested type argument, after the type
+   * parameter.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<T, List<S>>}
+   */
+  static class NestedSiblingLast<S, T extends Map<T, List<S>>> {}
+
+  @Test
+  public void testSubstituteCopyForOriginal() {
+    TypeVariable e = typeParameter(Outer.class, 0);
+    TypeVariable t = typeParameter(Outer.Inner.class, 0);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(e, JavaTypes.STRING_TYPE));
+    // Substituting a copy with other bounds yields that copy.
+    TypeVariable result = (TypeVariable) t.substitute(new Substitution(t, copy));
+    assertEquals(copy.getUpperTypeBound(), result.getUpperTypeBound());
+  }
+
+  @Test
+  public void testLazyTypeParametersOfNestedSibling() {
+    for (Class<?> c : Arrays.asList(NestedSiblingFirst.class, NestedSiblingLast.class)) {
+      List<TypeVariable> parameters = GenericClassType.forClass(c).getTypeParameters();
+      TypeVariable s = parameters.get(0);
+      TypeVariable t = parameters.get(1);
+      ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(parameters, s, t));
+      // The result does not depend on the order of the type arguments.
+      assertTrue(bound instanceof LazyReferenceBound);
+      assertTrue(bound.getLazyTypeParameters().contains(s));
+    }
+  }
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableToSelf implements Comparable<ComparableToSelf> {}
+
+  /** A subclass of a class that is comparable to itself. */
+  abstract static class SubclassOfComparableToSelf extends ComparableToSelf {}
+
+  @Test
+  public void testUnknownVariableBoundBySupertype() {
+    // X extends Comparable<X> cannot be SubclassOfComparableToSelf, but it can be ComparableToSelf.
+    ParameterBound bound = new EagerReferenceBound(typeParameter(SelfComparableBound.class));
+    assertTrue(
+        bound.isUpperBound(
+            ClassOrInterfaceType.forClass(SubclassOfComparableToSelf.class), new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.OBJECT_TYPE, new Substitution()));
+
+    // The capture of ? super Number can be Number, a supertype of Integer.
+    InstantiatedType listOfSuperNumber =
+        GenericClassType.forClass(List.class)
+            .instantiate(
+                new WildcardType(
+                    ParameterBound.forType(ClassOrInterfaceType.forClass(Number.class)), false));
+    ReferenceType capture =
+        ((ReferenceArgument) listOfSuperNumber.applyCaptureConversion().getTypeArguments().get(0))
+            .getReferenceType();
+    ParameterBound captureBound = new EagerReferenceBound(capture);
+    assertTrue(
+        captureBound.isUpperBound(
+            ClassOrInterfaceType.forClass(Integer.class), new Substitution()));
+    assertFalse(captureBound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 }

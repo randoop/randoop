@@ -54,7 +54,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundType);
+    return Objects.hashCode(boundType);
   }
 
   @Override
@@ -88,7 +88,7 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
+        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -105,11 +105,8 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
-      ReferenceType arrayType = ((ReferenceArgument) typeArgument).getReferenceType();
-      if (((ArrayType) arrayType).getComponentType().isVariable()) {
-        return new LazyReferenceBound(arrayType);
-      }
-      return new EagerReferenceBound(arrayType);
+      // An EagerReferenceBound, because LazyReferenceBound does not substitute into array types.
+      return new EagerReferenceBound(((ReferenceArgument) typeArgument).getReferenceType());
     }
 
     throw new RandoopBug(
@@ -370,7 +367,11 @@ class LazyParameterBound extends ParameterBound {
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     Substitution completeSubstitution = completeSubstitution(substitution);
     ParameterBound b = instantiate(completeSubstitution);
-    return b != null && b.isUpperBound(bound, completeSubstitution);
+    // Compare the instantiated bound directly.  Calling b.isUpperBound would apply the
+    // substitution again, which can change b, such as by substituting into the bounds of a type
+    // variable that the substitution put in b.
+    return b instanceof ReferenceBound
+        && bound.hasUpperBound(((ReferenceBound) b).getBoundType(), completeSubstitution);
   }
 
   /**
@@ -422,7 +423,8 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    return lowerBound.isLowerBound(JavaTypes.NULL_TYPE, substitution);
+    return lowerBound instanceof ReferenceBound
+        && ((ReferenceBound) lowerBound).getBoundType().equals(JavaTypes.NULL_TYPE);
   }
 
   @Override
