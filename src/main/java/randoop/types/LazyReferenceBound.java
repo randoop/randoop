@@ -79,9 +79,21 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    // substitute() has an effect only if the substitution maps each of these.
+    return getTypeParameters();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type, after substitution, may contain type variables, such as one that the
+   * substitution maps to itself. It is compared as an {@link EagerReferenceBound} would be.
+   */
+  @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isLowerBound(argType, substitution);
+    return new EagerReferenceBound(getBoundType().substitute(substitution))
+        .isLowerBound(argType, substitution);
   }
 
   /**

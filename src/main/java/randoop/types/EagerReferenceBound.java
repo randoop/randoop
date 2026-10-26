@@ -96,7 +96,9 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      // The substitution does not replace the type variable, so it stands for an unknown type.
+      return argType.isReferenceType()
+          && ((TypeVariable) thisBoundType).canBeInstantiatedBy((ReferenceType) argType);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {

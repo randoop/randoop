@@ -288,14 +288,17 @@ class LazyParameterBound extends ParameterBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
+   */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
-    if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
-    }
-    return b.isLowerBound(argType, substitution);
+    Substitution completeSubstitution = completeSubstitution(substitution);
+    ParameterBound b = instantiate(completeSubstitution);
+    return b != null && b.isLowerBound(argType, substitution);
   }
 
   @Override
@@ -314,50 +317,58 @@ class LazyParameterBound extends ParameterBound {
    * {@inheritDoc}
    *
    * <p>This generic type bound is satisfied by a concrete type if the concrete type formed by
-   * applying the substitution to this generic bound is satisfied by the concrete type.
+   * applying the substitution to this generic bound is satisfied by the concrete type. A type
+   * variable in this bound that the substitution does not replace stands for an unknown type, which
+   * may be any type that satisfies its bound.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
-    if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
-    }
-    return b.isUpperBound(argType, substitution);
+    Substitution completeSubstitution = completeSubstitution(substitution);
+    ParameterBound b = instantiate(completeSubstitution);
+    return b != null && b.isUpperBound(argType, substitution);
   }
 
   /**
    * {@inheritDoc}
    *
    * <p>A type variable in this bound that the substitution does not replace stands for an unknown
-   * type, which may be any type that satisfies its bound.
-   *
-   * <p>Returns false, and fails an assertion, if the substitution does not instantiate this bound,
-   * which happens only for a kind of type that {@link #substitute(Substitution)} does not handle.
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    List<TypeVariable> unknowns = new ArrayList<>();
-    for (TypeVariable variable : getTypeParameters()) {
-      // Look up the reflection variable, as substitute() does.
-      java.lang.reflect.Type reflectionVariable =
-          ((ExplicitTypeVariable) variable).getReflectionTypeVariable();
-      if (substitution.get(reflectionVariable) == null && !unknowns.contains(variable)) {
-        unknowns.add(variable);
-      }
-    }
-    // Substituting each unknown for itself makes it an unknown in ReferenceBound's comparison.
-    Substitution completeSubstitution =
-        unknowns.isEmpty()
-            ? substitution
-            : substitution.extend(unknowns, new ArrayList<ReferenceType>(unknowns));
+    Substitution completeSubstitution = completeSubstitution(substitution);
+    ParameterBound b = instantiate(completeSubstitution);
+    return b != null && b.isUpperBound(bound, completeSubstitution);
+  }
+
+  /**
+   * Returns the given substitution, extended to map to itself each type variable in this bound that
+   * it does not map. Such a type variable then stands for an unknown type when the substituted
+   * bound is compared with a type.
+   *
+   * @param substitution a type substitution
+   * @return a substitution that maps every type variable in this bound
+   */
+  private Substitution completeSubstitution(Substitution substitution) {
+    return substitution.extendWithIdentity(getTypeParameters());
+  }
+
+  /**
+   * Applies a substitution that maps every type variable in this bound, as returned by {@link
+   * #completeSubstitution(Substitution)}. Returns null, and fails an assertion, if the result is
+   * still this bound, which happens only for a kind of type that {@link #substitute(Substitution)}
+   * does not handle. Comparing the unchanged bound would recurse forever.
+   *
+   * @param completeSubstitution a substitution that maps every type variable in this bound
+   * @return this bound with the substitution applied, or null
+   */
+  private @Nullable ParameterBound instantiate(Substitution completeSubstitution) {
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
-      // Calling b.isUpperBound would recurse forever.
       assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
-      return false;
+      return null;
     }
-    return b.isUpperBound(bound, completeSubstitution);
+    return b;
   }
 
   /**

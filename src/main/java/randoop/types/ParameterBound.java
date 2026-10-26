@@ -282,8 +282,7 @@ public abstract class ParameterBound {
    * <p>A type variable in this bound that the substitution does not replace by a different type
    * stands for an unknown type that may be any type that satisfies the variable's upper bound. An
    * example is another type parameter of the declaration of the variable whose bound this is. Every
-   * other type variable, including one that the substitution maps another type variable to, stands
-   * for itself.
+   * other type variable, such as one in the given bound, stands for itself.
    *
    * @param bound the other bound
    * @param substitution the type substitution
@@ -296,8 +295,8 @@ public abstract class ParameterBound {
    * bound.
    *
    * @param upperBound the possible upper bound, to which {@code substitution} has been applied
-   * @param substitution the type substitution, which determines which type variables in {@code
-   *     upperBound} stand for unknown types, as in {@link #isUpperBound(ParameterBound,
+   * @param substitution the type substitution; a type variable in {@code upperBound} that it maps
+   *     to itself stands for an unknown type, as in {@link #isUpperBound(ParameterBound,
    *     Substitution)}
    * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
    */
