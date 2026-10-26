@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -94,8 +95,24 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
+    if (boundType instanceof GenericArrayType) {
+      ParameterBound componentBound =
+          new LazyParameterBound(((GenericArrayType) boundType).getGenericComponentType())
+              .substitute(substitution);
+      if (!(componentBound instanceof ReferenceBound)) {
+        return this;
+      }
+      ArrayType arrayType =
+          ArrayType.ofComponentType(((ReferenceBound) componentBound).getBoundType());
+      if (componentBound instanceof LazyReferenceBound) {
+        return new LazyReferenceBound(arrayType);
+      }
+      return new EagerReferenceBound(arrayType);
+    }
+
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        "lazy parameter bounds should be a type variable, parameterized type, or generic array"
+            + " type");
   }
 
   /**
@@ -314,13 +331,23 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
+   * <p>Returns false if the substitution does not instantiate this bound.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return !b.equals(this) && b.isLowerBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
    * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
    * cannot be determined without a substitution for its type variables.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    return lowerBound instanceof ReferenceBound
-        && ((ReferenceBound) lowerBound).getBoundType().equals(JavaTypes.NULL_TYPE);
+    return lowerBound.isNullType(substitution);
   }
 
   @Override
