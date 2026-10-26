@@ -201,9 +201,12 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-  /** Clear the display; good to do before printing to System.out. */
+  /**
+   * Erases the current progress message, in {@link Mode#SINGLE_LINE_OVERWRITE} mode; does nothing
+   * in other modes. Good to do before printing to System.out.
+   */
   public void clear() {
-    if (outputMode == Mode.NO_DISPLAY) {
+    if (outputMode != Mode.SINGLE_LINE_OVERWRITE) {
       return;
     }
     // "display("");" is wrong because it leaves the timestamp and writes
