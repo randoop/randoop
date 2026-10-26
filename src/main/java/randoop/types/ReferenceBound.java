@@ -91,15 +91,6 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
-    if (bound instanceof ReferenceBound) {
-      return boundType.isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
-    }
-    assert false : "not handling ReferenceBound subtype of other bound type";
-    return false;
-  }
-
-  @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     // Mapping each type variable that the substitution does not replace to itself makes it an
     // unknown.
