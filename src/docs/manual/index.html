@@ -1339,12 +1339,21 @@ old tests are chosen, from among all existing tests. [default: UNIFORM]
 
 <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
 new tests. Setting this variable to a small number can sometimes result in a greater variety of
-tests generated during a single run. [default: 100000000]
+tests generated during a single run.
+
+<p>Must be positive. [default: 100000000]
             <li id="option:clear-memory"><b>--clear-memory=</b><i>long</i>.
              Clear the component set each time Randoop uses this much memory.
 
 <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
-that is slow due to thrashing and garbage collection. [default: 4000000000]
+that is slow due to thrashing and garbage collection.
+
+<p>Randoop uses memory that clearing the component set does not free. If a clear does not
+reduce memory use to this amount, then Randoop next clears the component set when its memory
+use reaches halfway between its memory use after that clear and the maximum heap size (as set
+by <code>-Xmx</code>).
+
+<p>Must be positive. [default: 4000000000]
       </ul>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>

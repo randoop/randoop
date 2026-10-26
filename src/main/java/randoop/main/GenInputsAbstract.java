@@ -843,6 +843,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
    * new tests. Setting this variable to a small number can sometimes result in a greater variety of
    * tests generated during a single run.
+   *
+   * <p>Must be positive.
    */
   @Option("Clear the component set when it gets this big")
   public static int clear = 100_000_000;
@@ -852,6 +854,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
    * that is slow due to thrashing and garbage collection.
+   *
+   * <p>Randoop uses memory that clearing the component set does not free. If a clear does not
+   * reduce memory use to this amount, then Randoop next clears the component set when its memory
+   * use reaches halfway between its memory use after that clear and the maximum heap size (as set
+   * by {@code -Xmx}).
+   *
+   * <p>Must be positive.
    */
   @Option("Clear the component set when Randoop uses this much memory")
   public static long clear_memory = 4_000_000_000L; // default: 4G
@@ -1093,6 +1102,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (maxsize <= 0) {
       throw new RandoopUsageError(
           "Maximum sequence size --maxsize must be greater than zero but was " + maxsize);
+    }
+
+    if (clear <= 0) {
+      throw new RandoopUsageError("--clear must be greater than zero but was " + clear);
     }
 
     if (clear_memory <= 0) {
