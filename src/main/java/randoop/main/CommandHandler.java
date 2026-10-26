@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
@@ -63,14 +64,14 @@ public abstract class CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected CommandHandler(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
 
     if ((command == null)) {
