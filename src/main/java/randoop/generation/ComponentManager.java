@@ -8,6 +8,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
+import randoop.DummyVisitor;
+import randoop.NormalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -15,8 +18,10 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
+import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
+import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
@@ -57,6 +62,26 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
+  /** The size of {@link #gralComponents} when it contains only the seed sequences. */
+  private final int gralSeedsSize;
+
+  /**
+   * The primitive values of the seed and literal sequences, which {@link #clearGeneratedSequences}
+   * retains. Null until first needed.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private @Nullable Set<Object> retainedPrimitiveValues = null;
+
+  /**
+   * The primitive values that the component set has a sequence for: those of the seed and literal
+   * sequences, and every value added by {@link #addPrimitiveValueIfNew} since the component set was
+   * last cleared. Null until first needed.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private @Nullable Set<Object> primitiveValuesSeen = null;
+
   // The next three variables are only for the use of method clearGeneratedSequences().
 
   /**
@@ -66,9 +91,6 @@ public class ComponentManager {
    * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
-
-  /** The size of {@link #gralComponents} when it contains only the seed sequences. */
-  private final int gralSeedsSize;
 
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
@@ -135,7 +157,9 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences stored by this manager, not counting seed sequences.
+   * Returns the number of sequences stored by this manager, not counting seed sequences. A sequence
+   * is counted once for each usable value of its last statement (the result, the receiver, and the
+   * arguments), so a sequence may be counted more than once.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
@@ -203,6 +227,46 @@ public class ComponentManager {
   // This is called in OperationModel.addClassLiterals().
   public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
+    retainedPrimitiveValues = null;
+    primitiveValuesSeen = null;
+  }
+
+  /**
+   * If the component set has no sequence for the given primitive value, adds one.
+   *
+   * @param value a primitive wrapper or a String
+   */
+  void addPrimitiveValueIfNew(Object value) {
+    if (primitiveValuesSeen == null) {
+      primitiveValuesSeen = new LinkedHashSet<>(getRetainedPrimitiveValues());
+    }
+    if (primitiveValuesSeen.add(value)) {
+      addGeneratedSequence(Sequence.createSequenceForPrimitive(value));
+    }
+  }
+
+  /**
+   * Returns the primitive values of the seed and literal sequences.
+   *
+   * @return the primitive values of the seed and literal sequences
+   */
+  private Set<Object> getRetainedPrimitiveValues() {
+    if (retainedPrimitiveValues == null) {
+      Set<Object> result = new LinkedHashSet<>();
+      for (Sequence s : getRetainedPrimitiveSequences()) {
+        ExecutableSequence es = new ExecutableSequence(s);
+        try {
+          es.execute(new DummyVisitor(), new DummyCheckGenerator());
+        } catch (RandoopSpecificationError e) {
+          // A primitive sequence contains no call that has a specification.
+          throw new RandoopBug("specification error for primitive sequence " + s, e);
+        }
+        NormalExecution e = (NormalExecution) es.getResult(0);
+        result.add(e.getRuntimeValue());
+      }
+      retainedPrimitiveValues = Collections.unmodifiableSet(result);
+    }
+    return retainedPrimitiveValues;
   }
 
   /**
@@ -210,6 +274,7 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+    primitiveValuesSeen = null;
     initDemandDrivenIfEnabled();
     if (!sutParameterNeverReturnedTypes.isEmpty()) {
       gralComponents.addSutParameterOnlyTypes(sutParameterNeverReturnedTypes);
@@ -320,12 +385,12 @@ public class ComponentManager {
   }
 
   /**
-   * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components and literals.
+   * Returns the seed and literal sequences that represent primitive values (e.g. sequences like
+   * "Foo var0 = null" or "int var0 = 1").
    *
-   * @return the sequences for primitive values
+   * @return the seed and literal sequences for primitive values
    */
-  Set<Sequence> getAllPrimitiveSequences() {
+  private Set<Sequence> getRetainedPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
     // Include literal-derived primitive sequences unless disabled.
@@ -339,13 +404,13 @@ public class ComponentManager {
       }
     }
 
-    // Add primitive sequences from general components.
+    // Add primitive sequences from the seeds.
     // This uses CollectionsPlume.addAll() because Collection.addAll() can't take an Iterable.
+    SequenceCollection seeds = new SequenceCollection(gralSeeds);
     for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
+      CollectionsPlume.addAll(result, seeds.getSequencesForType(type, true, false));
     }
-    CollectionsPlume.addAll(
-        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
+    CollectionsPlume.addAll(result, seeds.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
     return result;
   }
 

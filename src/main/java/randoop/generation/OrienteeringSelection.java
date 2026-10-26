@@ -195,6 +195,18 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation discards the details of every sequence. A sequence that is still in the
+   * component set (a seed or a literal) gets new details the next time it is a candidate.
+   */
+  @Override
+  public void componentsCleared() {
+    sequenceDetailsMap.clear();
+    weightMap.clear();
+  }
+
+  /**
    * Creates and stores a {@link SequenceDetails} for the given {@link Sequence} with the
    * corresponding execution time.
    *
