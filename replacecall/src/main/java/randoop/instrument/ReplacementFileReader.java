@@ -23,6 +23,7 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -381,9 +382,9 @@ public final class ReplacementFileReader {
    *
    * <p>For each non-private method in the replacement class, other than constructors and static
    * initializers, the method is checked to be callable as a replacement, and the original class is
-   * checked for a corresponding method. This original method may either be non-static, where the
-   * receiver is translated to the first argument of the replacement, or static, having the same
-   * arguments as the replacement.
+   * checked for a corresponding method with the same return type. This original method may either
+   * be non-static, where the receiver is translated to the first argument of the replacement, or
+   * static, having the same arguments as the replacement.
    *
    * <p>Note: This method will not overwrite an existing replacement method.
    *
@@ -422,7 +423,7 @@ public final class ReplacementFileReader {
       checkReplacementIsCallable(replacementJC, m, replacement);
 
       MethodSignature original = replacement.substituteClassname(originalClassname);
-      if (original.exists()) {
+      if (isReplacedBy(original, true, m, replacement)) {
         addReplacement(replacementMap, original, replacement);
         continue;
       }
@@ -431,7 +432,7 @@ public final class ReplacementFileReader {
       if (replacement.getParameterTypes().length > 0
           && replacement.getParameterTypes()[0].equals(new ObjectType(originalClassname))) {
         original = original.removeFirstParameter();
-        if (original.exists()) {
+        if (isReplacedBy(original, false, m, replacement)) {
           addReplacement(replacementMap, original, replacement);
           continue;
         }
@@ -443,6 +444,47 @@ public final class ReplacementFileReader {
               replacement, originalClassname);
       throw new ReplacementException(msg);
     }
+  }
+
+  /**
+   * Returns true if the given original method exists and is static or not, as specified. The caller
+   * has already checked that the parameter types of the original correspond to those of the
+   * replacement.
+   *
+   * @param original a candidate original method
+   * @param isStatic whether {@code original} must be static
+   * @param replacementMethod the replacement method
+   * @param replacement the signature of the replacement method
+   * @return true if {@code original} exists and is static if and only if {@code isStatic} is true
+   * @throws ReplacementException if {@code original} exists and is static or not, as specified, but
+   *     its return type differs from that of the replacement
+   */
+  private static boolean isReplacedBy(
+      MethodSignature original,
+      boolean isStatic,
+      Method replacementMethod,
+      MethodSignature replacement)
+      throws ReplacementException {
+    Method originalMethod;
+    try {
+      originalMethod = original.toMethod();
+    } catch (ClassNotFoundException
+        | NoClassDefFoundError
+        | NoSuchMethodException
+        | IllegalClassFormatException e) {
+      return false;
+    }
+    if (originalMethod.isStatic() != isStatic) {
+      return false;
+    }
+    if (!originalMethod.getReturnType().equals(replacementMethod.getReturnType())) {
+      String msg =
+          String.format(
+              "Replacement method %s must have return type %s",
+              replacement, originalMethod.getReturnType());
+      throw new ReplacementException(msg);
+    }
+    return true;
   }
 
   /**
