@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
@@ -27,7 +27,7 @@ import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
 
-/** Tests of {@link ForwardGenerator#clearComponents}. */
+/** Tests of {@link ForwardGenerator#clearComponents} and of the {@code --clear} option. */
 public class ClearComponentsTest {
 
   /** A class under test whose method creates new primitive values. */
@@ -67,8 +67,8 @@ public class ClearComponentsTest {
     optionsCache.saveState();
   }
 
-  @AfterClass
-  public static void restore() {
+  @After
+  public void restore() {
     optionsCache.restoreState();
   }
 
@@ -155,6 +155,33 @@ public class ClearComponentsTest {
       gen.step();
     }
     assertTrue(componentMgr.getAllGeneratedSequences().contains(newAdder));
+  }
+
+  /**
+   * {@link ForwardGenerator#step} clears the component set when the number of generated sequences
+   * reaches {@code --clear}, and generation continues afterward.
+   */
+  @Test
+  public void stepClearsAtThreshold() throws Exception {
+    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    GenInputsAbstract.clear = 10;
+
+    int numClears = 0;
+    int numCreatedAfterClear = 0;
+    for (int i = 0; i < 300; i++) {
+      boolean willClear = componentMgr.numGeneratedSequences() >= GenInputsAbstract.clear;
+      ExecutableSequence eSeq = gen.step();
+      if (willClear) {
+        numClears++;
+        assertTrue(componentMgr.numGeneratedSequences() < GenInputsAbstract.clear);
+      }
+      if (numClears > 0 && eSeq != null) {
+        numCreatedAfterClear++;
+      }
+    }
+    assertTrue(numClears > 1);
+    assertTrue(numCreatedAfterClear > 0);
   }
 
   /**
