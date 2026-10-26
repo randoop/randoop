@@ -839,7 +839,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Clear the component set each time this many generated sequences have been added to it since it
-   * was last cleared. Seed sequences are not counted. Must be positive.
+   * was last cleared. Seed sequences are not counted.
    *
    * <p>Randoop stores previously-generated tests in a "component" set, and uses them to generate
    * new tests. Setting this variable to a small number can sometimes result in a greater variety of
@@ -1097,10 +1097,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
       } else {
         null_ratio = 0;
       }
-    }
-
-    if (clear <= 0) {
-      throw new RandoopUsageError("--clear must be greater than zero but was " + clear);
     }
 
     if (maxsize <= 0) {
