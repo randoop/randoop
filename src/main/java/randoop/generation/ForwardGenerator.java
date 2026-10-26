@@ -189,6 +189,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
+    inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
   }
 
   @Override
