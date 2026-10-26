@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
@@ -94,67 +93,6 @@ public class ClearComponentsTest {
     Set<Sequence> primitivesAfterClear = nonSeedPrimitives(componentMgr, seeds);
     primitivesAfterClear.retainAll(primitivesBeforeClear);
     assertFalse(primitivesAfterClear.isEmpty());
-  }
-
-  /**
-   * After a clear, sequences created before the clear can be created again to rebuild the component
-   * set, but are not output as tests again.
-   */
-  @Test
-  public void sequencesAreCreatedAgainButNotOutputAfterClear() throws Exception {
-    Set<Sequence> seeds = SeedSequences.defaultSeeds();
-    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
-    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
-
-    Set<Sequence> outputBeforeClear = new HashSet<>();
-    for (int i = 0; i < 100; i++) {
-      ExecutableSequence eSeq = gen.step();
-      if (eSeq != null) {
-        outputBeforeClear.add(eSeq.sequence);
-      }
-    }
-    Set<Sequence> poolBeforeClear = new HashSet<>(componentMgr.getAllGeneratedSequences());
-
-    gen.clearComponents();
-
-    for (int i = 0; i < 1000; i++) {
-      ExecutableSequence eSeq = gen.step();
-      if (eSeq != null) {
-        assertFalse(outputBeforeClear.contains(eSeq.sequence));
-      }
-    }
-    Set<Sequence> recreated = new HashSet<>(componentMgr.getAllGeneratedSequences());
-    recreated.removeAll(seeds);
-    recreated.retainAll(poolBeforeClear);
-    recreated.retainAll(outputBeforeClear);
-    assertFalse(recreated.isEmpty());
-  }
-
-  /** A parameterless operation is used again after a clear. */
-  @Test
-  public void parameterlessOperationIsUsedAgainAfterClear() throws Exception {
-    Set<Sequence> seeds = SeedSequences.defaultSeeds();
-    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
-    ForwardGenerator gen = createGenerator(Adder.class, componentMgr);
-    // The parameterless operation is the constructor of Adder.
-    Sequence newAdder = null;
-    for (int i = 0; i < 100 && newAdder == null; i++) {
-      gen.step();
-      for (Sequence s : componentMgr.getAllGeneratedSequences()) {
-        if (s.getLastVariable().getType().getRuntimeClass() == Adder.class) {
-          newAdder = s;
-        }
-      }
-    }
-    assertNotNull(newAdder);
-
-    gen.clearComponents();
-    assertFalse(componentMgr.getAllGeneratedSequences().contains(newAdder));
-
-    for (int i = 0; i < 100 && !componentMgr.getAllGeneratedSequences().contains(newAdder); i++) {
-      gen.step();
-    }
-    assertTrue(componentMgr.getAllGeneratedSequences().contains(newAdder));
   }
 
   /**

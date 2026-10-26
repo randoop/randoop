@@ -57,27 +57,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
 
-  /**
-   * The sequences created since the component set was last cleared. Randoop does not create a
-   * sequence in this set again. A sequence that is in {@link #allSequences} but not in this set can
-   * be created again, to rebuild the component set, but is not output as a test again.
-   */
-  private Set<Sequence> sequencesSinceClear = new HashSet<>();
-
-  /**
-   * True if clearing the component set did not reduce memory use below {@link
-   * GenInputsAbstract#clear_memory}. The memory that clearing does not free only grows, so
-   * thereafter Randoop does not clear the component set because of memory use.
-   */
-  private boolean clearingForMemoryIsFutile = false;
-
-  /**
-   * The parameterless operations that have been removed from {@link #operations} since the
-   * component set was last cleared. Clearing the component set discards their results, so it
-   * restores them to {@link #operations}.
-   */
-  private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
-
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -211,9 +190,6 @@ public class ForwardGenerator extends AbstractGenerator {
   void clearComponents() {
     componentManager.clearGeneratedSequences();
     inputSequenceSelector.componentsCleared();
-    sequencesSinceClear = new HashSet<>();
-    operations.addAll(removedParameterlessOperations);
-    removedParameterlessOperations.clear();
   }
 
   @Override
@@ -226,19 +202,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear) {
+    if (componentManager.numGeneratedSequences() >= GenInputsAbstract.clear
+        || (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+            && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory)) {
       clearComponents();
-    } else if (!clearingForMemoryIsFutile
-        && SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      clearComponents();
-      if (SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-        clearingForMemoryIsFutile = true;
-        System.out.printf(
-            "%nClearing the component set did not reduce memory use below --clear-memory=%d."
-                + "%nRandoop will no longer clear the component set because of memory use.%n",
-            GenInputsAbstract.clear_memory);
-      }
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
@@ -250,12 +217,6 @@ public class ForwardGenerator extends AbstractGenerator {
             "%nLong generation time %d msec for null sequence.%n", gentimeNanos / nanoPerMilli);
       }
       return null;
-    }
-
-    // False if the sequence was created before the component set was last cleared.
-    boolean isNewSequence = allSequences.add(eSeq.sequence);
-    if (isNewSequence) {
-      randoopConsistencyTest2(eSeq.sequence);
     }
 
     if (GenInputsAbstract.dontexecute) {
@@ -315,8 +276,7 @@ public class ForwardGenerator extends AbstractGenerator {
       System.out.println(eSeq.sequence);
     }
 
-    // A sequence that was already output as a test is not output again.
-    return isNewSequence ? eSeq : null;
+    return eSeq;
   }
 
   @Override
@@ -458,7 +418,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * <ul>
    *   <li>it selects an operation but cannot generate inputs for the operation
    *   <li>it creates too large a method
-   *   <li>it creates a sequence that it already created since the component set was last cleared
+   *   <li>it creates a duplicate sequence
    * </ul>
    *
    * This method modifies the list of operations that represent the set of methods under tests.
@@ -467,7 +427,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * from the list of operations. Such a method will return the same thing every time it is invoked
    * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
    * invoked, its result is in the pool and there is no need to call the operation again and so we
-   * will remove it from the list of operations, until the component set is cleared.
+   * will remove it from the list of operations.
    *
    * @return a new sequence, or null
    */
@@ -550,13 +510,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
     // same thing every time it is invoked. Since we have just invoked it, its result will be in the
-    // pool until the pool is cleared.
+    // pool.
     // There is no need to call this operation again, so remove it from the list of operations.
     if (operation.getInputTypes().isEmpty()) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
-      if (operations.remove(operation)) {
-        removedParameterlessOperations.add(operation);
-      }
+      operations.remove(operation);
     }
 
     // Discard if sequence is larger than size limit
@@ -570,12 +528,16 @@ public class ForwardGenerator extends AbstractGenerator {
 
     randoopConsistencyTests(newSequence);
 
-    // Discard if sequence was already created since the component set was last cleared.
-    if (!sequencesSinceClear.add(newSequence)) {
+    // Discard if sequence is a duplicate.
+    if (this.allSequences.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf("Sequence discarded: the same sequence was previously created.%n");
       return null;
     }
+
+    this.allSequences.add(newSequence);
+
+    randoopConsistencyTest2(newSequence);
 
     Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());
 
