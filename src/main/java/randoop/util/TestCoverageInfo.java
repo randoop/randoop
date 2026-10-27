@@ -70,6 +70,14 @@ public class TestCoverageInfo {
     return String.format("%d/%d (%d%%)", covered, total, 100L * covered / total);
   }
 
+  /**
+   * Returns how many branches the given method has, and how many of them are covered. Each branch
+   * point has two branches: its true branch and its false branch.
+   *
+   * @param methodSignature the signature of a method, or null for the branches that are not in any
+   *     method
+   * @return the number of covered branches and the total number of branches in the method
+   */
   private BranchCov getCoverageInfo(String methodSignature) {
     Set<Integer> indices = methodToIndices.get(methodSignature);
     int totalBranches = indices.size() * 2;
