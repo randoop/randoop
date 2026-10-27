@@ -613,10 +613,13 @@ public class ForwardGenerator extends AbstractGenerator {
     return retseq;
   }
 
-  // If debugging is enabled,
-  // adds the string corresponding to the given newSequences to the
-  // end of the list allSequencesAsCode. The latter list is intended to mirror
-  // the set sequencesSinceClear, but stores strings instead of Sequences.
+  /**
+   * If debugging is enabled, adds the string corresponding to the given sequence to the end of the
+   * list {@link #allsequencesAsCode}. That list is intended to mirror the set {@link
+   * #sequencesSinceClear}, but stores strings instead of Sequences.
+   *
+   * @param newSequence the sequence to add
+   */
   private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
@@ -625,8 +628,13 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  // Checks that the set allSequencesAsCode contains a set of strings
-  // equivalent to the sequences in sequencesSinceClear.
+  /**
+   * If debugging is enabled, checks that {@link #allsequencesAsCode} contains a set of strings
+   * equivalent to the sequences in {@link #sequencesSinceClear}.
+   *
+   * @param newSequence the sequence whose position in {@link #allsequencesAsList} and {@link
+   *     #allsequencesAsCode} to compare
+   */
   private void randoopConsistencyTests(Sequence newSequence) {
     if (!GenInputsAbstract.debug_checks) {
       return;
