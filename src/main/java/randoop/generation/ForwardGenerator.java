@@ -199,10 +199,7 @@ public class ForwardGenerator extends AbstractGenerator {
     operationSelector.newRegressionTestHook(sequence);
   }
 
-  /**
-   * Removes all generated sequences from the component set, retaining seeds and literals, and
-   * resets the state that depends on the component set.
-   */
+  /** Removes all generated sequences from the component set, retaining seeds and literals. */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
     sequencesSinceClear = new HashSet<>();
