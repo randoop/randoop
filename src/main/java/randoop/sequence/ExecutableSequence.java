@@ -391,6 +391,15 @@ public class ExecutableSequence {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param outcome the outcomes of executing the statements of this sequence
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
   private @Nullable Object[] getRuntimeInputs(
       List<ExecutionOutcome> outcome, List<Variable> inputs) {
     @Nullable Object[] ros = getRuntimeValuesForVars(inputs, outcome);
@@ -416,6 +425,14 @@ public class ExecutableSequence {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally.
+   *
+   * @param vars the variables whose values to return
+   * @param execution the outcomes of executing the statements of a sequence
+   * @return the run-time values of the given variables, in the same order
+   */
   private static @Nullable Object[] getRuntimeValuesForVars(
       List<Variable> vars, List<ExecutionOutcome> execution) {
     @Nullable Object[] runtimeObjects = new Object[vars.size()];
@@ -554,8 +571,17 @@ public class ExecutableSequence {
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
-  // Execute the index-th statement in the sequence.
-  // Precondition: this method has been invoked on 0..index-1.
+  /**
+   * Executes the index-th statement in the given sequence, and stores its outcome in {@code
+   * outcome}.
+   *
+   * <p>Precondition: this method has been invoked on 0..index-1.
+   *
+   * @param s the sequence
+   * @param outcome the outcomes of executing the statements of {@code s}; side-effected
+   * @param index the index of the statement to execute
+   * @param inputVariables the run-time values of the statement's inputs
+   */
   private static void executeStatement(
       Sequence s, List<ExecutionOutcome> outcome, int index, @Nullable Object[] inputVariables) {
     Statement statement = s.getStatement(index);
