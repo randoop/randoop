@@ -31,8 +31,8 @@ java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) excl
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
 java7.util7.Collections.shuffle(java7.util7.List) ignore
-java7.util7.Collections.singletonIterator(java.lang.Object) exclude
-java7.util7.Collections.singletonIterator(java.lang.Object) include25
+java7.util7.Collections.singletonIterator(java.lang.Object) exclude11
+java7.util7.Collections.singletonIterator(java.lang.Object) exclude8
 java7.util7.Collections.sort(java7.util7.List) exclude
 java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
@@ -44,6 +44,8 @@ java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore
 java7.util7.Collections.unmodifiableList(java7.util7.List) ignore
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore17+
+java7.util7.Collections.unmodifiableMap(java7.util7.Map) include11
+java7.util7.Collections.unmodifiableMap(java7.util7.Map) include8
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude
 java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude
 java7.util7.LinkedList.add(int, java.lang.Object) ignore17+
@@ -71,6 +73,8 @@ java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkFirst(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.unlinkLast(java7.util7.LinkedList.Node) ignore17+
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
+java7.util7.TreeSet.add(java.lang.Object) exclude11
+java7.util7.TreeSet.add(java.lang.Object) exclude8
 java7.util7.TreeSet.add(java.lang.Object) ignore17+
 java7.util7.TreeSet.first() exclude11
 java7.util7.TreeSet.first() exclude8
