@@ -180,11 +180,6 @@ class CaptureTypeVariable extends TypeVariable {
     if (type != null && !type.isVariable()) {
       return type;
     }
-    if (type != null && this.equals(type)) {
-      // The bounds of this variable may refer to this variable, as in `Capture0 extends
-      // Comparable<Capture0>`.  Replacing this variable by itself in them would not terminate.
-      return substitute(substitution.without(this));
-    }
     // otherwise, apply to bounds
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);

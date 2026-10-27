@@ -257,22 +257,6 @@ public class Substitution {
   }
 
   /**
-   * Returns a copy of this substitution that does not map the given type variable or any copy of
-   * it.
-   *
-   * @param parameter the type variable
-   * @return a copy of this substitution that does not map {@code parameter}
-   */
-  Substitution without(TypeVariable parameter) {
-    Substitution result = new Substitution(this);
-    result.map.remove(parameter);
-    if (parameter instanceof ExplicitTypeVariable) {
-      result.rawMap.remove(((ExplicitTypeVariable) parameter).getReflectionTypeVariable());
-    }
-    return result;
-  }
-
-  /**
    * Returns a substitution that extends this one by mapping to itself each of the given type
    * variables that this one does not map. Returns this substitution if it maps all of them.
    *
