@@ -46,6 +46,21 @@ public class ClearComponentsTest {
     }
   }
 
+  /** A class under test whose constructor creates a non-primitive value. */
+  public static class Box {
+    /** The boxed value. */
+    public final int value;
+
+    /**
+     * Creates a Box.
+     *
+     * @param value the boxed value
+     */
+    public Box(int value) {
+      this.value = value;
+    }
+  }
+
   private static OptionsCache optionsCache;
 
   @BeforeClass
