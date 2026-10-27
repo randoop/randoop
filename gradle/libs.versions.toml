@@ -6,7 +6,7 @@ hamcrest = "1.3"
 
 checker = "3.55.1"
 
-jacoco = "0.8.15"
+jacoco = "0.8.16"
 
 pmd = "7.26.0"
 
