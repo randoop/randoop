@@ -9,6 +9,8 @@ public class RunnerThread extends Thread {
   private @MonotonicNonNull ReflectionCode code;
 
   // Fields assigned when calling run()
+
+  /** True if the most recent call to {@link #run} returned normally. Set by {@link #run}. */
   volatile boolean runFinished;
 
   /**
