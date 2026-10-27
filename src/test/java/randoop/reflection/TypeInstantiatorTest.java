@@ -19,6 +19,7 @@ import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
 
 /** Tests for {@link TypeInstantiator}. */
@@ -59,7 +60,7 @@ public class TypeInstantiatorTest {
    * @param <V> the element type
    * @param list a list
    */
-  @SuppressWarnings("UnusedMethod") // used via reflection
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
   private static <K, V extends Map<K, V>> void kOnlyInBound(List<V> list) {}
 
   /**
@@ -77,9 +78,35 @@ public class TypeInstantiatorTest {
    * @param d a D
    * @return a list
    */
-  @SuppressWarnings("UnusedMethod") // used via reflection
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
   private static <T, A, B, C, D> List<T> unrelatedVariables(
       Collection<? extends T> c, A a, B b, C cc, D d) {
+    return null;
+  }
+
+  /**
+   * A method in which the bound of the type of a parameter mentions the type variable of an earlier
+   * parameter.
+   *
+   * @param <U> the element type of {@code list}
+   * @param <T> the type of {@code t}
+   * @param list a list
+   * @param t a comparable
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U, T extends Comparable<U>> void boundMentionsEarlierVariable(
+      List<U> list, T t) {}
+
+  /**
+   * A method in which the bound of the return type mentions the type variable of a parameter.
+   *
+   * @param <U> the element type of {@code list}
+   * @param <T> the return type
+   * @param list a list
+   * @return a comparable
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U, T extends Comparable<U>> T returnBoundMentionsEarlierVariable(List<U> list) {
     return null;
   }
 
@@ -218,6 +245,66 @@ public class TypeInstantiatorTest {
       assertTrue(
           "bad instantiation: " + instantiated,
           argElementType.isSubtypeOfOrEqualTo(resultElementType));
+    }
+    assertTrue("no instantiation found", instantiations > 0);
+  }
+
+  /**
+   * In {@code <U, T extends Comparable<U>> void boundMentionsEarlierVariable(List<U> list, T t)},
+   * {@code U} is instantiated by the type of {@code list}, and the bound of {@code T} mentions
+   * {@code U}.
+   */
+  @Test
+  public void testBoundMentionsEarlierVariable() throws Exception {
+    Method m =
+        TypeInstantiatorTest.class.getDeclaredMethod(
+            "boundMentionsEarlierVariable", List.class, Comparable.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
+    int instantiations = 0;
+    for (int i = 0; i < 100; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(operation);
+      if (instantiated == null) {
+        continue;
+      }
+      instantiations++;
+      ReferenceType elementType = typeArgument(instantiated.getInputTypes().get(0));
+      ReferenceType comparableType = (ReferenceType) instantiated.getInputTypes().get(1);
+      assertTrue(
+          "bad instantiation: " + instantiated,
+          comparableType.isSubtypeOfOrEqualTo(
+              JavaTypes.COMPARABLE_TYPE.substitute(
+                  new Substitution(JavaTypes.COMPARABLE_TYPE.getTypeParameters(), elementType))));
+    }
+    assertTrue("no instantiation found", instantiations > 0);
+  }
+
+  /**
+   * In {@code <U, T extends Comparable<U>> T returnBoundMentionsEarlierVariable(List<U> list)},
+   * {@code U} is instantiated by the type of {@code list}, and the bound of the return type {@code
+   * T} mentions {@code U}.
+   */
+  @Test
+  public void testReturnBoundMentionsEarlierVariable() throws Exception {
+    Method m =
+        TypeInstantiatorTest.class.getDeclaredMethod(
+            "returnBoundMentionsEarlierVariable", List.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
+    int instantiations = 0;
+    for (int i = 0; i < 100; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(operation);
+      if (instantiated == null) {
+        continue;
+      }
+      instantiations++;
+      ReferenceType elementType = typeArgument(instantiated.getInputTypes().get(0));
+      ReferenceType comparableType = (ReferenceType) instantiated.getOutputType();
+      assertTrue(
+          "bad instantiation: " + instantiated,
+          comparableType.isSubtypeOfOrEqualTo(
+              JavaTypes.COMPARABLE_TYPE.substitute(
+                  new Substitution(JavaTypes.COMPARABLE_TYPE.getTypeParameters(), elementType))));
     }
     assertTrue("no instantiation found", instantiations > 0);
   }
