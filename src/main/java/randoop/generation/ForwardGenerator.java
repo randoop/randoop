@@ -607,10 +607,13 @@ public class ForwardGenerator extends AbstractGenerator {
     return retseq;
   }
 
-  // If debugging is enabled,
-  // adds the string corresponding to the given newSequences to the
-  // end of the list allSequencesAsCode. The latter list is intended to mirror
-  // the set allSequences, but stores strings instead of Sequences.
+  /**
+   * If {@link GenInputsAbstract#debug_checks} is set, moves the given sequence to the end of {@link
+   * #allsequencesAsCode} and {@link #allsequencesAsList}, adding it if absent. Those lists are
+   * intended to mirror {@link #allSequences}.
+   *
+   * @param newSequence the sequence that was added to, or moved to the end of, {@code allSequences}
+   */
   private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
