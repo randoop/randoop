@@ -50,6 +50,8 @@ commons-codec = "commons-codec:commons-codec:1.23.0"
 
 javassist = "org.javassist:javassist:3.+"
 
+jcommander = "com.beust:jcommander:1.35"
+
 joda-time = "joda-time:joda-time:2.12.7"
 
 [plugins]
