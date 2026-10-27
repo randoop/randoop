@@ -54,7 +54,10 @@ public final class SequenceCollection {
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private final Set<Type> typesAndSupertypes = new TreeSet<>();
+
+  /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
+  private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
@@ -92,7 +95,7 @@ public final class SequenceCollection {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    this.typesAndSupertypes = new TreeSet<>();
+    this.typesAndSupertypes.clear();
     this.sequenceCount = 0;
     checkRep();
   }
@@ -370,8 +373,13 @@ public final class SequenceCollection {
     return result;
   }
 
+  /**
+   * Returns the type instantiator for the types in this collection.
+   *
+   * @return the type instantiator for the types in this collection
+   */
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(typesAndSupertypes);
+    return typeInstantiator;
   }
 
   /**
