@@ -3,6 +3,7 @@ java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.ArrayList.addAll(java7.util7.Collection) exclude8
 java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17+
 java7.util7.ArrayList.elementData(int) exclude11
+java7.util7.ArrayList.ensureCapacity(int) exclude
 java7.util7.ArrayList.fastRemove(int) ignore
 java7.util7.ArrayList.hugeCapacity(int) exclude
 java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude
@@ -97,9 +98,11 @@ java7.util7.Collections.sort(java7.util7.List) exclude
 java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude17+
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
+java7.util7.Collections.synchronizedSet(java7.util7.Set) exclude25
 java7.util7.Collections.synchronizedSet(java7.util7.Set) exclude8
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17 # different on Azure vs CircleCI?
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude11
+java7.util7.Collections.unmodifiableList(java7.util7.List) exclude25
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude
 java7.util7.Collections.unmodifiableSet(java7.util7.Set) exclude
 java7.util7.Collections.unmodifiableSet(java7.util7.Set) include11
@@ -116,12 +119,14 @@ java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) exclude
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) include11
+java7.util7.LinkedList.addAll(int, java7.util7.Collection) include25
 java7.util7.LinkedList.addAll(java7.util7.Collection) exclude
 java7.util7.LinkedList.addAll(java7.util7.Collection) include11
 java7.util7.LinkedList.get(int) exclude8
 java7.util7.LinkedList.get(int) ignore17+
 java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore
 java7.util7.LinkedList.pop() exclude
+java7.util7.LinkedList.pop() include25
 java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude
 java7.util7.LinkedList.remove(int) exclude
 java7.util7.LinkedList.set(int, java.lang.Object) exclude11-
@@ -147,6 +152,7 @@ java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.floorEntry(java.lang.Object) exclude8
 java7.util7.TreeMap.get(java.lang.Object) ignore17+
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude
+java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) include25
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
@@ -194,6 +200,7 @@ java7.util7.TreeSet.tailSet(java.lang.Object, boolean) include11
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Vector.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.Vector.addAll(java7.util7.Collection) ignore17+
+java7.util7.Vector.ensureCapacity(int) exclude
 java7.util7.Vector.hugeCapacity(int) exclude
 java7.util7.Vector.removeRange(int, int) exclude
 java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude
