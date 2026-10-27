@@ -120,13 +120,12 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     int parenPos = signature.indexOf('(');
     if (parenPos < 1) {
       throw new IllegalArgumentException(
-          "Method signature expected, did not find beginning parenthesis: " + signature);
+          "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
     int lastParenPos = signature.lastIndexOf(')');
     if (lastParenPos < parenPos + 1) {
-      throw new IllegalArgumentException(
-          "Method signature expected, mismatched parenthesis: " + signature);
+      throw new IllegalArgumentException("Method signature expected, mismatched parenthesis");
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment") // dynamically checked just below
@@ -134,8 +133,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isFqBinaryName(parameter)) {
-        throw new IllegalArgumentException(
-            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
+        throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
     }
     return of(fullMethodName, parameters);
@@ -279,8 +277,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       JavaClass currentClass;
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
+      } catch (ReplacementFileReader.ReplacementException e) {
+        IllegalClassFormatException icfe =
+            new IllegalClassFormatException("Unable to read " + currentClassname);
+        icfe.initCause(e);
+        throw icfe;
       }
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
@@ -299,7 +300,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       // not have been loaded into BCEL yet.
       if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
-        throw new NoSuchMethodException("Method " + this.name + " not found");
+        throw new NoSuchMethodException("Method " + this + " not found");
       }
       currentClassname = currentClass.getSuperclassName();
     }
