@@ -221,8 +221,8 @@ public class ComponentManager {
   }
 
   /**
-   * Unless every operation can already select a sequence for the given primitive value, adds one to
-   * the component set.
+   * Unless every operation can already select a sequence that creates the given primitive value,
+   * adds such a sequence to the component set.
    *
    * @param value a primitive wrapper or a String
    */
