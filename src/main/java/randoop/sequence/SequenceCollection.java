@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -54,7 +55,18 @@ public final class SequenceCollection {
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private final Set<Type> typesAndSupertypes = new TreeSet<>();
+
+  /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
+  private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
+
+  /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
 
   /** Number of sequences in the collection: sum of sizes of all values in sequenceMap. */
   private int sequenceCount = 0;
@@ -92,7 +104,8 @@ public final class SequenceCollection {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    this.typesAndSupertypes = new TreeSet<>();
+    this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.sequenceCount = 0;
     checkRep();
   }
@@ -176,6 +189,14 @@ public final class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
+    if (sequence.size() == 1) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        primitiveValues.add(statement.getValue());
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -370,8 +391,25 @@ public final class SequenceCollection {
     return result;
   }
 
+  /**
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
+   *
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
+  }
+
+  /**
+   * Returns the type instantiator for the types in this collection.
+   *
+   * @return the type instantiator for the types in this collection
+   */
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(typesAndSupertypes);
+    return typeInstantiator;
   }
 
   /**
