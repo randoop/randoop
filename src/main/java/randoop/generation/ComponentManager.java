@@ -35,11 +35,12 @@ import randoop.util.Log;
  *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
- * Queries such as {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}
- * return both literals and non-literals. However, literals are not stored in the general pool. The
- * reason is that which literals are candidates depends on the method being called. (More precisely,
- * on the class and package in which the method is defined.)
+ * <p>This class also maintains per-scope literal information via {@link
+ * #getScopeToLiteralStatistics}. Queries such as {@link
+ * #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)} return both literals and
+ * non-literals. However, literals are not stored in the general pool. The reason is that which
+ * literals are candidates depends on the method being called. (More precisely, on the class and
+ * package in which the method is defined.)
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed, non-literal sequences,
  * restoring the pool to the original seeds.
@@ -55,16 +56,17 @@ public class ComponentManager {
   private SequenceCollection gralComponents;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
-  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
+  private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   /**
-   * The primitive values of the retained sequences that every operation can select: the seed
-   * sequences, and the literal sequences if {@link GenInputsAbstract#literals_level} is {@code
-   * ALL}. Null until first needed.
+   * The primitive values of the retained sequences that every operation can select. It is computed
+   * from {@link #gralSeeds}, {@link #scopeToLiteralStatistics}, and {@link
+   * GenInputsAbstract#literals_level} when the seeds and the literal statistics are set; see {@link
+   * #computeGlobalRetainedPrimitiveValues(Collection, ScopeToLiteralStatistics)}.
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private @Nullable Set<Object> globalRetainedPrimitiveValues = null;
+  private Set<Object> globalRetainedPrimitiveValues;
 
   /**
    * The primitive values added by {@link #addPrimitiveValueIfNew} since the component set was last
@@ -74,13 +76,14 @@ public class ComponentManager {
    */
   private final Set<Object> generatedPrimitiveValues = new HashSet<>();
 
-  // The next three variables are only for the use of method clearGeneratedSequences().
+  // clearGeneratedSequences() uses the next three variables to restore the component set.
 
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the client calls {@link #clearGeneratedSequences}.
+   * the client calls {@link #clearGeneratedSequences}, and to compute {@link
+   * #globalRetainedPrimitiveValues}.
    */
   private final Collection<Sequence> gralSeeds;
 
@@ -129,6 +132,7 @@ public class ComponentManager {
     Set<Sequence> seedSequences = new LinkedHashSet<>(MapsP.mapCapacity(generalSeeds));
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
+    this.globalRetainedPrimitiveValues = computeGlobalRetainedPrimitiveValues(gralSeeds, null);
     gralComponents = new SequenceCollection(seedSequences);
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
@@ -210,14 +214,16 @@ public class ComponentManager {
   }
 
   /**
-   * Sets the literal statistics map.
+   * Sets the literal statistics map. The client must not change the literal statistics, or {@link
+   * GenInputsAbstract#literals_level}, afterward.
    *
    * @param scopeToLiteralStatistics the literal statistics map
    */
   // This is called in OperationModel.addClassLiterals().
   public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
-    globalRetainedPrimitiveValues = null;
+    globalRetainedPrimitiveValues =
+        computeGlobalRetainedPrimitiveValues(gralSeeds, scopeToLiteralStatistics);
   }
 
   /**
@@ -227,8 +233,7 @@ public class ComponentManager {
    * @param value a primitive wrapper or a String
    */
   void addPrimitiveValueIfNew(Object value) {
-    if (!getGlobalRetainedPrimitiveValues().contains(value)
-        && generatedPrimitiveValues.add(value)) {
+    if (!globalRetainedPrimitiveValues.contains(value) && generatedPrimitiveValues.add(value)) {
       addGeneratedSequence(Sequence.createSequenceForPrimitive(value));
     }
   }
@@ -239,31 +244,33 @@ public class ComponentManager {
    * ALL}. A {@code CLASS} or {@code PACKAGE} literal is not included, because operations outside
    * its scope cannot select it.
    *
+   * @param seeds the seed sequences
+   * @param scopeToLiteralStatistics the literal statistics, or null if there are none
    * @return the primitive values of the retained sequences that every operation can select
    */
-  private Set<Object> getGlobalRetainedPrimitiveValues() {
-    if (globalRetainedPrimitiveValues == null) {
-      Set<Sequence> sequences = new LinkedHashSet<>(gralSeeds);
-      if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL
-          && scopeToLiteralStatistics != null) {
-        sequences.addAll(scopeToLiteralStatistics.getAllSequences());
-      }
-      Set<Object> result = new LinkedHashSet<>();
-      for (Sequence s : sequences) {
-        Type outType = s.getLastVariable().getType();
-        Statement lastStatement = s.getStatement(s.size() - 1);
-        if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
-            && lastStatement.isNonreceivingInitialization()) {
-          result.add(lastStatement.getValue());
-        }
-      }
-      globalRetainedPrimitiveValues = Collections.unmodifiableSet(result);
+  private static Set<Object> computeGlobalRetainedPrimitiveValues(
+      Collection<Sequence> seeds, @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics) {
+    Set<Sequence> sequences = new LinkedHashSet<>(seeds);
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL
+        && scopeToLiteralStatistics != null) {
+      sequences.addAll(scopeToLiteralStatistics.getAllSequences());
     }
-    return globalRetainedPrimitiveValues;
+    Set<Object> result = new LinkedHashSet<>();
+    for (Sequence s : sequences) {
+      Type outType = s.getLastVariable().getType();
+      Statement lastStatement = s.getStatement(s.size() - 1);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && lastStatement.isNonreceivingInitialization()) {
+        result.add(lastStatement.getValue());
+      }
+    }
+    return Collections.unmodifiableSet(result);
   }
 
   /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
+   * Also forgets the primitive values that {@link #addPrimitiveValueIfNew} has added, so that it
+   * adds them again.
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);

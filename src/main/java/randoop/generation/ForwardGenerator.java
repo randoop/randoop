@@ -183,10 +183,7 @@ public class ForwardGenerator extends AbstractGenerator {
     operationSelector.newRegressionTestHook(sequence);
   }
 
-  /**
-   * Removes all generated sequences from the component set, retaining seeds and literals, and
-   * resets the state that depends on the component set.
-   */
+  /** Removes all generated sequences from the component set, retaining seeds and literals. */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
   }
@@ -765,10 +762,10 @@ public class ForwardGenerator extends AbstractGenerator {
         // `scopeToTfIdfSelectors` is guaranteed to be non-null here because it's initialized when
         // GenInputsAbstract.literal_tfidf is true, and we're in that same conditional block.
         assert scopeToTfIdfSelectors != null : "@AssumeAssertion(nullness)"; // literal_tfidf==true
-        if (componentManager.scopeToLiteralStatistics != null) {
-          Sequence seq =
-              selectTfidfSequence(
-                  candidates, declaringType, componentManager.scopeToLiteralStatistics);
+        ScopeToLiteralStatistics scopeToLiteralStatistics =
+            componentManager.getScopeToLiteralStatistics();
+        if (scopeToLiteralStatistics != null) {
+          Sequence seq = selectTfidfSequence(candidates, declaringType, scopeToLiteralStatistics);
           if (seq != null) {
             inputVars.add(totStatements);
             sequences.add(seq);
