@@ -3,6 +3,7 @@ package randoop.instrument;
 import java.lang.instrument.IllegalClassFormatException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -24,6 +25,17 @@ import org.plumelib.util.StringsPlume;
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
 public final class MethodSignature implements Comparable<MethodSignature> {
+
+  /**
+   * Matches a fully-qualified method name: a fully-qualified class name, a period, and a method
+   * name or {@code <init>}.
+   */
+  private static final Pattern FULL_METHOD_NAME =
+      Pattern.compile(
+          ReplacementFileReader.DOT_DELIMITED_IDS
+              + "\\.(?:"
+              + ReplacementFileReader.ID_STRING
+              + "|<init>)");
 
   /** The fully-qualified class name. */
   private final String classname;
@@ -84,16 +96,12 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * Creates a {@link MethodSignature} object from string representations of its method name and
    * types.
    *
-   * @param fullMethodName fully-qualified name of method
+   * @param fullMethodName fully-qualified name of method; must contain a period
    * @param params binary names of parameter types
    * @return the {@link MethodSignature} for the method represented by the string
    */
-  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
+  private static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
     int dotPos = fullMethodName.lastIndexOf('.');
-    if (dotPos < 1) {
-      throw new IllegalArgumentException(
-          "Fully-qualified method name expected, no period found: " + fullMethodName);
-    }
     String classname = fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
     Type[] paramTypes = new Type[params.length];
@@ -108,9 +116,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
-   * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
-   * not include a return type.
+   * <p>The signature string must start with the fully-qualified classname, followed by a period,
+   * the method name, and then the fully-qualified parameter types in parentheses. The method name
+   * must be a Java identifier or {@code <init>}. The parameter types are separated by commas, and
+   * whitespace is permitted around them. No text, not even whitespace, may precede the classname or
+   * follow the closing parenthesis. Note that a signature does not include a return type.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
@@ -118,20 +128,28 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
-    if (parenPos < 1) {
+    if (parenPos < 0) {
       throw new IllegalArgumentException(
           "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
-    int lastParenPos = signature.lastIndexOf(')');
-    if (lastParenPos < parenPos + 1) {
-      throw new IllegalArgumentException("Method signature expected, mismatched parenthesis");
+    if (!FULL_METHOD_NAME.matcher(fullMethodName).matches()) {
+      throw new IllegalArgumentException(
+          "Method signature expected, bad fully-qualified method name \"" + fullMethodName + "\"");
     }
-    String paramString = signature.substring(parenPos + 1, lastParenPos);
+    if (!signature.endsWith(")")) {
+      throw new IllegalArgumentException(
+          "Method signature expected, does not end with closing parenthesis");
+    }
+    String paramString = signature.substring(parenPos + 1, signature.length() - 1).trim();
+    // The limit -1 makes split() retain trailing empty strings, so trailing commas are rejected.
     @SuppressWarnings("signature:assignment") // dynamically checked just below
     @FqBinaryName String[] parameters =
-        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
+        paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
     for (String parameter : parameters) {
+      if (parameter.isEmpty()) {
+        throw new IllegalArgumentException("Empty parameter type");
+      }
       if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }

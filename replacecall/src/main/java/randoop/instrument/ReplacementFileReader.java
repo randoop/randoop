@@ -40,24 +40,23 @@ import org.plumelib.reflection.Signatures;
 public final class ReplacementFileReader {
 
   /** Regex for Java identifiers. */
-  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final @Regex(0) String ID_STRING =
+      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers separated by periods. Corresponds to package names,
    * fully-qualified classnames, or method names with fully-qualified classname.
    */
-  public static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
+  public static final @Regex(0) String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
-   * anything in parentheses. The parentheses are expected to contain argument types, but the
-   * pattern permits anything.
-   *
-   * <p>Note: Replacements may only be methods, and so representing the {@code <init>} notation for
-   * constructors is unnecessary.
+   * anything in parentheses. The method name is expected to be fully-qualified and the parentheses
+   * are expected to contain argument types, but the pattern permits anything other than whitespace
+   * and parentheses before the parentheses, and anything other than a closing parenthesis within
+   * them. {@link MethodSignature#of(String)} validates the signature.
    */
-  private static final String SIGNATURE_STRING =
-      DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = "[^\\s()]+\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
