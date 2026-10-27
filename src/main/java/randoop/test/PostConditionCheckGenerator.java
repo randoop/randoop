@@ -72,6 +72,13 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     }
   }
 
+  /**
+   * Returns a new array that is {@code values} with null prepended, which represents the absent
+   * receiver of a static method.
+   *
+   * @param values the argument values
+   * @return a new array whose first element is null and whose remaining elements are {@code values}
+   */
   private @Nullable Object[] addNullReceiver(@Nullable Object[] values) {
     @Nullable Object[] args = new Object[values.length + 1];
     args[0] = null;
