@@ -2,7 +2,6 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,9 +16,7 @@ import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
-import randoop.sequence.Statement;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -58,32 +55,13 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  /**
-   * The primitive values of the retained sequences that every operation can select. It is computed
-   * from {@link #gralSeeds}, {@link #scopeToLiteralStatistics}, and {@link
-   * GenInputsAbstract#literals_level} when the seeds and the literal statistics are set; see {@link
-   * #computeGlobalRetainedPrimitiveValues(Collection, ScopeToLiteralStatistics)}.
-   *
-   * <p>Each value in the collection is a primitive wrapper or a String.
-   */
-  private Set<Object> globalRetainedPrimitiveValues;
-
-  /**
-   * The primitive values added by {@link #addPrimitiveValueIfNew} since the component set was last
-   * cleared.
-   *
-   * <p>Each value in the collection is a primitive wrapper or a String.
-   */
-  private final Set<Object> generatedPrimitiveValues = new HashSet<>();
-
-  // clearGeneratedSequences() uses the next three variables to restore the component set.
+  // The next three variables are only for the use of method clearGeneratedSequences().
 
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
    *
    * <p>Seeds are all contained in {@link #gralComponents}. This list is kept to restore seeds if
-   * the client calls {@link #clearGeneratedSequences}, and to compute {@link
-   * #globalRetainedPrimitiveValues}.
+   * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
 
@@ -132,7 +110,6 @@ public class ComponentManager {
     Set<Sequence> seedSequences = new LinkedHashSet<>(MapsP.mapCapacity(generalSeeds));
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
-    this.globalRetainedPrimitiveValues = computeGlobalRetainedPrimitiveValues(gralSeeds, null);
     gralComponents = new SequenceCollection(seedSequences);
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
@@ -214,67 +191,34 @@ public class ComponentManager {
   }
 
   /**
-   * Sets the literal statistics map. The client must not change the literal statistics, or {@link
-   * GenInputsAbstract#literals_level}, afterward.
+   * Sets the literal statistics map.
    *
    * @param scopeToLiteralStatistics the literal statistics map
    */
   // This is called in OperationModel.addClassLiterals().
   public void setScopeToLiteralStatistics(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
-    globalRetainedPrimitiveValues =
-        computeGlobalRetainedPrimitiveValues(gralSeeds, scopeToLiteralStatistics);
   }
 
   /**
-   * Unless every operation can already select a sequence that creates the given primitive value,
-   * adds such a sequence to the component set.
+   * Unless the component set already contains a sequence that consists of a single initialization
+   * to the given value, adds such a sequence to the component set. A literal does not prevent
+   * adding the value, because a literal is not in the component set and some operations cannot
+   * select it.
    *
    * @param value a primitive wrapper or a String
    */
   void addPrimitiveValueIfNew(Object value) {
-    if (!globalRetainedPrimitiveValues.contains(value) && generatedPrimitiveValues.add(value)) {
+    if (!gralComponents.containsPrimitiveValue(value)) {
       addGeneratedSequence(Sequence.createSequenceForPrimitive(value));
     }
   }
 
   /**
-   * Returns the primitive values of the retained sequences that every operation can select: the
-   * seed sequences, and the literal sequences if {@link GenInputsAbstract#literals_level} is {@code
-   * ALL}. A {@code CLASS} or {@code PACKAGE} literal is not included, because operations outside
-   * its scope cannot select it.
-   *
-   * @param seeds the seed sequences
-   * @param scopeToLiteralStatistics the literal statistics, or null if there are none
-   * @return the primitive values of the retained sequences that every operation can select
-   */
-  private static Set<Object> computeGlobalRetainedPrimitiveValues(
-      Collection<Sequence> seeds, @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics) {
-    Set<Sequence> sequences = new LinkedHashSet<>(seeds);
-    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.ALL
-        && scopeToLiteralStatistics != null) {
-      sequences.addAll(scopeToLiteralStatistics.getAllSequences());
-    }
-    Set<Object> result = new LinkedHashSet<>();
-    for (Sequence s : sequences) {
-      Type outType = s.getLastVariable().getType();
-      Statement lastStatement = s.getStatement(s.size() - 1);
-      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
-          && lastStatement.isNonreceivingInitialization()) {
-        result.add(lastStatement.getValue());
-      }
-    }
-    return Collections.unmodifiableSet(result);
-  }
-
-  /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
-   * Also forgets the primitive values that {@link #addPrimitiveValueIfNew} has added, so that it
-   * adds them again.
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
-    generatedPrimitiveValues.clear();
     initDemandDrivenIfEnabled();
     if (!sutParameterNeverReturnedTypes.isEmpty()) {
       gralComponents.addSutParameterOnlyTypes(sutParameterNeverReturnedTypes);

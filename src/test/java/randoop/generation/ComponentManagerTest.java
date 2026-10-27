@@ -1,9 +1,10 @@
 package randoop.generation;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
+import java.util.Collections;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,16 +45,21 @@ public class ComponentManagerTest {
     optionsCache.restoreState();
   }
 
-  /** A CLASS literal does not prevent adding its value to the component set. */
+  /** A seed prevents adding its value to the component set again. */
   @Test
-  public void classLiteralDoesNotSuppressGeneratedValue() {
-    assertTrue(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.CLASS));
+  public void seedSuppressesGeneratedValue() {
+    Sequence seed = Sequence.createSequenceForPrimitive(4242);
+    ComponentManager componentMgr = new ComponentManager(Collections.singleton(seed), IS_PUBLIC);
+    componentMgr.addPrimitiveValueIfNew(4242);
+    assertEquals(1, componentMgr.getAllGeneratedSequences().size());
   }
 
-  /** An ALL literal prevents adding its value to the component set. */
+  /** A literal does not prevent adding its value to the component set, at any literals level. */
   @Test
-  public void allLiteralSuppressesGeneratedValue() {
-    assertFalse(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.ALL));
+  public void literalDoesNotSuppressGeneratedValue() {
+    assertTrue(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.CLASS));
+    assertTrue(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.PACKAGE));
+    assertTrue(addsValueThatIsALiteral(GenInputsAbstract.ClassLiteralsMode.ALL));
   }
 
   /**
