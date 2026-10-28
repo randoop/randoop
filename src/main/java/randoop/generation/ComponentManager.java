@@ -339,6 +339,10 @@ public class ComponentManager {
     return gralComponents.getTypeInstantiator();
   }
 
+  /**
+   * Logs the general component sequences (not including literals) to the log file, if logging is
+   * enabled.
+   */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
