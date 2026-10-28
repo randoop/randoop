@@ -28,8 +28,10 @@ import randoop.types.TypeTuple;
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  // State variables.
+  /** The length of the created array, which is also the number of initializer elements. */
   private final int length;
+
+  /** The element type of the created array. */
   private final Type elementType;
 
   /**
@@ -62,18 +64,15 @@ public final class InitializedArrayCreation extends CallableOperation {
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput) {
-    if (statementInput.length > length) {
+    if (statementInput.length != length) {
       throw new IllegalArgumentException(
-          "Too many arguments: " + statementInput.length + ", capacity: " + length);
+          "Wrong number of arguments: " + statementInput.length + ", expected: " + length);
     }
-    long startTime = System.currentTimeMillis();
-    assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) {
       Array.set(theArray, i, statementInput[i]);
     }
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(theArray, totalTime);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
@@ -89,9 +88,9 @@ public final class InitializedArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    if (inputVars.size() > length) {
+    if (inputVars.size() != length) {
       throw new IllegalArgumentException(
-          "Too many arguments: " + inputVars.size() + ", capacity: " + length);
+          "Wrong number of arguments: " + inputVars.size() + ", expected: " + length);
     }
 
     String arrayTypeName = this.elementType.getFqName();

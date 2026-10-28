@@ -13,6 +13,12 @@ public class SystemExitCalledError extends Error {
   /** Status value for System.exit() call */
   public final int status;
 
+  /**
+   * Creates an error indicating that {@code System.exit()} was called with the given status. Also
+   * disposes of all active {@code java.awt} windows, to prevent the Java runtime from deadlocking.
+   *
+   * @param status the status argument passed to {@code System.exit()}
+   */
   public SystemExitCalledError(int status) {
     super(String.format("Call to System exit(%d) detected; terminating execution", status));
     this.status = status;
