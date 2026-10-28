@@ -90,7 +90,10 @@ public final class SequenceCollection {
     return sequenceCount;
   }
 
-  /** Removes all sequences from this collection. */
+  /**
+   * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
+   * demand-driven input creator, and the type instantiator.
+   */
   public void clear() {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
