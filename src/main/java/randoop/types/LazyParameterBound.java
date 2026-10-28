@@ -48,7 +48,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundType);
+    return Objects.hashCode(boundType);
   }
 
   @Override
