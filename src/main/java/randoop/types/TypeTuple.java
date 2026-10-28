@@ -129,6 +129,21 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
+   * Returns true if some type in this type tuple has a wildcard that capture conversion converts.
+   *
+   * @return true if some type in this type tuple has a wildcard type argument
+   * @see ClassOrInterfaceType#hasWildcardArgument()
+   */
+  public boolean hasWildcardArgument() {
+    for (Type type : list) {
+      if (type.isClassOrInterfaceType() && ((ClassOrInterfaceType) type).hasWildcardArgument()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Returns true if any of the types in this type tuple contains a capture variable.
    *
    * @return true if there is at least one capture variable occurrence

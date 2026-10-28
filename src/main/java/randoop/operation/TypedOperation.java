@@ -322,9 +322,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Returns true if this operation has a type that is a wildcard type.
+   * Returns true if some input or output type of this operation has a wildcard type argument, which
+   * capture conversion converts.
    *
-   * @return true if at least one input or output type has a wildcard, false otherwise
+   * @return true if at least one input or output type has a wildcard type argument, false otherwise
+   * @see randoop.types.ClassOrInterfaceType#hasWildcardArgument()
    */
   public abstract boolean hasWildcardTypes();
 
