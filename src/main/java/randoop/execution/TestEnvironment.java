@@ -3,22 +3,15 @@ package randoop.execution;
 import static randoop.execution.RunCommand.CommandException;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
-
-  /**
-   * The java executable of the JDK that runs Randoop. Tests run on that JDK, regardless of which
-   * java is on the PATH.
-   */
-  private static final String javaExecutable =
-      Paths.get(System.getProperty("java.home"), "bin", "java").toString();
 
   /** The process timeout in milliseconds. Defaults to 20 minutes. */
   private long timeoutMillis = 20 * 60 * 1000;
@@ -99,7 +92,8 @@ public class TestEnvironment {
    */
   private List<String> commandPrefix() {
     List<String> command = new ArrayList<>(agentMap.size() + 9);
-    command.add(javaExecutable);
+    // Run the tests on the JDK that runs Randoop, regardless of which java is on the PATH.
+    command.add(Globals.jdkBinDir.resolve("java").toString());
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
     command.add("-XX:+HeapDumpOnOutOfMemoryError");
