@@ -16,16 +16,16 @@ merge is clean and status 1 if there are conflicts.
 The merge is semantic.  For each method:
  * If ours and theirs have the same lines for the method, or one of them has
    the same lines as base, then the result is the other one's lines, verbatim.
+ * Otherwise, if CoverageChecker rejects ours or theirs, there is a conflict.
  * Otherwise, the method's action ("include", "exclude", or "ignore") is merged
    for each JDK version.  If ours and theirs specify the same action, or one of
    them specifies the same action as base, then the merged action is the other
    one's action; otherwise, there is a conflict.  If there are no conflicts,
-   then the result is the shortest of these candidates (the earliest, if
-   several are shortest):  the line-by-line merge of the method's lines (see
-   below), ours, theirs, and as few lines as possible that specify the merged
-   actions.  A candidate is used only if it specifies the merged actions,
-   CoverageChecker accepts it, and it contains every line of the line-by-line
-   merge that has a comment.
+   then the result is the first of these candidates that specifies the merged
+   actions, that CoverageChecker accepts, and that contains every line of the
+   line-by-line merge that has a comment:  the line-by-line merge of the
+   method's lines (see below), ours, theirs, and as few lines as possible that
+   specify the merged actions.
  * If there is a conflict or no candidate, the result is ours, base, and
    theirs, surrounded by conflict markers.
 The JDK versions are those in --jdks VERSIONS, a comma-separated list (default:
@@ -37,7 +37,7 @@ theirs, or if one of them added it and the other did not remove it.
 Comment-only lines are merged line by line.  Blank lines are removed.  The
 output is sorted, so comment-only lines are at the beginning of the file.
 
-If a version cannot be parsed (for example, because it contains conflict
+If the semantic merge fails (for example, because a version contains conflict
 markers), this script performs a textual merge using "git merge-file".
 
 --labels gives the labels to use in conflict markers; the default is the file
@@ -60,65 +60,20 @@ git merges *.covgoals files textually.
 """
 
 import argparse
-import importlib.util
-import itertools
 import subprocess
 import sys
 from pathlib import Path
-from types import ModuleType
 from typing import TypeVar
 
-
-def load_update_coverage_goals() -> ModuleType:
-    """Load update-coverage-goals.py, which is in the same directory as this script.
-
-    Returns:
-        the module
-    """
-    path = Path(__file__).resolve().with_name("update-coverage-goals.py")
-    spec = importlib.util.spec_from_file_location("update_coverage_goals", path)
-    assert spec is not None
-    assert spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-update_coverage_goals = load_update_coverage_goals()
-DEFAULT_JDKS = update_coverage_goals.DEFAULT_JDKS
-Goal = update_coverage_goals.Goal
-GoalLine = update_coverage_goals.GoalLine
-action_for = update_coverage_goals.action_for
-minimal_goals = update_coverage_goals.minimal_goals
-parse_goal_line = update_coverage_goals.parse_goal_line
-
-
-def read_goals(path: Path) -> tuple[set[str], dict[str, list[GoalLine]]]:
-    """Read a file of coverage goals.
-
-    Args:
-        path: a file of coverage goals
-
-    Returns:
-        the file's comment-only lines, and a map from each method to its lines
-    """
-    comment_lines = set()
-    lines_for_method: dict[str, list[GoalLine]] = {}
-    for line in path.read_text().splitlines():
-        if not line.strip():
-            continue
-        if not line.partition("#")[0].strip():
-            comment_lines.add(line)
-            continue
-        try:
-            goal_line = parse_goal_line(line)
-        except ValueError as e:
-            message = f"{path}: {e}"
-            raise ValueError(message) from e
-        lines_for_method.setdefault(goal_line.method, []).append(goal_line)
-    return comment_lines, lines_for_method
-
+from coverage_goals import (
+    DEFAULT_JDKS,
+    GoalLine,
+    action_for,
+    is_valid,
+    minimal_goals,
+    parse_goal_line,
+    read_goals,
+)
 
 T = TypeVar("T")
 
@@ -162,29 +117,6 @@ def merge_lines(base: set[str], ours: set[str], theirs: set[str]) -> set[str]:
     }
 
 
-def is_valid(goals: list[Goal], jdk: int) -> bool:
-    """Return true if CoverageChecker accepts the given goals for a method on a JDK version.
-
-    CoverageChecker rejects two goals of the same scope, a goal that specifies the
-    action that a less specific goal already specifies, and an unneeded "include".
-
-    Args:
-        goals: the goals for a method
-        jdk: a JDK version
-
-    Returns:
-        true if CoverageChecker accepts the goals on the JDK version
-    """
-    applicable = sorted(
-        (goal for goal in goals if goal.applies(jdk)), key=lambda goal: goal.scope()
-    )
-    scopes = [goal.scope() for goal in applicable]
-    if len(set(scopes)) != len(scopes):
-        return False
-    actions = ["include"] + [goal.action for goal in applicable]
-    return all(prev != action for prev, action in itertools.pairwise(actions))
-
-
 def merge_method(
     method: str,
     versions: tuple[list[GoalLine], list[GoalLine], list[GoalLine]],
@@ -207,9 +139,18 @@ def merge_method(
         return merged_texts, []
 
     mentioned = {line.goal.jdk for lines in versions for line in lines if line.goal.jdk}
+    all_jdks = sorted(set(jdks) | mentioned)
+    problems = [
+        f"JDK {jdk}: CoverageChecker rejects {name}"
+        for name, lines in (("ours", versions[1]), ("theirs", versions[2]))
+        for jdk in all_jdks
+        if not is_valid([line.goal for line in lines], jdk)
+    ]
+    if problems:
+        return None, problems
+
     target = {}
-    problems = []
-    for jdk in sorted(set(jdks) | mentioned):
+    for jdk in all_jdks:
         actions = [action_for([line.goal for line in lines], jdk) for lines in versions]
         action = merge_value(*actions)
         if action is None:
@@ -231,14 +172,10 @@ def merge_method(
             for jdk, action in target.items()
         )
 
-    candidates = [
-        candidate
-        for candidate in (line_merge, versions[1], versions[2], minimal)
-        if is_acceptable(candidate)
-    ]
-    if not candidates:
-        return None, ["no merge that preserves the comments is correct"]
-    return sorted(line.text for line in min(candidates, key=len)), []
+    for candidate in (line_merge, versions[1], versions[2], minimal):
+        if is_acceptable(candidate):
+            return sorted(line.text for line in candidate), []
+    return None, ["no merge that preserves the comments is correct"]
 
 
 def merge(
@@ -307,8 +244,8 @@ def main() -> None:
     jdks = [int(jdk) for jdk in args.jdks.split(",")]
     try:
         lines, conflicts = merge(paths, labels, args.marker_size, jdks)
-    except ValueError as e:
-        print(f"{e}; performing a textual merge", file=sys.stderr)
+    except Exception as e:  # ruff: ignore[blind-except]
+        print(f"{type(e).__name__}: {e}; performing a textual merge", file=sys.stderr)
         command = ["git", "merge-file", "--diff3", f"--marker-size={args.marker_size}"]
         for label in (labels[1], labels[0], labels[2]):
             command += ["-L", label]
