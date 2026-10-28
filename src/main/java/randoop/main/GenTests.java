@@ -367,12 +367,20 @@ public class GenTests extends GenInputsAbstract {
       omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
+    List<String> replacedSignatures = MethodReplacements.getSignatureList();
     if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+      omit_methods.addAll(createPatternsFromSignatures(replacedSignatures));
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+      List<Pattern> defaultOmitMethods = new ArrayList<>();
+      defaultOmitMethods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+      defaultOmitMethods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+      if (GenInputsAbstract.dont_omit_replaced_methods) {
+        // A replacement can make a nondeterministic method deterministic.
+        defaultOmitMethods.removeIf(
+            pattern -> replacedSignatures.stream().anyMatch(sig -> pattern.matcher(sig).find()));
+      }
+      omit_methods.addAll(defaultOmitMethods);
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
