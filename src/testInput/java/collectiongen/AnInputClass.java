@@ -23,7 +23,7 @@ public class AnInputClass {
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.string);
+    return Objects.hashCode(this.string);
   }
 
   @Override

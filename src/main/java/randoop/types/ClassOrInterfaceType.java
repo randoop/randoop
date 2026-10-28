@@ -121,7 +121,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(enclosingType);
+    return Objects.hashCode(enclosingType);
   }
 
   /**
@@ -516,6 +516,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
+    if (otherType.isVariable()) {
+      // A class or interface type is a subtype of a type variable only if it is a subtype of the
+      // variable's lower bound, as for a capture variable of `? super String`.
+      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
+      if (!(lowerBound instanceof EagerReferenceBound)) {
+        return false;
+      }
+      ReferenceType lowerBoundType = ((EagerReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && this.isSubtypeOfOrEqualTo(lowerBoundType);
+    }
+
     if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
       Class<?> thisClass = this.getRuntimeClass();
       Class<?> otherClass = otherType.getRuntimeClass();
@@ -524,10 +536,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
 
-    if (!otherType.isReferenceType()) {
-      return false;
-    }
-    if (otherType.isArray()) {
+    if (!(otherType instanceof ClassOrInterfaceType)) {
       return false;
     }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
