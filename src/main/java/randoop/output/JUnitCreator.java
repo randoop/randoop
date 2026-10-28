@@ -1,7 +1,16 @@
 package randoop.output;
 
+import static com.github.javaparser.GeneratedJavaParserConstants.EOF;
+import static com.github.javaparser.GeneratedJavaParserConstants.RBRACE;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.Position;
+import com.github.javaparser.Problem;
+import com.github.javaparser.Token;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -41,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
@@ -52,6 +63,14 @@ public final class JUnitCreator {
 
   /** An instance of a Java parser. */
   static JavaParser javaParser = new JavaParser();
+
+  /**
+   * A Java parser for fixture text. It accepts every feature of the latest Java version that
+   * JavaParser supports, because fixture text is written by the user.
+   */
+  private static final JavaParser fixtureParser =
+      new JavaParser(
+          new ParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.CURRENT));
 
   /** The "public" modifier. */
   private final NodeList<Modifier> PUBLIC = new NodeList<>(Modifier.publicModifier());
@@ -567,16 +586,128 @@ public final class JUnitCreator {
     return compilationUnit.toString();
   }
 
+  /**
+   * Parses fixture text, which is a sequence of Java statements.
+   *
+   * @param bodyText the lines of the fixture text, or null
+   * @return a block containing the statements, or null if {@code bodyText} is null
+   * @throws ParseException if {@code bodyText} is not a sequence of Java statements. The message
+   *     describes each error and gives its position as a line and column of {@code bodyText}. The
+   *     cause is the parser's exception for the first error.
+   */
   public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
     if (bodyText == null) {
       return null;
     }
+    // The text is parsed as a block.  The "{" is on the first line of bodyText, so that line
+    // numbers match bodyText.  The "}" is on a line of its own, after the last line of bodyText.
     StringBuilder blockText = new StringBuilder();
-    blockText.append('{').append(Globals.lineSep);
+    blockText.append('{');
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append('}');
-    return javaParser.parseBlock(blockText.toString()).getResult().get();
+    blockText.append('}');
+    ParseResult<BlockStmt> result = fixtureParser.parseBlock(blockText.toString());
+    // JavaParser recovers from some syntax errors, so a result can be present even if there are
+    // problems.
+    if (result.isSuccessful()) {
+      return result.getResult().get();
+    }
+    StringJoiner message = new StringJoiner(Globals.lineSep);
+    for (Problem problem : result.getProblems()) {
+      message.add(describeFixtureProblem(problem, bodyText.size()));
+    }
+    ParseException exception = new ParseException(message.toString());
+    for (Problem problem : result.getProblems()) {
+      Throwable cause = problem.getCause().orElse(null);
+      if (cause == null) {
+        continue;
+      }
+      if (exception.getCause() == null) {
+        exception.initCause(cause);
+      } else {
+        exception.addSuppressed(cause);
+      }
+    }
+    throw exception;
+  }
+
+  /** Matches a position in a JavaParser message, such as " at line 3, column 1". */
+  private static final Pattern MESSAGE_POSITION =
+      Pattern.compile("\\s+at line (\\d+), column (\\d+)");
+
+  /**
+   * Returns a description of a problem in fixture text, including its position in the fixture text.
+   *
+   * @param problem a problem that JavaParser found in the block that {@link #parseFixture} creates
+   * @param numLines the number of lines of fixture text
+   * @return a description of {@code problem}
+   */
+  private static String describeFixtureProblem(Problem problem, int numLines) {
+    String message = problem.getMessage();
+    // The token at which the problem occurs.
+    Token token = null;
+    Throwable cause = problem.getCause().orElse(null);
+    if (cause instanceof ParseException) {
+      ParseException e = (ParseException) cause;
+      Token current = e.currentToken;
+      if (current != null && current.next != null) {
+        if (current.kind == RBRACE && expectsOnlyEof(e)) {
+          // A "}" in the fixture text closed the block, and more text follows it.
+          token = current;
+          message = "Unmatched \"}\".";
+        } else {
+          // The parser accepted `current` and rejected the token after it.
+          token = current.next;
+        }
+      }
+    }
+
+    // The position of the problem in the block.
+    Position position;
+    if (token != null) {
+      position = new Position(token.beginLine, token.beginColumn);
+    } else {
+      position =
+          problem.getLocation().flatMap(TokenRange::toRange).map(range -> range.begin).orElse(null);
+    }
+    // Some messages, such as those for lexical errors, contain a position in the block.  Remove it,
+    // because it is not a position in the fixture text.
+    Matcher matcher = MESSAGE_POSITION.matcher(message);
+    if (matcher.find()) {
+      if (position == null) {
+        position =
+            new Position(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+      }
+      message = matcher.replaceFirst("");
+    }
+    if (position == null) {
+      return message;
+    }
+
+    int line = position.line;
+    int column = position.column;
+    if (line > numLines) {
+      return "At end of text: " + message + " (Randoop adds \"}\" after the fixture text.)";
+    }
+    if (line == 1) {
+      // Account for the "{" that precedes the first line.
+      column--;
+    }
+    return String.format("Line %d, column %d: %s", line, column, message);
+  }
+
+  /**
+   * Returns true if the only token that the parser expected was the end of input.
+   *
+   * @param e a parse exception
+   * @return true if {@code e} reports that the parser expected only the end of input
+   */
+  private static boolean expectsOnlyEof(ParseException e) {
+    int[][] expected = e.expectedTokenSequences;
+    return expected != null
+        && expected.length == 1
+        && expected[0].length == 1
+        && expected[0][0] == EOF;
   }
 }
