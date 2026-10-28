@@ -223,9 +223,12 @@ public class ProgressDisplay extends Thread {
         && GenInputsAbstract.progressintervalsteps <= 0;
   }
 
-  /** Clear the display; good to do before printing to System.out. */
+  /**
+   * Erases the current progress message, in {@link Mode#SINGLE_LINE_OVERWRITE} mode; does nothing
+   * in other modes. Good to do before printing to System.out.
+   */
   public void clear() {
-    if (noProgressOutput()) {
+    if (outputMode != Mode.SINGLE_LINE_OVERWRITE || noProgressOutput()) {
       return;
     }
     // "display("");" is wrong because it leaves the timestamp and writes

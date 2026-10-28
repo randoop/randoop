@@ -25,10 +25,20 @@ import randoop.types.TypeTuple;
  */
 public final class CheckRepContract extends ObjectContract {
 
+  /** The representation check method that this contract calls. */
   public final Method checkRepMethod;
+
+  /** The operation for calling {@link #checkRepMethod}. */
   private final TypedClassOperation operation;
-  boolean returnsBoolean; // derived from checkRepMethod
-  public final Class<?> declaringClass; // derived from checkRepMethod
+
+  /**
+   * True if {@link #checkRepMethod} returns {@code boolean}, false if it returns {@code void}.
+   * Derived from {@link #checkRepMethod}.
+   */
+  boolean returnsBoolean;
+
+  /** The class that declares {@link #checkRepMethod}. Derived from {@link #checkRepMethod}. */
+  public final Class<?> declaringClass;
 
   @Override
   public boolean equals(@Nullable Object o) {
@@ -44,7 +54,7 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public int hashCode() {
-    return Objects.hash(checkRepMethod);
+    return Objects.hashCode(checkRepMethod);
   }
 
   /**
