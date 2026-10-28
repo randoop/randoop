@@ -2,10 +2,17 @@ package randoop.reflection;
 
 import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
@@ -15,7 +22,6 @@ import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
-import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
@@ -24,7 +30,6 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
-import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -77,8 +82,12 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic()
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
-        if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
-          substitution = instantiateSortedSetType(operation);
+        int orderedIndex =
+            operation.isConstructorCall()
+                ? orderedTypeParameterIndex(declaringType.getRuntimeClass())
+                : -1;
+        if (orderedIndex != -1) {
+          substitution = instantiateOrderedType(operation, orderedIndex);
         } else {
           substitution = instantiateClass(declaringType);
         }
@@ -113,57 +122,155 @@ public class TypeInstantiator {
     return operation;
   }
 
+  /** Memoizes {@link #orderedTypeParameterIndex}. */
+  private static final Map<Class<?>, Integer> orderedTypeParameterIndexCache = new HashMap<>();
+
   /**
-   * Returns a substitution that instantiates the {@code SortedSet} type of the given constructor. A
-   * {@code SortedSet} may be built so that the element type {@code E} is ordered either explicitly
-   * with a {@code Comparator<E>}, or the element type satisfies {@code E implements Comparable<E>}.
+   * Returns the index of the type parameter whose values instances of the given class keep in
+   * order, or -1 if there is none. Such a type parameter is recognized by a constructor whose only
+   * formal parameter is a comparator for it (see {@link #isComparatorInterface}). Examples are the
+   * {@code E} in {@code TreeSet<E>} and the {@code K} in {@code TreeMap<K,V>}.
    *
-   * @param operation a constructor to be instantiated, for a class that implements {@code
-   *     SortedSet}
-   * @return the substitution to instantiate the element type of the {@code SortedSet} type
+   * @param c a class
+   * @return the index of the ordered type parameter of {@code c}, or -1
    */
-  private Substitution instantiateSortedSetType(TypedClassOperation operation) {
-    assert operation.isConstructorCall() : "only call with constructors of SortedSet subtype";
-
-    // TODO: we have no guarantee that there is a type parameter.
-    // For example, "class MyClass implements SortedSet<String>".
-    // TODO: we have no guarantee that the first type parameter is the set element type.
-    // For example, "class MyClass<A, B> implements SortedSet<B>".
-    TypeVariable typeParameter = operation.getDeclaringType().getTypeParameters().get(0);
-
-    TypeTuple opInputTypes = operation.getInputTypes();
-
-    // There are four constructors in the SortedSet interface.
-
-    if (opInputTypes.isEmpty()) {
-      // This is the default constructor, choose a type E that is Comparable<E>.
-      return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
-    } else if (opInputTypes.size() == 1) {
-      ClassOrInterfaceType inputType = (ClassOrInterfaceType) opInputTypes.get(0);
-      if (inputType.isInstantiationOf(JDKTypes.COMPARATOR_TYPE)) {
-        // This constructor has Comparator<E> arg, choose type E with Comparator<E>.
-        return selectSubstitutionForSortedSet(JDKTypes.COMPARATOR_TYPE, typeParameter);
-      } else if (inputType.isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
-        // This constructor has Collection<E> arg, choose type E that is Comparable<E>.
-        return selectSubstitutionForSortedSet(JavaTypes.COMPARABLE_TYPE, typeParameter);
-      } else if (inputType.isInstantiationOf(JDKTypes.SORTED_SET_TYPE)) {
-        // This constructor has SortedSet<E> arg, choose existing matching type.
-        return selectSubstitutionForSortedSet(JDKTypes.SORTED_SET_TYPE, typeParameter);
-      }
-    }
-
-    // This isn't one of the four standard SortedSet constructors.  We don't know what to do.
-    return null;
+  private static int orderedTypeParameterIndex(Class<?> c) {
+    return orderedTypeParameterIndexCache.computeIfAbsent(
+        c, TypeInstantiator::computeOrderedTypeParameterIndex);
   }
 
   /**
-   * Select a substitution for the type parameter of SortedSet.
+   * Computes the result of {@link #orderedTypeParameterIndex}.
    *
-   * @param searchType one of Comparator, Comparable, or SortedSet
-   * @param typeParameter the type parameter to create an instantiation for
-   * @return a substitution for the type parameter of SortedSet
+   * @param c a class
+   * @return the index of the ordered type parameter of {@code c}, or -1
    */
-  private Substitution selectSubstitutionForSortedSet(
+  private static int computeOrderedTypeParameterIndex(Class<?> c) {
+    List<java.lang.reflect.TypeVariable<?>> classTypeParameters =
+        Arrays.asList(c.getTypeParameters());
+    for (Constructor<?> constructor : c.getDeclaredConstructors()) {
+      java.lang.reflect.Type[] formals = constructor.getGenericParameterTypes();
+      if (formals.length != 1 || !(formals[0] instanceof java.lang.reflect.ParameterizedType)) {
+        continue;
+      }
+      java.lang.reflect.ParameterizedType formal = (java.lang.reflect.ParameterizedType) formals[0];
+      if (!isComparatorInterface((Class<?>) formal.getRawType())) {
+        continue;
+      }
+      // The type argument is T or `? super T`.
+      java.lang.reflect.Type typeArg = formal.getActualTypeArguments()[0];
+      if (typeArg instanceof WildcardType) {
+        java.lang.reflect.Type[] lowerBounds = ((WildcardType) typeArg).getLowerBounds();
+        if (lowerBounds.length == 1) {
+          typeArg = lowerBounds[0];
+        }
+      }
+      int index = classTypeParameters.indexOf(typeArg);
+      if (index != -1) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Returns true if the given class is a comparator interface: a generic interface with one type
+   * parameter and an abstract method {@code int compare(T, T)}. Examples are {@code
+   * java.util.Comparator} and copies of it.
+   *
+   * @param c a class
+   * @return true if {@code c} is a comparator interface
+   */
+  private static boolean isComparatorInterface(Class<?> c) {
+    if (!c.isInterface() || c.getTypeParameters().length != 1) {
+      return false;
+    }
+    try {
+      Method compare = c.getMethod("compare", Object.class, Object.class);
+      return compare.getReturnType() == int.class && Modifier.isAbstract(compare.getModifiers());
+    } catch (NoSuchMethodException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Returns true if values of the given type carry their own ordering: the type is generic and has
+   * a method {@code comparator()} that returns a comparator interface. Examples are {@code
+   * SortedSet<E>} and {@code SortedMap<K,V>}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a generic type with a {@code comparator()} method
+   */
+  private static boolean isSortedType(Type type) {
+    if (!type.isParameterized()) {
+      return false;
+    }
+    try {
+      Method comparator = type.getRuntimeClass().getMethod("comparator");
+      return isComparatorInterface(comparator.getReturnType());
+    } catch (NoSuchMethodException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Returns a substitution that instantiates the declaring type of the given constructor, for a
+   * class that keeps the values of one of its type parameters, {@code T}, in order. Such a class
+   * orders {@code T} either explicitly with a comparator, or by requiring that {@code T implements
+   * Comparable<T>}.
+   *
+   * @param operation a constructor to be instantiated
+   * @param orderedIndex the index of the ordered type parameter {@code T}; see {@link
+   *     #orderedTypeParameterIndex}
+   * @return the substitution to instantiate the declaring type of the constructor, or null if none
+   *     is found
+   */
+  private @Nullable Substitution instantiateOrderedType(
+      TypedClassOperation operation, int orderedIndex) {
+    assert operation.isConstructorCall() : "only call with constructors: " + operation;
+
+    List<TypeVariable> typeParameters = operation.getDeclaringType().getTypeParameters();
+    TypeVariable orderedParameter = typeParameters.get(orderedIndex);
+
+    // By default, choose a type T that is Comparable<T>.
+    GenericClassType searchType = JavaTypes.COMPARABLE_TYPE;
+    for (Type inputType : operation.getInputTypes()) {
+      if (!inputType.isParameterized()) {
+        continue;
+      }
+      if (isComparatorInterface(inputType.getRuntimeClass()) || isSortedType(inputType)) {
+        // This constructor has an argument that orders T, such as a Comparator<T> or a
+        // SortedSet<T>.  Half the time, choose a type T that has such a value.  Otherwise, choose a
+        // type T that is Comparable<T>, because the argument might be null or might use the natural
+        // ordering of T (as Collections.reverseOrder() does).
+        if (Randomness.weightedCoinFlip(0.5)) {
+          searchType = ((ParameterizedType) inputType).getGenericClassType();
+        }
+        break;
+      }
+    }
+
+    Substitution substitution = selectSubstitutionForOrderedType(searchType, orderedParameter);
+    if (substitution == null) {
+      return null;
+    }
+    List<TypeVariable> otherParameters = new ArrayList<>(typeParameters);
+    otherParameters.remove(orderedParameter);
+    if (otherParameters.isEmpty()) {
+      return substitution;
+    }
+    return selectSubstitution(otherParameters, substitution);
+  }
+
+  /**
+   * Select a substitution for an ordered type parameter.
+   *
+   * @param searchType a generic type whose first type argument is the ordered type, such as
+   *     Comparator, Comparable, or SortedSet
+   * @param typeParameter the type parameter to create an instantiation for
+   * @return a substitution for {@code typeParameter}, or null if none is found
+   */
+  private @Nullable Substitution selectSubstitutionForOrderedType(
       GenericClassType searchType, TypeVariable typeParameter) {
     // Select a substitution for searchType's formal parameter.
     Substitution substitution = selectSubstitution(searchType);
