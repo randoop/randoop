@@ -30,7 +30,6 @@
 ^\Qjava7.util7.Collections$UnmodifiableMap$UnmodifiableEntrySet$UnmodifiableEntrySetSpliterator.getComparator()\E$
 ^\Qjava7.util7.Collections$UnmodifiableSortedMap.comparator()\E$
 ^\Qjava7.util7.Collections$UnmodifiableSortedSet.comparator()\E$
-^\Qjava7.util7.Comparator.compare(java.lang.Object, java.lang.Object)\E$
 ^\Qjava7.util7.HashMap.comparableClassFor(java.lang.Object)\E$
 ^\Qjava7.util7.List.hashCode()\E$
 ^\Qjava7.util7.Map$Entry.hashCode()\E$
@@ -38,7 +37,6 @@
 ^\Qjava7.util7.Objects.hash(java.lang.Object[])\E$
 ^\Qjava7.util7.Objects.hashCode(java.lang.Object)\E$
 ^\Qjava7.util7.Objects.toString(java.lang.Object)\E$
-^\Qjava7.util7.Random.<init>()\E$
 ^\Qjava7.util7.Set.hashCode()\E$
 ^\Qjava7.util7.SortedMap.comparator()\E$
 ^\Qjava7.util7.SortedSet.comparator()\E$
