@@ -45,6 +45,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ACTIONS = ("include", "exclude", "ignore")
+# The JDK versions on which the system tests run.
+DEFAULT_JDKS = "8,11,17,21,25,26"
 # The goal syntax must be consistent with CoverageChecker.methods().
 GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
@@ -221,7 +223,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--jdks", default="8,11,17,21,25,26")
+    parser.add_argument("--jdks", default=DEFAULT_JDKS)
     parser.add_argument("goals_file", type=Path)
     parser.add_argument("coverage", nargs="+", metavar="JDK=COVERAGE_FILE")
     args = parser.parse_args()
