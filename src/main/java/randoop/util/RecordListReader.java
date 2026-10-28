@@ -38,6 +38,13 @@ public class RecordListReader {
   /** The object in charge of doing whatever is to be done with the record. */
   private final RecordProcessor processor;
 
+  /**
+   * Creates a reader for records of the given type.
+   *
+   * @param recordType the record type, which appears after "START" and "END" in the delimiting
+   *     lines of each record; must be non-empty
+   * @param proc the processor that is applied to each record that is read
+   */
   public RecordListReader(String recordType, RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0) {
       throw new IllegalArgumentException(
@@ -51,6 +58,11 @@ public class RecordListReader {
     this.endMarker = "END " + recordType;
   }
 
+  /**
+   * Reads all the records in the given file, and applies this reader's processor to each one.
+   *
+   * @param inFile the name of the file to read
+   */
   public void parse(String inFile) {
     if (inFile == null || inFile.length() == 0) {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
@@ -63,6 +75,11 @@ public class RecordListReader {
     }
   }
 
+  /**
+   * Reads all the records in the given file, and applies this reader's processor to each one.
+   *
+   * @param inFile the file to read
+   */
   public void parse(Path inFile) {
     if (inFile == null) {
       throw new IllegalArgumentException("Null input file");
@@ -75,6 +92,11 @@ public class RecordListReader {
     }
   }
 
+  /**
+   * Reads all the records from the given reader, and applies this reader's processor to each one.
+   *
+   * @param reader the reader from which to read records
+   */
   public void parse(BufferedReader reader) {
 
     String line;
