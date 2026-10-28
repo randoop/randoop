@@ -51,7 +51,7 @@ public class GenericClassType extends ParameterizedType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(rawType);
+    return Objects.hashCode(rawType);
   }
 
   /**
