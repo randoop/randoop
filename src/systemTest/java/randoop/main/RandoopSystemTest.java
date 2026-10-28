@@ -180,6 +180,8 @@ public class RandoopSystemTest {
    *     covered, and, unless ignored, any method not excluded is expected to be covered.
    *     To learn which methods a test covers under some random seeds but not others, run
    *     scripts/coverage-stability.sh.
+   *     To update a file of coverage goals to match the coverage on one or more JDK versions, run
+   *     scripts/update-coverage-goals.py.
    */
   @Test
   public void runCollectionsTest() {
