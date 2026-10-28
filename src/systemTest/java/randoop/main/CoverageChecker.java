@@ -7,8 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -343,6 +346,11 @@ class CoverageChecker {
    * in the excluded methods, then it must not be covered by any test. Otherwise, the method must be
    * covered by some test.
    *
+   * <p>If the system property {@code randoop.method.coverage.file} is set, this also writes to that
+   * file a line "covered METHOD" or "uncovered METHOD" for each declared method of each class
+   * (except methods that satisfy {@link #isIgnoredMethod(String)}), regardless of the coverage
+   * goals.
+   *
    * @param regressionStatus the {@link TestRunStatus} from the regression tests
    * @param errorStatus the {@link TestRunStatus} from the error tests
    */
@@ -351,6 +359,8 @@ class CoverageChecker {
     int numCoveredMethods = 0;
     Set<String> missingMethods = new TreeSet<>();
     Set<String> shouldBeMissingMethods = new TreeSet<>();
+    // Each element is "covered METHOD" or "uncovered METHOD".
+    Set<String> methodCoverage = new TreeSet<>();
 
     for (String classname : classnames) {
       String canonicalClassname = classname.replace('$', '.');
@@ -372,7 +382,12 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
+        boolean isIgnored = isIgnoredMethod(methodname);
+        if (!isIgnored) {
+          methodCoverage.add(
+              (coveredMethods.contains(methodname) ? "covered " : "uncovered ") + methodname);
+        }
+        if (!isIgnored && !ignoredMethodsGoal.contains(methodname)) {
           if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);
@@ -389,6 +404,15 @@ class CoverageChecker {
           }
           System.out.println("Ignoring " + methodname + " in coverage checks");
         }
+      }
+    }
+
+    String methodCoverageFile = System.getProperty("randoop.method.coverage.file");
+    if (methodCoverageFile != null && !methodCoverageFile.isEmpty()) {
+      try {
+        Files.write(Paths.get(methodCoverageFile), methodCoverage, UTF_8);
+      } catch (IOException e) {
+        throw new UncheckedIOException("Problem writing " + methodCoverageFile, e);
       }
     }
 
