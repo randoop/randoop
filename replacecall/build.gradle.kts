@@ -26,6 +26,9 @@ configurations {
 }
 
 dependencies {
+  // Needed to compile the mocks in randoop.mock.
+  compileOnly(libs.jcommander)
+  testImplementation(libs.jcommander)
   testImplementation(libs.junit)
   testImplementation(libs.hamcrest.all)
   "agentTestImplementation"(project(path = ":", configuration = "testInput"))
