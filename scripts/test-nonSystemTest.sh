@@ -42,7 +42,7 @@ sleep 3 # give xvfb some time to start
 ./gradlew printJunitJarPath
 
 # `gradle build` == `gradle check assemble`.
-./gradlew --info test replacecallAgentTest
+./gradlew --info test replacecallAgentTest coverageGoalsTest
 
 # Stop xvfb because 'start-stop-daemon --start' will fail if already running.
 /sbin/start-stop-daemon --stop --quiet --oknodo --pidfile "$PIDFILE" || true

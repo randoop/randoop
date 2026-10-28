@@ -605,6 +605,22 @@ val systemTest =
 systemTest { dependsOn(tasks.shadowJar) }
 
 /*
+ * Checks the system tests' coverage goals for every JDK that CI tests.  Unlike the systemTest
+ * task, it does not run Randoop, so it is fast.
+ */
+val coverageGoalsTest =
+  tasks.register<Test>("coverageGoalsTest") {
+    group = "Verification"
+    description = "Check the system tests' coverage goals"
+    testClassesDirs = sourceSets["systemTest"].output.classesDirs
+    classpath = sourceSets["systemTest"].runtimeClasspath
+    filter { includeTestsMatching("randoop.main.CoverageGoalsTest") }
+    testLogging { exceptionFormat = TestExceptionFormat.FULL }
+  }
+
+tasks.check { dependsOn(coverageGoalsTest) }
+
+/*
  * Link the systemTest task into the project check task.
  * Includes system tests into the project build task.
  */

@@ -94,7 +94,7 @@ class CoverageChecker {
    * @param classnames the class name set
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
+  CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
     this.classnames = classnames;
     this.minMethodsToCover = minMethodsToCover;
   }
@@ -229,6 +229,17 @@ class CoverageChecker {
    * @param covGoals method coverage goals
    */
   void methods(List<String> covGoals) {
+    methods(covGoals, javaVersion);
+  }
+
+  /**
+   * Add method names to be excluded, ignored, or included, using the goals that are active for the
+   * given Java version. For documentation of the format, see {@link #methods(List)}.
+   *
+   * @param covGoals method coverage goals
+   * @param jdkVersion the major Java version whose goals to apply
+   */
+  void methods(List<String> covGoals, int jdkVersion) {
     // Each method in `covGoals` is either:
     // * individually specified by "include", "exclude", or "ignore"
     // * not individually specified
@@ -291,9 +302,9 @@ class CoverageChecker {
       Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
-          || (javaVersion == actionJdk)
-          || (orGreater && javaVersion > actionJdk)
-          || (orLess && javaVersion < actionJdk)) {
+          || (jdkVersion == actionJdk)
+          || (orGreater && jdkVersion > actionJdk)
+          || (orLess && jdkVersion < actionJdk)) {
 
         String oldAction = thisCovGoals.get(methodName);
         if (oldAction != null) {
