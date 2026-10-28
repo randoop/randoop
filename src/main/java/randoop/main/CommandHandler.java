@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Options;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
@@ -15,19 +16,39 @@ import randoop.util.Util;
  */
 public abstract class CommandHandler {
 
+  /** The name of the command, which is the first argument given to Randoop. */
   public String fcommand;
+
+  /** A one-line description of the command. */
   public String fpitch;
+
+  /** The usage of the command, shown in its documentation. */
   public String fcommandGrammar;
+
+  /** Constraints on the command-line arguments, shown in the command's documentation. */
   public String fwhere;
+
+  /** A summary of what the command does. */
   public String fsummary;
+
+  /** Notes about the command, shown in its documentation. */
   public List<String> fnotes;
+
+  /** A description of the command's input. */
   public String finput;
+
+  /** A description of the command's output. */
   public String foutput;
+
+  /** An example invocation of the command. */
   public String fexample;
+
+  /** The command-line options that the command accepts. */
   public Options foptions;
 
   /**
-   * No arguments should be null.
+   * Creates a CommandHandler. Every argument other than {@code command} and {@code options} may be
+   * null, which means that the information is undocumented.
    *
    * @param command the name of the command
    * @param pitch the description of the command
@@ -43,18 +64,21 @@ public abstract class CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected CommandHandler(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
 
-    if ((command == null)) {
+    if (command == null) {
       throw new IllegalArgumentException("command cannot be null.");
+    }
+    if (options == null) {
+      throw new IllegalArgumentException("options cannot be null.");
     }
 
     this.fcommand = command;
@@ -141,7 +165,7 @@ public abstract class CommandHandler {
       out.println("}}}");
       out.println();
     }
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("*Notes:*");
       out.println();
       for (String note : fnotes) {
@@ -150,6 +174,11 @@ public abstract class CommandHandler {
     }
   }
 
+  /**
+   * Prints a plain-text usage message for the command, including its documentation and options.
+   *
+   * @param out the output stream for printing the usage message
+   */
   public final void usageMessage(PrintStream out) {
 
     out.println();
@@ -187,7 +216,7 @@ public abstract class CommandHandler {
           Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
-    if (fnotes != null && !fnotes.isEmpty()) {
+    if (!fnotes.isEmpty()) {
       out.println("Notes:");
       out.println();
       for (int i = 0; i < fnotes.size(); i++) {
@@ -198,10 +227,8 @@ public abstract class CommandHandler {
       }
     }
     out.println();
-    if (foptions != null) {
-      out.println("OPTIONS:");
-      out.println();
-      out.println(foptions.usage(false));
-    }
+    out.println("OPTIONS:");
+    out.println();
+    out.println(foptions.usage(false));
   }
 }
