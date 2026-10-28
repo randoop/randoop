@@ -1,7 +1,7 @@
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore17+
 java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude11-
-java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude11-
+java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) ignore17+
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
@@ -10,13 +10,13 @@ java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class)
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object) exclude11-
-java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude11-
+java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection) exclude
 java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude
 java7.util7.Collections.min(java7.util7.Collection) exclude
-java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude11-
+java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
 java7.util7.Collections.shuffle(java7.util7.List) exclude
