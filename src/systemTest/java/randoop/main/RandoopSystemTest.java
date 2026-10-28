@@ -1,6 +1,7 @@
 package randoop.main;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -1310,6 +1311,52 @@ public class RandoopSystemTest {
         new CoverageChecker(options, 6, "input.NoExitClass.hashCode() exclude");
     generateAndTest(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
+  /**
+   * Tests that Randoop does not directly call a constructor that the replacecall agent replaces.
+   */
+  @Test
+  public void runReplacedConstructorTest() throws IOException {
+    String classpath =
+        systemTestEnvironmentManager.classpath
+            + java.io.File.pathSeparator
+            + systemTestEnvironmentManager.replacecallAgentPath;
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(
+            "replaced-constructor-test",
+            classpath,
+            systemTestEnvironmentManager.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironmentManager.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    // The agent's default replacements include the java.util.Random() constructor.
+    options.addTestClass("java.util.Random");
+    // The default omit patterns also list java.util.Random(); disable them so that only the agent's
+    // list of replaced methods causes Randoop to omit it.
+    options.setFlag("omit-methods-no-defaults");
+    options.setFlag("no-error-revealing-tests");
+    options.setOption("generated_limit", "100");
+
+    generateAndCompile(testEnvironment, options, false);
+
+    String packageString = options.getPackageName();
+    String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
+    Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
+    StringBuilder testsBuilder = new StringBuilder();
+    try (DirectoryStream<Path> testFiles =
+        Files.newDirectoryStream(srcDir, options.getRegressionBasename() + "*.java")) {
+      for (Path path : testFiles) {
+        testsBuilder.append(FileUtils.readFileToString(path.toFile(), (String) null));
+      }
+    }
+    String tests = testsBuilder.toString();
+    assertTrue(
+        "Randoop should call java.util.Random(long)", tests.contains("new java.util.Random("));
+    assertFalse(
+        "Randoop should not call the replaced java.util.Random()",
+        tests.contains("new java.util.Random()"));
   }
 
   @Test
