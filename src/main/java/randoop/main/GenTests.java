@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -140,28 +141,36 @@ public class GenTests extends GenInputsAbstract {
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
+  /** The name of this command. */
   private static final String command = "gentests";
 
+  /** A one-line description of this command. */
   private static final String pitch = "Generates unit tests for a set of classes.";
 
+  /** The usage of this command, shown in its documentation. */
   private static final String commandGrammar = "gentests OPTIONS";
 
+  /** Constraints on the command-line arguments, shown in this command's documentation. */
   private static final String where =
       "At least one of `--testjar', `--classlist', `--testclass', or `--methodlist' is"
           + " specified.";
 
+  /** A summary of what this command does. */
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
           + "error-revealing tests and regression tests. ";
 
+  /** A description of this command's input. */
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
           + "via the `--testjar', `--classlist', or `--testclass' options.";
 
+  /** A description of this command's output. */
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
           + "an error-revealing test suite and a regression test suite.";
 
+  /** An example invocation of this command. */
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
@@ -172,10 +181,33 @@ public class GenTests extends GenInputsAbstract {
   /** The prefix for test method names. */
   public static final @Regex(0) @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
-  private BlockStmt afterAllFixtureBody;
-  private BlockStmt afterEachFixtureBody;
-  private BlockStmt beforeAllFixtureBody;
-  private BlockStmt beforeEachFixtureBody;
+  /**
+   * The body of the fixture method to run once after all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt afterAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run after each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_after_each}. Null if that option is not set, if the fixture has not yet
+   * been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt afterEachFixtureBody;
+
+  /**
+   * The body of the fixture method to run once before all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt beforeAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run before each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_before_each}. Null if that option is not set, if the fixture has not
+   * yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt beforeEachFixtureBody;
 
   static {
     notes = new ArrayList<>(4);
@@ -195,6 +227,7 @@ public class GenTests extends GenInputsAbstract {
             + "To produce different tests across runs, use the --randomseed option.");
   }
 
+  /** The command-line options for this command. */
   private static Options options =
       new Options(
           GenTests.class,
@@ -1124,37 +1157,39 @@ public class GenTests extends GenInputsAbstract {
    * @return true if all fixtures were read without error, false, otherwise
    */
   private boolean createFixtureCode() {
-    boolean badFixtureText = false;
+    List<String> errors = new ArrayList<>();
+    afterAllFixtureBody = parseFixtureFile(GenInputsAbstract.junit_after_all, "after-all", errors);
+    afterEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_after_each, "after-each", errors);
+    beforeAllFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_all, "before-all", errors);
+    beforeEachFixtureBody =
+        parseFixtureFile(GenInputsAbstract.junit_before_each, "before-each", errors);
+    return errors.isEmpty();
+  }
 
+  /**
+   * Parses the fixture text in the given file. If the fixture text cannot be parsed, prints a
+   * message and adds it to {@code errors}.
+   *
+   * @param filename the file containing the fixture text, or null
+   * @param fixtureKind the kind of fixture, such as "after-all", for use in error messages
+   * @param errors a list to which this adds a message if the fixture text cannot be parsed
+   * @return the parsed fixture text, or null if {@code filename} is null or the fixture text cannot
+   *     be parsed
+   */
+  private static BlockStmt parseFixtureFile(
+      String filename, String fixtureKind, List<String> errors) {
     try {
-      afterAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+      return JUnitCreator.parseFixture(getFileText(filename));
     } catch (ParseException e) {
-      System.out.println("Error in after-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
+      String error =
+          String.format("Error in %s fixture file %s: %s", fixtureKind, filename, e.getMessage());
+      // Print the message now, because getFileText exits if a later fixture file cannot be read.
+      System.out.println(error);
+      errors.add(error);
+      return null;
     }
-    try {
-      afterEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
-    } catch (ParseException e) {
-      System.out.println("Error in after-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeAllFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
-    } catch (ParseException e) {
-      System.out.println("Error in before-all fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    try {
-      beforeEachFixtureBody =
-          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
-    } catch (ParseException e) {
-      System.out.println("Error in before-each fixture text at token " + e.currentToken);
-      badFixtureText = true;
-    }
-    return !badFixtureText;
   }
 
   /**
@@ -1241,24 +1276,22 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Converts a signature string (see {@link RawSignature#toString()} to a {@code Pattern} that
-   * matches that string (with spaces removed).
+   * Converts a signature string, in the format of {@link RawSignature#toString()} but possibly with
+   * binary names in place of canonical names, to a {@code Pattern} that matches exactly the {@link
+   * RawSignature#toString()} of the same constructor or method. Each "$" in the signature string
+   * matches either "$" or ".", because a "$" in a binary name may separate the name of a nested
+   * class from the name of its enclosing class, or it may be part of a class name.
    *
    * @param signatureString the string representation of a signature
    * @return the pattern to match {@code signatureString}
    */
-  private static Pattern signatureToPattern(String signatureString) {
-    // TODO: Why doesn't this use Regex.quote()?
-    @SuppressWarnings("regex:assignment") // string manipulation (possibly wrong?)
-    @Regex String patternString =
-        signatureString
-            .replaceAll(" ", "")
-            .replaceAll("\\.", "\\\\.")
-            .replaceAll("\\(", "\\\\(")
-            .replaceAll("\\)", "\\\\)")
-            .replaceAll("\\$", "\\\\$")
-            .replaceAll("\\[", "\\\\[")
-            .replaceAll("\\]", "\\\\]");
+  public static Pattern signatureToPattern(String signatureString) {
+    StringJoiner patternJoiner = new StringJoiner("[.$]", "^", "$");
+    for (String part : signatureString.split("\\$", -1)) {
+      patternJoiner.add(Pattern.quote(part));
+    }
+    @SuppressWarnings("regex:assignment") // concatenation of quoted strings and "[.$]"
+    @Regex String patternString = patternJoiner.toString();
     return Pattern.compile(patternString);
   }
 
