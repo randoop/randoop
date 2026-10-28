@@ -1,10 +1,12 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -100,4 +102,70 @@ public class ClassOrInterfaceTypeTest {
   class C extends B implements K {}
 
   class D extends C {}
+
+  /** Declares methods whose parameter types are used in tests. */
+  static class TypeVariableHolder {
+    /**
+     * A method whose parameter types are parameterized types.
+     *
+     * @param strings a list of strings
+     * @param comparables a collection of comparables
+     * @param superStrings a list whose elements are supertypes of String
+     * @param iterables a collection of iterables
+     */
+    static void n(
+        List<String> strings,
+        Collection<Comparable<String>> comparables,
+        List<? super String> superStrings,
+        Collection<? extends Iterable<Comparable<String>>> iterables) {}
+  }
+
+  /**
+   * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
+   *
+   * @param i the index of the parameter
+   * @return the type of the parameter
+   */
+  private static Type nParameterType(int i) throws NoSuchMethodException {
+    return Type.forType(
+        TypeVariableHolder.class.getDeclaredMethod(
+                "n", List.class, Collection.class, List.class, Collection.class)
+            .getGenericParameterTypes()[i]);
+  }
+
+  /**
+   * Returns the type argument of the capture conversion of the given type.
+   *
+   * @param type a parameterized type with one wildcard argument
+   * @return the capture variable that is the argument of the capture conversion of {@code type}
+   */
+  private static CaptureTypeVariable captureVariable(Type type) {
+    InstantiatedType captured = ((InstantiatedType) type).applyCaptureConversion();
+    return (CaptureTypeVariable)
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+  }
+
+  @Test
+  public void subtypeOfCaptureVariableTest() throws NoSuchMethodException {
+    ClassOrInterfaceType stringType = ClassOrInterfaceType.forClass(String.class);
+    NonParameterizedType rawComparable =
+        ClassOrInterfaceType.forClass(Comparable.class).getRawtype();
+
+    // CAP#1 of `? super String` has lower bound String.
+    CaptureTypeVariable superString = captureVariable(nParameterType(2));
+    assertTrue(stringType.isSubtypeOfOrEqualTo(superString));
+    assertFalse(rawComparable.isSubtypeOfOrEqualTo(superString));
+
+    // CAP#1 of `? extends Iterable<Comparable<String>>` has no lower bound.
+    CaptureTypeVariable extendsIterable = captureVariable(nParameterType(3));
+    assertFalse(stringType.isSubtypeOfOrEqualTo(extendsIterable));
+    assertFalse(rawComparable.isSubtypeOfOrEqualTo(extendsIterable));
+
+    // An explicit type variable has no lower bound.
+    TypeVariable listParameter =
+        ((GenericClassType) ClassOrInterfaceType.forClass(List.class)).getTypeParameters().get(0);
+    assertFalse(stringType.isSubtypeOfOrEqualTo(listParameter));
+    assertFalse(rawComparable.isSubtypeOfOrEqualTo(listParameter));
+    assertFalse(nParameterType(1).isSubtypeOfOrEqualTo(listParameter));
+  }
 }
