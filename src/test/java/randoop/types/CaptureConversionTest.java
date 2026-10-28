@@ -1,6 +1,7 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -94,6 +95,24 @@ public class CaptureConversionTest {
           "instantiate exception mismatch: " + e.getMessage(),
           e.getMessage().contains("type argument java.lang.Integer[] does not match"));
     }
+  }
+
+  /** A field whose type has a wildcard only within a type argument. */
+  public List<List<?>> nestedWildcardField;
+
+  /** Tests that capture conversion does not convert a wildcard nested within a type argument. */
+  @Test
+  public void nestedWildcardTest() throws NoSuchFieldException {
+    InstantiatedType nestedWildcardType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("nestedWildcardField").getGenericType());
+    assertEquals(nestedWildcardType, nestedWildcardType.applyCaptureConversion());
+
+    // List<List<String>> is not a subtype of List<List<?>>.
+    InstantiatedType stringListListType =
+        JDKTypes.LIST_TYPE.instantiate(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE));
+    assertFalse(stringListListType.isSubtypeOfOrEqualTo(nestedWildcardType));
   }
 
   /**
