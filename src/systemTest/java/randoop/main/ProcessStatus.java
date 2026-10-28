@@ -3,11 +3,15 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -45,6 +49,17 @@ class ProcessStatus {
 
   @SuppressWarnings("regex")
   static final @Regex String lineSep = System.lineSeparator();
+
+  /** The bin directory of the JDK that runs the system tests. */
+  private static final String javaBinDir =
+      Paths.get(System.getProperty("java.home"), "bin").toString();
+
+  /**
+   * The java executable of the JDK that runs the system tests. Commands use it, rather than the
+   * java on the PATH, so that Gradle's {@code jdkTestVersion} property determines the JDK on which
+   * Randoop and its generated tests run.
+   */
+  static final String java = Paths.get(javaBinDir, "java").toString();
 
   /** Outputs a verbose representation of this. */
   public String dump() {
@@ -98,8 +113,13 @@ class ProcessStatus {
       System.out.printf("Command line has length %d:%n%s%n", cmdLine.toString().length(), cmdLine);
     }
 
+    // Put the JDK first on the PATH, so that a "java" command run by Randoop uses the same JDK.
+    Map<String, String> environment = new HashMap<>(System.getenv());
+    String path = System.getenv("PATH");
+    environment.put("PATH", path == null ? javaBinDir : javaBinDir + File.pathSeparator + path);
+
     try {
-      executor.execute(cmdLine, resultHandler);
+      executor.execute(cmdLine, environment, resultHandler);
     } catch (IOException e) {
       fail("Exception starting process: " + e);
     }

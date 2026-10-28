@@ -79,6 +79,7 @@ The Randoop homepage is
           <li><a href="#nondeterminism-source">Finding the source of nondeterminism</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
+          <li><a href="#nondeterminism-exception-messages">Exception messages</a></li>
           <li><a href="#nondeterminism-bug-in-randoop">Debugging nondeterminism in Randoop</a></li>
         </ul></li>
     </ul></li>
@@ -2472,6 +2473,28 @@ such as two different versions of JDK 8.  These differences can lead to
 different Randoop outputs, or to tests that passed on one JDK
 implementation but fail on another.
 </p>
+
+
+<h3 id="nondeterminism-exception-messages">Exception messages</h3>
+
+<p>
+When a test is expected to throw an exception, Randoop includes the
+exception's message in the test's failure message.  By default, the
+HotSpot JVM's just-in-time compiler may replace an exception that the JVM
+throws frequently, such as a <code>NullPointerException</code> or
+a <code>ClassCastException</code>, by a preallocated exception that has no
+message and no stack trace.  Whether that happens depends on timing.  As a
+result, the failure message in a test may be <code>null</code> in one run of
+Randoop and a detailed message in another run.
+</p>
+
+<p>
+To make the messages the same in every run, run Randoop with the JVM
+argument <code>-XX:-OmitStackTraceInFastThrow</code>, as in
+</p>
+<pre>
+java -XX:-OmitStackTraceInFastThrow -classpath ... randoop.main.Main gentests ...
+</pre>
 
 
 <h3 id="nondeterminism-bug-in-randoop">Debugging nondeterminism in Randoop</h3>
