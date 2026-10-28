@@ -35,11 +35,12 @@ import randoop.util.Log;
  *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
- * Queries such as {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}
- * return both literals and non-literals. However, literals are not stored in the general pool. The
- * reason is that which literals are candidates depends on the method being called. (More precisely,
- * on the class and package in which the method is defined.)
+ * <p>This class also maintains per-scope literal information via {@link
+ * #getScopeToLiteralStatistics}. Queries such as {@link
+ * #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)} return both literals and
+ * non-literals. However, literals are not stored in the general pool. The reason is that which
+ * literals are candidates depends on the method being called. (More precisely, on the class and
+ * package in which the method is defined.)
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed, non-literal sequences,
  * restoring the pool to the original seeds.
@@ -55,7 +56,7 @@ public class ComponentManager {
   private final SequenceCollection gralComponents;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
-  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
+  private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
   // The next two variables are only for the use of method clearGeneratedSequences().
 
