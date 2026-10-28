@@ -101,4 +101,15 @@ class LazyReferenceBound extends ReferenceBound {
     assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
     return false;
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * contains type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
+  }
 }

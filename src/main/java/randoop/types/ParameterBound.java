@@ -225,18 +225,39 @@ public abstract class ParameterBound {
   public abstract boolean isLowerBound(Type argType, Substitution subst);
 
   /**
-   * Returns true if this is a lower bound on the type of a given bound with respect to a type
-   * substitution. The body is approximately:
-   *
-   * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
-   * </pre>
+   * Returns true if this bound, after applying the substitution to it, is a lower bound on the type
+   * of the given bound. The substitution is not applied to the given bound.
    *
    * @param bound the other bound
-   * @param substitution the type substitution
+   * @param substitution the type substitution to apply to this bound
    * @return true iff this bound is a lower bound on the type of the given bound
    */
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    return false;
+    return bound.hasLowerBound(this, substitution);
+  }
+
+  /**
+   * Returns true if the given bound, after applying the substitution to it, is a lower bound on the
+   * type of this bound. The substitution is not applied to this bound. {@code
+   * b.hasLowerBound(lowerBound, substitution)} is equivalent to {@code lowerBound.isLowerBound(b,
+   * substitution)}.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound on the type of this bound
+   */
+  abstract boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution);
+
+  /**
+   * Returns true if this bound, after applying the substitution to it, is the null type.
+   *
+   * @param substitution the type substitution to apply to this bound
+   * @return true if this bound is the null type
+   */
+  final boolean isNullType(Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return b instanceof ReferenceBound
+        && ((ReferenceBound) b).getBoundType().equals(JavaTypes.NULL_TYPE);
   }
 
   /**

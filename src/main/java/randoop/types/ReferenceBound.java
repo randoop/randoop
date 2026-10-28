@@ -89,4 +89,9 @@ public abstract class ReferenceBound extends ParameterBound {
   public boolean isVariable() {
     return boundType.isVariable();
   }
+
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isLowerBound(boundType, substitution);
+  }
 }
