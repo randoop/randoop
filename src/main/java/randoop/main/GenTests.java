@@ -70,7 +70,6 @@ import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.CallableOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
-import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.TypedOperation.RankedTypeOperation;
@@ -847,32 +846,7 @@ public class GenTests extends GenInputsAbstract {
    * @return a map from a Type to a set of side-effect-free methods defined in it
    */
   public static MultiMap<Type, TypedClassOperation> readSideEffectFreeMethods() {
-    MultiMap<Type, TypedClassOperation> sideEffectFreeJDKMethods;
-    String sefDefaultsFileName = "/JDK-sef-methods.txt";
-    try (InputStream inputStream = GenTests.class.getResourceAsStream(sefDefaultsFileName)) {
-      sideEffectFreeJDKMethods =
-          OperationModel.readOperations(inputStream, sefDefaultsFileName, true);
-    } catch (IOException e) {
-      throw new RandoopBug(e);
-    }
-
-    MultiMap<Type, TypedClassOperation> sideEffectFreeUserMethods;
-    try {
-      sideEffectFreeUserMethods =
-          OperationModel.readOperations(GenInputsAbstract.side_effect_free_methods);
-    } catch (OperationParseException e) {
-      throw new RandoopUsageError(
-          String.format(
-              "Incorrectly formatted method in file %s: %s%n",
-              GenInputsAbstract.side_effect_free_methods, e));
-    }
-
-    MultiMap<Type, TypedClassOperation> result =
-        new MultiMap<>(
-            MapsP.mapCapacity(sideEffectFreeJDKMethods.size() + sideEffectFreeUserMethods.size()));
-    result.addAll(sideEffectFreeJDKMethods);
-    result.addAll(sideEffectFreeUserMethods);
-    return result;
+    return new MultiMap<>();
   }
 
   /** Is output to the user before each possibly flaky method. */

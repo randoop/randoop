@@ -28,6 +28,8 @@ commons-lang3 = "org.apache.commons:commons-lang3:3.21.0"
 
 commons-io = "commons-io:commons-io:2.22.0"
 
+asm = "org.ow2.asm:asm:7.3.1"
+
 org-jacoco-core = { group = "org.jacoco", name = "org.jacoco.core", version.ref = "jacoco" }
 
 org-jacoco-agent = { group = "org.jacoco", name = "org.jacoco.agent", version.ref = "jacoco" }
