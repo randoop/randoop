@@ -233,7 +233,10 @@ dependencies {
   implementation(libs.gson)
   implementation(libs.commons.exec)
   implementation(libs.commons.lang3)
+  implementation(libs.asm)
   implementation(libs.commons.io)
+  /* This works with Java 8, but not with Java 11. */
+  implementation(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
   compileOnly(libs.require.javadoc)
 
@@ -700,7 +703,12 @@ tasks.shadowJar {
   relocate("org.antlr", "randoop.org.antlr")
   relocate("org.apache", "randoop.org.apache")
   relocate("org.ccil.cowan.tagsoup", "randoop.org.ccil.cowan.tagsoup")
-  relocate("org.checkerframework", "randoop.org.checkerframework")
+  relocate("org.checkerframework", "randoop.org.checkerframework") {
+    // Don't relocate Checker Framework annotation names
+    exclude("org.checkerframework.dataflow.qual.SideEffectFree")
+    exclude("org.checkerframework.dataflow.qual.Pure")
+    exclude("org.checkerframework.checker.determinism.qual.NonDet")
+  }
   relocate("org.ini4j", "randoop.org.ini4j")
   relocate("org.plumelib", "randoop.org.plumelib")
   relocate("org.slf4j", "randoop.org.slf4j")
