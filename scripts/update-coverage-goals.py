@@ -16,6 +16,9 @@ run on a JDK version.  To create a coverage file, run the system test with the
   ./gradlew systemTest --rerun --tests randoop.main.RandoopSystemTest.runJDKTest \\
     -PjdkTestVersion=17 -Drandoop.method.coverage.file=$PWD/build/jdk17.txt
 
+The "java" command on PATH must be the same JDK version as -PjdkTestVersion,
+because Randoop and the tests that it generates run under that command.
+
 --jdks VERSIONS is a comma-separated list of the JDK versions on which the
 system tests run; default: 8,11,17,21,25,26.  For each method whose coverage
 differs from its goals on some JDK version, this script rewrites the method's
@@ -42,7 +45,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ACTIONS = ("include", "exclude", "ignore")
-GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(\d*)([+-]?)")
+# The goal syntax must be consistent with CoverageChecker.methods().
+GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
 # The scopes of a goal, from least to most specific.  A more specific goal
 # takes precedence over a less specific one.
@@ -75,7 +79,7 @@ class Goal:
         if m is None:
             message = f"bad coverage goal: {text}"
             raise ValueError(message)
-        return Goal(m.group(1), int(m.group(2) or 0), m.group(3))
+        return Goal(m.group(1), int(m.group(2) or 0), m.group(3) or "")
 
     def __str__(self) -> str:
         """Format this goal.

@@ -382,11 +382,12 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname)) {
+        boolean isIgnored = isIgnoredMethod(methodname);
+        if (!isIgnored) {
           methodCoverage.add(
               (coveredMethods.contains(methodname) ? "covered " : "uncovered ") + methodname);
         }
-        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
+        if (!isIgnored && !ignoredMethodsGoal.contains(methodname)) {
           if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);

@@ -80,7 +80,7 @@ class RandoopOptions {
       options.setOption("operation-history-log", operationLog);
     }
 
-    // Use value from Java property if command-line argument was not set
+    // Use value from Java property, if it is set.
     String randomseed = System.getProperty("randoop.randomseed");
     if (randomseed != null && !randomseed.isEmpty()) {
       options.setOption("randomseed", randomseed);
