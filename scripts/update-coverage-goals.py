@@ -147,7 +147,8 @@ def minimal_goals(target: dict[int, str]) -> list[Goal]:
     jdks = sorted(target)
     best: tuple | None = None
     for overall in ACTIONS:
-        ranges = [None] + [(jdk, action) for jdk in jdks for action in ACTIONS if action != overall]
+        others = [action for action in ACTIONS if action != overall]
+        ranges = [None, *itertools.product(jdks, others)]
         for lower, upper in itertools.product(ranges, ranges):
             if lower is not None and upper is not None and lower[0] >= upper[0]:
                 continue
@@ -182,7 +183,7 @@ def parse_goal_line(text: str) -> GoalLine:
     """Parse a line of a coverage goals file.
 
     Args:
-        text: a line of a coverage goals file, which is not blank
+        text: a line of a coverage goals file, which is not blank or comment-only
 
     Returns:
         the parsed line
@@ -204,7 +205,7 @@ def read_coverage(path: Path) -> dict[str, bool]:
     result = {}
     for line in path.read_text().splitlines():
         status, _, method = line.partition(" ")
-        if status not in ("covered", "uncovered"):
+        if status not in ("covered", "uncovered") or not method:
             sys.exit(f"{path}: bad line: {line}")
         result[method] = status == "covered"
     return result
@@ -233,6 +234,8 @@ def main() -> None:
     lines = [line for line in args.goals_file.read_text().splitlines() if line.strip()]
     lines_for_method: dict[str, list[GoalLine]] = {}
     for line in lines:
+        if not line.partition("#")[0].strip():
+            continue
         goal_line = parse_goal_line(line)
         lines_for_method.setdefault(goal_line.method, []).append(goal_line)
 
@@ -248,16 +251,17 @@ def main() -> None:
                 target[jdk] = "include" if coverage[jdk][method] else "exclude"
         if all(action_for(old_goals, jdk) == target[jdk] for jdk in jdks):
             continue
-        new = [f"{method} {goal}" for goal in minimal_goals(target)]
+        new_goals = minimal_goals(target)
+        new = [f"{method} {goal}" for goal in new_goals]
         if any(line.has_comment for line in old):
-            print(f"Not changing goals that have a comment.  Suggested goals for {method}:")
+            print(f"Not changing commented goals for {method}.  Suggested goals:")
             print("\n".join(f"  {line}" for line in new) if new else "  (none)")
             continue
         new_lines.difference_update(line.text for line in old)
         new_lines.update(new)
         print(f"{method}:")
         print(f"  old: {', '.join(str(goal) for goal in old_goals) or '(none)'}")
-        print(f"  new: {', '.join(line.rpartition(' ')[2] for line in new) or '(none)'}")
+        print(f"  new: {', '.join(str(goal) for goal in new_goals) or '(none)'}")
 
     args.goals_file.write_text("".join(line + "\n" for line in sorted(new_lines)))
 

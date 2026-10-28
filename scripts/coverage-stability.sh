@@ -9,7 +9,8 @@
 # Usage:
 #   scripts/coverage-stability.sh [--test TESTMETHOD] [--jdk VERSION] [SEED ...]
 #
-#   --test TESTMETHOD  a test method in RandoopSystemTest; default: runJDKTest
+#   --test TESTMETHOD  a test method in RandoopSystemTest that checks coverage
+#                      (that is, calls checkCoverage); default: runJDKTest
 #   --jdk VERSION      the JDK version for running tests; default: Gradle's JDK
 #   SEED ...           the random seeds to use; default: 1 2 3 4 5
 #
@@ -36,6 +37,9 @@ while [ $# -gt 0 ]; do
     --jdk)
       GRADLE_ARGS+=("-PjdkTestVersion=$2")
       shift 2
+      ;;
+    -[0-9]*)
+      break
       ;;
     -*)
       echo "$0: unrecognized option: $1" >&2
