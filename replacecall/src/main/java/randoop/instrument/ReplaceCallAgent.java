@@ -228,7 +228,7 @@ public final class ReplaceCallAgent {
 
       // Communicate the list of replaced methods to Randoop to omit direct calls
       List<String> signatureList =
-          CollectionsPlume.mapList(MethodSignature::toString, replacementMap.keySet());
+          CollectionsPlume.mapList(MethodSignature::toRawSignatureString, replacementMap.keySet());
       MethodReplacements.setReplacedMethods(signatureList);
 
       // Create the transformer and add to the class loader instrumentation
