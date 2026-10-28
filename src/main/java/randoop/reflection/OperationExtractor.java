@@ -439,20 +439,20 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Ensures that field {@code classType} of this object is a subtype of {@code
+   * Checks that field {@code classType} of this object is a subtype of (or equal to) {@code
    * operation.getDeclaringType()}; throws an exception if not.
    *
    * @param operation the operation for which types are to be checked
-   * @throws RandoopBug if field {@code classType} of this is not a subtype of {@code
-   *     operation.getDeclaringType()}
+   * @throws RandoopBug if field {@code classType} of this is neither a subtype of nor equal to
+   *     {@code operation.getDeclaringType()}
    */
-  // TODO: poor name
-  private void checkSubTypes(TypedClassOperation operation) {
+  private void assertSubtypeOfDeclaringType(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOfOrEqualTo(declaringType)) {
       throw new RandoopBug(
           String.format(
-              "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",
+              "Incompatible receiver type for operation %s:%n  %s%n"
+                  + "is neither a subtype of nor equal to%n  %s",
               operation,
               StringsPlume.toStringAndClass(classType),
               StringsPlume.toStringAndClass(declaringType)));
@@ -485,7 +485,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
       Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
-    checkSubTypes(operation);
+    assertSubtypeOfDeclaringType(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
@@ -530,7 +530,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (debug) {
       Log.logPrintln("OperationExtractor.visit: operation=" + operation);
     }
-    checkSubTypes(operation);
+    assertSubtypeOfDeclaringType(operation);
 
     if (operation.isStatic()) {
       // If this classType inherits this static method, but declaring class is not public, then
@@ -606,7 +606,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
     TypedClassOperation getter =
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
-    checkSubTypes(getter);
+    assertSubtypeOfDeclaringType(getter);
     if (getter != null) {
       operations.add(getter);
     }

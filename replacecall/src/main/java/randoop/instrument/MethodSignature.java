@@ -120,13 +120,12 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     int parenPos = signature.indexOf('(');
     if (parenPos < 1) {
       throw new IllegalArgumentException(
-          "Method signature expected, did not find beginning parenthesis: " + signature);
+          "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
     int lastParenPos = signature.lastIndexOf(')');
     if (lastParenPos < parenPos + 1) {
-      throw new IllegalArgumentException(
-          "Method signature expected, mismatched parenthesis: " + signature);
+      throw new IllegalArgumentException("Method signature expected, mismatched parenthesis");
     }
     String paramString = signature.substring(parenPos + 1, lastParenPos);
     @SuppressWarnings("signature:assignment") // dynamically checked just below
@@ -134,8 +133,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
     for (String parameter : parameters) {
       if (!Signatures.isFqBinaryName(parameter)) {
-        throw new IllegalArgumentException(
-            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
+        throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
     }
     return of(fullMethodName, parameters);
@@ -191,6 +189,34 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   @Override
   public String toString() {
     return String.format("%s.%s(%s)", classname, name, StringsPlume.join(", ", paramTypes));
+  }
+
+  /**
+   * Returns the signature string for this {@link MethodSignature} in the format of Randoop's {@code
+   * randoop.reflection.RawSignature#toString()}, except that every class name is a binary name.
+   *
+   * <p>The format differs from {@link #toString()}: a constructor is written {@code
+   * pkg.C(argument-list)} rather than {@code pkg.C.<init>(argument-list)}, and parameter types are
+   * separated by "," without a space.
+   *
+   * <p>The format differs from {@code RawSignature#toString()} in how a parameter type is written.
+   * {@code RawSignature} writes the declaring class as a binary name (such as {@code
+   * java.util.AbstractMap$SimpleEntry}), but each parameter type as a canonical name (such as
+   * {@code java.util.Map.Entry}). This method writes both as binary names (such as {@code
+   * java.util.Map$Entry}), because a canonical name cannot be computed from a binary name without
+   * loading the class: a "$" in a binary name may separate the name of a nested class from the name
+   * of its enclosing class, or it may be part of a class name.
+   *
+   * @return the signature string for this {@link MethodSignature} in Randoop's format, with binary
+   *     names
+   */
+  public String toRawSignatureString() {
+    String[] typeNames = new String[paramTypes.length];
+    for (int i = 0; i < paramTypes.length; i++) {
+      typeNames[i] = Signatures.fieldDescriptorToBinaryName(paramTypes[i].getSignature());
+    }
+    String executableName = name.equals("<init>") ? classname : classname + "." + name;
+    return executableName + "(" + String.join(",", typeNames) + ")";
   }
 
   /**
@@ -251,8 +277,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       JavaClass currentClass;
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
+      } catch (ReplacementFileReader.ReplacementException e) {
+        IllegalClassFormatException icfe =
+            new IllegalClassFormatException("Unable to read " + currentClassname);
+        icfe.initCause(e);
+        throw icfe;
       }
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
@@ -271,7 +300,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       // not have been loaded into BCEL yet.
       if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
-        throw new NoSuchMethodException("Method " + this.name + " not found");
+        throw new NoSuchMethodException("Method " + this + " not found");
       }
       currentClassname = currentClass.getSuperclassName();
     }
