@@ -53,6 +53,12 @@ done
 if [ $# -eq 0 ]; then
   set -- 1 2 3 4 5
 fi
+for seed in "$@"; do
+  if [[ ! "${seed}" =~ ^-?[0-9]+$ ]]; then
+    echo "$0: bad seed, not an integer: ${seed}" >&2
+    exit 2
+  fi
+done
 
 OUT_DIR="${ROOT_DIR}/build/coverage-stability/${TEST_METHOD}"
 mkdir -p "${OUT_DIR}"

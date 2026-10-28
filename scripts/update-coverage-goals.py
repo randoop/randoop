@@ -26,7 +26,8 @@ goals, using as few lines as possible, so that on each of these versions:
  * on a version that has no coverage file, the goal is unchanged.
 On other JDK versions, the goals may change.  A method's goals are not
 rewritten if any of its lines has a comment; this script prints suggested
-goals for such a method instead.
+goals for such a method instead.  The output file is sorted, so comment-only
+lines move to the beginning of the file.
 
 For a test whose coverage goals are in RandoopSystemTest.java rather than in a
 file, copy the goals to a file, run this script on it, and copy them back.
@@ -205,7 +206,7 @@ def read_coverage(path: Path) -> dict[str, bool]:
     result = {}
     for line in path.read_text().splitlines():
         status, _, method = line.partition(" ")
-        if status not in ("covered", "uncovered") or not method:
+        if status not in ("covered", "uncovered") or not method.strip():
             sys.exit(f"{path}: bad line: {line}")
         result[method] = status == "covered"
     return result
