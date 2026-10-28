@@ -314,7 +314,8 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Nullable Object[] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -378,12 +379,30 @@ public class ExecutableSequence {
     }
   }
 
-  public Object[] getRuntimeInputs(List<Variable> inputs) {
+  /**
+   * Returns the run-time values of the given variables, from the execution of this sequence. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
+  public @Nullable Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
-    Object[] ros = getRuntimeValuesForVars(inputs, outcome);
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param outcome the outcomes of executing the statements of this sequence
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
+  private @Nullable Object[] getRuntimeInputs(
+      List<ExecutionOutcome> outcome, List<Variable> inputs) {
+    @Nullable Object[] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
@@ -401,13 +420,22 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+  public static @Nullable Object[] getRuntimeValuesForVars(
+      List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
-  private static Object[] getRuntimeValuesForVars(
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally.
+   *
+   * @param vars the variables whose values to return
+   * @param execution the outcomes of executing the statements of a sequence
+   * @return the run-time values of the given variables, in the same order
+   */
+  private static @Nullable Object[] getRuntimeValuesForVars(
       List<Variable> vars, List<ExecutionOutcome> execution) {
-    Object[] runtimeObjects = new Object[vars.size()];
+    @Nullable Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
@@ -543,10 +571,19 @@ public class ExecutableSequence {
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
-  // Execute the index-th statement in the sequence.
-  // Precondition: this method has been invoked on 0..index-1.
+  /**
+   * Executes the index-th statement in the given sequence, and stores its outcome in {@code
+   * outcome}.
+   *
+   * <p>Precondition: this method has been invoked on 0..index-1.
+   *
+   * @param s the sequence
+   * @param outcome the outcomes of executing the statements of {@code s}; side-effected
+   * @param index the index of the statement to execute
+   * @param inputVariables the run-time values of the statement's inputs
+   */
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      Sequence s, List<ExecutionOutcome> outcome, int index, @Nullable Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -719,6 +756,12 @@ public class ExecutableSequence {
     return getResult(i) instanceof NormalExecution;
   }
 
+  /**
+   * Returns the index of the first statement whose execution did not terminate normally.
+   *
+   * @return the index of the first statement that did not execute normally, or -1 if every
+   *     statement executed normally
+   */
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
       if (!isNormalExecution(i)) {
@@ -728,6 +771,11 @@ public class ExecutableSequence {
     return -1;
   }
 
+  /**
+   * Returns true if every statement of this sequence terminated normally.
+   *
+   * @return true if every statement of this sequence terminated normally
+   */
   public boolean isNormalExecution() {
     return getNonNormalExecutionIndex() == -1;
   }
@@ -799,7 +847,7 @@ public class ExecutableSequence {
     if (checks == null) {
       throw new Error("hashCode() called prematurely");
     }
-    return Objects.hash(sequence.hashCode(), checks.hashCode());
+    return Objects.hash(sequence, checks);
   }
 
   @Override
