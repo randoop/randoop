@@ -81,10 +81,20 @@ public final class ReflectionExecutor {
     excep_exec_count = 0;
   }
 
+  /**
+   * Returns the number of normal executions.
+   *
+   * @return the number of normal executions
+   */
   public static int normalExecs() {
     return normal_exec_count;
   }
 
+  /**
+   * Returns the number of exceptional executions.
+   *
+   * @return the number of exceptional executions
+   */
   public static int excepExecs() {
     return excep_exec_count;
   }
