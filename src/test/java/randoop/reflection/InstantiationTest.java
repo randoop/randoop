@@ -178,7 +178,7 @@ public class InstantiationTest {
     int count = 0;
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
       count++;
     }
     assertEquals(24, count);
@@ -205,7 +205,8 @@ public class InstantiationTest {
     assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse(
+          "should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
     }
   }
 

@@ -169,7 +169,10 @@ public class CaptureConversionTest {
     public class Inner<U> {}
   }
 
-  /** A field whose type is the member class of a type with a wildcard type argument. */
+  /**
+   * A field whose type is a member class of a generic class. {@link #wildcardInEnclosingTypeTest}
+   * replaces the enclosing type by one that has a wildcard type argument.
+   */
   public Outer<String>.Inner<String> memberField;
 
   /** A field whose type has a wildcard type argument. */

@@ -115,20 +115,6 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Returns true if any of the types in this type tuple contains a wildcard.
-   *
-   * @return true if there is at least one wildcard occurrence
-   */
-  public boolean hasWildcard() {
-    for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Returns true if some type in this type tuple has a wildcard that capture conversion converts.
    *
    * @return true if some type in this type tuple has a wildcard type argument
