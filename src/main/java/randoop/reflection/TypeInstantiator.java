@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
@@ -461,9 +462,51 @@ public class TypeInstantiator {
             typeArgument);
         return null;
       }
-      selectedTypes.add(Randomness.randomMember(candidates));
+      if (typeArgument.isCaptureVariable()) {
+        // Code that uses a capture variable, such as the one for `List<?>`, cannot depend on its
+        // type, so favoring Comparable types would not help.
+        selectedTypes.add(Randomness.randomMember(candidates));
+      } else {
+        selectedTypes.add(selectType(candidates));
+      }
     }
     return substitution.extend(parameters, selectedTypes);
+  }
+
+  /**
+   * The probability that {@link #selectType} chooses among the candidates that implement {@code
+   * Comparable}, rather than among all the candidates.
+   */
+  private static final double COMPARABLE_PROBABILITY = 0.5;
+
+  /**
+   * Randomly selects a type from the given candidates, to instantiate a type parameter. Types that
+   * implement {@code Comparable} are favored, because many generic classes and methods, such as
+   * {@code TreeMap} and {@code Collections.sort}, can do useful work only on values of such types.
+   *
+   * @param candidates the types to choose from; non-empty
+   * @return a type from {@code candidates}
+   */
+  private static ReferenceType selectType(List<ReferenceType> candidates) {
+    if (Randomness.weightedCoinFlip(COMPARABLE_PROBABILITY)) {
+      List<ReferenceType> comparableCandidates =
+          CollectionsPlume.filter(candidates, TypeInstantiator::isComparable);
+      if (!comparableCandidates.isEmpty()) {
+        return Randomness.randomMember(comparableCandidates);
+      }
+    }
+    return Randomness.randomMember(candidates);
+  }
+
+  /**
+   * Returns true if the given type implements {@code Comparable}.
+   *
+   * @param type a type
+   * @return true if {@code type} implements {@code Comparable}
+   */
+  private static boolean isComparable(ReferenceType type) {
+    Class<?> c = type.getRuntimeClass();
+    return c != null && Comparable.class.isAssignableFrom(c);
   }
 
   /**
