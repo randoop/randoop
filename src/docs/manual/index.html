@@ -52,7 +52,7 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
-          <li><a href="#replacecall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#replacecall-untransformed-classes">Classes that are not transformed</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
               <li><a href="#replacecall-replacement-implementation">Tips about implementing replacement classes</a></li>
@@ -1026,7 +1026,12 @@ accessible field is used unless it is omitted by this or the <code>--omit-field<
 <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
 used to determine which members will be used in tests. [default: false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
-             Ignore class names specified by user that cannot be found [default: false]
+             If true, Randoop prints a warning and continues when a class named via <code>--testclass</code>,
+<code>--classlist</code>, or <code>--require-covered-classes</code> cannot be found or cannot be loaded
+(for example, because its static initializer throws an exception). If false, Randoop exits with
+an error in that case.
+
+<p>This option does not affect classes found via <code>--testjar</code> or <code>--test-package</code>. [default: false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
 different executions.
@@ -1559,12 +1564,13 @@ To use it:
 </ul>
 
 <p>
-Randoop uses a <a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">
+Randoop uses a <a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/resources/default-replacements.txt">
 default set of replacements</a>.
 You can <a href="#replacecall-replacement-definition">define additional replacements</a>.
+</p>
 
 
-<h3 id="replacecall-load-exclusions">Replacement exclusions</h3>
+<h3 id="replacecall-untransformed-classes">Classes that are not transformed</h3>
 
 <p>
 There are some classes that the replacecall agent should not transform.
@@ -1580,10 +1586,15 @@ The replacecall agent never modifies
   <li>Randoop, including the agent</li>
   <li>JUnit and Hamcrest</li>
   <li>Gradle</li>
-  <li>Classes in <code>rt.jar</code>, except in packages <code>java.awt</code> and <code>javax.swing</code></li>
+  <li>JDK classes loaded by the bootstrap class loader or by the platform
+  (in Java 8, extension) class loader, except in packages
+  <code>java.awt</code> and <code>javax.swing</code></li>
 </ul>
 <p>
-(The exact rules appear in the Randoop source code in class <code>CoveredClassTransformer</code>.)
+(The exact rules appear in the Randoop source code in method
+<a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/java/randoop/instrument/CallReplacementTransformer.java"><code>CallReplacementTransformer.isExcludedClass</code></a>
+and file
+<a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/resources/default-load-exclusions.txt"><code>default-load-exclusions.txt</code></a>.)
 </p>
 
 <p>
@@ -1610,7 +1621,7 @@ The package name is used to match the prefix of the fully-qualified classname.
 
 <p>
 For diagnostic output (such as to see what classes are being transformed),
-run the agent with the <code>--debug</code> flag
+run the agent with the <code>--debug</code> flag.
 </p>
 <pre>
 -javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--debug
@@ -1621,8 +1632,8 @@ run the agent with the <code>--debug</code> flag
 <h3 id="replacecall-replacement-definition">Defining replacements</h3>
 
 <p>
-To define your own method replacements, you will write mock implementations (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java">example</a>)
-and you will specify the replacements in a replacement file (<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/resources/default-replacements.txt">example</a>).
+To define your own method replacements, you will write mock implementations (<a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/java/randoop/mock/java/awt/Component.java">example</a>)
+and you will specify the replacements in a replacement file (<a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/resources/default-replacements.txt">example</a>).
 </p>
 
 <p>
@@ -1662,12 +1673,12 @@ class of the original method.
 For instance, a call to <code>java.awt.Component.show()</code> would be replaced
 by a call to a method with the signature <code>show(java.awt.Component)</code>.
 An example mock class is
-<a href="https://github.com/randoop/randoop/blob/master/agent/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.</li>
+<a href="https://github.com/randoop/randoop/blob/master/replacecall/src/main/java/randoop/mock/java/awt/Component.java"><code>randoop.mock.java.awt.Component</code></a>.</li>
   <li>If the original method is a constructor (an
 <code>&lt;init&gt;</code> method),
 then the replacement method should have the same
 parameter types, and its return type is the class that contains the
-constructor.
+constructor.</li>
 </ul>
 
 <p>
@@ -1685,7 +1696,7 @@ structure of the original classes.
 Randoop's default replacements file uses <code>randoop.mock</code> as the prefix, so the
 binary name of the <code>JOptionPane</code> mock class
 is <code>randoop.mock.javax.swing.JOptionPane</code>.  (You may need
-to <a href="#replacecall-load-exclusions">exclude</a> this package if any
+to <a href="#replacecall-untransformed-classes">exclude this package from transformation</a> if any
 of the replacement methods use otherwise replaced methods.)
 </p>
 
