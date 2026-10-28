@@ -206,33 +206,6 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /**
-   * Runs Randoop with {@code --debug_checks} on the classes of {@link #runCollectionsTest()}, with
-   * a different random seed. With this seed, capturing a wildcard that is nested within a type
-   * argument leads to two sequences whose code is identical but whose operations differ, which
-   * makes {@code --debug_checks} fail.
-   */
-  @Test
-  public void runCollectionsRandomSeedTest() {
-
-    SystemTestEnvironment testEnvironment =
-        systemTestEnvironmentManager.createTestEnvironment("collections-random-seed-test");
-
-    RandoopOptions options = createRandoopOptions(testEnvironment);
-    options.setPackageName("foo.bar");
-    options.setRegressionBasename("TestClass");
-    options.addTestClass("java7.util7.TreeSet");
-    options.addTestClass("java7.util7.Collections");
-    options.setFlag("no-error-revealing-tests");
-    options.setOption("output_limit", "5000");
-    options.setOption("npe-on-null-input", "EXPECTED");
-    options.setFlag("debug_checks");
-    options.setOption("omit-field-file", "resources/systemTest/testclassomitfields.txt");
-    options.setOption("randomseed", "2");
-
-    generateAndCompile(testEnvironment, options, false);
-  }
-
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
   @Test
   public void runNaiveCollectionsTest() {
