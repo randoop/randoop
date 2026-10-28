@@ -42,7 +42,8 @@ import randoop.util.Util;
 public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
-   * Creates a GenInputsAbstract. No arguments should be null.
+   * Creates a GenInputsAbstract. Every argument other than {@code command} and {@code options} may
+   * be null, which means that the information is undocumented.
    *
    * @param command the name of the command
    * @param pitch the description of the command
@@ -58,14 +59,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   protected GenInputsAbstract(
       String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
+      @Nullable String pitch,
+      @Nullable String commandGrammar,
+      @Nullable String where,
+      @Nullable String summary,
+      @Nullable List<String> notes,
+      @Nullable String input,
+      @Nullable String output,
+      @Nullable String example,
       Options options) {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
@@ -247,7 +248,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Only use public members in tests")
   public static boolean only_test_public_members = false;
 
-  @Option("Ignore class names specified by user that cannot be found")
+  /**
+   * If true, Randoop prints a warning and continues when a class named via {@code --testclass},
+   * {@code --classlist}, or {@code --require-covered-classes} cannot be found or cannot be loaded
+   * (for example, because its static initializer throws an exception). If false, Randoop exits with
+   * an error in that case.
+   *
+   * <p>This option does not affect classes found via {@code --testjar} or {@code --test-package}.
+   */
+  @Option("Warn about, rather than fail on, user-specified classes that cannot be found or loaded")
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
@@ -975,6 +984,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // CircleCI runs out of memory during test generation if 2500m.
   public static String jvm_max_memory = "3000m";
 
+  /**
+   * If true, Randoop captures everything written to standard output and standard error while
+   * executing each statement, and stores it in the statement's {@link randoop.ExecutionOutcome}.
+   */
   @Unpublicized
   @Option("Store all output to stdout and stderr in the ExecutionOutcome.")
   public static boolean capture_output = false;
@@ -1072,13 +1085,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Install the given runtime visitor")
   public static List<@ClassGetName String> visitor = new ArrayList<>();
 
+  /**
+   * If true, then with probability 0.1, after extending a sequence with an operation (such as a
+   * method call, constructor call, or field access), Randoop repeats that operation a random number
+   * of times (fewer than 100).
+   */
   // ///////////////////////////////////////////////////////////////////
-  // This is only here to keep the ICSE07ContainersTest working
-  // TODO Need to decide to keep the heuristic that uses this in
-  // /////////////////////////////////////////////////////////////////// ForwardGenerator
+  // This is only here to keep the ICSE07ContainersTest working.
+  // TODO: Decide whether to keep the heuristic in ForwardGenerator that uses this.
   @OptionGroup(value = "Pacheco thesis", unpublicized = true)
   @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times")
+  @Option("Use heuristic that may randomly repeat an operation several times")
   public static boolean repeat_heuristic = false;
 
   /** Check that the options given satisfy any specified constraints, and fail if they do not. */
