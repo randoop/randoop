@@ -120,23 +120,33 @@ class CoverageChecker {
    */
   static CoverageChecker fromFile(
       RandoopOptions options, int minMethodsToCover, String covGoalsFile) {
-    // Load from classpath: src/systemTest/resources/test-covgoals/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
+    List<String> covGoals = readCovGoals(covGoalsFile);
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
+    result.covGoalsFile = cloader.getResource("test-covgoals/" + covGoalsFile).getPath();
+    result.methods(covGoals);
+    return result;
+  }
+
+  /**
+   * Reads a coverage-goals file from the classpath.
+   *
+   * @param covGoalsFile the name of a file in {@code src/systemTest/resources/test-covgoals/}
+   * @return the lines of the file
+   */
+  static List<String> readCovGoals(String covGoalsFile) {
     ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
     String resourceName = "test-covgoals/" + covGoalsFile;
-    result.covGoalsFile = cloader.getResource(resourceName).getPath();
-    List<String> covGoals;
     try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
         throw new Error("Resource not found on classpath: " + resourceName);
       }
-      covGoals =
-          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
+      return new BufferedReader(new InputStreamReader(in, UTF_8))
+          .lines()
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new Error("Problem reading resource " + resourceName, e);
     }
-    result.methods(covGoals.toArray(new String[0]));
-    return result;
   }
 
   /**

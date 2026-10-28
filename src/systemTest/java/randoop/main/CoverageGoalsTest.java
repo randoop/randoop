@@ -1,6 +1,5 @@
 package randoop.main;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -31,7 +30,7 @@ public class CoverageGoalsTest {
   /**
    * Processes each coverage-goals file for each JDK version that CI tests.
    *
-   * @throws IOException if a coverage-goals file cannot be read
+   * @throws IOException if the coverage-goals directory cannot be listed
    * @throws URISyntaxException if the coverage-goals directory has a malformed URL
    */
   @Test
@@ -53,14 +52,13 @@ public class CoverageGoalsTest {
 
     List<String> failures = new ArrayList<>();
     for (Path covGoalsFile : covGoalsFiles) {
-      List<String> covGoals = Files.readAllLines(covGoalsFile, UTF_8);
+      List<String> covGoals = CoverageChecker.readCovGoals(covGoalsFile.getFileName().toString());
       for (int jdkVersion : CI_JDK_VERSIONS) {
         try {
           new CoverageChecker(Collections.emptySet(), 0).methods(covGoals, jdkVersion);
-        } catch (Error e) {
+        } catch (RuntimeException | Error e) {
           failures.add(
-              String.format(
-                  "%s on JDK %d: %s", covGoalsFile.getFileName(), jdkVersion, e.getMessage()));
+              String.format("%s on JDK %d: %s", covGoalsFile.getFileName(), jdkVersion, e));
         }
       }
     }
