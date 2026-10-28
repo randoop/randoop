@@ -900,7 +900,7 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String driverName = options.getRegressionBasename() + "Driver";
     List<String> command = new ArrayList<>(7);
-    command.add(ProcessStatus.java);
+    command.add(ProcessStatus.javaExecutable);
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx3000m");

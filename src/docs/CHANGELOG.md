@@ -24,6 +24,13 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+Randoop runs generated tests on the JDK that runs Randoop, rather than on the
+`java` that is on the PATH.
+
+When a generated test expects an exception that the JVM throws implicitly,
+such as `NullPointerException` or `ClassCastException`, the test's failure
+message omits the exception's message, which can differ from run to run.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.

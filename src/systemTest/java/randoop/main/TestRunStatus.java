@@ -66,7 +66,7 @@ class TestRunStatus {
     String jUnitTestSuiteName = ((packageName == null) ? "" : packageName + ".") + basename;
 
     List<String> command = new ArrayList<>(10);
-    command.add(ProcessStatus.java);
+    command.add(ProcessStatus.javaExecutable);
     if (testEnvironment.getBootClassPath() != null
         && !testEnvironment.getBootClassPath().isEmpty()) {
       command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());

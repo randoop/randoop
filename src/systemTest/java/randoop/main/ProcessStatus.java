@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.exec.CommandLine;
@@ -17,6 +16,7 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.checkerframework.checker.regex.qual.Regex;
 
 /**
@@ -59,7 +59,32 @@ class ProcessStatus {
    * java on the PATH, so that Gradle's {@code jdkTestVersion} property determines the JDK on which
    * Randoop and its generated tests run.
    */
-  static final String java = Paths.get(javaBinDir, "java").toString();
+  static final String javaExecutable = Paths.get(javaBinDir, "java").toString();
+
+  /**
+   * The environment for commands: this process's environment, with {@link #javaBinDir} first on the
+   * PATH so that a "java" command run by Randoop uses the same JDK.
+   */
+  private static final Map<String, String> environment = commandEnvironment();
+
+  /**
+   * Returns the environment for commands.
+   *
+   * @return the environment for commands
+   */
+  private static Map<String, String> commandEnvironment() {
+    Map<String, String> result;
+    try {
+      // On Windows, this map is case-insensitive, so the PATH lookup and update below affect the
+      // variable whether it is spelled "PATH" or "Path".
+      result = EnvironmentUtils.getProcEnvironment();
+    } catch (IOException e) {
+      throw new Error("Cannot read the environment", e);
+    }
+    String path = result.get("PATH");
+    result.put("PATH", path == null ? javaBinDir : javaBinDir + File.pathSeparator + path);
+    return result;
+  }
 
   /** Outputs a verbose representation of this. */
   public String dump() {
@@ -91,9 +116,6 @@ class ProcessStatus {
     // 20 minutes is longer than all tests currently take, even for a slow Travis-CI run.
     long timeoutMillis = 20 * 60 * 1000; // use 20 minutes for timeout
 
-    ProcessBuilder randoopBuilder = new ProcessBuilder(command);
-    randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
-
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
     cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
@@ -112,11 +134,6 @@ class ProcessStatus {
     if (cmdLine.toString().length() > 4095) {
       System.out.printf("Command line has length %d:%n%s%n", cmdLine.toString().length(), cmdLine);
     }
-
-    // Put the JDK first on the PATH, so that a "java" command run by Randoop uses the same JDK.
-    Map<String, String> environment = new HashMap<>(System.getenv());
-    String path = System.getenv("PATH");
-    environment.put("PATH", path == null ? javaBinDir : javaBinDir + File.pathSeparator + path);
 
     try {
       executor.execute(cmdLine, environment, resultHandler);
