@@ -86,14 +86,15 @@ public class InstantiatedType extends ParameterizedType {
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
-   * <p>If this type has no wildcards, then returns this type.
+   * <p>Converts only the wildcards that are type arguments of this type, not those nested within
+   * its type arguments. If no type argument of this type is a wildcard, then returns this type.
    *
    * @return the capture conversion type for this type
    */
   @Override
   public InstantiatedType applyCaptureConversion() {
 
-    if (!this.hasWildcard()) {
+    if (!this.hasWildcardArgument()) {
       return this;
     }
 
@@ -103,9 +104,7 @@ public class InstantiatedType extends ParameterizedType {
         WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
         convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
       } else {
-        ReferenceType convertedArgument =
-            ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
-        convertedTypeList.add(convertedArgument);
+        convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
       }
     }
 
@@ -247,6 +246,21 @@ public class InstantiatedType extends ParameterizedType {
   public boolean hasWildcard() {
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if some type argument of this type is a wildcard. Unlike {@link #hasWildcard()},
+   * does not look within the type arguments.
+   *
+   * @return true if some type argument of this type is a wildcard
+   */
+  private boolean hasWildcardArgument() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
         return true;
       }
     }
@@ -456,7 +470,7 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // wildcard clause
-    if (this.hasWildcard()) { // JLS 4.10.2
+    if (this.hasWildcardArgument()) { // JLS 4.10.2
       // old note says this has to be tested first
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
