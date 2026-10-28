@@ -79,6 +79,7 @@ public class ComponentManagerTest {
     ComponentManager componentMgr = new ComponentManager(Collections.singleton(seed), IS_PUBLIC);
     componentMgr.addPrimitiveValueIfNew(4242);
     assertEquals(1, componentMgr.getAllGeneratedSequences().size());
+    assertEquals(1, componentMgr.numGeneratedSequences());
   }
 
   /** A literal does not prevent adding its value to the component set, at any literals level. */
