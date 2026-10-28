@@ -65,6 +65,52 @@ public class OperationExtractor extends DefaultClassVisitor {
   private final SpecificationCollection operationSpecifications;
 
   /**
+   * Returns the public operations in the class that satisfy the default reflection predicate.
+   *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
+   *
+   * @param clazz the declaring class for collected operations
+   * @return the public operations in the class that satisfy the default reflection predicate
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
+   */
+  public static List<TypedOperation> operations(Class<?> clazz) throws RandoopSpecificationError {
+    return operations(ClassOrInterfaceType.forClass(clazz));
+  }
+
+  /**
+   * Returns the public operations in the class that satisfy the default reflection predicate.
+   *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
+   *
+   * @param classType the declaring class for collected operations
+   * @return the public operations in the class that satisfy the default reflection predicate
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
+   */
+  public static List<TypedOperation> operations(ClassOrInterfaceType classType)
+      throws RandoopSpecificationError {
+    return operations(
+        classType, new DefaultReflectionPredicate(), AccessibilityPredicate.IS_PUBLIC);
+  }
+
+  /**
+   * Returns the public operations in the classes that satisfy the default reflection predicate.
+   *
+   * <p>Omits no methods (that is, uses {@link OmitMethodsPredicate#NO_OMISSION}) and attaches no
+   * specifications to the operations.
+   *
+   * @param classTypes the declaring classes for collected operations
+   * @return the public operations in the classes that satisfy the default reflection predicate
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
+   */
+  public static List<TypedOperation> operations(Collection<ClassOrInterfaceType> classTypes)
+      throws RandoopSpecificationError {
+    return operations(
+        classTypes, new DefaultReflectionPredicate(), AccessibilityPredicate.IS_PUBLIC);
+  }
+
+  /**
    * Returns the operations in the class that satisfy the given predicates.
    *
    * @param clazz the declaring class for collected operations
