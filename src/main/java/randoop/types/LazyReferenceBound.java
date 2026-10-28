@@ -16,6 +16,11 @@ import java.util.Set;
  */
 class LazyReferenceBound extends ReferenceBound {
 
+  /**
+   * Creates a bound for the given reference type.
+   *
+   * @param boundType the bound type
+   */
   LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
