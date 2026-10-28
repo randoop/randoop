@@ -6,6 +6,14 @@ package randoop.test;
  */
 public class InvalidExceptionCheck extends ExceptionCheck {
 
+  /**
+   * Creates a check recording that the statement at the given index threw an exception that is
+   * classified as invalid behavior.
+   *
+   * @param exception the invalid exception thrown by the statement
+   * @param statementIndex the position of the statement in the sequence
+   * @param catchClassName the name of the exception class to be caught
+   */
   public InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
