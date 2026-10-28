@@ -32,11 +32,12 @@ import randoop.util.Log;
  *   <li>Sequences generated during the current run.
  * </ul>
  *
- * <p>This class also maintains per-scope literal information via {@link #scopeToLiteralStatistics}.
- * Queries such as {@link #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)}
- * return both literals and non-literals. However, literals are not stored in the general pool. The
- * reason is that which literals are candidates depends on the method being called. (More precisely,
- * on the class and package in which the method is defined.)
+ * <p>This class also maintains per-scope literal information via {@link
+ * #getScopeToLiteralStatistics}. Queries such as {@link
+ * #getSequencesForParam(randoop.operation.TypedOperation,int,boolean)} return both literals and
+ * non-literals. However, literals are not stored in the general pool. The reason is that which
+ * literals are candidates depends on the method being called. (More precisely, on the class and
+ * package in which the method is defined.)
  *
  * <p>Calling {@link #clearGeneratedSequences()} removes all non-seed, non-literal sequences,
  * restoring the pool to the original seeds.
@@ -49,12 +50,12 @@ public class ComponentManager {
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
-  private SequenceCollection gralComponents;
+  private final SequenceCollection gralComponents;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
-  public @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
+  private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  // The next three variables are only for the use of method clearGeneratedSequences().
+  // The next two variables are only for the use of method clearGeneratedSequences().
 
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
@@ -71,18 +72,6 @@ public class ComponentManager {
    * DemandDrivenInputCreator} with the same accessibility rules.
    */
   private final AccessibilityPredicate accessibility;
-
-  /**
-   * Types that are SUT-parameters but not SUT-returned.
-   *
-   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
-   * when no existing instances are available. This set is kept so that if the user calls {@link
-   * #clearGeneratedSequences}, we can re-add these types to the {@link DemandDrivenInputCreator}
-   * associated with {@link #gralComponents}.
-   *
-   * <p>This variable is used only by {@link #clearGeneratedSequences}.
-   */
-  private final Set<Type> sutParameterNeverReturnedTypes = new LinkedHashSet<>();
 
   /**
    * Create an empty component manager, with an immutable empty seed sequence set.
@@ -120,9 +109,7 @@ public class ComponentManager {
    */
   private void initDemandDrivenIfEnabled() {
     if (GenInputsAbstract.call_non_sut_methods) {
-      DemandDrivenInputCreator ddic =
-          new DemandDrivenInputCreator(
-              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
     }
   }
@@ -150,7 +137,6 @@ public class ComponentManager {
       return;
     }
     gralComponents.addSutParameterOnlyTypes(types);
-    this.sutParameterNeverReturnedTypes.addAll(types);
   }
 
   /**
@@ -217,11 +203,9 @@ public class ComponentManager {
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
   void clearGeneratedSequences() {
-    gralComponents = new SequenceCollection(this.gralSeeds);
+    gralComponents.clear();
+    gralComponents.addAll(gralSeeds);
     initDemandDrivenIfEnabled();
-    if (!sutParameterNeverReturnedTypes.isEmpty()) {
-      gralComponents.addSutParameterOnlyTypes(sutParameterNeverReturnedTypes);
-    }
   }
 
   /**
