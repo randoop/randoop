@@ -78,7 +78,8 @@ public class ExecutableSpecification {
    * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    * @see #checkPrestate(Object[], ExpectedOutcomeTable)
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] args) throws RandoopSpecificationError {
+  public ExpectedOutcomeTable checkPrestate(@Nullable Object[] args)
+      throws RandoopSpecificationError {
     ExpectedOutcomeTable table = new ExpectedOutcomeTable();
     this.checkPrestate(args, table);
     for (ExecutableSpecification execSpec : parentList) {
@@ -104,7 +105,7 @@ public class ExecutableSpecification {
    * @param table the table to which the created entry is to be added
    * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private void checkPrestate(Object[] args, ExpectedOutcomeTable table)
+  private void checkPrestate(@Nullable Object[] args, ExpectedOutcomeTable table)
       throws RandoopSpecificationError {
     boolean preconditionCheck = checkPreExpressions(args);
     List<ThrowsClause> throwsClauses = checkGuardThrowsPairs(args);
@@ -121,7 +122,7 @@ public class ExecutableSpecification {
    * @return false if any local precondition fails on the argument values, true if all succeed
    * @throws RandoopSpecificationError if a precondition cannot be evaluated
    */
-  private boolean checkPreExpressions(Object[] args) throws RandoopSpecificationError {
+  private boolean checkPreExpressions(@Nullable Object[] args) throws RandoopSpecificationError {
     for (ExecutableBooleanExpression preCondition : preExpressions) {
       if (!preCondition.check(args)) {
         return false;
@@ -138,7 +139,8 @@ public class ExecutableSpecification {
    * @return the list of exceptions for which the guard expression evaluated to true
    * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private List<ThrowsClause> checkGuardThrowsPairs(Object[] args) throws RandoopSpecificationError {
+  private List<ThrowsClause> checkGuardThrowsPairs(@Nullable Object[] args)
+      throws RandoopSpecificationError {
     List<ThrowsClause> throwsClauses = new ArrayList<>();
     for (GuardThrowsPair pair : guardThrowsPairs) {
       ExecutableBooleanExpression guard = pair.guard;
@@ -159,7 +161,7 @@ public class ExecutableSpecification {
    *     evaluates to true; null if there is none
    * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  private @Nullable ExecutableBooleanExpression checkGuardPropertyPairs(Object[] args)
+  private @Nullable ExecutableBooleanExpression checkGuardPropertyPairs(@Nullable Object[] args)
       throws RandoopSpecificationError {
     for (GuardPropertyPair gpPair : guardPropertyPairs) {
       ExecutableBooleanExpression guard = gpPair.guard;

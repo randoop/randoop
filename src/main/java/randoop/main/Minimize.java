@@ -992,15 +992,12 @@ public class Minimize extends CommandHandler {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
-    // Classpath for compiling the Java file.
-    String compileClasspath = ".";
-    if (classpath != null) {
-      compileClasspath += PATH_SEPARATOR + classpath;
-    }
-
     // Command to compile the input Java file.
-    List<String> command =
-        Arrays.asList("javac", "-classpath", compileClasspath, file.toAbsolutePath().toString());
+    List<String> command = new ArrayList<>();
+    command.add(Globals.jdkBinDir.resolve("javac").toString());
+    command.add("-classpath");
+    command.add(classpath == null ? "." : "." + PATH_SEPARATOR + classpath);
+    command.add(file.toAbsolutePath().toString());
 
     // Compile specified Java file.
     return runProcess(command, executionDir, timeoutLimit);
@@ -1039,7 +1036,12 @@ public class Minimize extends CommandHandler {
     }
 
     List<String> command =
-        Arrays.asList("java", "-classpath", classpath, "org.junit.runner.JUnitCore", fqClassName);
+        Arrays.asList(
+            Globals.jdkBinDir.resolve("java").toString(),
+            "-classpath",
+            classpath,
+            "org.junit.runner.JUnitCore",
+            fqClassName);
 
     // Run the specified Java file and return the standard output.
     return runProcess(command, executionDir, timeoutLimit).stdout;

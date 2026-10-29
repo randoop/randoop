@@ -27,6 +27,12 @@ public class SubTypeSet {
   /** If true, then {@link #mark} and {@link #undoLastStep()} are supported. */
   private boolean supportsCheckpoints;
 
+  /**
+   * Creates an empty SubTypeSet.
+   *
+   * @param supportsCheckpoints if true, then {@link #mark} and {@link #undoLastStep()} are
+   *     supported
+   */
   public SubTypeSet(boolean supportsCheckpoints) {
     if (supportsCheckpoints) {
       this.supportsCheckpoints = true;
