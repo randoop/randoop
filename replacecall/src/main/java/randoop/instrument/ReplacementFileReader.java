@@ -43,27 +43,23 @@ import org.plumelib.util.EntryReader.EntryFormat;
 public final class ReplacementFileReader {
 
   /** Regex for Java identifiers. */
-  public static final @Regex(0) String ID_STRING =
-      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+  public static final String ID_STRING = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
    * Regex to match a sequence of identifiers separated by periods. Corresponds to package names,
    * fully-qualified classnames, or method names with fully-qualified classname.
    */
-  public static final @Regex(0) String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
+  public static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
    * anything in parentheses. The method name is expected to be fully-qualified and the parentheses
    * are expected to contain argument types, but the pattern permits anything other than whitespace
-   * and parentheses before the parentheses, and anything other than a closing parenthesis within
-   * them. {@link MethodSignature#of(String)} validates the signature.
-   *
-   * <p>The pattern permits the {@code <init>} notation for constructors in both the original and
-   * the replacement signature. A constructor cannot be a replacement, but matching one lets {@link
-   * #addMethodReplacement} report a precise error instead of a format error.
+   * and parentheses before the parentheses (optionally followed by whitespace), and anything other
+   * than a closing parenthesis within them. {@link MethodSignature#of(String)} validates the
+   * signature.
    */
-  private static final String SIGNATURE_STRING = "[^\\s()]+\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = "[^\\s()]+\\s*\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
@@ -130,7 +126,7 @@ public final class ReplacementFileReader {
         if (trimmed.isEmpty()) {
           continue;
         }
-        Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
+        Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(trimmed);
         if (signatureLineMatcher.matches()) {
           try {
             addMethodReplacement(
@@ -139,7 +135,7 @@ public final class ReplacementFileReader {
             throw new ReplacementFileException(e, filename, reader.getLineNumber(), line);
           }
         } else {
-          Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
+          Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(trimmed);
           if (packageOrClassLineMatcher.matches()) {
             try {
               @SuppressWarnings("signature:assignment") // regex match enforces

@@ -26,6 +26,9 @@ public class MethodSignatureTest {
     sig = MethodSignature.of("a.B.c( )");
     assertArrayEquals(new Type[0], sig.getParameterTypes());
 
+    sig = MethodSignature.of("a.B.c( int , int )");
+    assertArrayEquals(new Type[] {Type.INT, Type.INT}, sig.getParameterTypes());
+
     sig = MethodSignature.of("a.B.<init>(int , java.lang.String)");
     assertEquals("a.B", sig.getClassname());
     assertEquals("<init>", sig.getName());
@@ -35,40 +38,36 @@ public class MethodSignatureTest {
 
   @Test
   public void malformedSignatures() {
-    String[] malformed = {
-      "a.B.c",
-      "a.B.c(int",
-      "a.B.c)",
-      "a.B.c(int))",
-      "a.B.c(int) junk",
-      "a.B.c d()",
-      "a.B.1c()",
-      "a.B.<clinit>()",
-      "c()",
-      ".c()",
-      "(int)",
-      "a.B.c(,int)",
-      "a.B.c(int,)",
-      "a.B.c(int, , )",
-      "a.B.c(int int)",
+    String noOpenParen = "Method signature expected, did not find beginning parenthesis";
+    String noCloseParen = "Method signature expected, does not end with closing parenthesis";
+    String badName = "Method signature expected, bad fully-qualified method name ";
+    String emptyParam = "Empty parameter type";
+    String badParam = "Bad parameter type ";
+    // Each element is a malformed signature and the error message for it.
+    String[][] malformed = {
+      {"a.B.c", noOpenParen},
+      {"a.B.c(int", noCloseParen},
+      {"a.B.c)", noOpenParen},
+      {"a.B.c(int))", badParam + "\"int)\""},
+      {"a.B.c(int) junk", noCloseParen},
+      {"a.B.c d()", badName + "\"a.B.c d\""},
+      {"a.B.c (int)", badName + "\"a.B.c \""},
+      {"a.B.1c()", badName + "\"a.B.1c\""},
+      {"a.B.<clinit>()", badName + "\"a.B.<clinit>\""},
+      {"c()", badName + "\"c\""},
+      {".c()", badName + "\".c\""},
+      {"(int)", badName + "\"\""},
+      {"a.B.c(,int)", emptyParam},
+      {"a.B.c(int,)", emptyParam},
+      {"a.B.c(int, , )", emptyParam},
+      {"a.B.c(int int)", badParam + "\"int int\""},
     };
-    for (String signature : malformed) {
-      assertThrows(signature, IllegalArgumentException.class, () -> MethodSignature.of(signature));
+    for (String[] signatureAndMessage : malformed) {
+      String signature = signatureAndMessage[0];
+      IllegalArgumentException e =
+          assertThrows(
+              signature, IllegalArgumentException.class, () -> MethodSignature.of(signature));
+      assertEquals(signature, signatureAndMessage[1], e.getMessage());
     }
-  }
-
-  @Test
-  public void ofWhitespaceParametersTest() {
-    assertEquals(MethodSignature.of("a.B.m()"), MethodSignature.of("a.B.m( )"));
-    assertEquals(MethodSignature.of("a.B.m(int,int)"), MethodSignature.of("a.B.m( int , int )"));
-  }
-
-  @Test
-  public void ofEmptyParameterTest() {
-    IllegalArgumentException e =
-        assertThrows(IllegalArgumentException.class, () -> MethodSignature.of("a.B.m(int,)"));
-    assertEquals("Empty parameter type", e.getMessage());
-    e = assertThrows(IllegalArgumentException.class, () -> MethodSignature.of("a.B.m(,int)"));
-    assertEquals("Empty parameter type", e.getMessage());
   }
 }

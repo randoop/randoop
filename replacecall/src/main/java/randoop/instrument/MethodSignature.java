@@ -3,7 +3,6 @@ package randoop.instrument;
 import java.lang.instrument.IllegalClassFormatException;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -25,17 +24,6 @@ import org.plumelib.util.StringsPlume;
  * BCEL {@code Type} instead of {@code java.lang.reflect.Class} for the parameter types.
  */
 public final class MethodSignature implements Comparable<MethodSignature> {
-
-  /**
-   * Matches a fully-qualified method name: a fully-qualified class name, a period, and a method
-   * name or {@code <init>}.
-   */
-  private static final Pattern FULL_METHOD_NAME =
-      Pattern.compile(
-          ReplacementFileReader.DOT_DELIMITED_IDS
-              + "\\.(?:"
-              + ReplacementFileReader.ID_STRING
-              + "|<init>)");
 
   /** The fully-qualified class name. */
   private final String classname;
@@ -93,32 +81,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Creates a {@link MethodSignature} object from string representations of its method name and
-   * types.
-   *
-   * @param fullMethodName fully-qualified name of method; must contain a period
-   * @param params binary names of parameter types
-   * @return the {@link MethodSignature} for the method represented by the string
-   */
-  private static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
-    int dotPos = fullMethodName.lastIndexOf('.');
-    String classname = fullMethodName.substring(0, dotPos);
-    String methodName = fullMethodName.substring(dotPos + 1);
-    Type[] paramTypes = new Type[params.length];
-    for (int i = 0; i < params.length; i++) {
-      // TODO: This seems incorrect, since it doesn't handle arrays.
-      paramTypes[i] = BcelUtil.fqBinaryNameToType(params[i]);
-    }
-
-    return new MethodSignature(classname, methodName, paramTypes);
-  }
-
-  /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
-   * <p>The signature string must start with the fully-qualified classname, followed by a period,
-   * the method name, and then the fully-qualified parameter types in parentheses. The method name
-   * must be a Java identifier or {@code <init>}. The parameter types are separated by commas, and
+   * <p>The signature string must start with the binary name of the class, followed by a period, the
+   * method name, and then the fully-qualified parameter types in parentheses. The method name must
+   * be a Java identifier or {@code <init>}. The parameter types are separated by commas, and
    * whitespace is permitted around them. No text, not even whitespace, may precede the classname or
    * follow the closing parenthesis. Note that a signature does not include a return type.
    *
@@ -133,7 +100,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
           "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
-    if (!FULL_METHOD_NAME.matcher(fullMethodName).matches()) {
+    int dotPos = fullMethodName.lastIndexOf('.');
+    String classname = dotPos < 0 ? "" : fullMethodName.substring(0, dotPos);
+    String methodName = fullMethodName.substring(dotPos + 1);
+    if (!Signatures.isBinaryName(classname)
+        || !(Signatures.isIdentifier(methodName) || methodName.equals("<init>"))) {
       throw new IllegalArgumentException(
           "Method signature expected, bad fully-qualified method name \"" + fullMethodName + "\"");
     }
@@ -146,15 +117,19 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     @SuppressWarnings("signature:assignment") // dynamically checked just below
     @FqBinaryName String[] parameters =
         paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
-    for (String parameter : parameters) {
+    Type[] paramTypes = new Type[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      String parameter = parameters[i];
       if (parameter.isEmpty()) {
         throw new IllegalArgumentException("Empty parameter type");
       }
       if (!Signatures.isFqBinaryName(parameter)) {
         throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
+      // TODO: This seems incorrect, since it doesn't handle arrays.
+      paramTypes[i] = BcelUtil.fqBinaryNameToType(parameter);
     }
-    return of(fullMethodName, parameters);
+    return new MethodSignature(classname, methodName, paramTypes);
   }
 
   @Override
