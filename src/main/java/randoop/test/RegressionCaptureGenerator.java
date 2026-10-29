@@ -93,6 +93,7 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
       AccessibilityPredicate isAccessible,
       OmitMethodsPredicate omitMethodsPredicate,
       boolean includeAssertions) {
+    super();
     this.exceptionExpectation = exceptionExpectation;
     this.sideEffectFreeMethodsByType = sideEffectFreeMethodsByType;
     this.isAccessible = isAccessible;
