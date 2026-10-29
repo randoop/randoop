@@ -37,165 +37,10 @@ file, copy the goals to a file, run this script on it, and copy them back.
 """
 
 import argparse
-import itertools
-import re
 import sys
-from collections.abc import Iterable
-from dataclasses import dataclass
 from pathlib import Path
 
-ACTIONS = ("include", "exclude", "ignore")
-# The goal syntax must be consistent with CoverageChecker.methods().
-GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
-
-# The scopes of a goal, from least to most specific.  A more specific goal
-# takes precedence over a less specific one.
-OVERALL = 0
-RANGE = 1
-INDIVIDUAL = 2
-
-
-@dataclass(frozen=True, order=True)
-class Goal:
-    """A coverage goal for a method, such as "exclude", "ignore17+", or "include11"."""
-
-    action: str
-    # The JDK version, or 0 if the goal applies to every version.
-    jdk: int = 0
-    # "+" (this version and later), "-" (this version and earlier), or "".
-    direction: str = ""
-
-    @staticmethod
-    def parse(text: str) -> "Goal":
-        """Parse a goal.
-
-        Args:
-            text: a goal, such as "exclude17+"
-
-        Returns:
-            the goal
-        """
-        m = GOAL_PATTERN.fullmatch(text)
-        if m is None:
-            message = f"bad coverage goal: {text}"
-            raise ValueError(message)
-        return Goal(m.group(1), int(m.group(2) or 0), m.group(3) or "")
-
-    def __str__(self) -> str:
-        """Format this goal.
-
-        Returns:
-            this goal in the format of a coverage goals file, such as "exclude17+"
-        """
-        return self.action + (str(self.jdk) if self.jdk else "") + self.direction
-
-    def scope(self) -> int:
-        """Return the scope of this goal.
-
-        Returns:
-            OVERALL, RANGE, or INDIVIDUAL
-        """
-        if self.jdk == 0:
-            return OVERALL
-        return RANGE if self.direction else INDIVIDUAL
-
-    def applies(self, jdk: int) -> bool:
-        """Return true if this goal applies to the given JDK version.
-
-        Args:
-            jdk: a JDK version
-
-        Returns:
-            true if this goal applies to the JDK version
-        """
-        if self.jdk == 0 or jdk == self.jdk:
-            return True
-        if self.direction == "+":
-            return jdk > self.jdk
-        if self.direction == "-":
-            return jdk < self.jdk
-        return False
-
-
-def action_for(goals: Iterable[Goal], jdk: int) -> str:
-    """Return the action that the given goals for a method specify for a JDK version.
-
-    Args:
-        goals: the goals for a method
-        jdk: a JDK version
-
-    Returns:
-        "include", "exclude", or "ignore"
-    """
-    result = "include"
-    result_scope = -1
-    for goal in goals:
-        if goal.applies(jdk) and goal.scope() > result_scope:
-            result = goal.action
-            result_scope = goal.scope()
-    return result
-
-
-def minimal_goals(target: dict[int, str]) -> list[Goal]:
-    """Return as few goals as possible that specify the given action for each JDK version.
-
-    The goals are acceptable to CoverageChecker:  no two range goals apply to
-    the same JDK version, and no goal specifies the action that a less
-    specific goal already specifies.
-
-    Args:
-        target: a map from JDK version to action
-
-    Returns:
-        the goals
-    """
-    jdks = sorted(target)
-    best: tuple | None = None
-    for overall in ACTIONS:
-        others = [action for action in ACTIONS if action != overall]
-        ranges = [None, *itertools.product(jdks, others)]
-        for lower, upper in itertools.product(ranges, ranges):
-            if lower is not None and upper is not None and lower[0] >= upper[0]:
-                continue
-            goals = [] if overall == "include" else [Goal(overall)]
-            if lower is not None:
-                goals.append(Goal(lower[1], lower[0], "-"))
-            if upper is not None:
-                goals.append(Goal(upper[1], upper[0], "+"))
-            for jdk in jdks:
-                if action_for(goals, jdk) != target[jdk]:
-                    goals.append(Goal(target[jdk], jdk))
-            num_ranges = sum(1 for goal in goals if goal.scope() == RANGE)
-            # Prefer fewer goals, then fewer range goals.
-            key = (len(goals), num_ranges, [str(goal) for goal in goals])
-            if best is None or key < best[0]:
-                best = (key, goals)
-    assert best is not None
-    return sorted(best[1], key=str)
-
-
-@dataclass
-class GoalLine:
-    """A line of a coverage goals file."""
-
-    text: str
-    method: str
-    goal: Goal
-    has_comment: bool
-
-
-def parse_goal_line(text: str) -> GoalLine:
-    """Parse a line of a coverage goals file.
-
-    Args:
-        text: a line of a coverage goals file, which is not blank or comment-only
-
-    Returns:
-        the parsed line
-    """
-    body, _, comment = text.partition("#")
-    method, _, goal = body.strip().rpartition(" ")
-    return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
+from coverage_goals import DEFAULT_JDKS, action_for, minimal_goals, read_goals
 
 
 def read_coverage(path: Path) -> dict[str, bool]:
@@ -221,7 +66,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--jdks", default="8,11,17,21,25,26")
+    parser.add_argument("--jdks", default=DEFAULT_JDKS)
     parser.add_argument("goals_file", type=Path)
     parser.add_argument("coverage", nargs="+", metavar="JDK=COVERAGE_FILE")
     args = parser.parse_args()
@@ -236,16 +81,15 @@ def main() -> None:
             sys.exit(f"JDK {jdk} is not in --jdks {args.jdks}")
         coverage[int(jdk)] = read_coverage(Path(path))
 
-    lines = [line for line in args.goals_file.read_text().splitlines() if line.strip()]
-    lines_for_method: dict[str, list[GoalLine]] = {}
-    for line in lines:
-        if not line.partition("#")[0].strip():
-            continue
-        goal_line = parse_goal_line(line)
-        lines_for_method.setdefault(goal_line.method, []).append(goal_line)
+    try:
+        comment_lines, lines_for_method = read_goals(args.goals_file)
+    except ValueError as e:
+        sys.exit(str(e))
 
     methods = sorted(set().union(*(set(c) for c in coverage.values())))
-    new_lines = set(lines)
+    new_lines = comment_lines | {
+        line.text for lines in lines_for_method.values() for line in lines
+    }
     for method in methods:
         old = lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
