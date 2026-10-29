@@ -141,18 +141,18 @@ def merge_method(
     if merged_texts is not None:
         return merged_texts, []
 
-    mentioned = {line.goal.jdk for lines in versions for line in lines if line.goal.jdk}
+    base_goals, ours_goals, theirs_goals = ([line.goal for line in lines] for lines in versions)
+    mentioned = {goal.jdk for goal in base_goals + ours_goals + theirs_goals if goal.jdk}
     all_jdks = sorted(set(jdks) | mentioned)
     problems = [
         f"{reason} in {name}"
-        for name, lines in (("ours", versions[1]), ("theirs", versions[2]))
+        for name, goals in (("ours", ours_goals), ("theirs", theirs_goals))
         for jdk in all_jdks
-        if (reason := rejection_reason([line.goal for line in lines], jdk)) is not None
+        if (reason := rejection_reason(goals, jdk)) is not None
     ]
     if problems:
         return None, problems
 
-    base_goals, ours_goals, theirs_goals = ([line.goal for line in lines] for lines in versions)
     target = {}
     for jdk in all_jdks:
         ours_action = action_for(ours_goals, jdk)

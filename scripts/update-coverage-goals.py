@@ -32,6 +32,10 @@ rewritten if any of its lines has a comment; this script prints suggested
 goals for such a method instead.  The output file is sorted, so comment-only
 lines move to the beginning of the file.
 
+If, on one of these versions, any method in a coverage file has two goals of
+the same scope (which CoverageChecker rejects), this script reports every such
+method and exits with a nonzero status without changing GOALS_FILE.
+
 For a test whose coverage goals are in RandoopSystemTest.java rather than in a
 file, copy the goals to a file, run this script on it, and copy them back.
 """
