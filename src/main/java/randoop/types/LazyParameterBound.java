@@ -223,34 +223,14 @@ class LazyParameterBound extends ParameterBound {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, because the bound is a {@code java.lang.reflect.Type}, which cannot contain a
+   * capture variable.
+   */
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType);
-  }
-
-  /**
-   * Returns true if the given type has a capture variable.
-   *
-   * @param type the type to test
-   * @return true if the given type has a capture variable
-   */
-  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasCaptureVariable(bound)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType)) {
-          return true;
-        }
-      }
-    }
     return false;
   }
 
