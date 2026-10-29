@@ -154,9 +154,7 @@ def merge_method(
         actions = [action_for([line.goal for line in lines], jdk) for lines in versions]
         action = merge_value(*actions)
         if action is None:
-            problems.append(
-                f"JDK {jdk}: base {actions[0]}, ours {actions[1]}, theirs {actions[2]}"
-            )
+            problems.append(f"JDK {jdk}: base {actions[0]}, ours {actions[1]}, theirs {actions[2]}")
         else:
             target[jdk] = action
     if problems:
@@ -237,9 +235,7 @@ def main() -> None:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("--jdks", default=DEFAULT_JDKS)
-    parser.add_argument(
-        "--labels", nargs=3, metavar=("BASE_LABEL", "OURS_LABEL", "THEIRS_LABEL")
-    )
+    parser.add_argument("--labels", nargs=3, metavar=("BASE_LABEL", "OURS_LABEL", "THEIRS_LABEL"))
     parser.add_argument("--marker-size", type=int, default=7)
     parser.add_argument("--stdout", action="store_true")
     parser.add_argument("base", type=Path)
@@ -252,7 +248,7 @@ def main() -> None:
     jdks = [int(jdk) for jdk in args.jdks.split(",")]
     try:
         lines, conflicts = merge(paths, labels, args.marker_size, jdks)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # ruff: ignore[blind-except]
         print(f"{type(e).__name__}: {e}; performing a textual merge", file=sys.stderr)
         command = ["git", "merge-file", "--diff3", f"--marker-size={args.marker_size}"]
         for label in (labels[1], labels[0], labels[2]):
