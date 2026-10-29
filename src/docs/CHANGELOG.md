@@ -4,6 +4,10 @@
 
 Randoop compiles under Java 21-26 and runs under Java 8-26.
 
+Renamed command-line argument `--silently-ignore-bad-class-names` to
+`--ignore-bad-class-names`, because Randoop prints a warning for each class that
+cannot be found or loaded.  The old name still works.
+
 With `--progressdisplay=false`, Randoop now exits when a test runs for more
 than 10 seconds, as it already did by default (unless `--usethreads` is
 given).  Previously, `--progressdisplay=false` disabled that check.
