@@ -1,6 +1,7 @@
 package randoop.main;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -178,6 +179,10 @@ public class RandoopSystemTest {
    *     methods, and then giving the CoverageChecker as the last argument to the alternate version
    *     of generateAndTest(). When excluded methods are given, these methods may not be
    *     covered, and, unless ignored, any method not excluded is expected to be covered.
+   *     To learn which methods a test covers under some random seeds but not others, run
+   *     scripts/coverage-stability.sh.
+   *     To update a file of coverage goals to match the coverage on one or more JDK versions, run
+   *     scripts/update-coverage-goals.py.
    */
   @Test
   public void runCollectionsTest() {
@@ -899,7 +904,7 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String driverName = options.getRegressionBasename() + "Driver";
     List<String> command = new ArrayList<>(7);
-    command.add("java");
+    command.add(ProcessStatus.javaExecutable);
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx3000m");
@@ -1311,6 +1316,52 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  /**
+   * Tests that Randoop does not directly call a constructor that the replacecall agent replaces.
+   */
+  @Test
+  public void runReplacedConstructorTest() throws IOException {
+    String classpath =
+        systemTestEnvironmentManager.classpath
+            + java.io.File.pathSeparator
+            + systemTestEnvironmentManager.replacecallAgentPath;
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(
+            "replaced-constructor-test",
+            classpath,
+            systemTestEnvironmentManager.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironmentManager.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    // The agent's default replacements include the java.util.Random() constructor.
+    options.addTestClass("java.util.Random");
+    // The default omit patterns also list java.util.Random(); disable them so that only the agent's
+    // list of replaced methods causes Randoop to omit it.
+    options.setFlag("omit-methods-no-defaults");
+    options.setFlag("no-error-revealing-tests");
+    options.setOption("generated_limit", "100");
+
+    generateAndCompile(testEnvironment, options, false);
+
+    String packageString = options.getPackageName();
+    String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
+    Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
+    StringBuilder testsBuilder = new StringBuilder();
+    try (DirectoryStream<Path> testFiles =
+        Files.newDirectoryStream(srcDir, options.getRegressionBasename() + "*.java")) {
+      for (Path path : testFiles) {
+        testsBuilder.append(FileUtils.readFileToString(path.toFile(), (String) null));
+      }
+    }
+    String tests = testsBuilder.toString();
+    assertTrue(
+        "Randoop should call java.util.Random(long)", tests.contains("new java.util.Random("));
+    assertFalse(
+        "Randoop should not call the replaced java.util.Random()",
+        tests.contains("new java.util.Random()"));
+  }
+
   @Test
   public void runJDKSpecificationsTest() {
     SystemTestEnvironment testEnvironment =
@@ -1329,12 +1380,11 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
+            "java7.util7.ArrayList.ensureCapacity(int) exclude",
             "java7.util7.ArrayList.fastRemove(int) exclude",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
-            "java7.util7.ArrayList.subList(int, int) exclude11",
-            "java7.util7.ArrayList.subList(int, int) exclude8",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );
