@@ -35,6 +35,10 @@ When a generated test expects an exception that the JVM throws implicitly,
 such as `NullPointerException` or `ClassCastException`, the test's failure
 message omits the exception's message, which can differ from run to run.
 
+With `--usethreads`, a bug in Randoop that is revealed while executing a test
+is reported (as it is without `--usethreads`).  Previously, Randoop treated it
+as a timeout, discarded the test, and continued generating tests.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
