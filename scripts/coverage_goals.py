@@ -235,14 +235,24 @@ class GoalLine:
         return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
 
 
-def read_goals(path: Path) -> tuple[list[str], dict[str, list[GoalLine]]]:
+@dataclass
+class GoalsFile:
+    """The contents of a coverage goals file, other than its blank lines."""
+
+    # The comment-only lines, in order.
+    comment_lines: list[str]
+    # A map from each method to its lines.
+    lines_for_method: dict[str, list[GoalLine]]
+
+
+def read_goals(path: Path) -> GoalsFile:
     """Read a file of coverage goals.
 
     Args:
         path: a file of coverage goals
 
     Returns:
-        the file's comment-only lines in order, and a map from each method to its lines
+        the file's contents
     """
     comment_lines = []
     lines_for_method: dict[str, list[GoalLine]] = {}
@@ -258,4 +268,4 @@ def read_goals(path: Path) -> tuple[list[str], dict[str, list[GoalLine]]]:
             message = f"{path}: {e}"
             raise ValueError(message) from e
         lines_for_method.setdefault(goal_line.method, []).append(goal_line)
-    return comment_lines, lines_for_method
+    return GoalsFile(comment_lines, lines_for_method)

@@ -57,6 +57,10 @@ and add this line to the .gitattributes file (or to .git/info/attributes):
 
   *.covgoals merge=covgoals
 
+In Randoop, these steps are already done:  the build runs the "git config"
+commands (in the installCovgoalsMergeDriver task, on which compileJava
+depends), and the .gitattributes file contains the line.
+
 Git runs the driver in the top-level directory of the working tree, so the
 relative file name of this script works only when this script is checked out;
 an absolute file name works on every branch.  If the driver is not configured,
@@ -236,24 +240,23 @@ def merge(
     Returns:
         the merged lines, and a textual description of each conflict
     """
-    # Each of base, ours, and theirs is the pair that read_goals returns for that version:
-    # element [0] is the version's comment-only lines, and element [1] is a map from each
-    # method to its lines.
     base, ours, theirs = (read_goals(path) for path in paths)
 
-    comment_lines = merge_ordered_lines(base[0], ours[0], theirs[0])
+    comment_lines = merge_ordered_lines(
+        base.comment_lines, ours.comment_lines, theirs.comment_lines
+    )
 
     # Each entry is a sort key and the lines to output.
     entries: list[tuple[str, list[str]]] = []
 
     conflicts = []
     # The union of the methods that have lines in any of the three versions.
-    methods = set(base[1]) | set(ours[1]) | set(theirs[1])
+    methods = set(base.lines_for_method) | set(ours.lines_for_method) | set(theirs.lines_for_method)
     for method in sorted(methods):
         versions = (
-            base[1].get(method, []),
-            ours[1].get(method, []),
-            theirs[1].get(method, []),
+            base.lines_for_method.get(method, []),
+            ours.lines_for_method.get(method, []),
+            theirs.lines_for_method.get(method, []),
         )
         merged, problems = merge_method(method, versions, jdks)
         if merged is not None:

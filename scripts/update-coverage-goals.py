@@ -86,7 +86,7 @@ def main() -> None:
         coverage[int(jdk)] = read_coverage(Path(path))
 
     try:
-        comment_lines, lines_for_method = read_goals(args.goals_file)
+        contents = read_goals(args.goals_file)
     except ValueError as e:
         sys.exit(str(e))
 
@@ -94,7 +94,7 @@ def main() -> None:
     old_actions_for_method: dict[str, dict[int, str]] = {}
     errors = []
     for method in methods:
-        old_goals = [line.goal for line in lines_for_method.get(method, [])]
+        old_goals = [line.goal for line in contents.lines_for_method.get(method, [])]
         try:
             old_actions_for_method[method] = {jdk: action_for(old_goals, jdk) for jdk in jdks}
         except ValueError as e:
@@ -102,9 +102,9 @@ def main() -> None:
     if errors:
         sys.exit("\n".join(errors))
 
-    new_lines = {line.text for lines in lines_for_method.values() for line in lines}
+    new_lines = {line.text for lines in contents.lines_for_method.values() for line in lines}
     for method in methods:
-        old = lines_for_method.get(method, [])
+        old = contents.lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
         old_actions = old_actions_for_method[method]
         target = dict(old_actions)
@@ -125,7 +125,7 @@ def main() -> None:
         print(f"  old: {', '.join(str(goal) for goal in old_goals) or '(none)'}")
         print(f"  new: {', '.join(str(goal) for goal in new_goals) or '(none)'}")
 
-    output_lines = comment_lines + sorted(new_lines)
+    output_lines = contents.comment_lines + sorted(new_lines)
     args.goals_file.write_text("".join(line + "\n" for line in output_lines))
 
 
