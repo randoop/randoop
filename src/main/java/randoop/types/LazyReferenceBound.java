@@ -60,11 +60,6 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public ReferenceBound applyCaptureConversion() {
-    return null;
-  }
-
-  @Override
   public List<TypeVariable> getTypeParameters() {
     if (getBoundType().isVariable()) {
       List<TypeVariable> parameters = new ArrayList<>(1);
