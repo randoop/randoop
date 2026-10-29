@@ -1,104 +1,126 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
- * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ * {@code java.lang.reflect.Type}.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substitution would replace a type variable with another type variable.
+ * <p>The bounds of a type variable in the bound type might refer back to this bound. This class
+ * behaves like {@link EagerReferenceBound}, except that {@link #getTypeParameters()} does not
+ * examine the bounds of those type variables, and {@link #substitute(Substitution)} does not
+ * substitute into this bound again when it reaches this bound through those type variables. Either
+ * would otherwise result in nonterminating calls.
+ *
+ * <p>Objects of this class are created by {@link ReferenceBound#forSubstitutedType(ReferenceType)}
+ * when applying a substitution to a bound yields a type that contains a type variable.
  */
-class LazyReferenceBound extends ReferenceBound {
+class LazyReferenceBound extends EagerReferenceBound {
+
+  /** The bounds that {@link #substitute(Substitution)} is currently substituting into. */
+  private static final ThreadLocal<Set<LazyReferenceBound>> beingSubstituted =
+      ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
   /**
-   * Creates a bound for the given reference type.
+   * Creates a lazy bound with the given type.
    *
-   * @param boundType the bound type
+   * @param boundType the type of this bound
    */
   LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
   @Override
-  public ReferenceBound substitute(Substitution substitution) {
+  public EagerReferenceBound substitute(Substitution substitution) {
     // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
-      if (substitution.get(parameter) == null) {
-        return this;
-      }
+    // Substituting into a type variable substitutes into its bounds, which might be this bound.
+    Set<LazyReferenceBound> inProgress = beingSubstituted.get();
+    if (!inProgress.add(this)) {
+      return this;
     }
-
-    ReferenceType referenceType = getBoundType().substitute(substitution);
+    ReferenceType referenceType;
+    try {
+      referenceType = getBoundType().substitute(substitution);
+    } finally {
+      inProgress.remove(this);
+    }
 
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-
-    if (getBoundType().isVariable()) {
-      if (referenceType.isVariable()) {
-        return new LazyReferenceBound(referenceType);
-      }
-      return new EagerReferenceBound(referenceType);
-    }
-
-    if (getBoundType().isParameterized()) {
-      // XXX technically, need to check if variable argument was replaced by variable
-      // if so should return new LazyReferenceBound(referenceType)
-      // But highly unlikely so for now only including code to do else case
-      return new EagerReferenceBound(referenceType);
-    }
-    return this;
+    return forSubstitutedType(referenceType);
   }
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    if (getBoundType().isVariable()) {
-      List<TypeVariable> parameters = new ArrayList<>(1);
-      parameters.add((TypeVariable) getBoundType());
-      return parameters;
-    } else if (getBoundType().isParameterized()) {
-      List<ReferenceType> referenceArgs =
-          ((InstantiatedType) getBoundType()).getReferenceArguments();
-      List<TypeVariable> parameters = new ArrayList<>(referenceArgs.size());
-      for (ReferenceType argType : referenceArgs) {
-        if (argType.isVariable()) {
-          parameters.add((TypeVariable) argType);
+    Set<TypeVariable> parameters = new LinkedHashSet<>();
+    addTypeVariables(getBoundType(), parameters);
+    return new ArrayList<>(parameters);
+  }
+
+  /**
+   * Adds the type variables that occur in the given type to {@code parameters}. Does not examine
+   * the bounds of those type variables, which might refer back to this bound.
+   *
+   * @param type the type
+   * @param parameters the set to which to add the type variables
+   */
+  private static void addTypeVariables(ReferenceType type, Set<TypeVariable> parameters) {
+    if (type.isVariable()) {
+      parameters.add((TypeVariable) type);
+    } else if (type.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      if (componentType.isReferenceType()) {
+        addTypeVariables((ReferenceType) componentType, parameters);
+      }
+    } else if (type instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+      if (classType.isMemberClass()) {
+        addTypeVariables(classType.enclosingType, parameters);
+      }
+      for (TypeArgument argument : classType.getTypeArguments()) {
+        if (argument instanceof ReferenceArgument) {
+          addTypeVariables(((ReferenceArgument) argument).getReferenceType(), parameters);
+        } else if (argument instanceof WildcardArgument) {
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound) {
+            addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
+          } else {
+            parameters.addAll(bound.getTypeParameters());
+          }
         }
       }
-      return parameters;
-    } else {
-      return new ArrayList<>(0);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the type variables at any depth of the bound type, as {@link #getTypeParameters()}
+   * does.
+   */
   @Override
-  public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isLowerBound(argType, substitution);
+  List<TypeVariable> getLazyTypeParameters() {
+    return getTypeParameters();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * contains type variables.
+   */
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
-    return false;
-  }
-
-  @Override
-  public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isUpperBound(argType, substitution);
-  }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
-    return false;
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
   }
 }

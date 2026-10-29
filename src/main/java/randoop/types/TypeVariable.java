@@ -1,13 +1,42 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
+
+  /**
+   * The type variables in the lazy parts of the bounds of this variable, other than this variable;
+   * null if not yet computed. Use {@link #getBoundVariables()} instead of reading this field.
+   */
+  private @Nullable List<TypeVariable> boundVariables = null;
+
+  /**
+   * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
+   * is in progress, in the current thread.
+   */
+  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
+   * The upper bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedUpperTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedUpperBound = null;
+
+  /**
+   * The lower bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedLowerTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedLowerBound = null;
 
   /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
@@ -72,12 +101,15 @@ public abstract class TypeVariable extends ParameterType {
 
     if (otherType.isVariable()) {
       TypeVariable otherVariable = (TypeVariable) otherType;
-      Substitution substitution = getSubstitution(otherVariable, this);
-      boolean lowerboundOk =
-          otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
-      boolean upperboundOk =
-          otherVariable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
-      return lowerboundOk && upperboundOk;
+      Substitution substitution = otherVariable.getSubstitution(this);
+      // Compare this variable, not its bound, so that an unknown in otherVariable's bound can be
+      // this variable.
+      return otherVariable
+              .getUpperTypeBound()
+              .isUpperBound(new EagerReferenceBound(this), substitution)
+          && otherVariable
+              .getLowerTypeBound()
+              .isLowerBound(getResolvedLowerTypeBound(), substitution);
     }
 
     return false;
@@ -88,22 +120,130 @@ public abstract class TypeVariable extends ParameterType {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
-    if (otherType.isReferenceType()) {
-      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
-      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
-    }
-    return false;
+    // A type variable is a subtype of any supertype of its upper bound, in which the type variable
+    // stands for itself.  For example, `W extends Comparable<W>` is a subtype of `Comparable<W>`.
+    return otherType.isReferenceType()
+        && Subtyping.isSubtypeOrEqual(this, (ReferenceType) otherType);
   }
 
   /**
-   * Creates a substitution of the given {@link ReferenceType} for the {@link TypeVariable}.
+   * Returns the upper bound of this variable, with each type variable in its lazy parts substituted
+   * for itself. For example, the bound of {@code T extends Comparable<T>} is a {@link
+   * LazyParameterBound}; the result is a {@link ReferenceBound} whose type, {@code Comparable<T>},
+   * can be compared with other types.
    *
-   * @param variable the variable
-   * @param otherType the replacement type
-   * @return a substitution that replaces {@code variable} with {@code otherType}
+   * @return the upper bound of this variable, with references to type variables resolved
    */
-  private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
-    return new Substitution(variable, otherType);
+  ParameterBound getResolvedUpperTypeBound() {
+    ParameterBound result = resolvedUpperBound;
+    if (result == null) {
+      result = getUpperTypeBound().substitute(getSubstitution(this));
+      resolvedUpperBound = result;
+    }
+    return result;
+  }
+
+  /**
+   * Returns the lower bound of this variable, with each type variable in its lazy parts substituted
+   * for itself.
+   *
+   * @return the lower bound of this variable, with references to type variables resolved
+   * @see #getResolvedUpperTypeBound()
+   */
+  ParameterBound getResolvedLowerTypeBound() {
+    ParameterBound result = resolvedLowerBound;
+    if (result == null) {
+      result = getLowerTypeBound().substitute(getSubstitution(this));
+      resolvedLowerBound = result;
+    }
+    return result;
+  }
+
+  /**
+   * Creates a substitution of the given {@link ReferenceType} for this variable. Every other type
+   * variable in the lazy parts of the bounds of this variable, such as another type parameter of
+   * its declaration, is substituted for itself, so the substitution instantiates the bounds of this
+   * variable.
+   *
+   * @param otherType the replacement type
+   * @return a substitution that replaces this variable with {@code otherType}
+   */
+  private Substitution getSubstitution(ReferenceType otherType) {
+    List<TypeVariable> parameters = new ArrayList<>(getBoundVariables());
+    List<ReferenceType> arguments = new ArrayList<>(parameters);
+    parameters.add(this);
+    arguments.add(otherType);
+    return new Substitution(parameters, arguments);
+  }
+
+  /**
+   * Returns an object that identifies this type variable. Substitution can create a copy of a type
+   * variable whose bounds differ, such as by having a lazy part resolved. {@link #equals(Object)}
+   * distinguishes the copy from the original, but they have the same identity.
+   *
+   * @return an object that identifies this type variable
+   */
+  Object getIdentity() {
+    return this;
+  }
+
+  /**
+   * Returns true if the two types are equal or are the same type variable, possibly with different
+   * bounds.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the two types are equal or are the same type variable
+   * @see #getIdentity()
+   */
+  static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+    if (type.equals(otherType)) {
+      return true;
+    }
+    return type instanceof TypeVariable
+        && otherType instanceof TypeVariable
+        && ((TypeVariable) type).getIdentity().equals(((TypeVariable) otherType).getIdentity());
+  }
+
+  /**
+   * Returns the type variables in the lazy parts of the bounds of this variable, other than this
+   * variable.
+   *
+   * @return the type variables in the lazy parts of the bounds of this variable, other than this
+   *     variable
+   */
+  private List<TypeVariable> getBoundVariables() {
+    List<TypeVariable> result = boundVariables;
+    if (result == null) {
+      // Keyed by identity, so that a copy of a type variable is not a separate entry.
+      Map<Object, TypeVariable> variables = new LinkedHashMap<>();
+      for (TypeVariable variable : getLowerTypeBound().getLazyTypeParameters()) {
+        variables.putIfAbsent(variable.getIdentity(), variable);
+      }
+      for (TypeVariable variable : getUpperTypeBound().getLazyTypeParameters()) {
+        variables.putIfAbsent(variable.getIdentity(), variable);
+      }
+      variables.remove(getIdentity());
+      result = new ArrayList<>(variables.values());
+      boundVariables = result;
+    }
+    return result;
+  }
+
+  @Override
+  void setUpperBound(ParameterBound upperBound) {
+    super.setUpperBound(upperBound);
+    boundVariables = null;
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
+  }
+
+  @Override
+  void setLowerBound(ParameterBound lowerBound) {
+    super.setLowerBound(lowerBound);
+    boundVariables = null;
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
   }
 
   @Override
@@ -119,29 +259,54 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
-    Substitution substitution;
+    // Checking a bound can check the same instantiation again, through mutually recursive bounds
+    // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
+    // that the inner check succeeds.
+    // Identify type variables by identity, because substitution creates copies of them.
+    Set<List<Object>> inProgress = instantiationChecks.get();
+    List<Object> check =
+        Arrays.asList(
+            getIdentity(),
+            otherType instanceof TypeVariable
+                ? ((TypeVariable) otherType).getIdentity()
+                : otherType);
+    if (!inProgress.add(check)) {
+      return true;
+    }
+    try {
+      return canBeInstantiatedByUnchecked(otherType);
+    } finally {
+      inProgress.remove(check);
+    }
+  }
+
+  /**
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
+   * Does not guard against recursion; see {@link #canBeInstantiatedBy(ReferenceType)}.
+   *
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  private boolean canBeInstantiatedByUnchecked(ReferenceType otherType) {
+    Substitution substitution = getSubstitution(otherType);
     if (getLowerTypeBound().isVariable()) {
-      substitution = getSubstitution(this, otherType);
       ParameterBound boundType = getLowerTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
     } else {
-      substitution = getSubstitution(this, otherType);
       if (!getLowerTypeBound().isLowerBound(otherType, substitution)) {
         return false;
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      substitution = getSubstitution(this, otherType);
       ParameterBound boundType = getUpperTypeBound().substitute(substitution);
       TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
     } else {
-      substitution = getSubstitution(this, otherType);
       if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
         return false;
       }

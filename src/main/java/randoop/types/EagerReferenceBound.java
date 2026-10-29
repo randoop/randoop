@@ -69,12 +69,6 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    assert bound instanceof EagerReferenceBound : "only handling reference bounds";
-    return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
-  }
-
-  @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
     if (bound instanceof EagerReferenceBound) {
       return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
@@ -107,10 +101,5 @@ class EagerReferenceBound extends ReferenceBound {
       return argSuperType.isInstantiationOf(boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
-  }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return isUpperBound(getBoundType(), substitution);
   }
 }
