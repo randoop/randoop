@@ -109,7 +109,7 @@ public class ProgressDisplay extends Thread {
   @Override
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
-    // When to display the next progress message.
+    // When to display the next progress message.  The first one is displayed immediately.
     long nextDisplayTime = System.currentTimeMillis();
     while (true) {
       if (shouldStop) {
