@@ -159,22 +159,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing regular expressions for methods to omit")
   public static @MonotonicNonNull List<Path> omit_classes_file = null;
 
-  // Documentation to add.
-  //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
-  //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
-  //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain circumstances and may be added in the future,
-  //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
    * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
    * replacecall} agent</a>.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose that the <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression.
+   * signature</a> of method M matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
+   * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
+   * signature names the class that declares M, not a class that inherits M.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.

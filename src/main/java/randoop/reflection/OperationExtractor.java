@@ -540,13 +540,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
 
-    // The declaring type of the method is not necessarily the classType, but may want to omit
-    // method in classType. So, create operation with the classType as declaring type for omit
-    // search.
-    TypedClassOperation operationForType = operation.getOperationForType(classType);
-    if (omitPredicate.shouldOmit(operationForType)) {
-      Log.logPrintln("omitPreditate omits " + operationForType);
-      omittedOperations.add(operationForType);
+    if (omitPredicate.shouldOmit(operation)) {
+      Log.logPrintln("omitPredicate omits " + operation);
+      omittedOperations.add(operation);
       return;
     }
 
