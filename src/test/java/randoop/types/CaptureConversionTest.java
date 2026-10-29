@@ -244,7 +244,9 @@ public class CaptureConversionTest {
             ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
     assertTrue(captureVariable.isCaptureVariable());
     // The upper bound includes List<?>, not List<CaptureN>.
-    assertTrue(captureVariable.getUpperTypeBound().hasWildcard());
+    ParameterBound upperBound = captureVariable.getUpperTypeBound();
+    assertFalse(upperBound.hasCaptureVariable());
+    assertTrue(upperBound.toString().contains("java.util.List<?>"));
   }
 
   /** A field whose type has a wildcard type argument. */
