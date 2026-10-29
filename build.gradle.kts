@@ -295,22 +295,6 @@ tasks.withType<JavaCompile>().configureEach {
   }
 }
 
-/*
- * Configure git to use scripts/merge-coverage-goals.py to merge *.covgoals files.  The file name
- * of the script is relative, so the configuration works in every worktree of the repository.
- */
-val installCovgoalsMergeDriver =
-  tasks.register<GitConfigTask>("installCovgoalsMergeDriver") {
-    directory.set(layout.projectDirectory)
-    settings.put("merge.covgoals.name", "coverage goals merge driver")
-    settings.put(
-      "merge.covgoals.driver",
-      "scripts/merge-coverage-goals.py --labels %S %X %Y --marker-size %L %O %A %B",
-    )
-  }
-
-tasks.compileJava { dependsOn(installCovgoalsMergeDriver) }
-
 val compileAll =
   tasks.register("compileAll") {
     dependsOn("compileJava")

@@ -220,52 +220,42 @@ class GoalLine:
     goal: Goal
     has_comment: bool
 
-    @staticmethod
-    def parse(text: str) -> "GoalLine":
-        """Parse a line of a coverage goals file.
 
-        Args:
-            text: a line of a coverage goals file, which is not blank or comment-only
+def parse_goal_line(text: str) -> GoalLine:
+    """Parse a line of a coverage goals file.
 
-        Returns:
-            the parsed line
-        """
-        body, _, comment = text.partition("#")
-        method, _, goal = body.strip().rpartition(" ")
-        return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
+    Args:
+        text: a line of a coverage goals file, which is not blank or comment-only
 
-
-@dataclass
-class GoalsFile:
-    """The contents of a coverage goals file, other than its blank lines."""
-
-    # The comment-only lines, in order.
-    comment_lines: list[str]
-    # A map from each method to its lines.
-    lines_for_method: dict[str, list[GoalLine]]
+    Returns:
+        the parsed line
+    """
+    body, _, comment = text.partition("#")
+    method, _, goal = body.strip().rpartition(" ")
+    return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
 
 
-def read_goals(path: Path) -> GoalsFile:
+def read_goals(path: Path) -> tuple[set[str], dict[str, list[GoalLine]]]:
     """Read a file of coverage goals.
 
     Args:
         path: a file of coverage goals
 
     Returns:
-        the file's contents
+        the file's comment-only lines, and a map from each method to its lines
     """
-    comment_lines = []
+    comment_lines = set()
     lines_for_method: dict[str, list[GoalLine]] = {}
     for line in path.read_text().splitlines():
         if not line.strip():
             continue
         if not line.partition("#")[0].strip():
-            comment_lines.append(line)
+            comment_lines.add(line)
             continue
         try:
-            goal_line = GoalLine.parse(line)
+            goal_line = parse_goal_line(line)
         except ValueError as e:
             message = f"{path}: {e}"
             raise ValueError(message) from e
         lines_for_method.setdefault(goal_line.method, []).append(goal_line)
-    return GoalsFile(comment_lines, lines_for_method)
+    return comment_lines, lines_for_method
