@@ -35,6 +35,13 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
+  /**
+   * Creates a {@code WildcardArgument} from a {@link ReferenceType}, which must be a {@link
+   * WildcardType}.
+   *
+   * @param argumentType the wildcard type
+   * @return the {@code WildcardArgument} for the given wildcard type
+   */
   public static WildcardArgument forType(ReferenceType argumentType) {
     assert argumentType instanceof WildcardType : "argument type must be wildcard type";
     return new WildcardArgument((WildcardType) argumentType);
@@ -181,6 +188,11 @@ public class WildcardArgument extends TypeArgument {
     return false;
   }
 
+  /**
+   * Returns the wildcard type of this argument.
+   *
+   * @return the wildcard type of this argument
+   */
   WildcardType getWildcardType() {
     return argumentType;
   }

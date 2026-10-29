@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -178,7 +179,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public Iterator<Type> iterator() {
-    return new TypeIterator(list.iterator());
+    return Collections.unmodifiableList(list).iterator();
   }
 
   @Override
@@ -194,29 +195,5 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
       result = list.get(i).compareTo(tuple.list.get(i));
     }
     return result;
-  }
-
-  private static class TypeIterator implements Iterator<Type> {
-
-    private Iterator<Type> iterator;
-
-    public TypeIterator(Iterator<Type> iterator) {
-      this.iterator = iterator;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return iterator.hasNext();
-    }
-
-    @Override
-    public Type next() {
-      return iterator.next();
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
   }
 }

@@ -52,9 +52,11 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
@@ -90,16 +92,16 @@ public final class JUnitCreator {
   private Map<String, Integer> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
-  private BlockStmt beforeAllBody = null;
+  private @Nullable BlockStmt beforeAllBody = null;
 
   /** The Java text for AfterAll method of generated test class. */
-  private BlockStmt afterAllBody = null;
+  private @Nullable BlockStmt afterAllBody = null;
 
   /** The Java text for BeforeEach method of generated test class. */
-  private BlockStmt beforeEachBody = null;
+  private @Nullable BlockStmt beforeEachBody = null;
 
   /** The Java text for AfterEach method of generated test class. */
-  private BlockStmt afterEachBody = null;
+  private @Nullable BlockStmt afterEachBody = null;
 
   /** The JUnit annotation for the BeforeAll option. */
   private static final String BEFORE_ALL = "BeforeClass";
@@ -149,18 +151,18 @@ public final class JUnitCreator {
    * Create a JUnitCreator object.
    *
    * @param junit_package_name the package name for the generated test classes
-   * @param beforeAllBody the Java text for BeforeAll method of generated test class
-   * @param afterAllBody the Java text for AfterAll method of generated test class
-   * @param beforeEachBody the Java text for BeforeEach method of generated test class
-   * @param afterEachBody the Java text for AfterEach method of generated test class
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class, or null
+   * @param afterAllBody the Java text for AfterAll method of generated test class, or null
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class, or null
+   * @param afterEachBody the Java text for AfterEach method of generated test class, or null
    * @return the JUnitCreator object
    */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
-      BlockStmt beforeAllBody,
-      BlockStmt afterAllBody,
-      BlockStmt beforeEachBody,
-      BlockStmt afterEachBody) {
+      @Nullable BlockStmt beforeAllBody,
+      @Nullable BlockStmt afterAllBody,
+      @Nullable BlockStmt beforeEachBody,
+      @Nullable BlockStmt afterEachBody) {
     assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
@@ -366,8 +368,13 @@ public final class JUnitCreator {
 
     // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
+    BlockStmt sequenceBlock;
     // try {
-    BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    try {
+      sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    } catch (Exception e) {
+      throw new RandoopBug("Cannot parse: " + sequenceBlockString, e);
+    }
     statements.addAll(sequenceBlock.getStatements());
     // }
     // catch (ParseException e) {
@@ -595,7 +602,8 @@ public final class JUnitCreator {
    *     describes each error and gives its position as a line and column of {@code bodyText}. The
    *     cause is the parser's exception for the first error.
    */
-  public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
+  public static @Nullable BlockStmt parseFixture(@Nullable List<String> bodyText)
+      throws ParseException {
     if (bodyText == null) {
       return null;
     }
