@@ -70,6 +70,16 @@ class CaptureTypeVariable extends TypeVariable {
     return wildcard;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the ID of this capture variable
+   */
+  @Override
+  Object getIdentity() {
+    return this.varID;
+  }
+
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
