@@ -1,0 +1,2 @@
+// bad replacement file for testing: a lowercase method name gets no constructor hint
+alpha.beta.gamma(int) randoop.mock.java.util.RandomReplace.randomWithSeedZero()

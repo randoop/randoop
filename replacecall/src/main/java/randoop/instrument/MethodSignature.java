@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.ArrayType;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InvokeInstruction;
+import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -238,6 +240,15 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns true if this {@link MethodSignature} represents a constructor.
+   *
+   * @return true if this {@link MethodSignature} represents a constructor
+   */
+  boolean isConstructor() {
+    return name.equals("<init>");
+  }
+
+  /**
    * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodSignature}.
    *
    * @return the parameter types for this {@link MethodSignature}
@@ -255,11 +266,12 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
    * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
    * If the class exists, but the method is not found, it checks to see if there is a superclass and
-   * repeats the search process.
+   * repeats the search process. Constructors are not inherited, so it does not search superclasses
+   * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
-   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
-   *     found on the classpath
+   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature}, or a
+   *     superclass that is searched, is not found on the classpath
    * @throws NoSuchMethodException if the containing class of this {@link MethodSignature} does not
    *     have the represented method as a member
    * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}
@@ -274,15 +286,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     String currentClassname = classname;
     while (true) {
       // Check that the class exists
-      JavaClass currentClass;
-      try {
-        currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (ReplacementFileReader.ReplacementException e) {
-        IllegalClassFormatException icfe =
-            new IllegalClassFormatException("Unable to read " + currentClassname);
-        icfe.initCause(e);
-        throw icfe;
-      }
+      JavaClass currentClass = ReplacementFileReader.readJavaClass(currentClassname);
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
@@ -293,6 +297,10 @@ public final class MethodSignature implements Comparable<MethodSignature> {
           this.method = m;
           return m;
         }
+      }
+
+      if (isConstructor()) {
+        throw new NoSuchMethodException("Constructor " + this + " not found");
       }
 
       // Method not found; perhaps inherited from superclass.
@@ -322,6 +330,58 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         | IllegalClassFormatException e) {
       return false;
     }
+  }
+
+  /**
+   * Returns the signature of the constructor of the class whose fully-qualified name is the
+   * fully-qualified method name of this {@link MethodSignature}. For example, if this represents
+   * method {@code Class(int)} of class {@code pkg}, the result is {@code pkg.Class.<init>(int)}.
+   *
+   * @return the constructor signature whose class name is the full method name of this
+   */
+  MethodSignature toConstructorSignature() {
+    return new MethodSignature(classname + "." + name, "<init>", paramTypes);
+  }
+
+  /**
+   * Returns the {@link MethodSignature} formed by replacing each class name in this, including in
+   * the parameter types, by the binary name of the class that it denotes (see {@link
+   * ReplacementFileReader#resolveClassname}). A class name that denotes no class on the classpath
+   * is unchanged.
+   *
+   * @return a new {@link MethodSignature} identical to this one except that each class name is the
+   *     binary name of a class on the classpath, where possible
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  MethodSignature resolveNestedClassnames() throws IllegalClassFormatException {
+    String resolvedClassname = ReplacementFileReader.resolveClassname(classname);
+    Type[] resolvedParamTypes = new Type[paramTypes.length];
+    for (int i = 0; i < paramTypes.length; i++) {
+      resolvedParamTypes[i] = resolveNestedClassnames(paramTypes[i]);
+    }
+    return new MethodSignature(
+        resolvedClassname == null ? classname : resolvedClassname, name, resolvedParamTypes);
+  }
+
+  /**
+   * Returns the type formed by replacing the class name in the given type by the binary name of the
+   * class that it denotes (see {@link ReplacementFileReader#resolveClassname}).
+   *
+   * @param type a type
+   * @return {@code type}, with the binary name of the class that it denotes, where possible
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  private static Type resolveNestedClassnames(Type type) throws IllegalClassFormatException {
+    if (type instanceof ArrayType) {
+      ArrayType arrayType = (ArrayType) type;
+      return new ArrayType(
+          resolveNestedClassnames(arrayType.getBasicType()), arrayType.getDimensions());
+    }
+    if (type instanceof ObjectType) {
+      String resolved = ReplacementFileReader.resolveClassname(((ObjectType) type).getClassName());
+      return resolved == null ? type : ObjectType.getInstance(resolved);
+    }
+    return type;
   }
 
   /**
