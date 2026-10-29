@@ -91,12 +91,15 @@ def main() -> None:
     for method in methods:
         old = lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
-        target = {}
+        try:
+            old_actions = {jdk: action_for(old_goals, jdk) for jdk in jdks}
+        except ValueError as e:
+            sys.exit(f"{args.goals_file}: {method}: {e}")
+        target = dict(old_actions)
         for jdk in jdks:
-            target[jdk] = action_for(old_goals, jdk)
             if target[jdk] != "ignore" and method in coverage.get(jdk, {}):
                 target[jdk] = "include" if coverage[jdk][method] else "exclude"
-        if all(action_for(old_goals, jdk) == target[jdk] for jdk in jdks):
+        if target == old_actions:
             continue
         new_goals = minimal_goals(target)
         new = [f"{method} {goal}" for goal in new_goals]

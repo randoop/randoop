@@ -168,7 +168,7 @@ def merge_method(
     def is_acceptable(candidate: list[GoalLine]) -> bool:
         goals = [line.goal for line in candidate]
         return comments <= {line.text for line in candidate} and all(
-            action_for(goals, jdk) == action and is_valid(goals, jdk)
+            is_valid(goals, jdk) and action_for(goals, jdk) == action
             for jdk, action in target.items()
         )
 

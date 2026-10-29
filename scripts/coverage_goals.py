@@ -16,8 +16,10 @@ DEFAULT_JDKS = "8,11,17,21,25,26"
 # The goal syntax must be consistent with CoverageChecker.methods().
 GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
-# The scopes of a goal, from least to most specific.  A more specific goal
-# takes precedence over a less specific one.
+# The scopes of a goal, from least to most specific.  A goal's scope depends
+# only on the JDK versions that the goal applies to:  every version, a range of
+# versions, or a single version.  A more specific goal takes precedence over a
+# less specific one.
 OVERALL = 0
 RANGE = 1
 INDIVIDUAL = 2
@@ -25,7 +27,7 @@ INDIVIDUAL = 2
 
 @dataclass(frozen=True, order=True)
 class Goal:
-    """A coverage goal for a method, such as "exclude", "ignore17+", or "include11"."""
+    """A coverage goal for a method, such as "exclude", "ignore17+", or "include25"."""
 
     action: str
     # The JDK version, or 0 if the goal applies to every version.
@@ -94,14 +96,22 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
 
     Returns:
         "include", "exclude", or "ignore"
+
+    Raises:
+        ValueError: if two of the goals that apply to the JDK version have the same scope
     """
-    result = "include"
-    result_scope = -1
+    goal_for_scope: dict[int, Goal] = {}
     for goal in goals:
-        if goal.applies(jdk) and goal.scope() > result_scope:
-            result = goal.action
-            result_scope = goal.scope()
-    return result
+        if not goal.applies(jdk):
+            continue
+        other = goal_for_scope.get(goal.scope())
+        if other is not None:
+            message = f"JDK {jdk}: goals {other} and {goal} have the same scope"
+            raise ValueError(message)
+        goal_for_scope[goal.scope()] = goal
+    if not goal_for_scope:
+        return "include"
+    return goal_for_scope[max(goal_for_scope)].action
 
 
 def is_valid(goals: list[Goal], jdk: int) -> bool:
@@ -141,6 +151,8 @@ def minimal_goals(target: dict[int, str]) -> list[Goal]:
         the goals
     """
     jdks = sorted(target)
+    # The best candidate found so far, as a pair of its sort key and its goals,
+    # or None if no candidate has been considered yet.  A smaller key is better.
     best: tuple | None = None
     for overall in ACTIONS:
         others = [action for action in ACTIONS if action != overall]
