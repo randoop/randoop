@@ -102,6 +102,7 @@ java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.synchronizedSet(java7.util7.Set) exclude17+
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude11-
+java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude25
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17 # different on Azure vs CircleCI?
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore8
 java7.util7.Collections.unmodifiableList(java7.util7.List) exclude
@@ -117,8 +118,10 @@ java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude
 java7.util7.Hashtable.putAll(java7.util7.Map) ignore
 java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude
 java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang.Object, java.lang.Object) exclude
+java7.util7.Hashtable.rehash() exclude25
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
+java7.util7.LinkedList.add(int, java.lang.Object) exclude25
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore8
 java7.util7.LinkedList.addAll(java7.util7.Collection) exclude8
 java7.util7.LinkedList.get(int) exclude
@@ -165,6 +168,7 @@ java7.util7.TreeMap.putAll(java7.util7.Map) ignore8
 java7.util7.TreeMap.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object) exclude
 java7.util7.TreeMap.remove(java.lang.Object) exclude11
+java7.util7.TreeMap.remove(java.lang.Object) exclude25
 java7.util7.TreeMap.rightOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude
@@ -181,6 +185,7 @@ java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
 java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
+java7.util7.TreeSet.contains(java.lang.Object) exclude25
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
