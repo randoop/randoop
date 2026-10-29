@@ -147,16 +147,6 @@ class WildcardType extends ParameterType {
   }
 
   @Override
-  public WildcardType applyCaptureConversion() {
-    if (getTypeBound().hasWildcard()) {
-      EagerReferenceBound convertedType =
-          (EagerReferenceBound) getTypeBound().applyCaptureConversion();
-      return new WildcardType(convertedType, this.hasUpperBound);
-    }
-    return this;
-  }
-
-  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return getTypeBound().isGeneric(ignoreWildcards);
   }

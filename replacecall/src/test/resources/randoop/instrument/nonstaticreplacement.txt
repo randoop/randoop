@@ -1,0 +1,2 @@
+// bad replacement file for testing
+java.util.Random.<init>() randoop.mock.java.util.RandomReplace.<init>()
