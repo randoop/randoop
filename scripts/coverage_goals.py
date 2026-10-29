@@ -130,11 +130,34 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
     return applicable[-1].action if applicable else "include"
 
 
-def is_valid(goals: list[Goal], jdk: int) -> bool:
-    """Return true if CoverageChecker accepts the given goals for a method on a JDK version.
+def rejection_reason(goals: Iterable[Goal], jdk: int) -> str | None:
+    """Return why CoverageChecker rejects the given goals for a method on a JDK version.
 
     CoverageChecker rejects two goals of the same scope, a goal that specifies the
     action that a less specific goal already specifies, and an unneeded "include".
+
+    Args:
+        goals: the goals for a method
+        jdk: a JDK version
+
+    Returns:
+        why CoverageChecker rejects the goals on the JDK version, or None if it accepts them
+    """
+    try:
+        applicable = applicable_goals(goals, jdk)
+    except ValueError as e:
+        return str(e)
+    previous = "include"
+    for goal in applicable:
+        if goal.action == previous:
+            return f"JDK {jdk}: goal {goal} is redundant"
+        previous = goal.action
+    return None
+
+
+def is_valid(goals: Iterable[Goal], jdk: int) -> bool:
+    """Return true if CoverageChecker accepts the given goals for a method on a JDK version.
+
     If this returns true, then action_for does not raise an exception for the same
     arguments.
 
@@ -145,12 +168,7 @@ def is_valid(goals: list[Goal], jdk: int) -> bool:
     Returns:
         true if CoverageChecker accepts the goals on the JDK version
     """
-    try:
-        applicable = applicable_goals(goals, jdk)
-    except ValueError:
-        return False
-    actions = ["include"] + [goal.action for goal in applicable]
-    return all(prev != action for prev, action in itertools.pairwise(actions))
+    return rejection_reason(goals, jdk) is None
 
 
 def minimal_goals(target: dict[int, str]) -> list[Goal]:

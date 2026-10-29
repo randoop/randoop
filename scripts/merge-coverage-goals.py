@@ -16,17 +16,18 @@ merge is clean and status 1 if there are conflicts.
 The merge is semantic.  For each method:
  * If ours and theirs have the same lines for the method, or one of them has
    the same lines as base, then the result is the other one's lines, verbatim.
- * Otherwise, if CoverageChecker rejects base, ours, or theirs, there is a
-   conflict.
+ * Otherwise, if CoverageChecker rejects ours or theirs, there is a conflict.
  * Otherwise, the method's action ("include", "exclude", or "ignore") is merged
    for each JDK version.  If ours and theirs specify the same action, or one of
    them specifies the same action as base, then the merged action is the other
-   one's action; otherwise, there is a conflict.  If there are no conflicts,
-   then the result is the first of these candidates that specifies the merged
-   actions, that CoverageChecker accepts, and that contains every line of the
-   line-by-line merge that has a comment:  the line-by-line merge of the
-   method's lines (see below), ours, theirs, and as few lines as possible that
-   specify the merged actions.
+   one's action; otherwise, there is a conflict.  On a JDK version for which
+   base has two goals of the same scope, base specifies no action, so there is
+   a conflict unless ours and theirs specify the same action.  If there are no
+   conflicts, then the result is the first of these candidates that specifies
+   the merged actions, that CoverageChecker accepts, and that contains every
+   line of the line-by-line merge that has a comment:  the line-by-line merge of
+   the method's lines (see below), ours, theirs, and as few lines as possible
+   that specify the merged actions.
  * If there is a conflict or no candidate, the result is ours, base, and
    theirs, surrounded by conflict markers.
 The JDK versions are those in --jdks VERSIONS, a comma-separated list (default:
@@ -74,6 +75,7 @@ from coverage_goals import (
     minimal_goals,
     parse_goal_line,
     read_goals,
+    rejection_reason,
 )
 
 T = TypeVar("T")
@@ -142,20 +144,30 @@ def merge_method(
     mentioned = {line.goal.jdk for lines in versions for line in lines if line.goal.jdk}
     all_jdks = sorted(set(jdks) | mentioned)
     problems = [
-        f"JDK {jdk}: CoverageChecker rejects {name}"
-        for name, lines in zip(("base", "ours", "theirs"), versions, strict=True)
+        f"{reason} in {name}"
+        for name, lines in (("ours", versions[1]), ("theirs", versions[2]))
         for jdk in all_jdks
-        if not is_valid([line.goal for line in lines], jdk)
+        if (reason := rejection_reason([line.goal for line in lines], jdk)) is not None
     ]
     if problems:
         return None, problems
 
+    base_goals, ours_goals, theirs_goals = ([line.goal for line in lines] for lines in versions)
     target = {}
     for jdk in all_jdks:
-        actions = [action_for([line.goal for line in lines], jdk) for lines in versions]
-        action = merge_value(*actions)
+        ours_action = action_for(ours_goals, jdk)
+        theirs_action = action_for(theirs_goals, jdk)
+        sides = f"ours {ours_action}, theirs {theirs_action}"
+        try:
+            base_action = action_for(base_goals, jdk)
+            problem = f"JDK {jdk}: base {base_action}, {sides}"
+        except ValueError as e:
+            # Base's action is unknown, so merge_value succeeds only if ours and theirs agree.
+            base_action = None
+            problem = f"{e} in base; {sides}"
+        action = merge_value(base_action, ours_action, theirs_action)
         if action is None:
-            problems.append(f"JDK {jdk}: base {actions[0]}, ours {actions[1]}, theirs {actions[2]}")
+            problems.append(problem)
         else:
             target[jdk] = action
     if problems:
