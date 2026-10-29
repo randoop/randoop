@@ -159,8 +159,10 @@ def merge_method(
     Args:
         method: a method
         versions: the method's lines in base, ours, and theirs
-        jdks: JDK versions on which the merged goals must be correct, in addition to
-            every version that is mentioned in a goal for the method
+        jdks: the JDK versions on which to merge the method's actions, in addition to
+            every version that is mentioned in a goal for the method.  On each of these
+            versions, the merged lines specify the merged action, and CoverageChecker
+            accepts them.
 
     Returns:
         the merged lines, or None if there is a conflict; and the reasons for the conflict
@@ -229,11 +231,14 @@ def merge(
         paths: the base, ours, and theirs files
         labels: the labels of base, ours, and theirs for conflict markers
         marker_size: the length of conflict markers
-        jdks: the JDK versions on which the merged goals must be correct
+        jdks: the JDK versions on which to merge each method's actions (see merge_method)
 
     Returns:
-        the merged lines, and a description of each conflict
+        the merged lines, and a textual description of each conflict
     """
+    # Each of base, ours, and theirs is the pair that read_goals returns for that version:
+    # element [0] is the version's comment-only lines, and element [1] is a map from each
+    # method to its lines.
     base, ours, theirs = (read_goals(path) for path in paths)
 
     comment_lines = merge_ordered_lines(base[0], ours[0], theirs[0])
@@ -242,6 +247,7 @@ def merge(
     entries: list[tuple[str, list[str]]] = []
 
     conflicts = []
+    # The union of the methods that have lines in any of the three versions.
     methods = set(base[1]) | set(ours[1]) | set(theirs[1])
     for method in sorted(methods):
         versions = (
