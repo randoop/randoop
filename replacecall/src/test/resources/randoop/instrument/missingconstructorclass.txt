@@ -1,0 +1,2 @@
+// bad replacement file for testing
+alpha.beta.Gamma(int) randoop.mock.java.util.RandomReplace.randomWithSeedZero()

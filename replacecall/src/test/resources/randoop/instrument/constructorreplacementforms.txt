@@ -1,0 +1,4 @@
+// replacement file for testing: more forms of constructor signatures
+java.lang.StringBuilder(java.lang.String) randoop.instrument.SampleReplacements.newStringBuilder(java.lang.String)
+java.util.AbstractMap$SimpleEntry(java.lang.Object,java.lang.Object) randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)
+UnnamedPackageClass(int) UnnamedPackageClass.make(int)

@@ -200,6 +200,92 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void constructorReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/constructorreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
+    assertEquals(
+        MethodSignature.of("randoop.mock.java.util.RandomReplace.randomWithSeedZero()"),
+        map.get(MethodSignature.of("java.util.Random.<init>()")));
+  }
+
+  @Test
+  public void missingConstructorClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/missingconstructorclass.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "missingconstructorclass.txt:2: Bad original method: Class alpha.beta not found"
+            + " (nor class alpha.beta.Gamma, for a constructor) for line: alpha.beta.Gamma(int)"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void inheritedConstructorShorthandTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/inheritedconstructorshorthand.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "inheritedconstructorshorthand.txt:2: Bad original method:"
+            + " Constructor java.lang.Integer.<init>() not found for line: java.lang.Integer()"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void inheritedConstructorTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/inheritedconstructor.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "inheritedconstructor.txt:2: Bad original method: Constructor java.lang.Integer.<init>()"
+            + " not found for line:"
+            + " java.lang.Integer.<init>()"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void missingMethodClassTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/missingmethodclass.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "missingmethodclass.txt:2: Bad original method: Class alpha.beta not found for line:"
+            + " alpha.beta.gamma(int) randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void constructorReplacementFormsTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/constructorreplacementforms.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(3, map.size());
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newStringBuilder(java.lang.String)"),
+        map.get(MethodSignature.of("java.lang.StringBuilder.<init>(java.lang.String)")));
+    assertEquals(
+        MethodSignature.of(
+            "randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)"),
+        map.get(
+            MethodSignature.of(
+                "java.util.AbstractMap$SimpleEntry.<init>(java.lang.Object,java.lang.Object)")));
+    assertEquals(
+        MethodSignature.of("UnnamedPackageClass.make(int)"),
+        map.get(MethodSignature.of("UnnamedPackageClass.<init>(int)")));
+  }
+
+  @Test
+  public void methodOrConstructorTypoTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/methodorconstructortypo.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "methodorconstructortypo.txt:2: Bad original method: Method SimpleEntryy not found in"
+            + " class java.util.AbstractMap (nor class java.util.AbstractMap.SimpleEntryy, for a constructor)");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
