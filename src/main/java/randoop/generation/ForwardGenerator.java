@@ -181,6 +181,10 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.grt_fuzzing) {
+      @SuppressWarnings({
+        "allcheckers:redundant.anno", // CF bug on lambda parameter `op`, on incremental compiles
+        "allcheckers:unneeded.suppression" // that bug does not occur on full compiles
+      })
       Set<TypedOperation> sideEffectingMethods =
           new HashSet<>(
               CollectionsPlume.filter(
