@@ -279,8 +279,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Returns an extractor that has visited the given class. Its {@link #getOperations()} and {@link
-   * #getOmittedOperations()} methods return the operations that were extracted and omitted.
+   * Returns a newly-created extractor that has visited the given class. Its {@link
+   * #getOperations()} and {@link #getOmittedOperations()} methods return the operations that were
+   * extracted and omitted.
    *
    * @param mgr the reflection manager that applies the extractor to the class
    * @param classType the declaring class for collected operations

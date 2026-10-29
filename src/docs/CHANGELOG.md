@@ -30,6 +30,13 @@ Changed command-line arguments:
   that M overrides, because a call to an overridden method might dispatch
   to M.
 
+Randoop compiles and runs generated tests with the JDK that runs Randoop,
+rather than with the `javac` and `java` that are on the PATH.
+
+When a generated test expects an exception that the JVM throws implicitly,
+such as `NullPointerException` or `ClassCastException`, the test's failure
+message omits the exception's message, which can differ from run to run.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
