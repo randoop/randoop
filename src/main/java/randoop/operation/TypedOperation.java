@@ -322,9 +322,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Returns true if this operation has a type that is a wildcard type.
+   * Returns true if some input or output type of this operation has a wildcard type argument.
    *
-   * @return true if at least one input or output type has a wildcard, false otherwise
+   * @return true if at least one input or output type has a wildcard type argument, false otherwise
+   * @see randoop.types.ClassOrInterfaceType#hasWildcardArgument()
    */
   public abstract boolean hasWildcardTypes();
 
@@ -732,7 +733,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     of the specifications of the operation
    * @throws RandoopSpecificationError if a guard expression cannot be evaluated
    */
-  public ExpectedOutcomeTable checkPrestate(Object[] values) throws RandoopSpecificationError {
+  public ExpectedOutcomeTable checkPrestate(@Nullable Object[] values)
+      throws RandoopSpecificationError {
     if (execSpec == null) {
       return new ExpectedOutcomeTable();
     }
@@ -748,7 +750,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link ExecutableBooleanExpression}
    */
-  private @Nullable Object[] addNullReceiverIfStatic(Object[] values) {
+  private @Nullable Object[] addNullReceiverIfStatic(@Nullable Object[] values) {
     @Nullable Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];

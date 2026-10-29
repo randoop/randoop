@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,7 +50,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(list);
+    return Objects.hashCode(list);
   }
 
   @Override
@@ -115,13 +116,14 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Returns true if any of the types in this type tuple contains a wildcard.
+   * Returns true if some type in this type tuple has a wildcard that capture conversion converts.
    *
-   * @return true if there is at least one wildcard occurrence
+   * @return true if some type in this type tuple has a wildcard type argument
+   * @see ClassOrInterfaceType#hasWildcardArgument()
    */
-  public boolean hasWildcard() {
+  public boolean hasWildcardArgument() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
+      if (type.isClassOrInterfaceType() && ((ClassOrInterfaceType) type).hasWildcardArgument()) {
         return true;
       }
     }
@@ -177,7 +179,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public Iterator<Type> iterator() {
-    return new TypeIterator(list.iterator());
+    return Collections.unmodifiableList(list).iterator();
   }
 
   @Override
@@ -193,29 +195,5 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
       result = list.get(i).compareTo(tuple.list.get(i));
     }
     return result;
-  }
-
-  private static class TypeIterator implements Iterator<Type> {
-
-    private Iterator<Type> iterator;
-
-    public TypeIterator(Iterator<Type> iterator) {
-      this.iterator = iterator;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return iterator.hasNext();
-    }
-
-    @Override
-    public Type next() {
-      return iterator.next();
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
   }
 }

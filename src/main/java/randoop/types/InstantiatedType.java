@@ -88,7 +88,9 @@ public class InstantiatedType extends ParameterizedType {
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
-   * <p>If this type has no wildcard type arguments, then returns this type.
+   * <p>Converts only the wildcards that are type arguments of this type or of an enclosing type,
+   * not those nested within type arguments or within wildcard bounds. If {@link
+   * #hasWildcardArgument()} is false, then returns this type.
    *
    * @return the capture conversion type for this type
    */
@@ -102,8 +104,7 @@ public class InstantiatedType extends ParameterizedType {
     List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
-        convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
+        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
       } else {
         convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
       }
@@ -253,13 +254,11 @@ public class InstantiatedType extends ParameterizedType {
     return false;
   }
 
-  /**
-   * Returns true if a type argument of this type is a wildcard. Unlike {@link #hasWildcard()},
-   * ignores wildcards nested within type arguments, such as the one in {@code List<List<?>>}.
-   *
-   * @return true if a type argument of this type is a wildcard
-   */
-  private boolean hasWildcardArgument() {
+  @Override
+  public boolean hasWildcardArgument() {
+    if (super.hasWildcardArgument()) {
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
         return true;
@@ -452,9 +451,9 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
-        if (i == thisTypeArguments.size()) {
-          return true;
-        }
+        // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
+        // a raw type as a subtype of every generic type of the same class.
+        return i == thisTypeArguments.size();
       }
 
       // first clause.

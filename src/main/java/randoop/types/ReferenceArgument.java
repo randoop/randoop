@@ -33,6 +33,12 @@ public final class ReferenceArgument extends TypeArgument {
     return forType(ReferenceType.forType(type));
   }
 
+  /**
+   * Creates a {@code ReferenceArgument} for the given {@link ReferenceType}.
+   *
+   * @param referenceType the reference type
+   * @return a {@code ReferenceArgument} for the given reference type
+   */
   public static ReferenceArgument forType(ReferenceType referenceType) {
     return new ReferenceArgument(referenceType);
   }
@@ -51,7 +57,7 @@ public final class ReferenceArgument extends TypeArgument {
 
   @Override
   public int hashCode() {
-    return Objects.hash(referenceType);
+    return Objects.hashCode(referenceType);
   }
 
   @Override

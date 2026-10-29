@@ -49,6 +49,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The operations collected by the extractor. This is the product of applying the visitor. */
   private final Collection<TypedOperation> operations = new TreeSet<>();
 
+  /** The operations that the extractor omitted because {@link #omitPredicate} matched them. */
+  private final Collection<TypedOperation> omittedOperations = new TreeSet<>();
+
   /** The reflection policy for collecting operations. */
   private final ReflectionPredicate reflectionPredicate;
 
@@ -229,15 +232,14 @@ public class OperationExtractor extends DefaultClassVisitor {
       AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications)
       throws RandoopSpecificationError {
-    ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     OperationExtractor extractor =
-        new OperationExtractor(
+        extract(
+            new ReflectionManager(accessibilityPredicate),
             classType,
             reflectionPredicate,
             omitMethodsPredicate,
             accessibilityPredicate,
             operationSpecifications);
-    mgr.apply(extractor, classType.getRuntimeClass());
     return new ArrayList<>(extractor.getOperations());
   }
 
@@ -264,16 +266,50 @@ public class OperationExtractor extends DefaultClassVisitor {
     ReflectionManager mgr = new ReflectionManager(accessibilityPredicate);
     for (ClassOrInterfaceType classType : classTypes) {
       OperationExtractor extractor =
-          new OperationExtractor(
+          extract(
+              mgr,
               classType,
               reflectionPredicate,
               omitMethodsPredicate,
               accessibilityPredicate,
               operationSpecifications);
-      mgr.apply(extractor, classType.getRuntimeClass());
       result.addAll(extractor.getOperations());
     }
     return new ArrayList<>(result);
+  }
+
+  /**
+   * Returns a newly-created extractor that has visited the given class. Its {@link
+   * #getOperations()} and {@link #getOmittedOperations()} methods return the operations that were
+   * extracted and omitted.
+   *
+   * @param mgr the reflection manager that applies the extractor to the class
+   * @param classType the declaring class for collected operations
+   * @param reflectionPredicate the reflection predicate
+   * @param omitMethodsPredicate the list of {@code Pattern} objects for omitting methods, may be
+   *     null
+   * @param accessibilityPredicate the predicate for test accessibility
+   * @param operationSpecifications the specifications (pre/post/throws-conditions)
+   * @return an extractor that has visited {@code classType}
+   * @throws RandoopSpecificationError if an expression in a specification does not compile
+   */
+  static OperationExtractor extract(
+      ReflectionManager mgr,
+      ClassOrInterfaceType classType,
+      ReflectionPredicate reflectionPredicate,
+      OmitMethodsPredicate omitMethodsPredicate,
+      AccessibilityPredicate accessibilityPredicate,
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
+    OperationExtractor extractor =
+        new OperationExtractor(
+            classType,
+            reflectionPredicate,
+            omitMethodsPredicate,
+            accessibilityPredicate,
+            operationSpecifications);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    return extractor;
   }
 
   /**
@@ -393,20 +429,20 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Ensures that field {@code classType} of this object is a subtype of {@code
+   * Checks that field {@code classType} of this object is a subtype of (or equal to) {@code
    * operation.getDeclaringType()}; throws an exception if not.
    *
    * @param operation the operation for which types are to be checked
-   * @throws RandoopBug if field {@code classType} of this is not a subtype of {@code
-   *     operation.getDeclaringType()}
+   * @throws RandoopBug if field {@code classType} of this is neither a subtype of nor equal to
+   *     {@code operation.getDeclaringType()}
    */
-  // TODO: poor name
-  private void checkSubTypes(TypedClassOperation operation) {
+  private void assertSubtypeOfDeclaringType(TypedClassOperation operation) {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (!classType.isSubtypeOfOrEqualTo(declaringType)) {
       throw new RandoopBug(
           String.format(
-              "Incompatible receiver type for operation %s:%n  %s%nis not a subtype of%n  %s",
+              "Incompatible receiver type for operation %s:%n  %s%n"
+                  + "is neither a subtype of nor equal to%n  %s",
               operation,
               StringsPlume.toStringAndClass(classType),
               StringsPlume.toStringAndClass(declaringType)));
@@ -439,7 +475,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           "OperationExtractor.visit: operation=%s for constructor %s%n", operation, constructor);
       Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
     }
-    checkSubTypes(operation);
+    assertSubtypeOfDeclaringType(operation);
     if (!omitPredicate.shouldOmit(operation)) {
       if (operationSpecifications != null) {
         ExecutableSpecification execSpec =
@@ -459,6 +495,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             "OperationExtractor.visit: shouldOmit failed %s%n  %s%n",
             StringsPlume.toStringAndClass(operation), omitPredicate);
       }
+      omittedOperations.add(operation);
     }
   }
 
@@ -484,7 +521,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (debug) {
       Log.logPrintln("OperationExtractor.visit: operation=" + operation);
     }
-    checkSubTypes(operation);
+    assertSubtypeOfDeclaringType(operation);
 
     if (operation.isStatic()) {
       // If this classType inherits this static method, but declaring class is not public, then
@@ -509,6 +546,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     TypedClassOperation operationForType = operation.getOperationForType(classType);
     if (omitPredicate.shouldOmit(operationForType)) {
       Log.logPrintln("omitPreditate omits " + operationForType);
+      omittedOperations.add(operationForType);
       return;
     }
 
@@ -560,7 +598,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
     TypedClassOperation getter =
         instantiateTypes(TypedOperation.createGetterForField(field, declaringType));
-    checkSubTypes(getter);
+    assertSubtypeOfDeclaringType(getter);
     if (getter != null) {
       operations.add(getter);
     }
@@ -597,5 +635,17 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   public Collection<TypedOperation> getOperations() {
     return operations;
+  }
+
+  /**
+   * Returns the {@link TypedOperation} objects for {@link #classType} that the omit predicate
+   * matched, and that therefore are not among those returned by {@link #getOperations()}.
+   *
+   * <p>Should be called after all members of the class are visited.
+   *
+   * @return the collection of operations omitted from the class
+   */
+  public Collection<TypedOperation> getOmittedOperations() {
+    return omittedOperations;
   }
 }

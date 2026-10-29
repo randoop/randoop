@@ -28,9 +28,22 @@ public class ProgressDisplay extends Thread {
    */
   private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
+  /**
+   * The longest time, in milliseconds, that this thread sleeps between checks. Keeping it short
+   * makes the check for {@link #exit_if_no_steps_after_milliseconds} timely.
+   */
+  private static final long max_sleep_milliseconds = 1000;
+
+  /** How progress messages are displayed. */
   public enum Mode {
+    /** Each progress message overwrites the previous one, on a single line. */
     SINGLE_LINE_OVERWRITE,
+    /** Each progress message appears on its own line. */
     MULTILINE,
+    /**
+     * No progress message is displayed. The thread still checks for a generator that has stopped
+     * taking steps, and if it finds one, it prints diagnostics and exits Randoop.
+     */
     NO_DISPLAY
   }
 
@@ -96,13 +109,16 @@ public class ProgressDisplay extends Thread {
   @Override
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
+    // When to display the next progress message.  The first one is displayed immediately.
+    long nextDisplayTime = System.currentTimeMillis();
     while (true) {
       if (shouldStop) {
         clear();
         return;
       }
-      if (progressInterval > 0) {
+      if (progressInterval > 0 && System.currentTimeMillis() >= nextDisplayTime) {
         display(true);
+        nextDisplayTime = System.currentTimeMillis() + progressInterval;
       }
 
       // Do not enforce a global timeout if we are using threads:
@@ -121,7 +137,10 @@ public class ProgressDisplay extends Thread {
       }
 
       try {
-        sleep(progressInterval > 0 ? progressInterval : 1000);
+        sleep(
+            progressInterval > 0
+                ? Math.min(progressInterval, max_sleep_milliseconds)
+                : max_sleep_milliseconds);
       } catch (InterruptedException e) {
         // If interrupted, just proceed.
       }
@@ -204,9 +223,12 @@ public class ProgressDisplay extends Thread {
         && GenInputsAbstract.progressintervalsteps <= 0;
   }
 
-  /** Clear the display; good to do before printing to System.out. */
+  /**
+   * Erases the current progress message, in {@link Mode#SINGLE_LINE_OVERWRITE} mode; does nothing
+   * in other modes. Good to do before printing to System.out.
+   */
   public void clear() {
-    if (noProgressOutput()) {
+    if (outputMode != Mode.SINGLE_LINE_OVERWRITE || noProgressOutput()) {
       return;
     }
     // "display("");" is wrong because it leaves the timestamp and writes

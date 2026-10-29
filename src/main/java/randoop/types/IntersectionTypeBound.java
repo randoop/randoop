@@ -55,7 +55,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundList);
+    return Objects.hashCode(boundList);
   }
 
   @Override
@@ -74,18 +74,6 @@ class IntersectionTypeBound extends ParameterBound {
         CollectionsPlume.mapList(
             (ParameterBound bound) -> bound.substitute(substitution), this.boundList);
     return new IntersectionTypeBound(bounds);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return an intersection bound with capture conversion applied to all member bounds
-   */
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList =
-        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
-    return new IntersectionTypeBound(convertedBoundList);
   }
 
   /**
