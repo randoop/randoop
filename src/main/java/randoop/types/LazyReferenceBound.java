@@ -61,15 +61,6 @@ class LazyReferenceBound extends EagerReferenceBound {
   }
 
   @Override
-  public LazyReferenceBound applyCaptureConversion() {
-    ReferenceType referenceType = getBoundType().applyCaptureConversion();
-    if (referenceType.equals(getBoundType())) {
-      return this;
-    }
-    return new LazyReferenceBound(referenceType);
-  }
-
-  @Override
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> parameters = new LinkedHashSet<>();
     addTypeVariables(getBoundType(), parameters);
