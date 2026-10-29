@@ -28,6 +28,12 @@ public class ProgressDisplay extends Thread {
    */
   private static int exit_if_no_steps_after_milliseconds = 10 * 1000;
 
+  /**
+   * The longest time, in milliseconds, that this thread sleeps between checks. Keeping it short
+   * makes the check for {@link #exit_if_no_steps_after_milliseconds} timely.
+   */
+  private static final long max_sleep_milliseconds = 1000;
+
   /** How progress messages are displayed. */
   public enum Mode {
     /** Each progress message overwrites the previous one, on a single line. */
@@ -103,13 +109,16 @@ public class ProgressDisplay extends Thread {
   @Override
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
+    // When to display the next progress message.  The first one is displayed immediately.
+    long nextDisplayTime = System.currentTimeMillis();
     while (true) {
       if (shouldStop) {
         clear();
         return;
       }
-      if (progressInterval > 0) {
+      if (progressInterval > 0 && System.currentTimeMillis() >= nextDisplayTime) {
         display(true);
+        nextDisplayTime = System.currentTimeMillis() + progressInterval;
       }
 
       // Do not enforce a global timeout if we are using threads:
@@ -128,7 +137,10 @@ public class ProgressDisplay extends Thread {
       }
 
       try {
-        sleep(progressInterval > 0 ? progressInterval : 1000);
+        sleep(
+            progressInterval > 0
+                ? Math.min(progressInterval, max_sleep_milliseconds)
+                : max_sleep_milliseconds);
       } catch (InterruptedException e) {
         // If interrupted, just proceed.
       }

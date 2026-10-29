@@ -79,6 +79,7 @@ The Randoop homepage is
           <li><a href="#nondeterminism-source">Finding the source of nondeterminism</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
+          <li><a href="#nondeterminism-exception-messages">Exception messages</a></li>
           <li><a href="#nondeterminism-bug-in-randoop">Debugging nondeterminism in Randoop</a></li>
         </ul></li>
     </ul></li>
@@ -1656,7 +1657,8 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </pre>
 
 <p>
-  A replacement method must be static and non-private.
+  A replacement method must be public and static, and it must be declared in a
+  public class (not an interface).
   (Therefore, replacement classes don't need to be instantiated.)
 </p>
 <ul>
@@ -2471,6 +2473,19 @@ There can be implementation changes even within a single JDK major version,
 such as two different versions of JDK 8.  These differences can lead to
 different Randoop outputs, or to tests that passed on one JDK
 implementation but fail on another.
+</p>
+
+
+<h3 id="nondeterminism-exception-messages">Exception messages</h3>
+
+<p>
+The HotSpot JVM's just-in-time compiler may replace an exception that the JVM
+throws frequently, such as a <code>NullPointerException</code>, by a
+preallocated exception that has no message and no stack trace.  Whether that
+happens depends on timing.  If the program under test uses such an
+exception's message, for example by returning it, then Randoop may generate
+different assertions in different runs.  To prevent this, run Randoop with the
+JVM argument <code>-XX:-OmitStackTraceInFastThrow</code>.
 </p>
 
 
