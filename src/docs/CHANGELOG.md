@@ -28,6 +28,13 @@ In a replacecall replacement file, a constructor may be written as
 `package-name.classname(argument-list)`, as in a Randoop fully-qualified
 signature, and a nested class may be written with "." instead of "$".
 
+Randoop compiles and runs generated tests with the JDK that runs Randoop,
+rather than with the `javac` and `java` that are on the PATH.
+
+When a generated test expects an exception that the JVM throws implicitly,
+such as `NullPointerException` or `ClassCastException`, the test's failure
+message omits the exception's message, which can differ from run to run.
+
 ## Version 4.3.4 (June 6, 2025)
 
 Randoop compiles and runs under Java 8-24.
