@@ -1719,7 +1719,10 @@ Each line of a replacement file is one of:
   <li>two whitespace-separated method signatures without return types (replace
     the first method by the second); each method signature is
     a <a href="#fully-qualified-signature">Randoop fully-qualified
-    signature</a>.
+    signature</a>, except that a constructor is written
+    <code>package-name.classname.&lt;init&gt;(argument-list)</code>
+    and whitespace is permitted around the commas and parentheses
+    of <code>argument-list</code>.
   </li>
 </ul>
 

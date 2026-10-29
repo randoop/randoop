@@ -1,0 +1,2 @@
+//bad replacement file
+javax.mail.Service.connect () randoop.mock.javax.mail.Service.connect(javax.mail.Service)
