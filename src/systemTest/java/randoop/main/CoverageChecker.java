@@ -220,14 +220,21 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included (included has no effect, except to
    * override/remove a previous exclusion or ignoring).
    *
-   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or &ge; 22.
+   * <p>Each string consists of a signature, a space, and an action: one of the words "exclude",
+   * "ignore", or "include", optionally followed by a JDK version number, optionally followed by "+"
+   * or "-". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude". A
+   * JDK version number restricts the goal to that JDK version; "+" extends it to later versions,
+   * and "-" extends it to earlier versions. For example, "exclude17" applies only on JDK 17,
+   * "exclude17+" applies on JDK 17 and later, and "exclude17-" applies on JDK 17 and earlier. Text
+   * from "#" to the end of the string is a comment.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    *
-   * <p>When multiple lines apply to a single method, the most specific one takes precedence.
+   * <p>When multiple goals apply to a single method, the most specific one takes precedence: a goal
+   * with a version number and no "+" or "-" is more specific than one with "+" or "-", which is
+   * more specific than one with no version number. It is an error for two equally specific goals to
+   * apply to a method, or for a goal to specify the action that a less specific goal (or the
+   * default, "include") already specifies.
    *
    * @param covGoals method coverage goals
    */
