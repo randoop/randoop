@@ -164,13 +164,6 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ParameterBound applyCaptureConversion() {
-    throw new LazyBoundException();
-    // assert false : "unable to do capture conversion on lazy bound " + this;
-    // return this;
-  }
-
-  @Override
   public List<TypeVariable> getTypeParameters() {
     return getTypeParameters(boundType);
   }
@@ -296,7 +289,7 @@ class LazyParameterBound extends ParameterBound {
     return boundType instanceof java.lang.reflect.TypeVariable;
   }
 
-  /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
+  /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
     public LazyBoundException() {}

@@ -3,19 +3,29 @@ package randoop.util;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * A thread that runs a {@link ReflectionCode}. To run the code in this thread, call {@link #setup}
+ * and then {@link #start}. A thread can be started only once.
+ *
+ * <p>Calls to {@link #setup} and {@link #run} must alternate. {@link #start} calls {@link #run} in
+ * this thread; a direct call to {@link #run} executes the code in the calling thread.
+ */
 public class RunnerThread extends Thread {
 
-  // Fields assigned when calling setup(..)
+  /** The code to run. Set by {@link #setup}. */
   private @MonotonicNonNull ReflectionCode code;
 
-  // Fields assigned when calling run()
+  /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
   boolean runFinished;
 
-  // The state of the thread.
+  /** The state of the thread: which method must be called next. */
   private NextCallMustBe state;
 
+  /** Which method must be called next on a {@code RunnerThread}. */
   private enum NextCallMustBe {
+    /** {@link RunnerThread#setup} must be called next. */
     SETUP,
+    /** {@link RunnerThread#run} must be called next. */
     RUN
   }
 
@@ -36,6 +46,13 @@ public class RunnerThread extends Thread {
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
 
+  /**
+   * Sets the code that the next call to {@link #run} will execute.
+   *
+   * @param code the code to run
+   * @throws IllegalStateException if {@link #run} must be called next
+   * @throws IllegalArgumentException if {@code code} is null
+   */
   public void setup(ReflectionCode code) {
     if (state != NextCallMustBe.SETUP) {
       throw new IllegalStateException();
