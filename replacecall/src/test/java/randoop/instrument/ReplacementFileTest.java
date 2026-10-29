@@ -2,6 +2,7 @@ package randoop.instrument;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -231,7 +232,9 @@ public class ReplacementFileTest {
   @Test
   public void invalidEncodingTest() throws IOException, ReplacementFileException {
     byte[] latin1Bytes = "java.lang.String java.lang.Caf\u00e9\n".getBytes(ISO_8859_1);
-    thrown.expect(MalformedInputException.class);
+    thrown.expect(IOException.class);
+    thrown.expectMessage("invalidencoding.txt: invalid character encoding");
+    thrown.expectCause(isA(MalformedInputException.class));
     ReplacementFileReader.readReplacements(
         new InputStreamReader(new ByteArrayInputStream(latin1Bytes), UTF_8.newDecoder()),
         "invalidencoding.txt");
