@@ -179,6 +179,10 @@ public class RandoopSystemTest {
    *     methods, and then giving the CoverageChecker as the last argument to the alternate version
    *     of generateAndTest(). When excluded methods are given, these methods may not be
    *     covered, and, unless ignored, any method not excluded is expected to be covered.
+   *     To learn which methods a test covers under some random seeds but not others, run
+   *     scripts/coverage-stability.sh.
+   *     To update a file of coverage goals to match the coverage on one or more JDK versions, run
+   *     scripts/update-coverage-goals.py.
    */
   @Test
   public void runCollectionsTest() {
@@ -1376,12 +1380,11 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore",
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
+            "java7.util7.ArrayList.ensureCapacity(int) exclude",
             "java7.util7.ArrayList.fastRemove(int) exclude",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
-            "java7.util7.ArrayList.subList(int, int) exclude11",
-            "java7.util7.ArrayList.subList(int, int) exclude8",
             "java7.util7.ArrayList.writeObject(java.io.ObjectOutputStream) exclude"
             // end of list (line break to permit easier sorting)
             );

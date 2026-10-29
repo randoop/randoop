@@ -49,4 +49,20 @@ public class RunCommandTest {
     assertEquals(status.toString(), 0, status.exitStatus);
     assertEquals(args, status.standardOutputLines);
   }
+
+  @Test
+  public void toShellCommandTest() {
+    assertEquals(
+        "java -cp a.jar:b/c.jar 'with space' 'it'\\''s' '' '$HOME' '-javaagent:x.jar=--f='\\''a b'\\'''",
+        RunCommand.toShellCommand(
+            Arrays.asList(
+                "java",
+                "-cp",
+                "a.jar:b/c.jar",
+                "with space",
+                "it's",
+                "",
+                "$HOME",
+                "-javaagent:x.jar=--f='a b'")));
+  }
 }
