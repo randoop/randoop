@@ -291,6 +291,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
+  }
+
+  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     if (super.isGeneric(ignoreWildcards)) { // enclosing type is generic
       return true;
@@ -473,6 +478,9 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only
+    // if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 

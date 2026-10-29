@@ -106,6 +106,14 @@ public class ClassOrInterfaceTypeTest {
   /** Declares methods whose parameter types are used in tests. */
   static class TypeVariableHolder {
     /**
+     * A method whose parameter type mentions a type variable.
+     *
+     * @param <T> the element type
+     * @param list a list
+     */
+    static <T> void m(List<T> list) {}
+
+    /**
      * A method whose parameter types are parameterized types.
      *
      * @param strings a list of strings
@@ -118,6 +126,16 @@ public class ClassOrInterfaceTypeTest {
         Collection<Comparable<String>> comparables,
         List<? super String> superStrings,
         Collection<? extends Iterable<Comparable<String>>> iterables) {}
+  }
+
+  /**
+   * A generic class with an inner class.
+   *
+   * @param <T> the type parameter
+   */
+  static class Outer<T> {
+    /** An inner class whose enclosing type is generic. */
+    class Inner {}
   }
 
   /**
@@ -146,6 +164,43 @@ public class ClassOrInterfaceTypeTest {
   }
 
   @Test
+  public void rawtypeIsNotSubtypeOfParameterizedTypeTest() throws NoSuchMethodException {
+    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
+    NonParameterizedType rawList = listType.getRawtype();
+    assertTrue(rawList.isSubtypeOfOrEqualTo(listType));
+    InstantiatedType listOfE =
+        listType.instantiate(new ArrayList<ReferenceType>(listType.getTypeParameters()));
+    assertTrue(listOfE.isGenericForm());
+    assertTrue(rawList.isSubtypeOfOrEqualTo(listOfE));
+
+    // A raw type is assignable to a parameterized type only by unchecked conversion, and it is not
+    // a subtype of it, even if the parameterized type mentions a type variable.
+    Type listOfT =
+        Type.forType(
+            TypeVariableHolder.class.getDeclaredMethod("m", List.class)
+                .getGenericParameterTypes()[0]);
+    assertTrue(listOfT instanceof InstantiatedType);
+    assertFalse(((InstantiatedType) listOfT).isGenericForm());
+    assertFalse(rawList.isSubtypeOfOrEqualTo(listOfT));
+
+    // A parameterized type is a subtype of the generic form of its class, but not of another
+    // parameterized type that mentions a type variable.
+    Type listOfString = nParameterType(0);
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(listType));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(listOfE));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(listOfT));
+
+    // `? extends List<T>` does not contain `? extends List<String>`.
+    WildcardArgument extendsListOfT =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound((ReferenceType) listOfT), true));
+    WildcardArgument extendsListOfString =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound((ReferenceType) listOfString), true));
+    assertFalse(extendsListOfT.contains(extendsListOfString));
+  }
+
+  @Test
   public void subtypeOfCaptureVariableTest() throws NoSuchMethodException {
     ClassOrInterfaceType stringType = ClassOrInterfaceType.forClass(String.class);
     NonParameterizedType rawComparable =
@@ -157,15 +212,37 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(rawComparable.isSubtypeOfOrEqualTo(superString));
 
     // CAP#1 of `? extends Iterable<Comparable<String>>` has no lower bound.
-    CaptureTypeVariable extendsIterable = captureVariable(nParameterType(3));
+    Type iterables = nParameterType(3);
+    CaptureTypeVariable extendsIterable = captureVariable(iterables);
     assertFalse(stringType.isSubtypeOfOrEqualTo(extendsIterable));
     assertFalse(rawComparable.isSubtypeOfOrEqualTo(extendsIterable));
+    Type comparables = nParameterType(1);
+    assertFalse(
+        comparables.isSubtypeOfOrEqualTo(((InstantiatedType) iterables).applyCaptureConversion()));
 
     // An explicit type variable has no lower bound.
     TypeVariable listParameter =
         ((GenericClassType) ClassOrInterfaceType.forClass(List.class)).getTypeParameters().get(0);
     assertFalse(stringType.isSubtypeOfOrEqualTo(listParameter));
     assertFalse(rawComparable.isSubtypeOfOrEqualTo(listParameter));
-    assertFalse(nParameterType(1).isSubtypeOfOrEqualTo(listParameter));
+    assertFalse(comparables.isSubtypeOfOrEqualTo(listParameter));
+  }
+
+  @Test
+  public void memberOfGenericClassSubtypeTest() {
+    GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    ClassOrInterfaceType innerGenericForm = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    assertTrue(innerGenericForm.isGenericForm());
+    ClassOrInterfaceType innerOfString =
+        innerGenericForm.substitute(
+            new Substitution(
+                outerType.getTypeParameters(), ClassOrInterfaceType.forClass(String.class)));
+    assertFalse(innerOfString.isGenericForm());
+    NonParameterizedType rawInner = innerGenericForm.getRawtype();
+    assertFalse(rawInner.isGenericForm());
+
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerGenericForm));
+    assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
+    assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
   }
 }

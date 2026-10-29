@@ -473,6 +473,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isNestedClass() && !isStatic();
   }
 
+  /**
+   * Returns true if this type is the generic form of its class: the type that the class declaration
+   * denotes, in which the type arguments of the class and of its enclosing types are their own type
+   * parameters. Examples are {@code List<E>}, {@code Outer<T>.Inner}, and {@code String}. Raw
+   * {@code List} and {@code List<T>} for a type variable {@code T} other than the type parameter of
+   * {@code List} are not generic forms.
+   *
+   * @return true if this type is the generic form of its class
+   */
+  public boolean isGenericForm() {
+    return !isMemberClass() || enclosingType.isGenericForm();
+  }
+
   @Override
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public boolean isParameterized() {
@@ -526,14 +539,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       ReferenceType lowerBoundType = ((EagerReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && this.isSubtypeOfOrEqualTo(lowerBoundType);
-    }
-
-    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
-      Class<?> thisClass = this.getRuntimeClass();
-      Class<?> otherClass = otherType.getRuntimeClass();
-      if (thisClass == otherClass) {
-        return true;
-      }
     }
 
     if (!(otherType instanceof ClassOrInterfaceType)) {

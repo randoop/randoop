@@ -118,9 +118,10 @@ java7.util7.Hashtable.putAll(java7.util7.Map) ignore
 java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude
 java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang.Object, java.lang.Object) exclude
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
+java7.util7.LinkedHashMap.containsValue(java.lang.Object) exclude8
+java7.util7.LinkedHashMap.get(java.lang.Object) exclude8
 java7.util7.LinkedHashMap.newValueIterator() ignore
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore8
-java7.util7.LinkedList.addAll(java7.util7.Collection) exclude8
 java7.util7.LinkedList.get(int) exclude
 java7.util7.LinkedList.get(int) ignore17+
 java7.util7.LinkedList.get(int) ignore8
@@ -165,6 +166,7 @@ java7.util7.TreeMap.putAll(java7.util7.Map) ignore8
 java7.util7.TreeMap.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object) exclude
 java7.util7.TreeMap.remove(java.lang.Object) exclude11
+java7.util7.TreeMap.remove(java.lang.Object) exclude8
 java7.util7.TreeMap.rightOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude
@@ -181,7 +183,12 @@ java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
 java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
+java7.util7.TreeSet.clear() exclude8
+java7.util7.TreeSet.clone() exclude8
+java7.util7.TreeSet.comparator() exclude8
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
+java7.util7.TreeSet.descendingIterator() exclude8
+java7.util7.TreeSet.descendingSet() exclude8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
 java7.util7.TreeSet.headSet(java.lang.Object) exclude
@@ -190,6 +197,7 @@ java7.util7.TreeSet.higher(java.lang.Object) ignore8
 java7.util7.TreeSet.last() ignore
 java7.util7.TreeSet.lower(java.lang.Object) ignore8
 java7.util7.TreeSet.pollFirst() ignore8
+java7.util7.TreeSet.pollLast() exclude8
 java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeSet.remove(java.lang.Object) exclude11
 java7.util7.TreeSet.remove(java.lang.Object) ignore17+
@@ -209,7 +217,20 @@ java7.util7.Vector.ensureCapacity(int) exclude
 java7.util7.Vector.hugeCapacity(int) exclude
 java7.util7.Vector.removeRange(int, int) exclude
 java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude
+java7.util7.WeakHashMap.clear() exclude8
+java7.util7.WeakHashMap.containsKey(java.lang.Object) exclude8
+java7.util7.WeakHashMap.containsNullValue() exclude8
+java7.util7.WeakHashMap.containsValue(java.lang.Object) exclude8
+java7.util7.WeakHashMap.expungeStaleEntries() exclude8
+java7.util7.WeakHashMap.get(java.lang.Object) exclude8
+java7.util7.WeakHashMap.getEntry(java.lang.Object) exclude8
+java7.util7.WeakHashMap.getTable() exclude8
+java7.util7.WeakHashMap.indexFor(int, int) exclude8
+java7.util7.WeakHashMap.keySet() exclude8
+java7.util7.WeakHashMap.maskNull(java.lang.Object) exclude8
 java7.util7.WeakHashMap.putAll(java7.util7.Map) exclude
 java7.util7.WeakHashMap.putAll(java7.util7.Map) include11
+java7.util7.WeakHashMap.remove(java.lang.Object) exclude8
 java7.util7.WeakHashMap.removeMapping(java.lang.Object) exclude
 java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore
+java7.util7.WeakHashMap.values() exclude8
