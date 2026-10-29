@@ -297,6 +297,16 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void javaxMailReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/javaxmailreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(4, map.size());
+    assertEquals(
+        MethodSignature.of("randoop.mock.javax.mail.Service.connect(javax.mail.Service)"),
+        map.get(MethodSignature.of("javax.mail.Service.connect()")));
+  }
+
+  @Test
   public void jcommanderReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/jcommanderreplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);

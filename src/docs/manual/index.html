@@ -79,6 +79,7 @@ The Randoop homepage is
           <li><a href="#nondeterminism-source">Finding the source of nondeterminism</a></li>
           <li><a href="#nondeterminism-in-program-under-test">Nondeterministic program under test</a></li>
           <li><a href="#nondeterminism-changed-program">Changes to the program or its environment</a></li>
+          <li><a href="#nondeterminism-exception-messages">Exception messages</a></li>
           <li><a href="#nondeterminism-bug-in-randoop">Debugging nondeterminism in Randoop</a></li>
         </ul></li>
     </ul></li>
@@ -1026,7 +1027,12 @@ accessible field is used unless it is omitted by this or the <code>--omit-field<
 <p>When this is false, the setting of <code>--junit-package-name</code> and package accessibility is
 used to determine which members will be used in tests. [default: false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
-             Ignore class names specified by user that cannot be found [default: false]
+             If true, Randoop prints a warning and continues when a class named via <code>--testclass</code>,
+<code>--classlist</code>, or <code>--require-covered-classes</code> cannot be found or cannot be loaded
+(for example, because its static initializer throws an exception). If false, Randoop exits with
+an error in that case.
+
+<p>This option does not affect classes found via <code>--testjar</code> or <code>--test-package</code>. [default: false]
             <li id="option:flaky-test-behavior"><b>--flaky-test-behavior=</b><i>enum</i>.
              What to do if Randoop generates a flaky test. A flaky test is one that behaves differently on
 different executions.
@@ -2467,6 +2473,19 @@ There can be implementation changes even within a single JDK major version,
 such as two different versions of JDK 8.  These differences can lead to
 different Randoop outputs, or to tests that passed on one JDK
 implementation but fail on another.
+</p>
+
+
+<h3 id="nondeterminism-exception-messages">Exception messages</h3>
+
+<p>
+The HotSpot JVM's just-in-time compiler may replace an exception that the JVM
+throws frequently, such as a <code>NullPointerException</code>, by a
+preallocated exception that has no message and no stack trace.  Whether that
+happens depends on timing.  If the program under test uses such an
+exception's message, for example by returning it, then Randoop may generate
+different assertions in different runs.  To prevent this, run Randoop with the
+JVM argument <code>-XX:-OmitStackTraceInFastThrow</code>.
 </p>
 
 
