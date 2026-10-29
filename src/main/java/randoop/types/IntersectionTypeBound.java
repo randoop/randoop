@@ -92,6 +92,15 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
+  List<TypeVariable> getLazyTypeParameters() {
+    List<TypeVariable> paramList = new ArrayList<>();
+    for (ParameterBound b : boundList) {
+      paramList.addAll(b.getLazyTypeParameters());
+    }
+    return paramList;
+  }
+
+  @Override
   boolean hasWildcard() {
     for (ParameterBound b : boundList) {
       if (b.hasWildcard()) {
@@ -124,17 +133,17 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Specifically, this method checks that the argument type is a subtype of all of the member
-   * bounds of this object.
+   * <p>Specifically, this method checks that some member bound of this object is a subtype of the
+   * argument type.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution subst) {
     for (ParameterBound b : boundList) {
-      if (!b.isLowerBound(otherType, subst)) {
-        return false;
+      if (b.isLowerBound(otherType, subst)) {
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   /**
@@ -195,5 +204,35 @@ class IntersectionTypeBound extends ParameterBound {
       }
     }
     return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given bound is a lower bound on all of the member bounds of this object
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (!b.hasLowerBound(lowerBound, substitution)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given type is an upper bound on some member bound of this object
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (b.hasUpperBound(upperBound, substitution)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

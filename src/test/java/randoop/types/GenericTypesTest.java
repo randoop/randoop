@@ -294,4 +294,23 @@ public class GenericTypesTest {
     assertTrue(list.isAssignableFrom(arraylist));
     assertFalse(arraylist.isAssignableFrom(list));
   }
+
+  /** Fields whose types are used in {@link #wildcardArgumentSubtypingTest}. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  private static class WildcardFields {
+    /** A list of strings. */
+    List<String> strings;
+
+    /** A list of some subtype of {@code String}. */
+    List<? extends String> extendsStrings;
+  }
+
+  @Test
+  public void wildcardArgumentSubtypingTest() throws NoSuchFieldException {
+    Type strings = Type.forType(WildcardFields.class.getDeclaredField("strings").getGenericType());
+    Type extendsStrings =
+        Type.forType(WildcardFields.class.getDeclaredField("extendsStrings").getGenericType());
+    assertTrue(strings.isSubtypeOfOrEqualTo(extendsStrings));
+    assertFalse(extendsStrings.isSubtypeOfOrEqualTo(strings));
+  }
 }

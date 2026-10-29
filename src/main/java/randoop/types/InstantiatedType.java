@@ -436,30 +436,15 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
-
-      // second clause: rawtype same and parameters S_i of otherType contains T_i of this
-      if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-        List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
-        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
-        assert otherTypeArguments.size() == thisTypeArguments.size();
-        int i = 0;
-        while (i < thisTypeArguments.size()
-            && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
-          i++;
-        }
-        // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
-        // a raw type as a subtype of every generic type of the same class.
-        return i == thisTypeArguments.size();
-      }
-
-      // first clause.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
-      InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null && superType.equals(otherType)) {
+    // first and second clauses
+    if (otherType instanceof InstantiatedType) {
+      if (Subtyping.isSubtypeOrEqual(this, (InstantiatedType) otherType, new Substitution())) {
         return true;
+      }
+      // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
+      // a raw type as a subtype of every generic type of the same class.
+      if (otherType.runtimeClassIs(this.getRuntimeClass())) {
+        return false;
       }
     }
 
