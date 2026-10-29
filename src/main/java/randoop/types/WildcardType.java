@@ -185,6 +185,11 @@ class WildcardType extends ParameterType {
   }
 
   @Override
+  public boolean hasWildcard() {
+    return true;
+  }
+
+  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return getTypeBound().isGeneric(ignoreWildcards);
   }

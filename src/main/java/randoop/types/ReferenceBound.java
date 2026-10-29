@@ -63,11 +63,6 @@ public abstract class ReferenceBound extends ParameterBound {
   public abstract ReferenceBound substitute(Substitution substitution);
 
   @Override
-  boolean hasWildcard() {
-    return boundType.hasWildcard();
-  }
-
-  @Override
   public boolean hasCaptureVariable() {
     return boundType.hasCaptureVariable();
   }

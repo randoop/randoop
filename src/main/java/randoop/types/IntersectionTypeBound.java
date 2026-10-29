@@ -92,16 +92,6 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  boolean hasWildcard() {
-    for (ParameterBound b : boundList) {
-      if (b.hasWildcard()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  @Override
   public boolean hasCaptureVariable() {
     for (ParameterBound b : boundList) {
       if (b.hasCaptureVariable()) {
