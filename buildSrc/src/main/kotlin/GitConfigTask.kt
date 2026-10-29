@@ -50,14 +50,13 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
    */
   private fun git(dir: java.io.File, vararg args: String): String? {
     val output = ByteArrayOutputStream()
-    val result =
-      execOperations.exec {
-        workingDir = dir
-        executable = "git"
-        args(*args)
-        standardOutput = output
-        isIgnoreExitValue = true
-      }
+    val result = execOperations.exec {
+      workingDir = dir
+      executable = "git"
+      args(*args)
+      standardOutput = output
+      isIgnoreExitValue = true
+    }
     return if (result.exitValue == 0) output.toString().trimEnd('\n') else null
   }
 }
