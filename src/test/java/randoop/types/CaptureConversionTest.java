@@ -1,6 +1,7 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -206,6 +207,105 @@ public class CaptureConversionTest {
           "instantiate exception mismatch: " + e.getMessage(),
           e.getMessage().contains("type argument java.lang.Integer[] does not match"));
     }
+  }
+
+  /** A field whose type has a wildcard only within a type argument. */
+  public List<List<?>> nestedWildcardField;
+
+  /** Tests that capture conversion does not convert a wildcard nested within a type argument. */
+  @Test
+  public void nestedWildcardTest() throws NoSuchFieldException {
+    InstantiatedType nestedWildcardType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("nestedWildcardField").getGenericType());
+    InstantiatedType capturedType = nestedWildcardType.applyCaptureConversion();
+    assertEquals(nestedWildcardType, capturedType);
+
+    // List<List<String>> is not a subtype of List<List<?>>.
+    InstantiatedType stringListListType =
+        JDKTypes.LIST_TYPE.instantiate(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE));
+    assertFalse(stringListListType.isSubtypeOfOrEqualTo(capturedType));
+  }
+
+  /** A field whose type has a wildcard within the bound of a wildcard type argument. */
+  public List<? extends List<?>> wildcardInBoundField;
+
+  /** Tests that capture conversion does not convert a wildcard within the bound of a wildcard. */
+  @Test
+  public void wildcardInBoundTest() throws NoSuchFieldException {
+    InstantiatedType wildcardInBoundType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardInBoundField").getGenericType());
+    InstantiatedType capturedType = wildcardInBoundType.applyCaptureConversion();
+    TypeVariable captureVariable =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(captureVariable.isCaptureVariable());
+    // The upper bound includes List<?>, not List<CaptureN>.
+    assertTrue(captureVariable.getUpperTypeBound().hasWildcard());
+  }
+
+  /** A field whose type has a wildcard type argument. */
+  public ArrayList<?> wildcardField;
+
+  /**
+   * Tests that a parameterized type is not a subtype of a same-class type whose type argument is a
+   * capture variable.
+   */
+  @Test
+  public void captureVariableSubtypeTest() throws NoSuchFieldException {
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(
+                    CaptureConversionTest.class.getField("wildcardField").getGenericType()))
+            .applyCaptureConversion();
+    InstantiatedType stringArrayListType =
+        JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(stringArrayListType.isSubtypeOfOrEqualTo(capturedType));
+    assertTrue(stringArrayListType.isSubtypeOfOrEqualTo(stringArrayListType));
+  }
+
+  /**
+   * A generic class with a generic member class.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class Outer<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U> {}
+  }
+
+  /**
+   * A field whose type is a member class of a generic class. {@link #wildcardInEnclosingTypeTest}
+   * replaces the enclosing type by one that has a wildcard type argument.
+   */
+  public Outer<String>.Inner<String> memberField;
+
+  /** A field whose type has a wildcard type argument. */
+  public Outer<?> wildcardOuterField;
+
+  /** Tests that capture conversion converts a wildcard in the enclosing type. */
+  @Test
+  public void wildcardInEnclosingTypeTest() throws NoSuchFieldException {
+    InstantiatedType memberType =
+        (InstantiatedType)
+            Type.forType(CaptureConversionTest.class.getField("memberField").getGenericType());
+    // Type.forType does not record the type arguments of an enclosing type, so set it directly.
+    memberType.enclosingType =
+        (ClassOrInterfaceType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardOuterField").getGenericType());
+    assertTrue(memberType.hasWildcardArgument());
+
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    assertTrue(((InstantiatedType) capturedType.enclosingType).hasCaptureVariable());
   }
 
   /**

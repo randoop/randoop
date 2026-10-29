@@ -261,7 +261,7 @@ class LazyParameterBound extends ParameterBound {
     return boundType instanceof java.lang.reflect.TypeVariable;
   }
 
-  /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
+  /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
     public LazyBoundException() {}
