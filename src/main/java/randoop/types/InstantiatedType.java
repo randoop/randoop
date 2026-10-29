@@ -86,26 +86,25 @@ public class InstantiatedType extends ParameterizedType {
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
-   * <p>If this type has no wildcards, then returns this type.
+   * <p>Converts only the wildcards that are type arguments of this type or of an enclosing type,
+   * not those nested within type arguments or within wildcard bounds. If {@link
+   * #hasWildcardArgument()} is false, then returns this type.
    *
    * @return the capture conversion type for this type
    */
   @Override
   public InstantiatedType applyCaptureConversion() {
 
-    if (!this.hasWildcard()) {
+    if (!this.hasWildcardArgument()) {
       return this;
     }
 
     List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
-        convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
+        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
       } else {
-        ReferenceType convertedArgument =
-            ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
-        convertedTypeList.add(convertedArgument);
+        convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
       }
     }
 
@@ -247,6 +246,19 @@ public class InstantiatedType extends ParameterizedType {
   public boolean hasWildcard() {
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean hasWildcardArgument() {
+    if (super.hasWildcardArgument()) {
+      return true;
+    }
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
         return true;
       }
     }
@@ -425,9 +437,15 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // first and second clauses
-    if (otherType instanceof InstantiatedType
-        && Subtyping.isSubtypeOrEqual(this, (InstantiatedType) otherType, new Substitution())) {
-      return true;
+    if (otherType instanceof InstantiatedType) {
+      if (Subtyping.isSubtypeOrEqual(this, (InstantiatedType) otherType, new Substitution())) {
+        return true;
+      }
+      // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
+      // a raw type as a subtype of every generic type of the same class.
+      if (otherType.runtimeClassIs(this.getRuntimeClass())) {
+        return false;
+      }
     }
 
     if (super.isSubtypeOfOrEqualTo(otherType)) {
@@ -435,7 +453,7 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // wildcard clause
-    if (this.hasWildcard()) { // JLS 4.10.2
+    if (this.hasWildcardArgument()) { // JLS 4.10.2
       // old note says this has to be tested first
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
