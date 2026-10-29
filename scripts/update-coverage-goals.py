@@ -87,9 +87,7 @@ def main() -> None:
         sys.exit(str(e))
 
     methods = sorted(set().union(*(set(c) for c in coverage.values())))
-    new_lines = comment_lines | {
-        line.text for lines in lines_for_method.values() for line in lines
-    }
+    new_lines = comment_lines | {line.text for lines in lines_for_method.values() for line in lines}
     for method in methods:
         old = lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
