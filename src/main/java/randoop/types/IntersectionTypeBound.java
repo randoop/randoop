@@ -80,18 +80,6 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return an intersection bound with capture conversion applied to all member bounds
-   */
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList =
-        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
-    return new IntersectionTypeBound(convertedBoundList);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * @return the list of type variables occurring in all of the type bounds of this intersection
    *     bound
    */

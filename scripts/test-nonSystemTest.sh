@@ -42,6 +42,7 @@ sleep 3 # give xvfb some time to start
 ./gradlew printJunitJarPath
 
 # `gradle build` == `gradle check assemble`.
+# The coverageGoalsTest task is not run here, because the systemTest task depends on it.
 ./gradlew --info test replacecallAgentTest
 
 # Stop xvfb because 'start-stop-daemon --start' will fail if already running.
