@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a type variable that is a type parameter. (See JLS, section 4.3.) */
@@ -23,10 +22,11 @@ public class ExplicitTypeVariable extends TypeVariable {
   /**
    * {@inheritDoc}
    *
-   * <p>Checks that the type parameter is equal. This may be more restrictive than desired because
-   * equivalent TypeVariable objects from different instances of the same type may be distinct.
+   * <p>Two type parameters are equal if they are the same declared type parameter, even if their
+   * bounds differ. Substitution creates a copy of a type parameter whose bounds differ, such as by
+   * having a lazy part resolved, and the copy stands for the same type parameter.
    *
-   * @return true if the type parameters are equal, false otherwise
+   * @return true if the type parameters are the same declared type parameter, false otherwise
    */
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -34,15 +34,15 @@ public class ExplicitTypeVariable extends TypeVariable {
       return true;
     }
     if (!(obj instanceof ExplicitTypeVariable)) {
-      return isAssignableFrom(null);
+      return false;
     }
     ExplicitTypeVariable t = (ExplicitTypeVariable) obj;
-    return variable.equals(t.variable) && super.equals(t);
+    return variable.equals(t.variable);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(variable, super.hashCode());
+    return variable.hashCode();
   }
 
   @Override
@@ -77,6 +77,12 @@ public class ExplicitTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this type variable to itself.  Keep this copy and its bounds, rather
+      // than the substitution's copy.  If the substitution maps this type variable to a copy of it
+      // with other bounds, that copy is the result.
+      type = null;
+    }
     if (type != null && !type.isVariable()) {
       return type;
     }
