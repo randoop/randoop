@@ -551,7 +551,7 @@ public class RandoopSystemTest {
     options.addTestClass("randoop.test.ClassWithInnerClass");
     options.addTestClass("randoop.test.ClassWithInnerClass$A");
     options.setOption("generated_limit", "40");
-    options.setFlag("silently-ignore-bad-class-names");
+    options.setFlag("ignore-bad-class-names");
     options.setOption("unchecked-exception", "ERROR");
     options.setOption("npe-on-null-input", "ERROR");
     options.setOption("npe-on-non-null-input", "ERROR");
@@ -904,7 +904,7 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
     String driverName = options.getRegressionBasename() + "Driver";
     List<String> command = new ArrayList<>(7);
-    command.add("java");
+    command.add(ProcessStatus.javaExecutable);
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx3000m");

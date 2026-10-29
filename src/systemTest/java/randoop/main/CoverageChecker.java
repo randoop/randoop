@@ -97,7 +97,7 @@ class CoverageChecker {
    * @param classnames the class name set
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
+  CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
     this.classnames = classnames;
     this.minMethodsToCover = minMethodsToCover;
   }
@@ -123,23 +123,33 @@ class CoverageChecker {
    */
   static CoverageChecker fromFile(
       RandoopOptions options, int minMethodsToCover, String covGoalsFile) {
-    // Load from classpath: src/systemTest/resources/test-covgoals/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
+    List<String> covGoals = readCovGoals(covGoalsFile);
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
+    result.covGoalsFile = cloader.getResource("test-covgoals/" + covGoalsFile).getPath();
+    result.methods(covGoals);
+    return result;
+  }
+
+  /**
+   * Reads a coverage-goals file from the classpath.
+   *
+   * @param covGoalsFile the name of a file in {@code src/systemTest/resources/test-covgoals/}
+   * @return the lines of the file
+   */
+  static List<String> readCovGoals(String covGoalsFile) {
     ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
     String resourceName = "test-covgoals/" + covGoalsFile;
-    result.covGoalsFile = cloader.getResource(resourceName).getPath();
-    List<String> covGoals;
     try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
         throw new Error("Resource not found on classpath: " + resourceName);
       }
-      covGoals =
-          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
+      return new BufferedReader(new InputStreamReader(in, UTF_8))
+          .lines()
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new Error("Problem reading resource " + resourceName, e);
     }
-    result.methods(covGoals.toArray(new String[0]));
-    return result;
   }
 
   /**
@@ -239,6 +249,17 @@ class CoverageChecker {
    * @param covGoals method coverage goals
    */
   void methods(List<String> covGoals) {
+    methods(covGoals, javaVersion);
+  }
+
+  /**
+   * Add method names to be excluded, ignored, or included, using the goals that are active for the
+   * given Java version. For documentation of the format, see {@link #methods(List)}.
+   *
+   * @param covGoals method coverage goals
+   * @param jdkVersion the major Java version whose goals to apply
+   */
+  void methods(List<String> covGoals, int jdkVersion) {
     // Each method in `covGoals` is either:
     // * individually specified by "include", "exclude", or "ignore"
     // * not individually specified
@@ -301,9 +322,9 @@ class CoverageChecker {
       Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
-          || (javaVersion == actionJdk)
-          || (orGreater && javaVersion > actionJdk)
-          || (orLess && javaVersion < actionJdk)) {
+          || (jdkVersion == actionJdk)
+          || (orGreater && jdkVersion > actionJdk)
+          || (orLess && jdkVersion < actionJdk)) {
 
         String oldAction = thisCovGoals.get(methodName);
         if (oldAction != null) {
