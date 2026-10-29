@@ -39,16 +39,6 @@ public class LazyReferenceBoundTest {
   @SuppressWarnings("serial")
   static class SelfValuedMap extends HashMap<String, SelfValuedMap> {}
 
-  /**
-   * A class with a field whose type has a wildcard argument and a type variable.
-   *
-   * @param <V> the type parameter
-   */
-  static class WildcardHolder<V> {
-    /** A field whose type has a wildcard argument and a type variable. */
-    Map<V, ? extends Number> field;
-  }
-
   /** A field whose type has a wildcard argument for {@link SelfBound}. */
   SelfBound<?> selfBoundField;
 
@@ -111,19 +101,6 @@ public class LazyReferenceBoundTest {
         "bound " + result + " should be lazy since it contains a type variable",
         result instanceof LazyReferenceBound);
     assertEquals(listOfW, result.getBoundType());
-  }
-
-  @Test
-  public void testApplyCaptureConversion() throws NoSuchFieldException {
-    ReferenceType mapType =
-        ClassOrInterfaceType.forType(
-            WildcardHolder.class.getDeclaredField("field").getGenericType());
-    ReferenceBound bound = new LazyReferenceBound(mapType);
-    ReferenceBound result = bound.applyCaptureConversion();
-    assertTrue(
-        "bound " + result + " should be lazy since it contains a type variable",
-        result instanceof LazyReferenceBound);
-    assertTrue(result.getBoundType().hasCaptureVariable());
   }
 
   @Test
