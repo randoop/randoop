@@ -992,14 +992,15 @@ public class Minimize extends CommandHandler {
     // Obtain directory to carry out compilation and execution step.
     Path executionDir = getExecutionDirectory(file, packageName);
 
-    // Command to compile the input Java file.
-    String command = "javac -classpath .";
+    // Classpath for compiling the Java file.
+    String compileClasspath = ".";
     if (classpath != null) {
-      // Add specified classpath to command.
-      command += PATH_SEPARATOR + classpath;
+      compileClasspath += PATH_SEPARATOR + classpath;
     }
 
-    command += " " + file.toAbsolutePath().toString();
+    // Command to compile the input Java file.
+    List<String> command =
+        Arrays.asList("javac", "-classpath", compileClasspath, file.toAbsolutePath().toString());
 
     // Compile specified Java file.
     return runProcess(command, executionDir, timeoutLimit);
@@ -1037,7 +1038,8 @@ public class Minimize extends CommandHandler {
       fqClassName = packageName + "." + fqClassName;
     }
 
-    String command = "java -classpath " + classpath + " org.junit.runner.JUnitCore " + fqClassName;
+    List<String> command =
+        Arrays.asList("java", "-classpath", classpath, "org.junit.runner.JUnitCore", fqClassName);
 
     // Run the specified Java file and return the standard output.
     return runProcess(command, executionDir, timeoutLimit).stdout;
@@ -1077,22 +1079,22 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Run a command given as a String and return the output and error results in an Outputs object.
+   * Run a command and return the output and error results in an Outputs object.
    *
-   * @param command the input command to be run
+   * @param command the input command to be run: the executable, followed by its arguments
    * @param executionDir the directory where the process commands should be executed
    * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
+  public static Outputs runProcess(List<String> command, Path executionDir, int timeoutLimit) {
     if (executionDir != null && executionDir.toString().isEmpty()) {
       // Execute command in the default directory.
       executionDir = null;
     }
 
-    String[] args = command.split(" ");
-    CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
-    cmdLine.addArguments(Arrays.copyOfRange(args, 1, args.length));
+    CommandLine cmdLine = new CommandLine(command.get(0)); // constructor requires executable name
+    // Disable quoting:  each element of `command` is already a separate argument.
+    cmdLine.addArguments(command.subList(1, command.size()).toArray(new String[0]), false);
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
