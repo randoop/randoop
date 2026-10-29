@@ -36,8 +36,10 @@ method.  On other JDK versions, the merged actions may differ.
 
 In a line-by-line merge, a line is in the result if it is in both ours and
 theirs, or if one of them added it and the other did not remove it.
-Comment-only lines are merged line by line.  Blank lines are removed.  The
-output is sorted, so comment-only lines are at the beginning of the file.
+Comment-only lines are merged line by line.  They are at the beginning of the
+output, in the order in which they appear in ours; each comment-only line that
+theirs added follows the merged line that precedes it in theirs.  Duplicate
+comment-only lines and blank lines are removed.  The other lines are sorted.
 
 If the semantic merge fails (for example, because a version contains conflict
 markers), this script performs a textual merge using "git merge-file".
@@ -73,7 +75,6 @@ from coverage_goals import (
     action_for,
     is_valid,
     minimal_goals,
-    parse_goal_line,
     read_goals,
     rejection_reason,
 )
@@ -118,6 +119,34 @@ def merge_lines(base: set[str], ours: set[str], theirs: set[str]) -> set[str]:
         for line in base | ours | theirs
         if merge_value(line in base, line in ours, line in theirs)
     }
+
+
+def merge_ordered_lines(base: list[str], ours: list[str], theirs: list[str]) -> list[str]:
+    """Return the three-way merge of sequences of lines, without duplicates.
+
+    A line is in the result under the same conditions as for merge_lines.  The
+    result is in the order of ours; each line that theirs added follows the line
+    of the result that precedes it in theirs, or is first if there is none.
+
+    Args:
+        base: the lines in the common ancestor
+        ours: the lines in the current version
+        theirs: the lines in the other version
+
+    Returns:
+        the merged lines
+    """
+    kept = merge_lines(set(base), set(ours), set(theirs))
+    result = [line for line in dict.fromkeys(ours) if line in kept]
+    # The position in result after the last line of theirs that is in result.
+    position = 0
+    for line in theirs:
+        if line in result:
+            position = result.index(line) + 1
+        elif line in kept:
+            result.insert(position, line)
+            position += 1
+    return result
 
 
 def merge_method(
@@ -176,7 +205,7 @@ def merge_method(
     line_for_text = {line.text: line for lines in versions for line in lines}
     line_merge = [line_for_text[text] for text in merge_lines(*(set(t) for t in texts))]
     comments = {line.text for line in line_merge if line.has_comment}
-    minimal = [parse_goal_line(f"{method} {goal}") for goal in minimal_goals(target)]
+    minimal = [GoalLine.parse(f"{method} {goal}") for goal in minimal_goals(target)]
 
     def is_acceptable(candidate: list[GoalLine]) -> bool:
         goals = [line.goal for line in candidate]
@@ -207,8 +236,10 @@ def merge(
     """
     base, ours, theirs = (read_goals(path) for path in paths)
 
+    comment_lines = merge_ordered_lines(base[0], ours[0], theirs[0])
+
     # Each entry is a sort key and the lines to output.
-    entries = [(line, [line]) for line in merge_lines(base[0], ours[0], theirs[0])]
+    entries: list[tuple[str, list[str]]] = []
 
     conflicts = []
     methods = set(base[1]) | set(ours[1]) | set(theirs[1])
@@ -239,7 +270,8 @@ def merge(
         # Put the conflict where the method's lines would be.
         entries.append((method + " ", block))
 
-    return [line for _, lines in sorted(entries) for line in lines], conflicts
+    goal_lines = [line for _, lines in sorted(entries) for line in lines]
+    return comment_lines + goal_lines, conflicts
 
 
 def main() -> None:

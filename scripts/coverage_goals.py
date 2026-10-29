@@ -220,40 +220,40 @@ class GoalLine:
     goal: Goal
     has_comment: bool
 
+    @staticmethod
+    def parse(text: str) -> "GoalLine":
+        """Parse a line of a coverage goals file.
 
-def parse_goal_line(text: str) -> GoalLine:
-    """Parse a line of a coverage goals file.
+        Args:
+            text: a line of a coverage goals file, which is not blank or comment-only
 
-    Args:
-        text: a line of a coverage goals file, which is not blank or comment-only
-
-    Returns:
-        the parsed line
-    """
-    body, _, comment = text.partition("#")
-    method, _, goal = body.strip().rpartition(" ")
-    return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
+        Returns:
+            the parsed line
+        """
+        body, _, comment = text.partition("#")
+        method, _, goal = body.strip().rpartition(" ")
+        return GoalLine(text, method, Goal.parse(goal), bool(comment.strip()))
 
 
-def read_goals(path: Path) -> tuple[set[str], dict[str, list[GoalLine]]]:
+def read_goals(path: Path) -> tuple[list[str], dict[str, list[GoalLine]]]:
     """Read a file of coverage goals.
 
     Args:
         path: a file of coverage goals
 
     Returns:
-        the file's comment-only lines, and a map from each method to its lines
+        the file's comment-only lines in order, and a map from each method to its lines
     """
-    comment_lines = set()
+    comment_lines = []
     lines_for_method: dict[str, list[GoalLine]] = {}
     for line in path.read_text().splitlines():
         if not line.strip():
             continue
         if not line.partition("#")[0].strip():
-            comment_lines.add(line)
+            comment_lines.append(line)
             continue
         try:
-            goal_line = parse_goal_line(line)
+            goal_line = GoalLine.parse(line)
         except ValueError as e:
             message = f"{path}: {e}"
             raise ValueError(message) from e

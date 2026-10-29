@@ -29,8 +29,8 @@ goals, using as few lines as possible, so that on each of these versions:
  * on a version that has no coverage file, the goal is unchanged.
 On other JDK versions, the goals may change.  A method's goals are not
 rewritten if any of its lines has a comment; this script prints suggested
-goals for such a method instead.  The output file is sorted, so comment-only
-lines move to the beginning of the file.
+goals for such a method instead.  In the output file, the comment-only lines
+come first, in their original order, followed by the other lines, sorted.
 
 If, on one of these versions, any method in a coverage file has two goals of
 the same scope (which CoverageChecker rejects), this script reports every such
@@ -102,7 +102,7 @@ def main() -> None:
     if errors:
         sys.exit("\n".join(errors))
 
-    new_lines = comment_lines | {line.text for lines in lines_for_method.values() for line in lines}
+    new_lines = {line.text for lines in lines_for_method.values() for line in lines}
     for method in methods:
         old = lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
@@ -125,7 +125,8 @@ def main() -> None:
         print(f"  old: {', '.join(str(goal) for goal in old_goals) or '(none)'}")
         print(f"  new: {', '.join(str(goal) for goal in new_goals) or '(none)'}")
 
-    args.goals_file.write_text("".join(line + "\n" for line in sorted(new_lines)))
+    output_lines = comment_lines + sorted(new_lines)
+    args.goals_file.write_text("".join(line + "\n" for line in output_lines))
 
 
 if __name__ == "__main__":
