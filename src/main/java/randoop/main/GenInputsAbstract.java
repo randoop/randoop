@@ -256,8 +256,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>This option does not affect classes found via {@code --testjar} or {@code --test-package}.
    */
-  @Option("Warn about, rather than fail on, user-specified classes that cannot be found or loaded")
-  public static boolean silently_ignore_bad_class_names = false;
+  @Option(
+      value =
+          "Warn about, rather than fail on, user-specified classes that cannot be found or loaded",
+      aliases = {"--silently-ignore-bad-class-names"})
+  public static boolean ignore_bad_class_names = false;
 
   /**
    * (For debugging.) If an error or exception is thrown during type instantiation or input
