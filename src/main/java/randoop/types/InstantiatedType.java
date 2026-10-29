@@ -79,7 +79,9 @@ public class InstantiatedType extends ParameterizedType {
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
-   * Conversion</a>.
+   * Conversion</a>. A type argument that is not a wildcard is unchanged, even if it contains a
+   * wildcard: for example, the capture conversion of {@code List<List<?>>} is {@code
+   * List<List<?>>}.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
    * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
