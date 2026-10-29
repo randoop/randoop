@@ -181,9 +181,9 @@ public class TypedClassOperation extends TypedOperation {
 
   @Override
   public boolean hasWildcardTypes() {
-    return getInputTypes().hasWildcard()
-        || (getOutputType().isParameterized()
-            && ((ClassOrInterfaceType) getOutputType()).hasWildcard());
+    return getInputTypes().hasWildcardArgument()
+        || (getOutputType().isClassOrInterfaceType()
+            && ((ClassOrInterfaceType) getOutputType()).hasWildcardArgument());
   }
 
   @Override
