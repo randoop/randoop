@@ -16,10 +16,11 @@ DEFAULT_JDKS = "8,11,17,21,25,26"
 # The goal syntax must be consistent with CoverageChecker.methods().
 GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
-# The scopes of a goal, from least to most specific.  A goal's scope depends
-# only on the JDK versions that the goal applies to:  every version, a range of
-# versions, or a single version.  A more specific goal takes precedence over a
-# less specific one.
+# The scopes of a goal, from least to most specific.  A goal's scope concerns
+# only JDK versions, and it is determined by the goal's form:  no JDK version
+# (every version), a JDK version with "+" or "-" (a range of versions), or a JDK
+# version alone (a single version).  A more specific goal takes precedence over
+# a less specific one.
 OVERALL = 0
 RANGE = 1
 INDIVIDUAL = 2
@@ -87,15 +88,15 @@ class Goal:
         return False
 
 
-def action_for(goals: Iterable[Goal], jdk: int) -> str:
-    """Return the action that the given goals for a method specify for a JDK version.
+def applicable_goals(goals: Iterable[Goal], jdk: int) -> list[Goal]:
+    """Return the given goals for a method that apply to a JDK version.
 
     Args:
         goals: the goals for a method
         jdk: a JDK version
 
     Returns:
-        "include", "exclude", or "ignore"
+        the goals that apply to the JDK version, from least to most specific
 
     Raises:
         ValueError: if two of the goals that apply to the JDK version have the same scope
@@ -109,9 +110,24 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
             message = f"JDK {jdk}: goals {other} and {goal} have the same scope"
             raise ValueError(message)
         goal_for_scope[goal.scope()] = goal
-    if not goal_for_scope:
-        return "include"
-    return goal_for_scope[max(goal_for_scope)].action
+    return [goal_for_scope[scope] for scope in sorted(goal_for_scope)]
+
+
+def action_for(goals: Iterable[Goal], jdk: int) -> str:
+    """Return the action that the given goals for a method specify for a JDK version.
+
+    Args:
+        goals: the goals for a method
+        jdk: a JDK version
+
+    Returns:
+        "include", "exclude", or "ignore"
+
+    Raises:
+        ValueError: if two of the goals that apply to the JDK version have the same scope
+    """  # ruff: ignore[docstring-extraneous-exception]
+    applicable = applicable_goals(goals, jdk)
+    return applicable[-1].action if applicable else "include"
 
 
 def is_valid(goals: list[Goal], jdk: int) -> bool:
@@ -119,6 +135,8 @@ def is_valid(goals: list[Goal], jdk: int) -> bool:
 
     CoverageChecker rejects two goals of the same scope, a goal that specifies the
     action that a less specific goal already specifies, and an unneeded "include".
+    If this returns true, then action_for does not raise an exception for the same
+    arguments.
 
     Args:
         goals: the goals for a method
@@ -127,11 +145,9 @@ def is_valid(goals: list[Goal], jdk: int) -> bool:
     Returns:
         true if CoverageChecker accepts the goals on the JDK version
     """
-    applicable = sorted(
-        (goal for goal in goals if goal.applies(jdk)), key=lambda goal: goal.scope()
-    )
-    scopes = [goal.scope() for goal in applicable]
-    if len(set(scopes)) != len(scopes):
+    try:
+        applicable = applicable_goals(goals, jdk)
+    except ValueError:
         return False
     actions = ["include"] + [goal.action for goal in applicable]
     return all(prev != action for prev, action in itertools.pairwise(actions))
@@ -153,7 +169,7 @@ def minimal_goals(target: dict[int, str]) -> list[Goal]:
     jdks = sorted(target)
     # The best candidate found so far, as a pair of its sort key and its goals,
     # or None if no candidate has been considered yet.  A smaller key is better.
-    best: tuple | None = None
+    best: tuple[tuple[int, int, list[str]], list[Goal]] | None = None
     for overall in ACTIONS:
         others = [action for action in ACTIONS if action != overall]
         ranges = [None, *itertools.product(jdks, others)]

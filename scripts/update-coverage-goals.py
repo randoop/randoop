@@ -87,14 +87,22 @@ def main() -> None:
         sys.exit(str(e))
 
     methods = sorted(set().union(*(set(c) for c in coverage.values())))
+    old_actions_for_method: dict[str, dict[int, str]] = {}
+    errors = []
+    for method in methods:
+        old_goals = [line.goal for line in lines_for_method.get(method, [])]
+        try:
+            old_actions_for_method[method] = {jdk: action_for(old_goals, jdk) for jdk in jdks}
+        except ValueError as e:
+            errors.append(f"{args.goals_file}: {method}: {e}")
+    if errors:
+        sys.exit("\n".join(errors))
+
     new_lines = comment_lines | {line.text for lines in lines_for_method.values() for line in lines}
     for method in methods:
         old = lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
-        try:
-            old_actions = {jdk: action_for(old_goals, jdk) for jdk in jdks}
-        except ValueError as e:
-            sys.exit(f"{args.goals_file}: {method}: {e}")
+        old_actions = old_actions_for_method[method]
         target = dict(old_actions)
         for jdk in jdks:
             if target[jdk] != "ignore" and method in coverage.get(jdk, {}):

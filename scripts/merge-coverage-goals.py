@@ -16,7 +16,8 @@ merge is clean and status 1 if there are conflicts.
 The merge is semantic.  For each method:
  * If ours and theirs have the same lines for the method, or one of them has
    the same lines as base, then the result is the other one's lines, verbatim.
- * Otherwise, if CoverageChecker rejects ours or theirs, there is a conflict.
+ * Otherwise, if CoverageChecker rejects base, ours, or theirs, there is a
+   conflict.
  * Otherwise, the method's action ("include", "exclude", or "ignore") is merged
    for each JDK version.  If ours and theirs specify the same action, or one of
    them specifies the same action as base, then the merged action is the other
@@ -142,7 +143,7 @@ def merge_method(
     all_jdks = sorted(set(jdks) | mentioned)
     problems = [
         f"JDK {jdk}: CoverageChecker rejects {name}"
-        for name, lines in (("ours", versions[1]), ("theirs", versions[2]))
+        for name, lines in zip(("base", "ours", "theirs"), versions, strict=True)
         for jdk in all_jdks
         if not is_valid([line.goal for line in lines], jdk)
     ]
