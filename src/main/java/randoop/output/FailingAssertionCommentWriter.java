@@ -57,6 +57,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private static final Pattern FAILURE_MESSAGE_PATTERN =
       Pattern.compile("There\\s+(?:was|were)\\s+(\\d+)\\s+failure(?:s|):");
 
+  /**
+   * A pattern matching the JUnit4 header line for a single failure, such as "1) test5(pkg.MyTest)".
+   * Capturing group 1 is the name of the failing test method.
+   */
   private static final Pattern FAILURE_HEADER_PATTERN =
       Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + DOT_DELIMITED_IDS + "\\)");
 

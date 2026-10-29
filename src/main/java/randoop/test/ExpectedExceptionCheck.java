@@ -1,6 +1,10 @@
 package randoop.test;
 
 import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -15,6 +19,23 @@ import randoop.Globals;
  * </ul>
  */
 public class ExpectedExceptionCheck extends ExceptionCheck {
+
+  /**
+   * Exception classes whose message is omitted from generated tests. The JVM throws these
+   * exceptions implicitly, such as when code dereferences null. The HotSpot JVM's just-in-time
+   * compiler may replace a frequently thrown one by a preallocated exception that has no message.
+   * Whether that happens depends on timing, so the message could differ from one run of Randoop to
+   * another.
+   */
+  private static final Set<Class<?>> omitMessageClasses =
+      Collections.unmodifiableSet(
+          new HashSet<>(
+              Arrays.asList(
+                  ArithmeticException.class,
+                  ArrayIndexOutOfBoundsException.class,
+                  ArrayStoreException.class,
+                  ClassCastException.class,
+                  NullPointerException.class)));
 
   /**
    * Creates check that enforces expectation that an exception is thrown by the statement at the
@@ -46,10 +67,14 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
         message = "Expected anonymous exception";
       } else {
         String exceptionMessage;
-        try {
-          exceptionMessage = "; message: " + toAscii(exception.getMessage());
-        } catch (Throwable t) {
-          exceptionMessage = " whose getMessage() throws an exception";
+        if (omitMessageClasses.contains(exception.getClass())) {
+          exceptionMessage = "";
+        } else {
+          try {
+            exceptionMessage = "; message: " + toAscii(exception.getMessage());
+          } catch (Throwable t) {
+            exceptionMessage = " whose getMessage() throws an exception";
+          }
         }
         message = "Expected exception of type " + getExceptionName() + exceptionMessage;
       }
