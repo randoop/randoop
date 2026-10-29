@@ -4,6 +4,10 @@
 
 Randoop compiles under Java 21-26 and runs under Java 8-26.
 
+Renamed command-line argument `--silently-ignore-bad-class-names` to
+`--ignore-bad-class-names`, because Randoop prints a warning for each class that
+cannot be found or loaded.  The old name still works.
+
 New command-line arguments:
 
 * `--call-non-sut-methods` calls methods outside the system under test to
@@ -31,6 +35,13 @@ Changed command-line arguments:
   to M.  Randoop no longer omits methods that override M.  A pattern must
   match the signature in the class that declares a method, not in a class
   that inherits it.
+
+Randoop compiles and runs generated tests with the JDK that runs Randoop,
+rather than with the `javac` and `java` that are on the PATH.
+
+When a generated test expects an exception that the JVM throws implicitly,
+such as `NullPointerException` or `ClassCastException`, the test's failure
+message omits the exception's message, which can differ from run to run.
 
 ## Version 4.3.4 (June 6, 2025)
 

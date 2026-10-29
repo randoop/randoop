@@ -76,6 +76,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
+  /** Instantiates generic operations with concrete type arguments. */
   private final TypeInstantiator instantiator;
 
   /** How to select sequences as input for creating new sequences. */

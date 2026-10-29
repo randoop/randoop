@@ -20,8 +20,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class WildcardType extends ParameterType {
 
+  /** True if this wildcard has an upper bound ({@code extends}), false if a lower bound. */
   private final boolean hasUpperBound;
 
+  /** Do not create a wildcard type without a bound. */
   private WildcardType() {
     //  do not create object
     this.hasUpperBound = false;
@@ -142,16 +144,6 @@ class WildcardType extends ParameterType {
       return this;
     }
     return new WildcardType(bound, hasUpperBound);
-  }
-
-  @Override
-  public WildcardType applyCaptureConversion() {
-    if (getTypeBound().hasWildcard()) {
-      EagerReferenceBound convertedType =
-          (EagerReferenceBound) getTypeBound().applyCaptureConversion();
-      return new WildcardType(convertedType, this.hasUpperBound);
-    }
-    return this;
   }
 
   /**
