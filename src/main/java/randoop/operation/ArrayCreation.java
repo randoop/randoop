@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -68,9 +69,15 @@ public class ArrayCreation extends CallableOperation {
   // The argument array contains a single Integer.
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
-    int length = ((Integer) input[0]).intValue();
-    Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
+    Object theArray;
+    // Record the exceptions that the generated code `new T[length]` would throw.
+    try {
+      @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
+      int length = ((Integer) input[0]).intValue();
+      theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
+    } catch (NullPointerException | NegativeArraySizeException | OutOfMemoryError e) {
+      return new ExceptionalExecution(e, 0);
+    }
     return new NormalExecution(theArray, 0);
   }
 
