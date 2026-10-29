@@ -86,8 +86,7 @@ public class DefaultOmitMethodsTest {
               SignatureParser.parse(
                   signature, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
         } catch (SignatureParseException | FailedPredicateException e) {
-          fail(filename + ": " + e.getMessage());
-          throw new Error("unreachable");
+          throw new AssertionError(filename + ": " + e.getMessage(), e);
         }
         RawSignature rawSignature =
             (member instanceof Constructor)
