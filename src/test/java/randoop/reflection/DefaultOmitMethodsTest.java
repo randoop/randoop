@@ -98,8 +98,7 @@ public class DefaultOmitMethodsTest {
           if (NEWER_JDK_SIGNATURES.contains(signature)) {
             continue;
           }
-          fail(filename + ": " + e.getMessage());
-          throw new Error("unreachable");
+          throw new AssertionError(filename + ": " + e.getMessage(), e);
         }
         RawSignature rawSignature =
             (member instanceof Constructor)
@@ -217,6 +216,80 @@ public class DefaultOmitMethodsTest {
     assertNotOmitted(
         java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat(java.lang.String)");
     assertNotOmitted(java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat.toPattern()");
+  }
+
+  @Test
+  public void testJodaTimeReadClock() throws RandoopSpecificationError {
+    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime()");
+    assertOmitted(
+        org.joda.time.DateTime.class, "org.joda.time.DateTime(org.joda.time.DateTimeZone)");
+    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime.now()");
+    assertOmitted(org.joda.time.DateTime.class, "org.joda.time.base.AbstractInstant.isAfterNow()");
+    assertOmitted(
+        org.joda.time.DateTime.class, "org.joda.time.DateTime.now(org.joda.time.DateTimeZone)");
+    assertNotOmitted(org.joda.time.DateTime.class, "org.joda.time.DateTime(long)");
+    assertNotOmitted(
+        org.joda.time.DateTime.class, "org.joda.time.DateTime(long,org.joda.time.DateTimeZone)");
+    assertNotOmitted(
+        org.joda.time.DateTime.class, "org.joda.time.base.AbstractInstant.isAfter(long)");
+
+    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate()");
+    assertOmitted(
+        org.joda.time.LocalDate.class, "org.joda.time.LocalDate(org.joda.time.Chronology)");
+    assertOmitted(
+        org.joda.time.LocalDate.class, "org.joda.time.LocalDate(org.joda.time.DateTimeZone)");
+    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(java.lang.Object)");
+    assertOmitted(
+        org.joda.time.LocalDate.class,
+        "org.joda.time.LocalDate(java.lang.Object,org.joda.time.Chronology)");
+    assertOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate.now()");
+    assertOmitted(
+        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.now(org.joda.time.DateTimeZone)");
+    assertOmitted(
+        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.toDateTimeAtCurrentTime()");
+    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(int,int,int)");
+    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate(long)");
+    assertNotOmitted(org.joda.time.LocalDate.class, "org.joda.time.LocalDate.plusDays(int)");
+    assertNotOmitted(
+        org.joda.time.LocalDate.class, "org.joda.time.LocalDate.toDateTimeAtStartOfDay()");
+
+    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant()");
+    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant.now()");
+    assertOmitted(org.joda.time.Instant.class, "org.joda.time.Instant(java.lang.Object)");
+    assertNotOmitted(org.joda.time.Instant.class, "org.joda.time.Instant(long)");
+
+    assertOmitted(org.joda.time.LocalTime.class, "org.joda.time.LocalTime()");
+    assertOmitted(
+        org.joda.time.LocalTime.class,
+        "org.joda.time.LocalTime.toDateTimeToday(org.joda.time.DateTimeZone)");
+    assertNotOmitted(org.joda.time.LocalTime.class, "org.joda.time.LocalTime(int,int)");
+
+    assertOmitted(org.joda.time.Interval.class, "org.joda.time.Interval(java.lang.Object)");
+    assertOmitted(
+        org.joda.time.Interval.class, "org.joda.time.base.AbstractInterval.containsNow()");
+    assertNotOmitted(org.joda.time.Interval.class, "org.joda.time.Interval(long,long)");
+    assertNotOmitted(
+        org.joda.time.Interval.class, "org.joda.time.base.AbstractInterval.contains(long)");
+  }
+
+  @Test
+  public void testJodaTimeSetGlobalState() throws RandoopSpecificationError {
+    assertOmitted(
+        org.joda.time.DateTimeUtils.class, "org.joda.time.DateTimeUtils.currentTimeMillis()");
+    assertOmitted(
+        org.joda.time.DateTimeUtils.class,
+        "org.joda.time.DateTimeUtils.setCurrentMillisFixed(long)");
+    assertOmitted(
+        org.joda.time.DateTimeUtils.class, "org.joda.time.DateTimeUtils.setCurrentMillisSystem()");
+    assertNotOmitted(
+        org.joda.time.DateTimeUtils.class,
+        "org.joda.time.DateTimeUtils.getInstantMillis(org.joda.time.ReadableInstant)");
+
+    assertOmitted(
+        org.joda.time.DateTimeZone.class,
+        "org.joda.time.DateTimeZone.setDefault(org.joda.time.DateTimeZone)");
+    assertNotOmitted(
+        org.joda.time.DateTimeZone.class, "org.joda.time.DateTimeZone.forID(java.lang.String)");
   }
 
   /**
