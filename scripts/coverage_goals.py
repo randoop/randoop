@@ -130,8 +130,7 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
     if applicable:
         # The last goal is the most specific one.
         return applicable[-1].action
-    else:
-        return "include"
+    return "include"
 
 
 def rejection_reason(goals: Iterable[Goal], jdk: int) -> str | None:
