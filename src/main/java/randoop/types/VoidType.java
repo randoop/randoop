@@ -16,7 +16,9 @@ public final class VoidType extends Type {
   private static final VoidType value = new VoidType();
 
   /** Creates a new VoidType. */
-  private VoidType() {}
+  private VoidType() {
+    super();
+  }
 
   /**
    * Returns a VoidType. Actually, always returns the single canonical VoidType.

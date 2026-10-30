@@ -1,8 +1,14 @@
 package randoop.instrument;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -294,6 +300,17 @@ public class ReplacementFileTest {
     Map<MethodSignature, MethodSignature> defaultMap =
         ReplacementFileReader.readReplacements(defaultFile);
     assertEquals(75, map.size());
+  }
+
+  @Test
+  public void invalidEncodingTest() throws IOException, ReplacementFileException {
+    byte[] latin1Bytes = "java.lang.String java.lang.Caf\u00e9\n".getBytes(ISO_8859_1);
+    thrown.expect(IOException.class);
+    thrown.expectMessage("invalidencoding.txt: invalid character encoding");
+    thrown.expectCause(isA(MalformedInputException.class));
+    ReplacementFileReader.readReplacements(
+        new InputStreamReader(new ByteArrayInputStream(latin1Bytes), UTF_8.newDecoder()),
+        "invalidencoding.txt");
   }
 
   @Test
