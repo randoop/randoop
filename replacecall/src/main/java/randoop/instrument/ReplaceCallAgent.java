@@ -23,9 +23,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.EntryReader.CommentFormat;
-import org.plumelib.util.EntryReader.EntryFormat;
 import randoop.MethodReplacements;
 
 /**
@@ -249,21 +246,14 @@ public final class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
-      throws IOException {
+  /*package-private*/ static Set<String> loadExclusions(
+      @Owning Reader exclusionReader, String filename) throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader =
-        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
-      for (String line : reader) {
-        String trimmed = line.trim();
-        if (!trimmed.isEmpty()) {
-          if (trimmed.charAt(trimmed.length() - 1) != '.') {
-            trimmed = trimmed + ".";
-          }
-          excludedPackagePrefixes.add(trimmed);
-        }
-      }
-    }
+    EntryFileReader.forEachEntry(
+        exclusionReader,
+        filename,
+        (entry, lineNumber) ->
+            excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
   }
 
