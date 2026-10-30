@@ -37,9 +37,12 @@ method.  On other JDK versions, the merged actions may differ.
 In a line-by-line merge, a line is in the result if it is in both ours and
 theirs, or if one of them added it and the other did not remove it.
 
-The comment-only lines are at the beginning of the output.  They are merged
-textually, by "git merge-file"; a conflict among them is reported like any
-other.  Blank lines are removed.  The other lines are sorted.
+The comment-only lines are at the beginning of the output.  If ours and theirs
+have the same comment-only lines, or one of them has the same comment-only
+lines as base, then the result is the other one's comment-only lines.
+Otherwise, the comment-only lines are merged line by line, without duplicates:
+the lines of ours come first, in order, followed by the lines that only theirs
+has, in order.  Blank lines are removed.  The other lines are sorted.
 
 If the semantic merge fails (for example, because a version contains conflict
 markers), this script performs a textual merge using "git merge-file".
@@ -66,7 +69,6 @@ git merges *.covgoals files textually.
 import argparse
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import TypeVar
 
@@ -122,54 +124,27 @@ def merge_lines(base: set[str], ours: set[str], theirs: set[str]) -> set[str]:
     }
 
 
-def merge_file_command(labels: list[str], marker_size: int) -> list[str]:
-    """Return a "git merge-file" command, without its file arguments.
+def merge_ordered_lines(base: list[str], ours: list[str], theirs: list[str]) -> list[str]:
+    """Return the three-way merge of sequences of lines.
+
+    If ours and theirs are equal, or one of them equals base, then the result is
+    the other one.  Otherwise, a line is in the result under the same conditions
+    as for merge_lines, and the result has no duplicates; it consists of the lines
+    of ours, in order, followed by the lines that only theirs has, in order.
 
     Args:
-        labels: the labels of base, ours, and theirs for conflict markers
-        marker_size: the length of conflict markers
+        base: the lines in the common ancestor
+        ours: the lines in the current version
+        theirs: the lines in the other version
 
     Returns:
-        the command, to which the caller appends the ours, base, and theirs files
+        the merged lines
     """
-    command = ["git", "merge-file", "--diff3", f"--marker-size={marker_size}"]
-    for label in (labels[1], labels[0], labels[2]):
-        command += ["-L", label]
-    return command
-
-
-def merge_text(
-    versions: tuple[list[str], list[str], list[str]], labels: list[str], marker_size: int
-) -> tuple[list[str], bool]:
-    """Return the textual three-way merge of sequences of lines, by "git merge-file".
-
-    Args:
-        versions: the lines in base, ours, and theirs
-        labels: the labels of base, ours, and theirs for conflict markers
-        marker_size: the length of conflict markers
-
-    Returns:
-        the merged lines, which contain conflict markers if there is a conflict;
-        and true if there is a conflict
-
-    Raises:
-        CalledProcessError: if "git merge-file" fails
-    """
-    base, ours, theirs = versions
-    with tempfile.TemporaryDirectory() as directory:
-        paths = []
-        for name, lines in (("ours", ours), ("base", base), ("theirs", theirs)):
-            path = Path(directory) / name
-            path.write_text("".join(line + "\n" for line in lines))
-            paths.append(str(path))
-        command = [*merge_file_command(labels, marker_size), "--stdout", *paths]
-        result = subprocess.run(command, capture_output=True, text=True, check=False)
-    # The exit status is the number of conflicts, at most 127, or negative on error.
-    if not 0 <= result.returncode <= 127:
-        raise subprocess.CalledProcessError(
-            result.returncode, command, result.stdout, result.stderr
-        )
-    return result.stdout.splitlines(), result.returncode > 0
+    merged = merge_value(base, ours, theirs)
+    if merged is not None:
+        return merged
+    kept = merge_lines(set(base), set(ours), set(theirs))
+    return [line for line in dict.fromkeys(ours + theirs) if line in kept]
 
 
 def merge_method(
@@ -261,16 +236,14 @@ def merge(
     """
     base, ours, theirs = (read_goals(path) for path in paths)
 
-    conflicts = []
-    comment_lines, comment_conflict = merge_text(
-        (base.comment_lines, ours.comment_lines, theirs.comment_lines), labels, marker_size
+    comment_lines = merge_ordered_lines(
+        base.comment_lines, ours.comment_lines, theirs.comment_lines
     )
-    if comment_conflict:
-        conflicts.append("Conflict in comment-only lines")
 
     # Each entry is a sort key and the lines to output.
     entries: list[tuple[str, list[str]]] = []
 
+    conflicts = []
     # The union of the methods that have lines in any of the three versions.
     methods = set(base.lines_for_method) | set(ours.lines_for_method) | set(theirs.lines_for_method)
     for method in sorted(methods):
@@ -325,7 +298,9 @@ def main() -> None:
         lines, conflicts = merge(paths, labels, args.marker_size, jdks)
     except Exception as e:  # ruff: ignore[blind-except]
         print(f"{type(e).__name__}: {e}; performing a textual merge", file=sys.stderr)
-        command = merge_file_command(labels, args.marker_size)
+        command = ["git", "merge-file", "--diff3", f"--marker-size={args.marker_size}"]
+        for label in (labels[1], labels[0], labels[2]):
+            command += ["-L", label]
         command += ["--stdout"] if args.stdout else []
         command += [str(args.ours), str(args.base), str(args.theirs)]
         sys.exit(1 if subprocess.run(command, check=False).returncode else 0)
