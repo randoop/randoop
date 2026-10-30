@@ -112,8 +112,8 @@ public abstract class AbstractGenerator {
   private @Nullable IStopper stopper;
 
   /**
-   * Updates the progress display message printed to the console. Null if {@link
-   * GenInputsAbstract#progressdisplay} is false.
+   * Displays progress messages, and exits Randoop if the generator stops taking steps. Its mode is
+   * {@link ProgressDisplay.Mode#NO_DISPLAY} if no progress messages should be displayed.
    */
   private ProgressDisplay progressDisplay;
 
@@ -309,69 +309,73 @@ public abstract class AbstractGenerator {
 
     startTime = System.currentTimeMillis();
 
-    if (GenInputsAbstract.progressdisplay) {
-      progressDisplay = new ProgressDisplay(this, ProgressDisplay.Mode.MULTILINE);
-      progressDisplay.start();
-    }
+    ProgressDisplay.Mode progressDisplayMode =
+        (GenInputsAbstract.progressdisplay
+                && (GenInputsAbstract.progressintervalmillis > 0
+                    || GenInputsAbstract.progressintervalsteps > 0))
+            ? ProgressDisplay.Mode.MULTILINE
+            : ProgressDisplay.Mode.NO_DISPLAY;
+    progressDisplay = new ProgressDisplay(this, progressDisplayMode);
+    progressDisplay.start();
 
-    while (!shouldStop()) {
+    try {
+      while (!shouldStop()) {
 
-      num_steps++;
+        num_steps++;
 
-      ExecutableSequence eSeq = step();
+        ExecutableSequence eSeq = step();
 
-      if (dump_sequences) {
-        Log.logPrintf("%nseq before run:%n%s%n", eSeq);
-      }
-
-      if (GenInputsAbstract.progressdisplay
-          && GenInputsAbstract.progressintervalsteps > 0
-          && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
-        progressDisplay.display(!GenInputsAbstract.deterministic);
-      }
-
-      if (eSeq == null) {
-        null_steps++;
-        continue;
-      }
-
-      num_sequences_generated++;
-
-      boolean test;
-      try {
-        test = outputTest.test(eSeq);
-      } catch (Throwable t) {
-        System.out.printf(
-            "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
-        throw t;
-      }
-      if (test) {
-        // Classify the sequence
-        if (eSeq.hasInvalidBehavior()) {
-          invalidSequenceCount++;
-        } else if (eSeq.hasFailure()) {
-          operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
-          num_failing_sequences++;
-          outErrorSeqs.add(eSeq);
-          outputSequences.add(eSeq.sequence);
-        } else {
-          outRegressionSeqs.add(eSeq);
-          outputSequences.add(eSeq.sequence);
-          newRegressionTestHook(eSeq.sequence);
+        if (dump_sequences) {
+          Log.logPrintf("%nseq before run:%n%s%n", eSeq);
         }
-      } else {
-        num_failed_output_test++;
+
+        if (GenInputsAbstract.progressintervalsteps > 0
+            && num_steps % GenInputsAbstract.progressintervalsteps == 0) {
+          progressDisplay.display(!GenInputsAbstract.deterministic);
+        }
+
+        if (eSeq == null) {
+          null_steps++;
+          continue;
+        }
+
+        num_sequences_generated++;
+
+        boolean test;
+        try {
+          test = outputTest.test(eSeq);
+        } catch (Throwable t) {
+          System.out.printf(
+              "%nProblem with sequence:%n%s%n%s%n", eSeq, UtilPlume.stackTraceToString(t));
+          throw t;
+        }
+        if (test) {
+          // Classify the sequence
+          if (eSeq.hasInvalidBehavior()) {
+            invalidSequenceCount++;
+          } else if (eSeq.hasFailure()) {
+            operationHistory.add(eSeq.getOperation(), OperationOutcome.ERROR_SEQUENCE);
+            num_failing_sequences++;
+            outErrorSeqs.add(eSeq);
+            outputSequences.add(eSeq.sequence);
+          } else {
+            outRegressionSeqs.add(eSeq);
+            outputSequences.add(eSeq.sequence);
+            newRegressionTestHook(eSeq.sequence);
+          }
+        } else {
+          num_failed_output_test++;
+        }
+
+        if (dump_sequences) {
+          Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
+          Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
+          // componentManager.log();
+        }
       }
 
-      if (dump_sequences) {
-        Log.logPrintf("Sequence after execution:%n%s%n", eSeq);
-        Log.logPrintf("allSequences.size()=%s%n", numGeneratedSequences());
-        // componentManager.log();
-      }
-    }
-
-    if (GenInputsAbstract.progressdisplay && progressDisplay != null) {
       progressDisplay.display(!GenInputsAbstract.deterministic);
+    } finally {
       progressDisplay.shouldStop = true;
     }
 
