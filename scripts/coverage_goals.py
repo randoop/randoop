@@ -16,8 +16,11 @@ DEFAULT_JDKS = "8,11,17,21,25,26"
 # The goal syntax must be consistent with CoverageChecker.methods().
 GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
-# The scopes of a goal, from least to most specific.  A more specific goal
-# takes precedence over a less specific one.
+# The scopes of a goal, from least to most specific.  A goal's scope concerns
+# only JDK versions, and it is determined by the goal's form:  no JDK version
+# (every version), a JDK version with "+" or "-" (a range of versions), or a JDK
+# version alone (a single version).  A more specific goal takes precedence over
+# a less specific one.
 OVERALL = 0
 RANGE = 1
 INDIVIDUAL = 2
@@ -25,7 +28,7 @@ INDIVIDUAL = 2
 
 @dataclass(frozen=True, order=True)
 class Goal:
-    """A coverage goal for a method, such as "exclude", "ignore17+", or "include11"."""
+    """A coverage goal for a method, such as "exclude", "ignore17+", or "include25"."""
 
     action: str
     # The JDK version, or 0 if the goal applies to every version.
@@ -85,6 +88,31 @@ class Goal:
         return False
 
 
+def applicable_goals(goals: Iterable[Goal], jdk: int) -> list[Goal]:
+    """Return a subset of the given goals: those that apply to the given JDK version.
+
+    Args:
+        goals: the goals for a method
+        jdk: a JDK version
+
+    Returns:
+        the goals that apply to the JDK version, from least to most specific
+
+    Raises:
+        ValueError: if two of the goals that apply to the JDK version have the same scope
+    """
+    goal_for_scope: dict[int, Goal] = {}
+    for goal in goals:
+        if not goal.applies(jdk):
+            continue
+        other = goal_for_scope.get(goal.scope())
+        if other is not None:
+            message = f"JDK {jdk}: goals {other} and {goal} have the same scope"
+            raise ValueError(message)
+        goal_for_scope[goal.scope()] = goal
+    return [goal_for_scope[scope] for scope in sorted(goal_for_scope)]
+
+
 def action_for(goals: Iterable[Goal], jdk: int) -> str:
     """Return the action that the given goals for a method specify for a JDK version.
 
@@ -94,18 +122,19 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
 
     Returns:
         "include", "exclude", or "ignore"
-    """
-    result = "include"
-    result_scope = -1
-    for goal in goals:
-        if goal.applies(jdk) and goal.scope() > result_scope:
-            result = goal.action
-            result_scope = goal.scope()
-    return result
+
+    Raises:
+        ValueError: if two of the goals that apply to the JDK version have the same scope
+    """  # ruff: ignore[docstring-extraneous-exception]
+    applicable = applicable_goals(goals, jdk)
+    if applicable:
+        # The last goal is the most specific one.
+        return applicable[-1].action
+    return "include"
 
 
-def is_valid(goals: list[Goal], jdk: int) -> bool:
-    """Return true if CoverageChecker accepts the given goals for a method on a JDK version.
+def rejection_reason(goals: Iterable[Goal], jdk: int) -> str | None:
+    """Return why CoverageChecker rejects the given goals for a method on a JDK version.
 
     CoverageChecker rejects two goals of the same scope, a goal that specifies the
     action that a less specific goal already specifies, and an unneeded "include".
@@ -115,16 +144,34 @@ def is_valid(goals: list[Goal], jdk: int) -> bool:
         jdk: a JDK version
 
     Returns:
+        why CoverageChecker rejects the goals on the JDK version, or None if it accepts them
+    """
+    try:
+        applicable = applicable_goals(goals, jdk)
+    except ValueError as e:
+        return str(e)
+    previous = "include"
+    for goal in applicable:
+        if goal.action == previous:
+            return f"JDK {jdk}: goal {goal} is redundant"
+        previous = goal.action
+    return None
+
+
+def is_valid(goals: Iterable[Goal], jdk: int) -> bool:
+    """Return true if CoverageChecker accepts the given goals for a method on a JDK version.
+
+    If this returns true, then action_for does not raise an exception for the same
+    arguments.
+
+    Args:
+        goals: the goals for a method
+        jdk: a JDK version
+
+    Returns:
         true if CoverageChecker accepts the goals on the JDK version
     """
-    applicable = sorted(
-        (goal for goal in goals if goal.applies(jdk)), key=lambda goal: goal.scope()
-    )
-    scopes = [goal.scope() for goal in applicable]
-    if len(set(scopes)) != len(scopes):
-        return False
-    actions = ["include"] + [goal.action for goal in applicable]
-    return all(prev != action for prev, action in itertools.pairwise(actions))
+    return rejection_reason(goals, jdk) is None
 
 
 def minimal_goals(target: dict[int, str]) -> list[Goal]:
@@ -141,7 +188,10 @@ def minimal_goals(target: dict[int, str]) -> list[Goal]:
         the goals
     """
     jdks = sorted(target)
-    best: tuple | None = None
+    # The best candidate found so far, as a pair of its sort key and its goals,
+    # or None if no candidate has been considered yet.  A smaller key is better.
+    # The sort key is used solely within this routine, in `key < best[0]`.
+    best: tuple[tuple[int, int, list[str]], list[Goal]] | None = None
     for overall in ACTIONS:
         others = [action for action in ACTIONS if action != overall]
         ranges = [None, *itertools.product(jdks, others)]
