@@ -55,7 +55,9 @@ and add this line to the .gitattributes file (or to .git/info/attributes):
 
 In Randoop, these steps are already done:  the build runs the "git config"
 commands (in the installCovgoalsMergeDriver task, on which compileJava
-depends), and the .gitattributes file contains the line.
+depends) for each variable that is not already set, and the .gitattributes
+file contains the line.  If the "git config" commands fail, the build issues a
+warning and continues.
 
 Git runs the driver in the top-level directory of the working tree, so the
 relative file name of this script works only when this script is checked out;
