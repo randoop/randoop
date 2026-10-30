@@ -305,9 +305,8 @@ tasks.withType<JavaCompile>().configureEach {
 val installCovgoalsMergeDriver =
   tasks.register<GitConfigTask>("installCovgoalsMergeDriver") {
     directory.set(layout.projectDirectory)
-    precondition.set(
-      listOf(layout.projectDirectory.file("scripts/merge-coverage-goals.py").asFile.path, "--help"),
-    )
+    // Git runs the driver with sh in the top-level directory of the working tree; do the same.
+    precondition.set(listOf("sh", "-c", "scripts/merge-coverage-goals.py --help"))
     settings.put("merge.covgoals.name", "coverage goals merge driver")
     settings.put(
       "merge.covgoals.driver",
