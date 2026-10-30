@@ -20,9 +20,10 @@ private val repositoryEnvironmentVariables =
  * Custom class that sets git configuration variables in the git repository that has a working tree
  * whose top-level directory is a given directory. The variables go in the repository's
  * configuration file, which all of its worktrees share. The task sets the variables only if none of
- * them is set, so it never overrides a configuration that a developer chose. It does nothing if the
- * directory is not the top level of a working tree (so it never modifies an enclosing repository)
- * or if the [precondition] command fails, and it only warns if a `git` command fails.
+ * them is set, so it never overrides a configuration that a developer chose. If it cannot set every
+ * variable, it unsets the ones that it set, so that a later run sets them all. It does nothing if
+ * the directory is not the top level of a working tree (so it never modifies an enclosing
+ * repository). It warns, but does not fail, if the [precondition] command or a `git` command fails.
  */
 abstract class GitConfigTask @Inject constructor(private val execOperations: ExecOperations) :
   DefaultTask() {
@@ -53,18 +54,24 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
       val preconditionHolds =
         precondition.get().isEmpty() ||
           try {
-            run(dir, precondition.get(), discardErrors = true) != null
+            runCommand(dir, precondition.get(), discardErrors = true) != null
           } catch (e: Exception) {
             false
           }
       if (!preconditionHolds) {
-        logger.info("Not setting git configuration variables: ${precondition.get()} failed")
+        logger.warn("Not setting git configuration variables, because ${precondition.get()} failed")
         return
       }
+      val setNames = mutableListOf<String>()
       for ((name, value) in settings.get()) {
         if (git(dir, "config", name, value) == null) {
           logger.warn("Could not set git configuration variable $name")
+          for (setName in setNames) {
+            git(dir, "config", "--unset", setName)
+          }
+          return
         }
+        setNames.add(name)
       }
     } catch (e: Exception) {
       logger.warn("Could not set git configuration variables: $e")
@@ -78,7 +85,8 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
    * @param args the arguments to git
    * @return the command's standard output without a trailing newline, or null if it fails
    */
-  private fun git(dir: java.io.File, vararg args: String): String? = run(dir, listOf("git") + args)
+  private fun git(dir: java.io.File, vararg args: String): String? =
+    runCommand(dir, listOf("git") + args)
 
   /**
    * Runs a command. The command does not inherit the [repositoryEnvironmentVariables], so git
@@ -89,7 +97,7 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
    * @param discardErrors if true, discard the command's standard error rather than showing it
    * @return the command's standard output without a trailing newline, or null if it fails
    */
-  private fun run(
+  private fun runCommand(
     dir: java.io.File,
     command: List<String>,
     discardErrors: Boolean = false,
