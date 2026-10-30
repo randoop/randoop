@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement lacks the receiver parameter
+java.lang.String.length() java.lang.Math.abs(int)

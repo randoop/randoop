@@ -23,12 +23,14 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
+import org.plumelib.util.StringsPlume;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
@@ -157,8 +159,8 @@ public final class ReplacementFileReader {
   /**
    * Adds a method replacement described by a pair of method signatures to the replacement map.
    * Verifies that both signatures are well-formed and correspond to a method that exists, and that
-   * the replacement method can be called from any class: it is public and static, and it is
-   * declared in a public class (not an interface).
+   * the replacement method can replace the original method, as described in {@link
+   * #addReplacement}.
    *
    * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
    *
@@ -166,7 +168,7 @@ public final class ReplacementFileReader {
    * @param originalSignature the signature of the method to be replaced
    * @param replacementSignature the signature of the replacement method
    * @throws ReplacementException if either signature is badly-formed or its method cannot be found,
-   *     or if the replacement method cannot be called from any class
+   *     or if the replacement method cannot replace the original method
    */
   private static void addMethodReplacement(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -176,31 +178,7 @@ public final class ReplacementFileReader {
 
     MethodSignature original = parseExistingMethod(originalSignature, "original");
     MethodSignature replacement = parseExistingMethod(replacementSignature, "replacement");
-    checkReplacementIsCallable(replacement);
     addReplacement(replacementMap, original, replacement);
-  }
-
-  /**
-   * Checks that a replacement method can be called, via {@code invokestatic}, from a class in any
-   * package.
-   *
-   * @param replacement the signature of the replacement method
-   * @throws ReplacementException if the replacement method cannot be found, if it is not public and
-   *     static, or if the replacement class is not public or is an interface
-   */
-  private static void checkReplacementIsCallable(MethodSignature replacement)
-      throws ReplacementException {
-    Method replacementMethod;
-    try {
-      replacementMethod = replacement.toMethod();
-    } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
-      throw new ReplacementException("Bad replacement method", e);
-    }
-    JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
-    if (replacementClass == null) {
-      throw new ReplacementException("Replacement class not found: " + replacement.getClassname());
-    }
-    checkReplacementIsCallable(replacementClass, replacementMethod, replacement);
   }
 
   /**
@@ -263,18 +241,57 @@ public final class ReplacementFileReader {
    * Adds a method replacement for the method with the original signature with the replacement
    * method.
    *
-   * <p>It is an error if a replacement already exists for the original signature.
+   * <p>It is an error if a replacement already exists for the original signature, or if the
+   * replacement method cannot replace the original method. The replacement method must be a public
+   * static method of a public class that is not an interface, and its descriptor must be the one
+   * that {@link CallReplacementTransformer#replacementDescriptor} computes for the original method.
    *
    * @param replacementMap the map from an original signature to a replacement signature
-   * @param original the original signature
-   * @param replacement the replacement method signature
-   * @throws ReplacementException if a replacement already exists for {@code original}
+   * @param original the original signature, which denotes an existing method
+   * @param replacement the replacement method signature, which denotes an existing method
+   * @throws ReplacementException if a replacement already exists for {@code original}, or if {@code
+   *     replacement} cannot replace {@code original}
    */
   private static void addReplacement(
       Map<MethodSignature, MethodSignature> replacementMap,
       MethodSignature original,
       MethodSignature replacement)
       throws ReplacementException {
+
+    Method originalMethod;
+    Method replacementMethod;
+    try {
+      originalMethod = original.toMethod();
+      replacementMethod = replacement.toMethod();
+    } catch (ClassNotFoundException | NoSuchMethodException | IllegalClassFormatException e) {
+      throw new ReplacementException(e.getMessage(), e);
+    }
+
+    // The transformed code calls the replacement from arbitrary classes.
+    JavaClass replacementClass = getJavaClassFromClassname(replacement.getClassname());
+    if (replacementClass == null) {
+      throw new ReplacementException("Replacement class not found: " + replacement.getClassname());
+    }
+    checkReplacementIsCallable(replacementClass, replacementMethod, replacement);
+
+    @SuppressWarnings("signature:assignment") // toMethod() found the class by this name
+    @BinaryName String originalClassname = original.getClassname();
+    String expected =
+        CallReplacementTransformer.replacementDescriptor(
+            originalMethod.isStatic() ? null : new ObjectType(originalClassname),
+            original.getName().equals("<init>"),
+            originalMethod.getReturnType(),
+            original.getParameterTypes());
+    if (!replacementMethod.getSignature().equals(expected)) {
+      throw new ReplacementException(
+          String.format(
+              "Replacement method %s %s must have signature %s %s(%s)",
+              replacementMethod.getReturnType(),
+              replacement,
+              Type.getReturnType(expected),
+              replacement.getName(),
+              StringsPlume.join(", ", Type.getArgumentTypes(expected))));
+    }
 
     // If there is already a replacement, do not overwrite it.
     if (replacementMap.get(original) != null) {
@@ -337,9 +354,10 @@ public final class ReplacementFileReader {
    * @param replacementPackage the name of the package containing the replacement class
    * @param classname the class's simple name
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a non-private replacement method is not public and static or
-   *     has no matching original, if the replacement class has a non-private method but is not
-   *     public or is an interface, or if the replacement class cannot be found
+   * @throws ReplacementException if a non-private replacement method is not public and static,
+   *     cannot replace its matching original, or has none, if the replacement class has a
+   *     non-private method but is not public or is an interface, or if the replacement class cannot
+   *     be found
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -358,9 +376,9 @@ public final class ReplacementFileReader {
    *
    * <p>For each non-private method in the replacement class, other than constructors and static
    * initializers, the method is checked to be callable as a replacement, and the original class is
-   * checked for a corresponding method. This original method may either be non-static, where the
-   * receiver is translated to the first argument of the replacement, or static, having the same
-   * arguments as the replacement.
+   * checked for a corresponding method with the same return type. This original method may either
+   * be non-static, where the receiver is translated to the first argument of the replacement, or
+   * static, having the same arguments as the replacement.
    *
    * <p>Note: This method will not overwrite an existing replacement method.
    *
@@ -368,9 +386,10 @@ public final class ReplacementFileReader {
    * @param originalClassname the name of the original class
    * @param replacementClassname the name of the replacement class
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a non-private replacement method is not public and static or
-   *     has no matching original, if the replacement class has a non-private method but is not
-   *     public or is an interface, or if the replacement class cannot be found
+   * @throws ReplacementException if a non-private replacement method is not public and static,
+   *     cannot replace its matching original, or has none, if the replacement class has a
+   *     non-private method but is not public or is an interface, or if the replacement class cannot
+   *     be found
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -386,8 +405,7 @@ public final class ReplacementFileReader {
 
     for (Method m : replacementJC.getMethods()) {
       if (m.getName().equals("<init>") || m.getName().equals("<clinit>")) {
-        // Do not replace the original class constructor or static initializer with the
-        // replacement class's.
+        // Do not replace the original class's initializers with the replacement class's.
         continue;
       }
       if (m.isPrivate()) {
@@ -399,7 +417,7 @@ public final class ReplacementFileReader {
       checkReplacementIsCallable(replacementJC, m, replacement);
 
       MethodSignature original = replacement.substituteClassname(originalClassname);
-      if (original.exists()) {
+      if (isReplacedBy(original, true, m, replacement)) {
         addReplacement(replacementMap, original, replacement);
         continue;
       }
@@ -408,7 +426,7 @@ public final class ReplacementFileReader {
       if (replacement.getParameterTypes().length > 0
           && replacement.getParameterTypes()[0].equals(new ObjectType(originalClassname))) {
         original = original.removeFirstParameter();
-        if (original.exists()) {
+        if (isReplacedBy(original, false, m, replacement)) {
           addReplacement(replacementMap, original, replacement);
           continue;
         }
@@ -420,6 +438,47 @@ public final class ReplacementFileReader {
               replacement, originalClassname);
       throw new ReplacementException(msg);
     }
+  }
+
+  /**
+   * Returns true if the given original method exists and is static or not, as specified. The caller
+   * has already checked that the parameter types of the original correspond to those of the
+   * replacement.
+   *
+   * @param original a candidate original method
+   * @param isStatic whether {@code original} must be static
+   * @param replacementMethod the replacement method
+   * @param replacement the signature of the replacement method
+   * @return true if {@code original} exists and is static if and only if {@code isStatic} is true
+   * @throws ReplacementException if {@code original} exists and is static or not, as specified, but
+   *     its return type differs from that of the replacement
+   */
+  private static boolean isReplacedBy(
+      MethodSignature original,
+      boolean isStatic,
+      Method replacementMethod,
+      MethodSignature replacement)
+      throws ReplacementException {
+    Method originalMethod;
+    try {
+      originalMethod = original.toMethod();
+    } catch (ClassNotFoundException
+        | NoClassDefFoundError
+        | NoSuchMethodException
+        | IllegalClassFormatException e) {
+      return false;
+    }
+    if (originalMethod.isStatic() != isStatic) {
+      return false;
+    }
+    if (!originalMethod.getReturnType().equals(replacementMethod.getReturnType())) {
+      String msg =
+          String.format(
+              "Replacement method %s must have return type %s",
+              replacement, originalMethod.getReturnType());
+      throw new ReplacementException(msg);
+    }
+    return true;
   }
 
   /**

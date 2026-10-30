@@ -18,4 +18,13 @@ public final class MethodMocks {
   private static int abs(int x) {
     return x;
   }
+
+  /**
+   * A replacement for {@code Object()} that has the wrong return type.
+   *
+   * @return the empty string
+   */
+  public static String newObject() {
+    return "";
+  }
 }
