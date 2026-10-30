@@ -32,7 +32,7 @@ import org.junit.rules.ExpectedException;
 import org.plumelib.options.Options;
 import org.plumelib.options.Options.ArgException;
 
-/** Tests for {@link ReplaceCallAgent}. */
+/** Tests for the {@link ReplaceCallAgent}. */
 public class ReplaceCallAgentTest {
   @Rule public ExpectedException thrown = ExpectedException.none();
 
