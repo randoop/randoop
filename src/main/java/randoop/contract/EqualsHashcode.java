@@ -10,7 +10,9 @@ public final class EqualsHashcode extends ObjectContract {
   private static final EqualsHashcode instance = new EqualsHashcode();
 
   /** Private constructor to enforce singleton. */
-  private EqualsHashcode() {}
+  private EqualsHashcode() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.

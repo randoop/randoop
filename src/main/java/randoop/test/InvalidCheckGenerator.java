@@ -7,7 +7,9 @@ import randoop.sequence.ExecutableSequence;
 public class InvalidCheckGenerator extends TestCheckGenerator {
 
   /** Creates an InvalidCheckGenerator. */
-  public InvalidCheckGenerator() {}
+  public InvalidCheckGenerator() {
+    super();
+  }
 
   @Override
   public InvalidChecks generateTestChecks(ExecutableSequence eseq)
