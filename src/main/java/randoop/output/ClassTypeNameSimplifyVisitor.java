@@ -12,7 +12,9 @@ import java.util.Optional;
 public class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInterfaceType> {
 
   /** Creates a ClassTypeNameSimplifyVisitor. */
-  public ClassTypeNameSimplifyVisitor() {}
+  public ClassTypeNameSimplifyVisitor() {
+    super();
+  }
 
   /**
    * Visit every class or interface type. Simplify the type name by removing the scope component if
