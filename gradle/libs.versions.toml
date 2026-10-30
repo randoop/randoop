@@ -54,7 +54,7 @@ javax-mail = "com.sun.mail:javax.mail:1.6.2"
 
 jcommander = "com.beust:jcommander:1.82"
 
-joda-time = "joda-time:joda-time:2.12.7"
+joda-time = "joda-time:joda-time:2.15.1"
 
 [plugins]
 
