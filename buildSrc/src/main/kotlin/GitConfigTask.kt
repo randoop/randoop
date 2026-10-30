@@ -10,19 +10,27 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 
 /**
- * Custom class that sets git configuration variables in the git working tree whose top-level
- * directory is a given directory. It sets only variables that are not already set, so it never
- * overrides a value that a developer chose. It does nothing if the directory is not the top level
- * of a git working tree (so it never modifies an enclosing repository) or if the [precondition]
- * command fails, and it only warns if a `git` command fails.
+ * Environment variables that would make git use a repository other than the one in its working
+ * directory, or make `git config` write a file other than that repository's configuration file.
+ */
+private val repositoryEnvironmentVariables =
+  setOf("GIT_DIR", "GIT_COMMON_DIR", "GIT_WORK_TREE", "GIT_CONFIG")
+
+/**
+ * Custom class that sets git configuration variables in the git repository that has a working tree
+ * whose top-level directory is a given directory. The variables go in the repository's
+ * configuration file, which all of its worktrees share. The task sets the variables only if none of
+ * them is set, so it never overrides a configuration that a developer chose. It does nothing if the
+ * directory is not the top level of a working tree (so it never modifies an enclosing repository)
+ * or if the [precondition] command fails, and it only warns if a `git` command fails.
  */
 abstract class GitConfigTask @Inject constructor(private val execOperations: ExecOperations) :
   DefaultTask() {
 
-  /** A map from each git configuration variable to the value to give it if it is not set. */
+  /** A map from each git configuration variable to its value. */
   @get:Input abstract val settings: MapProperty<String, String>
 
-  /** The top-level directory of the git working tree to configure. */
+  /** The top-level directory of a working tree of the git repository to configure. */
   @get:Internal abstract val directory: DirectoryProperty
 
   /**
@@ -37,31 +45,29 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
     if (!dir.resolve(".git").exists()) {
       return
     }
-    // Whether the precondition command succeeds, or null if it has not been run.
-    var preconditionHolds: Boolean? = null
-    for ((name, value) in settings.get()) {
-      try {
-        // `git config --get` fails if the variable is not set in any configuration file.
-        if (git(dir, "config", "--get", name) != null) {
-          continue
-        }
-        if (preconditionHolds == null) {
-          preconditionHolds =
-            precondition.get().isEmpty() ||
-              run(dir, precondition.get(), discardErrors = true) != null
-          if (!preconditionHolds) {
-            logger.info("Not setting git configuration variables: ${precondition.get()} failed")
+    try {
+      // `git config --get` fails if the variable is not set in any configuration file.
+      if (settings.get().keys.any { git(dir, "config", "--get", it) != null }) {
+        return
+      }
+      val preconditionHolds =
+        precondition.get().isEmpty() ||
+          try {
+            run(dir, precondition.get(), discardErrors = true) != null
+          } catch (e: Exception) {
+            false
           }
-        }
-        if (!preconditionHolds) {
-          return
-        }
+      if (!preconditionHolds) {
+        logger.info("Not setting git configuration variables: ${precondition.get()} failed")
+        return
+      }
+      for ((name, value) in settings.get()) {
         if (git(dir, "config", name, value) == null) {
           logger.warn("Could not set git configuration variable $name")
         }
-      } catch (e: Exception) {
-        logger.warn("Could not set git configuration variable $name: $e")
       }
+    } catch (e: Exception) {
+      logger.warn("Could not set git configuration variables: $e")
     }
   }
 
@@ -75,8 +81,8 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
   private fun git(dir: java.io.File, vararg args: String): String? = run(dir, listOf("git") + args)
 
   /**
-   * Runs a command. The command does not inherit `GIT_*` environment variables, such as `GIT_DIR`,
-   * which could make git operate on a repository other than the one in [dir].
+   * Runs a command. The command does not inherit the [repositoryEnvironmentVariables], so git
+   * operates on the repository in [dir].
    *
    * @param dir the working directory
    * @param command the command and its arguments
@@ -91,7 +97,7 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
     val output = ByteArrayOutputStream()
     val result = execOperations.exec {
       workingDir = dir
-      environment = System.getenv().filterKeys { !it.startsWith("GIT_") }
+      environment.keys.removeAll(repositoryEnvironmentVariables)
       commandLine(command)
       standardOutput = output
       if (discardErrors) {
