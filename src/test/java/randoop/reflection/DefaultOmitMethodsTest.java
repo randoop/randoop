@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,14 @@ public class DefaultOmitMethodsTest {
    * syntax.
    */
   private static final String[] ABSENT_PACKAGES = {"org.apache.commons.math4."};
+
+  /**
+   * Signatures of JDK members that some of the JDKs on which Randoop runs lack. Such a signature is
+   * checked only for syntax if the running JDK lacks the member.
+   */
+  private static final List<String> NEWER_JDK_SIGNATURES =
+      Arrays.asList(
+          "java.time.Clock.tickMillis(java.time.ZoneId)", "java.time.InstantSource.system()");
 
   /** The predicate that omits the operations that the default omit-methods files match. */
   private static OmitMethodsPredicate defaultOmitPredicate;
@@ -86,6 +95,9 @@ public class DefaultOmitMethodsTest {
               SignatureParser.parse(
                   signature, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
         } catch (SignatureParseException | FailedPredicateException e) {
+          if (NEWER_JDK_SIGNATURES.contains(signature)) {
+            continue;
+          }
           throw new AssertionError(filename + ": " + e.getMessage(), e);
         }
         RawSignature rawSignature =
@@ -136,6 +148,74 @@ public class DefaultOmitMethodsTest {
     assertNotOmitted(
         GenericComparator.class,
         "randoop.reflection.DefaultOmitMethodsTest$GenericComparator.compare(java.lang.Object,java.lang.Object)");
+  }
+
+  @Test
+  public void testJavaTimeNow() throws RandoopSpecificationError {
+    assertOmitted(java.time.LocalDate.class, "java.time.LocalDate.now()");
+    assertOmitted(java.time.LocalDate.class, "java.time.LocalDate.now(java.time.ZoneId)");
+    assertNotOmitted(java.time.LocalDate.class, "java.time.LocalDate.now(java.time.Clock)");
+    assertNotOmitted(java.time.LocalDate.class, "java.time.LocalDate.of(int,int,int)");
+
+    assertOmitted(java.time.Instant.class, "java.time.Instant.now()");
+    assertNotOmitted(java.time.Instant.class, "java.time.Instant.now(java.time.Clock)");
+
+    assertOmitted(java.time.chrono.HijrahDate.class, "java.time.chrono.HijrahDate.now()");
+    assertOmitted(
+        java.time.chrono.HijrahDate.class, "java.time.chrono.HijrahDate.now(java.time.ZoneId)");
+    assertNotOmitted(
+        java.time.chrono.HijrahDate.class, "java.time.chrono.HijrahDate.now(java.time.Clock)");
+  }
+
+  @Test
+  public void testJavaTimeClock() throws RandoopSpecificationError {
+    assertOmitted(java.time.Clock.class, "java.time.Clock.systemUTC()");
+    assertOmitted(java.time.Clock.class, "java.time.Clock.systemDefaultZone()");
+    assertOmitted(java.time.Clock.class, "java.time.Clock.system(java.time.ZoneId)");
+    assertOmitted(java.time.Clock.class, "java.time.Clock.tickSeconds(java.time.ZoneId)");
+    assertNotOmitted(
+        java.time.Clock.class, "java.time.Clock.fixed(java.time.Instant,java.time.ZoneId)");
+  }
+
+  @Test
+  public void testJavaTimeChronologyDateNow() throws RandoopSpecificationError {
+    // IsoChronology and HijrahChronology override Chronology.dateNow().  The default patterns name
+    // each of them, because a pattern that names an overridden method need not omit the overriders.
+    assertOmitted(java.time.chrono.IsoChronology.class, "java.time.chrono.IsoChronology.dateNow()");
+    assertOmitted(
+        java.time.chrono.IsoChronology.class,
+        "java.time.chrono.IsoChronology.dateNow(java.time.ZoneId)");
+    assertNotOmitted(
+        java.time.chrono.IsoChronology.class,
+        "java.time.chrono.IsoChronology.dateNow(java.time.Clock)");
+    assertOmitted(
+        java.time.chrono.HijrahChronology.class, "java.time.chrono.HijrahChronology.dateNow()");
+    assertNotOmitted(
+        java.time.chrono.HijrahChronology.class,
+        "java.time.chrono.HijrahChronology.dateNow(java.time.Clock)");
+  }
+
+  @Test
+  public void testJavaUtilCalendar() throws RandoopSpecificationError {
+    assertOmitted(java.util.GregorianCalendar.class, "java.util.GregorianCalendar()");
+    assertOmitted(
+        java.util.GregorianCalendar.class, "java.util.GregorianCalendar(java.util.TimeZone)");
+    assertNotOmitted(java.util.GregorianCalendar.class, "java.util.GregorianCalendar(int,int,int)");
+
+    assertOmitted(java.util.Calendar.class, "java.util.Calendar.getInstance()");
+    assertOmitted(
+        java.util.Calendar.class,
+        "java.util.Calendar.getInstance(java.util.TimeZone,java.util.Locale)");
+    assertNotOmitted(java.util.Calendar.class, "java.util.Calendar.get(int)");
+  }
+
+  @Test
+  public void testSimpleDateFormat() throws RandoopSpecificationError {
+    assertOmitted(
+        java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat.get2DigitYearStart()");
+    assertNotOmitted(
+        java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat(java.lang.String)");
+    assertNotOmitted(java.text.SimpleDateFormat.class, "java.text.SimpleDateFormat.toPattern()");
   }
 
   @Test
