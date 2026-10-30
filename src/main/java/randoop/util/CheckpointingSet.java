@@ -23,6 +23,7 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
 
   /** Creates a new, empty CheckpointingSet. */
   public CheckpointingSet() {
+    super();
     this.map = new CheckpointingMultiMap<>();
   }
 

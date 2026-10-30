@@ -10,7 +10,9 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 
   /** Private constructor to enforce singleton. */
-  private EqualsToNullRetFalse() {}
+  private EqualsToNullRetFalse() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
