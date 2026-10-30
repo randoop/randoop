@@ -9,7 +9,9 @@ import randoop.types.TypeTuple;
 public final class ToStringReturnsNormally extends ObjectContract {
 
   /** Creates a ToStringReturnsNormally. */
-  public ToStringReturnsNormally() {}
+  public ToStringReturnsNormally() {
+    super();
+  }
 
   @Override
   public boolean equals(@Nullable Object o) {

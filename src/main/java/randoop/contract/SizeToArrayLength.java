@@ -11,7 +11,9 @@ public final class SizeToArrayLength extends ObjectContract {
   private static final SizeToArrayLength instance = new SizeToArrayLength();
 
   /** Private constructor to enforce singleton. */
-  private SizeToArrayLength() {}
+  private SizeToArrayLength() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.

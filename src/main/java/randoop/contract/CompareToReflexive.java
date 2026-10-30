@@ -12,7 +12,9 @@ public final class CompareToReflexive extends ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();
 
   /** Private constructor to enforce singleton. */
-  private CompareToReflexive() {}
+  private CompareToReflexive() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
