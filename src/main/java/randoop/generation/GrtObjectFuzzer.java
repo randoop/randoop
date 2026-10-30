@@ -69,6 +69,7 @@ public final class GrtObjectFuzzer extends GrtFuzzer {
   /** Creates a GrtObjectFuzzer. The client must call {@link #initialize}. */
   // This constructor is private to enforce the singleton pattern.
   private GrtObjectFuzzer() {
+    super();
     // nothing to do; `initialize()` does the initialization.
   }
 

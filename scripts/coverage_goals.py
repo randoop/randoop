@@ -89,7 +89,7 @@ class Goal:
 
 
 def applicable_goals(goals: Iterable[Goal], jdk: int) -> list[Goal]:
-    """Return the given goals for a method that apply to a JDK version.
+    """Return a subset of the given goals: those that apply to the given JDK version.
 
     Args:
         goals: the goals for a method
@@ -127,7 +127,10 @@ def action_for(goals: Iterable[Goal], jdk: int) -> str:
         ValueError: if two of the goals that apply to the JDK version have the same scope
     """  # ruff: ignore[docstring-extraneous-exception]
     applicable = applicable_goals(goals, jdk)
-    return applicable[-1].action if applicable else "include"
+    if applicable:
+        # The last goal is the most specific one.
+        return applicable[-1].action
+    return "include"
 
 
 def rejection_reason(goals: Iterable[Goal], jdk: int) -> str | None:
@@ -187,6 +190,7 @@ def minimal_goals(target: dict[int, str]) -> list[Goal]:
     jdks = sorted(target)
     # The best candidate found so far, as a pair of its sort key and its goals,
     # or None if no candidate has been considered yet.  A smaller key is better.
+    # The sort key is used solely within this routine, in `key < best[0]`.
     best: tuple[tuple[int, int, list[str]], list[Goal]] | None = None
     for overall in ACTIONS:
         others = [action for action in ACTIONS if action != overall]
