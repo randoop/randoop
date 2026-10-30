@@ -53,6 +53,12 @@ and add this line to the .gitattributes file (or to .git/info/attributes):
 
   *.covgoals merge=covgoals
 
+In Randoop, these steps are already done:  the build runs the "git config"
+commands (in the installCovgoalsMergeDriver task, on which compileJava
+depends) unless either variable is already set, and the .gitattributes file
+contains the line.  If the "git config" commands fail, the build issues a
+warning and continues.
+
 Git runs the driver in the top-level directory of the working tree, so the
 relative file name of this script works only when this script is checked out;
 an absolute file name works on every branch.  If the driver is not configured,
