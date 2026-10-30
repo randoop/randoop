@@ -15,7 +15,9 @@ public class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<ClassOrInt
   private static final JavaParser javaParser = new JavaParser();
 
   /** Creates a MethodTypeNameSimplifyVisitor. */
-  public MethodTypeNameSimplifyVisitor() {}
+  public MethodTypeNameSimplifyVisitor() {
+    super();
+  }
 
   /**
    * Visit every method call expression. Simplify the type name by removing the scope component if
