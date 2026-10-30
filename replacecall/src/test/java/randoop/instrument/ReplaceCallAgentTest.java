@@ -36,7 +36,6 @@ import org.plumelib.options.Options.ArgException;
 public class ReplaceCallAgentTest {
   @Rule public ExpectedException thrown = ExpectedException.none();
 
-
   /** The value of {@link ReplaceCallAgent#replacement_file} before the test. */
   private Path origReplacementFile;
 
