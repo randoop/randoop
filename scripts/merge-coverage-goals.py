@@ -37,12 +37,19 @@ method.  On other JDK versions, the merged actions may differ.
 In a line-by-line merge, a line is in the result if it is in both ours and
 theirs, or if one of them added it and the other did not remove it.
 
-The comment-only lines are at the beginning of the output.  If ours and theirs
-have the same comment-only lines, or one of them has the same comment-only
-lines as base, then the result is the other one's comment-only lines.
-Otherwise, the comment-only lines are merged line by line, without duplicates:
-the lines of ours come first, in order, followed by the lines that only theirs
-has, in order.  Blank lines are removed.  The other lines are sorted.
+Each comment-only line is in the header (comment-only lines followed by a blank
+line at the beginning of the file), is in the trailer (comment-only lines at the
+end of the file), or is attached to the method of the goal line that follows
+it.  The header, the trailer, and the comment-only lines attached to each
+method are merged separately.  If ours and theirs have the same lines, or one
+of them has the same lines as base, then the result is the other one's lines.
+Otherwise, the lines are merged line by line, without duplicates:  the lines of
+ours come first, in order, followed by the lines that only theirs has, in
+order.
+
+The output is the header, a blank line if there is a header, then for each
+method in sorted order the comment-only lines attached to it followed by its
+lines in sorted order, and then the trailer.  Other blank lines are removed.
 
 If the semantic merge fails (for example, because a version contains conflict
 markers), this script performs a textual merge using "git merge-file".
@@ -76,6 +83,7 @@ from coverage_goals import (
     DEFAULT_JDKS,
     GoalLine,
     action_for,
+    goals_file_lines,
     is_valid,
     minimal_goals,
     read_goals,
@@ -235,18 +243,24 @@ def merge(
         the merged lines, and a textual description of each conflict
     """
     base, ours, theirs = (read_goals(path) for path in paths)
+    header = merge_ordered_lines(base.header, ours.header, theirs.header)
+    trailer = merge_ordered_lines(base.trailer, ours.trailer, theirs.trailer)
 
-    comment_lines = merge_ordered_lines(
-        base.comment_lines, ours.comment_lines, theirs.comment_lines
-    )
-
-    # Each entry is a sort key and the lines to output.
-    entries: list[tuple[str, list[str]]] = []
-
+    # For each method, the comment-only lines attached to it followed by its lines.
+    blocks: list[list[str]] = []
     conflicts = []
-    # The union of the methods that have lines in any of the three versions.
-    methods = set(base.lines_for_method) | set(ours.lines_for_method) | set(theirs.lines_for_method)
+    # The methods that have lines or comment-only lines in any of the three versions.
+    methods = {
+        method
+        for version in (base, ours, theirs)
+        for method in set(version.lines_for_method) | set(version.comments_for_method)
+    }
     for method in sorted(methods):
+        comment_lines = merge_ordered_lines(
+            base.comments_for_method.get(method, []),
+            ours.comments_for_method.get(method, []),
+            theirs.comments_for_method.get(method, []),
+        )
         versions = (
             base.lines_for_method.get(method, []),
             ours.lines_for_method.get(method, []),
@@ -254,7 +268,7 @@ def merge(
         )
         merged, problems = merge_method(method, versions, jdks)
         if merged is not None:
-            entries.extend((line, [line]) for line in merged)
+            blocks.append(comment_lines + merged)
             continue
         conflicts.append(f"Conflict in goals for {method}:")
         conflicts.extend(f"  {problem}" for problem in problems)
@@ -270,11 +284,9 @@ def merge(
             *theirs_lines,
             f"{'>' * marker_size} {labels[2]}",
         ]
-        # Put the conflict where the method's lines would be.
-        entries.append((method + " ", block))
+        blocks.append(comment_lines + block)
 
-    goal_lines = [line for _, lines in sorted(entries) for line in lines]
-    return comment_lines + goal_lines, conflicts
+    return goals_file_lines(header, blocks, trailer), conflicts
 
 
 def main() -> None:

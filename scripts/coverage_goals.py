@@ -241,12 +241,23 @@ class GoalLine:
 
 @dataclass
 class GoalsFile:
-    """The contents of a coverage goals file, other than its blank lines."""
+    """The contents of a coverage goals file, other than its blank lines.
 
-    # The comment-only lines, in order.
-    comment_lines: list[str]
+    Each comment-only line is in the header, is attached to a method, or is in the
+    trailer.  The header is the comment-only lines before the file's first blank
+    line, if no goal line precedes that blank line.  The trailer is the
+    comment-only lines after the last goal line.  Every other comment-only line is
+    attached to the method of the goal line that follows it.
+    """
+
+    # The comment-only lines at the beginning of the file, in order.
+    header: list[str]
+    # A map from each method to the comment-only lines attached to it, in order.
+    comments_for_method: dict[str, list[str]]
     # A map from each method to its lines.
     lines_for_method: dict[str, list[GoalLine]]
+    # The comment-only lines at the end of the file, in order.
+    trailer: list[str]
 
 
 def read_goals(path: Path) -> GoalsFile:
@@ -258,18 +269,49 @@ def read_goals(path: Path) -> GoalsFile:
     Returns:
         the file's contents
     """
-    comment_lines = []
+    header: list[str] = []
+    comments_for_method: dict[str, list[str]] = {}
     lines_for_method: dict[str, list[GoalLine]] = {}
+    # The comment-only lines since the last goal line or the end of the header.
+    pending: list[str] = []
     for line in path.read_text().splitlines():
         if not line.strip():
+            if not lines_for_method and not header:
+                header, pending = pending, []
             continue
         if not line.partition("#")[0].strip():
-            comment_lines.append(line)
+            pending.append(line)
             continue
         try:
             goal_line = GoalLine.parse(line)
         except ValueError as e:
             message = f"{path}: {e}"
             raise ValueError(message) from e
+        if pending:
+            comments_for_method.setdefault(goal_line.method, []).extend(pending)
+            pending = []
         lines_for_method.setdefault(goal_line.method, []).append(goal_line)
-    return GoalsFile(comment_lines, lines_for_method)
+    return GoalsFile(header, comments_for_method, lines_for_method, pending)
+
+
+def goals_file_lines(
+    header: list[str], blocks: Iterable[list[str]], trailer: list[str]
+) -> list[str]:
+    """Return the lines of a coverage goals file.
+
+    If every block that has comment-only lines also has a goal line, then
+    read_goals reads the result as the given header, blocks, and trailer.
+
+    Args:
+        header: the comment-only lines at the beginning of the file
+        blocks: for each method, in order, the comment-only lines attached to it
+            followed by its lines
+        trailer: the comment-only lines at the end of the file
+
+    Returns:
+        the lines of the file, in which a blank line follows the header, if any
+    """
+    result = [*header, ""] if header else []
+    for block in blocks:
+        result += block
+    return result + trailer

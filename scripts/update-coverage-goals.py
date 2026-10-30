@@ -29,8 +29,13 @@ goals, using as few lines as possible, so that on each of these versions:
  * on a version that has no coverage file, the goal is unchanged.
 On other JDK versions, the goals may change.  A method's goals are not
 rewritten if any of its lines has a comment; this script prints suggested
-goals for such a method instead.  In the output file, the comment-only lines
-come first, in their original order, followed by the other lines, sorted.
+goals for such a method instead.  The output file is sorted by method, and
+each method's lines are sorted.  Comment-only lines keep their order:  each one
+stays before the lines of the method whose goal line follows it, and a header
+(comment-only lines followed by a blank line at the beginning of the file) and a
+trailer (comment-only lines at the end of the file) stay in place.  If a
+method's lines are removed, the comment-only lines before them stay in the
+method's place, so they precede the next method.  Other blank lines are removed.
 
 If, on one of these versions, any method in a coverage file has two goals of
 the same scope (which CoverageChecker rejects), this script reports every such
@@ -44,7 +49,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from coverage_goals import DEFAULT_JDKS, action_for, minimal_goals, read_goals
+from coverage_goals import DEFAULT_JDKS, action_for, goals_file_lines, minimal_goals, read_goals
 
 
 def read_coverage(path: Path) -> dict[str, bool]:
@@ -102,7 +107,9 @@ def main() -> None:
     if errors:
         sys.exit("\n".join(errors))
 
-    new_lines = {line.text for lines in contents.lines_for_method.values() for line in lines}
+    new_lines_for_method = {
+        method: {line.text for line in lines} for method, lines in contents.lines_for_method.items()
+    }
     for method in methods:
         old = contents.lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
@@ -119,13 +126,16 @@ def main() -> None:
             print(f"Not changing commented goals for {method}.  Suggested goals:")
             print("\n".join(f"  {line}" for line in new) if new else "  (none)")
             continue
-        new_lines.difference_update(line.text for line in old)
-        new_lines.update(new)
+        new_lines_for_method[method] = set(new)
         print(f"{method}:")
         print(f"  old: {', '.join(str(goal) for goal in old_goals) or '(none)'}")
         print(f"  new: {', '.join(str(goal) for goal in new_goals) or '(none)'}")
 
-    output_lines = contents.comment_lines + sorted(new_lines)
+    blocks = (
+        contents.comments_for_method.get(method, []) + sorted(new_lines_for_method.get(method, []))
+        for method in sorted(set(contents.comments_for_method) | set(new_lines_for_method))
+    )
+    output_lines = goals_file_lines(contents.header, blocks, contents.trailer)
     args.goals_file.write_text("".join(line + "\n" for line in output_lines))
 
 
