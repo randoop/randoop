@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -54,7 +55,18 @@ public final class SequenceCollection {
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private final Set<Type> typesAndSupertypes = new TreeSet<>();
+
+  /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
+  private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
+
+  /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
 
   /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
@@ -97,12 +109,16 @@ public final class SequenceCollection {
     return sequenceCount;
   }
 
-  /** Removes all sequences from this collection. */
+  /**
+   * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
+   * demand-driven input creator, and the type instantiator.
+   */
   public void clear() {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    this.typesAndSupertypes = new TreeSet<>();
+    this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.sequenceCount = 0;
     checkRep();
   }
@@ -183,9 +199,20 @@ public final class SequenceCollection {
    * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
+   * @return true if this collection changed; that is, if {@code sequence} has at least one active
+   *     output
    */
   @RequiresNonNull("this.sequenceMap")
-  public void add(Sequence sequence) {
+  public boolean add(Sequence sequence) {
+    boolean changed = false;
+    if (sequence.size() == 1) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        primitiveValues.add(statement.getValue());
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -205,9 +232,11 @@ public final class SequenceCollection {
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
+        changed = true;
       }
     }
     checkRep();
+    return changed;
   }
 
   /**
@@ -381,13 +410,25 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns a type instantiator that instantiates type parameters using the types of the sequences
-   * in this collection and their supertypes.
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
    *
-   * @return a type instantiator for the types in this collection
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
+  }
+
+  /**
+   * Returns the type instantiator for this collection, which instantiates type parameters using the
+   * types of the sequences in this collection and their supertypes.
+   *
+   * @return the type instantiator for this collection
    */
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(typesAndSupertypes);
+    return typeInstantiator;
   }
 
   /**
