@@ -20,12 +20,14 @@ The merge is semantic.  For each method:
  * Otherwise, the method's action ("include", "exclude", or "ignore") is merged
    for each JDK version.  If ours and theirs specify the same action, or one of
    them specifies the same action as base, then the merged action is the other
-   one's action; otherwise, there is a conflict.  If there are no conflicts,
-   then the result is the first of these candidates that specifies the merged
-   actions, that CoverageChecker accepts, and that contains every line of the
-   line-by-line merge that has a comment:  the line-by-line merge of the
-   method's lines (see below), ours, theirs, and as few lines as possible that
-   specify the merged actions.
+   one's action; otherwise, there is a conflict.  On a JDK version for which
+   base has two goals of the same scope, base specifies no action, so there is
+   a conflict unless ours and theirs specify the same action.  If there are no
+   conflicts, then the result is the first of these candidates that specifies
+   the merged actions, that CoverageChecker accepts, and that contains every
+   line of the line-by-line merge that has a comment:  the line-by-line merge of
+   the method's lines (see below), ours, theirs, and as few lines as possible
+   that specify the merged actions.
  * If there is a conflict or no candidate, the result is ours, base, and
    theirs, surrounded by conflict markers.
 The JDK versions are those in --jdks VERSIONS, a comma-separated list (default:
@@ -68,11 +70,11 @@ from typing import TypeVar
 from coverage_goals import (
     DEFAULT_JDKS,
     GoalLine,
+    GoalsFile,
     action_for,
     is_valid,
     minimal_goals,
-    parse_goal_line,
-    read_goals,
+    rejection_reason,
 )
 
 T = TypeVar("T")
@@ -127,8 +129,10 @@ def merge_method(
     Args:
         method: a method
         versions: the method's lines in base, ours, and theirs
-        jdks: JDK versions on which the merged goals must be correct, in addition to
-            every version that is mentioned in a goal for the method
+        jdks: the JDK versions on which to merge the method's actions, in addition to
+            every version that is mentioned in a goal for the method.  On each of these
+            versions, the merged lines specify the merged action, and CoverageChecker
+            accepts them.
 
     Returns:
         the merged lines, or None if there is a conflict; and the reasons for the conflict
@@ -138,23 +142,33 @@ def merge_method(
     if merged_texts is not None:
         return merged_texts, []
 
-    mentioned = {line.goal.jdk for lines in versions for line in lines if line.goal.jdk}
+    base_goals, ours_goals, theirs_goals = ([line.goal for line in lines] for lines in versions)
+    mentioned = {goal.jdk for goal in base_goals + ours_goals + theirs_goals if goal.jdk}
     all_jdks = sorted(set(jdks) | mentioned)
     problems = [
-        f"JDK {jdk}: CoverageChecker rejects {name}"
-        for name, lines in (("ours", versions[1]), ("theirs", versions[2]))
+        f"{reason} in {name}"
+        for name, goals in (("ours", ours_goals), ("theirs", theirs_goals))
         for jdk in all_jdks
-        if not is_valid([line.goal for line in lines], jdk)
+        if (reason := rejection_reason(goals, jdk)) is not None
     ]
     if problems:
         return None, problems
 
     target = {}
     for jdk in all_jdks:
-        actions = [action_for([line.goal for line in lines], jdk) for lines in versions]
-        action = merge_value(*actions)
+        ours_action = action_for(ours_goals, jdk)
+        theirs_action = action_for(theirs_goals, jdk)
+        sides = f"ours {ours_action}, theirs {theirs_action}"
+        try:
+            base_action = action_for(base_goals, jdk)
+            problem = f"JDK {jdk}: base {base_action}, {sides}"
+        except ValueError as e:
+            # Base's action is unknown, so merge_value succeeds only if ours and theirs agree.
+            base_action = None
+            problem = f"{e} in base; {sides}"
+        action = merge_value(base_action, ours_action, theirs_action)
         if action is None:
-            problems.append(f"JDK {jdk}: base {actions[0]}, ours {actions[1]}, theirs {actions[2]}")
+            problems.append(problem)
         else:
             target[jdk] = action
     if problems:
@@ -163,12 +177,12 @@ def merge_method(
     line_for_text = {line.text: line for lines in versions for line in lines}
     line_merge = [line_for_text[text] for text in merge_lines(*(set(t) for t in texts))]
     comments = {line.text for line in line_merge if line.has_comment}
-    minimal = [parse_goal_line(f"{method} {goal}") for goal in minimal_goals(target)]
+    minimal = [GoalLine.parse(f"{method} {goal}") for goal in minimal_goals(target)]
 
     def is_acceptable(candidate: list[GoalLine]) -> bool:
         goals = [line.goal for line in candidate]
         return comments <= {line.text for line in candidate} and all(
-            action_for(goals, jdk) == action and is_valid(goals, jdk)
+            is_valid(goals, jdk) and action_for(goals, jdk) == action
             for jdk, action in target.items()
         )
 
@@ -187,24 +201,23 @@ def merge(
         paths: the base, ours, and theirs files
         labels: the labels of base, ours, and theirs for conflict markers
         marker_size: the length of conflict markers
-        jdks: the JDK versions on which the merged goals must be correct
+        jdks: the JDK versions on which to merge each method's actions (see merge_method)
 
     Returns:
-        the merged lines, and a description of each conflict
+        the merged lines, and a textual description of each conflict
     """
-    base, ours, theirs = (read_goals(path) for path in paths)
+    # The base, ours, and theirs files.
+    files = [GoalsFile.read(path) for path in paths]
 
     # Each entry is a sort key and the lines to output.
-    entries = [(line, [line]) for line in merge_lines(base[0], ours[0], theirs[0])]
+    entries = [(line, [line]) for line in merge_lines(*(f.comment_lines for f in files))]
 
     conflicts = []
-    methods = set(base[1]) | set(ours[1]) | set(theirs[1])
+    # The union of the methods that have lines in any of the three versions.
+    methods = set().union(*(f.lines_for_method for f in files))
     for method in sorted(methods):
-        versions = (
-            base[1].get(method, []),
-            ours[1].get(method, []),
-            theirs[1].get(method, []),
-        )
+        base, ours, theirs = (f.lines_for_method.get(method, []) for f in files)
+        versions = (base, ours, theirs)
         merged, problems = merge_method(method, versions, jdks)
         if merged is not None:
             entries.extend((line, [line]) for line in merged)
@@ -226,7 +239,8 @@ def merge(
         # Put the conflict where the method's lines would be.
         entries.append((method + " ", block))
 
-    return [line for _, lines in sorted(entries) for line in lines], conflicts
+    merged_lines = [line for _, lines in sorted(entries) for line in lines]
+    return merged_lines, conflicts
 
 
 def main() -> None:
