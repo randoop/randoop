@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,7 +22,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -37,6 +37,8 @@ import randoop.MethodReplacements;
  * documentation</a> for the file format.) Default replacements are given in an internal resource
  * file {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
  * --replacement-file} command-line argument. A user replacement may override a default replacement.
+ * The {@code --disable-default-replacement} and {@code --disable-default-replacements-file}
+ * command-line arguments disable individual default replacements.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
@@ -81,6 +83,25 @@ public final class ReplaceCallAgent {
   public static @MonotonicNonNull Path dont_transform = null;
 
   /**
+   * Default replacements that should not be used. Each value is the signature of an original
+   * method, in the format used in replacement files, such as {@code java.lang.System.exit(int)}. If
+   * the signature contains whitespace, enclose it in quotes. This option may be given multiple
+   * times.
+   */
+  @SuppressWarnings("WeakerAccess")
+  @Option("method whose default replacement should not be used")
+  public static List<String> disable_default_replacement = new ArrayList<>();
+
+  /**
+   * File listing default replacements that should not be used. Each line is the signature of an
+   * original method, in the format used in replacement files, such as {@code
+   * java.lang.System.exit(int)}.
+   */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing methods whose default replacements should not be used, one per line")
+  public static @MonotonicNonNull Path disable_default_replacements_file = null;
+
+  /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
    * so that when classes are loaded they are transformed to replace calls to methods as specified
    * in the replacements file(s).
@@ -93,7 +114,7 @@ public final class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        String[] target_args = options.parse(true, tokenize(agentArgs));
         if (target_args.length > 0) {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
@@ -133,7 +154,6 @@ public final class ReplaceCallAgent {
       }
 
       // If user-provided package exclusion file, load user package exclusions
-      Path exclusionFilePath = null;
       if (dont_transform != null) {
         String dont_transform_string = dont_transform.toString();
         try (Reader dont_transform_reader = Files.newBufferedReader(dont_transform, UTF_8)) {
@@ -145,8 +165,6 @@ public final class ReplaceCallAgent {
               "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
           System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
         }
-        // Get path for exclusions file to use in argument string given to Randoop
-        exclusionFilePath = dont_transform;
       }
 
       /*
@@ -170,9 +188,16 @@ public final class ReplaceCallAgent {
         }
       }
 
+      // Remove the default replacements that the user disabled.
+      Set<MethodSignature> unmatched =
+          removeDisabledReplacements(replacementMap, readDisabledSignatures());
+      if (!unmatched.isEmpty()) {
+        System.err.printf("Cannot disable nonexistent default replacement(s): %s%n", unmatched);
+        System.exit(1); // Exit on bad user input.
+      }
+
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
-      Path replacementFilePath = null;
       if (replacement_file != null) {
         try {
           replacementMap.putAll(ReplacementFileReader.readReplacements(replacement_file));
@@ -181,18 +206,16 @@ public final class ReplaceCallAgent {
               "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
           System.exit(1);
         }
-        assert replacement_file != null : "@AssumeAssertion(nullness): no side effects above";
-        // Get path for replacement file to use in argument string given to Randoop.
-        replacementFilePath = replacement_file;
       }
 
       /*
        * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
-       * file inputs on the command-line. The paths for the files are made absolute and then the
-       * argument string is rebuilt.
+       * files, but in a different working directory.  It does not use the debugging options:  each
+       * test run would overwrite this run's debugging output, and Randoop interprets the test runs'
+       * standard output and standard error.
        */
       MethodReplacements.setAgentPath(getAgentPath());
-      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+      MethodReplacements.setAgentArgs(createAgentArgs());
 
       /*
       if (debug) {
@@ -218,6 +241,74 @@ public final class ReplaceCallAgent {
     } catch (Throwable e) {
       replaceCallExit(e.getMessage());
     }
+  }
+
+  /**
+   * Returns the signatures given by the {@code --disable-default-replacement} and {@code
+   * --disable-default-replacements-file} command-line options. Exits if a signature cannot be
+   * parsed or the file cannot be read.
+   *
+   * @return the signatures of the methods whose default replacements should not be used
+   */
+  private static Set<MethodSignature> readDisabledSignatures() {
+    Set<MethodSignature> result = new LinkedHashSet<>();
+    for (String signature : disable_default_replacement) {
+      addDisabledSignature(result, signature, "--disable-default-replacement");
+    }
+    if (disable_default_replacements_file != null) {
+      String filename = disable_default_replacements_file.toString();
+      try (Reader fileReader = Files.newBufferedReader(disable_default_replacements_file, UTF_8)) {
+        EntryFileReader.forEachEntry(
+            fileReader,
+            filename,
+            (entry, lineNumber) ->
+                addDisabledSignature(result, entry, filename + ":" + lineNumber));
+      } catch (IOException e) {
+        System.err.printf(
+            "Error reading disabled default replacements file %s:%n %s%n",
+            disable_default_replacements_file, e.getMessage());
+        System.exit(1); // Exit on bad user input.
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Parses a method signature and adds it to the given set. Exits if the text cannot be parsed,
+   * including if it is blank.
+   *
+   * @param signatures the set to which the parsed signature is added
+   * @param text the method signature, in the format used in replacement files
+   * @param source where the text came from, for error messages
+   */
+  private static void addDisabledSignature(
+      Set<MethodSignature> signatures, String text, String source) {
+    String trimmed = text.trim();
+    try {
+      signatures.add(MethodSignature.of(trimmed));
+    } catch (IllegalArgumentException e) {
+      System.err.printf(
+          "Bad disabled default replacement \"%s\" in %s: %s%n", trimmed, source, e.getMessage());
+      System.exit(1); // Exit on bad user input.
+    }
+  }
+
+  /**
+   * Removes the replacements for the given methods from the replacement map.
+   *
+   * @param replacementMap the map from original methods to their replacements; is side-effected
+   * @param disabled the original methods whose replacements to remove
+   * @return the elements of {@code disabled} that are not keys of {@code replacementMap}
+   */
+  static Set<MethodSignature> removeDisabledReplacements(
+      Map<MethodSignature, MethodSignature> replacementMap, Set<MethodSignature> disabled) {
+    Set<MethodSignature> unmatched = new LinkedHashSet<>();
+    for (MethodSignature signature : disabled) {
+      if (replacementMap.remove(signature) == null) {
+        unmatched.add(signature);
+      }
+    }
+    return unmatched;
   }
 
   /**
@@ -308,25 +399,103 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   * Creates an agent argument string that gives the current replacement file, exclusion file, and
+   * disabled default replacements, using absolute file names. Thus, the argument string has the
+   * same effect regardless of the working directory.
    *
-   * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
-   * files used in the original use of the agent.
+   * <p>The argument string omits the debugging options {@code --debug}, {@code --debug-directory},
+   * and {@code --verbose}.
    *
-   * @param replacementFilePath the {@code Path} for the replacement file
-   * @param exclusionFilePath the {@code Path} for the replacement file
-   * @return the argument string for the current run using absolute paths
+   * @return an agent argument string that gives the current replacement file, exclusion file, and
+   *     disabled default replacements
    */
-  private static String createAgentArgs(
-      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
-    StringJoiner result = new StringJoiner(",");
-    if (replacementFilePath != null) {
-      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+  static String createAgentArgs() {
+    // tokenize() splits the argument string at whitespace that is not quoted.
+    StringJoiner result = new StringJoiner(" ");
+    if (replacement_file != null) {
+      result.add("--replacement-file=" + quote(replacement_file.toAbsolutePath().toString()));
     }
-    if (exclusionFilePath != null) {
-      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+    if (dont_transform != null) {
+      result.add("--dont-transform=" + quote(dont_transform.toAbsolutePath().toString()));
+    }
+    for (String signature : disable_default_replacement) {
+      result.add("--disable-default-replacement=" + quote(signature.trim()));
+    }
+    if (disable_default_replacements_file != null) {
+      result.add(
+          "--disable-default-replacements-file="
+              + quote(disable_default_replacements_file.toAbsolutePath().toString()));
     }
     return result.toString();
+  }
+
+  /**
+   * Splits an agent argument string into arguments. Arguments are separated by whitespace. Within
+   * an argument, text between a pair of single quotes or a pair of double quotes may contain
+   * whitespace; the quotes themselves are removed. Where an argument contains a value quoted by
+   * {@link #quote}, the result contains the original, unquoted value.
+   *
+   * @param args the agent argument string
+   * @return the arguments in {@code args}
+   */
+  static String[] tokenize(String args) {
+    // Options.tokenize() retains the quote characters, which is why this method removes them.
+    // TODO: When upgrading to a version of plume-lib Options that includes
+    // https://github.com/plume-lib/options/pull/713, whose Options.tokenize() removes the quote
+    // characters, replace this method by Options.tokenize() and remove unquote().  Otherwise,
+    // unquote() corrupts every value that contains a quote character.
+    String[] result = Options.tokenize(args);
+    for (int i = 0; i < result.length; i++) {
+      // TODO: Delete this call to unquote() when upgrading to plume-lib/options#713 (see above).
+      result[i] = unquote(result[i]);
+    }
+    return result;
+  }
+
+  /**
+   * Removes the quote characters from a token returned by {@link Options#tokenize}. Text between a
+   * pair of single quotes or a pair of double quotes is retained literally.
+   *
+   * @param token a token returned by {@link Options#tokenize}
+   * @return the token, with its quote characters removed
+   */
+  private static String unquote(String token) {
+    // TODO: Delete this method when upgrading to a version of plume-lib Options that includes
+    // https://github.com/plume-lib/options/pull/713, whose Options.tokenize() removes the quote
+    // characters.  Otherwise, this method corrupts every value that contains a quote character.
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < token.length()) {
+      char ch = token.charAt(i);
+      if (ch == '\'' || ch == '"') {
+        int close = token.indexOf(ch, i + 1);
+        if (close == -1) {
+          close = token.length();
+        }
+        result.append(token, i + 1, close);
+        i = close + 1;
+      } else {
+        result.append(ch);
+        i++;
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Quotes a value so that {@link #tokenize} treats it as part of a single argument and yields it
+   * unchanged.
+   *
+   * @param value a value
+   * @return {@code value}, quoted if necessary
+   */
+  static String quote(String value) {
+    // Options.tokenize() splits at any character for which Character.isWhitespace() is true.
+    if (value.chars().anyMatch(ch -> Character.isWhitespace(ch) || ch == '\'' || ch == '"')) {
+      // Each single quote ends the quoted text, appears within double quotes, and resumes it.
+      return "'" + value.replace("'", "'\"'\"'") + "'";
+    }
+    return value;
   }
 
   /**

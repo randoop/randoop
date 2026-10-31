@@ -52,6 +52,7 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#replacecall">Avoiding calls to specific methods: the replacecall agent</a>
         <ul>
+          <li><a href="#replacecall-disable-default">Disabling default replacements</a></li>
           <li><a href="#replacecall-untransformed-classes">Classes that are not transformed</a></li>
           <li><a href="#replacecall-replacement-definition">Defining replacements</a>
             <ul>
@@ -1566,6 +1567,80 @@ You can <a href="#replacecall-replacement-definition">define additional replacem
 </p>
 
 
+<p id="replacecall-options">
+To give the agent more than one option, separate the options with whitespace.
+Because the <code>-javaagent</code> argument then contains whitespace, quote
+it on the command line.
+(Alternatively, separate the options with commas.)
+The agent removes single and double quotes from its options:
+text between a pair of single quotes or a pair of double quotes is retained
+literally, including any whitespace or the other kind of quote.
+Therefore, to give a filename that contains whitespace, a single quote, or a
+double quote, enclose the filename in quotes:  in double quotes if the
+filename contains a single quote, and otherwise in single quotes.
+These quotes must reach the agent, so they are in addition to the quoting
+that the shell requires.
+For example (the
+<a href="#replacecall-untransformed-classes"><code>--dont-transform</code></a> and
+<a href="#replacecall-replacement-definition"><code>--replacement-file</code></a>
+options are described below):
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--dont-transform=dont-transform.txt --replacement-file='my replacements.txt'"
+</pre>
+<p>
+Within a double-quoted shell argument, escape the double quotes that enclose a
+filename containing a single quote:
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--replacement-file=\"don't replace.txt\""
+</pre>
+
+
+<h3 id="replacecall-disable-default">Disabling default replacements</h3>
+
+<p>
+To disable a default replacement, pass the signature of the original method to the
+<code>--disable-default-replacement</code> command-line option.
+(By contrast, the <a href="#replacecall-untransformed-classes"><code>--dont-transform</code></a>
+command-line option prevents all replacements in the classes of given packages.)
+The signature has the same format as a method signature in a
+<a href="#replacecall-replacement-definition">replacement file</a>;
+in particular, a constructor is written as
+<code>package-name.classname.&lt;init&gt;(argument-list)</code>.
+If the signature contains whitespace, enclose it in single quotes.
+You may give the option multiple times.
+For example, by default every <code>java.util.Random</code> object
+that is created without a seed uses a seed of 0.
+To let such objects be seeded randomly,
+use this command-line argument (the double quotes prevent the shell from interpreting the
+parentheses and angle brackets):
+</p>
+<pre>
+"-javaagent:${RANDOOP_PATH}/replacecall-4.3.4.jar=--disable-default-replacement=java.util.Random.&lt;init&gt;()"
+</pre>
+
+<p>
+Alternately, list the signatures in a file, one per line, and pass the file to the
+<code>--disable-default-replacements-file=<em>filename</em></code> command-line option.
+(Blank lines and <code>//</code>-style comments are ignored.)
+For example, the file might contain:
+</p>
+<pre>
+// Use randomly-seeded Random objects.
+java.util.Random.&lt;init&gt;()
+// Show the real message dialogs.
+javax.swing.JOptionPane.showMessageDialog(java.awt.Component, java.lang.Object)
+</pre>
+
+<p>
+It is an error to disable a default replacement that does not exist.
+When a default replacement is disabled, Randoop may call the original method directly.
+These options affect only the default replacements, not the ones in a
+file given by <code>--replacement-file</code>.
+</p>
+
+
 <h3 id="replacecall-untransformed-classes">Classes that are not transformed</h3>
 
 <p>
@@ -1644,7 +1719,10 @@ Each line of a replacement file is one of:
   <li>two whitespace-separated method signatures without return types (replace
     the first method by the second); each method signature is
     a <a href="#fully-qualified-signature">Randoop fully-qualified
-    signature</a>.
+    signature</a>, except that a constructor is written
+    <code>package-name.classname.&lt;init&gt;(argument-list)</code>
+    and whitespace is permitted around the commas of <code>argument-list</code>
+    and just inside its parentheses, but not before the opening parenthesis.
   </li>
 </ul>
 

@@ -32,6 +32,17 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+New command-line arguments to the replacecall agent:
+
+* `--disable-default-replacement` disables a default replacement
+* `--disable-default-replacements-file` disables the default replacements
+  listed in a file
+
+The replacecall agent removes single and double quotes from its options.  A
+filename that contains whitespace, a single quote, or a double quote must be
+quoted.  See the
+[manual](https://randoop.github.io/randoop/manual/index.html#replacecall-options).
+
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
 
