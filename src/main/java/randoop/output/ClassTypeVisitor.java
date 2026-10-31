@@ -12,7 +12,9 @@ import java.util.Set;
 public class ClassTypeVisitor extends VoidVisitorAdapter<Set<ClassOrInterfaceType>> {
 
   /** Creates a ClassTypeVisitor. */
-  public ClassTypeVisitor() {}
+  public ClassTypeVisitor() {
+    super();
+  }
 
   /**
    * If the class or interface type is in a package that's not visible by default, add the type to
