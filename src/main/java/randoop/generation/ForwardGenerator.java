@@ -14,7 +14,6 @@ import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
-import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
@@ -29,7 +28,6 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -37,7 +35,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
-import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -55,10 +52,26 @@ public class ForwardGenerator extends AbstractGenerator {
    * The set of ALL sequences ever generated, including sequences that were executed and then
    * discarded.
    *
-   * <p>This must be ordered by insertion to allow for flaky test history collection in {@link
+   * <p>This is ordered by most recent creation (a sequence that is created again moves to the end),
+   * to allow for flaky test history collection in {@link
    * randoop.main.GenTests#printSequenceExceptionError(AbstractGenerator, SequenceExceptionError)}.
    */
   private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
+
+  /**
+   * The sequences created since the component set was last cleared, or null if it has never been
+   * cleared (in which case {@link #allSequences} contains exactly those sequences). Randoop does
+   * not create a sequence in this set again. A sequence that is in {@link #allSequences} but not in
+   * this set can be created again, to rebuild the component set, but is not output as a test again.
+   */
+  private @Nullable Set<Sequence> sequencesSinceClear = null;
+
+  /**
+   * The parameterless operations that have been removed from {@link #operations} since the
+   * component set was last cleared. Clearing the component set discards their results, so it
+   * restores them to {@link #operations}.
+   */
+  private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
 
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
@@ -76,9 +89,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
-  /** Instantiates generic operations with concrete type arguments. */
-  private final TypeInstantiator instantiator;
-
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
@@ -91,14 +101,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
    */
   private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
-
-  /**
-   * The set of all primitive values seen during generation and execution of sequences. This set is
-   * used to tell if a new primitive value has been generated, to add the value to the components.
-   *
-   * <p>Each value in the collection is a primitive wrapper or a String.
-   */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
    * Create a forward generator.
@@ -144,9 +146,6 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.instantiator = componentManager.getTypeInstantiator();
-
-    initializeRuntimePrimitivesSeen();
 
     switch (GenInputsAbstract.method_selection) {
       case UNIFORM:
@@ -205,25 +204,12 @@ public class ForwardGenerator extends AbstractGenerator {
     operationSelector.newRegressionTestHook(sequence);
   }
 
-  /**
-   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
-   * used to determine new values that should be added to the component set. The component set
-   * initially contains a set of primitive sequences; this method puts those primitives in this set.
-   */
-  // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
-    for (Sequence s : componentManager.getAllPrimitiveSequences()) {
-      ExecutableSequence es = new ExecutableSequence(s);
-      try {
-        es.execute(new DummyVisitor(), new DummyCheckGenerator());
-      } catch (RandoopSpecificationError e) {
-        // A primitive sequence contains no call that has a specification.
-        throw new RandoopBug("specification error for primitive sequence " + s, e);
-      }
-      NormalExecution e = (NormalExecution) es.getResult(0);
-      Object runtimeValue = e.getRuntimeValue();
-      runtimePrimitivesSeen.add(runtimeValue);
-    }
+  /** Removes all generated sequences from the component set, retaining seeds and literals. */
+  void clearComponents() {
+    componentManager.clearGeneratedSequences();
+    sequencesSinceClear = new HashSet<>();
+    operations.addAll(removedParameterlessOperations);
+    removedParameterlessOperations.clear();
   }
 
   @Override
@@ -237,11 +223,11 @@ public class ForwardGenerator extends AbstractGenerator {
     long startTimeNanos = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      componentManager.clearGeneratedSequences();
+      clearComponents();
     }
     if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
         && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      componentManager.clearGeneratedSequences();
+      clearComponents();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
@@ -254,6 +240,14 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       return null;
     }
+
+    if (sequencesSinceClear != null) {
+      sequencesSinceClear.add(eSeq.sequence);
+    }
+    // If the sequence was created before the component set was last cleared, move it to the end.
+    allSequences.remove(eSeq.sequence);
+    allSequences.add(eSeq.sequence);
+    randoopConsistencyTest2(eSeq.sequence);
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
@@ -312,7 +306,9 @@ public class ForwardGenerator extends AbstractGenerator {
       System.out.println(eSeq.sequence);
     }
 
-    return eSeq;
+    // A sequence that was output as a test before the component set was last cleared is not output
+    // again.
+    return outputSequences.contains(eSeq.sequence) ? null : eSeq;
   }
 
   @Override
@@ -435,9 +431,8 @@ public class ForwardGenerator extends AbstractGenerator {
         if (runtimeValue instanceof Float && Float.isNaN((float) runtimeValue)) {
           runtimeValue = Float.NaN; // canonicalize NaN value
         }
-        if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
-          // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
+        if (!looksLikeObjToString && !tooLongString) {
+          componentManager.addPrimitiveValueIfNew(runtimeValue);
         }
         continue;
       }
@@ -455,7 +450,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * <ul>
    *   <li>it selects an operation but cannot generate inputs for the operation
    *   <li>it creates too large a method
-   *   <li>it creates a duplicate sequence
+   *   <li>it creates a sequence that it already created since the component set was last cleared
    * </ul>
    *
    * This method modifies the list of operations that represent the set of methods under tests.
@@ -464,7 +459,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * from the list of operations. Such a method will return the same thing every time it is invoked
    * (unless it's nondeterministic, but Randoop should not be run on nondeterministic methods). Once
    * invoked, its result is in the pool and there is no need to call the operation again and so we
-   * will remove it from the list of operations.
+   * will remove it from the list of operations, until the component set is cleared.
    *
    * @return a new sequence, or null
    */
@@ -486,7 +481,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
+        operation =
+            componentManager.getTypeInstantiator().instantiate((TypedClassOperation) operation);
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
@@ -546,11 +542,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // A parameterless operation (a static constant method or no-argument constructor) returns the
     // same thing every time it is invoked. Since we have just invoked it, its result will be in the
-    // pool.
+    // pool until the pool is cleared.
     // There is no need to call this operation again, so remove it from the list of operations.
-    if (operation.getInputTypes().isEmpty()) {
+    if (operation.getInputTypes().isEmpty() && operations.remove(operation)) {
       operationHistory.add(operation, OperationOutcome.REMOVED);
-      operations.remove(operation);
+      removedParameterlessOperations.add(operation);
     }
 
     // Discard if sequence is larger than size limit
@@ -564,16 +560,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     randoopConsistencyTests(newSequence);
 
-    // Discard if sequence is a duplicate.
-    if (this.allSequences.contains(newSequence)) {
+    // Discard if sequence was already created since the component set was last cleared.
+    if ((sequencesSinceClear == null ? allSequences : sequencesSinceClear).contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf("Sequence discarded: the same sequence was previously created.%n");
       return null;
     }
-
-    this.allSequences.add(newSequence);
-
-    randoopConsistencyTest2(newSequence);
 
     Log.logPrintf("Successfully created new unique sequence:%n%s%n", newSequence.toString());
 
@@ -617,14 +609,20 @@ public class ForwardGenerator extends AbstractGenerator {
     return retseq;
   }
 
-  // If debugging is enabled,
-  // adds the string corresponding to the given newSequences to the
-  // set allSequencesAsCode. The latter set is intended to mirror
-  // the set allSequences, but stores strings instead of Sequences.
+  /**
+   * If {@link GenInputsAbstract#debug_checks} is set, moves the given sequence to the end of {@link
+   * #allsequencesAsCode} and {@link #allsequencesAsList}, adding it if absent. Those lists are
+   * intended to mirror {@link #allSequences}.
+   *
+   * @param newSequence the sequence that was added to, or moved to the end of, {@code allSequences}
+   */
   private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
-      this.allsequencesAsCode.add(newSequence.toCodeString());
+      String code = newSequence.toCodeString();
+      this.allsequencesAsCode.remove(code);
+      this.allsequencesAsList.remove(newSequence);
+      this.allsequencesAsCode.add(code);
       this.allsequencesAsList.add(newSequence);
     }
   }
@@ -1037,10 +1035,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 "invalid seqs: " + invalidSequenceCount,
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
-            String.join(
-                ", ",
-                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
+            "sideEffectFreeMethods: " + sideEffectFreeMethods.size())
         + ")";
   }
 
