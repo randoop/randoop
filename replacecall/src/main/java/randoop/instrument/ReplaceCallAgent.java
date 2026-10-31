@@ -344,7 +344,7 @@ public final class ReplaceCallAgent {
     EntryFileReader.forEachEntry(
         exclusionReader,
         filename,
-        (entry, lineNumber) ->
+        (String entry, int lineNumber) ->
             excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
   }
