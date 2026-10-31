@@ -17,6 +17,7 @@ java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.C
 java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
+java7.util7.Collections.copy(java7.util7.List, java7.util7.List) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
