@@ -70,10 +70,10 @@ from typing import TypeVar
 from coverage_goals import (
     DEFAULT_JDKS,
     GoalLine,
+    GoalsFile,
     action_for,
     is_valid,
     minimal_goals,
-    read_goals,
     rejection_reason,
 )
 
@@ -206,23 +206,18 @@ def merge(
     Returns:
         the merged lines, and a textual description of each conflict
     """
-    base, ours, theirs = (read_goals(path) for path in paths)
+    # The base, ours, and theirs files.
+    files = [GoalsFile.read(path) for path in paths]
 
     # Each entry is a sort key and the lines to output.
-    entries = [
-        (line, [line])
-        for line in merge_lines(base.comment_lines, ours.comment_lines, theirs.comment_lines)
-    ]
+    entries = [(line, [line]) for line in merge_lines(*(f.comment_lines for f in files))]
 
     conflicts = []
     # The union of the methods that have lines in any of the three versions.
-    methods = set(base.lines_for_method) | set(ours.lines_for_method) | set(theirs.lines_for_method)
+    methods = set().union(*(f.lines_for_method for f in files))
     for method in sorted(methods):
-        versions = (
-            base.lines_for_method.get(method, []),
-            ours.lines_for_method.get(method, []),
-            theirs.lines_for_method.get(method, []),
-        )
+        base, ours, theirs = (f.lines_for_method.get(method, []) for f in files)
+        versions = (base, ours, theirs)
         merged, problems = merge_method(method, versions, jdks)
         if merged is not None:
             entries.extend((line, [line]) for line in merged)

@@ -44,7 +44,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from coverage_goals import DEFAULT_JDKS, action_for, minimal_goals, read_goals
+from coverage_goals import DEFAULT_JDKS, GoalsFile, action_for, minimal_goals
 
 
 def read_coverage(path: Path) -> dict[str, bool]:
@@ -86,7 +86,7 @@ def main() -> None:
         coverage[int(jdk)] = read_coverage(Path(path))
 
     try:
-        contents = read_goals(args.goals_file)
+        contents = GoalsFile.read(args.goals_file)
     except ValueError as e:
         sys.exit(str(e))
 
