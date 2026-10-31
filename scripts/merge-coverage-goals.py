@@ -70,11 +70,10 @@ from typing import TypeVar
 from coverage_goals import (
     DEFAULT_JDKS,
     GoalLine,
+    GoalsFile,
     action_for,
     is_valid,
     minimal_goals,
-    parse_goal_line,
-    read_goals,
     rejection_reason,
 )
 
@@ -178,7 +177,7 @@ def merge_method(
     line_for_text = {line.text: line for lines in versions for line in lines}
     line_merge = [line_for_text[text] for text in merge_lines(*(set(t) for t in texts))]
     comments = {line.text for line in line_merge if line.has_comment}
-    minimal = [parse_goal_line(f"{method} {goal}") for goal in minimal_goals(target)]
+    minimal = [GoalLine.parse(f"{method} {goal}") for goal in minimal_goals(target)]
 
     def is_acceptable(candidate: list[GoalLine]) -> bool:
         goals = [line.goal for line in candidate]
@@ -207,23 +206,18 @@ def merge(
     Returns:
         the merged lines, and a textual description of each conflict
     """
-    # Each of base, ours, and theirs is the pair that read_goals returns for that version:
-    # element [0] is the version's comment-only lines, and element [1] is a map from each
-    # method to its lines.
-    base, ours, theirs = (read_goals(path) for path in paths)
+    # The base, ours, and theirs files.
+    files = [GoalsFile.read(path) for path in paths]
 
     # Each entry is a sort key and the lines to output.
-    entries = [(line, [line]) for line in merge_lines(base[0], ours[0], theirs[0])]
+    entries = [(line, [line]) for line in merge_lines(*(f.comment_lines for f in files))]
 
     conflicts = []
     # The union of the methods that have lines in any of the three versions.
-    methods = set(base[1]) | set(ours[1]) | set(theirs[1])
+    methods = set().union(*(f.lines_for_method for f in files))
     for method in sorted(methods):
-        versions = (
-            base[1].get(method, []),
-            ours[1].get(method, []),
-            theirs[1].get(method, []),
-        )
+        base, ours, theirs = (f.lines_for_method.get(method, []) for f in files)
+        versions = (base, ours, theirs)
         merged, problems = merge_method(method, versions, jdks)
         if merged is not None:
             entries.extend((line, [line]) for line in merged)
