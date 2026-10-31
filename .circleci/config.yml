@@ -461,9 +461,9 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  nonSystemTest-jdk26:
+  nonSystemTest-jdk27:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk26
+      - image: mdernst/randoop-ubuntu-jdk27
     environment:
       TERM: dumb
     resource_class: large
@@ -487,7 +487,7 @@ jobs:
             - gradle-v2-{{ .Branch }}-
             - gradle-v2-
 
-      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=26 && ./scripts/test-nonSystemTest.sh
+      - run: export ORG_GRADLE_PROJECT_jdkTestVersion=27 && ./scripts/test-nonSystemTest.sh
 
       - save_cache:
           paths:
@@ -506,9 +506,9 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
-  systemTest-jdk26:
+  systemTest-jdk27:
     docker:
-      - image: mdernst/randoop-ubuntu-jdk26
+      - image: mdernst/randoop-ubuntu-jdk27
     environment:
       TERM: dumb
     resource_class: large
@@ -533,7 +533,7 @@ jobs:
             - gradle-v2-
 
       - run:
-          command: export ORG_GRADLE_PROJECT_jdkTestVersion=26 && ./scripts/test-systemTest.sh
+          command: export ORG_GRADLE_PROJECT_jdkTestVersion=27 && ./scripts/test-systemTest.sh
           no_output_timeout: 20m
 
       - save_cache:
@@ -624,11 +624,11 @@ workflows:
             - systemTest-jdk25
       - nonSystemTest-jdk25
       - systemTest-jdk25
-      - nonSystemTest-jdk26:
+      - nonSystemTest-jdk27:
           requires:
             - misc
             - nonSystemTest-jdk25
-      - systemTest-jdk26:
+      - systemTest-jdk27:
           requires:
             - misc
             - systemTest-jdk25

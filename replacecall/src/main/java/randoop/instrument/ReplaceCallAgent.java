@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -252,7 +254,7 @@ public final class ReplaceCallAgent {
     EntryFileReader.forEachEntry(
         exclusionReader,
         filename,
-        (entry, lineNumber) ->
+        (String entry, int lineNumber) ->
             excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
   }
@@ -290,13 +292,20 @@ public final class ReplaceCallAgent {
   /**
    * Extracts the path from a URL of type jar.
    *
-   * @param url the url to extract the path from
-   * @return the path for the jar file, as a string
+   * @param url the url to extract the path from, such as {@code
+   *     jar:file:/path/to/my%20file.jar!/path/to/MyClass.class}
+   * @return the path for the jar file, as a string, such as {@code /path/to/my file.jar}
    */
   /*package*/ static String getJarPathFromURL(URL url) {
-    String jarPath = url.getPath();
-    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
-    return jarPath.substring(jarPath.indexOf(':') + offset, jarPath.indexOf('!'));
+    // The path of a jar URL is a file URL, followed by "!/" and the entry name.
+    String path = url.getPath();
+    String jarFileURL = path.substring(0, path.indexOf("!/"));
+    try {
+      // Unlike URL.getPath(), Paths.get(URI) decodes escapes such as "%20".
+      return Paths.get(new URI(jarFileURL)).toString();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Malformed jar URL: " + url, e);
+    }
   }
 
   /**

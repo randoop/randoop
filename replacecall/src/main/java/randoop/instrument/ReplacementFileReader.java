@@ -122,7 +122,7 @@ public final class ReplacementFileReader {
     EntryFileReader.<ReplacementFileException>forEachEntry(
         in,
         filename,
-        (line, lineNumber) -> {
+        (String line, int lineNumber) -> {
           Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
           if (signatureLineMatcher.matches()) {
             try {
