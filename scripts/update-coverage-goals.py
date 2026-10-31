@@ -32,6 +32,10 @@ rewritten if any of its lines has a comment; this script prints suggested
 goals for such a method instead.  The output file is sorted, so comment-only
 lines move to the beginning of the file.
 
+If, on one of these versions, any method in a coverage file has two goals of
+the same scope (which CoverageChecker rejects), this script reports every such
+method and exits with a nonzero status without changing GOALS_FILE.
+
 For a test whose coverage goals are in RandoopSystemTest.java rather than in a
 file, copy the goals to a file, run this script on it, and copy them back.
 """
@@ -40,7 +44,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from coverage_goals import DEFAULT_JDKS, action_for, minimal_goals, read_goals
+from coverage_goals import DEFAULT_JDKS, GoalsFile, action_for, minimal_goals
 
 
 def read_coverage(path: Path) -> dict[str, bool]:
@@ -82,21 +86,34 @@ def main() -> None:
         coverage[int(jdk)] = read_coverage(Path(path))
 
     try:
-        comment_lines, lines_for_method = read_goals(args.goals_file)
+        contents = GoalsFile.read(args.goals_file)
     except ValueError as e:
         sys.exit(str(e))
 
     methods = sorted(set().union(*(set(c) for c in coverage.values())))
-    new_lines = comment_lines | {line.text for lines in lines_for_method.values() for line in lines}
+    old_actions_for_method: dict[str, dict[int, str]] = {}
+    errors = []
     for method in methods:
-        old = lines_for_method.get(method, [])
+        old_goals = [line.goal for line in contents.lines_for_method.get(method, [])]
+        try:
+            old_actions_for_method[method] = {jdk: action_for(old_goals, jdk) for jdk in jdks}
+        except ValueError as e:
+            errors.append(f"{args.goals_file}: {method}: {e}")
+    if errors:
+        sys.exit("\n".join(errors))
+
+    new_lines = contents.comment_lines | {
+        line.text for lines in contents.lines_for_method.values() for line in lines
+    }
+    for method in methods:
+        old = contents.lines_for_method.get(method, [])
         old_goals = [line.goal for line in old]
-        target = {}
+        old_actions = old_actions_for_method[method]
+        target = dict(old_actions)
         for jdk in jdks:
-            target[jdk] = action_for(old_goals, jdk)
             if target[jdk] != "ignore" and method in coverage.get(jdk, {}):
                 target[jdk] = "include" if coverage[jdk][method] else "exclude"
-        if all(action_for(old_goals, jdk) == target[jdk] for jdk in jdks):
+        if target == old_actions:
             continue
         new_goals = minimal_goals(target)
         new = [f"{method} {goal}" for goal in new_goals]
