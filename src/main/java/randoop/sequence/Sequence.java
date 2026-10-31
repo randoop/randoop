@@ -828,7 +828,7 @@ public final class Sequence {
    * @param i an index
    * @throws IllegalArgumentException if {@code i} is out of range
    */
-  void checkIndex(int i) {
+  private void checkIndex(int i) {
     if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
     }

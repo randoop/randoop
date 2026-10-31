@@ -20,7 +20,7 @@ public abstract class ExecutionOutcome {
    * The standard output and error output of executing the sequence. Only populated if {@link
    * randoop.main.GenInputsAbstract#capture_output} is true.
    */
-  @Nullable String output = null;
+  private @Nullable String output = null;
 
   /**
    * Creates a new ExecutionOutcome.
