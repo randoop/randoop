@@ -29,7 +29,6 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -76,9 +75,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
-  /** Instantiates generic operations with concrete type arguments. */
-  private final TypeInstantiator instantiator;
-
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
@@ -98,7 +94,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
+  private final Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
    * Create a forward generator.
@@ -144,7 +140,6 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
 
@@ -207,11 +202,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
-   * used to determine new values that should be added to the component set. The component set
-   * initially contains a set of primitive sequences; this method puts those primitives in this set.
+   * used to determine new values that should be added to the component set. This method sets
+   * runtimePrimitivesSeen to the primitives in the component set's primitive sequences.
    */
   // XXX this is goofy - these values are available in other ways
   private void initializeRuntimePrimitivesSeen() {
+    runtimePrimitivesSeen.clear();
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
       try {
@@ -226,6 +222,15 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /**
+   * Removes generated sequences from the component set, and forgets the primitive values that they
+   * produced, so that those values are added to the component set again when they are next seen.
+   */
+  private void clearGeneratedSequences() {
+    componentManager.clearGeneratedSequences();
+    initializeRuntimePrimitivesSeen();
+  }
+
   @Override
   public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
@@ -237,11 +242,11 @@ public class ForwardGenerator extends AbstractGenerator {
     long startTimeNanos = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      componentManager.clearGeneratedSequences();
+      clearGeneratedSequences();
     }
     if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
         && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      componentManager.clearGeneratedSequences();
+      clearGeneratedSequences();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
@@ -486,7 +491,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
+        operation =
+            componentManager.getTypeInstantiator().instantiate((TypedClassOperation) operation);
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
