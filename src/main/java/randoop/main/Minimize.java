@@ -140,7 +140,7 @@ public class Minimize extends CommandHandler {
   private static final JavaParser javaParser = new JavaParser();
 
   /** Create the handler for Randoop's {@code minimize} command. */
-  Minimize() {
+  /*package*/ Minimize() {
     super(
         "minimize",
         "Minimize a failing JUnit test suite.",
@@ -1332,7 +1332,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(String command, int exitValue, String stdout, String errout) {
+    /*package*/ Outputs(String command, int exitValue, String stdout, String errout) {
       this.command = command;
       this.exitValue = exitValue;
       this.stdout = stdout;
@@ -1347,7 +1347,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+    /*package*/ Outputs(CommandLine command, int exitValue, String stdout, String errout) {
       this(command.toString(), exitValue, stdout, errout);
     }
 
@@ -1358,7 +1358,7 @@ public class Minimize extends CommandHandler {
      * @param errout error output
      * @return an Outputs object representing a failed execution
      */
-    static Outputs failure(CommandLine command, String errout) {
+    /*package*/ static Outputs failure(CommandLine command, String errout) {
       return new Outputs(command.toString(), 1, "", errout);
     }
 

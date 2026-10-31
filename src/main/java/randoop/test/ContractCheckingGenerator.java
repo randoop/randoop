@@ -155,7 +155,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
    *     sequence is invalid, null otherwise.
    */
-  @Nullable Check checkContracts(
+  /*package*/ @Nullable Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
       Object[] values = getValues(tuple);

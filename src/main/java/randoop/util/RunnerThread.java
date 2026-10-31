@@ -16,7 +16,7 @@ public class RunnerThread extends Thread {
   private @MonotonicNonNull ReflectionCode code;
 
   /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
-  boolean runFinished;
+  /*package*/ boolean runFinished;
 
   /** The state of the thread: which method must be called next. */
   private NextCallMustBe state;
@@ -34,6 +34,7 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
+  /*package*/
   @SuppressWarnings({
     "initialization:method.invocation", // needed for CF 3.49.4 and earlier
     "PMD.ConstructorCallsOverridableMethod"

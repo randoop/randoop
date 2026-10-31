@@ -30,7 +30,7 @@ public class NoExceptionCheck implements Check {
    * @param statementIdx the index of the statement that is expected to return normally
    * @param exceptionName the exception that the statement threw during generation
    */
-  NoExceptionCheck(int statementIdx, String exceptionName) {
+  /*package*/ NoExceptionCheck(int statementIdx, String exceptionName) {
     this.statementIdx = statementIdx;
     this.exceptionName = exceptionName;
   }

@@ -246,7 +246,7 @@ import randoop.util.Log;
    * @param classname the name of the class, without the package
    * @return the fully-qualified class name constructed from the arguments
    */
-  @BinaryName String fullyQualifiedName(
+  /*package*/ @BinaryName String fullyQualifiedName(
       @DotSeparatedIdentifiers String packageName, @Identifier String classname) {
     @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;

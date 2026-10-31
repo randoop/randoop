@@ -15,20 +15,20 @@ public class RandoopSpecificationError extends Exception {
 
   /** Which file was being read when the error occurred, or null if unknown. */
   @SuppressWarnings("serial") // TODO: use a serializable type.
-  @Nullable Path file = null;
+  private @Nullable Path file = null;
 
   /**
    * The local message for this exception, which overrides the message passed to the constructor. If
    * null, the message passed to the constructor is used.
    */
-  @Nullable String thisMessage = null;
+  private @Nullable String thisMessage = null;
 
   /**
    * Create a {@link RandoopSpecificationError} with the given message.
    *
    * @param message the error message
    */
-  RandoopSpecificationError(String message) {
+  /*package*/ RandoopSpecificationError(String message) {
     super(message);
   }
 
@@ -38,7 +38,7 @@ public class RandoopSpecificationError extends Exception {
    * @param message the error message
    * @param cause the causing exception
    */
-  RandoopSpecificationError(String message, Throwable cause) {
+  /*package*/ RandoopSpecificationError(String message, Throwable cause) {
     super(message, cause);
   }
 

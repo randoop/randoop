@@ -198,7 +198,7 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
+  /*package*/ ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);
@@ -223,7 +223,7 @@ public abstract class ObjectContract {
    * @param o an object, or null
    * @return a printed representation of the object
    */
-  static String toStringHandleExceptions(@Nullable Object o) {
+  /*package*/ static String toStringHandleExceptions(@Nullable Object o) {
     if (o == null) {
       return "null";
     }

@@ -32,7 +32,7 @@ public class InstantiatedType extends ParameterizedType {
    * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
-  InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
+  /*package*/ InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
     super();
     if (genericType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
@@ -168,7 +168,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the list of reference types that are arguments to this type
    */
-  List<ReferenceType> getReferenceArguments() {
+  /*package*/ List<ReferenceType> getReferenceArguments() {
     return CollectionsPlume.mapList(
         (TypeArgument argument) ->
             argument.isWildcard()

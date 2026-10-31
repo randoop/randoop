@@ -113,7 +113,7 @@ public final class PrimitiveTypes {
    *     primitive.
    * @return true if the source type can be assigned to the target type, false otherwise
    */
-  static boolean isAssignable(Class<?> target, Class<?> source) {
+  /*package*/ static boolean isAssignable(Class<?> target, Class<?> source) {
     if (!target.isPrimitive() || !source.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }

@@ -196,7 +196,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param type the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type
    */
-  static NonreceiverTerm createNullOrZeroTerm(Type type) {
+  /*package*/ static NonreceiverTerm createNullOrZeroTerm(Type type) {
     if (type.isBoxedPrimitive()) {
       type = ((NonParameterizedType) type).toPrimitive();
     }

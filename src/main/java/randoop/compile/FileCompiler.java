@@ -110,7 +110,7 @@ public class FileCompiler {
      * @param options the list of compiler options
      * @param diagnostics the compiler diagnostics
      */
-    FileCompilerException(
+    /*package*/ FileCompilerException(
         String message,
         List<File> sourceFiles,
         List<String> options,

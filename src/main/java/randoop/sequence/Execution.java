@@ -17,7 +17,7 @@ import randoop.NotExecuted;
 public final class Execution {
 
   /** The execution outcome of each statement. */
-  final List<ExecutionOutcome> outcomes;
+  /*package*/ final List<ExecutionOutcome> outcomes;
 
   /** The instrumented classes that were covered by the execution. */
   private Set<Class<?>> coveredClasses;
@@ -58,7 +58,7 @@ public final class Execution {
    *
    * @param c a class that the execution covered
    */
-  void addCoveredClass(Class<?> c) {
+  /*package*/ void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
@@ -67,7 +67,7 @@ public final class Execution {
    *
    * @return the classes that the execution covered
    */
-  Set<Class<?>> getCoveredClasses() {
+  /*package*/ Set<Class<?>> getCoveredClasses() {
     return coveredClasses;
   }
 }

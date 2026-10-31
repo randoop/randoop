@@ -55,7 +55,8 @@ public class ExecutableBooleanExpression {
    * @param contractSource the source code for this expression (see {@link #getContractSource()} for
    *     format details)
    */
-  ExecutableBooleanExpression(Method expressionMethod, String comment, String contractSource) {
+  /*package*/ ExecutableBooleanExpression(
+      Method expressionMethod, String comment, String contractSource) {
     this.expressionMethod = expressionMethod;
     this.comment = comment;
     this.contractSource = contractSource;
@@ -79,7 +80,7 @@ public class ExecutableBooleanExpression {
    * @param compiler the compiler to used to compile the expression method
    * @throws RandoopSpecificationError if the expression does not compile
    */
-  ExecutableBooleanExpression(
+  /*package*/ ExecutableBooleanExpression(
       RawSignature signature,
       String declarations,
       String expressionSource,
@@ -100,7 +101,7 @@ public class ExecutableBooleanExpression {
    * @param args the pre-state values to the arguments
    * @return the {@link ExecutableBooleanExpression} with the pre-state set
    */
-  ExecutableBooleanExpression addPrestate(@Nullable Object[] args) {
+  /*package*/ ExecutableBooleanExpression addPrestate(@Nullable Object[] args) {
     return this;
   }
 
@@ -213,7 +214,7 @@ public class ExecutableBooleanExpression {
    * @throws RandoopSpecificationError if the expression does not compile
    */
   // package-private to enable test code to call it
-  static Method createMethod(
+  /*package*/ static Method createMethod(
       RawSignature signature,
       String parameterDeclaration,
       String expressionSource,

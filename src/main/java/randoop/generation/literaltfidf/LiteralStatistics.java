@@ -176,7 +176,7 @@ public class LiteralStatistics {
    *
    * <p>A LiteralUses is mutable.
    */
-  /*package-private*/ static class LiteralUses {
+  /*package*/ static class LiteralUses {
     /** The number of uses of the literal. */
     private int numUses;
 
