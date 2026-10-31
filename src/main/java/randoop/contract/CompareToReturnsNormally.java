@@ -10,7 +10,9 @@ public final class CompareToReturnsNormally extends ObjectContract {
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
   /** Private constructor to enforce singleton. */
-  private CompareToReturnsNormally() {}
+  private CompareToReturnsNormally() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.

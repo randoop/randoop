@@ -15,6 +15,7 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param boundType the {@link ReferenceType} of this bound
    */
   ReferenceBound(ReferenceType boundType) {
+    super();
     this.boundType = boundType;
   }
 
