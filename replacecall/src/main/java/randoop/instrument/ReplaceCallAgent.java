@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,9 +25,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.EntryReader.CommentFormat;
-import org.plumelib.util.EntryReader.EntryFormat;
 import randoop.MethodReplacements;
 
 /**
@@ -248,21 +247,14 @@ public final class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
-      throws IOException {
+  /*package-private*/ static Set<String> loadExclusions(
+      @Owning Reader exclusionReader, String filename) throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader =
-        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
-      for (String line : reader) {
-        String trimmed = line.trim();
-        if (!trimmed.isEmpty()) {
-          if (trimmed.charAt(trimmed.length() - 1) != '.') {
-            trimmed = trimmed + ".";
-          }
-          excludedPackagePrefixes.add(trimmed);
-        }
-      }
-    }
+    EntryFileReader.forEachEntry(
+        exclusionReader,
+        filename,
+        (String entry, int lineNumber) ->
+            excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
   }
 
@@ -299,13 +291,20 @@ public final class ReplaceCallAgent {
   /**
    * Extracts the path from a URL of type jar.
    *
-   * @param url the url to extract the path from
-   * @return the path for the jar file, as a string
+   * @param url the url to extract the path from, such as {@code
+   *     jar:file:/path/to/my%20file.jar!/path/to/MyClass.class}
+   * @return the path for the jar file, as a string, such as {@code /path/to/my file.jar}
    */
   static String getJarPathFromURL(URL url) {
-    String jarPath = url.getPath();
-    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
-    return jarPath.substring(jarPath.indexOf(':') + offset, jarPath.indexOf('!'));
+    // The path of a jar URL is a file URL, followed by "!/" and the entry name.
+    String path = url.getPath();
+    String jarFileURL = path.substring(0, path.indexOf("!/"));
+    try {
+      // Unlike URL.getPath(), Paths.get(URI) decodes escapes such as "%20".
+      return Paths.get(new URI(jarFileURL)).toString();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Malformed jar URL: " + url, e);
+    }
   }
 
   /**

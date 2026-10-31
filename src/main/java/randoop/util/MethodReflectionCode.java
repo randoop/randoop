@@ -33,6 +33,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     "PMD.ArrayIsStoredDirectly"
   })
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
+    super();
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;

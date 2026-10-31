@@ -38,6 +38,7 @@ public final class ObserverEqArray extends ObjectContract {
    * @param isAccessible the accessibility predicate
    */
   public ObserverEqArray(Object value, AccessibilityPredicate isAccessible) {
+    super();
     this.value = value;
     if (!isLiteralType(value, isAccessible)) {
       throw new RandoopBug(
