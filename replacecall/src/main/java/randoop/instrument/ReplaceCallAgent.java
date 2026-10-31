@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -93,7 +92,7 @@ public final class ReplaceCallAgent {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them
         Options options = new Options(ReplaceCallAgent.class);
-        String[] target_args = options.parse(true, Options.tokenize(agentArgs));
+        String[] target_args = options.parse(true, tokenize(agentArgs));
         if (target_args.length > 0) {
           System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
           System.exit(1); // Exit on bad user input.
@@ -133,7 +132,6 @@ public final class ReplaceCallAgent {
       }
 
       // If user-provided package exclusion file, load user package exclusions
-      Path exclusionFilePath = null;
       if (dont_transform != null) {
         String dont_transform_string = dont_transform.toString();
         try (Reader dont_transform_reader = Files.newBufferedReader(dont_transform, UTF_8)) {
@@ -145,8 +143,6 @@ public final class ReplaceCallAgent {
               "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
           System.exit(1); // Exit on user input error. (Throwing exception would halt JVM.)
         }
-        // Get path for exclusions file to use in argument string given to Randoop
-        exclusionFilePath = dont_transform;
       }
 
       /*
@@ -172,7 +168,6 @@ public final class ReplaceCallAgent {
 
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
-      Path replacementFilePath = null;
       if (replacement_file != null) {
         try {
           replacementMap.putAll(ReplacementFileReader.readReplacements(replacement_file));
@@ -181,18 +176,16 @@ public final class ReplaceCallAgent {
               "Error reading replacement file %s:%n  %s%n", replacement_file, e.getMessage());
           System.exit(1);
         }
-        assert replacement_file != null : "@AssumeAssertion(nullness): no side effects above";
-        // Get path for replacement file to use in argument string given to Randoop.
-        replacementFilePath = replacement_file;
       }
 
       /*
        * The flaky-filter in Randoop needs to run the generated tests using the agent with the same
-       * file inputs on the command-line. The paths for the files are made absolute and then the
-       * argument string is rebuilt.
+       * files, but in a different working directory.  It does not use the debugging options:  each
+       * test run would overwrite this run's debugging output, and Randoop interprets the test runs'
+       * standard output and standard error.
        */
       MethodReplacements.setAgentPath(getAgentPath());
-      MethodReplacements.setAgentArgs(createAgentArgs(replacementFilePath, exclusionFilePath));
+      MethodReplacements.setAgentArgs(createAgentArgs());
 
       /*
       if (debug) {
@@ -308,25 +301,94 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an argument string using absolute paths for the replacement and exclusion file.
+   * Creates an agent argument string that gives the current replacement file and exclusion file,
+   * using absolute file names. Thus, the argument string has the same effect regardless of the
+   * working directory.
    *
-   * <p>This is necessary because the flaky filter in Randoop needs to call the agent using the same
-   * files used in the original use of the agent.
+   * <p>The argument string omits the debugging options {@code --debug}, {@code --debug-directory},
+   * and {@code --verbose}.
    *
-   * @param replacementFilePath the {@code Path} for the replacement file
-   * @param exclusionFilePath the {@code Path} for the replacement file
-   * @return the argument string for the current run using absolute paths
+   * @return an agent argument string that gives the current replacement file and exclusion file
    */
-  private static String createAgentArgs(
-      @Nullable Path replacementFilePath, @Nullable Path exclusionFilePath) {
-    StringJoiner result = new StringJoiner(",");
-    if (replacementFilePath != null) {
-      result.add("--replacement-file=" + replacementFilePath.toAbsolutePath());
+  static String createAgentArgs() {
+    // tokenize() splits the argument string at whitespace that is not quoted.
+    StringJoiner result = new StringJoiner(" ");
+    if (replacement_file != null) {
+      result.add("--replacement-file=" + quote(replacement_file.toAbsolutePath().toString()));
     }
-    if (exclusionFilePath != null) {
-      result.add("--dont-transform=" + exclusionFilePath.toAbsolutePath());
+    if (dont_transform != null) {
+      result.add("--dont-transform=" + quote(dont_transform.toAbsolutePath().toString()));
     }
     return result.toString();
+  }
+
+  /**
+   * Splits an agent argument string into arguments. Arguments are separated by whitespace. Within
+   * an argument, text between a pair of single quotes or a pair of double quotes may contain
+   * whitespace; the quotes themselves are removed. Where an argument contains a value quoted by
+   * {@link #quote}, the result contains the original, unquoted value.
+   *
+   * @param args the agent argument string
+   * @return the arguments in {@code args}
+   */
+  static String[] tokenize(String args) {
+    // Options.tokenize() retains the quote characters, which is why this method removes them.
+    // TODO: When upgrading to a version of plume-lib Options that includes
+    // https://github.com/plume-lib/options/pull/713, whose Options.tokenize() removes the quote
+    // characters, replace this method by Options.tokenize() and remove unquote().  Otherwise,
+    // unquote() corrupts every value that contains a quote character.
+    String[] result = Options.tokenize(args);
+    for (int i = 0; i < result.length; i++) {
+      // TODO: Delete this call to unquote() when upgrading to plume-lib/options#713 (see above).
+      result[i] = unquote(result[i]);
+    }
+    return result;
+  }
+
+  /**
+   * Removes the quote characters from a token returned by {@link Options#tokenize}. Text between a
+   * pair of single quotes or a pair of double quotes is retained literally.
+   *
+   * @param token a token returned by {@link Options#tokenize}
+   * @return the token, with its quote characters removed
+   */
+  private static String unquote(String token) {
+    // TODO: Delete this method when upgrading to a version of plume-lib Options that includes
+    // https://github.com/plume-lib/options/pull/713, whose Options.tokenize() removes the quote
+    // characters.  Otherwise, this method corrupts every value that contains a quote character.
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < token.length()) {
+      char ch = token.charAt(i);
+      if (ch == '\'' || ch == '"') {
+        int close = token.indexOf(ch, i + 1);
+        if (close == -1) {
+          close = token.length();
+        }
+        result.append(token, i + 1, close);
+        i = close + 1;
+      } else {
+        result.append(ch);
+        i++;
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Quotes a value so that {@link #tokenize} treats it as part of a single argument and yields it
+   * unchanged.
+   *
+   * @param value a value
+   * @return {@code value}, quoted if necessary
+   */
+  static String quote(String value) {
+    // Options.tokenize() splits at any character for which Character.isWhitespace() is true.
+    if (value.chars().anyMatch(ch -> Character.isWhitespace(ch) || ch == '\'' || ch == '"')) {
+      // Each single quote ends the quoted text, appears within double quotes, and resumes it.
+      return "'" + value.replace("'", "'\"'\"'") + "'";
+    }
+    return value;
   }
 
   /**
