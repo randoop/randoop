@@ -31,7 +31,7 @@ The merge is semantic.  For each method:
  * If there is a conflict or no candidate, the result is ours, base, and
    theirs, surrounded by conflict markers.
 The JDK versions are those in --jdks VERSIONS, a comma-separated list (default:
-8,11,17,21,25,26), plus every version that is mentioned in a goal for the
+8,11,17,21,25,27), plus every version that is mentioned in a goal for the
 method.  On other JDK versions, the merged actions may differ.
 
 In a line-by-line merge, a line is in the result if it is in both ours and

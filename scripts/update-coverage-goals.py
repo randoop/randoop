@@ -20,7 +20,7 @@ The "java" command on PATH must be the same JDK version as -PjdkTestVersion,
 because Randoop and the tests that it generates run under that command.
 
 --jdks VERSIONS is a comma-separated list of the JDK versions on which the
-system tests run; default: 8,11,17,21,25,26.  For each method whose coverage
+system tests run; default: 8,11,17,21,25,27.  For each method whose coverage
 differs from its goals on some JDK version, this script rewrites the method's
 goals, using as few lines as possible, so that on each of these versions:
  * a method that is ignored remains ignored,
