@@ -11,8 +11,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ACTIONS = ("include", "exclude", "ignore")
-# The JDK versions on which the system tests run.
-DEFAULT_JDKS = "8,11,17,21,25,26"
+# The JDK versions on which the system tests run.  Keep this in sync with
+# .azure/jobs.m4.
+DEFAULT_JDKS = "8,11,17,21,25,27"
 # The goal syntax must be consistent with CoverageChecker.methods().
 GOAL_PATTERN = re.compile(r"(include|exclude|ignore)(?:(\d+)([+-]?))?")
 
