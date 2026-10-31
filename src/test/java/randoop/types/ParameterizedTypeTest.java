@@ -19,7 +19,10 @@ import static randoop.types.ExampleClassesForTests.H;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.junit.Test;
 import randoop.types.test.ParameterInput;
 
@@ -124,6 +127,30 @@ public class ParameterizedTypeTest {
         GenericClassType.forClass(ArrayList.class)
             .instantiate(NonParameterizedType.forClass(String.class));
     assertEquals("java.util.ArrayList<java.lang.String>", strALType.getBinaryName());
+  }
+
+  @Test
+  public void testCompareTo() {
+    Type strALType =
+        GenericClassType.forClass(ArrayList.class)
+            .instantiate(NonParameterizedType.forClass(String.class));
+    Type intALType =
+        GenericClassType.forClass(ArrayList.class)
+            .instantiate(NonParameterizedType.forClass(Integer.class));
+    Type rawALType = NonParameterizedType.forClass(ArrayList.class);
+    assertNotEquals(0, strALType.compareTo(intALType));
+    assertNotEquals(0, strALType.compareTo(rawALType));
+    assertEquals(
+        Integer.signum(strALType.compareTo(intALType)),
+        -Integer.signum(intALType.compareTo(strALType)));
+    assertEquals(
+        0,
+        strALType.compareTo(
+            GenericClassType.forClass(ArrayList.class)
+                .instantiate(NonParameterizedType.forClass(String.class))));
+
+    Set<Type> types = new TreeSet<>(Arrays.asList(strALType, intALType, rawALType));
+    assertEquals(3, types.size());
   }
 
   @Test
