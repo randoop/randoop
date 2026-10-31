@@ -2,6 +2,7 @@ java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignor
 java7.util7.Collections.asLifoQueue(java7.util7.Deque) exclude
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
+java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude11-
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) ignore17+
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
