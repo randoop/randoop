@@ -243,8 +243,8 @@ class GoalLine:
 class GoalsFile:
     """The contents of a coverage goals file, other than its blank lines."""
 
-    # The comment-only lines, in order.
-    comment_lines: list[str]
+    # The comment-only lines.
+    comment_lines: set[str]
     # A map from each method to its lines.
     lines_for_method: dict[str, list[GoalLine]]
 
@@ -258,13 +258,13 @@ def read_goals(path: Path) -> GoalsFile:
     Returns:
         the file's contents
     """
-    comment_lines = []
+    comment_lines = set()
     lines_for_method: dict[str, list[GoalLine]] = {}
     for line in path.read_text().splitlines():
         if not line.strip():
             continue
         if not line.partition("#")[0].strip():
-            comment_lines.append(line)
+            comment_lines.add(line)
             continue
         try:
             goal_line = GoalLine.parse(line)

@@ -36,13 +36,8 @@ method.  On other JDK versions, the merged actions may differ.
 
 In a line-by-line merge, a line is in the result if it is in both ours and
 theirs, or if one of them added it and the other did not remove it.
-
-The comment-only lines are at the beginning of the output.  If ours and theirs
-have the same comment-only lines, or one of them has the same comment-only
-lines as base, then the result is the other one's comment-only lines.
-Otherwise, the comment-only lines are merged line by line, without duplicates:
-the lines of ours come first, in order, followed by the lines that only theirs
-has, in order.  Blank lines are removed.  The other lines are sorted.
+Comment-only lines are merged line by line.  Blank lines are removed.  The
+output is sorted, so comment-only lines are at the beginning of the file.
 
 If the semantic merge fails (for example, because a version contains conflict
 markers), this script performs a textual merge using "git merge-file".
@@ -122,29 +117,6 @@ def merge_lines(base: set[str], ours: set[str], theirs: set[str]) -> set[str]:
         for line in base | ours | theirs
         if merge_value(line in base, line in ours, line in theirs)
     }
-
-
-def merge_ordered_lines(base: list[str], ours: list[str], theirs: list[str]) -> list[str]:
-    """Return the three-way merge of sequences of lines.
-
-    If ours and theirs are equal, or one of them equals base, then the result is
-    the other one.  Otherwise, a line is in the result under the same conditions
-    as for merge_lines, and the result has no duplicates; it consists of the lines
-    of ours, in order, followed by the lines that only theirs has, in order.
-
-    Args:
-        base: the lines in the common ancestor
-        ours: the lines in the current version
-        theirs: the lines in the other version
-
-    Returns:
-        the merged lines
-    """
-    merged = merge_value(base, ours, theirs)
-    if merged is not None:
-        return merged
-    kept = merge_lines(set(base), set(ours), set(theirs))
-    return [line for line in dict.fromkeys(ours + theirs) if line in kept]
 
 
 def merge_method(
@@ -236,12 +208,11 @@ def merge(
     """
     base, ours, theirs = (read_goals(path) for path in paths)
 
-    comment_lines = merge_ordered_lines(
-        base.comment_lines, ours.comment_lines, theirs.comment_lines
-    )
-
     # Each entry is a sort key and the lines to output.
-    entries: list[tuple[str, list[str]]] = []
+    entries = [
+        (line, [line])
+        for line in merge_lines(base.comment_lines, ours.comment_lines, theirs.comment_lines)
+    ]
 
     conflicts = []
     # The union of the methods that have lines in any of the three versions.
@@ -273,8 +244,8 @@ def merge(
         # Put the conflict where the method's lines would be.
         entries.append((method + " ", block))
 
-    goal_lines = [line for _, lines in sorted(entries) for line in lines]
-    return comment_lines + goal_lines, conflicts
+    merged_lines = [line for _, lines in sorted(entries) for line in lines]
+    return merged_lines, conflicts
 
 
 def main() -> None:
