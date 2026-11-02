@@ -95,7 +95,7 @@ public class DefaultOmitMethodsTest {
               SignatureParser.parse(
                   signature, AccessibilityPredicate.IS_ANY, new EverythingAllowedPredicate());
         } catch (SignatureParseException | FailedPredicateException e) {
-          if (NEWER_JDK_SIGNATURES.contains(signature)) {
+          if (NEWER_JDK_SIGNATURES.contains(signature) && !hasMethod(signature)) {
             continue;
           }
           throw new AssertionError(filename + ": " + e.getMessage(), e);
@@ -107,6 +107,29 @@ public class DefaultOmitMethodsTest {
         assertEquals(filename, rawSignature.toString(), signature);
       }
     }
+  }
+
+  /**
+   * Returns true if the running JVM has a method with the given signature.
+   *
+   * @param signature a method signature in the format of {@link RawSignature#toString()}, such as
+   *     "java.time.InstantSource.system()"
+   * @return true if the running JVM has a method with the given signature
+   */
+  private static boolean hasMethod(String signature) {
+    String qualifiedName = signature.substring(0, signature.indexOf('('));
+    Class<?> c;
+    try {
+      c = Class.forName(qualifiedName.substring(0, qualifiedName.lastIndexOf('.')));
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+    for (Method m : c.getDeclaredMethods()) {
+      if (RawSignature.of(m).toString().equals(signature)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Test
