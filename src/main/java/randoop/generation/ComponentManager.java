@@ -53,10 +53,10 @@ public class ComponentManager {
   private final SequenceCollection gralComponents;
 
   /**
-   * The number of sequences that {@link #addGeneratedSequence} has added to {@link #gralComponents}
-   * since this was created or since the last call to {@link #clearGeneratedSequences}.
+   * The number of seed sequences that were added to {@link #gralComponents} when it was populated,
+   * as counted by {@link SequenceCollection#numSequencesAdded}.
    */
-  private int numGeneratedSequences = 0;
+  private int numSeedSequencesAdded;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
@@ -105,6 +105,7 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     this.accessibility = accessibility;
     initDemandDrivenIfEnabled();
   }
@@ -121,15 +122,16 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences that {@link #addGeneratedSequence} has added to this manager
-   * since it was created or since the last call to {@link #clearGeneratedSequences}. Seed sequences
-   * are not counted, nor are sequences that {@link #addGeneratedSequence} did not store because
-   * they have no active outputs.
+   * Returns the number of sequences that have been added to this manager's component set since it
+   * was created or since the last call to {@link #clearGeneratedSequences}. The count includes
+   * sequences added by {@link #addGeneratedSequence} and by the {@link DemandDrivenInputCreator}.
+   * Seed sequences are not counted, nor are sequences that were not stored because they have no
+   * active outputs.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
   public int numGeneratedSequences() {
-    return numGeneratedSequences;
+    return gralComponents.numSequencesAdded() - numSeedSequencesAdded;
   }
 
   /**
@@ -171,9 +173,7 @@ public class ComponentManager {
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
-    if (gralComponents.add(sequence)) {
-      numGeneratedSequences++;
-    }
+    gralComponents.add(sequence);
   }
 
   /**
@@ -215,7 +215,7 @@ public class ComponentManager {
   void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
-    numGeneratedSequences = 0;
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     initDemandDrivenIfEnabled();
   }
 

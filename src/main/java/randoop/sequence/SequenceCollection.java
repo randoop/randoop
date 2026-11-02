@@ -75,6 +75,12 @@ public final class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
+   * The number of calls to {@link #add} that changed this collection since it was created or last
+   * cleared.
+   */
+  private int numSequencesAdded = 0;
+
+  /**
    * SUT-parameter types that are not SUT-returned types. {@link
    * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
    * existing instances are available.
@@ -110,6 +116,18 @@ public final class SequenceCollection {
   }
 
   /**
+   * Returns the number of calls to {@link #add} that changed this collection since it was created
+   * or last cleared, including calls by {@code addAll}. A call changes this collection if its
+   * sequence has at least one active output.
+   *
+   * @return the number of calls to {@link #add} that changed this collection since it was created
+   *     or last cleared
+   */
+  public int numSequencesAdded() {
+    return numSequencesAdded;
+  }
+
+  /**
    * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
    * demand-driven input creator, and the type instantiator.
    */
@@ -120,6 +138,7 @@ public final class SequenceCollection {
     this.typesAndSupertypes.clear();
     this.primitiveValues.clear();
     this.sequenceCount = 0;
+    this.numSequencesAdded = 0;
     checkRep();
   }
 
@@ -209,7 +228,8 @@ public final class SequenceCollection {
       Type outType = sequence.getLastVariable().getType();
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
-          && statement.isNonreceivingInitialization()) {
+          && statement.isNonreceivingInitialization()
+          && sequence.isActive(0)) {
         primitiveValues.add(statement.getValue());
       }
     }
@@ -234,6 +254,9 @@ public final class SequenceCollection {
         updateCompatibleMap(sequence, formalType);
         changed = true;
       }
+    }
+    if (changed) {
+      numSequencesAdded++;
     }
     checkRep();
     return changed;
