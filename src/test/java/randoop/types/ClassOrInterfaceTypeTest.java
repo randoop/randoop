@@ -172,6 +172,8 @@ public class ClassOrInterfaceTypeTest {
         listType.instantiate(new ArrayList<ReferenceType>(listType.getTypeParameters()));
     assertTrue(listOfE.isGenericForm());
     assertTrue(rawList.isSubtypeOfOrEqualTo(listOfE));
+    // The generic class and the instantiated type are two representations of the same type.
+    assertTrue(listType.isSubtypeOfOrEqualTo(listOfE));
 
     // A raw type is assignable to a parameterized type only by unchecked conversion, and it is not
     // a subtype of it, even if the parameterized type mentions a type variable.
