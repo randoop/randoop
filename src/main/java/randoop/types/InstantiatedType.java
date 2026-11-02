@@ -292,6 +292,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
+  }
+
+  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     if (super.isGeneric(ignoreWildcards)) { // enclosing type is generic
       return true;
@@ -450,9 +455,9 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
-        // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
-        // a raw type as a subtype of every generic type of the same class.
-        return i == thisTypeArguments.size();
+        // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+        // is also a subtype of the generic form of its class.
+        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.
@@ -474,6 +479,8 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
