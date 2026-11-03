@@ -3,6 +3,7 @@ package randoop.instrument;
 import java.lang.instrument.IllegalClassFormatException;
 import java.util.Arrays;
 import java.util.Objects;
+import org.apache.bcel.Const;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -252,10 +253,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * <p>Tries to locate a class file whose name is contained in {@code this.classname}. If found, it
    * then searches that class file for a method whose name matches {@code this.name} and whose
-   * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
-   * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
-   * If the class exists, but the method is not found, it checks to see if there is a superclass and
-   * repeats the search process.
+   * argument types match {@code this.paramTypes}, preferring a method that is not a bridge method.
+   * If it finds a matching method it returns the corresponding {@code
+   * org.apache.bcel.classfile.Method} object for this {@link MethodSignature}. If the class exists,
+   * but the method is not found, it checks to see if there is a superclass and repeats the search
+   * process.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -287,12 +289,22 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
 
+      // A class with a covariant override also has a bridge method with the same parameter types.
+      // Prefer the override, whose return type is the one that call sites use.
+      @Nullable Method bridge = null;
       for (Method m : currentClass.getMethods()) {
         if (m.getName().equals(this.name) && Arrays.equals(m.getArgumentTypes(), this.paramTypes)) {
-          // we have a match
+          if ((m.getAccessFlags() & Const.ACC_BRIDGE) != 0) {
+            bridge = m;
+            continue;
+          }
           this.method = m;
           return m;
         }
+      }
+      if (bridge != null) {
+        this.method = bridge;
+        return bridge;
       }
 
       // Method not found; perhaps inherited from superclass.

@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement has the wrong return type
+java.lang.System.exit(int) java.lang.Math.abs(int)
