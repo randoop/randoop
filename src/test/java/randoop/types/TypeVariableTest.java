@@ -245,7 +245,9 @@ public class TypeVariableTest {
 
   @Test
   public void testLazyReferenceLowerBoundToUnmappedVariable() {
-    // The unknown type variable T, with T extends Comparable<T>, must be a subtype of the argument.
+    // The bound is the unknown type variable T, with T extends Comparable<T>.  The argument is
+    // within the bound if it can instantiate T.  Object cannot, because Object is not a
+    // Comparable<Object>.
     LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
     assertTrue(bound.isLowerBound(JavaTypes.STRING_TYPE, new Substitution()));
     assertFalse(bound.isLowerBound(JavaTypes.OBJECT_TYPE, new Substitution()));
