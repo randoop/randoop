@@ -129,7 +129,7 @@ public abstract class TypeVariable extends ParameterType {
   ParameterBound getResolvedUpperTypeBound() {
     ParameterBound result = resolvedUpperBound;
     if (result == null) {
-      result = getUpperTypeBound().substitute(getSubstitution(this));
+      result = getUpperTypeBound().substitute(getIdentitySubstitution());
       resolvedUpperBound = result;
     }
     return result;
@@ -145,10 +145,27 @@ public abstract class TypeVariable extends ParameterType {
   ParameterBound getResolvedLowerTypeBound() {
     ParameterBound result = resolvedLowerBound;
     if (result == null) {
-      result = getLowerTypeBound().substitute(getSubstitution(this));
+      result = getLowerTypeBound().substitute(getIdentitySubstitution());
       resolvedLowerBound = result;
     }
     return result;
+  }
+
+  /**
+   * Returns a substitution of each type variable in the bounds of this variable, and of this
+   * variable, for itself. Applying it to a bound resolves the bound's lazy parts.
+   *
+   * @return a substitution that replaces this variable and each type variable in its bounds with
+   *     itself
+   */
+  private Substitution getIdentitySubstitution() {
+    // A copy of a type variable equals the original, so it is not a separate entry.
+    Set<TypeVariable> variables = new LinkedHashSet<>();
+    variables.add(this);
+    variables.addAll(getLowerTypeBound().getTypeParameters());
+    variables.addAll(getUpperTypeBound().getTypeParameters());
+    List<TypeVariable> parameters = new ArrayList<>(variables);
+    return new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
   }
 
   /**
