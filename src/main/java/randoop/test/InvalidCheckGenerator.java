@@ -7,11 +7,13 @@ import randoop.sequence.ExecutableSequence;
 public class InvalidCheckGenerator extends TestCheckGenerator {
 
   /** Creates an InvalidCheckGenerator. */
-  public InvalidCheckGenerator() {}
+  public InvalidCheckGenerator() {
+    super();
+  }
 
   @Override
   public InvalidChecks generateTestChecks(ExecutableSequence eseq)
       throws RandoopSpecificationError {
-    return new InvalidChecks(new InvalidValueCheck(eseq, eseq.sequence.size() - 1));
+    return new InvalidChecks(new InvalidValueCheck());
   }
 }
