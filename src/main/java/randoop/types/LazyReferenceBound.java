@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
@@ -105,12 +106,18 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns the type variables at any depth of the bound type, as {@link #getTypeParameters()}
-   * does.
+   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
+   * in {@link #getUnknownVariable(Type, Substitution)}.
    */
   @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    return getTypeParameters();
+  public boolean isLowerBound(Type argType, Substitution substitution) {
+    TypeVariable unknown = getUnknownVariable(argType, substitution);
+    if (unknown != null) {
+      // The unknown type variable can be argType itself.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+    }
+    return super.isLowerBound(argType, substitution);
   }
 
   /**
@@ -122,5 +129,27 @@ class LazyReferenceBound extends EagerReferenceBound {
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     return lowerBound.isNullType(substitution);
+  }
+
+  /**
+   * Returns the type variable that the bound type is after the given substitution is applied, if
+   * the substitution does not instantiate it and {@code argType} is a reference type that is not a
+   * variable. Otherwise, returns null.
+   *
+   * <p>The returned type variable stands for an unknown type. {@code argType} is within this bound
+   * if the type variable can be instantiated by {@code argType}. Comparing {@code argType} with the
+   * bounds of the type variable instead would accept any type as within a lower bound, since the
+   * lower bound of the type variable is usually the null type.
+   *
+   * @param argType a type to compare with this bound
+   * @param substitution a type substitution
+   * @return the uninstantiated type variable that the bound type is, or null
+   */
+  private @Nullable TypeVariable getUnknownVariable(Type argType, Substitution substitution) {
+    if (!getBoundType().isVariable() || !argType.isReferenceType() || argType.isVariable()) {
+      return null;
+    }
+    ReferenceType boundType = getBoundType().substitute(substitution);
+    return boundType.isVariable() ? (TypeVariable) boundType : null;
   }
 }

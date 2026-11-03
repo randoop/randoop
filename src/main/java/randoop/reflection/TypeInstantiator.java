@@ -38,6 +38,19 @@ public class TypeInstantiator {
   /** If true, log information about instantiation. */
   private static final boolean debug = false;
 
+  /**
+   * The maximum number of randomly selected substitutions that {@link
+   * #instantiateOperationTypes(TypedClassOperation)} checks against the bounds of an operation's
+   * type variables before it gives up.
+   */
+  private static final int MAX_INSTANTIATION_ATTEMPTS = 10;
+
+  /**
+   * The maximum number of candidate substitutions for an operation's type variables that {@link
+   * #substitutionsSatisfyingBounds(List, Substitution, List)} checks against their bounds.
+   */
+  private static final int MAX_CHECKED_SUBSTITUTIONS = 1000;
+
   // This field is side-effected by aliases held outside the class.
   /**
    * The set of input types for this model. The input types need to be closed on supertypes: if a
@@ -276,10 +289,42 @@ public class TypeInstantiator {
    * the types instantiated.
    *
    * @param operation the operation
-   * @return the operation with generic types instantiated
+   * @return the operation with generic types instantiated, or null if no instantiation was found
    */
   // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-  private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
+  private @Nullable TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
+    for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
+      Substitution substitution = selectOperationSubstitution(operation);
+      if (substitution == null) {
+        return null;
+      }
+      if (!satisfiesBounds(substitution)) {
+        Log.logPrintf(
+            "TypeInstantiator: substitution %s does not satisfy the bounds of %s%n",
+            substitution, operation);
+        continue;
+      }
+      TypedClassOperation result = operation.substitute(substitution);
+      // An operation is generic if it has type variables.  This seems to assume that substitution
+      // failed, because it left some type variables unreplaced.  Should that be an error?
+      if (result.isGeneric(/* ignoreWildcards= */ true)) {
+        return null;
+      }
+      return result;
+    }
+    return null;
+  }
+
+  /**
+   * Returns a randomly selected substitution that instantiates the generic types of the given
+   * operation. If there are too many candidate substitutions to check, the result might not satisfy
+   * the bounds of the type variables; see {@link #satisfiesBounds(Substitution)}.
+   *
+   * @param operation an operation
+   * @return a substitution that instantiates the generic types of {@code operation}, or null if no
+   *     instantiating types exist for some type variable
+   */
+  private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
     Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution substitution = new Substitution();
@@ -308,29 +353,83 @@ public class TypeInstantiator {
     }
 
     List<TypeVariable> remaining = uninstantiatedVariables(typeParameters, substitution);
-    if (!remaining.isEmpty()) {
-      // The variables that the substitution instantiates, but whose bounds mention a variable
-      // in `remaining`.  For example, after the capture variable of `? extends T` has been
-      // instantiated, its upper bound mentions T.
-      List<TypeVariable> dependents = new ArrayList<>();
-      for (TypeVariable variable : substitution.keySet()) {
-        if (!boundsAreInstantiated(variable, substitution)) {
-          dependents.add(variable);
-        }
+    if (remaining.isEmpty()) {
+      return substitution;
+    }
+    // The variables that the substitution instantiates, but whose bounds mention a variable
+    // in `remaining`.  For example, after the capture variable of `? extends T` has been
+    // instantiated, its upper bound mentions T.
+    List<TypeVariable> dependents = new ArrayList<>();
+    for (TypeVariable variable : substitution.keySet()) {
+      if (!boundsAreInstantiated(variable, substitution)) {
+        dependents.add(variable);
       }
-      substitution = selectSubstitution(remaining, substitution, dependents);
-      if (substitution == null) {
+    }
+    List<Substitution> substitutions =
+        substitutionsSatisfyingBounds(remaining, substitution, dependents);
+    if (substitutions == null) {
+      // There are too many candidate substitutions to check them all.
+      return selectSubstitution(remaining, substitution, dependents);
+    }
+    if (substitutions.isEmpty()) {
+      return null;
+    }
+    return Randomness.randomMember(substitutions);
+  }
+
+  /**
+   * Returns the substitutions that extend the given substitution by instantiating the given type
+   * variables with candidate types, and that satisfy the bounds of all the type variables they
+   * instantiate. Returns null if there are more than {@link #MAX_CHECKED_SUBSTITUTIONS} candidate
+   * substitutions.
+   *
+   * @param parameters type variables that {@code substitution} does not instantiate
+   * @param substitution a substitution to extend
+   * @param dependents variables that {@code substitution} instantiates, whose bounds mention
+   *     variables in {@code parameters}
+   * @return the extending substitutions that satisfy the bounds, or null if there are too many
+   *     candidates
+   * @see #satisfiesBounds(Substitution)
+   */
+  private @Nullable List<Substitution> substitutionsSatisfyingBounds(
+      List<TypeVariable> parameters, Substitution substitution, List<TypeVariable> dependents) {
+    List<Substitution> result = new ArrayList<>();
+    List<List<ReferenceType>> candidates = candidateTypes(parameters, substitution, dependents);
+    if (candidates.isEmpty()) {
+      return result;
+    }
+    long count = 1;
+    for (List<ReferenceType> parameterCandidates : candidates) {
+      count *= parameterCandidates.size();
+      if (count > MAX_CHECKED_SUBSTITUTIONS) {
         return null;
       }
     }
-
-    operation = operation.substitute(substitution);
-    // An operation is generic if it has type variables.  This seems to assume that substitution
-    // failed, because it left some type variables unreplaced.  Should that be an error?
-    if (operation.isGeneric(/* ignoreWildcards= */ true)) {
-      return null;
+    for (List<ReferenceType> tuple : iteratorToIterable(new CombinationIterator<>(candidates))) {
+      Substitution extended = substitution.extend(parameters, tuple);
+      if (satisfiesBounds(extended)) {
+        result.add(extended);
+      }
     }
-    return operation;
+    return result;
+  }
+
+  /**
+   * Returns true if each type to which the given substitution maps a type variable is within the
+   * bounds of that type variable, with the substitution applied to the bounds.
+   *
+   * <p>The types are chosen one type variable at a time. A choice for one type variable can treat
+   * another one as an unknown type, so the choices can be inconsistent. For example, for {@code <T
+   * extends Comparable<? super T>> T min(Collection<? extends T>)}, the capture of {@code ? extends
+   * T} might be instantiated by {@code Comparable<String>} and {@code T} by {@code String}. This
+   * check rejects such a substitution.
+   *
+   * @param substitution a substitution that instantiates every type variable of an operation
+   * @return true if each type in the substitution is within the bounds of its type variable
+   */
+  private static boolean satisfiesBounds(Substitution substitution) {
+    List<TypeVariable> parameters = new ArrayList<>(substitution.keySet());
+    return new BoundsCheck(parameters).test(substitution);
   }
 
   /**

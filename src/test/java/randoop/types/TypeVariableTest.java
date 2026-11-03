@@ -416,6 +416,14 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testLazyReferenceLowerBoundToUnmappedVariable() {
+    // The unknown type variable T, with T extends Comparable<T>, must be a subtype of the argument.
+    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
+    assertTrue(bound.isLowerBound(JavaTypes.STRING_TYPE, new Substitution()));
+    assertFalse(bound.isLowerBound(JavaTypes.OBJECT_TYPE, new Substitution()));
+  }
+
+  @Test
   public void testCopyWithResolvedBound() {
     TypeVariable t = typeParameter(SelfComparableBound.class, 0);
     TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
@@ -501,7 +509,7 @@ public class TypeVariableTest {
       ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(parameters, s, t));
       // The result does not depend on the order of the type arguments.
       assertTrue(bound instanceof LazyReferenceBound);
-      assertTrue(bound.getLazyTypeParameters().contains(s));
+      assertTrue(((ReferenceBound) bound).getBoundType().getTypeParameters().contains(s));
     }
   }
 
@@ -1193,5 +1201,26 @@ public class TypeVariableTest {
         captureBound.isUpperBound(
             ClassOrInterfaceType.forClass(Integer.class), new Substitution()));
     assertFalse(captureBound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+  }
+
+  @Test
+  public void testCaptureOfMethodTypeParameter()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    // <T extends Object & Comparable<? super T>> T min(Collection<? extends T>)
+    Method min = Collections.class.getMethod("min", java.util.Collection.class);
+    TypedClassOperation operation = TypedOperation.forMethod(min).applyCaptureConversion();
+    InstantiatedType parameterType = (InstantiatedType) operation.getInputTypes().get(0);
+    TypeVariable capture =
+        (TypeVariable)
+            ((ReferenceArgument) parameterType.getTypeArguments().get(0)).getReferenceType();
+    // T is instantiated separately from the capture variable, so the capture variable cannot be
+    // instantiated by Comparable<String> on the assumption that T is a supertype of it.
+    InstantiatedType comparableToString =
+        JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(capture.canBeInstantiatedBy(comparableToString));
+    assertFalse(
+        GenericClassType.forClass(java.util.Collection.class)
+            .instantiate(comparableToString)
+            .isInstantiationOf(parameterType));
   }
 }
