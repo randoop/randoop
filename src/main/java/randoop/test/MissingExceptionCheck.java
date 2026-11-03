@@ -33,7 +33,7 @@ public class MissingExceptionCheck implements Check {
    * @param expected the expected exceptions
    * @param index the statement index
    */
-  MissingExceptionCheck(List<List<ThrowsClause>> expected, int index) {
+  /*package*/ MissingExceptionCheck(List<List<ThrowsClause>> expected, int index) {
     this.expected = expected;
     this.index = index;
   }

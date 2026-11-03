@@ -28,7 +28,7 @@ public class RandoopSpecificationError extends Exception {
    *
    * @param message the error message
    */
-  RandoopSpecificationError(String message) {
+  /*package*/ RandoopSpecificationError(String message) {
     super(message);
   }
 
@@ -38,7 +38,7 @@ public class RandoopSpecificationError extends Exception {
    * @param message the error message
    * @param cause the causing exception
    */
-  RandoopSpecificationError(String message, Throwable cause) {
+  /*package*/ RandoopSpecificationError(String message, Throwable cause) {
     super(message, cause);
   }
 

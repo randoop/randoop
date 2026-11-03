@@ -126,7 +126,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
      *
      * @return a random StringFuzzingOperation
      */
-    static StringFuzzingOperation random() {
+    /*package*/ static StringFuzzingOperation random() {
       return values()[Randomness.nextRandomInt(values().length)];
     }
   }

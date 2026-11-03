@@ -37,7 +37,7 @@ public class CoveredClassTransformer implements ClassFileTransformer {
   private ClassPool pool;
 
   /** Create {@code CoveredClassTransformer}. */
-  CoveredClassTransformer() {
+  /*package*/ CoveredClassTransformer() {
     super();
     pool = ClassPool.getDefault();
   }

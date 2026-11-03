@@ -19,7 +19,7 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * @param boundType the bound type
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -96,6 +96,7 @@ class LazyReferenceBound extends ReferenceBound {
     return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
+  /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     assert false : "isUpperBound(ParameterBound, Substitution) not implemented";

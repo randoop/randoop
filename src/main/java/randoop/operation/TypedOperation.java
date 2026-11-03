@@ -74,7 +74,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param outputType the output types
    * @param execSpec the specification for the operation
    */
-  TypedOperation(
+  /*package*/ TypedOperation(
       CallableOperation operation,
       TypeTuple inputTypes,
       Type outputType,

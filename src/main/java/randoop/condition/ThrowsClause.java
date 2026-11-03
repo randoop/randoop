@@ -19,7 +19,7 @@ public class ThrowsClause {
    * @param exceptionType the type of the expected exception
    * @param comment the text description of the throws clause
    */
-  ThrowsClause(ClassOrInterfaceType exceptionType, String comment) {
+  /*package*/ ThrowsClause(ClassOrInterfaceType exceptionType, String comment) {
     this.exceptionType = exceptionType;
     this.comment = comment;
   }

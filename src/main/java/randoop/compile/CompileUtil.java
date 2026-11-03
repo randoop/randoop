@@ -21,7 +21,7 @@ final class CompileUtil {
    * @param pathString the path to a file as a string
    * @return the {@code URI} for the path
    */
-  static URI toURI(String pathString) {
+  /*package*/ static URI toURI(String pathString) {
     try {
       return new URI(pathString);
     } catch (URISyntaxException e) {

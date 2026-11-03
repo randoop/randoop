@@ -59,7 +59,8 @@ final class HelperSequenceCreator {
    * @param collectionType the query type
    * @return the singleton list containing the compatible sequence
    */
-  static SIList<Sequence> createArraySequence(ComponentManager components, Type collectionType) {
+  /*package*/ static SIList<Sequence> createArraySequence(
+      ComponentManager components, Type collectionType) {
 
     // The returned sequence has length less than this.
     final int MAX_LENGTH = 7;
@@ -140,7 +141,7 @@ final class HelperSequenceCreator {
    * @param collectionType the type for collection
    * @return a sequence that creates a collection of type {@code collectionType}
    */
-  static Sequence createCollection(
+  /*package*/ static Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);

@@ -31,7 +31,7 @@ class TypeExtractor extends DefaultClassVisitor {
    *     class populates the set, and the client reads the set it passed in.
    * @param predicate the accessibility predicate
    */
-  TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
+  /*package*/ TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
     super();
     this.inputTypes = inputTypes;
     this.predicate = predicate;

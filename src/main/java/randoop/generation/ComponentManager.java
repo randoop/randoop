@@ -206,7 +206,7 @@ public class ComponentManager {
   /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
-  void clearGeneratedSequences() {
+  /*package*/ void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
     initDemandDrivenIfEnabled();
     if (!sutParameterNeverReturnedTypes.isEmpty()) {
@@ -219,7 +219,7 @@ public class ComponentManager {
    *
    * @return the set of all generated sequences
    */
-  Set<Sequence> getAllGeneratedSequences() {
+  /*package*/ Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }
 
@@ -230,7 +230,7 @@ public class ComponentManager {
    * @param cls the query type
    * @return the sequences whose output type is assignable to {@code cls}
    */
-  SIList<Sequence> getSequencesForType(Type cls) {
+  /*package*/ SIList<Sequence> getSequencesForType(Type cls) {
     return gralComponents.getSequencesForType(cls, false, false);
   }
 
@@ -248,6 +248,7 @@ public class ComponentManager {
    *     appropriate to use as a method call receiver
    * @return the sequences that create values of the given type
    */
+  /*package*/
   @SuppressWarnings("unchecked")
   SIList<Sequence> getSequencesForParam(TypedOperation operation, int i, boolean onlyReceivers) {
 
@@ -301,7 +302,8 @@ public class ComponentManager {
    * @param declaringType the class containing the operation being tested
    * @return sequences from the appropriate scope that create values of the needed type
    */
-  SIList<Sequence> getLiteralSequences(Type neededType, ClassOrInterfaceType declaringType) {
+  /*package*/ SIList<Sequence> getLiteralSequences(
+      Type neededType, ClassOrInterfaceType declaringType) {
     if (scopeToLiteralStatistics == null
         || GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
       return SIList.empty();
@@ -323,7 +325,7 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
-  Set<Sequence> getAllPrimitiveSequences() {
+  /*package*/ Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> result = new LinkedHashSet<>();
     // Include literal-derived primitive sequences unless disabled.
@@ -352,7 +354,7 @@ public class ComponentManager {
    *
    * @return the type instantiator for the general components
    */
-  TypeInstantiator getTypeInstantiator() {
+  /*package*/ TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
   }
 

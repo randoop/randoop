@@ -88,7 +88,7 @@ import randoop.util.Util;
    * @param overridden the map from a method to methods that it overrides and that have a
    *     specification
    */
-  SpecificationCollection(
+  /*package*/ SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
       MultiMap<OperationSignature, Method> signatureToMethods,
       Map<AccessibleObject, Set<Method>> overridden) {
