@@ -47,7 +47,7 @@ public class TypeInstantiator {
 
   /**
    * The maximum number of candidate substitutions for an operation's type variables that {@link
-   * #substitutionsSatisfyingBounds(List, Substitution)} checks against their bounds.
+   * #substitutionsSatisfyingBounds(List, Substitution, List)} checks against their bounds.
    */
   private static final int MAX_CHECKED_SUBSTITUTIONS = 1000;
 
@@ -429,11 +429,7 @@ public class TypeInstantiator {
    */
   private static boolean satisfiesBounds(Substitution substitution) {
     List<TypeVariable> parameters = new ArrayList<>(substitution.keySet());
-    List<ReferenceType> arguments = new ArrayList<>(parameters.size());
-    for (TypeVariable parameter : parameters) {
-      arguments.add(substitution.get(parameter));
-    }
-    return new BoundsCheck(parameters).test(arguments, substitution);
+    return new BoundsCheck(parameters).test(substitution);
   }
 
   /**
