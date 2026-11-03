@@ -21,6 +21,7 @@ public class SequenceParseException extends Exception {
    * @param statementCount the index of the statement at which the error occurred
    */
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
+    super();
 
     StringBuilder b = new StringBuilder(256);
     b.append(
