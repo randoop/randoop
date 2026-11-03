@@ -46,6 +46,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     c.getArity() == 1}.
    */
   public ContractCheckingGenerator(ContractSet contracts) {
+    super();
     this.contracts = contracts;
   }
 
