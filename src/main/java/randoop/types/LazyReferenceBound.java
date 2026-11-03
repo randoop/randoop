@@ -123,12 +123,18 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
-   * contains type variables.
+   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
+   * in {@link #getUnknownVariable(Type, Substitution)}.
    */
   @Override
-  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    return lowerBound.isNullType(substitution);
+  public boolean isUpperBound(Type argType, Substitution substitution) {
+    TypeVariable unknown = getUnknownVariable(argType, substitution);
+    if (unknown != null) {
+      // The unknown type variable can be argType itself.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+    }
+    return super.isUpperBound(argType, substitution);
   }
 
   /**
@@ -151,5 +157,16 @@ class LazyReferenceBound extends EagerReferenceBound {
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
+   * contains type variables.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isNullType(substitution);
   }
 }
