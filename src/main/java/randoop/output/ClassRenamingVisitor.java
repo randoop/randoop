@@ -31,6 +31,7 @@ public class ClassRenamingVisitor extends VoidVisitorAdapter<Void> {
    * @param newName the new name
    */
   public ClassRenamingVisitor(String oldName, String newName) {
+    super();
     this.oldName = oldName;
     this.newName = newName;
   }

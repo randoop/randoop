@@ -24,6 +24,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
    * @param postConditions the post-condition to be tested in generated {@link TestChecks}
    */
   public PostConditionCheckGenerator(List<ExecutableBooleanExpression> postConditions) {
+    super();
     this.postConditions = postConditions;
   }
 

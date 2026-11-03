@@ -32,6 +32,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * @param predicate the accessibility predicate
    */
   TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
+    super();
     this.inputTypes = inputTypes;
     this.predicate = predicate;
   }
