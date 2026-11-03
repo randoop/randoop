@@ -15,7 +15,9 @@ public class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<Class
   private static final JavaParser javaParser = new JavaParser();
 
   /** Creates a FieldAccessTypeNameSimplifyVisitor. */
-  public FieldAccessTypeNameSimplifyVisitor() {}
+  public FieldAccessTypeNameSimplifyVisitor() {
+    super();
+  }
 
   /**
    * Visit every field access expression. Simplify the type name by removing the scope component if

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -23,7 +25,7 @@ public class MinimizerTests {
     Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
     boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
     String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
-    String command = GRADLEW_COMMAND + " -q printJunitJarPath";
+    List<String> command = Arrays.asList(GRADLEW_COMMAND, "-q", "printJunitJarPath");
     // This sometimes fails with timeout, sometimes with out of memory.  Why?
     // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
     for (int i = 0; i < 3; i++) {
