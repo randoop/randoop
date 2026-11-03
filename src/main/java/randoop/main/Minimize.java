@@ -1081,21 +1081,9 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Run a command given as a String and return the output and error results in an Outputs object.
-   *
-   * @param command the input command to be run; its words are separated by single spaces
-   * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the command to run
-   * @return an {@code Outputs} object containing the standard and error output
-   */
-  public static Outputs runProcess(String command, Path executionDir, int timeoutLimit) {
-    return runProcess(Arrays.asList(command.split(" ")), executionDir, timeoutLimit);
-  }
-
-  /**
    * Run a command and return the output and error results in an Outputs object.
    *
-   * @param command the input command to be run, as an executable followed by its arguments
+   * @param command the input command to be run: the executable, followed by its arguments
    * @param executionDir the directory where the process commands should be executed
    * @param timeoutLimit number of seconds allowed for the command to run
    * @return an {@code Outputs} object containing the standard and error output
@@ -1107,7 +1095,7 @@ public class Minimize extends CommandHandler {
     }
 
     CommandLine cmdLine = new CommandLine(command.get(0)); // constructor requires executable name
-    // Do not quote arguments that contain spaces, such as paths; each element is one argument.
+    // Disable quoting:  each element of `command` is already a separate argument.
     cmdLine.addArguments(command.subList(1, command.size()).toArray(new String[0]), false);
 
     DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();

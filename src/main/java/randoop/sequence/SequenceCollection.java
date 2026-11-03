@@ -417,8 +417,8 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns the type instantiator for this collection, which instantiates type parameters using
-   * the types of the sequences in this collection and their supertypes.
+   * Returns the type instantiator for this collection, which instantiates type parameters using the
+   * types of the sequences in this collection and their supertypes.
    *
    * @return the type instantiator for this collection
    */
