@@ -33,6 +33,7 @@ public final class PrimitiveType extends Type {
    * @param runtimeClass the runtime class
    */
   private PrimitiveType(Class<?> runtimeClass) {
+    super();
     assert runtimeClass.isPrimitive()
         : "must be initialized with primitive type, got " + runtimeClass.getName();
     assert !runtimeClass.equals(void.class) : "void should be represented by VoidType";

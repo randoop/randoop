@@ -31,6 +31,7 @@ class LazyParameterBound extends ParameterBound {
    * @param boundType the reflection type for this bound
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
+    super();
     this.boundType = boundType;
   }
 
@@ -186,11 +187,6 @@ class LazyParameterBound extends ParameterBound {
       typeParameters = result;
     }
     return result;
-  }
-
-  @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    return getTypeParameters();
   }
 
   /**
@@ -367,7 +363,9 @@ class LazyParameterBound extends ParameterBound {
   /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
-    public LazyBoundException() {}
+    public LazyBoundException() {
+      super();
+    }
 
     /** ID for serializing this class. */
     private static final long serialVersionUID = 20190508;
