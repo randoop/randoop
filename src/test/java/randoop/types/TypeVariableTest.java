@@ -411,8 +411,9 @@ public class TypeVariableTest {
     TypeVariable capture =
         (TypeVariable)
             ((ReferenceArgument) parameterType.getTypeArguments().get(0)).getReferenceType();
-    // T is instantiated separately from the capture variable, so the capture variable cannot be
-    // instantiated by Comparable<String> on the assumption that T is a supertype of it.
+    // The capture variable's upper bound is T.  String can instantiate T, but Comparable<String>
+    // cannot, because Comparable<String> is not a Comparable<? super Comparable<String>>.
+    assertTrue(capture.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     InstantiatedType comparableToString =
         JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     assertFalse(capture.canBeInstantiatedBy(comparableToString));
