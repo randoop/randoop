@@ -93,15 +93,6 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
-      paramList.addAll(b.getLazyTypeParameters());
-    }
-    return paramList;
-  }
-
-  @Override
   boolean hasWildcard() {
     for (ParameterBound b : boundList) {
       if (b.hasWildcard()) {
