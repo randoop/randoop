@@ -186,6 +186,30 @@ public class InstantiationTest {
   }
   */
 
+  /** Based on issue #1889: a type parameter bounded by its declaring type applied to a wildcard. */
+  @Test
+  public void testWildcardBoundInstantiation() {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.WildcardBoundBuilder");
+    classnames.add("randoop.reflection.ConcreteWildcardBoundBuilder");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    getOperations(model, classOperations, inputTypes);
+
+    boolean foundCreate = false;
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().endsWith(".create")
+          && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
+              == WildcardBoundBuilder.class) {
+        foundCreate = true;
+      }
+    }
+    assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
+  }
+
   /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
