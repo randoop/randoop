@@ -569,13 +569,7 @@ public class TypeInstantiator {
             typeArgument);
         return null;
       }
-      if (typeArgument.isCaptureVariable()) {
-        // Code that uses a capture variable, such as the one for `List<?>`, cannot depend on its
-        // type, so favoring Comparable types would not help.
-        selectedTypes.add(Randomness.randomMember(candidates));
-      } else {
-        selectedTypes.add(selectType(candidates));
-      }
+      selectedTypes.add(selectType(candidates));
     }
     return substitution.extend(parameters, selectedTypes);
   }
@@ -587,11 +581,12 @@ public class TypeInstantiator {
   private static final double COMPARABLE_PROBABILITY = 0.5;
 
   /**
-   * Randomly selects a type from the given candidates, to instantiate a type parameter. Types that
-   * implement {@code Comparable} are favored, because many generic classes and methods, such as
-   * {@code TreeMap} and {@code Collections.sort}, can do useful work only on values of such types.
+   * Returns a randomly chosen type from the given candidates, to instantiate a type parameter.
+   * Comparable types (see {@link #isComparable}) are favored, because many generic classes and
+   * methods, such as {@code TreeMap} and {@code Collections.sort}, can do useful work only on
+   * values of such types.
    *
-   * @param candidates the types to choose from; non-empty
+   * @param candidates a non-empty list of types to choose from
    * @return a type from {@code candidates}
    */
   private static ReferenceType selectType(List<ReferenceType> candidates) {
@@ -606,14 +601,27 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns true if the given type implements {@code Comparable}.
+   * Returns true if values of the given type can be compared to one another: that is, if the type
+   * is a subtype of {@code Comparable<? super T>}, where {@code T} is the type. That is the bound
+   * that methods such as {@code Collections.sort} and {@code Collections.max} require. For example,
+   * {@code String} is comparable, but {@code Comparable<String>} is not, because a {@code
+   * Comparable<String>} can be compared only to a {@code String}.
    *
    * @param type a type
-   * @return true if {@code type} implements {@code Comparable}
+   * @return true if {@code type} is a subtype of {@code Comparable<? super type>}
    */
-  private static boolean isComparable(ReferenceType type) {
-    Class<?> c = type.getRuntimeClass();
-    return c != null && Comparable.class.isAssignableFrom(c);
+  /*package-private*/ static boolean isComparable(ReferenceType type) {
+    if (!(type instanceof ClassOrInterfaceType)) {
+      return false;
+    }
+    InstantiatedType comparableSupertype =
+        ((ClassOrInterfaceType) type).getMatchingSupertype(JavaTypes.COMPARABLE_TYPE);
+    if (comparableSupertype == null) {
+      return false;
+    }
+    TypeArgument comparedType = comparableSupertype.getTypeArguments().get(0);
+    return comparedType instanceof ReferenceArgument
+        && type.isSubtypeOfOrEqualTo(((ReferenceArgument) comparedType).getReferenceType());
   }
 
   /**
