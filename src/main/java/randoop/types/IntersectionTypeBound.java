@@ -32,6 +32,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
+    super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -87,15 +88,6 @@ class IntersectionTypeBound extends ParameterBound {
     List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
-    }
-    return paramList;
-  }
-
-  @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
-      paramList.addAll(b.getLazyTypeParameters());
     }
     return paramList;
   }

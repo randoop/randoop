@@ -80,6 +80,22 @@ class CaptureTypeVariable extends TypeVariable {
     return this.varID;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false for a capture variable. The type variables in its bounds, such as {@code T} in
+   * the capture of {@code ? extends T}, are instantiated separately from the capture variable, so
+   * the capture variable cannot be checked against an unknown {@code T}. Otherwise, for {@code <T
+   * extends Comparable<? super T>> T min(Collection<? extends T>)}, the capture variable could be
+   * instantiated by {@code Comparable<String>} and {@code T} by {@code String}.
+   *
+   * @return false
+   */
+  @Override
+  boolean hasUnknownBoundVariables() {
+    return false;
+  }
+
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {

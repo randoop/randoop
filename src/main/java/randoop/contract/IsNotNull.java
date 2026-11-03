@@ -16,7 +16,9 @@ import randoop.types.TypeTuple;
 public final class IsNotNull extends ObjectContract {
 
   /** Creates an IsNotNull. */
-  public IsNotNull() {}
+  public IsNotNull() {
+    super();
+  }
 
   @Override
   public boolean equals(@Nullable Object o) {
@@ -43,7 +45,7 @@ public final class IsNotNull extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

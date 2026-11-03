@@ -29,9 +29,6 @@ import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.BinaryName;
 import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 import org.plumelib.reflection.Signatures;
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.EntryReader.CommentFormat;
-import org.plumelib.util.EntryReader.EntryFormat;
 
 /**
  * Provides the methods {@link #readReplacements(Reader, String)} and {@link
@@ -76,7 +73,7 @@ public final class ReplacementFileReader {
    * Pattern to match class or package replacements consisting of a pair of class or package name
    * signatures. Group 1 is the package name, and group 2 is the class name.
    */
-  private static final Pattern PACKAGE_OR_CLASS_LINE =
+  private static final @Regex(2) Pattern PACKAGE_OR_CLASS_LINE =
       Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
 
   /** Do not instantiate. */
@@ -121,43 +118,39 @@ public final class ReplacementFileReader {
       throws ReplacementFileException, IOException {
     HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
-    try (EntryReader reader =
-        new EntryReader(in, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
-      for (String line : reader) {
-        String trimmed = line.trim();
-        if (trimmed.isEmpty()) {
-          continue;
-        }
-        Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
-        if (signatureLineMatcher.matches()) {
-          try {
-            addMethodReplacement(
-                replacementMap, signatureLineMatcher.group(1), signatureLineMatcher.group(2));
-          } catch (ReplacementException e) {
-            throw new ReplacementFileException(e, filename, reader.getLineNumber(), line);
-          }
-        } else {
-          Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
-          if (packageOrClassLineMatcher.matches()) {
+    EntryFileReader.<ReplacementFileException>forEachEntry(
+        in,
+        filename,
+        (String line, int lineNumber) -> {
+          Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
+          if (signatureLineMatcher.matches()) {
             try {
-              @SuppressWarnings("signature:assignment") // regex match enforces
-              @DotSeparatedIdentifiers String original = packageOrClassLineMatcher.group(1);
-              @SuppressWarnings("signature:assignment") // regex match enforces
-              @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
-              addReplacementsForClassOrPackage(replacementMap, original, replacement);
-            } catch (ReplacementException
-                | IOException
-                | ClassNotFoundException
-                | NoClassDefFoundError e) {
-              throw new ReplacementFileException(e, filename, reader.getLineNumber(), line);
+              addMethodReplacement(
+                  replacementMap, signatureLineMatcher.group(1), signatureLineMatcher.group(2));
+            } catch (ReplacementException e) {
+              throw new ReplacementFileException(e, filename, lineNumber, line);
             }
           } else {
-            String msg = "Error in replacement file: bad format";
-            throw new ReplacementFileException(msg, filename, reader.getLineNumber(), line);
+            Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
+            if (packageOrClassLineMatcher.matches()) {
+              try {
+                @SuppressWarnings("signature:assignment") // regex match enforces
+                @DotSeparatedIdentifiers String original = packageOrClassLineMatcher.group(1);
+                @SuppressWarnings("signature:assignment") // regex match enforces
+                @DotSeparatedIdentifiers String replacement = packageOrClassLineMatcher.group(2);
+                addReplacementsForClassOrPackage(replacementMap, original, replacement);
+              } catch (ReplacementException
+                  | IOException
+                  | ClassNotFoundException
+                  | NoClassDefFoundError e) {
+                throw new ReplacementFileException(e, filename, lineNumber, line);
+              }
+            } else {
+              String msg = "Error in replacement file: bad format";
+              throw new ReplacementFileException(msg, filename, lineNumber, line);
+            }
           }
-        }
-      }
-    }
+        });
     return replacementMap;
   }
 
