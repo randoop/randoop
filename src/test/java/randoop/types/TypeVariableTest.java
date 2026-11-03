@@ -68,7 +68,7 @@ public class TypeVariableTest {
   }
 
   /**
-   * Returns a type parameter of the given generic class.
+   * Returns the type parameter at the given index of the given generic class.
    *
    * @param c a generic class
    * @param index the index of the type parameter
@@ -79,8 +79,7 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose lazy bound has a sibling in a nested type argument, before the type
-   * parameter.
+   * A class whose type parameter T has a bound with a sibling in a nested type argument, before T.
    *
    * @param <S> a type parameter
    * @param <T> a type parameter bounded by {@code Map<List<S>, T>}
@@ -88,8 +87,7 @@ public class TypeVariableTest {
   static class NestedSiblingFirst<S, T extends Map<List<S>, T>> {}
 
   /**
-   * A type parameter whose lazy bound has a sibling in a nested type argument, after the type
-   * parameter.
+   * A class whose type parameter T has a bound with a sibling in a nested type argument, after T.
    *
    * @param <S> a type parameter
    * @param <T> a type parameter bounded by {@code Map<T, List<S>>}
@@ -110,7 +108,8 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound contains the type parameter, but not as the last type argument.
+   * A class whose type parameter's bound contains the type parameter, but not as the last type
+   * argument.
    *
    * @param <T> the type parameter
    */
@@ -126,6 +125,119 @@ public class TypeVariableTest {
   /** A field whose type has a wildcard argument for a type parameter with a recursive bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   SelfFirstArgumentBound<?> selfFirstArgumentWildcardField;
+
+  /**
+   * A class whose type parameter's bound contains the type parameter in a wildcard bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardSelfBound<T extends Comparable<? super T>> {}
+
+  /**
+   * A class whose type parameter's bound contains the type parameter in a nested type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class NestedSelfBound<T extends Comparable<List<T>>> {}
+
+  /** A field whose type has a wildcard argument for a type parameter with a wildcard self-bound. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  WildcardSelfBound<?> wildcardSelfBoundField;
+
+  /** A field whose type has a wildcard argument for a type parameter with a nested self-bound. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  NestedSelfBound<?> nestedSelfBoundField;
+
+  /** A field whose type has wildcard arguments for a type parameter and its sibling. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  NestedSiblingLast<?, ?> nestedSiblingLastField;
+
+  /**
+   * Returns the capture conversion of the type of the given field of this class.
+   *
+   * @param fieldName the name of a field of this class, whose type has a wildcard argument
+   * @return the capture conversion of the field's type
+   * @throws NoSuchFieldException if this class has no field named {@code fieldName}
+   */
+  private static InstantiatedType capturedFieldType(String fieldName) throws NoSuchFieldException {
+    InstantiatedType wildcardType =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                TypeVariableTest.class.getDeclaredField(fieldName).getGenericType());
+    return wildcardType.applyCaptureConversion();
+  }
+
+  /**
+   * Returns the type argument at the given index of the given type.
+   *
+   * @param type a parameterized type whose type argument at {@code index} is a type variable
+   * @param index the index of the type argument
+   * @return the type argument of {@code type} at {@code index}
+   */
+  private static TypeVariable typeArgument(InstantiatedType type, int index) {
+    return (TypeVariable)
+        ((ReferenceArgument) type.getTypeArguments().get(index)).getReferenceType();
+  }
+
+  @Test
+  public void testCaptureConversionOfSelfBoundInsideTypeArgument() throws NoSuchFieldException {
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    for (String fieldName : Arrays.asList("wildcardSelfBoundField", "nestedSelfBoundField")) {
+      InstantiatedType capturedType = capturedFieldType(fieldName);
+      TypeVariable capture = typeArgument(capturedType, 0);
+      ParameterBound bound = capture.getUpperTypeBound();
+      assertTrue(
+          "bound " + bound + " should be lazy since it contains a type variable",
+          bound instanceof LazyReferenceBound);
+      assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+      // The substitution does not affect the captured type, whose bound refers to itself.
+      assertEquals(
+          capturedType, capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE)));
+    }
+  }
+
+  @Test
+  public void testSubstituteVariableForCaptureVariable() throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    InstantiatedType substitutedType = capturedType.substitute(new Substitution(capture, v));
+    ParameterBound bound = typeArgument(substitutedType, 0).getUpperTypeBound();
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(v, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testSubstituteIntoSiblingOfCaptureVariable() throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("nestedSiblingLastField");
+    TypeVariable captureS = typeArgument(capturedType, 0);
+    TypeVariable captureT = typeArgument(capturedType, 1);
+    // The bound of captureT is Map<captureT, List<captureS>>.
+    ReferenceType substituted =
+        captureT.substitute(new Substitution(captureS, JavaTypes.STRING_TYPE));
+    ParameterBound bound = ((TypeVariable) substituted).getUpperTypeBound();
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                captureT, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testInstantiationOfCaptureVariableWithLazyBound() throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    // The bound of v is Object, which is not within Map<v, String>.
+    assertFalse(v.isInstantiationOf(capture));
+  }
 
   @Test
   public void testSubstituteVariableIntoFirstArgument() {
@@ -156,16 +268,8 @@ public class TypeVariableTest {
 
   @Test
   public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
-    InstantiatedType wildcardType =
-        (InstantiatedType)
-            ClassOrInterfaceType.forType(
-                TypeVariableTest.class
-                    .getDeclaredField("selfFirstArgumentWildcardField")
-                    .getGenericType());
-    InstantiatedType capturedType = wildcardType.applyCaptureConversion();
-    TypeVariable capture =
-        (TypeVariable)
-            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
     // The capture variable's bound is Map<capture, String>, which refers to the capture variable.
     ParameterBound bound = capture.getUpperTypeBound();
     assertTrue(

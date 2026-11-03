@@ -1,16 +1,15 @@
 package randoop.types;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
- * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ * {@code java.lang.reflect.Type}. Its methods that test bounds apply a substitution to the bound
+ * type before evaluating it.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substitution would replace a type variable with another type variable.
+ * <p>Objects of this class are created by {@link ReferenceBound#forBoundType(ReferenceType)} when
+ * the bound type contains a type variable.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -25,57 +24,19 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound substitute(Substitution substitution) {
-    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
-      if (substitution.get(parameter) == null) {
-        return this;
-      }
-    }
-
     ReferenceType referenceType = getBoundType().substitute(substitution);
-
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-
-    if (getBoundType().isVariable()) {
-      if (referenceType.isVariable()) {
-        return new LazyReferenceBound(referenceType);
-      }
-      return new EagerReferenceBound(referenceType);
-    }
-
-    if (getBoundType().isParameterized()) {
-      // XXX technically, need to check if variable argument was replaced by variable
-      // if so should return new LazyReferenceBound(referenceType)
-      // But highly unlikely so for now only including code to do else case
-      return new EagerReferenceBound(referenceType);
-    }
-    return this;
+    return ReferenceBound.forBoundType(referenceType);
   }
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    if (getBoundType().isVariable()) {
-      List<TypeVariable> parameters = new ArrayList<>(1);
-      parameters.add((TypeVariable) getBoundType());
-      return parameters;
-    } else if (getBoundType().isParameterized()) {
-      List<ReferenceType> referenceArgs =
-          ((InstantiatedType) getBoundType()).getReferenceArguments();
-      List<TypeVariable> parameters = new ArrayList<>(referenceArgs.size());
-      for (ReferenceType argType : referenceArgs) {
-        if (argType.isVariable()) {
-          parameters.add((TypeVariable) argType);
-        }
-      }
-      return parameters;
-    } else {
-      return new ArrayList<>(0);
-    }
+    return getBoundType().getTypeParameters();
   }
 
   @Override
@@ -85,8 +46,11 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      return getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
+    }
+    assert false : "not handling LazyReferenceBound subtype of other bound type";
     return false;
   }
 
@@ -98,7 +62,7 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
-    return false;
+    ReferenceBound b = this.substitute(substitution);
+    return !this.equals(b) && b.isUpperBound(bound, substitution);
   }
 }

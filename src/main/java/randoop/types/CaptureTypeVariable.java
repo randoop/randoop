@@ -1,8 +1,10 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -26,6 +28,22 @@ class CaptureTypeVariable extends TypeVariable {
 
   /** The wildcard. */
   private final WildcardArgument wildcard;
+
+  /**
+   * The ids of the capture variables whose {@link #substitute(Substitution)} is executing on the
+   * current thread. A capture variable can occur in its own bound, as {@code Capture0} does in
+   * {@code Capture0 extends Comparable<? super Capture0>}. When the substitution reaches such an
+   * occurrence, it does not apply the substitution to the variable's bounds again.
+   */
+  private static final ThreadLocal<Set<Integer>> substituting =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
+   * The ids of the capture variables whose {@link #getTypeParameters()} is executing on the current
+   * thread. See {@link #substituting}.
+   */
+  private static final ThreadLocal<Set<Integer>> gettingTypeParameters =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a {@link CaptureTypeVariable} for the given wildcard. Created object is not complete
@@ -168,13 +186,51 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<Integer> inProgress = gettingTypeParameters.get();
+    if (!inProgress.add(varID)) {
+      // This variable occurs in its own bound.
+      List<TypeVariable> result = new ArrayList<>(1);
+      result.add(this);
+      return result;
+    }
+    try {
+      return super.getTypeParameters();
+    } finally {
+      inProgress.remove(varID);
+    }
+  }
+
+  @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
     }
-    // otherwise, apply to bounds
+    Set<Integer> inProgress = substituting.get();
+    if (!inProgress.add(varID)) {
+      // This variable occurs in its own bound, which the substitution is already being applied to.
+      return type != null ? type : this;
+    }
+    try {
+      return substituteIntoBounds(type, substitution);
+    } finally {
+      inProgress.remove(varID);
+    }
+  }
+
+  /**
+   * Returns this variable, or the given replacement for it, with the given substitution applied to
+   * its bounds.
+   *
+   * @param type the type variable that replaces this variable, or null to keep this variable
+   * @param substitution a type substitution
+   * @return {@code type}, or this variable if {@code type} is null, with {@code substitution}
+   *     applied to the bounds
+   */
+  private ReferenceType substituteIntoBounds(
+      @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
 
