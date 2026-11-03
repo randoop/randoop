@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
