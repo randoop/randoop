@@ -78,13 +78,16 @@ java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignor
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) include11
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
-java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude
+java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude17-
+java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude27
 java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # inconsistent Java 8 vs 9, so ignore
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
-java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
+java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude17-
+java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude27
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
-java7.util7.Collections.copy(java7.util7.List, java7.util7.List) exclude
+java7.util7.Collections.copy(java7.util7.List, java7.util7.List) exclude17-
+java7.util7.Collections.copy(java7.util7.List, java7.util7.List) exclude27
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
@@ -109,6 +112,8 @@ java7.util7.Collections.shuffle(java7.util7.List) exclude
 java7.util7.Collections.shuffle(java7.util7.List, java7.util7.Random) exclude11
 java7.util7.Collections.singletonIterator(java.lang.Object) ignore
 java7.util7.Collections.sort(java7.util7.List) exclude11
+java7.util7.Collections.sort(java7.util7.List) exclude21
+java7.util7.Collections.sort(java7.util7.List) exclude25
 java7.util7.Collections.sort(java7.util7.List, java7.util7.Comparator) exclude
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.swap(java7.util7.List, int, int) exclude11
@@ -118,7 +123,8 @@ java7.util7.Collections.synchronizedSortedMap(java7.util7.SortedMap) exclude17+
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) exclude11
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17 # different on Azure vs CircleCI?
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore8
-java7.util7.Collections.unmodifiableList(java7.util7.List) exclude
+java7.util7.Collections.unmodifiableList(java7.util7.List) exclude17-
+java7.util7.Collections.unmodifiableList(java7.util7.List) exclude27
 java7.util7.Collections.unmodifiableList(java7.util7.List) ignore8
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) exclude11
 java7.util7.Collections.unmodifiableMap(java7.util7.Map) ignore8
@@ -127,13 +133,14 @@ java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) exclude8
 java7.util7.Collections.unmodifiableSortedMap(java7.util7.SortedMap) ignore17+
 java7.util7.Collections.unmodifiableSortedSet(java7.util7.SortedSet) ignore
 java7.util7.Collections.zeroLengthArray(java.lang.Class) exclude
-java7.util7.Hashtable.put(java.lang.Object, java.lang.Object) exclude
-java7.util7.Hashtable.put(java.lang.Object, java.lang.Object) include11
-java7.util7.Hashtable.put(java.lang.Object, java.lang.Object) include8
+java7.util7.Hashtable.put(java.lang.Object, java.lang.Object) exclude17
+java7.util7.Hashtable.put(java.lang.Object, java.lang.Object) exclude27
 java7.util7.Hashtable.putAll(java7.util7.Map) ignore
 java7.util7.Hashtable.readObject(java.io.ObjectInputStream) exclude
 java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang.Object, java.lang.Object) exclude
-java7.util7.Hashtable.rehash() exclude11+
+java7.util7.Hashtable.rehash() exclude11
+java7.util7.Hashtable.rehash() exclude17
+java7.util7.Hashtable.rehash() exclude27
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
 java7.util7.LinkedList.add(int, java.lang.Object) exclude8
@@ -159,6 +166,8 @@ java7.util7.StringTokenizer.isDelimiter(int) exclude
 java7.util7.TreeMap.addAllForTreeSet(java7.util7.SortedSet, java.lang.Object) ignore
 java7.util7.TreeMap.colorOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.compare(java.lang.Object, java.lang.Object) exclude11+
+java7.util7.TreeMap.containsKey(java.lang.Object) exclude21
+java7.util7.TreeMap.containsKey(java.lang.Object) exclude25
 java7.util7.TreeMap.deleteEntry(java7.util7.TreeMap.Entry) ignore
 java7.util7.TreeMap.descendingKeyIterator() exclude
 java7.util7.TreeMap.firstKey() exclude
@@ -179,6 +188,8 @@ java7.util7.TreeMap.predecessor(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.putAll(java7.util7.Map) ignore8
 java7.util7.TreeMap.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object) exclude
+java7.util7.TreeMap.remove(java.lang.Object) exclude21
+java7.util7.TreeMap.remove(java.lang.Object) exclude25
 java7.util7.TreeMap.remove(java.lang.Object) exclude8
 java7.util7.TreeMap.rightOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude
@@ -194,6 +205,8 @@ java7.util7.TreeMap.values() exclude17+
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude
 java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
+java7.util7.TreeSet.contains(java.lang.Object) exclude21
+java7.util7.TreeSet.contains(java.lang.Object) exclude25
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
