@@ -40,7 +40,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /** Creates a ClassOrInterfaceType. */
-  public ClassOrInterfaceType() {}
+  public ClassOrInterfaceType() {
+    super();
+  }
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -631,6 +633,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean hasWildcard() {
     return false;
+  }
+
+  /**
+   * Returns true if some type argument of this type, or of an enclosing type, is a wildcard. These
+   * are the wildcards that {@link #applyCaptureConversion()} converts. Unlike {@link
+   * #hasWildcard()}, does not look within type arguments.
+   *
+   * @return true if some type argument of this type or of an enclosing type is a wildcard
+   */
+  public boolean hasWildcardArgument() {
+    return isMemberClass() && enclosingType.hasWildcardArgument();
   }
 
   @Override

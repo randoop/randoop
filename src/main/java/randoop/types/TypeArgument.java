@@ -38,6 +38,13 @@ public abstract class TypeArgument {
     }
   }
 
+  /**
+   * Converts a {@link ReferenceType} to a {@code TypeArgument} object. The result is a {@link
+   * WildcardArgument} if the type is a wildcard type, and a {@link ReferenceArgument} otherwise.
+   *
+   * @param referenceType the type of a type argument
+   * @return the {@code TypeArgument} for the given type
+   */
   public static TypeArgument forType(ReferenceType referenceType) {
     if (referenceType instanceof randoop.types.WildcardType) {
       return WildcardArgument.forType(referenceType);

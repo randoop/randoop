@@ -32,6 +32,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
+    super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -79,18 +80,6 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return an intersection bound with capture conversion applied to all member bounds
-   */
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList =
-        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
-    return new IntersectionTypeBound(convertedBoundList);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * @return the list of type variables occurring in all of the type bounds of this intersection
    *     bound
    */
@@ -99,15 +88,6 @@ class IntersectionTypeBound extends ParameterBound {
     List<TypeVariable> paramList = new ArrayList<>(boundList.size());
     for (ParameterBound b : boundList) {
       paramList.addAll(b.getTypeParameters());
-    }
-    return paramList;
-  }
-
-  @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    List<TypeVariable> paramList = new ArrayList<>();
-    for (ParameterBound b : boundList) {
-      paramList.addAll(b.getLazyTypeParameters());
     }
     return paramList;
   }

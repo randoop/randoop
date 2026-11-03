@@ -11,8 +11,15 @@ public final class EqualsSymmetric extends ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
   /** Private constructor to enforce singleton. */
-  private EqualsSymmetric() {}
+  private EqualsSymmetric() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsSymmetric getInstance() {
     return instance;
   }
@@ -32,7 +39,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override

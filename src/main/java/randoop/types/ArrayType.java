@@ -36,6 +36,7 @@ public final class ArrayType extends ReferenceType {
    * @param runtimeClass the runtime class
    */
   private ArrayType(Type componentType, Class<?> runtimeClass) {
+    super();
     this.componentType = componentType;
     this.runtimeClass = runtimeClass;
   }
@@ -285,6 +286,12 @@ public final class ArrayType extends ReferenceType {
     return ofComponentType(rawElementType);
   }
 
+  /**
+   * Returns the number of dimensions of this array type. For instance, {@code int[]} has 1
+   * dimension and {@code String[][]} has 2.
+   *
+   * @return the number of dimensions of this array type
+   */
   public int getDimensions() {
     int dimensions = 1;
     if (componentType.isArray()) {

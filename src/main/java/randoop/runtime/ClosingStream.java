@@ -1,5 +1,6 @@
 package randoop.runtime;
 
+/** A message indicating that the stream of messages from Randoop is being closed. */
 public class ClosingStream implements IMessage {
 
   /** Creates a new ClosingStream. */
