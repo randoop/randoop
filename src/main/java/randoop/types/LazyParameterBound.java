@@ -218,11 +218,6 @@ class LazyParameterBound extends ParameterBound {
     return result;
   }
 
-  @Override
-  List<TypeVariable> getLazyTypeParameters() {
-    return getTypeParameters();
-  }
-
   /**
    * Collects the type parameters from the given reflection {@code Type} object.
    *
