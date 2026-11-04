@@ -245,11 +245,11 @@ public final class SequenceCollection {
     if (added) {
       Log.logPrintf(
           "Added sequence #%d of type %s of length %d%n",
-          sequences.size() + 1, type, sequence.size());
+          sequences.size(), type, sequence.size());
     } else {
       Log.logPrintf(
-          "Didn't add duplicate sequence #%d of type %s of length %d%n",
-          sequences.size() + 1, type, sequence.size());
+          "Didn't add duplicate sequence of type %s of length %d (collection has %d sequences)%n",
+          type, sequence.size(), sequences.size());
     }
     sequenceCount++;
   }
