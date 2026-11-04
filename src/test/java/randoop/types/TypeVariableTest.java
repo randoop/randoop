@@ -237,6 +237,70 @@ public class TypeVariableTest {
     TypeVariable v = typeParameter(Unbounded.class, 0);
     // The bound of v is Object, which is not within Map<v, String>.
     assertFalse(v.isInstantiationOf(capture));
+    // The bound of the other capture variable is Map<otherCapture, String>, which is within
+    // Map<otherCapture, String>.
+    TypeVariable otherCapture =
+        typeArgument(capturedFieldType("selfFirstArgumentWildcardField"), 0);
+    assertTrue(otherCapture.isInstantiationOf(capture));
+  }
+
+  /**
+   * A class whose type parameter's bound is the type parameter's own interface.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfComparable<T extends Comparable<T>> {}
+
+  /**
+   * A generic class that is comparable to itself.
+   *
+   * @param <U> the type parameter
+   */
+  static class Version<U> implements Comparable<Version<U>> {
+    @Override
+    public int compareTo(Version<U> other) {
+      return 0;
+    }
+  }
+
+  /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SelfComparable<?> selfComparableField;
+
+  @Test
+  public void testInstantiateSelfBoundWithGenericType() {
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    // Version<v> is within the bound Comparable<Version<v>>, which contains a type variable.
+    InstantiatedType versionOfV = GenericClassType.forClass(Version.class).instantiate(v);
+    InstantiatedType instantiated =
+        GenericClassType.forClass(SelfComparable.class).instantiate(versionOfV);
+    assertEquals(Collections.singletonList(v), instantiated.getTypeParameters());
+  }
+
+  @Test
+  public void testSubtypeTestOfCaptureVariableAgainstItsBoundTerminates()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfComparableField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // The bound of the capture variable is Comparable<capture>.  The subtype test substitutes
+    // Comparable<capture> for capture, so each substitution into the bound nests it more deeply.
+    // This test checks only that the subtype test terminates.  Its result is imprecise:  it is
+    // false, though capture is a subtype of its bound, because the subtype test compares
+    // Comparable<Comparable<capture>> with Comparable<capture>.
+    ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
+    boolean unused = capture.isSubtypeOfOrEqualTo(bound);
+  }
+
+  @Test
+  public void testTypeParametersAfterSubstituteIntoSiblingOfCaptureVariable()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("nestedSiblingLastField");
+    TypeVariable captureS = typeArgument(capturedType, 0);
+    TypeVariable captureT = typeArgument(capturedType, 1);
+    // The bound of captureT is Map<captureT, List<captureS>>.
+    ReferenceType substituted =
+        captureT.substitute(new Substitution(captureS, JavaTypes.STRING_TYPE));
+    assertEquals(Collections.singletonList(substituted), substituted.getTypeParameters());
   }
 
   @Test

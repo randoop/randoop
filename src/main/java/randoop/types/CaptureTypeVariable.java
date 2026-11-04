@@ -189,10 +189,10 @@ class CaptureTypeVariable extends TypeVariable {
   public List<TypeVariable> getTypeParameters() {
     Set<Integer> inProgress = gettingTypeParameters.get();
     if (!inProgress.add(varID)) {
-      // This variable occurs in its own bound.
-      List<TypeVariable> result = new ArrayList<>(1);
-      result.add(this);
-      return result;
+      // This variable occurs in its own bound.  The enclosing call for this variable adds it to the
+      // result.  The occurrence can be a different copy of this variable (see substitute), so
+      // adding the occurrence too would add the same variable twice.
+      return new ArrayList<>(0);
     }
     try {
       return super.getTypeParameters();
