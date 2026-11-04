@@ -245,7 +245,9 @@ public class TypeVariableTest {
 
   @Test
   public void testLazyReferenceLowerBoundToUnmappedVariable() {
-    // The unknown type variable T, with T extends Comparable<T>, must be a subtype of the argument.
+    // The bound is the unknown type variable T, with T extends Comparable<T>.  The argument is
+    // within the bound if it can instantiate T.  Object cannot, because Object is not a
+    // Comparable<Object>.
     LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
     assertTrue(bound.isLowerBound(JavaTypes.STRING_TYPE, new Substitution()));
     assertFalse(bound.isLowerBound(JavaTypes.OBJECT_TYPE, new Substitution()));
@@ -409,8 +411,9 @@ public class TypeVariableTest {
     TypeVariable capture =
         (TypeVariable)
             ((ReferenceArgument) parameterType.getTypeArguments().get(0)).getReferenceType();
-    // T is instantiated separately from the capture variable, so the capture variable cannot be
-    // instantiated by Comparable<String> on the assumption that T is a supertype of it.
+    // The capture variable's upper bound is T.  String can instantiate T, but Comparable<String>
+    // cannot, because Comparable<String> is not a Comparable<? super Comparable<String>>.
+    assertTrue(capture.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     InstantiatedType comparableToString =
         JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
     assertFalse(capture.canBeInstantiatedBy(comparableToString));
