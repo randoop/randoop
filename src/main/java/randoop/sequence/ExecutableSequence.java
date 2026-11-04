@@ -325,7 +325,7 @@ public class ExecutableSequence {
             // call.
             ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
             if (outcomeTable.isInvalidCall()) {
-              checks = new InvalidChecks(new InvalidValueCheck(this, i));
+              checks = new InvalidChecks(new InvalidValueCheck());
               return;
             }
             gen = outcomeTable.addPostCheckGenerator(gen);

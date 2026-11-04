@@ -64,7 +64,7 @@ import randoop.sequence.ExecutableSequence;
 public final class JUnitCreator {
 
   /** An instance of a Java parser. */
-  static JavaParser javaParser = new JavaParser();
+  private static final JavaParser javaParser = new JavaParser();
 
   /**
    * A Java parser for fixture text. It accepts every feature of the latest Java version that

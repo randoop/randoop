@@ -36,6 +36,7 @@ public final class ArrayType extends ReferenceType {
    * @param runtimeClass the runtime class
    */
   private ArrayType(Type componentType, Class<?> runtimeClass) {
+    super();
     this.componentType = componentType;
     this.runtimeClass = runtimeClass;
   }

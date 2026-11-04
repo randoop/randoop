@@ -54,6 +54,7 @@ public final class PrimValue extends ObjectContract {
    * @param equalityMode what equality test the assertion uses
    */
   public PrimValue(Object value, EqualityMode equalityMode) {
+    super();
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
@@ -81,7 +82,7 @@ public final class PrimValue extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
