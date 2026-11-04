@@ -79,6 +79,7 @@ class EagerReferenceBound extends ReferenceBound {
     if (bound instanceof ReferenceBound) {
       return this.getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
     }
+    // TODO: change this into an unconditional exception.
     assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }

@@ -28,7 +28,7 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param boundType a reference type
    * @return a bound whose type is {@code boundType}
    */
-  static ReferenceBound forBoundType(ReferenceType boundType) {
+  static ReferenceBound forTypeLazyIfGeneric(ReferenceType boundType) {
     if (boundType.isGeneric()) {
       return new LazyReferenceBound(boundType);
     }
