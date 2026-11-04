@@ -265,23 +265,6 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the parameterized input types that instantiate the given type.
-   *
-   * @param patternType a type
-   * @return the parameterized input types that are instantiations of {@code patternType}
-   */
-  private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
-    List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
-    for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
-          && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
-        matches.add((ReferenceType) inputType);
-      }
-    }
-    return matches;
-  }
-
-  /**
    * Selects an instantiation of the generic types of an operation, and returns a new operation with
    * the types instantiated.
    *
