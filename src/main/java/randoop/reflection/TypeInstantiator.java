@@ -2,8 +2,10 @@ package randoop.reflection;
 
 import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -299,12 +301,15 @@ public class TypeInstantiator {
    * #MAX_CHECKED_SUBSTITUTIONS} combinations of candidate types, this checks that many random
    * combinations rather than all of them.
    *
+   * <p>The other type variables include each type variable that occurs in the bounds of an
+   * instantiated type variable, such as {@code T} in {@code <T> void copy(List<? super T>, List<?
+   * extends T>)}, where {@code T} occurs only in the bounds of the wildcards; see {@link
+   * #addBoundTypeVariables(Set, Substitution)}. Checking the bounds of the capture variables of the
+   * wildcards against the type chosen for {@code T} ensures that the types chosen for the wildcards
+   * are consistent with one another.
+   *
    * <p>If no substitution is found, and some parameter type matched several input types, this
    * chooses the input types again, up to {@link #MAX_INSTANTIATION_ATTEMPTS} times.
-   *
-   * <p>A type variable that occurs only in the bounds of wildcards, such as {@code T} in {@code <T>
-   * void copy(List<? super T>, List<? extends T>)}, is not instantiated. Therefore, this does not
-   * check that the types chosen for those wildcards are consistent with one another.
    *
    * @param operation an operation
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
@@ -358,6 +363,7 @@ public class TypeInstantiator {
           }
         }
         typeParameters.removeAll(substitution.keySet());
+        addBoundTypeVariables(typeParameters, substitution);
 
         if (typeParameters.isEmpty()) {
           if (satisfiesBounds(substitution)) {
@@ -386,6 +392,40 @@ public class TypeInstantiator {
     }
     Log.logPrintf("TypeInstantiator: no instantiation of %s: %s%n", operation, failure);
     return null;
+  }
+
+  /**
+   * Adds to the given set each type variable that the given substitution does not instantiate and
+   * that occurs in the bounds of a type variable that is in the set or that the substitution
+   * instantiates. Repeats until no more type variables are added, so the set also contains each
+   * such type variable that occurs in the bounds of an added type variable.
+   *
+   * <p>For example, in {@code <T> void copy(List<? super T>, List<? extends T>)}, {@code T} occurs
+   * only in the bounds of the capture variables of the wildcards. If {@code substitution}
+   * instantiates those capture variables, then this adds {@code T} to {@code typeParameters}.
+   * Instantiating {@code T} lets {@link #satisfiesBounds(Substitution)} check that the types chosen
+   * for the wildcards are consistent with one another.
+   *
+   * @param typeParameters type variables that {@code substitution} does not instantiate; is
+   *     side-effected
+   * @param substitution a substitution
+   */
+  private static void addBoundTypeVariables(
+      Set<TypeVariable> typeParameters, Substitution substitution) {
+    Set<TypeVariable> instantiated = substitution.keySet();
+    Deque<TypeVariable> worklist = new ArrayDeque<>(instantiated);
+    worklist.addAll(typeParameters);
+    while (!worklist.isEmpty()) {
+      TypeVariable variable = worklist.remove();
+      List<TypeVariable> boundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : boundVariables) {
+        if (!instantiated.contains(boundVariable) && typeParameters.add(boundVariable)) {
+          worklist.add(boundVariable);
+        }
+      }
+    }
   }
 
   /**
