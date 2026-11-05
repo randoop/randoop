@@ -423,8 +423,7 @@ public class TypeInstantiator {
         if (genericCandidates == null) {
           return Collections.emptyList();
         }
-        BoundsCheck boundsCheck = new BoundsCheck(new ArrayList<>(genericCandidates.keySet()));
-        result = allSubstitutions(genericCandidates, substitution, boundsCheck);
+        result = allSubstitutions(genericCandidates, substitution);
       }
       if (result.isEmpty()) {
         return result;
@@ -479,19 +478,19 @@ public class TypeInstantiator {
 
   /**
    * Returns the substitutions that extend the given substitution by instantiating the given type
-   * variables with a combination of their candidate types, and that satisfy the given bounds check.
+   * variables with a combination of their candidate types, and that satisfy the bounds of those
+   * type variables.
    *
    * @param candidatesByVariable a map from each type variable to instantiate to its candidate types
    * @param initialSubstitution the substitution to be extended by new substitutions
-   * @param boundsCheck a bounds check for the keys of {@code candidatesByVariable}, in order
    * @return the list of instantiating substitutions; may be empty. The list is fresh and clients
    *     may side-effect it.
    */
   private static List<Substitution> allSubstitutions(
       Map<TypeVariable, List<ReferenceType>> candidatesByVariable,
-      Substitution initialSubstitution,
-      BoundsCheck boundsCheck) {
+      Substitution initialSubstitution) {
     List<TypeVariable> parameters = new ArrayList<>(candidatesByVariable.keySet());
+    BoundsCheck boundsCheck = new BoundsCheck(parameters);
     List<Substitution> substitutionList = new ArrayList<>();
     for (List<ReferenceType> tuple :
         iteratorToIterable(new CombinationIterator<>(candidatesByVariable.values()))) {
