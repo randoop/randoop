@@ -1,8 +1,11 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -26,6 +29,22 @@ class CaptureTypeVariable extends TypeVariable {
 
   /** The wildcard. */
   private final WildcardArgument wildcard;
+
+  /**
+   * The ids of the capture variables whose {@link #substitute(Substitution)} is executing on the
+   * current thread. A capture variable can occur in its own bound, as {@code Capture0} does in
+   * {@code Capture0 extends Comparable<? super Capture0>}. When the substitution reaches such an
+   * occurrence, it does not apply the substitution to the variable's bounds again.
+   */
+  private static final ThreadLocal<Set<Integer>> substituteIsExecuting =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
+   * The ids of the capture variables whose {@link #getTypeParameters()} is executing on the current
+   * thread. See {@link #substituteIsExecuting}.
+   */
+  private static final ThreadLocal<Set<Integer>> getTypeParametersIsExecuting =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a {@link CaptureTypeVariable} for the given wildcard. Created object is not complete
@@ -73,27 +92,12 @@ class CaptureTypeVariable extends TypeVariable {
   /**
    * {@inheritDoc}
    *
-   * @return the ID of this capture variable
+   * @return the ID of this capture variable, an integer such as 7 that capture conversion assigns
+   *     in creation order
    */
   @Override
-  Object getIdentity() {
+  Object getVariableKey() {
     return this.varID;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns false for a capture variable. The type variables in its bounds, such as {@code T} in
-   * the capture of {@code ? extends T}, are instantiated separately from the capture variable, so
-   * the capture variable cannot be checked against an unknown {@code T}. Otherwise, for {@code <T
-   * extends Comparable<? super T>> T min(Collection<? extends T>)}, the capture variable could be
-   * instantiated by {@code Comparable<String>} and {@code T} by {@code String}.
-   *
-   * @return false
-   */
-  @Override
-  boolean hasUnknownBoundVariables() {
-    return false;
   }
 
   @Override
@@ -194,13 +198,55 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<Integer> getTypeParametersIsExecutingSet = getTypeParametersIsExecuting.get();
+    if (!getTypeParametersIsExecutingSet.add(varID)) {
+      // This variable occurs in its own bound.  The enclosing call for this variable adds it to the
+      // result.  The occurrence can be a different copy of this variable (see substitute), so
+      // adding the occurrence too would add the same variable twice.
+      return Collections.emptyList();
+    }
+    try {
+      return super.getTypeParameters();
+    } finally {
+      getTypeParametersIsExecutingSet.remove(varID);
+    }
+  }
+
+  @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
     }
-    // otherwise, apply to bounds
+    Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
+    if (!substituteIsExecutingSet.add(varID)) {
+      // This variable occurs in its own bound, which the substitution is already being applied to.
+      return type != null ? type : this;
+    }
+    try {
+      return substituteIntoBounds(type, substitution);
+    } finally {
+      substituteIsExecutingSet.remove(varID);
+    }
+  }
+
+  /**
+   * Returns the result of applying the given substitution to this variable. The substitution maps
+   * this variable to {@code type}, which can be null. Let the substituted bounds be this variable's
+   * bounds with the substitution applied. If the substituted bounds differ from this variable's
+   * bounds, the result is a copy of {@code type} (or of this variable, if {@code type} is null)
+   * whose bounds are the substituted bounds. Otherwise, the result is {@code type}, or this
+   * variable if {@code type} is null.
+   *
+   * @param type the type variable that {@code substitution} maps this variable to, or null if
+   *     {@code substitution} does not map this variable
+   * @param substitution a type substitution
+   * @return the result of applying {@code substitution} to this variable
+   */
+  private ReferenceType substituteIntoBounds(
+      @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
 

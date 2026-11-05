@@ -75,7 +75,7 @@ public class ExplicitTypeVariable extends TypeVariable {
    * @return the reflection type variable for this type parameter
    */
   @Override
-  Object getIdentity() {
+  Object getVariableKey() {
     return this.variable;
   }
 
