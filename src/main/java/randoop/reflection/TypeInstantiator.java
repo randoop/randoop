@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
@@ -461,9 +462,59 @@ public class TypeInstantiator {
             typeArgument);
         return null;
       }
-      selectedTypes.add(Randomness.randomMember(candidates));
+      selectedTypes.add(selectType(candidates));
     }
     return substitution.extend(parameters, selectedTypes);
+  }
+
+  /**
+   * The probability that {@link #selectType} chooses among the candidates that implement {@code
+   * Comparable}, rather than among all the candidates.
+   */
+  private static final double COMPARABLE_PROBABILITY = 0.5;
+
+  /**
+   * Returns a randomly chosen type from the given candidates, to instantiate a type parameter.
+   * Comparable types (see {@link #isComparable}) are favored, because many generic classes and
+   * methods, such as {@code TreeMap} and {@code Collections.sort}, can do useful work only on
+   * values of such types.
+   *
+   * @param candidates a non-empty list of types to choose from
+   * @return a type from {@code candidates}
+   */
+  private static ReferenceType selectType(List<ReferenceType> candidates) {
+    if (Randomness.weightedCoinFlip(COMPARABLE_PROBABILITY)) {
+      List<ReferenceType> comparableCandidates =
+          CollectionsPlume.filter(candidates, TypeInstantiator::isComparable);
+      if (!comparableCandidates.isEmpty()) {
+        return Randomness.randomMember(comparableCandidates);
+      }
+    }
+    return Randomness.randomMember(candidates);
+  }
+
+  /**
+   * Returns true if values of the given type can be compared to one another: that is, if the type
+   * is a subtype of {@code Comparable<? super T>}, where {@code T} is the type. That is the bound
+   * that methods such as {@code Collections.sort} and {@code Collections.max} require. For example,
+   * {@code String} is comparable, but {@code Comparable<String>} is not, because a {@code
+   * Comparable<String>} can be compared only to a {@code String}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a subtype of {@code Comparable<? super type>}
+   */
+  /*package-private*/ static boolean isComparable(ReferenceType type) {
+    if (!(type instanceof ClassOrInterfaceType)) {
+      return false;
+    }
+    InstantiatedType comparableSupertype =
+        ((ClassOrInterfaceType) type).getMatchingSupertype(JavaTypes.COMPARABLE_TYPE);
+    if (comparableSupertype == null) {
+      return false;
+    }
+    TypeArgument comparedType = comparableSupertype.getTypeArguments().get(0);
+    return comparedType instanceof ReferenceArgument
+        && type.isSubtypeOfOrEqualTo(((ReferenceArgument) comparedType).getReferenceType());
   }
 
   /**
