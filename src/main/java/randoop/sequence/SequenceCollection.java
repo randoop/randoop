@@ -54,7 +54,10 @@ public final class SequenceCollection {
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private final Set<Type> typesAndSupertypes = new TreeSet<>();
+
+  /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
+  private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
@@ -97,12 +100,15 @@ public final class SequenceCollection {
     return sequenceCount;
   }
 
-  /** Removes all sequences from this collection. */
+  /**
+   * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
+   * demand-driven input creator, and the type instantiator.
+   */
   public void clear() {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    this.typesAndSupertypes = new TreeSet<>();
+    this.typesAndSupertypes.clear();
     this.sequenceCount = 0;
     checkRep();
   }
@@ -381,13 +387,13 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns a type instantiator that instantiates type parameters using the types of the sequences
-   * in this collection and their supertypes.
+   * Returns the type instantiator for this collection, which instantiates type parameters using the
+   * types of the sequences in this collection and their supertypes.
    *
-   * @return a type instantiator for the types in this collection
+   * @return the type instantiator for this collection
    */
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(typesAndSupertypes);
+    return typeInstantiator;
   }
 
   /**
