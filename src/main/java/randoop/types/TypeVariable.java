@@ -168,7 +168,7 @@ public abstract class TypeVariable extends ParameterType {
       // Compare identities, so that a copy of a type variable is not a separate entry.
       boolean present = false;
       for (TypeVariable parameter : parameters) {
-        if (parameter.getIdentity().equals(variable.getIdentity())) {
+        if (parameter.getVariableKey().equals(variable.getVariableKey())) {
           present = true;
           break;
         }
