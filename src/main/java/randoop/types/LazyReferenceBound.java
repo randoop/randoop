@@ -1,17 +1,17 @@
 package randoop.types;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
- * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
+ * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
+ * substitution does not instantiate.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substitution would replace a type variable with another type variable.
+ * <p>Objects of this class are created by {@link
+ * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -26,63 +26,25 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound substitute(Substitution substitution) {
-    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
-      if (substitution.get(parameter) == null) {
-        return this;
-      }
-    }
-
     ReferenceType referenceType = getBoundType().substitute(substitution);
-
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-
-    if (getBoundType().isVariable()) {
-      if (referenceType.isVariable()) {
-        return new LazyReferenceBound(referenceType);
-      }
-      return new EagerReferenceBound(referenceType);
-    }
-
-    if (getBoundType().isParameterized()) {
-      // XXX technically, need to check if variable argument was replaced by variable
-      // if so should return new LazyReferenceBound(referenceType)
-      // But highly unlikely so for now only including code to do else case
-      return new EagerReferenceBound(referenceType);
-    }
-    return this;
+    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
   }
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    if (getBoundType().isVariable()) {
-      List<TypeVariable> parameters = new ArrayList<>(1);
-      parameters.add((TypeVariable) getBoundType());
-      return parameters;
-    } else if (getBoundType().isParameterized()) {
-      List<ReferenceType> referenceArgs =
-          ((InstantiatedType) getBoundType()).getReferenceArguments();
-      List<TypeVariable> parameters = new ArrayList<>(referenceArgs.size());
-      for (ReferenceType argType : referenceArgs) {
-        if (argType.isVariable()) {
-          parameters.add((TypeVariable) argType);
-        }
-      }
-      return parameters;
-    } else {
-      return new ArrayList<>(0);
-    }
+    return getBoundType().getTypeParameters();
   }
 
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -97,15 +59,18 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      return getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
+    }
+    assert false : "not handling LazyReferenceBound subtype of other bound type";
     return false;
   }
 
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -124,10 +89,12 @@ class LazyReferenceBound extends ReferenceBound {
    * the substitution does not instantiate it and {@code argType} is a reference type that is not a
    * variable. Otherwise, returns null.
    *
-   * <p>The returned type variable stands for an unknown type. {@code argType} is within this bound
-   * if the type variable can be instantiated by {@code argType}. Comparing {@code argType} with the
-   * bounds of the type variable instead would accept any type as within a lower bound, since the
-   * lower bound of the type variable is usually the null type.
+   * <p>The substitution does not determine the type that the returned type variable will be. This
+   * class treats {@code argType} as within this bound if the type variable can be instantiated by
+   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
+   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
+   * instead would accept any type as within a lower bound, since the lower bound of the type
+   * variable is usually the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
