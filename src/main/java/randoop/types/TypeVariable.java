@@ -168,7 +168,7 @@ public abstract class TypeVariable extends ParameterType {
       // Compare identities, so that a copy of a type variable is not a separate entry.
       boolean present = false;
       for (TypeVariable parameter : parameters) {
-        if (parameter.getIdentity().equals(variable.getIdentity())) {
+        if (parameter.getVariableKey().equals(variable.getVariableKey())) {
           present = true;
           break;
         }
@@ -191,13 +191,13 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns an object that identifies this type variable. Substitution can create a copy of a type
-   * variable whose bounds differ, such as by having a lazy part resolved. {@link #equals(Object)}
-   * distinguishes the copy from the original, but they have the same identity.
+   * Returns an object that a type variable shares with its copies. Substitution can create a copy
+   * of a type variable whose bounds differ, such as by having a lazy part resolved. {@link
+   * #equals(Object)} distinguishes the copy from the original, but they have equal keys.
    *
-   * @return an object that identifies this type variable
+   * @return an object that a type variable shares with its copies, and with no other type variable
    */
-  Object getIdentity() {
+  Object getVariableKey() {
     return this;
   }
 
@@ -208,27 +208,16 @@ public abstract class TypeVariable extends ParameterType {
    * @param type a type
    * @param otherType a type
    * @return true if the two types are equal or are the same type variable
-   * @see #getIdentity()
+   * @see #getVariableKey()
    */
   static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
-    // Comparing identities is cheaper than equals(), which compares bounds.
+    // Comparing keys is cheaper than equals(), which compares bounds.
     if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
-      return ((TypeVariable) type).getIdentity().equals(((TypeVariable) otherType).getIdentity());
+      return ((TypeVariable) type)
+          .getVariableKey()
+          .equals(((TypeVariable) otherType).getVariableKey());
     }
     return type.equals(otherType);
-  }
-
-  /**
-   * Returns true if a type variable in the bounds of this variable that a substitution does not
-   * replace stands for an unknown type when the bounds are checked, as in {@link
-   * LazyParameterBound#isUpperBound(Type, Substitution)}. Such a type variable is usually another
-   * type parameter of the declaration of this variable.
-   *
-   * @return true if an uninstantiated type variable in the bounds of this variable stands for an
-   *     unknown type
-   */
-  boolean hasUnknownBoundVariables() {
-    return true;
   }
 
   @Override
@@ -254,12 +243,12 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
    * Does not require that all bounds of this variable be instantiated.
    *
-   * <p>A type variable in the bounds that is not instantiated stands for an unknown type (see
-   * {@link #hasUnknownBoundVariables()}), and each occurrence of it is checked separately. So the
-   * result can be true even if no single type for that type variable satisfies every occurrence.
-   * For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be instantiated by a class
-   * that implements {@code Map<A, B>}. A client that instantiates all the type variables should
-   * check the bounds again with all of them instantiated, as {@link
+   * <p>A type variable in the bounds that is not instantiated stands for an unknown type, as in
+   * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
+   * checked separately. So the result can be true even if no single type for that type variable
+   * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
    * randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
@@ -269,13 +258,13 @@ public abstract class TypeVariable extends ParameterType {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
-    // Identify type variables by identity, because substitution creates copies of them.
+    // Identify type variables by their keys, because substitution creates copies of them.
     Set<List<Object>> inProgress = instantiationChecks.get();
     List<Object> check =
         Arrays.asList(
-            getIdentity(),
+            getVariableKey(),
             otherType instanceof TypeVariable
-                ? ((TypeVariable) otherType).getIdentity()
+                ? ((TypeVariable) otherType).getVariableKey()
                 : otherType);
     if (!inProgress.add(check)) {
       return true;
@@ -319,9 +308,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns true if the given type can instantiate the type variable that is the given bound of
-   * this variable. That type variable might not be instantiated by the substitution; then, if
-   * {@link #hasUnknownBoundVariables()} is true, it stands for an unknown type, and otherwise this
-   * method returns false.
+   * this variable. That type variable might not be instantiated by the substitution; then it stands
+   * for an unknown type.
    *
    * @param bound a bound of this variable that is a type variable
    * @param substitution the substitution of {@code otherType} for this variable
@@ -335,7 +323,7 @@ public abstract class TypeVariable extends ParameterType {
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
-    } else if (substituted instanceof LazyParameterBound && hasUnknownBoundVariables()) {
+    } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {
