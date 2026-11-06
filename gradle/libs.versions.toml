@@ -60,7 +60,7 @@ joda-time = "joda-time:joda-time:2.15.1"
 
 com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
 
-com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.10.4" }
+com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.11.0" }
 
 net-ltgt-errorprone = { id = "net.ltgt.errorprone", version = "5.2.0" }
 
