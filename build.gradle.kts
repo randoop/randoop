@@ -411,7 +411,9 @@ allprojects {
         .getByType(CheckerFrameworkCompileExtension::class.java)
         .enabled = false
     } else {
-      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Xlint:-options") + werror(project))
+      options.compilerArgs.addAll(
+        listOf("-Xlint:all,-processing", "-Xlint:-options") + werror(project),
+      )
 
       options.errorprone {
         enabled = isJava17orHigher
