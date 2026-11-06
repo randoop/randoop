@@ -50,6 +50,12 @@ val testJdkVersionString =
   providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().majorVersion)
 val testJdkVersion = Integer.valueOf(testJdkVersionString)
 
+// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness).  The code does
+// not yet type-check under the Nullness Checker, and -Werror would make javac stop at the first
+// class that has a warning.  Without -Werror, the build reports every warning, so that CI can
+// report the ones on lines that a pull request changes.
+val werror = if (project.hasProperty("cfNullness")) listOf() else listOf("-Werror")
+
 /* Common build configuration for Randoop and agents */
 allprojects {
   apply(plugin = "java")
@@ -144,7 +150,6 @@ allprojects {
         // Uncomment -proc:none to disable all annotation processing and speed up the build.
         // "-proc:none",
 
-        "-Werror",
         "-Awarns",
         "-Xmaxwarns",
         "10000",
@@ -156,7 +161,7 @@ allprojects {
         // -processing: suppresses "No processor claimed any of these annotations ..."
         // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
         "-Xlint:-processing,-options",
-      )
+      ) + werror
   }
 
   configure<JacocoPluginExtension> {
@@ -287,10 +292,9 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(
       listOf(
         "-g",
-        "-Werror",
         "-Xlint",
         "-Xlint:-classfile,-options",
-      ),
+      ) + werror,
     )
   }
 }
@@ -406,7 +410,7 @@ allprojects {
         .getByType(CheckerFrameworkCompileExtension::class.java)
         .enabled = false
     } else {
-      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror", "-Xlint:-options"))
+      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Xlint:-options") + werror)
 
       options.errorprone {
         enabled = isJava17orHigher

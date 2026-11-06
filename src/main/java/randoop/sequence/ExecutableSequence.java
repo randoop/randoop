@@ -653,9 +653,9 @@ public class ExecutableSequence {
    *
    * @param index which element to obtain
    * @return the result of executing the index-th element of the sequence, if that element's
-   *     execution completed normally
+   *     execution completed normally; can be null
    */
-  private Object getValue(int index) {
+  private @Nullable Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
@@ -689,10 +689,12 @@ public class ExecutableSequence {
    * mapping to {@link #variableMap}.
    *
    * @param variable the variable to use as a value in variableMap
-   * @param value the Java value to use as a key in variableMap
+   * @param value the Java value to use as a key in variableMap; this method does nothing if it is
+   *     null
    * @param refValues the set of all reference values; is side-effected by this method
    */
-  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+  private void addReferenceValue(
+      Variable variable, @Nullable Object value, Set<ReferenceValue> refValues) {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
@@ -741,9 +743,15 @@ public class ExecutableSequence {
    *
    * @param value the value
    * @return a variable that has the given value
+   * @throws IllegalArgumentException if no variable has the given value
    */
   public Variable getVariable(Object value) {
-    return variableMap.get(value).iterator().next();
+    Set<Variable> variables = variableMap.get(value);
+    if (variables == null) {
+      // Do not call value.toString(), which can throw an exception or not terminate.
+      throw new IllegalArgumentException("No variable has the given value");
+    }
+    return variables.iterator().next();
   }
 
   /**
