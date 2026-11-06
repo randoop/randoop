@@ -993,7 +993,7 @@ public class TypeInstantiator {
     for (List<ReferenceType> tuple :
         iteratorToIterable(new CombinationIterator<>(candidateTypes))) {
       Substitution substitution = initialSubstitution.extend(parameters, tuple);
-      if (boundsCheck.test(tuple, substitution)) {
+      if (boundsCheck.test(substitution)) {
         substitutionList.add(substitution);
       }
     }
