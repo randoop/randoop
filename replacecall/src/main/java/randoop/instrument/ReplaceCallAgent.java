@@ -107,7 +107,7 @@ public final class ReplaceCallAgent {
             agentArgs, instrumentation);
       }
 
-      debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
+      debugPath = Paths.get("").toAbsolutePath();
       if (debug && debug_directory != null && !debug_directory.isEmpty()) {
         debugPath = debugPath.resolve(debug_directory);
         if (!Files.exists(debugPath)) {
@@ -216,17 +216,18 @@ public final class ReplaceCallAgent {
       instrumentation.addTransformer(transformer);
 
     } catch (Throwable e) {
-      replaceCallExit(e.getMessage());
+      e.printStackTrace();
+      replaceCallExit(e.toString());
     }
   }
 
   /**
-   * Exit the program due to an exception in the ReplaceCall agent.
+   * Exit the program due to an error in the ReplaceCall agent.
    *
-   * @param message the exception's message, or null if it has none
+   * @param message the error message to print
    */
   @TerminatesExecution
-  private static void replaceCallExit(@Nullable String message) {
+  private static void replaceCallExit(String message) {
     System.err.println("Error in replacecall agent: " + message);
     System.err.println(
         "For problems with the default replacements file, make sure that the"

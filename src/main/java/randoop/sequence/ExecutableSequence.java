@@ -649,11 +649,12 @@ public class ExecutableSequence {
   }
 
   /**
-   * The result of executing the index-th element of the sequence.
+   * Returns the runtime value of the index-th element of the sequence. Throws Error if that
+   * element's execution did not complete normally.
    *
    * @param index which element to obtain
-   * @return the result of executing the index-th element of the sequence, if that element's
-   *     execution completed normally; can be null
+   * @return the runtime value of the index-th element of the sequence, or null if that value is
+   *     null
    */
   private @Nullable Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
@@ -714,10 +715,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
       // TODO: Should this be only reference values, not all values?
       Object value = getValue(i);
-      if (value != null) {
-        Variable variable = sequence.getVariable(i);
-        addReferenceValue(variable, value, values);
-      }
+      Variable variable = sequence.getVariable(i);
+      addReferenceValue(variable, value, values);
     }
     return new ArrayList<>(values);
   }
@@ -743,13 +742,16 @@ public class ExecutableSequence {
    *
    * @param value the value
    * @return a variable that has the given value
-   * @throws IllegalArgumentException if no variable has the given value
+   * @throws RandoopBug if no variable has the given value
    */
   public Variable getVariable(Object value) {
     Set<Variable> variables = variableMap.get(value);
     if (variables == null) {
       // Do not call value.toString(), which can throw an exception or not terminate.
-      throw new IllegalArgumentException("No variable has the given value");
+      throw new RandoopBug(
+          String.format(
+              "No variable has the given value, of class %s with identity hash code %d",
+              value.getClass().getName(), System.identityHashCode(value)));
     }
     return variables.iterator().next();
   }
