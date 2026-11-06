@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 import randoop.main.RandoopBug;
 
 /**
@@ -103,9 +102,10 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument
+   * @return the type argument, or null if the substitution does not instantiate every type
+   *     variable that occurs in {@code type} outside a wildcard
    */
-  private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static @Nullable TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -115,10 +115,15 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof ParameterizedType) {
-      List<TypeArgument> argumentList =
-          CollectionsPlume.mapList(
-              (java.lang.reflect.Type parameter) -> substitute(parameter, substitution),
-              ((ParameterizedType) type).getActualTypeArguments());
+      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
+      for (java.lang.reflect.Type parameter : actualTypeArgs) {
+        TypeArgument typeArgument = substitute(parameter, substitution);
+        if (typeArgument == null) {
+          return null;
+        }
+        argumentList.add(typeArgument);
+      }
 
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
