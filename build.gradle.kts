@@ -50,11 +50,12 @@ val testJdkVersionString =
   providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().majorVersion)
 val testJdkVersion = Integer.valueOf(testJdkVersionString)
 
-// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness).  The code does
-// not yet type-check under the Nullness Checker, and -Werror would make javac stop at the first
-// class that has a warning.  Without -Werror, the build reports every warning, so that CI can
-// report the ones on lines that a pull request changes.
-val werror = if (project.hasProperty("cfNullness")) listOf() else listOf("-Werror")
+// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness) on project `p`.
+// The code does not yet type-check under the Nullness Checker, and -Werror would make javac stop at
+// the first class that has a warning.  Without -Werror, the build reports every warning, so that CI
+// can report the ones on lines that a pull request changes.
+fun werror(p: Project): List<String> =
+  if (p.hasProperty("cfNullness")) listOf() else listOf("-Werror")
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -161,7 +162,7 @@ allprojects {
         // -processing: suppresses "No processor claimed any of these annotations ..."
         // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
         "-Xlint:-processing,-options",
-      ) + werror
+      ) + werror(project)
   }
 
   configure<JacocoPluginExtension> {
@@ -294,7 +295,7 @@ tasks.withType<JavaCompile>().configureEach {
         "-g",
         "-Xlint",
         "-Xlint:-classfile,-options",
-      ) + werror,
+      ) + werror(project),
     )
   }
 }
@@ -410,7 +411,7 @@ allprojects {
         .getByType(CheckerFrameworkCompileExtension::class.java)
         .enabled = false
     } else {
-      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Xlint:-options") + werror)
+      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Xlint:-options") + werror(project))
 
       options.errorprone {
         enabled = isJava17orHigher

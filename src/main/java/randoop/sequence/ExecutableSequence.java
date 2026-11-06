@@ -740,9 +740,13 @@ public class ExecutableSequence {
   /**
    * Returns some variable that has the given value in the outcome of executing this sequence.
    *
-   * @param value the value
+   * <p>Only values returned by {@link #getLastStatementValues} or {@link #getAllValues} are
+   * recorded, so the value must have been returned by one of those methods.
+   *
+   * @param value the value, which was returned by {@link #getLastStatementValues} or {@link
+   *     #getAllValues}
    * @return a variable that has the given value
-   * @throws RandoopBug if no variable has the given value
+   * @throws RandoopBug if no variable has been recorded for the given value
    */
   public Variable getVariable(Object value) {
     Set<Variable> variables = variableMap.get(value);
@@ -750,7 +754,8 @@ public class ExecutableSequence {
       // Do not call value.toString(), which can throw an exception or not terminate.
       throw new RandoopBug(
           String.format(
-              "No variable has the given value, of class %s with identity hash code %d",
+              "No variable has been recorded for the given value, of class %s with identity hash"
+                  + " code %d; was it returned by getLastStatementValues() or getAllValues()?",
               value.getClass().getName(), System.identityHashCode(value)));
     }
     return variables.iterator().next();
