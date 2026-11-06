@@ -97,7 +97,7 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
-      return ReferenceBound.forSubstitutedType(
+      return ReferenceBound.forTypeLazyIfGeneric(
           ((ReferenceArgument) typeArgument).getReferenceType());
     }
 
