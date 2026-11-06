@@ -11,7 +11,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}.
+ * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
+ * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
+ * substitution does not instantiate.
  *
  * <p>The bounds of a type variable in the bound type might refer back to this bound. This class
  * behaves like {@link EagerReferenceBound}, except that {@link #getTypeParameters()} does not
@@ -19,8 +21,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * substitute into this bound again when it reaches this bound through those type variables. Either
  * would otherwise result in nonterminating calls.
  *
- * <p>Objects of this class are created by {@link ReferenceBound#forSubstitutedType(ReferenceType)}
- * when applying a substitution to a bound yields a type that contains a type variable.
+ * <p>Objects of this class are created by {@link
+ * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
  */
 class LazyReferenceBound extends EagerReferenceBound {
 
@@ -39,7 +41,6 @@ class LazyReferenceBound extends EagerReferenceBound {
 
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
-    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
@@ -58,7 +59,7 @@ class LazyReferenceBound extends EagerReferenceBound {
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-    return forSubstitutedType(referenceType);
+    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
   }
 
   @Override
@@ -106,7 +107,7 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -123,7 +124,7 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -142,10 +143,12 @@ class LazyReferenceBound extends EagerReferenceBound {
    * the substitution does not instantiate it and {@code argType} is a reference type that is not a
    * variable. Otherwise, returns null.
    *
-   * <p>The returned type variable stands for an unknown type. {@code argType} is within this bound
-   * if the type variable can be instantiated by {@code argType}. Comparing {@code argType} with the
-   * bounds of the type variable instead would accept any type as within a lower bound, since the
-   * lower bound of the type variable is usually the null type.
+   * <p>The substitution does not determine the type that the returned type variable will be. This
+   * class treats {@code argType} as within this bound if the type variable can be instantiated by
+   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
+   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
+   * instead would accept any type as within a lower bound, since the lower bound of the type
+   * variable is usually the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
