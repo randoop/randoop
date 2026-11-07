@@ -1662,7 +1662,7 @@ Give the replacement file to the replacecall agent using the <code>--replacement
 </p>
 <ul>
   <li>If the original method is static, the replacement method must have the
-    identical signature.</li>
+    same parameter types and return type as the original method.</li>
   <li>If the original method is non-static, then the replacement method must
 have an additional first parameter whose type is the class named for the
 original method in the replacement file.
@@ -1677,6 +1677,13 @@ then the replacement method must have the same
 parameter types, and its return type must be the class that contains the
 constructor.</li>
 </ul>
+
+<p>
+When a replacement file line gives two method signatures, the replacement
+method may have a different name than the original method.  When a line
+gives two package names or two class names, each replacement method must
+have the same name as the original method that it replaces.
+</p>
 
 <p>
 Please keep in mind that when you define a replacement,
