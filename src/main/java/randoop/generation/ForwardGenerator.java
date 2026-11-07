@@ -14,7 +14,6 @@ import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import org.plumelib.util.SystemPlume;
-import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
@@ -29,7 +28,6 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -37,7 +35,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.VarAndSeq;
 import randoop.sequence.Variable;
-import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -60,6 +57,13 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
 
+  /**
+   * When Randoop uses more memory than this, it clears the component set. This is {@link
+   * GenInputsAbstract#clear_memory}, or more if the last clear did not reduce memory use below
+   * that. See {@link #computeClearMemoryThreshold}.
+   */
+  private long clearMemoryThreshold = GenInputsAbstract.clear_memory;
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -76,9 +80,6 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
-  /** Instantiates generic operations with concrete type arguments. */
-  private final TypeInstantiator instantiator;
-
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
 
@@ -91,14 +92,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
    */
   private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
-
-  /**
-   * The set of all primitive values seen during generation and execution of sequences. This set is
-   * used to tell if a new primitive value has been generated, to add the value to the components.
-   *
-   * <p>Each value in the collection is a primitive wrapper or a String.
-   */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
    * Create a forward generator.
@@ -144,9 +137,6 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.instantiator = componentManager.getTypeInstantiator();
-
-    initializeRuntimePrimitivesSeen();
 
     switch (GenInputsAbstract.method_selection) {
       case UNIFORM:
@@ -205,25 +195,30 @@ public class ForwardGenerator extends AbstractGenerator {
     operationSelector.newRegressionTestHook(sequence);
   }
 
+  /** Removes all generated sequences from the component set, retaining seeds and literals. */
+  void clearComponents() {
+    componentManager.clearGeneratedSequences();
+  }
+
   /**
-   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
-   * used to determine new values that should be added to the component set. The component set
-   * initially contains a set of primitive sequences; this method puts those primitives in this set.
+   * Returns the memory use above which Randoop clears the component set, given the memory use just
+   * after a clear.
+   *
+   * <p>If the clear reduced memory use to at most {@link GenInputsAbstract#clear_memory}, the
+   * result is {@link GenInputsAbstract#clear_memory}. Otherwise, clearing again before the
+   * component set regrows would free little memory, so the result is halfway between the memory use
+   * after the clear and the maximum memory. Thus, Randoop clears again before it runs out of
+   * memory.
+   *
+   * @param usedMemoryAfterClear the memory use, in bytes, just after the component set was cleared
+   * @param maxMemory the maximum memory, in bytes, that the JVM will attempt to use
+   * @return the memory use above which Randoop clears the component set
    */
-  // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
-    for (Sequence s : componentManager.getAllPrimitiveSequences()) {
-      ExecutableSequence es = new ExecutableSequence(s);
-      try {
-        es.execute(new DummyVisitor(), new DummyCheckGenerator());
-      } catch (RandoopSpecificationError e) {
-        // A primitive sequence contains no call that has a specification.
-        throw new RandoopBug("specification error for primitive sequence " + s, e);
-      }
-      NormalExecution e = (NormalExecution) es.getResult(0);
-      Object runtimeValue = e.getRuntimeValue();
-      runtimePrimitivesSeen.add(runtimeValue);
+  static long computeClearMemoryThreshold(long usedMemoryAfterClear, long maxMemory) {
+    if (usedMemoryAfterClear <= GenInputsAbstract.clear_memory) {
+      return GenInputsAbstract.clear_memory;
     }
+    return usedMemoryAfterClear + (maxMemory - usedMemoryAfterClear) / 2;
   }
 
   @Override
@@ -237,11 +232,24 @@ public class ForwardGenerator extends AbstractGenerator {
     long startTimeNanos = System.nanoTime();
 
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      componentManager.clearGeneratedSequences();
-    }
-    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      componentManager.clearGeneratedSequences();
+      clearComponents();
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+        clearMemoryThreshold =
+            computeClearMemoryThreshold(
+                SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
+      }
+    } else if (SystemPlume.usedMemory(false) > clearMemoryThreshold
+        && SystemPlume.usedMemory(true) > clearMemoryThreshold) {
+      clearComponents();
+      clearMemoryThreshold =
+          computeClearMemoryThreshold(
+              SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+        System.out.printf(
+            "%nClearing the component set did not reduce memory use below --clear-memory=%d."
+                + "%nRandoop will next clear the component set when memory use exceeds %d.%n",
+            GenInputsAbstract.clear_memory, clearMemoryThreshold);
+      }
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
@@ -435,9 +443,8 @@ public class ForwardGenerator extends AbstractGenerator {
         if (runtimeValue instanceof Float && Float.isNaN((float) runtimeValue)) {
           runtimeValue = Float.NaN; // canonicalize NaN value
         }
-        if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
-          // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
+        if (!looksLikeObjToString && !tooLongString) {
+          componentManager.addPrimitiveValueIfNew(runtimeValue);
         }
         continue;
       }
@@ -486,7 +493,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
+        operation =
+            componentManager.getTypeInstantiator().instantiate((TypedClassOperation) operation);
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
@@ -1037,10 +1045,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 "invalid seqs: " + invalidSequenceCount,
                 "subsumed_sequences: " + subsumed_sequences.size(),
                 "num_failed_output_test: " + num_failed_output_test),
-            String.join(
-                ", ",
-                "sideEffectFreeMethods: " + sideEffectFreeMethods.size(),
-                "runtimePrimitivesSeen: " + runtimePrimitivesSeen.size()))
+            "sideEffectFreeMethods: " + sideEffectFreeMethods.size())
         + ")";
   }
 

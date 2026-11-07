@@ -867,6 +867,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Setting this variable to a smaller number may prevent an out-of-memory exception or a run
    * that is slow due to thrashing and garbage collection.
    *
+   * <p>Randoop uses memory that clearing the component set does not free. If a clear does not
+   * reduce memory use to this amount, then Randoop next clears the component set when its memory
+   * use reaches halfway between its memory use after that clear and the maximum heap size (as set
+   * by {@code -Xmx}).
+   *
    * <p>Must be positive.
    */
   @Option("Clear the component set when Randoop uses this much memory")
