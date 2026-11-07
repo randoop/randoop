@@ -109,6 +109,24 @@ public class ReplacedMethodPatternTest {
     assertFalse(pattern.matcher("a.Foo$Bar.m(a.FooxBar[])").find());
   }
 
+  @Test
+  public void excludeSignaturesKeepsOtherMatches() {
+    Pattern pattern =
+        GenTests.excludeSignatures(
+            Pattern.compile("\\bensureCapacity\\b"),
+            java.util.Arrays.asList("java.lang.StringBuilder.ensureCapacity(int)"));
+    assertFalse(pattern.matcher("java.lang.StringBuilder.ensureCapacity(int)").find());
+    assertTrue(pattern.matcher("java.util.ArrayList.ensureCapacity(int)").find());
+    assertFalse(pattern.matcher("java.util.ArrayList.add(java.lang.Object)").find());
+
+    // An anchored pattern still matches.
+    pattern =
+        GenTests.excludeSignatures(
+            Pattern.compile("^java\\.util\\."), java.util.Arrays.asList("x.Y.z()"));
+    assertTrue(pattern.matcher("java.util.ArrayList.size()").find());
+    assertFalse(pattern.matcher("a.java.util.Foo.size()").find());
+  }
+
   /**
    * Asserts that the agent's signature string for {@code executable}, computed from its class file,
    * yields an omit pattern that matches the {@link RawSignature} of {@code executable}.
