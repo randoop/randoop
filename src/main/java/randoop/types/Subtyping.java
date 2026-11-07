@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.Collections;
 import java.util.List;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
@@ -167,8 +168,8 @@ final class Subtyping {
   /**
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
-   * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound.
+   * {@code type} itself, the lower bound of {@code type} if it is a type variable, the unknown's
+   * upper bound, or a member of the unknown's upper bound if that is an intersection.
    *
    * @param lowerType the possible subtype, which may be an unknown
    * @param type the possible supertype
@@ -194,14 +195,24 @@ final class Subtyping {
         }
       }
     }
+    // Try the unknown's upper bound, or each member of an intersection upper bound.
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
-    if (!(unknownBound instanceof ReferenceBound)) {
-      return false;
+    List<ParameterBound> candidateBounds =
+        unknownBound instanceof IntersectionTypeBound
+            ? ((IntersectionTypeBound) unknownBound).getBounds()
+            : Collections.singletonList(unknownBound);
+    for (ParameterBound candidateBound : candidateBounds) {
+      if (!(candidateBound instanceof ReferenceBound)) {
+        continue;
+      }
+      ReferenceType candidateType =
+          ((ReferenceBound) candidateBound).getBoundType().substitute(substitution);
+      if (isSubtypeOrEqual(candidateType, type, substitution)
+          && satisfiesBound(candidateType, unknown, substitution)) {
+        return true;
+      }
     }
-    ReferenceType unknownBoundType =
-        ((ReferenceBound) unknownBound).getBoundType().substitute(substitution);
-    return isSubtypeOrEqual(unknownBoundType, type, substitution)
-        && satisfiesBound(unknownBoundType, unknown, substitution);
+    return false;
   }
 
   /**
