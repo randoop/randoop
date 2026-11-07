@@ -40,6 +40,15 @@ class IntersectionTypeBound extends ParameterBound {
     this.boundList = boundList;
   }
 
+  /**
+   * Returns the type bounds of this intersection bound. The result must not be modified.
+   *
+   * @return the type bounds of this intersection bound
+   */
+  List<ParameterBound> getBounds() {
+    return boundList;
+  }
+
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
   // be reordered)
   @Override
