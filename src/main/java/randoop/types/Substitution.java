@@ -137,8 +137,8 @@ public class Substitution {
   @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      TypeVariable key = entry.getKey();
-      if (this.map.containsKey(key) && !this.get(key).equals(entry.getValue())) {
+      ReferenceType existing = this.get(entry.getKey());
+      if (existing != null && !existing.equals(entry.getValue())) {
         return false;
       }
     }
@@ -350,7 +350,8 @@ public class Substitution {
 
   /**
    * Returns the concrete type mapped from the type variable by this substitution. Returns null if
-   * the variable is not in the substitution.
+   * the variable is not in the substitution. A copy of a type variable, which can have different
+   * bounds, maps to the same type as the type variable.
    *
    * @param parameter the variable
    * @return the concrete type mapped from the variable in this substitution, or null if there is no
@@ -361,7 +362,16 @@ public class Substitution {
     if (parameter instanceof ExplicitTypeVariable) {
       return rawMap.get(((ExplicitTypeVariable) parameter).getReflectionTypeVariable());
     }
-    return map.get(parameter);
+    ReferenceType result = map.get(parameter);
+    if (result == null && parameter instanceof CaptureTypeVariable) {
+      // Look up a capture variable by its id, which copies of it share.
+      for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+        if (TypeVariable.isSameVariable(entry.getKey(), parameter)) {
+          return entry.getValue();
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -413,8 +423,10 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
-    if (typeParameter instanceof ExplicitTypeVariable
-        && rawMap.containsKey(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable())) {
+    if (typeParameter instanceof CaptureTypeVariable
+        || (typeParameter instanceof ExplicitTypeVariable
+            && rawMap.containsKey(
+                ((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable()))) {
       // Replace the entry for a copy of the type variable.
       map.keySet().removeIf(key -> TypeVariable.isSameVariable(key, typeParameter));
     }
