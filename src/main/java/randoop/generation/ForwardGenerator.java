@@ -73,6 +73,12 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
 
+  /**
+   * The number of sequences created so far, including sequences that were created again (to
+   * rebuild the component set) after it was cleared. This can exceed {@code allSequences.size()}.
+   */
+  private int numGeneratedSequences = 0;
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -241,6 +247,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
+    numGeneratedSequences++;
     if (sequencesSinceClear != null) {
       sequencesSinceClear.add(eSeq.sequence);
     }
@@ -1009,7 +1016,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public int numGeneratedSequences() {
-    return allSequences.size();
+    return numGeneratedSequences;
   }
 
   @Override
