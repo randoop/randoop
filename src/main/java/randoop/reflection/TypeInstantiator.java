@@ -21,7 +21,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -356,7 +355,9 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            // The parameter type need not be a ParameterizedType:  it can be a non-generic member
+            // class of a generic class, such as Outer<E>.Inner.
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               failure = "no input type instantiates " + paramType;
               allMatched = false;
@@ -365,7 +366,7 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               failure = "no substitution instantiates " + origParamType + " as " + selectedType;
               allMatched = false;
@@ -387,7 +388,10 @@ public class TypeInstantiator {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
         }
-        typeParameters.removeAll(substitution.keySet());
+        // Look up each type variable, rather than testing membership in the key set, so that a copy
+        // of an instantiated type variable (with different bounds) is also removed.
+        Substitution finalSubstitution = substitution;
+        typeParameters.removeIf(variable -> finalSubstitution.get(variable) != null);
 
         if (typeParameters.isEmpty()) {
           // The substitution instantiates every type variable in the parameter and return types.
@@ -677,7 +681,12 @@ public class TypeInstantiator {
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> arguments = new ArrayList<>(parameters.size());
     for (TypeVariable parameter : parameters) {
-      arguments.add(substitution.get(parameter));
+      ReferenceType argument = substitution.get(parameter);
+      if (argument == null) {
+        throw new IllegalArgumentException(
+            "substitution " + substitution + " does not instantiate " + parameter);
+      }
+      arguments.add(argument);
     }
     return new BoundsCheck(parameters).test(arguments, substitution);
   }

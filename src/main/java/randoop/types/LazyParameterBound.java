@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -91,8 +92,16 @@ class LazyParameterBound extends ParameterBound {
       return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
     }
 
+    if (boundType instanceof GenericArrayType) {
+      ArrayType arrayType = substituteArray((GenericArrayType) boundType, substitution);
+      if (arrayType == null) {
+        return this;
+      }
+      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
+    }
+
     throw new RandoopBug(
-        "lazy parameter bounds should be either a type variable or parameterized type");
+        "lazy parameter bounds should be a type variable, parameterized type, or generic array type");
   }
 
   /**
@@ -135,6 +144,11 @@ class LazyParameterBound extends ParameterBound {
       return TypeArgument.forType(ClassOrInterfaceType.forType(type));
     }
 
+    if (type instanceof GenericArrayType) {
+      ArrayType arrayType = substituteArray((GenericArrayType) type, substitution);
+      return arrayType == null ? null : TypeArgument.forType(arrayType);
+    }
+
     if (type instanceof java.lang.reflect.WildcardType) {
       final java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
       java.lang.reflect.Type[] lowerBounds = wildcardType.getLowerBounds();
@@ -164,6 +178,25 @@ class LazyParameterBound extends ParameterBound {
     }
 
     return null;
+  }
+
+  /**
+   * Applies a substitution to a generic array type, such as {@code T[]}.
+   *
+   * @param type the generic array type
+   * @param substitution the type substitution
+   * @return the array type, or null if the substitution does not instantiate every type variable
+   *     that occurs in {@code type} outside a wildcard
+   */
+  private static @Nullable ArrayType substituteArray(
+      GenericArrayType type, Substitution substitution) {
+    // The component type of a generic array type is a type variable, a parameterized type, or a
+    // generic array type, so it is never a wildcard.
+    TypeArgument component = substitute(type.getGenericComponentType(), substitution);
+    if (!(component instanceof ReferenceArgument)) {
+      return null;
+    }
+    return ArrayType.ofComponentType(((ReferenceArgument) component).getReferenceType());
   }
 
   @Override
@@ -208,6 +241,8 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
         variableList.addAll(getTypeParameters(boundType));
       }
+    } else if (type instanceof GenericArrayType) {
+      variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
     }
     return variableList;
   }
@@ -220,6 +255,9 @@ class LazyParameterBound extends ParameterBound {
   private static boolean hasWildcard(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.WildcardType) {
       return true;
+    }
+    if (type instanceof GenericArrayType) {
+      return hasWildcard(((GenericArrayType) type).getGenericComponentType());
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
       for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
