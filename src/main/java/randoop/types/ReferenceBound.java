@@ -20,6 +20,23 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
+   * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
+   * type contains a type variable, as in {@code Map<T, String>}, because the bounds of that type
+   * variable might refer back to the type; it is an {@link EagerReferenceBound} otherwise. Other
+   * code also creates an {@link EagerReferenceBound} whose type contains a type variable, so not
+   * every bound that contains a type variable is a {@link LazyReferenceBound}.
+   *
+   * @param boundType a reference type
+   * @return a bound whose type is {@code boundType}
+   */
+  static EagerReferenceBound forTypeLazyIfGeneric(ReferenceType boundType) {
+    if (boundType.isGeneric()) {
+      return new LazyReferenceBound(boundType);
+    }
+    return new EagerReferenceBound(boundType);
+  }
+
+  /**
    * Returns the {@link ReferenceType} bound of this type.
    *
    * @return the type for this bound
@@ -86,5 +103,23 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isVariable() {
     return boundType.isVariable();
+  }
+
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    // Mapping each type variable that the substitution does not replace to itself makes it an
+    // unknown.
+    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+    return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
+  }
+
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isLowerBound(boundType, substitution);
+  }
+
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    return Subtyping.isSubtypeOrEqual(boundType, upperBound, substitution);
   }
 }
