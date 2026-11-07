@@ -183,6 +183,28 @@ public class CaptureConversionTest {
     assertTrue(captureVariable.getUpperTypeBound().hasWildcard());
   }
 
+  /** A field whose type has a wildcard within the lower bound of a wildcard type argument. */
+  public List<? super List<?>> wildcardInLowerBoundField;
+
+  /**
+   * Tests that capture conversion does not convert a wildcard within the lower bound of a wildcard.
+   */
+  @Test
+  public void wildcardInLowerBoundTest() throws NoSuchFieldException {
+    InstantiatedType wildcardInLowerBoundType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardInLowerBoundField").getGenericType());
+    InstantiatedType capturedType = wildcardInLowerBoundType.applyCaptureConversion();
+    TypeVariable captureVariable =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(captureVariable.isCaptureVariable());
+    // The lower bound is List<?>, not List<CaptureN>.
+    assertTrue(captureVariable.getLowerTypeBound().hasWildcard());
+    assertFalse(captureVariable.getLowerTypeBound().hasCaptureVariable());
+  }
+
   /** A field whose type has a wildcard type argument. */
   public ArrayList<?> wildcardField;
 
