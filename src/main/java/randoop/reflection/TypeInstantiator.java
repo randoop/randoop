@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -470,11 +469,17 @@ public class TypeInstantiator {
    */
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
-    Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
+    Map<TypeVariable, TypeVariable> constrainingVariables = constrainingVariables(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      List<TypeVariable> constrained =
-          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
+      // The instantiated type variables whose bounds mention `parameter` and no other
+      // uninstantiated type variable.
+      List<TypeVariable> constrained = new ArrayList<>();
+      for (Map.Entry<TypeVariable, TypeVariable> entry : constrainingVariables.entrySet()) {
+        if (TypeVariable.isSameVariable(entry.getValue(), parameter)) {
+          constrained.add(entry.getKey());
+        }
+      }
       List<ReferenceType> candidates = candidateTypes(parameter);
       if (!constrained.isEmpty()) {
         candidates.removeIf(
@@ -492,29 +497,34 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns a map from each uninstantiated type variable {@code X} to the type variables that the
-   * given substitution instantiates and whose bounds mention {@code X} and no other uninstantiated
-   * type variable. Once {@code X} is instantiated, the bounds of those type variables can be
-   * checked. For example, if {@code substitution} instantiates the capture of {@code ? extends K}
-   * but not {@code K}, then the value for {@code K} contains the capture variable.
+   * Returns a map from each type variable that the given substitution instantiates, and whose
+   * bounds mention exactly one uninstantiated type variable {@code X}, to {@code X}. Once {@code X}
+   * is instantiated, the bounds of the key can be checked. For example, if {@code substitution}
+   * instantiates the capture of {@code ? extends K} but not {@code K}, then the result maps the
+   * capture variable to {@code K}.
+   *
+   * <p>Type variables are compared by {@link TypeVariable#isSameVariable}, because a bound can
+   * mention a copy of a type variable whose bounds differ from those of the original.
    *
    * @param substitution a substitution
-   * @return a map from each uninstantiated type variable to the instantiated type variables whose
-   *     bounds mention it and no other uninstantiated type variable
+   * @return a map from each instantiated type variable whose bounds mention exactly one
+   *     uninstantiated type variable to that type variable
    */
-  private static Map<TypeVariable, List<TypeVariable>> constrainedVariables(
+  private static Map<TypeVariable, TypeVariable> constrainingVariables(
       Substitution substitution) {
-    Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
-    Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
+    Collection<? extends TypeVariable> instantiated = substitution.keySet();
+    Map<TypeVariable, TypeVariable> result = new LinkedHashMap<>();
     for (TypeVariable variable : instantiated) {
       // The uninstantiated type variables in the bounds of `variable`.
-      Set<TypeVariable> boundVariables =
-          new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
-      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      boundVariables.removeAll(instantiated);
-      if (boundVariables.size() == 1) {
-        TypeVariable boundVariable = boundVariables.iterator().next();
-        result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
+      List<TypeVariable> uninstantiatedInBounds = new ArrayList<>();
+      for (TypeVariable boundVariable : boundVariables(variable)) {
+        if (!containsVariable(instantiated, boundVariable)
+            && !containsVariable(uninstantiatedInBounds, boundVariable)) {
+          uninstantiatedInBounds.add(boundVariable);
+        }
+      }
+      if (uninstantiatedInBounds.size() == 1) {
+        result.put(variable, uninstantiatedInBounds.get(0));
       }
     }
     return result;
@@ -566,7 +576,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {
         checkFirst.add(variable);
@@ -768,6 +778,25 @@ public class TypeInstantiator {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the index of the given type variable in the given list, possibly with different
+   * bounds.
+   *
+   * @param variables a list of type variables
+   * @param variable a type variable
+   * @return the index of {@code variable} in {@code variables}, possibly with different bounds, or
+   *     -1 if it does not occur
+   * @see TypeVariable#isSameVariable
+   */
+  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
+    for (int i = 0; i < variables.size(); i++) {
+      if (TypeVariable.isSameVariable(variables.get(i), variable)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**
