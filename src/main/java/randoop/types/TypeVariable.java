@@ -179,18 +179,10 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns true if a type variable in the bounds of this variable that a substitution does not
-   * replace stands for an unknown type when the bounds are checked, as in {@link
-   * LazyParameterBound#isUpperBound(Type, Substitution)}. Such a type variable is usually another
-   * type parameter of the declaration of this variable.
+   * {@inheritDoc}
    *
-   * @return true if an uninstantiated type variable in the bounds of this variable stands for an
-   *     unknown type
+   * <p>Also discards the cached resolved bounds of this variable.
    */
-  boolean hasUnknownBoundVariables() {
-    return true;
-  }
-
   @Override
   void setUpperBound(ParameterBound upperBound) {
     super.setUpperBound(upperBound);
@@ -214,12 +206,12 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
    * Does not require that all bounds of this variable be instantiated.
    *
-   * <p>A type variable in the bounds that is not instantiated stands for an unknown type (see
-   * {@link #hasUnknownBoundVariables()}), and each occurrence of it is checked separately. So the
-   * result can be true even if no single type for that type variable satisfies every occurrence.
-   * For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be instantiated by a class
-   * that implements {@code Map<A, B>}. A client that instantiates all the type variables should
-   * check the bounds again with all of them instantiated, as {@link
+   * <p>A type variable in the bounds that is not instantiated stands for an unknown type, as in
+   * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
+   * checked separately. So the result can be true even if no single type for that type variable
+   * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
    * randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
@@ -273,9 +265,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns true if the given type can instantiate the type variable that is the given bound of
-   * this variable. That type variable might not be instantiated by the substitution; then, if
-   * {@link #hasUnknownBoundVariables()} is true, it stands for an unknown type, and otherwise this
-   * method returns false.
+   * this variable. That type variable might not be instantiated by the substitution; then it stands
+   * for an unknown type.
    *
    * @param bound a bound of this variable that is a type variable
    * @param substitution the substitution of {@code otherType} for this variable
@@ -289,7 +280,7 @@ public abstract class TypeVariable extends ParameterType {
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
-    } else if (substituted instanceof LazyParameterBound && hasUnknownBoundVariables()) {
+    } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {

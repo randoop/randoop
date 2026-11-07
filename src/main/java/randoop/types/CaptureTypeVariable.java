@@ -79,25 +79,6 @@ class CaptureTypeVariable extends TypeVariable {
    * @return true if the capture variables are the same capture variable, false otherwise
    */
   @Override
-  boolean hasUnknownBoundVariables() {
-    // Returns false for a capture variable. The type variables in its bounds, such as `T` in the
-    // capture of `? extends T`, are instantiated separately from the capture variable, so the
-    // capture variable cannot be checked against an unknown `T`. Otherwise, for
-    // `<T extends Comparable<? super T>> T min(Collection<? extends T>)`, the capture variable
-    // could be instantiated by `Comparable<String>` and `T` by `String`.
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
-   * and wildcards differ. Substitution creates a copy of a capture variable whose bounds and
-   * wildcard differ, and the copy stands for the same capture variable.
-   *
-   * @return true if the capture variables are the same capture variable, false otherwise
-   */
-  @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
