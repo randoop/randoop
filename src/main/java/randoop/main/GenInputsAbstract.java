@@ -211,7 +211,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Include methods that are otherwise omitted by default. Unless you set this to true, every
    * method replaced by the {@code replacecall} agent is treated as if it had been supplied as an
-   * argument to {@code --omit-methods}.
+   * argument to {@code --omit-methods}. If you set this to true, then Randoop also ignores every
+   * default omit pattern that matches a replaced method, so a replaced method is not omitted even
+   * if a default omit pattern matches it.
    */
   @Unpublicized
   @Option("Don't omit methods that are replaced by the replacecall agent")
