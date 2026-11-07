@@ -123,7 +123,8 @@ final class Subtyping {
     if (!(argument instanceof ReferenceArgument)) {
       // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
       // wildcard is contained only by an identical wildcard.
-      return otherArgument.equals(argument);
+      return otherArgument instanceof WildcardArgument
+          && isSameWildcard(argument, (WildcardArgument) otherArgument, substitution);
     }
     ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
     if (otherArgument instanceof ReferenceArgument) {
@@ -174,6 +175,11 @@ final class Subtyping {
       }
     }
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
+    if (unknownBound instanceof IntersectionTypeBound) {
+      // Every choice for the unknown is a subtype of each member of its bound.  An intersection has
+      // no single member that is itself a valid choice, so this assumes that some choice exists.
+      return unknownBound.substitute(substitution).hasUpperBound(type, substitution);
+    }
     if (!(unknownBound instanceof ReferenceBound)) {
       return false;
     }
@@ -224,13 +230,46 @@ final class Subtyping {
       TypeArgument otherTypeArgument = otherTypeArguments.get(i);
       boolean same =
           otherTypeArgument instanceof WildcardArgument
-              ? otherTypeArgument.equals(typeArguments.get(i))
+              ? isSameWildcard(
+                  typeArguments.get(i), (WildcardArgument) otherTypeArgument, substitution)
               : contains(otherTypeArgument, typeArguments.get(i), substitution);
       if (!same) {
         return false;
       }
     }
     return true;
+  }
+
+  /**
+   * Returns true if {@code argument} is the same wildcard as {@code otherWildcard}: both have an
+   * upper bound or both have a lower bound, and the bounds are the same type.
+   *
+   * @param argument a type argument
+   * @param otherWildcard a wildcard, whose bound may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code argument} is the same wildcard as {@code otherWildcard}
+   */
+  private static boolean isSameWildcard(
+      TypeArgument argument, WildcardArgument otherWildcard, Substitution substitution) {
+    if (otherWildcard.equals(argument)) {
+      return true;
+    }
+    if (!(argument instanceof WildcardArgument)) {
+      return false;
+    }
+    WildcardArgument wildcard = (WildcardArgument) argument;
+    if (wildcard.hasUpperBound() != otherWildcard.hasUpperBound()) {
+      return false;
+    }
+    ParameterBound bound = wildcard.getTypeBound();
+    ParameterBound otherBound = otherWildcard.getTypeBound();
+    if (!(bound instanceof ReferenceBound && otherBound instanceof ReferenceBound)) {
+      return false;
+    }
+    return isSameType(
+        ((ReferenceBound) bound).getBoundType(),
+        ((ReferenceBound) otherBound).getBoundType(),
+        substitution);
   }
 
   /**
