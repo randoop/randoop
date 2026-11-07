@@ -202,7 +202,9 @@ public final class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
-    if (sequence.size() == 1) {
+    // Record the value only if this collection retains the sequence, which requires its only
+    // statement to be active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
       Type outType = sequence.getLastVariable().getType();
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))

@@ -214,6 +214,7 @@ public class ForwardGenerator extends AbstractGenerator {
     allsequencesAsList.clear();
     operations.addAll(removedParameterlessOperations);
     removedParameterlessOperations.clear();
+    inputSequenceSelector.componentSetCleared(componentManager.getAllGeneratedSequences());
   }
 
   @Override
