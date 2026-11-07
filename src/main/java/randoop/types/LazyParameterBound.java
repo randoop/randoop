@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 
@@ -235,16 +236,30 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return hasWildcard(boundType);
+    return hasWildcard(boundType, new HashSet<>());
   }
 
-  private static boolean hasWildcard(java.lang.reflect.Type type) {
+  /**
+   * Returns true if the given type has a wildcard.
+   *
+   * @param type the type to test
+   * @param visited the type variables whose bounds have already been examined; prevents infinite
+   *     recursion on recursive bounds such as {@code T extends Comparable<T>} or {@code T extends
+   *     List<T[]>}
+   * @return true if the given type has a wildcard
+   */
+  private static boolean hasWildcard(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
     if (type instanceof java.lang.reflect.WildcardType) {
       return true;
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasWildcard(bound)) {
+      java.lang.reflect.TypeVariable<?> typeVariable = (java.lang.reflect.TypeVariable<?>) type;
+      if (!visited.add(typeVariable)) {
+        return false;
+      }
+      for (java.lang.reflect.Type bound : typeVariable.getBounds()) {
+        if (hasWildcard(bound, visited)) {
           return true;
         }
       }
@@ -253,32 +268,40 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType)) {
+        if (hasWildcard(argType, visited)) {
           return true;
         }
       }
     }
     if (type instanceof GenericArrayType) {
-      return hasWildcard(((GenericArrayType) type).getGenericComponentType());
+      return hasWildcard(((GenericArrayType) type).getGenericComponentType(), visited);
     }
     return false;
   }
 
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType);
+    return hasCaptureVariable(boundType, new HashSet<>());
   }
 
   /**
    * Returns true if the given type has a capture variable.
    *
    * @param type the type to test
+   * @param visited the type variables whose bounds have already been examined; prevents infinite
+   *     recursion on recursive bounds such as {@code T extends Comparable<T>} or {@code T extends
+   *     List<T[]>}
    * @return true if the given type has a capture variable
    */
-  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
+  private static boolean hasCaptureVariable(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
     if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasCaptureVariable(bound)) {
+      java.lang.reflect.TypeVariable<?> typeVariable = (java.lang.reflect.TypeVariable<?>) type;
+      if (!visited.add(typeVariable)) {
+        return false;
+      }
+      for (java.lang.reflect.Type bound : typeVariable.getBounds()) {
+        if (hasCaptureVariable(bound, visited)) {
           return true;
         }
       }
@@ -287,13 +310,13 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType)) {
+        if (hasCaptureVariable(argType, visited)) {
           return true;
         }
       }
     }
     if (type instanceof GenericArrayType) {
-      return hasCaptureVariable(((GenericArrayType) type).getGenericComponentType());
+      return hasCaptureVariable(((GenericArrayType) type).getGenericComponentType(), visited);
     }
     return false;
   }
