@@ -60,8 +60,8 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof EagerReferenceBound) {
-        Type argLowerBoundType = ((EagerReferenceBound) argLowerBound).getBoundType();
+      if (argLowerBound instanceof ReferenceBound) {
+        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
         return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
       }
     }
@@ -70,9 +70,10 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
-    if (bound instanceof EagerReferenceBound) {
-      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
+    if (bound instanceof ReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
     }
+    // TODO: change this into an unconditional exception.
     assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }

@@ -20,18 +20,20 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
-   * Returns a bound for the given type, which results from applying a substitution to a bound. The
-   * bound is lazy if the type contains a type variable, because the bounds of that type variable
-   * might refer back to the type.
+   * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
+   * type contains a type variable, as in {@code Map<T, String>}, because the bounds of that type
+   * variable might refer back to the type; it is an {@link EagerReferenceBound} otherwise. Other
+   * code also creates an {@link EagerReferenceBound} whose type contains a type variable, so not
+   * every bound that contains a type variable is a {@link LazyReferenceBound}.
    *
-   * @param type the type that results from applying a substitution to a bound
-   * @return a lazy bound if {@code type} contains a type variable, an eager bound otherwise
+   * @param boundType a reference type
+   * @return a bound whose type is {@code boundType}
    */
-  static EagerReferenceBound forSubstitutedType(ReferenceType type) {
-    if (type.isGeneric()) {
-      return new LazyReferenceBound(type);
+  static EagerReferenceBound forTypeLazyIfGeneric(ReferenceType boundType) {
+    if (boundType.isGeneric()) {
+      return new LazyReferenceBound(boundType);
     }
-    return new EagerReferenceBound(type);
+    return new EagerReferenceBound(boundType);
   }
 
   /**

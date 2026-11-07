@@ -17,10 +17,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * behaves like {@link EagerReferenceBound}, except that {@link #getTypeParameters()} does not
  * examine the bounds of those type variables, and {@link #substitute(Substitution)} does not
  * substitute into this bound again when it reaches this bound through those type variables. Either
- * would otherwise result in nonterminating calls.
+ * would otherwise result in nonterminating calls. Also, its methods that test bounds treat
+ * specially a bound type that is a type variable that the substitution does not instantiate.
  *
- * <p>Objects of this class are created by {@link ReferenceBound#forSubstitutedType(ReferenceType)}
- * when applying a substitution to a bound yields a type that contains a type variable.
+ * <p>Objects of this class are created by {@link
+ * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
  */
 class LazyReferenceBound extends EagerReferenceBound {
 
@@ -58,7 +59,7 @@ class LazyReferenceBound extends EagerReferenceBound {
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-    return forSubstitutedType(referenceType);
+    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
   }
 
   @Override
@@ -106,7 +107,7 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -123,7 +124,7 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, may contain type variables that the substitution does
+   * <p>The bound type, after substitution, can contain type variables that the substitution does
    * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
    * in {@link #getUnknownVariable(Type, Substitution)}.
    */
@@ -142,10 +143,12 @@ class LazyReferenceBound extends EagerReferenceBound {
    * the substitution does not instantiate it and {@code argType} is a reference type that is not a
    * variable. Otherwise, returns null.
    *
-   * <p>The returned type variable stands for an unknown type. {@code argType} is within this bound
-   * if the type variable can be instantiated by {@code argType}. Comparing {@code argType} with the
-   * bounds of the type variable instead would accept any type as within a lower bound, since the
-   * lower bound of the type variable is usually the null type.
+   * <p>The substitution does not determine the type that the returned type variable will be. This
+   * class treats {@code argType} as within this bound if the type variable can be instantiated by
+   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
+   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
+   * instead would accept any type as within a lower bound, since the lower bound of the type
+   * variable is usually the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

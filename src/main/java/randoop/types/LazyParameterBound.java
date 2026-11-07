@@ -71,16 +71,12 @@ class LazyParameterBound extends ParameterBound {
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
-        if (referenceType.isVariable()) {
-          return new LazyReferenceBound(referenceType);
-        }
-        return new EagerReferenceBound(referenceType);
+        return ReferenceBound.forTypeLazyIfGeneric(referenceType);
       }
       return this;
     }
 
     if (boundType instanceof ParameterizedType) {
-      boolean isLazy = false;
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
@@ -89,16 +85,11 @@ class LazyParameterBound extends ParameterBound {
         if (typeArgument == null) {
           return this;
         }
-        isLazy |= isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      if (isLazy) {
-        return new LazyReferenceBound(instantiatedType);
-      }
-      return new EagerReferenceBound(instantiatedType);
+      return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
     }
 
     if (boundType instanceof GenericArrayType) {
@@ -121,10 +112,12 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution does not map a type variable in {@code
-   *     type} or maps the component type of an array type to the null type
+   * @return the type argument, or null if the substitution does not instantiate every type variable
+   *     that occurs in {@code type} outside a wildcard, or if it maps the component type of an
+   *     array type to the null type
    */
-  private static TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static @Nullable TypeArgument substitute(
+      java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
