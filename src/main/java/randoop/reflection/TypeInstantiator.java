@@ -24,7 +24,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -368,7 +367,8 @@ public class TypeInstantiator {
    *     the bounds of its type variables, or null if none was found
    */
   private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
-    // Why the most recent attempt failed; used for diagnostics.
+    // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
+    // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
     for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
       // answer question: what type instantiation would allow a call to this operation?
@@ -383,22 +383,29 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type need not be a ParameterizedType:  for a member class with no type
+            // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.  Matching
+            // and instantiating substitutions account for the enclosing type.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
-              failure = "no input type instantiates " + paramType;
+              if (Log.isLoggingOn()) {
+                failure = "no input type instantiates " + paramType;
+              }
               allMatched = false;
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
             Substitution extended =
-                selectSubstitution((ParameterizedType) origParamType, matches, substitution);
+                selectSubstitution((ClassOrInterfaceType) origParamType, matches, substitution);
             if (extended == null) {
-              failure =
-                  "no input type instantiates "
-                      + origParamType
-                      + " within the bounds, given "
-                      + substitution;
+              if (Log.isLoggingOn()) {
+                failure =
+                    "no input type instantiates "
+                        + origParamType
+                        + " within the bounds, given "
+                        + substitution;
+              }
               allMatched = false;
               break;
             }
@@ -425,19 +432,25 @@ public class TypeInstantiator {
           if (satisfiesBounds(substitution)) {
             return substitution;
           }
-          failure = substitution + " does not satisfy the bounds";
+          if (Log.isLoggingOn()) {
+            failure = substitution + " does not satisfy the bounds";
+          }
         } else {
           Map<TypeVariable, List<ReferenceType>> candidatesByVariable =
               consistentCandidatesByVariable(parameters, substitution);
           if (candidatesByVariable == null) {
-            failure = "some type variable in " + parameters + " has no candidate types";
+            if (Log.isLoggingOn()) {
+              failure = "some type variable in " + parameters + " has no candidate types";
+            }
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
             if (result != null) {
               return result;
             }
-            failure = "no extension of " + substitution + " satisfies the bounds";
+            if (Log.isLoggingOn()) {
+              failure = "no extension of " + substitution + " satisfies the bounds";
+            }
           }
         }
       }

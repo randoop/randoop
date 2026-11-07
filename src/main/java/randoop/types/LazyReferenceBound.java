@@ -29,6 +29,10 @@ class LazyReferenceBound extends EagerReferenceBound {
   private static final ThreadLocal<Set<LazyReferenceBound>> beingSubstituted =
       ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
+  /** The bounds that {@link #hasLowerBound(ParameterBound, Substitution)} is currently examining. */
+  private static final ThreadLocal<Set<LazyReferenceBound>> beingComparedWithLowerBound =
+      ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
+
   /**
    * Creates a lazy bound with the given type.
    *
@@ -164,11 +168,30 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
-   * contains type variables.
+   * <p>Because the type of this bound contains type variables, returns true only if {@code
+   * lowerBound} is the null type, or if the type of this bound is a capture variable and {@code
+   * lowerBound} is a lower bound on the capture variable's lower bound. A capture variable stands
+   * for a particular type, which is a supertype of its lower bound.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    return lowerBound.isNullType(substitution);
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    if (!(getBoundType() instanceof CaptureTypeVariable)) {
+      return false;
+    }
+    // The lower bound of the capture variable might refer back to this bound.
+    Set<LazyReferenceBound> inProgress = beingComparedWithLowerBound.get();
+    if (!inProgress.add(this)) {
+      return false;
+    }
+    try {
+      return ((CaptureTypeVariable) getBoundType())
+          .getLowerTypeBound()
+          .hasLowerBound(lowerBound, substitution);
+    } finally {
+      inProgress.remove(this);
+    }
   }
 }

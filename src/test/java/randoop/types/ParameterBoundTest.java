@@ -107,6 +107,42 @@ public class ParameterBoundTest {
     assertTrue(nullBound.isLowerBound(lazyListBound, new Substitution()));
   }
 
+  /**
+   * A capture variable is a supertype of its lower bound, so a {@link LazyReferenceBound} whose type
+   * is a capture variable has that lower bound, and its subtypes, as lower bounds.
+   */
+  @Test
+  public void testLazyCaptureBoundHasCaptureLowerBound() throws Exception {
+    java.lang.reflect.Type superNumber =
+        ((java.lang.reflect.ParameterizedType)
+                ArrayHolder.class
+                    .getDeclaredMethod("superNumbers", List.class)
+                    .getGenericParameterTypes()[0])
+            .getActualTypeArguments()[0];
+    CaptureTypeVariable capture = new CaptureTypeVariable(WildcardArgument.forType(superNumber));
+    ParameterBound lazyCaptureBound = new LazyReferenceBound(capture);
+
+    assertTrue(nullBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertTrue(numberBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertTrue(integerBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertFalse(stringBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertFalse(
+        ParameterBound.forType(JavaTypes.OBJECT_TYPE)
+            .isLowerBound(lazyCaptureBound, new Substitution()));
+  }
+
+  /** Bounds whose types are equal copies of a type variable have equal hash codes. */
+  @Test
+  public void testEqualVariableBoundsHaveEqualHashCodes() {
+    TypeVariable copy =
+        arrayHolderVariable.createCopyWithBounds(
+            arrayHolderVariable.getLowerTypeBound(), numberBound);
+    ParameterBound bound = new EagerReferenceBound(arrayHolderVariable);
+    ParameterBound copyBound = new LazyReferenceBound(copy);
+    assertTrue(bound.equals(copyBound));
+    assertTrue(bound.hashCode() == copyBound.hashCode());
+  }
+
   /** The substitution is applied to the lower bound when the other bound is lazy. */
   @Test
   public void testSubstitutionAppliedToLowerBoundOfLazyBound() {
@@ -157,5 +193,12 @@ public class ParameterBoundTest {
      * @return an array
      */
     abstract T[] array();
+
+    /**
+     * Has a parameter whose type argument is a wildcard with a lower bound.
+     *
+     * @param list a list
+     */
+    abstract void superNumbers(List<? super Number> list);
   }
 }
