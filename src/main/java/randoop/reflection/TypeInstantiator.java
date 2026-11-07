@@ -241,7 +241,7 @@ public class TypeInstantiator {
    * @param type the generic type for which an instantiation is to be found
    * @return a substitution instantiating the given type as an existing type; null if no such type
    */
-  private Substitution selectSubstitution(ClassOrInterfaceType type) {
+  private @Nullable Substitution selectSubstitution(ClassOrInterfaceType type) {
     List<ReferenceType> matches = matchingInputTypes(type);
     if (matches.isEmpty()) {
       return null;
@@ -674,6 +674,7 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
+  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> arguments = new ArrayList<>(parameters.size());
     for (TypeVariable parameter : parameters) {
