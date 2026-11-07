@@ -21,7 +21,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -356,7 +355,8 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            // Not necessarily a ParameterizedType: a member class of a generic class is generic.
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               failure = "no input type instantiates " + paramType;
               allMatched = false;
@@ -365,7 +365,7 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               failure = "no substitution instantiates " + origParamType + " as " + selectedType;
               allMatched = false;
@@ -387,7 +387,10 @@ public class TypeInstantiator {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
         }
-        typeParameters.removeAll(substitution.keySet());
+        // Also remove copies of mapped type variables, which are not equal to the keys because
+        // their bounds differ.
+        Substitution mapped = substitution;
+        typeParameters.removeIf(variable -> mapped.get(variable) != null);
 
         if (typeParameters.isEmpty()) {
           // The substitution instantiates every type variable in the parameter and return types.
@@ -536,7 +539,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {
         checkFirst.add(variable);
@@ -552,6 +555,23 @@ public class TypeInstantiator {
             ? Integer.MAX_VALUE
             : MAX_CHECKED_SUBSTITUTIONS;
     return new BoundsSearch(candidatesByVariable, checkAfter, maxChecks).search(0, substitution);
+  }
+
+  /**
+   * Returns the index in {@code variables} of the given type variable or of a copy of it, which may
+   * have different bounds.
+   *
+   * @param variables type variables
+   * @param variable a type variable
+   * @return the index of {@code variable} or a copy of it in {@code variables}, or -1 if none
+   */
+  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
+    for (int i = 0; i < variables.size(); i++) {
+      if (variables.get(i).isSameVariableAs(variable)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**

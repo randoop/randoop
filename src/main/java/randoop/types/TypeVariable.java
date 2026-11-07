@@ -202,6 +202,18 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
+   * Returns true if this is the same type variable as the given one, possibly with different
+   * bounds.
+   *
+   * @param other a type variable
+   * @return true if this and {@code other} are the same type variable
+   * @see #getVariableKey()
+   */
+  public boolean isSameVariableAs(TypeVariable other) {
+    return getVariableKey().equals(other.getVariableKey());
+  }
+
+  /**
    * Returns true if the two types are equal or are the same type variable, possibly with different
    * bounds.
    *
