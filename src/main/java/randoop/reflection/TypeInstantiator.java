@@ -704,6 +704,7 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
+  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     return new BoundsCheck(parameters).test(substitution);
   }
