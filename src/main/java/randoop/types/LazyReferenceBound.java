@@ -40,7 +40,6 @@ class LazyReferenceBound extends EagerReferenceBound {
 
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
-    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
