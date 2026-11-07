@@ -584,4 +584,28 @@ public class TypeVariableTest {
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
   }
+
+  /**
+   * A class whose type parameter's bound contains the type parameter as an array component.
+   *
+   * @param <U> the type parameter
+   */
+  static class ArrayArgumentBound<U extends Map<U, U[]>> {}
+
+  /** A map type that satisfies the bound of {@link ArrayArgumentBound}. */
+  abstract static class SelfArrayMap extends java.util.AbstractMap<SelfArrayMap, SelfArrayMap[]> {}
+
+  /** A map type that does not satisfy the bound of {@link ArrayArgumentBound}. */
+  abstract static class SelfStringMap extends java.util.AbstractMap<SelfStringMap, String[]> {}
+
+  @Test
+  public void testLazyBoundWithGenericArrayArgument() {
+    TypeVariable u = typeParameter(ArrayArgumentBound.class, 0);
+    ParameterBound bound = u.getUpperTypeBound();
+    assertTrue("bound " + bound + " should be lazy", bound instanceof LazyParameterBound);
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(SelfArrayMap.class), new Substitution()));
+    assertFalse(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(SelfStringMap.class), new Substitution()));
+  }
 }

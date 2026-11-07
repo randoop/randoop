@@ -105,7 +105,8 @@ class LazyParameterBound extends ParameterBound {
    * @return the type argument, or null if the substitution does not instantiate every type
    *     variable that occurs in {@code type} outside a wildcard
    */
-  private static @Nullable TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static @Nullable TypeArgument substitute(
+      java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -129,6 +130,18 @@ class LazyParameterBound extends ParameterBound {
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       return TypeArgument.forType(instantiatedType);
+    }
+
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      java.lang.reflect.Type componentType =
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType();
+      TypeArgument componentArgument = substitute(componentType, substitution);
+      if (!(componentArgument instanceof ReferenceArgument)) {
+        return null;
+      }
+      ReferenceType substitutedComponent =
+          ((ReferenceArgument) componentArgument).getReferenceType();
+      return TypeArgument.forType(ArrayType.ofComponentType(substitutedComponent));
     }
 
     if (type instanceof Class) {
@@ -200,6 +213,9 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
+    } else if (type instanceof java.lang.reflect.GenericArrayType) {
+      variableList.addAll(
+          getTypeParameters(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
     } else if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
@@ -237,6 +253,9 @@ class LazyParameterBound extends ParameterBound {
         }
       }
     }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return hasWildcard(((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
+    }
     return false;
   }
 
@@ -267,6 +286,10 @@ class LazyParameterBound extends ParameterBound {
           return true;
         }
       }
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return hasCaptureVariable(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
     }
     return false;
   }
