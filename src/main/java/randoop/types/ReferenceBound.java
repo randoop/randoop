@@ -92,6 +92,12 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (lowerBound instanceof IntersectionTypeBound) {
+      // An intersection type is a subtype of a type if any of its members is, but
+      // IntersectionTypeBound.isLowerBound(Type, Substitution) requires every member to be.
+      return ((IntersectionTypeBound) lowerBound)
+          .hasMemberThatIsLowerBound(boundType, substitution);
+    }
     return lowerBound.isLowerBound(boundType, substitution);
   }
 }

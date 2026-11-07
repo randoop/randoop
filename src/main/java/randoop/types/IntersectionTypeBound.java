@@ -150,6 +150,24 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
+   * Returns true if some member bound of this intersection, after applying the substitution to it,
+   * is a lower bound of the given type. Because an intersection type is a subtype of each of its
+   * members, this means that the intersection type is a subtype of the given type.
+   *
+   * @param otherType the type
+   * @param subst the type substitution to apply to the member bounds
+   * @return true if some member bound of this intersection is a lower bound of {@code otherType}
+   */
+  boolean hasMemberThatIsLowerBound(Type otherType, Substitution subst) {
+    for (ParameterBound b : boundList) {
+      if (b.isLowerBound(otherType, subst)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * {@inheritDoc}
    *
    * <p>Determines whether all types in this bound are {@code Object}.
