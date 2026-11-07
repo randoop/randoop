@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,6 +9,13 @@ import java.util.Set;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
+
+  /**
+   * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
+   * is in progress, in the current thread.
+   */
+  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
@@ -72,7 +80,7 @@ public abstract class TypeVariable extends ParameterType {
 
     if (otherType.isVariable()) {
       TypeVariable otherVariable = (TypeVariable) otherType;
-      Substitution substitution = getSubstitution(otherVariable, this);
+      Substitution substitution = otherVariable.getSubstitution(this);
       boolean lowerboundOk =
           otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
       boolean upperboundOk =
@@ -89,21 +97,50 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
+      Substitution substitution = getSubstitution((ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
   }
 
   /**
-   * Creates a substitution of the given {@link ReferenceType} for the {@link TypeVariable}.
+   * Returns a substitution of the given {@link ReferenceType} for this variable.
    *
-   * @param variable the variable
-   * @param otherType the replacement type
-   * @return a substitution that replaces {@code variable} with {@code otherType}
+   * @param otherType a replacement type
+   * @return a substitution that replaces this variable with {@code otherType}
    */
-  private static Substitution getSubstitution(TypeVariable variable, ReferenceType otherType) {
-    return new Substitution(variable, otherType);
+  private Substitution getSubstitution(ReferenceType otherType) {
+    return new Substitution(this, otherType);
+  }
+
+  /**
+   * Returns an object that a type variable shares with its copies. Substitution can create a copy
+   * of a type variable whose bounds differ, such as by having a lazy part resolved. {@link
+   * #equals(Object)} distinguishes the copy from the original, but they have equal keys.
+   *
+   * @return an object that a type variable shares with its copies, and with no other type variable
+   */
+  Object getVariableKey() {
+    return this;
+  }
+
+  /**
+   * Returns true if the two types are equal or are the same type variable, possibly with different
+   * bounds.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the two types are equal or are the same type variable
+   * @see #getVariableKey()
+   */
+  static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+    // Comparing keys is cheaper than equals(), which compares bounds.
+    if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
+      return ((TypeVariable) type)
+          .getVariableKey()
+          .equals(((TypeVariable) otherType).getVariableKey());
+    }
+    return type.equals(otherType);
   }
 
   @Override
@@ -115,38 +152,111 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
    * Does not require that all bounds of this variable be instantiated.
    *
+   * <p>A type variable in the bounds that is not instantiated stands for an unknown type, as in
+   * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
+   * checked separately. So the result can be true even if no single type for that type variable
+   * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
+   * randoop.reflection.TypeInstantiator} does.
+   *
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
-    Substitution substitution;
+    return canBeInstantiatedBy(otherType, new Substitution());
+  }
+
+  /**
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType},
+   * when the other type variables are instantiated as by the given substitution. Like {@link
+   * #canBeInstantiatedBy(ReferenceType)}, but checks this variable's bounds with the mappings of
+   * {@code context} for the type variables in them, rather than treating all of those type
+   * variables as unknown.
+   *
+   * @param otherType the possibly instantiating type, not a variable
+   * @param context a substitution for other type variables; any mapping of this variable in it is
+   *     ignored
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  boolean canBeInstantiatedBy(ReferenceType otherType, Substitution context) {
+    // Checking a bound can check the same instantiation again, through mutually recursive bounds
+    // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
+    // that the inner check succeeds.
+    // Identify type variables by their keys, because substitution creates copies of them.
+    Set<List<Object>> inProgress = instantiationChecks.get();
+    List<Object> check =
+        Arrays.asList(
+            getVariableKey(),
+            otherType instanceof TypeVariable
+                ? ((TypeVariable) otherType).getVariableKey()
+                : otherType);
+    if (!inProgress.add(check)) {
+      return true;
+    }
+    try {
+      return canBeInstantiatedByUnchecked(otherType, context);
+    } finally {
+      inProgress.remove(check);
+    }
+  }
+
+  /**
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
+   * Does not guard against recursion; see {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)}.
+   *
+   * @param otherType a possibly instantiating type, not a variable
+   * @param context a substitution for other type variables
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution context) {
+    Substitution substitution = context.withMapping(this, otherType);
     if (getLowerTypeBound().isVariable()) {
-      substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getLowerTypeBound().substitute(substitution);
-      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
-      if (!checkType.canBeInstantiatedBy(otherType)) {
+      if (!variableBoundAllows(getLowerTypeBound(), substitution, otherType)) {
         return false;
       }
     } else {
-      substitution = getSubstitution(this, otherType);
       if (!getLowerTypeBound().isLowerBound(otherType, substitution)) {
         return false;
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      substitution = getSubstitution(this, otherType);
-      ParameterBound boundType = getUpperTypeBound().substitute(substitution);
-      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
-      if (!checkType.canBeInstantiatedBy(otherType)) {
+      if (!variableBoundAllows(getUpperTypeBound(), substitution, otherType)) {
         return false;
       }
     } else {
-      substitution = getSubstitution(this, otherType);
       if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
         return false;
       }
     }
     return true;
+  }
+
+  /**
+   * Returns true if the given type can instantiate the type variable that is the given bound of
+   * this variable. That type variable might not be instantiated by the substitution; then it stands
+   * for an unknown type.
+   *
+   * @param bound a bound of this variable that is a type variable
+   * @param substitution the substitution of {@code otherType} for this variable
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if {@code otherType} can instantiate the type variable that is {@code bound}
+   */
+  private boolean variableBoundAllows(
+      ParameterBound bound, Substitution substitution, ReferenceType otherType) {
+    ParameterBound substituted = bound.substitute(substitution);
+    TypeVariable variable;
+    if (substituted instanceof ReferenceBound
+        && ((ReferenceBound) substituted).getBoundType().isVariable()) {
+      variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+    } else if (substituted instanceof LazyParameterBound) {
+      // The substitution does not instantiate the type variable.
+      variable = substituted.getTypeParameters().get(0);
+    } else {
+      return false;
+    }
+    return variable.canBeInstantiatedBy(otherType, substitution);
   }
 
   /**

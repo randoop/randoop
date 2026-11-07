@@ -60,8 +60,8 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof EagerReferenceBound) {
-        Type argLowerBoundType = ((EagerReferenceBound) argLowerBound).getBoundType();
+      if (argLowerBound instanceof ReferenceBound) {
+        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
         return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
       }
     }
@@ -70,15 +70,16 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    assert bound instanceof EagerReferenceBound : "only handling reference bounds";
-    return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
+    assert bound instanceof ReferenceBound : "only handling reference bounds";
+    return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
   }
 
   @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
-    if (bound instanceof EagerReferenceBound) {
-      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
+    if (bound instanceof ReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
     }
+    // TODO: change this into an unconditional exception.
     assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }
@@ -90,7 +91,17 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      TypeVariable variable = (TypeVariable) thisBoundType;
+      if (argType.isReferenceType() && !argType.isVariable()) {
+        // The type variable can be argType itself, as in LazyReferenceBound.isUpperBound.  Checking
+        // argType against the upper bound of the type variable instead would leave the type
+        // variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
+        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the type
+        // variable are checked with the mappings of `subst`, because they can mention other type
+        // variables that `subst` instantiates.
+        return variable.canBeInstantiatedBy((ReferenceType) argType, subst);
+      }
+      return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
