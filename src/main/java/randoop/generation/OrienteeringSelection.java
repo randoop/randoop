@@ -196,6 +196,21 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation discards the details and weights of all sequences other than {@code
+   * retainedSequences} (which include the seeds). If a discarded sequence (such as a literal) is
+   * later a candidate, its details are recreated on demand.
+   *
+   * @param retainedSequences the sequences that remain in the component set after clearing
+   */
+  @Override
+  public void componentSetCleared(Set<Sequence> retainedSequences) {
+    sequenceDetailsMap.keySet().retainAll(retainedSequences);
+    weightMap.keySet().retainAll(retainedSequences);
+  }
+
+  /**
    * Creates and stores a {@link SequenceDetails} for the given {@link Sequence} with the
    * corresponding execution time.
    *

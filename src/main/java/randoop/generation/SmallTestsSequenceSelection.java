@@ -2,6 +2,7 @@ package randoop.generation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.plumelib.util.SIList;
 import randoop.sequence.Sequence;
 import randoop.util.Randomness;
@@ -30,6 +31,19 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
   public Sequence selectInputSequence(SIList<Sequence> candidates) {
     double totalWeight = updateWeightMapForCandidates(candidates);
     return Randomness.randomMemberWeighted(candidates, weightMap, totalWeight);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation discards the weights of all sequences other than {@code
+   * retainedSequences}. A discarded weight is recomputed on demand.
+   *
+   * @param retainedSequences the sequences that remain in the component set after clearing
+   */
+  @Override
+  public void componentSetCleared(Set<Sequence> retainedSequences) {
+    weightMap.keySet().retainAll(retainedSequences);
   }
 
   /**
