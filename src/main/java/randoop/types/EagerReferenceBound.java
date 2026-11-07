@@ -60,8 +60,8 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof EagerReferenceBound) {
-        Type argLowerBoundType = ((EagerReferenceBound) argLowerBound).getBoundType();
+      if (argLowerBound instanceof ReferenceBound) {
+        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
         return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
       }
     }
@@ -69,16 +69,11 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    assert bound instanceof EagerReferenceBound : "only handling reference bounds";
-    return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
-  }
-
-  @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
-    if (bound instanceof EagerReferenceBound) {
-      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
+    if (bound instanceof ReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
     }
+    // TODO: change this into an unconditional exception.
     assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }
@@ -89,8 +84,22 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
-    if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+    if (thisBoundType.isVariable() || argType.isVariable()) {
+      if (!argType.isReferenceType()) {
+        return false;
+      }
+      ReferenceType argReferenceType = (ReferenceType) argType;
+      if (thisBoundType.isVariable()
+          && TypeVariable.isSameVariable(thisBoundType, getBoundType())) {
+        // The substitution does not replace the type variable, so it stands for an unknown type.
+        // Checking argType against the upper bound of the type variable instead would leave the
+        // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
+        // accept Comparable<String>, which no choice of T is a supertype of.
+        return canBeSupertype((TypeVariable) thisBoundType, argReferenceType);
+      }
+      // A type variable that the substitution put in the bound stands for itself.  A type variable
+      // argument satisfies this bound if its own upper bound does.
+      return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
@@ -109,8 +118,35 @@ class EagerReferenceBound extends ReferenceBound {
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
 
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return isUpperBound(getBoundType(), substitution);
+  /**
+   * Returns true if the unknown type that the given type variable stands for can be a supertype of,
+   * or equal to, the given type: that is, if the type variable can be instantiated by the type, by
+   * its lower bound, if the type is a subtype of it, or, for a type parameter, by one of the type's
+   * supertypes. A capture variable stands for a particular type, which only its lower bound is
+   * known to be a supertype of.
+   *
+   * @param variable a type variable that stands for an unknown type
+   * @param type a type
+   * @return true if {@code variable} can be instantiated by a supertype of {@code type}
+   */
+  private static boolean canBeSupertype(TypeVariable variable, ReferenceType type) {
+    if (TypeVariable.isSameVariable(type, variable) || variable.canBeInstantiatedBy(type)) {
+      return true;
+    }
+    if (variable instanceof ExplicitTypeVariable && type instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+        if (variable.canBeInstantiatedBy(supertype)) {
+          return true;
+        }
+      }
+    }
+    ParameterBound lowerBound = variable.getLowerTypeBound();
+    if (lowerBound instanceof ReferenceBound) {
+      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && type.isSubtypeOfOrEqualTo(lowerBoundType)
+          && variable.canBeInstantiatedBy(lowerBoundType);
+    }
+    return false;
   }
 }
