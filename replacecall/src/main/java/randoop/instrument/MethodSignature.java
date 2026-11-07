@@ -103,8 +103,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     int dotPos = fullMethodName.lastIndexOf('.');
     String classname = dotPos < 0 ? "" : fullMethodName.substring(0, dotPos);
     String methodName = fullMethodName.substring(dotPos + 1);
-    if (!Signatures.isBinaryName(classname)
-        || !(Signatures.isIdentifier(methodName) || methodName.equals("<init>"))) {
+    if (!isBinaryName(classname) || !(isIdentifier(methodName) || methodName.equals("<init>"))) {
       throw new IllegalArgumentException(
           "Method signature expected, bad fully-qualified method name \"" + fullMethodName + "\"");
     }
@@ -123,13 +122,83 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       if (parameter.isEmpty()) {
         throw new IllegalArgumentException("Empty parameter type");
       }
-      if (!Signatures.isFqBinaryName(parameter)) {
+      if (!isFqBinaryName(parameter)) {
         throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
       }
       // TODO: This seems incorrect, since it doesn't handle arrays.
       paramTypes[i] = BcelUtil.fqBinaryNameToType(parameter);
     }
     return new MethodSignature(classname, methodName, paramTypes);
+  }
+
+  // The methods in {@link Signatures} recognize only ASCII identifiers, but Java permits non-ASCII
+  // identifiers. The following methods use {@link Signatures} for ASCII strings, and otherwise
+  // check identifiers using {@link Character#isJavaIdentifierStart} and {@link
+  // Character#isJavaIdentifierPart}. A non-ASCII identifier is never a keyword or literal.
+
+  /**
+   * Returns true if the given string is a Java identifier, possibly containing non-ASCII
+   * characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a Java identifier
+   */
+  private static boolean isIdentifier(String s) {
+    if (isAscii(s)) {
+      return Signatures.isIdentifier(s);
+    }
+    if (!Character.isJavaIdentifierStart(s.codePointAt(0))) {
+      return false;
+    }
+    return s.codePoints().allMatch(Character::isJavaIdentifierPart);
+  }
+
+  /**
+   * Returns true if the given string is a binary name, possibly containing non-ASCII characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a binary name
+   */
+  private static boolean isBinaryName(String s) {
+    if (isAscii(s)) {
+      return Signatures.isBinaryName(s);
+    }
+    // The limit -1 makes split() retain trailing empty strings, so a trailing period is rejected.
+    for (String segment : s.split("\\.", -1)) {
+      if (!isIdentifier(segment)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the given string is a fully-qualified binary name, possibly containing
+   * non-ASCII characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a fully-qualified binary name
+   */
+  private static boolean isFqBinaryName(String s) {
+    if (isAscii(s)) {
+      return Signatures.isFqBinaryName(s);
+    }
+    String elementType = s;
+    while (elementType.endsWith("[]")) {
+      elementType = elementType.substring(0, elementType.length() - 2);
+    }
+    // A primitive type name is ASCII, so a non-ASCII element type must be a binary name.
+    return isBinaryName(elementType);
+  }
+
+  /**
+   * Returns true if the given string contains only ASCII characters.
+   *
+   * @param s a string
+   * @return true if every character of {@code s} is ASCII
+   */
+  private static boolean isAscii(String s) {
+    return s.chars().allMatch(c -> c < 128);
   }
 
   @Override
