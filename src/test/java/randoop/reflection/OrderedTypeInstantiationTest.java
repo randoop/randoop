@@ -43,6 +43,31 @@ public class OrderedTypeInstantiationTest {
     public MyOrderedMap(MyComparator<? super K> comparator) {}
   }
 
+  /** A subclass of an ordered class, with no comparator constructor of its own. */
+  public static class MyTreeSet<E> extends TreeSet<E> {
+    private static final long serialVersionUID = 20261107L;
+
+    public MyTreeSet() {}
+  }
+
+  /** A sorted type whose first type parameter is unordered and whose second is ordered. */
+  public static class MySortedMap<V, K> {
+    public MySortedMap(MyComparator<? super K> comparator) {}
+
+    public MySortedMap(MySortedMap<?, K> other) {}
+
+    public MyComparator<? super K> comparator() {
+      return null;
+    }
+  }
+
+  /** An instantiation of {@link MySortedMap} whose unordered type argument is not comparable. */
+  public static class ThreadStringMap extends MySortedMap<Thread, String> {
+    public ThreadStringMap() {
+      super((MyComparator<? super String>) null);
+    }
+  }
+
   /** How many times to instantiate each constructor, since instantiation is random. */
   private static final int TRIALS = 50;
 
@@ -54,7 +79,9 @@ public class OrderedTypeInstantiationTest {
   private static Set<Type> inputTypes() {
     Set<Type> result = new LinkedHashSet<>();
     for (Class<?> c :
-        new Class<?>[] {String.class, Thread.class, BitSet.class, MyStringComparator.class}) {
+        new Class<?>[] {
+          String.class, Thread.class, BitSet.class, MyStringComparator.class, ThreadStringMap.class
+        }) {
       result.addAll(ClassOrInterfaceType.forClass(c).getSupertypesInclusive());
     }
     return result;
@@ -100,6 +127,20 @@ public class OrderedTypeInstantiationTest {
         JavaTypes.STRING_TYPE);
     checkOrderedTypeArgument(
         TypedOperation.forConstructor(MyOrderedMap.class.getConstructor(MyComparator.class)),
+        1,
+        JavaTypes.STRING_TYPE);
+  }
+
+  @Test
+  public void testSubclassOfOrderedClass() throws NoSuchMethodException {
+    checkOrderedTypeArgument(
+        TypedOperation.forConstructor(MyTreeSet.class.getConstructor()), 0, JavaTypes.STRING_TYPE);
+  }
+
+  @Test
+  public void testSortedTypeOrdersSecondParameter() throws NoSuchMethodException {
+    checkOrderedTypeArgument(
+        TypedOperation.forConstructor(MySortedMap.class.getConstructor(MySortedMap.class)),
         1,
         JavaTypes.STRING_TYPE);
   }

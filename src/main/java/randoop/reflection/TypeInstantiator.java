@@ -129,15 +129,21 @@ public class TypeInstantiator {
   /**
    * Returns the index of the type parameter whose values instances of the given class keep in
    * order, or -1 if there is none. Such a type parameter is recognized by a constructor whose only
-   * formal parameter is a comparator for it (see {@link #isComparatorInterface}). Examples are the
-   * {@code E} in {@code TreeSet<E>} and the {@code K} in {@code TreeMap<K,V>}.
+   * formal parameter is a comparator for it (see {@link #isComparatorInterface}), in the class or
+   * in a generic superclass. Examples are the {@code E} in {@code TreeSet<E>} and the {@code K} in
+   * {@code TreeMap<K,V>}.
    *
    * @param c a class
    * @return the index of the ordered type parameter of {@code c}, or -1
    */
   private static int orderedTypeParameterIndex(Class<?> c) {
-    return orderedTypeParameterIndexCache.computeIfAbsent(
-        c, TypeInstantiator::computeOrderedTypeParameterIndex);
+    // Not computeIfAbsent, because the computation is recursive and would modify the map.
+    Integer result = orderedTypeParameterIndexCache.get(c);
+    if (result == null) {
+      result = computeOrderedTypeParameterIndex(c);
+      orderedTypeParameterIndexCache.put(c, result);
+    }
+    return result;
   }
 
   /**
@@ -149,29 +155,59 @@ public class TypeInstantiator {
   private static int computeOrderedTypeParameterIndex(Class<?> c) {
     List<java.lang.reflect.TypeVariable<?>> classTypeParameters =
         Arrays.asList(c.getTypeParameters());
+    if (classTypeParameters.isEmpty()) {
+      return -1;
+    }
     for (Constructor<?> constructor : c.getDeclaredConstructors()) {
       java.lang.reflect.Type[] formals = constructor.getGenericParameterTypes();
-      if (formals.length != 1 || !(formals[0] instanceof java.lang.reflect.ParameterizedType)) {
+      if (formals.length != 1) {
         continue;
       }
-      java.lang.reflect.ParameterizedType formal = (java.lang.reflect.ParameterizedType) formals[0];
-      if (!isComparatorInterface((Class<?>) formal.getRawType())) {
-        continue;
-      }
-      // The type argument is T or `? super T`.
-      java.lang.reflect.Type typeArg = formal.getActualTypeArguments()[0];
-      if (typeArg instanceof WildcardType) {
-        java.lang.reflect.Type[] lowerBounds = ((WildcardType) typeArg).getLowerBounds();
-        if (lowerBounds.length == 1) {
-          typeArg = lowerBounds[0];
-        }
-      }
-      int index = classTypeParameters.indexOf(typeArg);
+      int index = comparedTypeParameterIndex(formals[0], classTypeParameters);
       if (index != -1) {
         return index;
       }
     }
+    // A subclass of an ordered class, such as `class MySet<E> extends TreeSet<E>`, is also ordered,
+    // even if it has no comparator constructor.
+    java.lang.reflect.Type superclass = c.getGenericSuperclass();
+    if (superclass instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType superType =
+          (java.lang.reflect.ParameterizedType) superclass;
+      int superIndex = orderedTypeParameterIndex((Class<?>) superType.getRawType());
+      if (superIndex != -1) {
+        return classTypeParameters.indexOf(superType.getActualTypeArguments()[superIndex]);
+      }
+    }
     return -1;
+  }
+
+  /**
+   * If the given type is a comparator interface (see {@link #isComparatorInterface}) whose type
+   * argument is {@code T} or {@code ? super T}, where {@code T} is one of the given type
+   * parameters, returns the index of {@code T}. Otherwise, returns -1.
+   *
+   * @param type a type, such as {@code Comparator<? super T>}
+   * @param typeParameters the type parameters of a class
+   * @return the index in {@code typeParameters} of the type that {@code type} compares, or -1
+   */
+  private static int comparedTypeParameterIndex(
+      java.lang.reflect.Type type, List<java.lang.reflect.TypeVariable<?>> typeParameters) {
+    if (!(type instanceof java.lang.reflect.ParameterizedType)) {
+      return -1;
+    }
+    java.lang.reflect.ParameterizedType ptype = (java.lang.reflect.ParameterizedType) type;
+    if (!isComparatorInterface((Class<?>) ptype.getRawType())) {
+      return -1;
+    }
+    java.lang.reflect.Type typeArg = ptype.getActualTypeArguments()[0];
+    if (typeArg instanceof WildcardType) {
+      java.lang.reflect.Type[] lowerBounds = ((WildcardType) typeArg).getLowerBounds();
+      if (lowerBounds.length == 1) {
+        typeArg = lowerBounds[0];
+      }
+    }
+    return typeParameters.indexOf(typeArg);
   }
 
   /**
@@ -195,23 +231,39 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns true if values of the given type carry their own ordering: the type is generic and has
+   * If values of the given type carry their own ordering, returns the index of the type parameter
+   * that they order; otherwise returns -1. A type carries its own ordering if it is generic and has
    * a method {@code comparator()} that returns a comparator interface. Examples are {@code
-   * SortedSet<E>} and {@code SortedMap<K,V>}.
+   * SortedSet<E>}, which orders {@code E} (index 0), and {@code SortedMap<K,V>}, which orders
+   * {@code K} (index 0).
    *
    * @param type a type
-   * @return true if {@code type} is a generic type with a {@code comparator()} method
+   * @return the index of the type parameter that {@code type}'s {@code comparator()} method
+   *     compares, or -1
    */
-  private static boolean isSortedType(Type type) {
+  private static int sortedTypeParameterIndex(Type type) {
     if (!type.isParameterized()) {
-      return false;
+      return -1;
     }
+    Class<?> c = type.getRuntimeClass();
+    Method comparator;
     try {
-      Method comparator = type.getRuntimeClass().getMethod("comparator");
-      return isComparatorInterface(comparator.getReturnType());
+      comparator = c.getMethod("comparator");
     } catch (NoSuchMethodException e) {
-      return false;
+      return -1;
     }
+    if (!isComparatorInterface(comparator.getReturnType())) {
+      return -1;
+    }
+    int index =
+        comparedTypeParameterIndex(
+            comparator.getGenericReturnType(), Arrays.asList(c.getTypeParameters()));
+    if (index != -1) {
+      return index;
+    }
+    // The comparator() method may be inherited, so its return type refers to a type parameter of a
+    // superclass.  Use the constructors to determine the ordered type parameter.
+    return orderedTypeParameterIndex(c);
   }
 
   /**
@@ -233,25 +285,43 @@ public class TypeInstantiator {
     List<TypeVariable> typeParameters = operation.getDeclaringType().getTypeParameters();
     TypeVariable orderedParameter = typeParameters.get(orderedIndex);
 
-    // By default, choose a type T that is Comparable<T>.
-    GenericClassType searchType = JavaTypes.COMPARABLE_TYPE;
+    // If this constructor has an argument that orders T, such as a Comparator<T> or a
+    // SortedSet<T>, then orderingType is the generic class of that argument, and orderingIndex is
+    // the index of its type parameter that corresponds to T.
+    GenericClassType orderingType = null;
+    int orderingIndex = -1;
     for (Type inputType : operation.getInputTypes()) {
       if (!inputType.isParameterized()) {
         continue;
       }
-      if (isComparatorInterface(inputType.getRuntimeClass()) || isSortedType(inputType)) {
-        // This constructor has an argument that orders T, such as a Comparator<T> or a
-        // SortedSet<T>.  Half the time, choose a type T that has such a value.  Otherwise, choose a
-        // type T that is Comparable<T>, because the argument might be null or might use the natural
-        // ordering of T (as Collections.reverseOrder() does).
-        if (Randomness.weightedCoinFlip(0.5)) {
-          searchType = ((ParameterizedType) inputType).getGenericClassType();
-        }
+      int index =
+          isComparatorInterface(inputType.getRuntimeClass())
+              ? 0
+              : sortedTypeParameterIndex(inputType);
+      if (index != -1) {
+        orderingType = ((ParameterizedType) inputType).getGenericClassType();
+        orderingIndex = index;
         break;
       }
     }
 
-    Substitution substitution = selectSubstitutionForOrderedType(searchType, orderedParameter);
+    // By default, choose a type T that is Comparable<T>.  If there is an ordering argument, then
+    // half the time, choose a type T that has such a value.  (Not always, because the argument
+    // might be null or might use the natural ordering of T, as Collections.reverseOrder() does.)
+    // If the first choice fails, try the other.
+    boolean useOrderingType = orderingType != null && Randomness.weightedCoinFlip(0.5);
+    Substitution substitution =
+        useOrderingType
+            ? selectSubstitutionForOrderedType(orderingType, orderingIndex, orderedParameter)
+            : selectComparableSubstitution(orderedParameter);
+    if (substitution == null) {
+      if (useOrderingType) {
+        substitution = selectComparableSubstitution(orderedParameter);
+      } else if (orderingType != null) {
+        substitution =
+            selectSubstitutionForOrderedType(orderingType, orderingIndex, orderedParameter);
+      }
+    }
     if (substitution == null) {
       return null;
     }
@@ -264,23 +334,48 @@ public class TypeInstantiator {
   }
 
   /**
-   * Select a substitution for an ordered type parameter.
+   * Select a substitution for an ordered type parameter, from an existing instantiation of a type
+   * that orders it.
    *
-   * @param searchType a generic type whose first type argument is the ordered type, such as
-   *     Comparator, Comparable, or SortedSet
+   * @param searchType a generic type that orders one of its type arguments, such as Comparator,
+   *     SortedSet, or SortedMap
+   * @param searchIndex the index of the type argument of {@code searchType} that it orders
    * @param typeParameter the type parameter to create an instantiation for
    * @return a substitution for {@code typeParameter}, or null if none is found
    */
   private @Nullable Substitution selectSubstitutionForOrderedType(
-      GenericClassType searchType, TypeVariable typeParameter) {
-    // Select a substitution for searchType's formal parameter.
+      GenericClassType searchType, int searchIndex, TypeVariable typeParameter) {
+    // Select a substitution for searchType's formal parameters.
     Substitution substitution = selectSubstitution(searchType);
     if (substitution == null) {
       return null;
     }
     // Convert it into a substitution for the given type parameter.
-    TypeArgument argumentType = searchType.substitute(substitution).getTypeArguments().get(0);
+    TypeArgument argumentType =
+        searchType.substitute(substitution).getTypeArguments().get(searchIndex);
+    if (!(argumentType instanceof ReferenceArgument)) {
+      return null;
+    }
     return new Substitution(typeParameter, ((ReferenceArgument) argumentType).getReferenceType());
+  }
+
+  /**
+   * Select a substitution for an ordered type parameter that uses the natural ordering: that is,
+   * one that maps the type parameter to an input type {@code T} that is a subtype of {@code
+   * Comparable<? super T>} (see {@link #isComparable}). For example, if the input types contain
+   * {@code Comparable<Number>} but not a {@code Number} subtype that implements it, then this does
+   * not choose {@code Number}, because not every {@code Number} is comparable.
+   *
+   * @param typeParameter the type parameter to create an instantiation for
+   * @return a substitution for {@code typeParameter}, or null if none is found
+   */
+  private @Nullable Substitution selectComparableSubstitution(TypeVariable typeParameter) {
+    List<ReferenceType> candidates =
+        CollectionsPlume.filter(candidateTypes(typeParameter), TypeInstantiator::isComparable);
+    if (candidates.isEmpty()) {
+      return null;
+    }
+    return new Substitution(typeParameter, Randomness.randomMember(candidates));
   }
 
   /**
