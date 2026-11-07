@@ -566,7 +566,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {
         checkFirst.add(variable);
@@ -769,6 +769,24 @@ public class TypeInstantiator {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the index of the given type variable in the given list, possibly with different bounds.
+   *
+   * @param variables a list of type variables
+   * @param variable a type variable
+   * @return the index in {@code variables} of {@code variable}, possibly with different bounds, or
+   *     -1 if it does not occur
+   * @see TypeVariable#isSameVariable
+   */
+  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
+    for (int i = 0; i < variables.size(); i++) {
+      if (TypeVariable.isSameVariable(variables.get(i), variable)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**

@@ -87,9 +87,10 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns the number of (type, sequence) entries in this collection. {@link #add} adds one entry
-   * for each active value of the sequence's last statement, so this number may exceed the number of
-   * distinct sequences in this collection.
+   * Returns the number of distinct (type, sequence) entries in this collection. {@link #add} adds
+   * one entry for each active value of the sequence's last statement whose type does not already
+   * have an entry for the sequence, so this number may exceed the number of distinct sequences in
+   * this collection.
    *
    * @return the number of (type, sequence) entries in this collection
    */
@@ -243,6 +244,7 @@ public final class SequenceCollection {
     Set<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
     boolean added = sequences.add(sequence);
     if (added) {
+      sequenceCount++;
       Log.logPrintf(
           "Added sequence #%d of type %s of length %d%n",
           sequences.size(), type, sequence.size());
@@ -251,7 +253,6 @@ public final class SequenceCollection {
           "Didn't add duplicate sequence of type %s of length %d (collection has %d sequences)%n",
           type, sequence.size(), sequences.size());
     }
-    sequenceCount++;
   }
 
   /**
