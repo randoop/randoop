@@ -434,7 +434,9 @@ public class TypeInstantiator {
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
-            if (result != null) {
+            // The search checks each bound once its variables are instantiated; check the complete
+            // result too, in case the search scheduled some bound check too early.
+            if (result != null && satisfiesBounds(result)) {
               return result;
             }
             failure = "no extension of " + substitution + " satisfies the bounds";
@@ -511,7 +513,8 @@ public class TypeInstantiator {
       Set<TypeVariable> boundVariables =
           new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
       boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      boundVariables.removeAll(instantiated);
+      // Compare with isSameVariable, because a type variable can be a copy with other bounds.
+      boundVariables.removeIf(v -> containsVariable(instantiated, v));
       if (boundVariables.size() == 1) {
         TypeVariable boundVariable = boundVariables.iterator().next();
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
@@ -566,7 +569,12 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
+        for (int j = last + 1; j < parameters.size(); j++) {
+          if (TypeVariable.isSameVariable(parameters.get(j), neededVariable)) {
+            last = j;
+          }
+        }
       }
       if (last == -1) {
         checkFirst.add(variable);
