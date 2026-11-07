@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -329,7 +330,13 @@ public class OmitMethodsPredicate {
    */
   private static boolean hasParameterTypes(
       Method candidate, Class<?>[] paramTypes, Map<TypeVariable<?>, Type> typeArguments) {
-    Type[] candidateParamTypes = candidate.getGenericParameterTypes();
+    Type[] candidateParamTypes;
+    try {
+      candidateParamTypes = candidate.getGenericParameterTypes();
+    } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+      // The generic signature names a type that is not present; compare the erased types.
+      return Arrays.equals(candidate.getParameterTypes(), paramTypes);
+    }
     if (candidateParamTypes.length != paramTypes.length) {
       // The generic parameter types can omit synthetic parameters.
       return Arrays.equals(candidate.getParameterTypes(), paramTypes);
@@ -361,11 +368,24 @@ public class OmitMethodsPredicate {
     while (!worklist.isEmpty()) {
       Class<?> current = worklist.remove(worklist.size() - 1);
       List<Type> genericSupertypes = new ArrayList<>();
-      Type genericSuperclass = current.getGenericSuperclass();
+      // If a generic signature names a type that is not present, fall back to the raw supertypes,
+      // which contribute no type arguments.
+      Type genericSuperclass;
+      try {
+        genericSuperclass = current.getGenericSuperclass();
+      } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+        genericSuperclass = current.getSuperclass();
+      }
       if (genericSuperclass != null) {
         genericSupertypes.add(genericSuperclass);
       }
-      Collections.addAll(genericSupertypes, current.getGenericInterfaces());
+      Type[] genericInterfaces;
+      try {
+        genericInterfaces = current.getGenericInterfaces();
+      } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+        genericInterfaces = current.getInterfaces();
+      }
+      Collections.addAll(genericSupertypes, genericInterfaces);
       for (Type genericSupertype : genericSupertypes) {
         Class<?> rawSupertype;
         if (genericSupertype instanceof ParameterizedType) {
