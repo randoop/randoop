@@ -60,9 +60,16 @@ final class Subtyping {
     }
     if (type.isVariable()) {
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
-      return ((TypeVariable) type)
+      if (((TypeVariable) type)
           .getResolvedUpperTypeBound()
-          .hasUpperBound(otherType, substitution);
+          .hasUpperBound(otherType, substitution)) {
+        return true;
+      }
+      if (!otherType.isVariable()) {
+        return false;
+      }
+      // Try the lower bound of the other type variable, below.  For example, T is a subtype of the
+      // capture of "? super T".
     }
     if (otherType.isVariable()) {
       // A type variable that stands for itself is a supertype of its lower bound.

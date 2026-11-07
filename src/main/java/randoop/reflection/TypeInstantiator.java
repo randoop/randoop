@@ -24,7 +24,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -257,7 +256,9 @@ public class TypeInstantiator {
     while (!matches.isEmpty()) {
       ReferenceType selectedType = Randomness.randomSetMember(matches);
       Substitution selected = selectedType.getInstantiatingSubstitution(type);
-      if (selected != null) {
+      // A match can conflict with the substitution, for example if it binds a capture variable
+      // that the substitution already maps to a different type.
+      if (selected != null && substitution.isConsistentWith(selected)) {
         Substitution result = substitution.extend(selected);
         if (satisfiesInstantiatedBounds(result)) {
           return result;
@@ -384,7 +385,7 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               failure = "no input type instantiates " + paramType;
               allMatched = false;
@@ -392,7 +393,7 @@ public class TypeInstantiator {
             }
             choseAmongSeveral |= matches.size() > 1;
             Substitution extended =
-                selectSubstitution((ParameterizedType) origParamType, matches, substitution);
+                selectSubstitution((ClassOrInterfaceType) origParamType, matches, substitution);
             if (extended == null) {
               failure =
                   "no input type instantiates "
@@ -566,7 +567,13 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        // A bound can mention a copy, with different bounds, of a type variable in `parameters`.
+        for (int i = 0; i < parameters.size(); i++) {
+          if (TypeVariable.isSameVariable(parameters.get(i), neededVariable)) {
+            last = Math.max(last, i);
+            break;
+          }
+        }
       }
       if (last == -1) {
         checkFirst.add(variable);
