@@ -59,12 +59,12 @@ public class ForwardGenerator extends AbstractGenerator {
   private final LinkedHashSet<Sequence> allSequences = new LinkedHashSet<>();
 
   /**
-   * The sequences created since the component set was last cleared, or null if it has never been
-   * cleared (in which case {@link #allSequences} contains exactly those sequences). Randoop does
-   * not create a sequence in this set again. A sequence that is in {@link #allSequences} but not in
-   * this set can be created again, to rebuild the component set, but is not output as a test again.
+   * The sequences created since the component set was last cleared (or since generation started).
+   * Randoop does not create a sequence in this set again. A sequence that is in {@link
+   * #allSequences} but not in this set can be created again, to rebuild the component set, but is
+   * not output as a test again.
    */
-  private @Nullable Set<Sequence> sequencesSinceClear = null;
+  private LinkedHashSet<Sequence> sequencesSinceClear = new LinkedHashSet<>();
 
   /**
    * The parameterless operations that have been removed from {@link #operations} since the
@@ -74,10 +74,11 @@ public class ForwardGenerator extends AbstractGenerator {
   private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
 
   /**
-   * The number of sequences created so far, including sequences that were created again (to
-   * rebuild the component set) after it was cleared. This can exceed {@code allSequences.size()}.
+   * The number of sequences created, including sequences that were executed and then discarded. A
+   * sequence that is created again after a clear is counted again, so this can exceed {@code
+   * allSequences.size()}.
    */
-  private int numGeneratedSequences = 0;
+  private int numSequencesCreated = 0;
 
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
@@ -213,7 +214,7 @@ public class ForwardGenerator extends AbstractGenerator {
   /** Removes all generated sequences from the component set, retaining seeds and literals. */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
-    sequencesSinceClear = new HashSet<>();
+    sequencesSinceClear = new LinkedHashSet<>();
     operations.addAll(removedParameterlessOperations);
     removedParameterlessOperations.clear();
   }
@@ -247,10 +248,8 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    numGeneratedSequences++;
-    if (sequencesSinceClear != null) {
-      sequencesSinceClear.add(eSeq.sequence);
-    }
+    sequencesSinceClear.add(eSeq.sequence);
+    numSequencesCreated++;
     // If the sequence was created before the component set was last cleared, move it to the end.
     allSequences.remove(eSeq.sequence);
     allSequences.add(eSeq.sequence);
@@ -568,7 +567,7 @@ public class ForwardGenerator extends AbstractGenerator {
     randoopConsistencyTests(newSequence);
 
     // Discard if sequence was already created since the component set was last cleared.
-    if ((sequencesSinceClear == null ? allSequences : sequencesSinceClear).contains(newSequence)) {
+    if (sequencesSinceClear.contains(newSequence)) {
       operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
       Log.logPrintf("Sequence discarded: the same sequence was previously created.%n");
       return null;
@@ -1016,7 +1015,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   @Override
   public int numGeneratedSequences() {
-    return numGeneratedSequences;
+    return numSequencesCreated;
   }
 
   @Override
