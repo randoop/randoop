@@ -62,6 +62,10 @@ public class ParameterBoundTest {
     assertTrue(integerBound.isLowerBound(intersection, new Substitution()));
     assertFalse(stringBound.isLowerBound(intersection, new Substitution()));
     assertFalse(integerBound.isLowerBound(selfComparableBound, new Substitution()));
+    // An intersection is a lower bound of a type if any of its members is.
+    assertTrue(intersection.isLowerBound(numberBound, new Substitution()));
+    assertFalse(intersection.isLowerBound(integerBound, new Substitution()));
+    assertFalse(intersection.isLowerBound(stringBound, new Substitution()));
   }
 
   /** A lazy bound that the substitution does not instantiate is not a lower bound of anything. */
