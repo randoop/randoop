@@ -203,11 +203,6 @@ final class Subtyping {
       }
     }
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
-    if (unknownBound instanceof IntersectionTypeBound) {
-      // Every choice for the unknown is a subtype of each member of its bound.  An intersection has
-      // no single member that is itself a valid choice, so this assumes that some choice exists.
-      return unknownBound.substitute(substitution).hasUpperBound(type, substitution);
-    }
     if (!(unknownBound instanceof ReferenceBound)) {
       return false;
     }
