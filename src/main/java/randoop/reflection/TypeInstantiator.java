@@ -24,6 +24,7 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -389,7 +390,7 @@ public class TypeInstantiator {
             // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.  Matching
             // and instantiating substitutions account for the enclosing type.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
