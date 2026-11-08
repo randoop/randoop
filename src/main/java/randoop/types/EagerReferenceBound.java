@@ -96,8 +96,10 @@ class EagerReferenceBound extends ReferenceBound {
         // The type variable can be argType itself, as in LazyReferenceBound.isUpperBound.  Checking
         // argType against the upper bound of the type variable instead would leave the type
         // variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
-        // accept Comparable<String>, which no choice of T is a supertype of.
-        return variable.canBeInstantiatedBy((ReferenceType) argType);
+        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
+        // type variable are checked with the mappings of `subst`, because they can mention other
+        // type variables that `subst` instantiates.
+        return variable.canBeInstantiatedBy((ReferenceType) argType, subst);
       }
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }

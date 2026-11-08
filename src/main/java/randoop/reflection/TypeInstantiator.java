@@ -752,6 +752,12 @@ public class TypeInstantiator {
    */
   @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
+    for (TypeVariable parameter : parameters) {
+      if (substitution.get(parameter) == null) {
+        throw new IllegalArgumentException(
+            "substitution " + substitution + " does not instantiate " + parameter);
+      }
+    }
     return new BoundsCheck(parameters).test(substitution);
   }
 
