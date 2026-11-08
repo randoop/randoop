@@ -202,7 +202,8 @@ public final class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
-    if (sequence.size() == 1) {
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
       Type outType = sequence.getLastVariable().getType();
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
