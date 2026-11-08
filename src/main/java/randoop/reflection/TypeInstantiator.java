@@ -257,7 +257,9 @@ public class TypeInstantiator {
     while (!matches.isEmpty()) {
       ReferenceType selectedType = Randomness.randomSetMember(matches);
       Substitution selected = selectedType.getInstantiatingSubstitution(type);
-      if (selected != null) {
+      // A match can conflict with the substitution, for example if it binds a capture variable
+      // that the substitution already maps to a different type.
+      if (selected != null && substitution.isConsistentWith(selected)) {
         Substitution result = substitution.extend(selected);
         if (satisfiesInstantiatedBounds(result)) {
           return result;
