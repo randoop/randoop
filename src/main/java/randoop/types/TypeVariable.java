@@ -209,7 +209,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the two types are equal or are the same type variable
    * @see #getVariableKey()
    */
-  static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+  public static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
     // Comparing keys is cheaper than equals(), which compares bounds.
     if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
       return ((TypeVariable) type)
@@ -254,6 +254,22 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {
+    return canBeInstantiatedBy(otherType, new Substitution());
+  }
+
+  /**
+   * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType},
+   * when the other type variables are instantiated as by the given substitution. Like {@link
+   * #canBeInstantiatedBy(ReferenceType)}, but checks this variable's bounds with the mappings of
+   * {@code context} for the type variables in them, rather than treating all of those type
+   * variables as unknown.
+   *
+   * @param otherType the possibly instantiating type, not a variable
+   * @param context a substitution for other type variables; any mapping of this variable in it is
+   *     ignored
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  boolean canBeInstantiatedBy(ReferenceType otherType, Substitution context) {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
@@ -269,7 +285,7 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     try {
-      return canBeInstantiatedByUnchecked(otherType);
+      return canBeInstantiatedByUnchecked(otherType, context);
     } finally {
       inProgress.remove(check);
     }
@@ -277,13 +293,15 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns true if this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
-   * Does not guard against recursion; see {@link #canBeInstantiatedBy(ReferenceType)}.
+   * Does not guard against recursion; see {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)}.
    *
    * @param otherType a possibly instantiating type, not a variable
+   * @param context a substitution for other type variables
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  private boolean canBeInstantiatedByUnchecked(ReferenceType otherType) {
-    Substitution substitution = getSubstitution(otherType);
+  private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution context) {
+    Substitution substitution = context.withMapping(this, otherType);
     if (getLowerTypeBound().isVariable()) {
       if (!variableBoundAllows(getLowerTypeBound(), substitution, otherType)) {
         return false;
@@ -328,7 +346,7 @@ public abstract class TypeVariable extends ParameterType {
     } else {
       return false;
     }
-    return variable.canBeInstantiatedBy(otherType);
+    return variable.canBeInstantiatedBy(otherType, substitution);
   }
 
   /**

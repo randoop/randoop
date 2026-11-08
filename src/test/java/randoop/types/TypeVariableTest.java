@@ -299,6 +299,79 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubstitutionOfCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution substitution = new Substitution(capture, JavaTypes.STRING_TYPE);
+    // A substitution for a capture variable applies to a copy of it with different bounds.
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(copy));
+    assertEquals(JavaTypes.STRING_TYPE, copy.substitute(substitution));
+  }
+
+  /**
+   * A type parameter {@code W} bounded by a sibling {@code V} whose recursive bound mentions
+   * another sibling {@code K}.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code Map<K, List<V>>}
+   * @param <W> a type parameter bounded by {@code V}
+   */
+  static class PartiallySubstitutedRecursiveBound<K, V extends Map<K, List<V>>, W extends V> {}
+
+  /** A map from {@code Integer} to lists of itself. */
+  abstract static class IntegerKeyedMapOfSelf
+      implements Map<Integer, List<IntegerKeyedMapOfSelf>> {}
+
+  /** A map from {@code String} to lists of itself. */
+  abstract static class StringKeyedMapOfSelf implements Map<String, List<StringKeyedMapOfSelf>> {}
+
+  @Test
+  public void testVariableBoundWithPartialSubstitution() {
+    TypeVariable k = typeParameter(PartiallySubstitutedRecursiveBound.class, 0);
+    TypeVariable w = typeParameter(PartiallySubstitutedRecursiveBound.class, 2);
+    ReferenceType integerKeyed = ClassOrInterfaceType.forClass(IntegerKeyedMapOfSelf.class);
+    ReferenceType stringKeyed = ClassOrInterfaceType.forClass(StringKeyedMapOfSelf.class);
+    Substitution kIsString = new Substitution(k, JavaTypes.STRING_TYPE);
+    // With K := String, V's bound is Map<String, List<V>>, which IntegerKeyedMapOfSelf violates.
+    assertFalse(
+        w.getUpperTypeBound()
+            .isUpperBound(integerKeyed, kIsString.extend(new Substitution(w, integerKeyed))));
+    assertTrue(
+        w.getUpperTypeBound()
+            .isUpperBound(stringKeyed, kIsString.extend(new Substitution(w, stringKeyed))));
+  }
+
+  /**
+   * A pair.
+   *
+   * @param <A> the type of the first element
+   * @param <B> the type of the second element
+   */
+  interface Pair<A, B> {}
+
+  /**
+   * A type parameter whose bound contains a generic array type.
+   *
+   * @param <T> a type parameter bounded by {@code Pair<T, T[]>}
+   */
+  static class ArrayPairBound<T extends Pair<T, T[]>> {}
+
+  /** A class that satisfies the bound of {@link ArrayPairBound}. */
+  abstract static class SelfArrayPair implements Pair<SelfArrayPair, SelfArrayPair[]> {}
+
+  /** A class that does not satisfy the bound of {@link ArrayPairBound}. */
+  abstract static class SelfStringArrayPair implements Pair<SelfStringArrayPair, String[]> {}
+
+  @Test
+  public void testGenericArrayInLazyBound() {
+    TypeVariable t = typeParameter(ArrayPairBound.class, 0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
+    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
+  }
+
+  @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
     // S := String would need a T that is both a List<String> and the T in Comparable<T>.
@@ -1275,6 +1348,55 @@ public class TypeVariableTest {
         captureT.substitute(new Substitution(captureS, JavaTypes.STRING_TYPE));
     assertEquals(Collections.singletonList(substituted), substituted.getTypeParameters());
   }
+
+  @Test
+  public void testSubstituteVariableIntoNestedArgument() {
+    TypeVariable t = typeParameter(SelfNestedArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteVariableIntoWildcardBound() {
+    TypeVariable t = typeParameter(WildcardSelfBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteTypeContainingVariableIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    InstantiatedType listOfV = GenericClassType.forClass(List.class).instantiate(v);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, listOfV));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(listOfV, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  /**
+   * A class whose type parameter's bound contains the type parameter nested in a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   @Test
   public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
