@@ -564,8 +564,7 @@ public class TypeInstantiator {
   private ParameterBound getUpperBound(TypeVariable parameter) {
     ParameterBound upperBound = parameter.getUpperTypeBound();
     List<TypeVariable> boundVariables = upperBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return upperBound;
     }
     return ParameterBound.forType(JavaTypes.OBJECT_TYPE);
@@ -583,8 +582,7 @@ public class TypeInstantiator {
   private ParameterBound getLowerBound(TypeVariable parameter) {
     ParameterBound lowerBound = parameter.getLowerTypeBound();
     List<TypeVariable> boundVariables = lowerBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return lowerBound;
     }
     return ParameterBound.forType(JavaTypes.NULL_TYPE);
