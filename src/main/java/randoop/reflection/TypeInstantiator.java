@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
@@ -508,13 +507,13 @@ public class TypeInstantiator {
    * the type variables that it instantiates.
    *
    * <p>This searches depth-first, instantiating the type variables in the order of the map's keys
-   * and trying each one's candidate types in random order. It checks the bounds of each type
-   * variable as soon as every type variable in those bounds, and the type variable itself, is
-   * instantiated. Thus, it abandons a partial substitution as soon as the partial substitution
-   * violates some bound, rather than extending it to every combination of the remaining candidate
-   * types. For example, for {@code <K, V extends K>}, once the search chooses {@code Integer} for
-   * {@code K}, it rejects each candidate type for {@code V} that is not a subtype of {@code
-   * Integer}.
+   * and trying each one's candidate types in a random order that favors comparable types (see
+   * {@link CandidateChooser}). It checks the bounds of each type variable as soon as every type
+   * variable in those bounds, and the type variable itself, is instantiated. Thus, it abandons a
+   * partial substitution as soon as the partial substitution violates some bound, rather than
+   * extending it to every combination of the remaining candidate types. For example, for {@code <K,
+   * V extends K>}, once the search chooses {@code Integer} for {@code K}, it rejects each candidate
+   * type for {@code V} that is not a subtype of {@code Integer}.
    *
    * <p>If there are at most {@link #MAX_CHECKED_SUBSTITUTIONS} combinations of candidate types, the
    * search is exhaustive: it returns null only if no combination satisfies the bounds. Otherwise,
@@ -593,11 +592,11 @@ public class TypeInstantiator {
    */
   private static final class BoundsSearch {
 
-    /**
-     * The type variables to instantiate, each with its candidate types, in the order that the
-     * search instantiates them.
-     */
-    private final List<Map.Entry<TypeVariable, List<ReferenceType>>> parameters;
+    /** The type variables to instantiate, in the order that the search instantiates them. */
+    private final List<TypeVariable> parameters;
+
+    /** Element i holds the candidate types of {@code parameters.get(i)}. */
+    private final List<CandidateChooser> candidates;
 
     /**
      * Element i holds the type variables whose bounds can be checked once the search instantiates
@@ -621,7 +620,11 @@ public class TypeInstantiator {
         Map<TypeVariable, List<ReferenceType>> candidatesByVariable,
         List<List<TypeVariable>> checkAfter,
         int maxChecks) {
-      this.parameters = new ArrayList<>(candidatesByVariable.entrySet());
+      this.parameters = new ArrayList<>(candidatesByVariable.keySet());
+      this.candidates = new ArrayList<>(parameters.size());
+      for (List<ReferenceType> variableCandidates : candidatesByVariable.values()) {
+        candidates.add(new CandidateChooser(variableCandidates));
+      }
       this.checkAfter = checkAfter;
       this.remainingChecks = maxChecks;
     }
@@ -639,15 +642,10 @@ public class TypeInstantiator {
       if (index == parameters.size()) {
         return substitution;
       }
-      TypeVariable parameter = parameters.get(index).getKey();
-      List<ReferenceType> untried = new ArrayList<>(parameters.get(index).getValue());
+      TypeVariable parameter = parameters.get(index);
+      CandidateChooser untried = new CandidateChooser(candidates.get(index));
       while (!untried.isEmpty() && remainingChecks > 0) {
-        // Remove a random element of `untried`.
-        int i = Randomness.nextRandomInt(untried.size());
-        ReferenceType candidate = untried.get(i);
-        untried.set(i, untried.get(untried.size() - 1));
-        untried.remove(untried.size() - 1);
-
+        ReferenceType candidate = untried.removeNext();
         remainingChecks--;
         Substitution extended = substitution.extend(new Substitution(parameter, candidate));
         if (satisfiesBounds(checkAfter.get(index), extended)) {
@@ -843,35 +841,99 @@ public class TypeInstantiator {
             typeArgument);
         return null;
       }
-      selectedTypes.add(selectType(candidates));
+      selectedTypes.add(new CandidateChooser(candidates).removeNext());
     }
     return substitution.extend(parameters, selectedTypes);
   }
 
   /**
-   * The probability that {@link #selectType} chooses among the candidates that implement {@code
-   * Comparable}, rather than among all the candidates.
+   * The probability that {@link CandidateChooser#removeNext()} chooses among the comparable
+   * candidates, rather than among all the candidates.
    */
   private static final double COMPARABLE_PROBABILITY = 0.5;
 
   /**
-   * Returns a randomly chosen type from the given candidates, to instantiate a type parameter.
-   * Comparable types (see {@link #isComparable}) are favored, because many generic classes and
-   * methods, such as {@code TreeMap} and {@code Collections.sort}, can do useful work only on
-   * values of such types.
-   *
-   * @param candidates a non-empty list of types to choose from
-   * @return a type from {@code candidates}
+   * Candidate types to instantiate a type variable, from which {@link #removeNext()} chooses and
+   * removes one at a time. The choice favors comparable types (see {@link #isComparable}), because
+   * many generic classes and methods, such as {@code TreeMap} and {@code Collections.sort}, can do
+   * useful work only on values of such types.
    */
-  private static ReferenceType selectType(List<ReferenceType> candidates) {
-    if (Randomness.weightedCoinFlip(COMPARABLE_PROBABILITY)) {
-      List<ReferenceType> comparableCandidates =
-          CollectionsPlume.filter(candidates, TypeInstantiator::isComparable);
-      if (!comparableCandidates.isEmpty()) {
-        return Randomness.randomMember(comparableCandidates);
+  private static final class CandidateChooser {
+
+    /** The remaining candidates that are comparable. */
+    private final List<ReferenceType> comparable;
+
+    /** The remaining candidates that are not comparable. */
+    private final List<ReferenceType> notComparable;
+
+    /**
+     * Creates a chooser whose remaining candidates are the given candidates.
+     *
+     * @param candidates the candidate types
+     */
+    CandidateChooser(List<ReferenceType> candidates) {
+      this.comparable = new ArrayList<>();
+      this.notComparable = new ArrayList<>();
+      for (ReferenceType candidate : candidates) {
+        (isComparable(candidate) ? comparable : notComparable).add(candidate);
       }
     }
-    return Randomness.randomMember(candidates);
+
+    /**
+     * Creates a chooser whose remaining candidates are those of the given chooser.
+     *
+     * @param other a chooser
+     */
+    CandidateChooser(CandidateChooser other) {
+      this.comparable = new ArrayList<>(other.comparable);
+      this.notComparable = new ArrayList<>(other.notComparable);
+    }
+
+    /**
+     * Returns true if no candidates remain.
+     *
+     * @return true if no candidates remain
+     */
+    boolean isEmpty() {
+      return comparable.isEmpty() && notComparable.isEmpty();
+    }
+
+    /**
+     * Removes a randomly chosen candidate from the remaining candidates and returns it. With
+     * probability {@link #COMPARABLE_PROBABILITY}, the choice is uniform among the remaining
+     * comparable candidates, if there are any. Otherwise, it is uniform among all the remaining
+     * candidates.
+     *
+     * @return the chosen candidate
+     */
+    ReferenceType removeNext() {
+      int index;
+      if (Randomness.weightedCoinFlip(COMPARABLE_PROBABILITY) && !comparable.isEmpty()) {
+        index = Randomness.nextRandomInt(comparable.size());
+      } else {
+        index = Randomness.nextRandomInt(comparable.size() + notComparable.size());
+      }
+      if (index < comparable.size()) {
+        return swapRemove(comparable, index);
+      } else {
+        return swapRemove(notComparable, index - comparable.size());
+      }
+    }
+
+    /**
+     * Removes the element at the given index from the given list, by replacing it by the list's
+     * last element, and returns it.
+     *
+     * @param list a list
+     * @param index an index into {@code list}
+     * @return the element that was at {@code index}
+     */
+    private static ReferenceType swapRemove(List<ReferenceType> list, int index) {
+      ReferenceType result = list.get(index);
+      list.set(index, list.get(list.size() - 1));
+      list.remove(list.size() - 1);
+      return result;
+    }
   }
 
   /**
