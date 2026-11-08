@@ -25,17 +25,17 @@ public class Substitution {
   private Map<TypeVariable, ReferenceType> map;
 
   /**
-   * The map from the {@link TypeVariable#getVariableKey() key} of each type variable in {@link #map}
-   * to its type. Copies of a type variable, which can differ in their bounds, share a key, so a
-   * lookup in this map finds the type for any copy. The key of a type parameter is its reflection
+   * The map from the {@link TypeVariable#getVariableKey() key} of each type variable in {@link
+   * #map} to its type. Copies of a type variable, which can differ in their bounds, share a key, so
+   * a lookup in this map finds the type for any copy. The key of a type parameter is its reflection
    * type variable, which {@link #get(Type)} looks up.
    */
   private Map<Object, ReferenceType> keyMap;
 
   /**
-   * The identities of the type variables that occur in a type that this substitution maps a
-   * different type variable to; null if not yet computed. Use {@link #getReplacementVariables()}
-   * instead of reading this field.
+   * The keys of the type variables that occur in a type that this substitution maps a different
+   * type variable to; null if not yet computed. Use {@link #getReplacementVariables()} instead of
+   * reading this field.
    */
   private @Nullable Set<Object> replacementVariables = null;
 
@@ -300,10 +300,10 @@ public class Substitution {
   }
 
   /**
-   * Returns the identities of the type variables that occur in a type that this substitution maps a
+   * Returns the keys of the type variables that occur in a type that this substitution maps a
    * different type variable to.
    *
-   * @return the identities of the type variables that occur in a replacement
+   * @return the keys of the type variables that occur in a replacement
    * @see TypeVariable#getVariableKey()
    */
   private Set<Object> getReplacementVariables() {
