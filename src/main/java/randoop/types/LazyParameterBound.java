@@ -77,6 +77,11 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (boundType instanceof ParameterizedType) {
+      if (!instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      // Type variables that the substitution does not instantiate remain type variables, so a
+      // partial substitution is preserved rather than discarded.
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
@@ -111,18 +116,22 @@ class LazyParameterBound extends ParameterBound {
    * parameterized type bound, to create a type argument to a {@link
    * randoop.types.ParameterizedType}.
    *
+   * <p>A type variable that {@code substitution} does not instantiate remains a type variable in
+   * the result.
+   *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution does not instantiate every type
-   *     variable that occurs in {@code type} outside a wildcard
+   * @return the type argument, or null if {@code type} is not a kind of type that this method
+   *     handles
    */
-  private static @Nullable TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static @Nullable TypeArgument substitute(
+      java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
         return TypeArgument.forType(referenceType);
       }
-      return null;
+      return TypeArgument.forType(TypeVariable.forType(type));
     }
 
     if (type instanceof ParameterizedType) {
@@ -187,6 +196,43 @@ class LazyParameterBound extends ParameterBound {
     }
 
     return null;
+  }
+
+  /**
+   * Returns true if the given substitution instantiates some type variable that occurs in the given
+   * reflection type.
+   *
+   * @param type the reflection type
+   * @param substitution the type substitution
+   * @return true if {@code substitution} instantiates a type variable that occurs in {@code type}
+   */
+  private static boolean instantiatesAny(java.lang.reflect.Type type, Substitution substitution) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return substitution.get(type) != null;
+    }
+    if (type instanceof ParameterizedType) {
+      for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
+        if (instantiatesAny(argType, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (instantiatesAny(boundType, substitution)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (instantiatesAny(boundType, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
   }
 
   @Override
