@@ -314,12 +314,8 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>();
-    for (TypeVariable variable : super.getTypeParameters()) {
-      // The bounds of this variable can contain a copy of it with other bounds, which is the same
-      // type variable.
-      parameters.add(isSameVariable(variable, this) ? this : variable);
-    }
+    // A copy of this variable in its bounds equals this variable, so it is not a separate element.
+    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);
   }
