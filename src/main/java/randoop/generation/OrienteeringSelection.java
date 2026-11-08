@@ -196,6 +196,13 @@ public class OrienteeringSelection extends InputSequenceSelector {
     createSequenceDetailsWithExecutionTime(eSeq.sequence, eSeq.exectime);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation discards the details and weights of all sequences other than {@code
+   * retainedSequences}. If a discarded sequence is later a candidate, its details are recreated on
+   * demand.
+   */
   @Override
   public void componentsCleared(Set<Sequence> retainedSequences) {
     sequenceDetailsMap.keySet().retainAll(retainedSequences);
