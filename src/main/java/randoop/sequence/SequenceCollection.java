@@ -224,7 +224,8 @@ public final class SequenceCollection {
   @RequiresNonNull("this.sequenceMap")
   public boolean add(Sequence sequence) {
     boolean changed = false;
-    if (sequence.size() == 1) {
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
       Type outType = sequence.getLastVariable().getType();
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
@@ -468,7 +469,6 @@ public final class SequenceCollection {
   }
 
   /** Logs the contents of this collection to the log file. */
-  @SuppressWarnings("nullness:flowexpr.parse.error.postcondition") // TEMPORARY, to mask a bug
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
