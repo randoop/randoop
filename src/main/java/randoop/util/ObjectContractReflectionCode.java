@@ -8,10 +8,10 @@ import randoop.contract.ObjectContract;
 public final class ObjectContractReflectionCode extends ReflectionCode {
 
   /** The contract to evaluate. */
-  final ObjectContract c;
+  private final ObjectContract c;
 
   /** The values that the contract is evaluated on. */
-  final Object[] objs;
+  private final Object[] objs;
 
   /**
    * Creates an ObjectContractReflectionCode that evaluates the given contract on the given values.
@@ -21,6 +21,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
    */
   @SuppressWarnings("PMD.ArrayIsStoredDirectly")
   public ObjectContractReflectionCode(final ObjectContract c, final Object... objs) {
+    super();
     this.c = c;
     this.objs = objs;
   }

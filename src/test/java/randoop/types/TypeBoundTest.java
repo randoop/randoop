@@ -1,6 +1,7 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.types.TypeBoundExamples.SW;
 import static randoop.types.TypeBoundExamples.TW;
@@ -38,6 +39,21 @@ public class TypeBoundTest {
     assertEquals(typeParameters.size(), 1);
     ReferenceType candidateType = ClassOrInterfaceType.forClass(Word.class);
     checkBound(typeParameters.get(0), candidateType, true);
+  }
+
+  /**
+   * A type parameter whose bound refers to the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfBound<T extends Comparable<T>> {}
+
+  @Test
+  public void testLazyBoundHasNoCaptureVariable() {
+    ParameterBound bound =
+        GenericClassType.forClass(SelfBound.class).getTypeParameters().get(0).getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    assertFalse(bound.hasCaptureVariable());
   }
 
   @Test

@@ -24,6 +24,7 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType the {@code Class} raw type
    */
   GenericClassType(Class<?> rawType) {
+    super();
     this.rawType = rawType;
     this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
   }
@@ -166,9 +167,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> params = super.getTypeParameters();
-    params.addAll(parameters);
-    return params;
+    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
   }
 
   /**

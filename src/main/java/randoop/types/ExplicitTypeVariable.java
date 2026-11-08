@@ -60,7 +60,22 @@ public class ExplicitTypeVariable extends TypeVariable {
     return this.getFqName();
   }
 
+  /**
+   * Returns the reflection type variable that this type variable represents.
+   *
+   * @return the reflection type variable that this type variable represents
+   */
   java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
+    return this.variable;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the reflection type variable for this type parameter
+   */
+  @Override
+  Object getVariableKey() {
     return this.variable;
   }
 
@@ -72,6 +87,12 @@ public class ExplicitTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this type variable to itself.  Keep this copy and its bounds, rather
+      // than the substitution's copy.  If the substitution maps this type variable to a copy of it
+      // with other bounds, that copy is the result.
+      type = null;
+    }
     if (type != null && !type.isVariable()) {
       return type;
     }

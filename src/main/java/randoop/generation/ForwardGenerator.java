@@ -76,6 +76,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
+  /** Instantiates generic operations with concrete type arguments. */
   private final TypeInstantiator instantiator;
 
   /** How to select sequences as input for creating new sequences. */
@@ -180,6 +181,11 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (GenInputsAbstract.grt_fuzzing) {
+      // https://github.com/typetools/checker-framework/issues/8455
+      @SuppressWarnings({
+        "allcheckers:redundant.anno", // CF bug on lambda parameter `op`, on incremental compiles
+        "allcheckers:unneeded.suppression" // that bug does not occur on full compiles
+      })
       Set<TypedOperation> sideEffectingMethods =
           new HashSet<>(
               CollectionsPlume.filter(

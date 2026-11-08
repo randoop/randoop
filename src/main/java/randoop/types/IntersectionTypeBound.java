@@ -32,11 +32,21 @@ class IntersectionTypeBound extends ParameterBound {
    * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
+    super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
 
     this.boundList = boundList;
+  }
+
+  /**
+   * Returns the type bounds of this intersection bound. The result must not be modified.
+   *
+   * @return the type bounds of this intersection bound
+   */
+  List<ParameterBound> getBounds() {
+    return boundList;
   }
 
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
@@ -79,18 +89,6 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return an intersection bound with capture conversion applied to all member bounds
-   */
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList =
-        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
-    return new IntersectionTypeBound(convertedBoundList);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * @return the list of type variables occurring in all of the type bounds of this intersection
    *     bound
    */
@@ -101,16 +99,6 @@ class IntersectionTypeBound extends ParameterBound {
       paramList.addAll(b.getTypeParameters());
     }
     return paramList;
-  }
-
-  @Override
-  boolean hasWildcard() {
-    for (ParameterBound b : boundList) {
-      if (b.hasWildcard()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @Override
@@ -136,29 +124,11 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Specifically, this method checks that the argument type is a subtype of all of the member
-   * bounds of this object.
+   * <p>Specifically, this method checks that some member bound of this object is a subtype of the
+   * argument type.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution subst) {
-    for (ParameterBound b : boundList) {
-      if (!b.isLowerBound(otherType, subst)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Returns true if some member bound of this intersection, after applying the substitution to it,
-   * is a lower bound of the given type. Because an intersection type is a subtype of each of its
-   * members, this means that the intersection type is a subtype of the given type.
-   *
-   * @param otherType the type
-   * @param subst the type substitution to apply to the member bounds
-   * @return true if some member bound of this intersection is a lower bound of {@code otherType}
-   */
-  boolean hasMemberThatIsLowerBound(Type otherType, Substitution subst) {
     for (ParameterBound b : boundList) {
       if (b.isLowerBound(otherType, subst)) {
         return true;

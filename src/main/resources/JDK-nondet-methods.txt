@@ -12,7 +12,7 @@
 ^\Qjava.lang.System.currentTimeMillis()\E$
 ^\Qjava.lang.System.getProperties()\E$
 ^\Qjava.lang.System.getProperty(java.lang.String)\E$
-^\Qjava.lang.System.getProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.System.getProperty(java.lang.String,java.lang.String)\E$
 ^\Qjava.lang.System.getSecurityManager()\E$
 ^\Qjava.lang.System.getenv()\E$
 ^\Qjava.lang.System.getenv(java.lang.String)\E$
@@ -20,7 +20,7 @@
 ^\Qjava.lang.System.inheritedChannel()\E$
 ^\Qjava.lang.System.mapLibraryName(java.lang.String)\E$
 ^\Qjava.lang.System.nanoTime()\E$
-^\Qjava.lang.System.setProperty(java.lang.String, java.lang.String)\E$
+^\Qjava.lang.System.setProperty(java.lang.String,java.lang.String)\E$
 ^\Qjava.lang.reflect.Method.hashCode()\E$
 ^\Qjava.text.BreakIterator.getAvailableLocales()\E$
 ^\Qjava.util.AbstractList.hashCode()\E$
@@ -37,7 +37,6 @@
 ^\Qjava.util.Arrays.hashCode(short[])\E$
 ^\Qjava.util.Collection.hashCode()\E$
 ^\Qjava.util.Collections.shuffle(java.util.List)\E$
-^\Qjava.util.Comparator.compare(java.lang.Object, java.lang.Object)\E$
 ^\Qjava.util.List.hashCode()\E$
-^\Qjava.util.Random.<init>()\E$
+^\Qjava.util.Random()\E$
 ^\Qjava.util.Set.hashCode()\E$

@@ -11,6 +11,11 @@ public final class NotExecuted extends ExecutionOutcome {
     super(-1);
   }
 
+  /**
+   * Returns the canonical {@code NotExecuted} outcome.
+   *
+   * @return the canonical {@code NotExecuted} outcome
+   */
   public static NotExecuted create() {
     return notExecutedSingleton;
   }

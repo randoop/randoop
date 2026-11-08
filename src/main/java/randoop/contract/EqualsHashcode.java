@@ -10,8 +10,15 @@ public final class EqualsHashcode extends ObjectContract {
   private static final EqualsHashcode instance = new EqualsHashcode();
 
   /** Private constructor to enforce singleton. */
-  private EqualsHashcode() {}
+  private EqualsHashcode() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsHashcode getInstance() {
     return instance;
   }
@@ -34,7 +41,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override

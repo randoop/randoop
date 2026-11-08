@@ -15,7 +15,24 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param boundType the {@link ReferenceType} of this bound
    */
   ReferenceBound(ReferenceType boundType) {
+    super();
     this.boundType = boundType;
+  }
+
+  /**
+   * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
+   * type contains a type variable, as in {@code Map<T, String>}, and an {@link EagerReferenceBound}
+   * otherwise. Other code also creates an {@link EagerReferenceBound} whose type contains a type
+   * variable, so not every bound that contains a type variable is a {@link LazyReferenceBound}.
+   *
+   * @param boundType a reference type
+   * @return a bound whose type is {@code boundType}
+   */
+  static ReferenceBound forTypeLazyIfGeneric(ReferenceType boundType) {
+    if (boundType.isGeneric()) {
+      return new LazyReferenceBound(boundType);
+    }
+    return new EagerReferenceBound(boundType);
   }
 
   /**
@@ -63,14 +80,6 @@ public abstract class ReferenceBound extends ParameterBound {
   public abstract ReferenceBound substitute(Substitution substitution);
 
   @Override
-  public abstract ReferenceBound applyCaptureConversion();
-
-  @Override
-  boolean hasWildcard() {
-    return boundType.hasWildcard();
-  }
-
-  @Override
   public boolean hasCaptureVariable() {
     return boundType.hasCaptureVariable();
   }
@@ -92,12 +101,6 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    if (lowerBound instanceof IntersectionTypeBound) {
-      // An intersection type is a subtype of a type if any of its members is, but
-      // IntersectionTypeBound.isLowerBound(Type, Substitution) requires every member to be.
-      return ((IntersectionTypeBound) lowerBound)
-          .hasMemberThatIsLowerBound(boundType, substitution);
-    }
     return lowerBound.isLowerBound(boundType, substitution);
   }
 }

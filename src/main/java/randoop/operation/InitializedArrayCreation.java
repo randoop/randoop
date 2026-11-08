@@ -28,8 +28,10 @@ import randoop.types.TypeTuple;
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  // State variables.
+  /** The length of the created array, which is also the number of initializer elements. */
   private final int length;
+
+  /** The element type of the created array. */
   private final Type elementType;
 
   /**
@@ -40,6 +42,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @param arrayType the type of array this operation creates
    */
   InitializedArrayCreation(ArrayType arrayType, int length) {
+    super();
     assert length >= 0 : "array length may not be negative: " + length;
 
     this.elementType = arrayType.getComponentType();

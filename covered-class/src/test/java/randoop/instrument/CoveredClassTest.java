@@ -57,7 +57,7 @@ public class CoveredClassTest {
     GenInputsAbstract.time_limit = 0;
     GenInputsAbstract.generated_limit = 10000;
     GenInputsAbstract.output_limit = 5000;
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
+    GenInputsAbstract.ignore_bad_class_names = false;
   }
 
   @AfterClass

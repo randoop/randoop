@@ -40,7 +40,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /** Creates a ClassOrInterfaceType. */
-  public ClassOrInterfaceType() {}
+  public ClassOrInterfaceType() {
+    super();
+  }
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -520,10 +522,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // A class or interface type is a subtype of a type variable only if it is a subtype of the
       // variable's lower bound, as for a capture variable of `? super String`.
       ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
-      if (!(lowerBound instanceof EagerReferenceBound)) {
+      if (!(lowerBound instanceof ReferenceBound)) {
         return false;
       }
-      ReferenceType lowerBoundType = ((EagerReferenceBound) lowerBound).getBoundType();
+      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
@@ -631,6 +633,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean hasWildcard() {
     return false;
+  }
+
+  /**
+   * Returns true if some type argument of this type, or of an enclosing type, is a wildcard. These
+   * are the wildcards that {@link #applyCaptureConversion()} converts. Unlike {@link
+   * #hasWildcard()}, does not look within type arguments.
+   *
+   * @return true if some type argument of this type or of an enclosing type is a wildcard
+   */
+  public boolean hasWildcardArgument() {
+    return isMemberClass() && enclosingType.hasWildcardArgument();
   }
 
   @Override

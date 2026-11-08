@@ -25,6 +25,7 @@ import randoop.types.TypeTuple;
  */
 public class FieldSet extends CallableOperation {
 
+  /** The field that this operation sets. */
   private AccessibleField field;
 
   /**
@@ -35,6 +36,7 @@ public class FieldSet extends CallableOperation {
    * @throws IllegalArgumentException if field is static final
    */
   public FieldSet(AccessibleField field) {
+    super();
     if (field.isFinal()) {
       throw new IllegalArgumentException("Field may not be final for FieldSet");
     }

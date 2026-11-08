@@ -10,8 +10,15 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
   /** Private constructor to enforce singleton. */
-  private HashCodeReturnsNormally() {}
+  private HashCodeReturnsNormally() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static HashCodeReturnsNormally getInstance() {
     return instance;
   }
@@ -39,7 +46,7 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
