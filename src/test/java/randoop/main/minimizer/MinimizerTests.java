@@ -31,8 +31,7 @@ public class MinimizerTests {
     for (int i = 0; i < 3; i++) {
       Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
       if (outputs.isSuccess()) {
-        // Remove the line terminator, which is not part of the classpath.
-        return outputs.stdout.trim();
+        return outputs.stdout;
       }
       System.out.printf("Attempt %d failed:%n", i + 1);
       System.out.println(outputs.diagnostics());
