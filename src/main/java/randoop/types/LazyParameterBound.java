@@ -77,6 +77,11 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (boundType instanceof ParameterizedType) {
+      if (!instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      // Type variables that the substitution does not instantiate remain type variables, so a
+      // partial substitution is preserved rather than discarded.
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
@@ -93,15 +98,16 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (boundType instanceof GenericArrayType) {
-      ArrayType arrayType = substituteArray((GenericArrayType) boundType, substitution);
-      if (arrayType == null) {
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
         return this;
       }
-      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
     }
 
     throw new RandoopBug(
-        "lazy parameter bounds should be a type variable, parameterized type, or generic array type");
+        "lazy parameter bounds should be a type variable, parameterized type, or array type");
   }
 
   /**
@@ -109,18 +115,22 @@ class LazyParameterBound extends ParameterBound {
    * parameterized type bound, to create a type argument to a {@link
    * randoop.types.ParameterizedType}.
    *
+   * <p>A type variable that {@code substitution} does not instantiate remains a type variable in
+   * the result.
+   *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution does not instantiate every type
-   *     variable that occurs in {@code type} outside a wildcard
+   * @return the type argument, or null if {@code type} is not a kind of type that this method
+   *     handles or if the substitution maps the component type of an array type to the null type
    */
-  private static @Nullable TypeArgument substitute(java.lang.reflect.Type type, Substitution substitution) {
+  private static @Nullable TypeArgument substitute(
+      java.lang.reflect.Type type, Substitution substitution) {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
         return TypeArgument.forType(referenceType);
       }
-      return null;
+      return TypeArgument.forType(TypeVariable.forType(type));
     }
 
     if (type instanceof ParameterizedType) {
@@ -145,8 +155,17 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof GenericArrayType) {
-      ArrayType arrayType = substituteArray((GenericArrayType) type, substitution);
-      return arrayType == null ? null : TypeArgument.forType(arrayType);
+      TypeArgument componentArgument =
+          substitute(((GenericArrayType) type).getGenericComponentType(), substitution);
+      if (!(componentArgument instanceof ReferenceArgument)) {
+        return null;
+      }
+      ReferenceType componentType = ((ReferenceArgument) componentArgument).getReferenceType();
+      // There is no array of the null type.
+      if (componentType.equals(JavaTypes.NULL_TYPE)) {
+        return null;
+      }
+      return TypeArgument.forType(ArrayType.ofComponentType(componentType));
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
@@ -181,22 +200,43 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Applies a substitution to a generic array type, such as {@code T[]}.
+   * Returns true if the given substitution instantiates some type variable that occurs in the given
+   * reflection type.
    *
-   * @param type the generic array type
+   * @param type the reflection type
    * @param substitution the type substitution
-   * @return the array type, or null if the substitution does not instantiate every type variable
-   *     that occurs in {@code type} outside a wildcard
+   * @return true if {@code substitution} instantiates a type variable that occurs in {@code type}
    */
-  private static @Nullable ArrayType substituteArray(
-      GenericArrayType type, Substitution substitution) {
-    // The component type of a generic array type is a type variable, a parameterized type, or a
-    // generic array type, so it is never a wildcard.
-    TypeArgument component = substitute(type.getGenericComponentType(), substitution);
-    if (!(component instanceof ReferenceArgument)) {
-      return null;
+  private static boolean instantiatesAny(java.lang.reflect.Type type, Substitution substitution) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return substitution.get(type) != null;
     }
-    return ArrayType.ofComponentType(((ReferenceArgument) component).getReferenceType());
+    if (type instanceof ParameterizedType) {
+      for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
+        if (instantiatesAny(argType, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (type instanceof GenericArrayType) {
+      return instantiatesAny(((GenericArrayType) type).getGenericComponentType(), substitution);
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (instantiatesAny(boundType, substitution)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (instantiatesAny(boundType, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
   }
 
   @Override
@@ -233,6 +273,8 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
+    } else if (type instanceof GenericArrayType) {
+      variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
     } else if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
@@ -241,71 +283,18 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
         variableList.addAll(getTypeParameters(boundType));
       }
-    } else if (type instanceof GenericArrayType) {
-      variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
     }
     return variableList;
   }
 
-  @Override
-  boolean hasWildcard() {
-    return hasWildcard(boundType);
-  }
-
-  private static boolean hasWildcard(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.WildcardType) {
-      return true;
-    }
-    if (type instanceof GenericArrayType) {
-      return hasWildcard(((GenericArrayType) type).getGenericComponentType());
-    }
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasWildcard(bound)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, because the bound is a {@code java.lang.reflect.Type}, which cannot contain a
+   * capture variable.
+   */
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType);
-  }
-
-  /**
-   * Returns true if the given type has a capture variable.
-   *
-   * @param type the type to test
-   * @return true if the given type has a capture variable
-   */
-  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasCaptureVariable(bound)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType)) {
-          return true;
-        }
-      }
-    }
     return false;
   }
 
@@ -362,6 +351,19 @@ class LazyParameterBound extends ParameterBound {
    */
   private Substitution completeSubstitution(Substitution substitution) {
     return substitution.extendWithIdentity(getTypeParameterList());
+  }
+
+  /**
+   * Returns this bound with the given substitution applied, after the substitution is extended to
+   * map to itself each type variable in this bound that it does not map. Each such type variable
+   * stands for an unknown type in the result. Returns null if the result would still be this bound;
+   * see {@link #instantiate(Substitution)}.
+   *
+   * @param substitution a type substitution
+   * @return this bound with the substitution applied, or null
+   */
+  @Nullable ParameterBound substituteWithUnknowns(Substitution substitution) {
+    return instantiate(completeSubstitution(substitution));
   }
 
   /**

@@ -133,7 +133,7 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if the two types are equal or are the same type variable
    * @see #getVariableKey()
    */
-  static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+  public static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
     // Comparing keys is cheaper than equals(), which compares bounds.
     if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
       return ((TypeVariable) type)
