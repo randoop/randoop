@@ -340,7 +340,8 @@ public class TypeInstantiator {
    *     the bounds of its type variables, or null if none was found
    */
   private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
-    // Why the most recent attempt failed; used for diagnostics.
+    // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
+    // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
     for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
       // answer question: what type instantiation would allow a call to this operation?
@@ -358,7 +359,9 @@ public class TypeInstantiator {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
             if (matches.isEmpty()) {
-              failure = "no input type instantiates " + paramType;
+              if (Log.isLoggingOn()) {
+                failure = "no input type instantiates " + paramType;
+              }
               allMatched = false;
               break;
             }
@@ -367,7 +370,9 @@ public class TypeInstantiator {
             Substitution subst =
                 selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
             if (subst == null) {
-              failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              if (Log.isLoggingOn()) {
+                failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              }
               allMatched = false;
               break;
             }
@@ -394,20 +399,26 @@ public class TypeInstantiator {
           if (satisfiesBounds(substitution)) {
             return substitution;
           }
-          failure = substitution + " does not satisfy the bounds";
+          if (Log.isLoggingOn()) {
+            failure = substitution + " does not satisfy the bounds";
+          }
         } else {
           List<TypeVariable> parameters = new ArrayList<>(typeParameters);
           Map<TypeVariable, List<ReferenceType>> candidatesByVariable =
               consistentCandidatesByVariable(parameters, substitution);
           if (candidatesByVariable == null) {
-            failure = "some type variable in " + parameters + " has no candidate types";
+            if (Log.isLoggingOn()) {
+              failure = "some type variable in " + parameters + " has no candidate types";
+            }
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
             if (result != null) {
               return result;
             }
-            failure = "no extension of " + substitution + " satisfies the bounds";
+            if (Log.isLoggingOn()) {
+              failure = "no extension of " + substitution + " satisfies the bounds";
+            }
           }
         }
       }
