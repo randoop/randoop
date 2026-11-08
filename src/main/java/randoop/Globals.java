@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -83,6 +85,24 @@ public final class Globals {
    */
   public static String getClassPath() {
     return System.getProperty("java.class.path");
+  }
+
+  /** The bin directory of the JDK that runs Randoop. It contains the java and javac executables. */
+  public static final Path jdkBinDir = jdkBinDir();
+
+  /**
+   * Returns the bin directory of the JDK that runs Randoop.
+   *
+   * @return the bin directory of the JDK that runs Randoop
+   */
+  private static Path jdkBinDir() {
+    Path javaHome = Paths.get(System.getProperty("java.home"));
+    // On JDK 8, java.home is the JDK's jre subdirectory, whose bin directory contains no javac.
+    Path parent = javaHome.getParent();
+    if (javaHome.endsWith("jre") && parent != null) {
+      javaHome = parent;
+    }
+    return javaHome.resolve("bin");
   }
 
   /** Column width for printing messages. */

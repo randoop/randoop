@@ -15,6 +15,7 @@ import randoop.types.ReferenceArgument;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 
+/** Chooses descriptive names for the variables of a sequence, based on the variables' types. */
 class VariableRenamer {
 
   /** The sequence in which every variable will be renamed. */
@@ -23,6 +24,11 @@ class VariableRenamer {
   /** Maximum depth to concatenate parameterized type names. */
   private static final int VAR_NAME_MAX_DEPTH = 2;
 
+  /**
+   * Creates a VariableRenamer for the given sequence.
+   *
+   * @param sequence the sequence whose variables will be renamed; must not be null
+   */
   public VariableRenamer(Sequence sequence) {
     assert sequence != null : "The given sequence to rename cannot be null";
     this.sequence = sequence;

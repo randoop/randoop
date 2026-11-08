@@ -4,6 +4,7 @@ package randoop.contract;
 // methods, document them well and update the Randoop manual.
 
 import java.util.concurrent.TimeoutException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -215,8 +216,17 @@ public abstract class ObjectContract {
     return new ObjectCheck(this, varArray);
   }
 
-  // The toString() of class Buggy throws an exception.
-  static String toStringHandleExceptions(Object o) {
+  /**
+   * Returns the result of calling {@code toString()} on the given object, or a description of the
+   * object if {@code toString()} throws an exception.
+   *
+   * @param o an object, or null
+   * @return a printed representation of the object
+   */
+  static String toStringHandleExceptions(@Nullable Object o) {
+    if (o == null) {
+      return "null";
+    }
     try {
       return o.toString();
     } catch (Throwable t) {

@@ -66,6 +66,7 @@ public final class ReplaceCallAgent {
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
   static Path debugPath;
 
+  /** Print progress information, such as the arguments with which the agent is started. */
   @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
   public static boolean verbose = false;

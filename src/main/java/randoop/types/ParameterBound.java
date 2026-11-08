@@ -112,14 +112,6 @@ public abstract class ParameterBound {
   public abstract ParameterBound substitute(Substitution substitution);
 
   /**
-   * Applies a capture conversion to any wildcard arguments in the type of this bound.
-   *
-   * @return this type with any wildcards replaced by capture conversion
-   * @see ReferenceType#applyCaptureConversion()
-   */
-  public abstract ParameterBound applyCaptureConversion();
-
-  /**
    * Returns any type parameters in the type of this bound.
    *
    * @return the list of {@code TypeVariable} objects in this bound
@@ -186,13 +178,6 @@ public abstract class ParameterBound {
   static boolean isTypeVariable(java.lang.reflect.Type type) {
     return type instanceof java.lang.reflect.TypeVariable;
   }
-
-  /**
-   * Returns true if the type of this bound has a wildcard type argument.
-   *
-   * @return true, if this bound has a wildcard argument, and false otherwise
-   */
-  abstract boolean hasWildcard();
 
   /**
    * Returns true if the type of this bound has a capture variable.

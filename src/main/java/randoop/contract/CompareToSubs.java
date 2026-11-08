@@ -17,6 +17,11 @@ public final class CompareToSubs extends ObjectContract {
   /** Private constructor to enforce singleton. */
   private CompareToSubs() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToSubs getInstance() {
     return instance;
   }

@@ -28,8 +28,10 @@ import randoop.types.TypeTuple;
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  // State variables.
+  /** The length of the created array, which is also the number of initializer elements. */
   private final int length;
+
+  /** The element type of the created array. */
   private final Type elementType;
 
   /**

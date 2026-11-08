@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +47,14 @@ class ProcessStatus {
   @SuppressWarnings("regex")
   static final @Regex String lineSep = System.lineSeparator();
 
+  /**
+   * The java executable of the JDK that runs the system tests. Commands use it, rather than the
+   * java on the PATH, so that Gradle's {@code jdkTestVersion} property determines the JDK on which
+   * Randoop and its generated tests run.
+   */
+  static final String javaExecutable =
+      Paths.get(System.getProperty("java.home"), "bin", "java").toString();
+
   /** Outputs a verbose representation of this. */
   public String dump() {
     StringBuilder sb = new StringBuilder();
@@ -75,9 +84,6 @@ class ProcessStatus {
     // for individual tests has caused headaches when tests are run on Travis-CI.
     // 20 minutes is longer than all tests currently take, even for a slow Travis-CI run.
     long timeoutMillis = 20 * 60 * 1000; // use 20 minutes for timeout
-
-    ProcessBuilder randoopBuilder = new ProcessBuilder(command);
-    randoopBuilder.redirectErrorStream(true); // join standard output error & standard error streams
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name

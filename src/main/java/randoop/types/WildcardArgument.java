@@ -35,6 +35,13 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
+  /**
+   * Creates a {@code WildcardArgument} from a {@link ReferenceType}, which must be a {@link
+   * WildcardType}.
+   *
+   * @param argumentType the wildcard type
+   * @return the {@code WildcardArgument} for the given wildcard type
+   */
   public static WildcardArgument forType(ReferenceType argumentType) {
     assert argumentType instanceof WildcardType : "argument type must be wildcard type";
     return new WildcardArgument((WildcardType) argumentType);
@@ -79,20 +86,6 @@ public class WildcardArgument extends TypeArgument {
       return this;
     }
     return new WildcardArgument(argType);
-  }
-
-  /**
-   * Applies a capture conversion to the bound of this {@link WildcardArgument}.
-   *
-   * @return this wildcard argument with capture conversion applied to the type bound
-   * @see ReferenceType#applyCaptureConversion()
-   */
-  public WildcardArgument applyCaptureConversion() {
-    WildcardType wildcardType = argumentType.applyCaptureConversion();
-    if (wildcardType.equals(argumentType)) {
-      return this;
-    }
-    return new WildcardArgument(wildcardType);
   }
 
   @Override
@@ -192,6 +185,11 @@ public class WildcardArgument extends TypeArgument {
     return false;
   }
 
+  /**
+   * Returns the wildcard type of this argument.
+   *
+   * @return the wildcard type of this argument
+   */
   WildcardType getWildcardType() {
     return argumentType;
   }

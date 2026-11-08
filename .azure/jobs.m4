@@ -1,3 +1,4 @@
+dnl When changing the JDK versions, also change CoverageGoalsTest.CI_JDK_VERSIONS.
 nonSystemTest_job(8)
 systemTest_job(8)
 nonSystemTest_job(11)

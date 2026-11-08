@@ -9,7 +9,10 @@ import randoop.sequence.ExecutableSequence;
  */
 public class ExtendGenerator extends TestCheckGenerator {
 
+  /** The generator whose invalid and error checks take precedence. */
   private TestCheckGenerator firstGenerator;
+
+  /** The generator whose checks are used if the first finds no invalid or error behavior. */
   private TestCheckGenerator secondGenerator;
 
   /**

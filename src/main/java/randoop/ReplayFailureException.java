@@ -15,6 +15,12 @@ public class ReplayFailureException extends RuntimeException {
   @SuppressWarnings("serial")
   private final Check decoration;
 
+  /**
+   * Creates a ReplayFailureException.
+   *
+   * @param message the detail message
+   * @param d the check that failed to replay
+   */
   public ReplayFailureException(String message, Check d) {
     super(message);
     this.decoration = d;

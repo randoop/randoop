@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -57,7 +59,8 @@ public final class RunCommand {
     executor.setStreamHandler(streamHandler);
 
     Log.logPrintf("RunCommand.run():%n");
-    Log.logPrintf("  cd %s; %s%n", workingDirectory, StringsPlume.join(" ", command));
+    Log.logPrintf(
+        "  cd %s; %s%n", shellQuote(workingDirectory.toString()), toShellCommand(command));
     Log.logPrintf("  timeoutMillis=%s, environment: %s%n", timeoutMillis, System.getenv());
 
     try {
@@ -94,6 +97,33 @@ public final class RunCommand {
     }
 
     return new Status(command, exitValue, timedOut, standardOutputLines, errorOutputLines);
+  }
+
+  /** Matches a non-empty string that a Unix shell treats literally. */
+  private static final Pattern SHELL_LITERAL = Pattern.compile("[A-Za-z0-9_@%+=:,./-]+");
+
+  /**
+   * Returns a string that a Unix shell splits into the given command and arguments.
+   *
+   * @param command a command and its arguments
+   * @return the command and its arguments, each quoted for a Unix shell if necessary
+   */
+  static String toShellCommand(List<String> command) {
+    return command.stream().map(RunCommand::shellQuote).collect(Collectors.joining(" "));
+  }
+
+  /**
+   * Returns a string that a Unix shell treats as the given single word.
+   *
+   * @param word a word
+   * @return the word, quoted for a Unix shell if necessary
+   */
+  static String shellQuote(String word) {
+    if (SHELL_LITERAL.matcher(word).matches()) {
+      return word;
+    }
+    // Each single quote ends the quoted text, appears escaped, and resumes the quoted text.
+    return "'" + word.replace("'", "'\\''") + "'";
   }
 
   /**
@@ -147,8 +177,8 @@ public final class RunCommand {
       StringBuilder sb = new StringBuilder();
       sb.append(
           String.format(
-              "Status %d (timedOut=%s) for command \"%s\"",
-              exitStatus, timedOut, StringsPlume.join(" ", command)));
+              "Status %d (timedOut=%s) for command: %s",
+              exitStatus, timedOut, toShellCommand(command)));
       describeLines("stdout", standardOutputLines, sb);
       describeLines("stderr", errorOutputLines, sb);
       return sb.toString();

@@ -244,6 +244,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation(libs.commons.codec)
   testImplementation(libs.hamcrest.all)
+  /* DefaultOmitMethodsTest checks the Joda-Time signatures in omitmethods-defaults.txt. */
+  testImplementation(libs.joda.time)
   configurations["junit"].dependencies.forEach { testImplementation(it) }
   testImplementation(sourceSets["testInput"].output)
 
@@ -587,6 +589,8 @@ val systemTest =
     setWorkingDir(layout.buildDirectory)
     testClassesDirs = sourceSets["systemTest"].output.classesDirs
     classpath = sourceSets["systemTest"].runtimeClasspath
+    // The coverageGoalsTest task runs it.
+    filter { excludeTestsMatching("randoop.main.CoverageGoalsTest") }
 
     /*
      * Show as much as possible to console.
@@ -601,6 +605,23 @@ val systemTest =
   }
 
 systemTest { dependsOn(tasks.shadowJar) }
+
+/*
+ * Checks the system tests' coverage goals for every JDK that CI tests.  Unlike the systemTest
+ * task, it does not run Randoop, so it is fast.  The systemTest task depends on it, so that a bad
+ * coverage goal makes systemTest fail before it runs Randoop.
+ */
+val coverageGoalsTest =
+  tasks.register<Test>("coverageGoalsTest") {
+    group = "Verification"
+    description = "Check the system tests' coverage goals"
+    testClassesDirs = sourceSets["systemTest"].output.classesDirs
+    classpath = sourceSets["systemTest"].runtimeClasspath
+    filter { includeTestsMatching("randoop.main.CoverageGoalsTest") }
+    testLogging { exceptionFormat = TestExceptionFormat.FULL }
+  }
+
+systemTest { dependsOn(coverageGoalsTest) }
 
 /*
  * Link the systemTest task into the project check task.

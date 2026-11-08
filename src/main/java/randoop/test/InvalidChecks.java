@@ -2,6 +2,7 @@ package randoop.test;
 
 import java.util.Collections;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An empty or singleton set. It contains at most one InvalidExceptionCheck or InvalidValueCheck,
@@ -12,10 +13,13 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /** An empty, immutable set of invalid checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
-  // Either an InvalidExceptionCheck or an InvalidValueCheck.
-  private Check check;
+  /**
+   * The sole member of this set, or null if this set is empty. If non-null, either an {@link
+   * InvalidExceptionCheck} or an {@link InvalidValueCheck}.
+   */
+  private @Nullable Check check;
 
-  /** Create an empty, mutable set of invalid checks. */
+  /** Create an empty set of invalid checks. */
   public InvalidChecks() {}
 
   /**
@@ -59,7 +63,7 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   }
 
   @Override
-  public ExceptionCheck getExceptionCheck() {
+  public @Nullable ExceptionCheck getExceptionCheck() {
     // TODO is this right?  The result might be an InvalidValueCheck
     if (check instanceof InvalidExceptionCheck) {
       return (InvalidExceptionCheck) check;

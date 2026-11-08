@@ -19,6 +19,11 @@ public final class CompareToTransitive extends ObjectContract {
   /** Private constructor to enforce singleton. */
   private CompareToTransitive() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToTransitive getInstance() {
     return instance;
   }

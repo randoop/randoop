@@ -12,6 +12,11 @@ public final class EqualsReflexive extends ObjectContract {
   /** Private constructor to enforce singleton. */
   private EqualsReflexive() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsReflexive getInstance() {
     return instance;
   }

@@ -25,12 +25,23 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     map = new LinkedHashMap<>();
   }
 
+  /**
+   * For each entry in the given map, adds its value to the multiset for its key.
+   *
+   * @param m the key-value pairs to add
+   */
   public void addAll(Map<? extends K, ? extends V> m) {
     for (K t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
+  /**
+   * Adds each of the given values to the multiset for the given key.
+   *
+   * @param key the key
+   * @param values the values to add
+   */
   public void addAll(K key, Collection<? extends V> values) {
     for (V t2 : values) {
       add(key, t2);
@@ -48,6 +59,14 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     values.add(value);
   }
 
+  /**
+   * Removes one occurrence of the given value from the multiset for the given key.
+   *
+   * @param key the key
+   * @param value the value to remove
+   * @throws IllegalStateException if the key is not in this map, or its multiset does not contain
+   *     the value
+   */
   public void remove(K key, V value) {
     MultiSet<V> values = map.get(key);
     if (values == null) {
@@ -60,6 +79,12 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     values.remove(value);
   }
 
+  /**
+   * Removes the given key, and its multiset, from this map.
+   *
+   * @param key the key to remove
+   * @throws IllegalStateException if the key is not in this map
+   */
   public void remove(K key) {
     MultiSet<V> values = map.get(key);
     if (values == null) {
@@ -69,6 +94,12 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     map.remove(key);
   }
 
+  /**
+   * Returns the distinct values in the multiset for the given key.
+   *
+   * @param key the key
+   * @return the distinct values that the key maps to; empty if the key is not in this map
+   */
   public Set<V> getVariables(K key) {
     MultiSet<V> values = map.get(key);
     if (values == null) {
@@ -77,10 +108,21 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     return values.getElements();
   }
 
+  /**
+   * Returns the keys of this map.
+   *
+   * @return the keys of this map
+   */
   public Set<K> keySet() {
     return map.keySet();
   }
 
+  /**
+   * Returns true if this map contains the given key.
+   *
+   * @param obj a key
+   * @return true if this map contains the given key
+   */
   public boolean contains(K obj) {
     return map.containsKey(obj);
   }
@@ -95,20 +137,36 @@ public class KeyToMultiSet<K extends @Signed Object, V extends @Signed Object> {
     }
   }
 
+  /**
+   * Removes all occurrences of each of the given values from the multiset of every key.
+   *
+   * @param values the values to remove
+   */
   public void removeAllInstances(Set<V> values) {
     for (MultiSet<V> multiSet : map.values()) {
       multiSet.removeAllInstances(values);
     }
   }
 
+  /** Removes all keys from this map. */
   public void clear() {
     map.clear();
   }
 
+  /**
+   * Returns the number of keys in this map.
+   *
+   * @return the number of keys in this map
+   */
   public int size() {
     return map.size();
   }
 
+  /**
+   * Returns true if this map contains no keys.
+   *
+   * @return true if this map contains no keys
+   */
   public boolean isEmpty() {
     return map.isEmpty();
   }

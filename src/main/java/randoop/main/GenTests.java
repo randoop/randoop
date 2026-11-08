@@ -36,6 +36,7 @@ import java.util.StringTokenizer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -141,28 +142,36 @@ public class GenTests extends GenInputsAbstract {
   private static final String NO_OPERATIONS_TO_TEST =
       "There are no methods for Randoop to test.  See diagnostics above.  Exiting.";
 
+  /** The name of this command. */
   private static final String command = "gentests";
 
+  /** A one-line description of this command. */
   private static final String pitch = "Generates unit tests for a set of classes.";
 
+  /** The usage of this command, shown in its documentation. */
   private static final String commandGrammar = "gentests OPTIONS";
 
+  /** Constraints on the command-line arguments, shown in this command's documentation. */
   private static final String where =
       "At least one of `--testjar', `--classlist', `--testclass', or `--methodlist' is"
           + " specified.";
 
+  /** A summary of what this command does. */
   private static final String summary =
       "Uses feedback-directed random test generation to generate "
           + "error-revealing tests and regression tests. ";
 
+  /** A description of this command's input. */
   private static final String input =
       "One or more names of classes to test. A class to test can be specified "
           + "via the `--testjar', `--classlist', or `--testclass' options.";
 
+  /** A description of this command's output. */
   private static final String output =
       "Two JUnit test suites (each as one or more Java source files): "
           + "an error-revealing test suite and a regression test suite.";
 
+  /** An example invocation of this command. */
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
           + "--testclass=java.util.TreeSet";
@@ -173,10 +182,33 @@ public class GenTests extends GenInputsAbstract {
   /** The prefix for test method names. */
   public static final @Regex(0) @Identifier String TEST_METHOD_NAME_PREFIX = "test";
 
-  private BlockStmt afterAllFixtureBody;
-  private BlockStmt afterEachFixtureBody;
-  private BlockStmt beforeAllFixtureBody;
-  private BlockStmt beforeEachFixtureBody;
+  /**
+   * The body of the fixture method to run once after all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_after_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt afterAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run after each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_after_each}. Null if that option is not set, if the fixture has not yet
+   * been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt afterEachFixtureBody;
+
+  /**
+   * The body of the fixture method to run once before all tests, parsed from the file named by
+   * {@link GenInputsAbstract#junit_before_all}. Null if that option is not set, if the fixture has
+   * not yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt beforeAllFixtureBody;
+
+  /**
+   * The body of the fixture method to run before each test, parsed from the file named by {@link
+   * GenInputsAbstract#junit_before_each}. Null if that option is not set, if the fixture has not
+   * yet been parsed, or if it could not be parsed.
+   */
+  private @Nullable BlockStmt beforeEachFixtureBody;
 
   static {
     notes = new ArrayList<>(4);
@@ -196,6 +228,7 @@ public class GenTests extends GenInputsAbstract {
             + "To produce different tests across runs, use the --randomseed option.");
   }
 
+  /** The command-line options for this command. */
   private static Options options =
       new Options(
           GenTests.class,
@@ -355,7 +388,7 @@ public class GenTests extends GenInputsAbstract {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
-    if (silently_ignore_bad_class_names) {
+    if (ignore_bad_class_names) {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 

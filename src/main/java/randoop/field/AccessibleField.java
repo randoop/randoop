@@ -19,9 +19,16 @@ import randoop.types.Type;
  */
 public class AccessibleField {
 
+  /** The reflective field, which has been made accessible. */
   private Field field;
+
+  /** The type of the class that declares the field. */
   private final ClassOrInterfaceType declaringType;
+
+  /** True if the field is final. */
   private boolean isFinal;
+
+  /** True if the field is static. */
   private boolean isStatic;
 
   /**
@@ -149,6 +156,11 @@ public class AccessibleField {
     return isStatic;
   }
 
+  /**
+   * Returns true if the field is final.
+   *
+   * @return true if the field is final
+   */
   public boolean isFinal() {
     return isFinal;
   }
@@ -163,6 +175,11 @@ public class AccessibleField {
     return reflectionPredicate.test(field);
   }
 
+  /**
+   * Returns the underlying reflective {@link Field} object.
+   *
+   * @return the reflective field
+   */
   public Field getRawField() {
     return field;
   }

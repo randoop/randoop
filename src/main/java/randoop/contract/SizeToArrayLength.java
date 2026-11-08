@@ -13,6 +13,11 @@ public final class SizeToArrayLength extends ObjectContract {
   /** Private constructor to enforce singleton. */
   private SizeToArrayLength() {}
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static SizeToArrayLength getInstance() {
     return instance;
   }

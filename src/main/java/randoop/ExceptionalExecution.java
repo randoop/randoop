@@ -35,8 +35,11 @@ public class ExceptionalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
+    // A preallocated exception that the JVM throws implicitly has an empty stack trace.
+    StackTraceElement[] stackTrace = exception.getStackTrace();
     return String.format(
         "[ExceptionalExecution, %s, at %s]",
-        exception.getClass().getName(), exception.getStackTrace()[0]);
+        exception.getClass().getName(),
+        stackTrace.length == 0 ? "unknown location" : stackTrace[0]);
   }
 }

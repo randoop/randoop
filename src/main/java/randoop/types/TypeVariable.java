@@ -161,6 +161,14 @@ public abstract class TypeVariable extends ParameterType {
     return new ArrayList<>(parameters);
   }
 
+  /**
+   * Returns a copy of this type variable, but with the given bounds. An implementation may ignore
+   * {@code lowerBound} if its kind of type variable has a fixed lower bound.
+   *
+   * @param lowerBound the lower bound for the new type variable
+   * @param upperBound the upper bound for the new type variable
+   * @return a copy of this type variable with the given bounds
+   */
   public abstract TypeVariable createCopyWithBounds(
       ParameterBound lowerBound, ParameterBound upperBound);
 

@@ -194,13 +194,6 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ParameterBound applyCaptureConversion() {
-    throw new LazyBoundException();
-    // assert false : "unable to do capture conversion on lazy bound " + this;
-    // return this;
-  }
-
-  @Override
   public List<TypeVariable> getTypeParameters() {
     return getTypeParameters(boundType);
   }
@@ -234,90 +227,14 @@ class LazyParameterBound extends ParameterBound {
     return variableList;
   }
 
-  @Override
-  boolean hasWildcard() {
-    return hasWildcard(boundType, new HashSet<>());
-  }
-
   /**
-   * Returns true if the given type has a wildcard.
+   * {@inheritDoc}
    *
-   * @param type the type to test
-   * @param visited the type variables whose bounds have already been examined; prevents infinite
-   *     recursion on recursive bounds such as {@code T extends Comparable<T>} or {@code T extends
-   *     List<T[]>}
-   * @return true if the given type has a wildcard
+   * <p>Returns false, because the bound is a {@code java.lang.reflect.Type}, which cannot contain a
+   * capture variable.
    */
-  private static boolean hasWildcard(
-      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
-    if (type instanceof java.lang.reflect.WildcardType) {
-      return true;
-    }
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      java.lang.reflect.TypeVariable<?> typeVariable = (java.lang.reflect.TypeVariable<?>) type;
-      if (!visited.add(typeVariable)) {
-        return false;
-      }
-      for (java.lang.reflect.Type bound : typeVariable.getBounds()) {
-        if (hasWildcard(bound, visited)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasWildcard(argType, visited)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof GenericArrayType) {
-      return hasWildcard(((GenericArrayType) type).getGenericComponentType(), visited);
-    }
-    return false;
-  }
-
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType, new HashSet<>());
-  }
-
-  /**
-   * Returns true if the given type has a capture variable.
-   *
-   * @param type the type to test
-   * @param visited the type variables whose bounds have already been examined; prevents infinite
-   *     recursion on recursive bounds such as {@code T extends Comparable<T>} or {@code T extends
-   *     List<T[]>}
-   * @return true if the given type has a capture variable
-   */
-  private static boolean hasCaptureVariable(
-      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> visited) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      java.lang.reflect.TypeVariable<?> typeVariable = (java.lang.reflect.TypeVariable<?>) type;
-      if (!visited.add(typeVariable)) {
-        return false;
-      }
-      for (java.lang.reflect.Type bound : typeVariable.getBounds()) {
-        if (hasCaptureVariable(bound, visited)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType, visited)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof GenericArrayType) {
-      return hasCaptureVariable(((GenericArrayType) type).getGenericComponentType(), visited);
-    }
     return false;
   }
 
@@ -376,7 +293,7 @@ class LazyParameterBound extends ParameterBound {
     return boundType instanceof java.lang.reflect.TypeVariable;
   }
 
-  /** There was an attempt to perform an operation, such as capture conversion, on a lazy bound. */
+  /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
     public LazyBoundException() {}
