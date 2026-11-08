@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,6 +63,117 @@ public class CaptureConversionTest {
         JDKTypes.LIST_TYPE,
         ArrayType.ofComponentType(ReferenceType.forClass(Integer.class)),
         listOperations);
+  }
+
+  /**
+   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument.
+   *
+   * @param <T> a type parameter with a self-referential bound
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperSelfComparable<T extends Comparable<T>> {
+    /**
+     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
+     * with a self-referential bound.
+     */
+    Comparable<? super T> superT;
+  }
+
+  /** Tests capture when the wildcard bound is a type variable with a self-referential bound. */
+  @Test
+  public void captureSelfComparableBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(SuperSelfComparable.class.getDeclaredField("superT").getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertEquals(wildcard.getTypeBound(), capture.getLowerTypeBound());
+    assertTrue(capture.getUpperTypeBound().isObject());
+  }
+
+  /**
+   * A class with a field whose type is a parameterized type with a {@code ? super T} type argument,
+   * where the bounds of T and U refer to each other.
+   *
+   * @param <T> a type parameter whose bound refers to U
+   * @param <U> a type parameter whose bound refers to T
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperMutuallyComparable<T extends Comparable<U>, U extends Comparable<T>> {
+    /**
+     * A parameterized type with a wildcard type argument, whose lower bound is a type parameter
+     * with a mutually recursive bound.
+     */
+    Comparable<? super T> superT;
+  }
+
+  /** Tests capture when the wildcard bound is a type variable with a mutually recursive bound. */
+  @Test
+  public void captureMutuallyComparableBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(SuperMutuallyComparable.class.getDeclaredField("superT").getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertEquals(wildcard.getTypeBound(), capture.getLowerTypeBound());
+    assertTrue(capture.getUpperTypeBound().isObject());
+  }
+
+  /**
+   * A class with a field whose type has a wildcard type argument, whose bound contains a wildcard
+   * whose bound is a type parameter.
+   *
+   * @param <T> a type parameter whose bound contains a wildcard
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class ExtendsSuperWildcardComparable<T extends Comparable<? super T>> {
+    /** A parameterized type whose wildcard type argument has a bound that contains a wildcard. */
+    List<? extends Comparable<? super T>> extendsSuperT;
+  }
+
+  /**
+   * Tests capture when the wildcard bound is a parameterized type with a wildcard argument. Capture
+   * conversion leaves the wildcard bound unchanged.
+   */
+  @Test
+  public void captureNestedWildcardBoundTest() throws NoSuchFieldException {
+    InstantiatedType type =
+        (InstantiatedType)
+            Type.forType(
+                ExtendsSuperWildcardComparable.class
+                    .getDeclaredField("extendsSuperT")
+                    .getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) type.getTypeArguments().get(0);
+    CaptureTypeVariable capture = getCaptureVariable(type.applyCaptureConversion());
+    assertTrue(isGlbWithObject(capture.getUpperTypeBound(), wildcard.getTypeBound()));
+  }
+
+  /**
+   * Returns true if {@code bound} is equivalent to {@code glb(Object, other)}: that is, if it is
+   * {@code other} or the intersection of {@code Object} and {@code other}.
+   *
+   * @param bound the bound to test
+   * @param other the bound that {@code bound} should be equivalent to
+   * @return true if {@code bound} is {@code other}, possibly intersected with {@code Object}
+   */
+  private static boolean isGlbWithObject(ParameterBound bound, ParameterBound other) {
+    ParameterBound objectBound = ParameterBound.forType(JavaTypes.OBJECT_TYPE);
+    return bound.equals(other)
+        || bound.equals(new IntersectionTypeBound(Arrays.asList(objectBound, other)))
+        || bound.equals(new IntersectionTypeBound(Arrays.asList(other, objectBound)));
+  }
+
+  /**
+   * Returns the capture variable that is the sole type argument of the given type.
+   *
+   * @param type a parameterized type with one type argument, which is a capture variable
+   * @return the type argument of {@code type}
+   */
+  private static CaptureTypeVariable getCaptureVariable(InstantiatedType type) {
+    TypeArgument argument = type.getTypeArguments().get(0);
+    ReferenceType referenceType = ((ReferenceArgument) argument).getReferenceType();
+    assertTrue(referenceType.isCaptureVariable());
+    return (CaptureTypeVariable) referenceType;
   }
 
   /** Container tests involve a generic class with a type parameter T bound by Comparable<T>. */
@@ -132,7 +244,9 @@ public class CaptureConversionTest {
             ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
     assertTrue(captureVariable.isCaptureVariable());
     // The upper bound includes List<?>, not List<CaptureN>.
-    assertTrue(captureVariable.getUpperTypeBound().hasWildcard());
+    ParameterBound upperBound = captureVariable.getUpperTypeBound();
+    assertFalse(upperBound.hasCaptureVariable());
+    assertTrue(upperBound.toString().contains("java.util.List<?>"));
   }
 
   /** A field whose type has a wildcard type argument. */

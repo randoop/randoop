@@ -135,17 +135,10 @@ public class Substitution {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
-  @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      TypeVariable key = entry.getKey();
-      if (this.map.containsKey(key) && !this.get(key).equals(entry.getValue())) {
-        return false;
-      }
-    }
-    for (Map.Entry<Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      Type key = entry.getKey();
-      if (this.rawMap.containsKey(key) && !this.get(key).equals(entry.getValue())) {
+      ReferenceType existing = this.get(entry.getKey());
+      if (existing != null && !existing.equals(entry.getValue())) {
         return false;
       }
     }
@@ -356,6 +349,20 @@ public class Substitution {
       }
       instantiatedDeclarations = result;
     }
+    return result;
+  }
+
+  /**
+   * Returns a copy of this substitution that maps the given type variable to the given type,
+   * replacing any mapping of it in this substitution.
+   *
+   * @param variable a type variable
+   * @param type the type to map {@code variable} to
+   * @return a copy of this substitution that maps {@code variable} to {@code type}
+   */
+  Substitution withMapping(TypeVariable variable, ReferenceType type) {
+    Substitution result = new Substitution(this);
+    result.put(variable, type);
     return result;
   }
 

@@ -340,8 +340,10 @@ public class TypeInstantiator {
    *         <li>If the parameter type is some other generic type, such as {@code T} or {@code T[]},
    *             defer its type variables to step 2.
    *       </ul>
-   *   <li>Instantiate the remaining type variables: those in the return type and those deferred in
-   *       step 1. The return type need not be an input type.
+   *   <li>Instantiate the remaining type variables: those in the return type, those deferred in
+   *       step 1, and those in the bounds of any of these or of the type variables that the
+   *       substitution instantiates; see {@link #uninstantiatedVariables(Set, Substitution)}. The
+   *       return type need not be an input type.
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
@@ -464,6 +466,92 @@ public class TypeInstantiator {
   }
 
   /**
+   * Returns the type variables that remain to be instantiated: the given type variables, together
+   * with the type variables in the bounds of the given type variables and of the type variables
+   * that {@code substitution} instantiates, transitively, but without the ones that {@code
+   * substitution} instantiates. For example, for {@code <S extends Map<T, T>, T>}, if {@code
+   * substitution} instantiates {@code S}, the result contains {@code T}; instantiating {@code T}
+   * makes the bound of {@code S} be checked with one type for every occurrence of {@code T}.
+   *
+   * <p>Substitution can create copies of a type variable that have different bounds. The result
+   * contains at most one of the copies, and none if {@code substitution} instantiates any of them.
+   *
+   * @param variables type variables
+   * @param substitution a substitution
+   * @return the type variables that remain to be instantiated, without duplicates; those in {@code
+   *     variables} come first, in their order there
+   */
+  private static List<TypeVariable> uninstantiatedVariables(
+      Set<TypeVariable> variables, Substitution substitution) {
+    List<TypeVariable> result = new ArrayList<>();
+    // The type variables that have been added to the worklist, without copies.
+    List<TypeVariable> seen = new ArrayList<>();
+    Deque<TypeVariable> worklist = new ArrayDeque<>();
+    for (TypeVariable variable : variables) {
+      if (!containsVariable(seen, variable)) {
+        seen.add(variable);
+        worklist.add(variable);
+      }
+    }
+    for (TypeVariable variable : substitution.keySet()) {
+      if (!containsVariable(seen, variable)) {
+        seen.add(variable);
+        worklist.add(variable);
+      }
+    }
+    while (!worklist.isEmpty()) {
+      TypeVariable variable = worklist.remove();
+      if (!containsVariable(substitution.keySet(), variable)) {
+        result.add(variable);
+      }
+      List<TypeVariable> boundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : boundVariables) {
+        if (!containsVariable(seen, boundVariable)) {
+          seen.add(boundVariable);
+          worklist.add(boundVariable);
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns true if the given collection contains the given type variable.
+   *
+   * @param variables type variables
+   * @param variable a type variable
+   * @return true if {@code variables} contains {@code variable}
+   */
+  private static boolean containsVariable(
+      Iterable<? extends TypeVariable> variables, TypeVariable variable) {
+    for (TypeVariable v : variables) {
+      if (v.equals(variable)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns the index in the given list of the given type variable, or -1 if the list does not
+   * contain it.
+   *
+   * @param variables type variables
+   * @param variable a type variable
+   * @return the index of {@code variable} in {@code variables}, or -1
+   */
+  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
+    for (int i = 0; i < variables.size(); i++) {
+      if (variables.get(i).equals(variable)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Returns a map from each of the given type variables to its candidate types that are consistent
    * with the given substitution.
    *
@@ -486,8 +574,12 @@ public class TypeInstantiator {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      List<TypeVariable> constrained =
-          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
+      List<TypeVariable> constrained = new ArrayList<>();
+      for (Map.Entry<TypeVariable, List<TypeVariable>> entry : constrainedVariables.entrySet()) {
+        if (entry.getKey().equals(parameter)) {
+          constrained.addAll(entry.getValue());
+        }
+      }
       List<ReferenceType> candidates = candidateTypes(parameter);
       if (!constrained.isEmpty()) {
         candidates.removeIf(
@@ -520,13 +612,19 @@ public class TypeInstantiator {
     Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
     Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
     for (TypeVariable variable : instantiated) {
-      // The uninstantiated type variables in the bounds of `variable`.
-      Set<TypeVariable> boundVariables =
-          new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
-      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      boundVariables.removeAll(instantiated);
+      // The uninstantiated type variables in the bounds of `variable`, without copies.
+      List<TypeVariable> boundVariables = new ArrayList<>();
+      List<TypeVariable> allBoundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      allBoundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : allBoundVariables) {
+        if (!containsVariable(instantiated, boundVariable)
+            && !containsVariable(boundVariables, boundVariable)) {
+          boundVariables.add(boundVariable);
+        }
+      }
       if (boundVariables.size() == 1) {
-        TypeVariable boundVariable = boundVariables.iterator().next();
+        TypeVariable boundVariable = boundVariables.get(0);
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }
@@ -579,7 +677,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        last = Math.max(last, parameters.indexOf(neededVariable));
+        last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {
         checkFirst.add(variable);
@@ -717,7 +815,14 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
+  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
+    for (TypeVariable parameter : parameters) {
+      if (substitution.get(parameter) == null) {
+        throw new IllegalArgumentException(
+            "substitution " + substitution + " does not instantiate " + parameter);
+      }
+    }
     return new BoundsCheck(parameters).test(substitution);
   }
 
