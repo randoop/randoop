@@ -119,16 +119,44 @@ final class Subtyping {
       } catch (LazyBoundException e) {
         return false;
       }
-      List<TypeArgument> typeArguments = supertype.getTypeArguments();
-      List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
+      return argumentsContained(supertype, otherInstantiatedType, substitution);
+    }
+    return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if each type argument of {@code otherType} contains the corresponding type
+   * argument of {@code type}, including the type arguments of the enclosing types of member
+   * classes. The two types must be instantiations of the same generic class.
+   *
+   * @param type a type, to which capture conversion has been applied
+   * @param otherType a type, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if the type arguments of {@code otherType} contain those of {@code type}
+   */
+  private static boolean argumentsContained(
+      ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
+    if (otherType instanceof InstantiatedType) {
+      if (!(type instanceof InstantiatedType)) {
+        return false;
+      }
+      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
+      if (typeArguments.size() != otherTypeArguments.size()) {
+        return false;
+      }
       for (int i = 0; i < typeArguments.size(); i++) {
         if (!contains(otherTypeArguments.get(i), typeArguments.get(i), substitution)) {
           return false;
         }
       }
-      return true;
     }
-    return type.isSubtypeOfOrEqualTo(otherType);
+    // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the type
+    // arguments of the enclosing type must also be contained.
+    if (type.isMemberClass() && otherType.isMemberClass()) {
+      return argumentsContained(type.enclosingType, otherType.enclosingType, substitution);
+    }
+    return true;
   }
 
   /**
