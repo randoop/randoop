@@ -25,9 +25,9 @@ public class Substitution {
   private Map<TypeVariable, ReferenceType> map;
 
   /**
-   * The map from the {@link TypeVariable#getVariableKey() key} of each type variable in {@link #map}
-   * to its type. Copies of a type variable, which can differ in their bounds, share a key, so a
-   * lookup in this map finds the type for any copy. The key of a type parameter is its reflection
+   * The map from the {@link TypeVariable#getVariableKey() key} of each type variable in {@link
+   * #map} to its type. Copies of a type variable, which can differ in their bounds, share a key, so
+   * a lookup in this map finds the type for any copy. The key of a type parameter is its reflection
    * type variable, which {@link #get(Type)} looks up.
    */
   private Map<Object, ReferenceType> keyMap;
