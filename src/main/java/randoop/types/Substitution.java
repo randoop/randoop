@@ -34,8 +34,8 @@ public class Substitution {
 
   /**
    * The keys of the type variables that occur in a type that this substitution maps a different
-   * type variable to; null if not yet computed. Use {@link #getReplacementVariables()}
-   * instead of reading this field.
+   * type variable to; null if not yet computed. Use {@link #getReplacementVariables()} instead of
+   * reading this field.
    */
   private @Nullable Set<Object> replacementVariables = null;
 
