@@ -165,7 +165,7 @@ public abstract class TypeVariable extends ParameterType {
     List<TypeVariable> boundVariables = new ArrayList<>(getLowerTypeBound().getTypeParameters());
     boundVariables.addAll(getUpperTypeBound().getTypeParameters());
     for (TypeVariable variable : boundVariables) {
-      // Compare identities, so that a copy of a type variable is not a separate entry.
+      // Compare keys, so that a copy of a type variable is not a separate entry.
       boolean present = false;
       for (TypeVariable parameter : parameters) {
         if (parameter.getVariableKey().equals(variable.getVariableKey())) {

@@ -33,8 +33,8 @@ public class Substitution {
   private Map<Object, ReferenceType> keyMap;
 
   /**
-   * The identities of the type variables that occur in a type that this substitution maps a
-   * different type variable to; null if not yet computed. Use {@link #getReplacementVariables()}
+   * The keys of the type variables that occur in a type that this substitution maps a different
+   * type variable to; null if not yet computed. Use {@link #getReplacementVariables()}
    * instead of reading this field.
    */
   private @Nullable Set<Object> replacementVariables = null;
@@ -300,10 +300,10 @@ public class Substitution {
   }
 
   /**
-   * Returns the identities of the type variables that occur in a type that this substitution maps a
+   * Returns the keys of the type variables that occur in a type that this substitution maps a
    * different type variable to.
    *
-   * @return the identities of the type variables that occur in a replacement
+   * @return the keys of the type variables that occur in a replacement
    * @see TypeVariable#getVariableKey()
    */
   private Set<Object> getReplacementVariables() {
