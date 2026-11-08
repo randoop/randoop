@@ -108,15 +108,14 @@ public class ParameterBoundTest {
   }
 
   /**
-   * A capture variable is a supertype of its lower bound, so a {@link LazyReferenceBound} whose type
-   * is a capture variable has that lower bound, and its subtypes, as lower bounds.
+   * A capture variable is a supertype of its lower bound, so a {@link LazyReferenceBound} whose
+   * type is a capture variable has that lower bound, and its subtypes, as lower bounds.
    */
   @Test
   public void testLazyCaptureBoundHasCaptureLowerBound() throws Exception {
     java.lang.reflect.Type superNumber =
         ((java.lang.reflect.ParameterizedType)
-                ArrayHolder.class
-                    .getDeclaredMethod("superNumbers", List.class)
+                ArrayHolder.class.getDeclaredMethod("superNumbers", List.class)
                     .getGenericParameterTypes()[0])
             .getActualTypeArguments()[0];
     CaptureTypeVariable capture = new CaptureTypeVariable(WildcardArgument.forType(superNumber));

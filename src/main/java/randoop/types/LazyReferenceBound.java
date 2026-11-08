@@ -29,7 +29,9 @@ class LazyReferenceBound extends EagerReferenceBound {
   private static final ThreadLocal<Set<LazyReferenceBound>> beingSubstituted =
       ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
-  /** The bounds that {@link #hasLowerBound(ParameterBound, Substitution)} is currently examining. */
+  /**
+   * The bounds that {@link #hasLowerBound(ParameterBound, Substitution)} is currently examining.
+   */
   private static final ThreadLocal<Set<LazyReferenceBound>> beingComparedWithLowerBound =
       ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
