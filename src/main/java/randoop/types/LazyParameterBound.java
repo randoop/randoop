@@ -416,12 +416,13 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns false if the substitution does not instantiate this bound.
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
    */
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    ParameterBound b = this.substitute(substitution);
-    return !b.equals(this) && b.isLowerBound(bound, substitution);
+    ParameterBound b = instantiate(completeSubstitution(substitution));
+    return b != null && b.isLowerBound(bound, substitution);
   }
 
   /**
