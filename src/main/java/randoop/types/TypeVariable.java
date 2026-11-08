@@ -106,6 +106,36 @@ public abstract class TypeVariable extends ParameterType {
     return new Substitution(variable, otherType);
   }
 
+  /**
+   * Returns an object that a type variable shares with its copies. Substitution can create a copy
+   * of a type variable whose bounds differ, such as by having a lazy part resolved. {@link
+   * #equals(Object)} distinguishes the copy from the original, but they have equal keys.
+   *
+   * @return an object that a type variable shares with its copies, and with no other type variable
+   */
+  Object getVariableKey() {
+    return this;
+  }
+
+  /**
+   * Returns true if the two types are equal or are the same type variable, possibly with different
+   * bounds.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the two types are equal or are the same type variable
+   * @see #getVariableKey()
+   */
+  public static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
+    // Comparing keys is cheaper than equals(), which compares bounds.
+    if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
+      return ((TypeVariable) type)
+          .getVariableKey()
+          .equals(((TypeVariable) otherType).getVariableKey());
+    }
+    return type.equals(otherType);
+  }
+
   @Override
   public boolean isVariable() {
     return true;

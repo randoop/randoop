@@ -89,6 +89,17 @@ class CaptureTypeVariable extends TypeVariable {
     return wildcard;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the ID of this capture variable, an integer such as 7 that capture conversion assigns
+   *     in creation order
+   */
+  @Override
+  Object getVariableKey() {
+    return this.varID;
+  }
+
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {

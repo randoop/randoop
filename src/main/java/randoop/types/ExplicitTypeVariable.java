@@ -69,6 +69,16 @@ public class ExplicitTypeVariable extends TypeVariable {
     return this.variable;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the reflection type variable for this type parameter
+   */
+  @Override
+  Object getVariableKey() {
+    return this.variable;
+  }
+
   @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     return true;
