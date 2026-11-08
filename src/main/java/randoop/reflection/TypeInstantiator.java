@@ -860,68 +860,6 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the type variables that must be instantiated to extend the given substitution to the
-   * given type variables. These are the given type variables that the substitution does not
-   * instantiate, plus the type variables in their bounds and in the bounds of the variables of the
-   * substitution, transitively. For example, in {@code <T> void Collections.copy(List<? super T>,
-   * List<? extends T>)}, the parameter types are instantiated by instantiating their capture
-   * variables, and only the bounds of the capture variables mention {@code T}.
-   *
-   * @param variables type variables to be instantiated
-   * @param substitution a substitution
-   * @return the type variables that must be instantiated to extend {@code substitution} to {@code
-   *     variables}
-   */
-  private static List<TypeVariable> uninstantiatedVariables(
-      Collection<TypeVariable> variables, Substitution substitution) {
-    Deque<TypeVariable> worklist = new ArrayDeque<>(variables);
-    for (TypeVariable variable : substitution.keySet()) {
-      worklist.addAll(boundVariables(variable));
-    }
-    List<TypeVariable> result = new ArrayList<>();
-    while (!worklist.isEmpty()) {
-      TypeVariable variable = worklist.remove();
-      if (!containsVariable(substitution.keySet(), variable)
-          && !containsVariable(result, variable)) {
-        result.add(variable);
-        worklist.addAll(boundVariables(variable));
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Returns the type variables that occur in the bounds of the given type variable.
-   *
-   * @param variable a type variable
-   * @return the type variables that occur in the bounds of {@code variable}
-   */
-  private static List<TypeVariable> boundVariables(TypeVariable variable) {
-    List<TypeVariable> result = new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
-    result.addAll(variable.getUpperTypeBound().getTypeParameters());
-    return result;
-  }
-
-  /**
-   * Returns true if the given collection contains the given type variable, possibly with different
-   * bounds.
-   *
-   * @param variables a collection of type variables
-   * @param variable a type variable
-   * @return true if {@code variables} contains {@code variable}, possibly with different bounds
-   * @see TypeVariable#isSameVariable
-   */
-  private static boolean containsVariable(
-      Collection<? extends TypeVariable> variables, TypeVariable variable) {
-    for (TypeVariable v : variables) {
-      if (TypeVariable.isSameVariable(v, variable)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Selects an instantiating substitution for the given list of type variables.
    *
    * @param typeParameters the type variables to be instantiated
