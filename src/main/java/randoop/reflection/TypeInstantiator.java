@@ -343,8 +343,8 @@ public class TypeInstantiator {
    *       </ul>
    *   <li>Instantiate the remaining type variables: those in the return type, those deferred in
    *       step 1, and those in the bounds of any of these or of the type variables that the
-   *       substitution instantiates; see {@link #uninstantiatedVariables(Set, Substitution)}. The
-   *       return type need not be an input type.
+   *       substitution instantiates; see {@link #uninstantiatedVariables(Collection,
+   *       Substitution)}. The return type need not be an input type.
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
@@ -364,11 +364,6 @@ public class TypeInstantiator {
    * <p>If an attempt fails, and step 1 chose among several input types for some parameter type,
    * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
    * Otherwise, another attempt would start from the same substitution, so this returns null.
-   *
-   * <p>A type variable that occurs only in the bounds of other type variables, such as {@code T} in
-   * {@code <S extends Map<T, T>, T> void m(List<S>)} or in {@code <T> void copy(List<? super T>,
-   * List<? extends T>)}, is instantiated too. Thus, the types chosen for {@code S}, or for the
-   * captures of the wildcards, must be consistent with a single type for {@code T}.
    *
    * @param operation an operation
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
@@ -468,76 +463,6 @@ public class TypeInstantiator {
     }
     Log.logPrintf("TypeInstantiator: no instantiation of %s: %s%n", operation, failure);
     return null;
-  }
-
-  /**
-   * Returns the type variables that remain to be instantiated: the given type variables, together
-   * with the type variables in the bounds of the given type variables and of the type variables
-   * that {@code substitution} instantiates, transitively, but without the ones that {@code
-   * substitution} instantiates. For example, for {@code <S extends Map<T, T>, T>}, if {@code
-   * substitution} instantiates {@code S}, the result contains {@code T}; instantiating {@code T}
-   * makes the bound of {@code S} be checked with one type for every occurrence of {@code T}.
-   *
-   * <p>Substitution can create copies of a type variable that have different bounds. The result
-   * contains at most one of the copies, and none if {@code substitution} instantiates any of them.
-   *
-   * @param variables type variables
-   * @param substitution a substitution
-   * @return the type variables that remain to be instantiated, without duplicates; those in {@code
-   *     variables} come first, in their order there
-   */
-  private static List<TypeVariable> uninstantiatedVariables(
-      Set<TypeVariable> variables, Substitution substitution) {
-    List<TypeVariable> result = new ArrayList<>();
-    // The type variables that have been added to the worklist, without copies.
-    List<TypeVariable> seen = new ArrayList<>();
-    Deque<TypeVariable> worklist = new ArrayDeque<>();
-    for (TypeVariable variable : variables) {
-      if (!containsVariable(seen, variable)) {
-        seen.add(variable);
-        worklist.add(variable);
-      }
-    }
-    for (TypeVariable variable : substitution.keySet()) {
-      if (!containsVariable(seen, variable)) {
-        seen.add(variable);
-        worklist.add(variable);
-      }
-    }
-    while (!worklist.isEmpty()) {
-      TypeVariable variable = worklist.remove();
-      if (!containsVariable(substitution.keySet(), variable)) {
-        result.add(variable);
-      }
-      List<TypeVariable> boundVariables =
-          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
-      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      for (TypeVariable boundVariable : boundVariables) {
-        if (!containsVariable(seen, boundVariable)) {
-          seen.add(boundVariable);
-          worklist.add(boundVariable);
-        }
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Returns true if the given collection contains the given type variable or a copy of it.
-   *
-   * @param variables type variables
-   * @param variable a type variable
-   * @return true if {@code variables} contains {@code variable} or a copy of it
-   * @see TypeVariable#isSameVariable(ReferenceType, ReferenceType)
-   */
-  private static boolean containsVariable(
-      Iterable<? extends TypeVariable> variables, TypeVariable variable) {
-    for (TypeVariable v : variables) {
-      if (TypeVariable.isSameVariable(v, variable)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
