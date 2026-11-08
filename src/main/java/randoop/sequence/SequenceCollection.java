@@ -229,8 +229,7 @@ public final class SequenceCollection {
       Type outType = sequence.getLastVariable().getType();
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
-          && statement.isNonreceivingInitialization()
-          && sequence.isActive(0)) {
+          && statement.isNonreceivingInitialization()) {
         primitiveValues.add(statement.getValue());
       }
     }
