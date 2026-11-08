@@ -646,6 +646,55 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubstituteVariableIntoNestedArgument() {
+    TypeVariable t = typeParameter(SelfNestedArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteVariableIntoWildcardBound() {
+    TypeVariable t = typeParameter(WildcardSelfBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteTypeContainingVariableIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    InstantiatedType listOfV = GenericClassType.forClass(List.class).instantiate(v);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, listOfV));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(listOfV, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  /**
+   * A class whose type parameter's bound contains the type parameter nested in a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
+
+  @Test
   public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
     TypeVariable capture = typeArgument(capturedType, 0);
