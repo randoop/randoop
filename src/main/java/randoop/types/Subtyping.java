@@ -151,7 +151,8 @@ final class Subtyping {
     if (!(argument instanceof ReferenceArgument)) {
       // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
       // wildcard is contained only by an identical wildcard.
-      return otherArgument.equals(argument);
+      return otherArgument instanceof WildcardArgument
+          && isSameWildcard(argument, (WildcardArgument) otherArgument, substitution);
     }
     ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
     if (otherArgument instanceof ReferenceArgument) {
