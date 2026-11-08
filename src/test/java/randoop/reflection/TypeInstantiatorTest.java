@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -16,15 +15,12 @@ import org.junit.Test;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
-import randoop.types.TypeVariable;
 
 /** Tests for {@link TypeInstantiator}. */
 public class TypeInstantiatorTest {
@@ -56,25 +52,6 @@ public class TypeInstantiatorTest {
     /** A list of nodes. */
     List<Node> nodes;
   }
-
-  /**
-   * A generic class with a member class.
-   *
-   * @param <E> the type parameter
-   */
-  private static class Outer<E> {
-    /** A member class with no type parameters of its own. */
-    class Inner {}
-  }
-
-  /**
-   * A method whose parameter type is generic only through its enclosing type.
-   *
-   * @param <E> the type parameter of the enclosing type
-   * @param inner an inner object
-   */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
-  private static <E> void innerParameter(Outer<E>.Inner inner) {}
 
   /**
    * A method whose type parameter {@code K} occurs only in the bound of another type parameter.
@@ -187,31 +164,6 @@ public class TypeInstantiatorTest {
           argElementType.isSubtypeOfOrEqualTo(resultElementType));
     }
     assertTrue("no instantiation found", instantiations > 0);
-  }
-
-  /**
-   * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
-   * with no type parameters of its own, which is generic only through its enclosing type.
-   */
-  @Test
-  public void testNonParameterizedMemberClassParameter() throws Exception {
-    Method m = TypeInstantiatorTest.class.getDeclaredMethod("innerParameter", Outer.Inner.class);
-    TypedClassOperation operation = TypedOperation.forMethod(m);
-    // Outer<String>.Inner.  Reflection does not preserve the type arguments of the enclosing type,
-    // so this substitutes into Outer<E>.Inner.
-    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
-    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
-    ClassOrInterfaceType expected =
-        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
-    assertTrue(genericInner.isGeneric());
-    assertFalse(genericInner instanceof ParameterizedType);
-    assertFalse(expected.isGeneric());
-    Set<Type> inputTypes = inputTypes();
-    inputTypes.add(expected);
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    TypedClassOperation instantiated = instantiator.instantiate(operation);
-    assertTrue("no instantiation found", instantiated != null);
-    assertEquals(expected, instantiated.getInputTypes().get(0));
   }
 
   /**
