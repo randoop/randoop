@@ -7,6 +7,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -128,6 +129,21 @@ public class ReplaceCallAgentTest {
       "--disable-default-replacements-file=" + disabledFile.toAbsolutePath()
     };
     assertArrayEquals(expected, ReplaceCallAgent.tokenize(args));
+
+    checkParse(args, replacementFile.toAbsolutePath(), dontTransformFile.toAbsolutePath());
+  }
+
+  @Test
+  public void createAgentArgsDoubleQuoteTest() throws ArgException {
+    // Windows does not permit a double quote in a filename.
+    assumeFalse(System.getProperty("os.name").startsWith("Windows"));
+    // The only special character in the first filename is a double quote.
+    Path replacementFile = Paths.get("my\"replacements\".txt");
+    // The second filename contains both kinds of quote.
+    Path dontTransformFile = Paths.get("don't \"transform\".txt");
+    ReplaceCallAgent.replacement_file = replacementFile;
+    ReplaceCallAgent.dont_transform = dontTransformFile;
+    String args = ReplaceCallAgent.createAgentArgs();
 
     checkParse(args, replacementFile.toAbsolutePath(), dontTransformFile.toAbsolutePath());
   }

@@ -1578,11 +1578,14 @@ Therefore, to give a filename that contains whitespace, a single quote, or a
 double quote, enclose the filename in quotes:  in double quotes if the
 filename contains a single quote but no double quote, and otherwise in single
 quotes.
-If the filename contains both kinds of quote, also replace each single quote in
-it by <code>'"'"'</code>, which ends the single-quoted text, gives a single
+If the filename contains both kinds of quote, quote consecutive parts of it
+separately, each part in the kind of quote that it does not contain.
+One way to do so is to replace each single quote in the single-quoted filename
+by <code>'"'"'</code>, which ends the single-quoted text, gives a single
 quote within double quotes, and resumes the single-quoted text.
 For example, give the filename <code>a'b"c.txt</code> as
-<code>'a'"'"'b"c.txt'</code>.
+<code>'a'"'"'b"c.txt'</code>, and the filename
+<code>don't "replace".txt</code> as <code>"don't "'"replace".txt'</code>.
 These quotes must reach the agent, so they are in addition to the quoting
 that the shell requires.
 For example (the
