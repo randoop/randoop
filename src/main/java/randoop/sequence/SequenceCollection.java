@@ -410,7 +410,6 @@ public final class SequenceCollection {
   }
 
   /** Logs the contents of this collection to the log file. */
-  @SuppressWarnings("nullness:flowexpr.parse.error.postcondition") // TEMPORARY, to mask a bug
   public void log() {
     if (!Log.isLoggingOn()) {
       return;

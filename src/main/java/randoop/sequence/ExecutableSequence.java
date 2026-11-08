@@ -649,13 +649,14 @@ public class ExecutableSequence {
   }
 
   /**
-   * The result of executing the index-th element of the sequence.
+   * Returns the runtime value of the index-th element of the sequence. Throws Error if that
+   * element's execution did not complete normally.
    *
    * @param index which element to obtain
-   * @return the result of executing the index-th element of the sequence, if that element's
-   *     execution completed normally
+   * @return the runtime value of the index-th element of the sequence, or null if that value is
+   *     null
    */
-  private Object getValue(int index) {
+  private @Nullable Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
@@ -689,10 +690,12 @@ public class ExecutableSequence {
    * mapping to {@link #variableMap}.
    *
    * @param variable the variable to use as a value in variableMap
-   * @param value the Java value to use as a key in variableMap
+   * @param value the Java value to use as a key in variableMap; this method does nothing if it is
+   *     null
    * @param refValues the set of all reference values; is side-effected by this method
    */
-  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+  private void addReferenceValue(
+      Variable variable, @Nullable Object value, Set<ReferenceValue> refValues) {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
@@ -712,10 +715,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
       // TODO: Should this be only reference values, not all values?
       Object value = getValue(i);
-      if (value != null) {
-        Variable variable = sequence.getVariable(i);
-        addReferenceValue(variable, value, values);
-      }
+      Variable variable = sequence.getVariable(i);
+      addReferenceValue(variable, value, values);
     }
     return new ArrayList<>(values);
   }
@@ -739,11 +740,25 @@ public class ExecutableSequence {
   /**
    * Returns some variable that has the given value in the outcome of executing this sequence.
    *
-   * @param value the value
+   * <p>Only values returned by {@link #getLastStatementValues} or {@link #getAllValues} are
+   * recorded, so the value must have been returned by one of those methods.
+   *
+   * @param value the value, which was returned by {@link #getLastStatementValues} or {@link
+   *     #getAllValues}
    * @return a variable that has the given value
+   * @throws RandoopBug if no variable has been recorded for the given value
    */
   public Variable getVariable(Object value) {
-    return variableMap.get(value).iterator().next();
+    Set<Variable> variables = variableMap.get(value);
+    if (variables == null) {
+      // Do not call value.toString(), which can throw an exception or not terminate.
+      throw new RandoopBug(
+          String.format(
+              "No variable has been recorded for the given value, of class %s with identity hash"
+                  + " code %d; was it returned by getLastStatementValues() or getAllValues()?",
+              value.getClass().getName(), System.identityHashCode(value)));
+    }
+    return variables.iterator().next();
   }
 
   /**
