@@ -321,9 +321,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     Substitution substitution = new Substitution();
     if (this.isMemberClass()) {
-      substitution = enclosingType.getInstantiatingSubstitution(goalType);
-      if (substitution == null) {
-        return null;
+      // For a member class such as Outer<String>.Inner and a goal type such as Outer<E>.Inner, the
+      // enclosing type of this type instantiates the enclosing type of the goal type.
+      ReferenceType enclosingGoalType = goalType;
+      if (goalType instanceof ClassOrInterfaceType
+          && ((ClassOrInterfaceType) goalType).isMemberClass()) {
+        enclosingGoalType = ((ClassOrInterfaceType) goalType).enclosingType;
+      }
+      if (enclosingGoalType.isGeneric()) {
+        substitution = enclosingType.getInstantiatingSubstitution(enclosingGoalType);
+        if (substitution == null) {
+          return null;
+        }
       }
     }
 

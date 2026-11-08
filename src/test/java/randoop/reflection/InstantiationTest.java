@@ -435,9 +435,7 @@ public class InstantiationTest {
 
   /**
    * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
-   * with no type parameters of its own, which is generic only through its enclosing type. {@link
-   * TypeInstantiator#instantiate} handles such a parameter type; this test does not check whether
-   * it finds an instantiation.
+   * with no type parameters of its own, which is generic only through its enclosing type.
    */
   @Test
   public void testNonParameterizedMemberClassParameter() throws Exception {
@@ -453,6 +451,8 @@ public class InstantiationTest {
     Set<Type> inputTypes = new LinkedHashSet<>();
     inputTypes.add(JavaTypes.OBJECT_TYPE);
     inputTypes.add(stringInner);
-    new TypeInstantiator(inputTypes).instantiate(operation);
+    TypedClassOperation instantiated = new TypeInstantiator(inputTypes).instantiate(operation);
+    assertNotNull("no instantiation found", instantiated);
+    assertEquals(stringInner, instantiated.getInputTypes().get(0));
   }
 }
