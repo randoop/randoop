@@ -9,8 +9,10 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -545,17 +547,13 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testSubtypeTestOfCaptureVariableAgainstItsBoundTerminates()
-      throws NoSuchFieldException {
+  public void testSubtypeTestOfCaptureVariableAgainstItsBound() throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("selfComparableField");
     TypeVariable capture = typeArgument(capturedType, 0);
-    // The bound of the capture variable is Comparable<capture>.  The subtype test substitutes
-    // Comparable<capture> for capture, so each substitution into the bound nests it more deeply.
-    // This test checks only that the subtype test terminates.  Its result is imprecise:  it is
-    // false, though capture is a subtype of its bound, because the subtype test compares
-    // Comparable<Comparable<capture>> with Comparable<capture>.
+    // The bound of the capture variable is Comparable<capture>, which refers to the capture
+    // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
-    boolean unused = capture.isSubtypeOfOrEqualTo(bound);
+    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test
@@ -583,5 +581,89 @@ public class TypeVariableTest {
         GenericClassType.forClass(Map.class).instantiate(capture, JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+  }
+
+  /**
+   * A type parameter whose self-referential bound contains an array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayBound<T extends Map<T, T[]>> {}
+
+  /** A class that satisfies the bound of {@link SelfArrayBound}. */
+  @SuppressWarnings("serial")
+  static class SelfArrayMap extends HashMap<SelfArrayMap, SelfArrayMap[]> {}
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array of the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class ArrayWildcardBound<T extends Collection<? extends T[]>> {}
+
+  /** A class that satisfies the bound of {@link ArrayWildcardBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayCollection extends ArrayList<ArrayCollection[]> {}
+
+  @Test
+  public void testArrayInLazyBound() {
+    TypeVariable t = GenericClassType.forClass(SelfArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayMap.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testArrayInWildcardInLazyBound() {
+    TypeVariable t = GenericClassType.forClass(ArrayWildcardBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayCollection.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A type parameter whose bound refers to an array of the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class ComparableToArrayBound<T extends Comparable<T[]>> {}
+
+  /** A class that satisfies the bound of {@link ComparableToArrayBound}. */
+  abstract static class ComparableToArray implements Comparable<ComparableToArray[]> {}
+
+  /**
+   * A type parameter {@code U} whose bound has a wildcard bounded by an array of a sibling.
+   *
+   * @param <T> the component type
+   * @param <U> the type parameter
+   */
+  static class ArrayOfSiblingBound<T, U extends Collection<? extends T[]>> {}
+
+  /**
+   * A type parameter, to substitute for another one.
+   *
+   * @param <V> the type parameter
+   */
+  static class OneParameter<V> {}
+
+  @Test
+  public void testSelfArrayInBound() {
+    TypeVariable t =
+        GenericClassType.forClass(ComparableToArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToArray.class)));
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSubstituteArrayInBoundTwice() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ArrayOfSiblingBound.class).getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    TypeVariable v = GenericClassType.forClass(OneParameter.class).getTypeParameters().get(0);
+    TypeVariable throughV =
+        (TypeVariable)
+            ((TypeVariable) u.substitute(new Substitution(t, v)))
+                .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
+    TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 }

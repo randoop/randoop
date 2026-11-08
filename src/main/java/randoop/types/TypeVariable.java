@@ -18,6 +18,13 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(HashSet::new);
 
   /**
+   * The pairs of a type variable's key and a type for which {@link
+   * #upperBoundIsSubtypeOfOrEqualTo(ReferenceType)} is in progress, in the current thread.
+   */
+  private static final ThreadLocal<Set<List<Object>>> upperBoundSubtypeChecks =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
@@ -97,10 +104,44 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
+      if (upperBoundIsSubtypeOfOrEqualTo((ReferenceType) otherType)) {
+        return true;
+      }
       Substitution substitution = getSubstitution((ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
+  }
+
+  /**
+   * Returns true if the upper bound of this variable, as written, is a subtype of or equal to the
+   * given type. The upper bound is a supertype of this variable, so then this variable is a subtype
+   * of the given type. The bound can mention this variable, as {@code Comparable<Capture0>} does
+   * for {@code Capture0 extends Comparable<Capture0>}.
+   *
+   * <p>Returns false if the upper bound is not a single reference type, or if this check is already
+   * in progress for this variable and type in the current thread.
+   *
+   * @param otherType a reference type
+   * @return true if the upper bound of this variable is a subtype of or equal to {@code otherType}
+   */
+  private boolean upperBoundIsSubtypeOfOrEqualTo(ReferenceType otherType) {
+    ParameterBound upperBound = getUpperTypeBound();
+    if (!(upperBound instanceof ReferenceBound)) {
+      return false;
+    }
+    // A subtype test of the bound can test this variable against the same type again, as for
+    // `Capture0 extends Comparable<? super Capture0>`.  Assume that the inner test fails.
+    Set<List<Object>> inProgress = upperBoundSubtypeChecks.get();
+    List<Object> check = Arrays.asList(getVariableKey(), otherType);
+    if (!inProgress.add(check)) {
+      return false;
+    }
+    try {
+      return ((ReferenceBound) upperBound).getBoundType().isSubtypeOfOrEqualTo(otherType);
+    } finally {
+      inProgress.remove(check);
+    }
   }
 
   /**
