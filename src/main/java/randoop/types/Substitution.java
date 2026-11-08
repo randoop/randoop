@@ -204,6 +204,20 @@ public class Substitution {
   }
 
   /**
+   * Returns a copy of this substitution that maps the given type variable to the given type,
+   * replacing any mapping of it (or of a copy of it) in this substitution.
+   *
+   * @param variable a type variable
+   * @param type the type to map {@code variable} to
+   * @return a copy of this substitution that maps {@code variable} to {@code type}
+   */
+  Substitution withMapping(TypeVariable variable, ReferenceType type) {
+    Substitution result = new Substitution(this);
+    result.put(variable, type);
+    return result;
+  }
+
+  /**
    * Returns the concrete type mapped from the type variable by this substitution. Returns null if
    * the variable is not in the substitution.
    *

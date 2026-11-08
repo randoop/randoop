@@ -205,6 +205,67 @@ public class TypeVariableTest {
     assertEquals(JavaTypes.STRING_TYPE, copy.substitute(substitution));
   }
 
+  /**
+   * A type parameter {@code W} bounded by a sibling {@code V} whose recursive bound mentions
+   * another sibling {@code K}.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code Map<K, List<V>>}
+   * @param <W> a type parameter bounded by {@code V}
+   */
+  static class PartiallySubstitutedRecursiveBound<K, V extends Map<K, List<V>>, W extends V> {}
+
+  /** A map from {@code Integer} to lists of itself. */
+  abstract static class IntegerKeyedMapOfSelf
+      implements Map<Integer, List<IntegerKeyedMapOfSelf>> {}
+
+  /** A map from {@code String} to lists of itself. */
+  abstract static class StringKeyedMapOfSelf implements Map<String, List<StringKeyedMapOfSelf>> {}
+
+  @Test
+  public void testVariableBoundWithPartialSubstitution() {
+    TypeVariable k = typeParameter(PartiallySubstitutedRecursiveBound.class, 0);
+    TypeVariable w = typeParameter(PartiallySubstitutedRecursiveBound.class, 2);
+    ReferenceType integerKeyed = ClassOrInterfaceType.forClass(IntegerKeyedMapOfSelf.class);
+    ReferenceType stringKeyed = ClassOrInterfaceType.forClass(StringKeyedMapOfSelf.class);
+    Substitution kIsString = new Substitution(k, JavaTypes.STRING_TYPE);
+    // With K := String, V's bound is Map<String, List<V>>, which IntegerKeyedMapOfSelf violates.
+    assertFalse(
+        w.getUpperTypeBound()
+            .isUpperBound(integerKeyed, kIsString.extend(new Substitution(w, integerKeyed))));
+    assertTrue(
+        w.getUpperTypeBound()
+            .isUpperBound(stringKeyed, kIsString.extend(new Substitution(w, stringKeyed))));
+  }
+
+  /**
+   * A pair.
+   *
+   * @param <A> the type of the first element
+   * @param <B> the type of the second element
+   */
+  interface Pair<A, B> {}
+
+  /**
+   * A type parameter whose bound contains a generic array type.
+   *
+   * @param <T> a type parameter bounded by {@code Pair<T, T[]>}
+   */
+  static class ArrayPairBound<T extends Pair<T, T[]>> {}
+
+  /** A class that satisfies the bound of {@link ArrayPairBound}. */
+  abstract static class SelfArrayPair implements Pair<SelfArrayPair, SelfArrayPair[]> {}
+
+  /** A class that does not satisfy the bound of {@link ArrayPairBound}. */
+  abstract static class SelfStringArrayPair implements Pair<SelfStringArrayPair, String[]> {}
+
+  @Test
+  public void testGenericArrayInLazyBound() {
+    TypeVariable t = typeParameter(ArrayPairBound.class, 0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
+    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
+  }
+
   @Test
   public void testSubstitutionOfTypeParameterCopy() {
     TypeVariable x = typeParameter(ListBound.class, 0);
