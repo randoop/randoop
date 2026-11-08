@@ -257,7 +257,9 @@ public class TypeInstantiator {
     while (!matches.isEmpty()) {
       ReferenceType selectedType = Randomness.randomSetMember(matches);
       Substitution selected = selectedType.getInstantiatingSubstitution(type);
-      if (selected != null) {
+      // A match can conflict with the substitution, for example if it binds a capture variable
+      // that the substitution already maps to a different type.
+      if (selected != null && substitution.isConsistentWith(selected)) {
         Substitution result = substitution.extend(selected);
         if (satisfiesInstantiatedBounds(result)) {
           return result;
@@ -343,8 +345,8 @@ public class TypeInstantiator {
    *       </ul>
    *   <li>Instantiate the remaining type variables: those in the return type, those deferred in
    *       step 1, and those in the bounds of any of these or of the type variables that the
-   *       substitution instantiates; see {@link #uninstantiatedVariables(Set, Substitution)}. The
-   *       return type need not be an input type.
+   *       substitution instantiates; see {@link #uninstantiatedVariables(Collection,
+   *       Substitution)}. The return type need not be an input type.
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
@@ -448,7 +450,9 @@ public class TypeInstantiator {
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
-            if (result != null) {
+            // The search checks each bound once its variables are instantiated; check the complete
+            // result too, in case the search scheduled some bound check too early.
+            if (result != null && satisfiesBounds(result)) {
               return result;
             }
             if (Log.isLoggingOn()) {
@@ -614,6 +618,7 @@ public class TypeInstantiator {
     Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
     for (TypeVariable variable : instantiated) {
       // The uninstantiated type variables in the bounds of `variable`, without copies.
+      // Compare with isSameVariable, because a type variable can be a copy with other bounds.
       List<TypeVariable> boundVariables = new ArrayList<>();
       List<TypeVariable> allBoundVariables =
           new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
@@ -678,6 +683,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
+        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
         last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {

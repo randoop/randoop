@@ -168,6 +168,7 @@ public abstract class TypeVariable extends ParameterType {
     return new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
   }
 
+
   /**
    * Returns a substitution of the given {@link ReferenceType} for this variable.
    *
