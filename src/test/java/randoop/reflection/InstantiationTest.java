@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -25,9 +26,11 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
 /** Tests instantiation of type parameters by OperationModel. */
@@ -409,5 +412,47 @@ public class InstantiationTest {
         typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
+  }
+
+  /**
+   * A generic class with a member class.
+   *
+   * @param <E> the type parameter
+   */
+  private static class Outer<E> {
+    /** A member class with no type parameters of its own. */
+    class Inner {}
+  }
+
+  /**
+   * A method whose parameter type is generic only through its enclosing type.
+   *
+   * @param <E> the type parameter of the enclosing type
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void innerParameter(Outer<E>.Inner inner) {}
+
+  /**
+   * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
+   * with no type parameters of its own, which is generic only through its enclosing type. {@link
+   * TypeInstantiator#instantiate} handles such a parameter type; this test does not check whether
+   * it finds an instantiation.
+   */
+  @Test
+  public void testNonParameterizedMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("innerParameter", Outer.Inner.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    assertTrue(genericInner.isGeneric());
+    assertFalse(genericInner instanceof ParameterizedType);
+    // Outer<String>.Inner.
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
+    inputTypes.add(stringInner);
+    new TypeInstantiator(inputTypes).instantiate(operation);
   }
 }
