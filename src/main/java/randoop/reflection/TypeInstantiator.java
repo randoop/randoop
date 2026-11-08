@@ -340,8 +340,10 @@ public class TypeInstantiator {
    *         <li>If the parameter type is some other generic type, such as {@code T} or {@code T[]},
    *             defer its type variables to step 2.
    *       </ul>
-   *   <li>Instantiate the remaining type variables: those in the return type and those deferred in
-   *       step 1. The return type need not be an input type.
+   *   <li>Instantiate the remaining type variables: those in the return type, those deferred in
+   *       step 1, and those in the bounds of any of these or of the type variables that the
+   *       substitution instantiates; see {@link #uninstantiatedVariables(Collection,
+   *       Substitution)}. The return type need not be an input type.
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
@@ -367,7 +369,8 @@ public class TypeInstantiator {
    *     the bounds of its type variables, or null if none was found
    */
   private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
-    // Why the most recent attempt failed; used for diagnostics.
+    // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
+    // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
     for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
       // answer question: what type instantiation would allow a call to this operation?
@@ -385,7 +388,9 @@ public class TypeInstantiator {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
             if (matches.isEmpty()) {
-              failure = "no input type instantiates " + paramType;
+              if (Log.isLoggingOn()) {
+                failure = "no input type instantiates " + paramType;
+              }
               allMatched = false;
               break;
             }
@@ -393,11 +398,13 @@ public class TypeInstantiator {
             Substitution extended =
                 selectSubstitution((ParameterizedType) origParamType, matches, substitution);
             if (extended == null) {
-              failure =
-                  "no input type instantiates "
-                      + origParamType
-                      + " within the bounds, given "
-                      + substitution;
+              if (Log.isLoggingOn()) {
+                failure =
+                    "no input type instantiates "
+                        + origParamType
+                        + " within the bounds, given "
+                        + substitution;
+              }
               allMatched = false;
               break;
             }
@@ -424,19 +431,27 @@ public class TypeInstantiator {
           if (satisfiesBounds(substitution)) {
             return substitution;
           }
-          failure = substitution + " does not satisfy the bounds";
+          if (Log.isLoggingOn()) {
+            failure = substitution + " does not satisfy the bounds";
+          }
         } else {
           Map<TypeVariable, List<ReferenceType>> candidatesByVariable =
               consistentCandidatesByVariable(parameters, substitution);
           if (candidatesByVariable == null) {
-            failure = "some type variable in " + parameters + " has no candidate types";
+            if (Log.isLoggingOn()) {
+              failure = "some type variable in " + parameters + " has no candidate types";
+            }
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
-            if (result != null) {
+            // The search checks each bound once its variables are instantiated; check the complete
+            // result too, in case the search scheduled some bound check too early.
+            if (result != null && satisfiesBounds(result)) {
               return result;
             }
-            failure = "no extension of " + substitution + " satisfies the bounds";
+            if (Log.isLoggingOn()) {
+              failure = "no extension of " + substitution + " satisfies the bounds";
+            }
           }
         }
       }
@@ -447,6 +462,23 @@ public class TypeInstantiator {
     }
     Log.logPrintf("TypeInstantiator: no instantiation of %s: %s%n", operation, failure);
     return null;
+  }
+
+  /**
+   * Returns the index in the given list of the given type variable or a copy of it, or -1 if the
+   * list contains neither.
+   *
+   * @param variables type variables
+   * @param variable a type variable
+   * @return the index of {@code variable} or a copy of it in {@code variables}, or -1
+   */
+  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
+    for (int i = 0; i < variables.size(); i++) {
+      if (TypeVariable.isSameVariable(variables.get(i), variable)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -472,12 +504,10 @@ public class TypeInstantiator {
     Map<TypeVariable, TypeVariable> constrainingVariables = constrainingVariables(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      // The instantiated type variables whose bounds mention `parameter` and no other
-      // uninstantiated type variable.
       List<TypeVariable> constrained = new ArrayList<>();
-      for (Map.Entry<TypeVariable, TypeVariable> entry : constrainingVariables.entrySet()) {
-        if (TypeVariable.isSameVariable(entry.getValue(), parameter)) {
-          constrained.add(entry.getKey());
+      for (Map.Entry<TypeVariable, List<TypeVariable>> entry : constrainedVariables.entrySet()) {
+        if (TypeVariable.isSameVariable(entry.getKey(), parameter)) {
+          constrained.addAll(entry.getValue());
         }
       }
       List<ReferenceType> candidates = candidateTypes(parameter);
@@ -515,16 +545,21 @@ public class TypeInstantiator {
     Collection<? extends TypeVariable> instantiated = substitution.keySet();
     Map<TypeVariable, TypeVariable> result = new LinkedHashMap<>();
     for (TypeVariable variable : instantiated) {
-      // The uninstantiated type variables in the bounds of `variable`.
-      List<TypeVariable> uninstantiatedInBounds = new ArrayList<>();
-      for (TypeVariable boundVariable : boundVariables(variable)) {
+      // The uninstantiated type variables in the bounds of `variable`, without copies.
+      // Compare with isSameVariable, because a type variable can be a copy with other bounds.
+      List<TypeVariable> boundVariables = new ArrayList<>();
+      List<TypeVariable> allBoundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      allBoundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : allBoundVariables) {
         if (!containsVariable(instantiated, boundVariable)
-            && !containsVariable(uninstantiatedInBounds, boundVariable)) {
-          uninstantiatedInBounds.add(boundVariable);
+            && !containsVariable(boundVariables, boundVariable)) {
+          boundVariables.add(boundVariable);
         }
       }
-      if (uninstantiatedInBounds.size() == 1) {
-        result.put(variable, uninstantiatedInBounds.get(0));
+      if (boundVariables.size() == 1) {
+        TypeVariable boundVariable = boundVariables.get(0);
+        result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }
     return result;
@@ -576,6 +611,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
+        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
         last = Math.max(last, indexOfVariable(parameters, neededVariable));
       }
       if (last == -1) {
@@ -714,6 +750,7 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
+  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     return new BoundsCheck(parameters).test(substitution);
   }

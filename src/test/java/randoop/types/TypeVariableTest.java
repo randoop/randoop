@@ -1230,17 +1230,13 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testSubtypeTestOfCaptureVariableAgainstItsBoundTerminates()
-      throws NoSuchFieldException {
+  public void testSubtypeTestOfCaptureVariableAgainstItsBound() throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("selfComparableField");
     TypeVariable capture = typeArgument(capturedType, 0);
-    // The bound of the capture variable is Comparable<capture>.  The subtype test substitutes
-    // Comparable<capture> for capture, so each substitution into the bound nests it more deeply.
-    // This test checks only that the subtype test terminates.  Its result is imprecise:  it is
-    // false, though capture is a subtype of its bound, because the subtype test compares
-    // Comparable<Comparable<capture>> with Comparable<capture>.
+    // The bound of the capture variable is Comparable<capture>, which refers to the capture
+    // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
-    boolean unused = capture.isSubtypeOfOrEqualTo(bound);
+    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test
@@ -1254,6 +1250,55 @@ public class TypeVariableTest {
         captureT.substitute(new Substitution(captureS, JavaTypes.STRING_TYPE));
     assertEquals(Collections.singletonList(substituted), substituted.getTypeParameters());
   }
+
+  @Test
+  public void testSubstituteVariableIntoNestedArgument() {
+    TypeVariable t = typeParameter(SelfNestedArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                GenericClassType.forClass(List.class).instantiate(v), JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteVariableIntoWildcardBound() {
+    TypeVariable t = typeParameter(WildcardSelfBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  @Test
+  public void testSubstituteTypeContainingVariableIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    InstantiatedType listOfV = GenericClassType.forClass(List.class).instantiate(v);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, listOfV));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(listOfV, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+    assertEquals(Collections.singletonList(v), bound.getTypeParameters());
+  }
+
+  /**
+   * A class whose type parameter's bound contains the type parameter nested in a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   @Test
   public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
