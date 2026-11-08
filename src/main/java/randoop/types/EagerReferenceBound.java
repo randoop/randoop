@@ -94,8 +94,10 @@ class EagerReferenceBound extends ReferenceBound {
         // The substitution does not replace the type variable, so it stands for an unknown type.
         // Checking argType against the upper bound of the type variable instead would leave the
         // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
-        // accept Comparable<String>, which no choice of T is a supertype of.
-        return canBeSupertype((TypeVariable) thisBoundType, argReferenceType);
+        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
+        // type variable are checked with the mappings of `subst`, because they can mention other
+        // type variables that `subst` instantiates.
+        return canBeSupertype((TypeVariable) thisBoundType, argReferenceType, subst);
       }
       // A type variable that the substitution put in the bound stands for itself.  A type variable
       // argument satisfies this bound if its own upper bound does.
@@ -127,15 +129,19 @@ class EagerReferenceBound extends ReferenceBound {
    *
    * @param variable a type variable that stands for an unknown type
    * @param type a type
+   * @param substitution a substitution for the other type variables in the bounds of {@code
+   *     variable}
    * @return true if {@code variable} can be instantiated by a supertype of {@code type}
    */
-  private static boolean canBeSupertype(TypeVariable variable, ReferenceType type) {
-    if (TypeVariable.isSameVariable(type, variable) || variable.canBeInstantiatedBy(type)) {
+  private static boolean canBeSupertype(
+      TypeVariable variable, ReferenceType type, Substitution substitution) {
+    if (TypeVariable.isSameVariable(type, variable)
+        || variable.canBeInstantiatedBy(type, substitution)) {
       return true;
     }
     if (variable instanceof ExplicitTypeVariable && type instanceof ClassOrInterfaceType) {
       for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
-        if (variable.canBeInstantiatedBy(supertype)) {
+        if (variable.canBeInstantiatedBy(supertype, substitution)) {
           return true;
         }
       }
@@ -145,7 +151,7 @@ class EagerReferenceBound extends ReferenceBound {
       ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && type.isSubtypeOfOrEqualTo(lowerBoundType)
-          && variable.canBeInstantiatedBy(lowerBoundType);
+          && variable.canBeInstantiatedBy(lowerBoundType, substitution);
     }
     return false;
   }

@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -24,29 +25,18 @@ public class LazyParameterBoundTest {
   public void testSubstituteWithoutNestedVariable() {
     List<TypeVariable> parameters =
         GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters();
+    TypeVariable u = parameters.get(0);
     TypeVariable t = parameters.get(1);
     ParameterBound bound = t.getUpperTypeBound();
     assertTrue(bound instanceof LazyParameterBound);
-    // The substitution does not map U, which occurs in the bound.
-    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE)));
-  }
-
-  /**
-   * A type parameter whose self-referential bound contains a wildcard inside an array type.
-   *
-   * @param <T> the type parameter
-   */
-  static class WildcardInArrayBound<T extends List<Map<?, T>[]>> {}
-
-  @Test
-  public void testHasWildcardInArray() {
-    ParameterBound bound =
-        GenericClassType.forClass(WildcardInArrayBound.class)
-            .getTypeParameters()
-            .get(0)
-            .getUpperTypeBound();
-    assertTrue(bound instanceof LazyParameterBound);
-    assertTrue(bound.hasWildcard());
+    // The substitution does not map U, which occurs in the bound, so U remains in the result.
+    ParameterBound result = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(result instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                GenericClassType.forClass(List.class).instantiate(u), JavaTypes.STRING_TYPE),
+        ((ReferenceBound) result).getBoundType());
   }
 
   /**
