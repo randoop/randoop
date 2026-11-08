@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.Collections;
 import java.util.List;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
@@ -119,16 +120,44 @@ final class Subtyping {
       } catch (LazyBoundException e) {
         return false;
       }
-      List<TypeArgument> typeArguments = supertype.getTypeArguments();
-      List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
+      return argumentsContained(supertype, otherInstantiatedType, substitution);
+    }
+    return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if each type argument of {@code otherType} contains the corresponding type
+   * argument of {@code type}, including the type arguments of the enclosing types of member
+   * classes. The two types must be instantiations of the same generic class.
+   *
+   * @param type a type, to which capture conversion has been applied
+   * @param otherType a type, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if the type arguments of {@code otherType} contain those of {@code type}
+   */
+  private static boolean argumentsContained(
+      ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
+    if (otherType instanceof InstantiatedType) {
+      if (!(type instanceof InstantiatedType)) {
+        return false;
+      }
+      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
+      if (typeArguments.size() != otherTypeArguments.size()) {
+        return false;
+      }
       for (int i = 0; i < typeArguments.size(); i++) {
         if (!contains(otherTypeArguments.get(i), typeArguments.get(i), substitution)) {
           return false;
         }
       }
-      return true;
     }
-    return type.isSubtypeOfOrEqualTo(otherType);
+    // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the type
+    // arguments of the enclosing type must also be contained.
+    if (type.isMemberClass() && otherType.isMemberClass()) {
+      return argumentsContained(type.enclosingType, otherType.enclosingType, substitution);
+    }
+    return true;
   }
 
   /**
@@ -168,8 +197,8 @@ final class Subtyping {
   /**
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
-   * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound.
+   * {@code type} itself, the lower bound of {@code type} if it is a type variable, the unknown's
+   * upper bound, or a member of the unknown's upper bound if that is an intersection.
    *
    * @param lowerType the possible subtype, which may be an unknown
    * @param type the possible supertype
@@ -195,14 +224,24 @@ final class Subtyping {
         }
       }
     }
+    // Try the unknown's upper bound, or each member of an intersection upper bound.
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
-    if (!(unknownBound instanceof ReferenceBound)) {
-      return false;
+    List<ParameterBound> candidateBounds =
+        unknownBound instanceof IntersectionTypeBound
+            ? ((IntersectionTypeBound) unknownBound).getBounds()
+            : Collections.singletonList(unknownBound);
+    for (ParameterBound candidateBound : candidateBounds) {
+      if (!(candidateBound instanceof ReferenceBound)) {
+        continue;
+      }
+      ReferenceType candidateType =
+          ((ReferenceBound) candidateBound).getBoundType().substitute(substitution);
+      if (isSubtypeOrEqual(candidateType, type, substitution)
+          && satisfiesBound(candidateType, unknown, substitution)) {
+        return true;
+      }
     }
-    ReferenceType unknownBoundType =
-        ((ReferenceBound) unknownBound).getBoundType().substitute(substitution);
-    return isSubtypeOrEqual(unknownBoundType, type, substitution)
-        && satisfiesBound(unknownBoundType, unknown, substitution);
+    return false;
   }
 
   /**

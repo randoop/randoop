@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -38,6 +39,15 @@ class IntersectionTypeBound extends ParameterBound {
     }
 
     this.boundList = boundList;
+  }
+
+  /**
+   * Returns the type bounds of this intersection bound. The result must not be modified.
+   *
+   * @return the type bounds of this intersection bound
+   */
+  List<ParameterBound> getBounds() {
+    return Collections.unmodifiableList(boundList);
   }
 
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
