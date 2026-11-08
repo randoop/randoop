@@ -351,6 +351,22 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubstitutionOfTypeParameterCopy() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    // Substituting into the bound of Y creates a copy of Y whose bound is List<String>.
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    assertFalse(y.equals(copy));
+    assertTrue(TypeVariable.isSameVariable(y, copy));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    // A substitution for a type parameter applies to a copy of it with different bounds.
+    Substitution substitution = new Substitution(y, listOfString);
+    assertEquals(listOfString, substitution.get(copy));
+    assertEquals(listOfString, copy.substitute(substitution));
+  }
+
+  @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
     // S := String would need a T that is both a List<String> and the T in Comparable<T>.
