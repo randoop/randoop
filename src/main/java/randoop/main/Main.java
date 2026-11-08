@@ -15,7 +15,7 @@ import randoop.sequence.Sequence;
  */
 public final class Main {
 
-  // Handlers for user-visible commands.
+  /** Handlers for user-visible commands. */
   public static List<CommandHandler> handlers;
 
   static {

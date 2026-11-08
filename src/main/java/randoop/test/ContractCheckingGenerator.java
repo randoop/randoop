@@ -35,6 +35,7 @@ import randoop.util.TupleSet;
  */
 public final class ContractCheckingGenerator extends TestCheckGenerator {
 
+  /** The contracts to check on the values produced by executing a sequence. */
   private ContractSet contracts;
 
   /**
@@ -45,6 +46,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     c.getArity() == 1}.
    */
   public ContractCheckingGenerator(ContractSet contracts) {
+    super();
     this.contracts = contracts;
   }
 

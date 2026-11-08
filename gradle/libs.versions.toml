@@ -14,7 +14,7 @@ pmd = "7.26.0"
 
 checker = { group = "org.checkerframework", name = "checker", version.ref = "checker" }
 
-error-prone-core = "com.google.errorprone:error_prone_core:2.51.0"
+error-prone-core = "com.google.errorprone:error_prone_core:2.52.0"
 
 require-javadoc = "org.plumelib:require-javadoc:1.0.9"
 
@@ -50,15 +50,19 @@ commons-codec = "commons-codec:commons-codec:1.23.0"
 
 javassist = "org.javassist:javassist:3.+"
 
+javax-mail = "com.sun.mail:javax.mail:1.6.2"
+
 jcommander = "com.beust:jcommander:1.82"
+
+joda-time = "joda-time:joda-time:2.15.1"
 
 [plugins]
 
 com-gradleup-shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
 
-com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.10.4" }
+com-diffplug-spotless = { id = "com.diffplug.spotless", version = "8.11.0" }
 
-net-ltgt-errorprone = { id = "net.ltgt.errorprone", version = "5.1.1" }
+net-ltgt-errorprone = { id = "net.ltgt.errorprone", version = "5.2.0" }
 
 org-checkerframework = { id = "org.checkerframework", version = "1.0.2" }
 

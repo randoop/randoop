@@ -81,7 +81,7 @@ class RandoopRunStatus {
   @SuppressWarnings("CatchAndPrintStackTrace") // The problem is with the log, so cannot log it.
   static ProcessStatus generate(SystemTestEnvironment testEnvironment, RandoopOptions options) {
     List<String> command = new ArrayList<>();
-    command.add("java");
+    command.add(ProcessStatus.javaExecutable);
     command.add("-ea");
     // cannot use randoop.main.GenInputsAbstract.jvm_max_memory due to package clash
     command.add("-Xmx3000m");

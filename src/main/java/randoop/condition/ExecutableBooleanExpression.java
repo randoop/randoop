@@ -100,7 +100,7 @@ public class ExecutableBooleanExpression {
    * @param args the pre-state values to the arguments
    * @return the {@link ExecutableBooleanExpression} with the pre-state set
    */
-  ExecutableBooleanExpression addPrestate(Object[] args) {
+  ExecutableBooleanExpression addPrestate(@Nullable Object[] args) {
     return this;
   }
 
@@ -143,7 +143,7 @@ public class ExecutableBooleanExpression {
    * @return true if this expression is satisfied by the values, false otherwise
    * @throws RandoopSpecificationError if the expression cannot be evaluated
    */
-  public boolean check(Object[] values) throws RandoopSpecificationError {
+  public boolean check(@Nullable Object[] values) throws RandoopSpecificationError {
     try {
       @SuppressWarnings("nullness:unboxing.of.nullable") // reflection
       boolean result = (boolean) expressionMethod.invoke(null, values);

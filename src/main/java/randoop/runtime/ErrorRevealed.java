@@ -22,6 +22,14 @@ public class ErrorRevealed implements IMessage {
   @SuppressWarnings("serial") // TODO: use a serializable type.
   public final List<String> failingClassNames;
 
+  /**
+   * Creates a message indicating that a test revealed an error.
+   *
+   * @param testCode the code of the test that revealed the error
+   * @param description a description of the error
+   * @param failingClassNames the classes whose tests failed
+   * @param junitFile the file for the JUnit test
+   */
   public ErrorRevealed(
       String testCode, String description, List<String> failingClassNames, Path junitFile) {
     this.testCode = testCode;
@@ -38,6 +46,11 @@ public class ErrorRevealed implements IMessage {
     return description;
   }
 
+  /**
+   * Returns the classes whose tests failed.
+   *
+   * @return the classes whose tests failed, as an unmodifiable list
+   */
   public List<String> getFailingClassNames() {
     return failingClassNames;
   }

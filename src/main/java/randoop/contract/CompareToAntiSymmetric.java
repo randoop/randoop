@@ -14,8 +14,15 @@ public final class CompareToAntiSymmetric extends ObjectContract {
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
   /** Private constructor to enforce singleton. */
-  private CompareToAntiSymmetric() {}
+  private CompareToAntiSymmetric() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToAntiSymmetric getInstance() {
     return instance;
   }
@@ -44,7 +51,7 @@ public final class CompareToAntiSymmetric extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
