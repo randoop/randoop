@@ -35,19 +35,6 @@ public class SmallTestsSequenceSelection extends InputSequenceSelector {
   }
 
   /**
-   * {@inheritDoc}
-   *
-   * <p>This implementation discards the weights of all sequences other than {@code
-   * retainedSequences}. A discarded weight is recomputed on demand.
-   *
-   * @param retainedSequences the sequences that remain in the component set after clearing
-   */
-  @Override
-  public void componentSetCleared(Set<Sequence> retainedSequences) {
-    weightMap.keySet().retainAll(retainedSequences);
-  }
-
-  /**
    * Update the weight for any sequence not currently in the map, and compute the total weight.
    *
    * @param candidates the elements to compute a weight for
