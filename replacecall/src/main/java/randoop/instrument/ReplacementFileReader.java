@@ -198,7 +198,7 @@ public final class ReplacementFileReader {
    * that method exists, and otherwise uses the constructor interpretation if class {@code pkg.C}
    * exists. If class {@code pkg} is unreadable, this uses the constructor interpretation if that
    * constructor exists, and otherwise reports that class {@code pkg} is unreadable. A signature
-   * such as {@code C(int)}, with no period before the parenthesis, is a constructor of class
+   * such as {@code C(int)}, with no period before the parenthesis, denotes a constructor of class
    * {@code C} in the unnamed package.
    *
    * @param signatureString the original signature, as written in a replacement file
