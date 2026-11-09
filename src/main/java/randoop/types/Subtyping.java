@@ -62,14 +62,16 @@ final class Subtyping {
       }
       // Try the supertypes of the type variable, below.
     }
-    if (type.isVariable()) {
+    if (type.isVariable()
+        && ((TypeVariable) type)
+            .getResolvedUpperTypeBound()
+            .hasUpperBound(otherType, substitution)) {
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
-      return ((TypeVariable) type)
-          .getResolvedUpperTypeBound()
-          .hasUpperBound(otherType, substitution);
+      return true;
     }
     if (otherType.isVariable()) {
-      // A type variable that stands for itself is a supertype of its lower bound.
+      // A type variable that stands for itself is a supertype of its lower bound.  For example, if
+      // CAP is the capture of `? super T`, then T <: CAP, even though T's upper bound is not.
       ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
       if (!(lowerBound instanceof ReferenceBound)) {
         return false;
@@ -77,6 +79,10 @@ final class Subtyping {
       ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && isSubtypeOrEqual(type, lowerBoundType, substitution);
+    }
+    if (type.isVariable()) {
+      // Neither the type variable's upper bound nor anything else makes it a subtype.
+      return false;
     }
     if (type.isArray() && otherType.isArray()) {
       Type componentType = ((ArrayType) type).getComponentType();
