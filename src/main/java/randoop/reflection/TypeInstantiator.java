@@ -463,12 +463,12 @@ public class TypeInstantiator {
   private Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
-    for (TypeVariable parameter : parameters) {
-      List<ReferenceType> candidates = candidateTypes(parameter);
+    for (TypeVariable typeArgument : parameters) {
+      List<ReferenceType> candidates = candidateTypes(typeArgument);
       if (candidates.isEmpty()) {
         Log.logPrintf(
             "TypeInstantiator.selectSubstitutionIndependently: No candidate types for %s%n",
-            parameter);
+            typeArgument);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
