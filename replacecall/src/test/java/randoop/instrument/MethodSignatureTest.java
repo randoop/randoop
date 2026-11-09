@@ -34,6 +34,14 @@ public class MethodSignatureTest {
     assertEquals("<init>", sig.getName());
     assertArrayEquals(
         new Type[] {Type.INT, new ObjectType("java.lang.String")}, sig.getParameterTypes());
+
+    // Non-ASCII identifiers are permitted in Java.
+    sig = MethodSignature.of("p.Café.café(p.Café)");
+    assertEquals("p.Café", sig.getClassname());
+    assertEquals("café", sig.getName());
+    assertArrayEquals(new Type[] {new ObjectType("p.Café")}, sig.getParameterTypes());
+    sig = MethodSignature.of("p.Café$Inner.café()");
+    assertEquals("p.Café$Inner", sig.getClassname());
   }
 
   @Test
@@ -61,6 +69,9 @@ public class MethodSignatureTest {
       {"a.B.c(int,)", emptyParam},
       {"a.B.c(int, , )", emptyParam},
       {"a.B.c(int int)", badParam + "\"int int\""},
+      {"a.Café.1é()", badName + "\"a.Café.1é\""},
+      {"a..Café.c()", badName + "\"a..Café.c\""},
+      {"a.B.c(p.Café.)", badParam + "\"p.Café.\""},
     };
     for (String[] signatureAndMessage : malformed) {
       String signature = signatureAndMessage[0];
