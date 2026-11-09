@@ -41,9 +41,13 @@ import randoop.util.Log;
  * Randoop doesn't call any method that might dispatch to m at run time. For example, if an omit
  * pattern matches {@code my.package.MyClass.toString()}, then {@code Object.toString()} should also
  * be omitted (because otherwise a variable {@code myObject} might hold a {@code MyClass}, and a
- * call {@code myObject.toString()} might dispatch to {@code my.package.MyClass.toString()}). A
- * client that has determined the omitted methods calls {@link #omittingOverriddenMethods} to obtain
- * a predicate that also omits the methods that they override.
+ * call {@code myObject.toString()} might dispatch to {@code my.package.MyClass.toString()}).
+ *
+ * <p>A predicate built from omit patterns alone does not omit overridden methods, because it cannot
+ * determine which methods its patterns match without a set of classes to examine. A client first
+ * applies {@link #shouldOmit} to the operations of the classes under test, then passes the
+ * operations that it omits to {@link #omittingOverriddenMethods}, which returns a new predicate
+ * that also omits every method that those operations override.
  */
 public class OmitMethodsPredicate {
 
@@ -105,8 +109,7 @@ public class OmitMethodsPredicate {
     if (logOmit) {
       Log.logPrintf("omittingOverriddenMethods: %s%n", newOverriddenMethods);
     }
-    return new OmitMethodsPredicate(
-        omitPatterns, Collections.unmodifiableSet(newOverriddenMethods));
+    return new OmitMethodsPredicate(omitPatterns, newOverriddenMethods);
   }
 
   /**
