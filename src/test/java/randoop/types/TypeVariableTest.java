@@ -121,7 +121,8 @@ public class TypeVariableTest {
         bound instanceof LazyReferenceBound);
     assertEquals(
         GenericClassType.forClass(Map.class)
-            .instantiate(t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+            .instantiate(
+                t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
         ((ReferenceBound) bound).getBoundType());
   }
 
