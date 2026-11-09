@@ -134,7 +134,7 @@ public class ReplacementFileTest {
   }
 
   @Test
-  public void badArgTypeMethodTest()throws IOException, ReplacementFileException {
+  public void badArgTypeMethodTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/badargumenttypereplacement.txt");
     thrown.expect(ReplacementFileException.class);
     String msg =
