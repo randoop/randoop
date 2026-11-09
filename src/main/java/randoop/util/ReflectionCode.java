@@ -1,7 +1,6 @@
 package randoop.util;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
 
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
@@ -124,7 +123,7 @@ public abstract class ReflectionCode {
     } else if (!hasStarted() && hasRun()) {
       return "ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return "returned: " + StringsPlume.toStringAndClass(retval);
+      return "returned: " + Util.toStringAndClassSafely(retval);
     } else {
       return "threw: " + exceptionThrown;
     }

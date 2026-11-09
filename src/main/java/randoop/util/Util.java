@@ -4,9 +4,11 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -226,5 +228,42 @@ public final class Util {
    */
   public static String filenameAndAbsolute(String filename) {
     return pathAndAbsolute(Paths.get(filename));
+  }
+
+  /**
+   * Returns the result of {@link StringsPlume#toStringAndClass} for the given value. If the value's
+   * {@code toString()} throws, returns the names of the value's class and of the thrown class
+   * instead, as in "[java.util.HashMap whose toString() threw java.lang.StackOverflowError]".
+   *
+   * <p>Use this method to print a value created by code under test. Its {@code toString()} is code
+   * under test, which can throw, such as a {@code StackOverflowError} for a collection that
+   * contains itself.
+   *
+   * @param value a value, possibly null
+   * @return a printed representation of the value and its class
+   */
+  public static String toStringAndClassSafely(@Nullable Object value) {
+    try {
+      return StringsPlume.toStringAndClass(value);
+    } catch (Throwable t) {
+      return String.format(
+          "[%s whose toString() threw %s]",
+          (value == null ? "null" : value.getClass().getName()), t.getClass().getName());
+    }
+  }
+
+  /**
+   * Returns a printed representation of the given values and their classes, as in "[hello [class
+   * java.lang.String], null]". Prints each value with {@link #toStringAndClassSafely}.
+   *
+   * @param values an array of values, each possibly null
+   * @return a printed representation of the values and their classes
+   */
+  public static String elementsToStringAndClassSafely(@Nullable Object[] values) {
+    StringJoiner result = new StringJoiner(", ", "[", "]");
+    for (Object value : values) {
+      result.add(toStringAndClassSafely(value));
+    }
+    return result.toString();
   }
 }
