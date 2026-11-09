@@ -1,12 +1,16 @@
 package randoop.reflection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.junit.Test;
@@ -103,6 +107,64 @@ public class TypeInstantiatorTest {
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
     assertTrue("no instantiation of " + thenComparing, instantiated > 0);
+  }
+
+  /** A map whose values are of the map's own type. */
+  private static class Node extends HashMap<String, Node> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261025;
+  }
+
+  /**
+   * A method whose type parameter {@code K} occurs only in the bound of another type parameter.
+   *
+   * @param <K> the key type of {@code V}
+   * @param <V> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <K, V extends Map<K, V>> void kOnlyInBound(List<V> list) {}
+
+  /**
+   * Tests a type variable that occurs only in the bound of another type variable. In {@code <K, V
+   * extends Map<K, V>> void kOnlyInBound(List<V> list)}, the bound of {@code V} mentions {@code K},
+   * which occurs in no parameter type, so {@code K} is not instantiated when an input type is
+   * matched to {@code List<V>}. Among the input types, only {@code List<Node>} has an element type
+   * that is a {@code Map<K, V>} for some {@code K}.
+   */
+  @Test
+  public void testBoundMentionsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType nodeType = ClassOrInterfaceType.forClass(Node.class);
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    addTypes(
+        GenericClassType.forClass(Collection.class)
+            .instantiate(
+                GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)),
+        inputTypes);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    for (ClassOrInterfaceType elementType :
+        new ClassOrInterfaceType[] {
+          JavaTypes.STRING_TYPE, INTEGER_TYPE, JavaTypes.OBJECT_TYPE, nodeType
+        }) {
+      addTypes(listType.instantiate(elementType), inputTypes);
+    }
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation kOnlyInBound =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("kOnlyInBound", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(kOnlyInBound);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
   }
 
   /**

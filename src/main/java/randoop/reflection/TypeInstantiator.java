@@ -762,12 +762,7 @@ public class TypeInstantiator {
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> arguments = new ArrayList<>(parameters.size());
     for (TypeVariable parameter : parameters) {
-      ReferenceType argument = substitution.get(parameter);
-      if (argument == null) {
-        throw new IllegalArgumentException(
-            "substitution " + substitution + " does not instantiate " + parameter);
-      }
-      arguments.add(argument);
+      arguments.add(substitution.get(parameter));
     }
     return new BoundsCheck(parameters).test(arguments, substitution);
   }
