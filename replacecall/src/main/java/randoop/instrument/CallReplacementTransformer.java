@@ -505,49 +505,17 @@ public class CallReplacementTransformer extends InstructionListUtils
     debug_transform.log(
         "%s.%s: Replacing method %s with %s%n", class_name, method_name, origSig, newSig);
 
-    InvokeInstruction newInvocation;
-
+    // The receiver of the original call, or null if the call has none.
+    @Nullable Type receiverType;
     switch (origInvocation.getOpcode()) {
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
-        Type instanceType = origInvocation.getReferenceType(pool);
-        if (new_dup_removed) {
-          // We are calling an <init> method replacement.  Use the same argument list as
-          // the original call, but instead of a void return, the replacement will return
-          // the object type. (As a replacement for the NEW we deleted earlier.)
-          newInvocation =
-              ifact.createInvoke(
-                  newSig.getClassname(),
-                  newSig.getName(),
-                  instanceType,
-                  origInvocation.getArgumentTypes(pool),
-                  Const.INVOKESTATIC);
-        } else {
-          // These calls have an implicit receiver ({@code this}) argument. Since the conversion is
-          // to a static call, the receiver type is inserted at the beginning of the argument type
-          // array. This argument has already been explicitly pushed onto the stack, so modifying
-          // the call signature is enough.
-          Type[] arguments =
-              ArraysPlume.prepend(instanceType, origInvocation.getArgumentTypes(pool));
-          newInvocation =
-              ifact.createInvoke(
-                  newSig.getClassname(),
-                  newSig.getName(),
-                  origInvocation.getReturnType(pool),
-                  arguments,
-                  Const.INVOKESTATIC);
-        }
+        receiverType = origInvocation.getReferenceType(pool);
         break;
 
       case Const.INVOKESTATIC:
-        newInvocation =
-            ifact.createInvoke(
-                newSig.getClassname(),
-                newSig.getName(),
-                origInvocation.getReturnType(pool),
-                origInvocation.getArgumentTypes(pool),
-                Const.INVOKESTATIC);
+        receiverType = null;
         break;
 
       default:
@@ -563,8 +531,47 @@ public class CallReplacementTransformer extends InstructionListUtils
                 origInvocation, mg.getClassName(), mg.getName());
         throw new IllegalClassFormatException(msg);
     }
+
+    // The arguments, including the receiver, are already on the stack, so changing the call is
+    // enough.  A constructor's replacement returns the object in place of the deleted NEW.
+    String descriptor =
+        replacementDescriptor(
+            receiverType,
+            new_dup_removed,
+            origInvocation.getReturnType(pool),
+            origInvocation.getArgumentTypes(pool));
+    InvokeInstruction newInvocation =
+        ifact.createInvoke(
+            newSig.getClassname(),
+            newSig.getName(),
+            Type.getReturnType(descriptor),
+            Type.getArgumentTypes(descriptor),
+            Const.INVOKESTATIC);
     // debug_transform.log("new invoke: %s%n", newInvocation);
     return build_il(newInvocation);
+  }
+
+  /**
+   * Returns the descriptor of the static method that replaces a call. The replacement takes the
+   * receiver of the call, if any, as an additional first argument. The replacement for a
+   * constructor instead takes the same arguments as the constructor and returns the new object.
+   *
+   * @param receiverType the type of the receiver of the call, or null if the original method is
+   *     static
+   * @param isConstructor true if the original method is a constructor
+   * @param returnType the return type of the original method
+   * @param argTypes the argument types of the original method
+   * @return the descriptor of the replacement method
+   */
+  static String replacementDescriptor(
+      @Nullable Type receiverType, boolean isConstructor, Type returnType, Type[] argTypes) {
+    if (receiverType == null) {
+      return Type.getMethodSignature(returnType, argTypes);
+    } else if (isConstructor) {
+      return Type.getMethodSignature(receiverType, argTypes);
+    } else {
+      return Type.getMethodSignature(returnType, ArraysPlume.prepend(receiverType, argTypes));
+    }
   }
 
   /** Dumps out {@link #replacementMap} to the debug_map logger, if that logger is enabled. */
