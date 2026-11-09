@@ -100,8 +100,13 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
-      // An EagerReferenceBound, because LazyReferenceBound does not substitute into array types.
-      return new EagerReferenceBound(((ReferenceArgument) typeArgument).getReferenceType());
+      ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
+      // If the element type is a type variable, a later substitution might map it to the null
+      // type.  A LazyReferenceBound leaves the bound unresolved in that case.
+      if (arrayType.getElementType().isVariable()) {
+        return new LazyReferenceBound(arrayType);
+      }
+      return new EagerReferenceBound(arrayType);
     }
 
     throw new RandoopBug(
@@ -147,7 +152,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
+      // Use the array-aware conversion, so that an array class such as String[] is an ArrayType.
+      return TypeArgument.forType(type);
     }
 
     if (type instanceof GenericArrayType) {
@@ -249,10 +255,29 @@ class LazyParameterBound extends ParameterBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
+      checkMapsAllTypeParameters(substitution);
+      // The substitution maps an array component type to the null type, so no type satisfies it.
+      return false;
     }
     return b.isLowerBound(argType, substitution);
+  }
+
+  /**
+   * Throws an exception if the substitution does not map every type parameter of this bound. If
+   * the substitution maps every type parameter but does not instantiate this bound, then it maps
+   * the component type of an array type to the null type, for which there is no array type.
+   *
+   * @param substitution the substitution
+   * @throws IllegalArgumentException if the substitution does not map a type parameter of this
+   *     bound
+   */
+  private void checkMapsAllTypeParameters(Substitution substitution) {
+    for (TypeVariable parameter : getTypeParameters()) {
+      if (substitution.get(parameter) == null) {
+        throw new IllegalArgumentException(
+            "substitution " + substitution + " does not instantiate " + this);
+      }
+    }
   }
 
   @Override
@@ -277,8 +302,9 @@ class LazyParameterBound extends ParameterBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
-      throw new IllegalArgumentException(
-          "substitution " + substitution + " does not instantiate " + this);
+      checkMapsAllTypeParameters(substitution);
+      // The substitution maps an array component type to the null type, so no type satisfies it.
+      return false;
     }
     return b.isUpperBound(argType, substitution);
   }
