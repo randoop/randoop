@@ -195,7 +195,16 @@ public final class MethodCall extends CallableOperation {
     Object[] params = Arrays.copyOfRange(input, paramsStartIndex, input.length);
     if (Log.isLoggingOn()) {
       for (int i = 0; i < params.length; i++) {
-        Log.logPrintf("  Param %d = %s%n", i, StringsPlume.toStringAndClass(params[i]));
+        String paramString;
+        try {
+          paramString = StringsPlume.toStringAndClass(params[i]);
+        } catch (Throwable t) {
+          // The parameter's toString() is code under test.  It can throw, such as a
+          // StackOverflowError for a collection that contains itself.
+          paramString =
+              String.format("[%s whose toString() threw %s]", params[i].getClass(), t.getClass());
+        }
+        Log.logPrintf("  Param %d = %s%n", i, paramString);
       }
     }
 
