@@ -50,16 +50,18 @@ public final class ReplacementFileReader {
 
   /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
-   * anything in parentheses. The parentheses are expected to contain argument types, but the
-   * pattern permits anything.
+   * anything in parentheses. The method name is expected to be fully-qualified and the parentheses
+   * are expected to contain argument types, but the pattern permits anything other than whitespace
+   * and parentheses before the parentheses (optionally followed by whitespace), and anything other
+   * than a closing parenthesis within them. {@link MethodSignature#of(String)} validates the
+   * signature.
    *
    * <p>The original method may be a constructor, written as {@code classname.<init>(...)} or as
    * {@code classname(...)}. A replacement is always a static method, but the pattern permits the
    * {@code <init>} notation in the replacement signature too, so that {@link #addMethodReplacement}
    * reports a precise error instead of a format error.
    */
-  private static final String SIGNATURE_STRING =
-      DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = "[^\\s()]+\\s*\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
