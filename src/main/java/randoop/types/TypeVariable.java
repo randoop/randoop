@@ -14,14 +14,16 @@ public abstract class TypeVariable extends ParameterType {
    * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
    * is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
-   * The pairs of a type variable's key and a type for which {@link
+   * The pairs of a type variable and a type for which {@link
    * #upperBoundIsSubtypeOfOrEqualTo(ReferenceType)} is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<Object>>> upperBoundSubtypeChecks =
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<ReferenceType>>> upperBoundSubtypeChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
@@ -132,8 +134,8 @@ public abstract class TypeVariable extends ParameterType {
     }
     // A subtype test of the bound can test this variable against the same type again, as for
     // `Capture0 extends Comparable<? super Capture0>`.  Assume that the inner test fails.
-    Set<List<Object>> inProgress = upperBoundSubtypeChecks.get();
-    List<Object> check = Arrays.asList(getVariableKey(), otherType);
+    Set<List<ReferenceType>> inProgress = upperBoundSubtypeChecks.get();
+    List<ReferenceType> check = Arrays.asList(this, otherType);
     if (!inProgress.add(check)) {
       return false;
     }
@@ -152,36 +154,6 @@ public abstract class TypeVariable extends ParameterType {
    */
   private Substitution getSubstitution(ReferenceType otherType) {
     return new Substitution(this, otherType);
-  }
-
-  /**
-   * Returns an object that a type variable shares with its copies. Substitution can create a copy
-   * of a type variable whose bounds differ, such as by having a lazy part resolved. {@link
-   * #equals(Object)} distinguishes the copy from the original, but they have equal keys.
-   *
-   * @return an object that a type variable shares with its copies, and with no other type variable
-   */
-  Object getVariableKey() {
-    return this;
-  }
-
-  /**
-   * Returns true if the two types are equal or are the same type variable, possibly with different
-   * bounds.
-   *
-   * @param type a type
-   * @param otherType a type
-   * @return true if the two types are equal or are the same type variable
-   * @see #getVariableKey()
-   */
-  public static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
-    // Comparing keys is cheaper than equals(), which compares bounds.
-    if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
-      return ((TypeVariable) type)
-          .getVariableKey()
-          .equals(((TypeVariable) otherType).getVariableKey());
-    }
-    return type.equals(otherType);
   }
 
   @Override
@@ -224,14 +196,8 @@ public abstract class TypeVariable extends ParameterType {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
-    // Identify type variables by their keys, because substitution creates copies of them.
-    Set<List<Object>> inProgress = instantiationChecks.get();
-    List<Object> check =
-        Arrays.asList(
-            getVariableKey(),
-            otherType instanceof TypeVariable
-                ? ((TypeVariable) otherType).getVariableKey()
-                : otherType);
+    Set<List<ReferenceType>> inProgress = instantiationChecks.get();
+    List<ReferenceType> check = Arrays.asList(this, otherType);
     if (!inProgress.add(check)) {
       return true;
     }
