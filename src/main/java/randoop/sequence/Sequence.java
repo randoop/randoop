@@ -58,7 +58,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(SIList.empty(), 0, 0);
+    this(SIList.empty(), 0, 0, 0);
   }
 
   /**
@@ -69,9 +69,12 @@ public final class Sequence {
    * @param statements the statements of the new sequence
    * @param hashCode the hashcode for the new sequence
    * @param netSize the net size for the new sequence
+   * @param numCheckedStatements the number of leading statements that are already known to satisfy
+   *     the representation invariant; {@link #checkRep} checks only the statements after them
    */
   @SuppressWarnings("nullness:method.invocation") // initialized enough: computeLastStatementInfo()
-  private Sequence(SIList<Statement> statements, int hashCode, int netSize) {
+  private Sequence(
+      SIList<Statement> statements, int hashCode, int netSize, int numCheckedStatements) {
     if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
     }
@@ -81,7 +84,7 @@ public final class Sequence {
     this.computeLastStatementInfo();
     this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
-    this.checkRep();
+    this.checkRep(numCheckedStatements);
   }
 
   /**
@@ -90,7 +93,7 @@ public final class Sequence {
    * @param statements the statements
    */
   public Sequence(SIList<Statement> statements) {
-    this(statements, computeHashcode(statements), computeNetSize(statements));
+    this(statements, computeHashcode(statements), computeNetSize(statements), 0);
   }
 
   /**
@@ -177,8 +180,9 @@ public final class Sequence {
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.netSize : this.netSize + 1;
+    // This sequence's statements were checked when it was created.
     return new Sequence(
-        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize);
+        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize, size);
   }
 
   /**
@@ -221,7 +225,10 @@ public final class Sequence {
       newNetSize += c.netSize;
       statements1.add(c.statements);
     }
-    return new Sequence(SIList.concat(statements1), newHashCode, newNetSize);
+    SIList<Statement> newStatements = SIList.concat(statements1);
+    // Each of the sequences was checked when it was created.  A statement's inputs are given by
+    // relative indices, so they still refer to statements of the same sequence.
+    return new Sequence(newStatements, newHashCode, newNetSize, newStatements.size());
   }
 
   /**
@@ -543,8 +550,14 @@ public final class Sequence {
     }
   }
 
-  /** Representation invariant check. */
-  private void checkRep() {
+  /**
+   * Representation invariant check. Does nothing unless {@link GenInputsAbstract#debug_checks} is
+   * true.
+   *
+   * @param numCheckedStatements the number of leading statements that are already known to satisfy
+   *     the representation invariant; this method checks only the statements after them
+   */
+  private void checkRep(int numCheckedStatements) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -554,7 +567,7 @@ public final class Sequence {
       throw new RuntimeException("statements == null");
     }
 
-    for (int si = 0; si < this.statements.size(); si++) { // `si` is used later
+    for (int si = numCheckedStatements; si < this.statements.size(); si++) { // `si` is used later
 
       Statement statementWithInputs = this.statements.get(si);
 

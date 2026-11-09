@@ -1,6 +1,5 @@
 java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17+
-java7.util7.ArrayList.elementData(int) exclude11
 java7.util7.ArrayList.ensureCapacity(int) exclude
 java7.util7.ArrayList.fastRemove(int) ignore
 java7.util7.ArrayList.hugeCapacity(int) exclude
@@ -101,10 +100,10 @@ java7.util7.Hashtable.reconstitutionPut(java7.util7.Hashtable.Entry[], java.lang
 java7.util7.Hashtable.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.LinkedHashMap.newValueIterator() ignore
 java7.util7.LinkedList.addAll(int, java7.util7.Collection) ignore8
+java7.util7.LinkedList.element() exclude8
 java7.util7.LinkedList.get(int) ignore
 java7.util7.LinkedList.get(int) include11
 java7.util7.LinkedList.linkBefore(java.lang.Object, java7.util7.LinkedList.Node) ignore
-java7.util7.LinkedList.pop() exclude8
 java7.util7.LinkedList.readObject(java.io.ObjectInputStream) exclude
 java7.util7.LinkedList.set(int, java.lang.Object) ignore
 java7.util7.LinkedList.set(int, java.lang.Object) include11
@@ -134,7 +133,9 @@ java7.util7.TreeMap.get(java.lang.Object) ignore
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude8
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude8
+java7.util7.TreeMap.headMap(java.lang.Object) ignore17+ # calls headMap(Object, boolean)
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) ignore17+
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) include11
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude
