@@ -58,19 +58,6 @@ class LazyReferenceBound extends ReferenceBound {
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>Returns false if {@code bound} is not a {@link ReferenceBound}.
-   */
-  @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (!(bound instanceof ReferenceBound)) {
-      return false;
-    }
-    return isLowerBound(((ReferenceBound) bound).getBoundType(), substitution);
-  }
-
   @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
     if (bound instanceof ReferenceBound) {
