@@ -352,6 +352,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       OmitMethodsPredicate omitPredicate,
       AccessibilityPredicate accessibilityPredicate,
       SpecificationCollection operationSpecifications) {
+    super();
     this.classType = classType;
     this.reflectionPredicate = reflectionPredicate;
     this.omitPredicate = omitPredicate;

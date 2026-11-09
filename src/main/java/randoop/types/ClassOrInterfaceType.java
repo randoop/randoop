@@ -40,7 +40,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /** Creates a ClassOrInterfaceType. */
-  public ClassOrInterfaceType() {}
+  public ClassOrInterfaceType() {
+    super();
+  }
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
