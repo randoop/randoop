@@ -35,6 +35,7 @@ class CaptureTypeVariable extends TypeVariable {
    * {@code Capture0 extends Comparable<? super Capture0>}. When the substitution reaches such an
    * occurrence, it does not apply the substitution to the variable's bounds again.
    */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<Integer>> substituteIsExecuting =
       ThreadLocal.withInitial(HashSet::new);
 
@@ -42,6 +43,7 @@ class CaptureTypeVariable extends TypeVariable {
    * The ids of the capture variables whose {@link #getTypeParameters()} is executing on the current
    * thread. See {@link #substituteIsExecuting}.
    */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<Integer>> getTypeParametersIsExecuting =
       ThreadLocal.withInitial(HashSet::new);
 

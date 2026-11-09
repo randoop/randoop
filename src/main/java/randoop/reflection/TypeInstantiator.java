@@ -4,7 +4,6 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -532,12 +531,8 @@ public class TypeInstantiator {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      List<TypeVariable> constrained = new ArrayList<>();
-      for (Map.Entry<TypeVariable, List<TypeVariable>> entry : constrainedVariables.entrySet()) {
-        if (entry.getKey().equals(parameter)) {
-          constrained.addAll(entry.getValue());
-        }
-      }
+      List<TypeVariable> constrained =
+          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
       if (!constrained.isEmpty()) {
         candidates.removeIf(
@@ -570,19 +565,13 @@ public class TypeInstantiator {
     Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
     Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
     for (TypeVariable variable : instantiated) {
-      // The uninstantiated type variables in the bounds of `variable`, without duplicates.
-      List<TypeVariable> boundVariables = new ArrayList<>();
-      List<TypeVariable> allBoundVariables =
-          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
-      allBoundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      for (TypeVariable boundVariable : allBoundVariables) {
-        if (!containsVariable(instantiated, boundVariable)
-            && !containsVariable(boundVariables, boundVariable)) {
-          boundVariables.add(boundVariable);
-        }
-      }
+      // The uninstantiated type variables in the bounds of `variable`.
+      Set<TypeVariable> boundVariables =
+          new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      boundVariables.removeAll(instantiated);
       if (boundVariables.size() == 1) {
-        TypeVariable boundVariable = boundVariables.get(0);
+        TypeVariable boundVariable = boundVariables.iterator().next();
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }
@@ -778,24 +767,6 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns true if the given collection contains the given type variable, possibly with different
-   * bounds.
-   *
-   * @param variables a collection of type variables
-   * @param variable a type variable
-   * @return true if {@code variables} contains {@code variable}, possibly with different bounds
-   */
-  private static boolean containsVariable(
-      Collection<? extends TypeVariable> variables, TypeVariable variable) {
-    for (TypeVariable v : variables) {
-      if (v.equals(variable)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Returns the type variables that occur in the bounds of the given type variable.
    *
    * @param variable a type variable
@@ -818,7 +789,7 @@ public class TypeInstantiator {
    */
   private static boolean boundsAreInstantiated(TypeVariable variable, Substitution substitution) {
     for (TypeVariable boundVariable : boundVariables(variable)) {
-      if (!containsVariable(substitution.keySet(), boundVariable)) {
+      if (!substitution.keySet().contains(boundVariable)) {
         return false;
       }
     }
@@ -1004,7 +975,7 @@ public class TypeInstantiator {
    */
   private static boolean occursInBounds(TypeVariable variable, List<TypeVariable> variables) {
     for (TypeVariable v : variables) {
-      if (containsVariable(boundVariables(v), variable)) {
+      if (boundVariables(v).contains(variable)) {
         return true;
       }
     }

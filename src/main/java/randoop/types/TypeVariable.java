@@ -15,6 +15,7 @@ public abstract class TypeVariable extends ParameterType {
    * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
    * is in progress, in the current thread.
    */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
       ThreadLocal.withInitial(HashSet::new);
 
@@ -314,7 +315,6 @@ public abstract class TypeVariable extends ParameterType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    // A copy of this variable in its bounds equals this variable, so it is not a separate element.
     Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
     parameters.add(this);
     return new ArrayList<>(parameters);

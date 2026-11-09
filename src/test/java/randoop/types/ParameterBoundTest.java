@@ -134,18 +134,6 @@ public class ParameterBoundTest {
             .isLowerBound(lazyCaptureBound, new Substitution()));
   }
 
-  /** Bounds whose types are equal copies of a type variable have equal hash codes. */
-  @Test
-  public void testEqualVariableBoundsHaveEqualHashCodes() {
-    TypeVariable copy =
-        arrayHolderVariable.createCopyWithBounds(
-            arrayHolderVariable.getLowerTypeBound(), numberBound);
-    ParameterBound bound = new EagerReferenceBound(arrayHolderVariable);
-    ParameterBound copyBound = new LazyReferenceBound(copy);
-    assertTrue(bound.equals(copyBound));
-    assertTrue(bound.hashCode() == copyBound.hashCode());
-  }
-
   /** The substitution is applied to the lower bound when the other bound is lazy. */
   @Test
   public void testSubstitutionAppliedToLowerBoundOfLazyBound() {
