@@ -361,7 +361,8 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // The parameter type is a parameterized type such as `List<T>`, or a member class of a
-            // generic class, such as `Outer<T>.Inner`, which is not a ParameterizedType.
+            // generic class, such as `Outer<T>.Inner`, which has no type parameters of its own and
+            // is not a ParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {

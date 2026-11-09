@@ -306,7 +306,8 @@ public abstract class TypeVariable extends ParameterType {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else if (substituted instanceof ReferenceBound) {
-      // The substitution instantiates the type variable by a type that is not a type variable.
+      // The substitution instantiates the type variable by a type that is not a type variable.  For
+      // `W extends V`, where the substitution maps V to String, compare otherType with String.
       return isUpper
           ? substituted.isUpperBound(otherType, substitution)
           : substituted.isLowerBound(otherType, substitution);

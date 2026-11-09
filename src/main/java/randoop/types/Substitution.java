@@ -411,7 +411,8 @@ public class Substitution {
 
   /**
    * Returns the type variables mapped from by this. The result is unmodifiable, so that it cannot
-   * make the indexes and caches of this substitution inconsistent.
+   * make the indexes and caches of this substitution inconsistent: for example, a client cannot
+   * remove a key from {@link #map} without removing it from {@link #rawMap} too.
    *
    * @return the type variables mapped from by this
    */
