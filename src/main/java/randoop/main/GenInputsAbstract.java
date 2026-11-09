@@ -170,7 +170,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * signature</a> matches the regular expression, or a method inherited from a superclass or
    * interface whose signature matches the regular expression. Nor will Randoop directly call any
    * method that such a method overrides (because such a call might dispatch to the omitted method
-   * at run time).
+   * at run time). Randoop considers only the omitted methods of the classes under test, so a call
+   * can still dispatch to an omitted method of a class that is not under test.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.

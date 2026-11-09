@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +65,13 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
-   * Methods that are omitted because they are overridden by an omitted method, even though no
-   * pattern matches them. Never side-effected.
+   * Methods that this predicate omits even though no pattern matches them, because a call to them
+   * might dispatch to an omitted method. Maps each such method to the classes whose instances
+   * dispatch a call to the method to an omitted method. For example, if a pattern matches {@code
+   * MyClass.toString()}, then this maps {@code Object.toString()} to a set that contains {@code
+   * MyClass}. Neither the map nor its values are ever side-effected.
    */
-  private final Set<Method> overriddenMethods;
+  private final Map<Method, Set<Class<?>>> overriddenMethods;
 
   /**
    * Create a new OmitMethodsPredicate.
@@ -75,49 +79,71 @@ public class OmitMethodsPredicate {
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
    */
   public OmitMethodsPredicate(List<Pattern> omitPatterns) {
-    this(omitPatterns, Collections.emptySet());
+    this(omitPatterns, Collections.emptyMap());
   }
 
   /**
    * Create a new OmitMethodsPredicate.
    *
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
-   * @param overriddenMethods methods to omit even though no pattern matches them
+   * @param overriddenMethods methods to omit even though no pattern matches them, each mapped to
+   *     the classes whose instances dispatch a call to it to an omitted method
    */
-  private OmitMethodsPredicate(List<Pattern> omitPatterns, Set<Method> overriddenMethods) {
+  private OmitMethodsPredicate(
+      List<Pattern> omitPatterns, Map<Method, Set<Class<?>>> overriddenMethods) {
     this.omitPatterns = new ArrayList<>(omitPatterns);
     this.overriddenMethods = overriddenMethods;
   }
 
   /**
    * Returns a predicate that omits everything that this one does, plus every method that is
-   * overridden by a method among {@code omittedOperations}.
+   * overridden by a method among {@code omittedOperations}. If an operation's declaring type
+   * inherits the operation's method, the returned predicate also omits that method, because the
+   * receiver of a call to the method might be an instance of the declaring type.
    *
-   * @param omittedOperations operations that this predicate omits
-   * @return a predicate that also omits the methods that {@code omittedOperations} override
+   * @param omittedOperations a collection of operations that this predicate omits
+   * @return a predicate that also omits the methods that {@code omittedOperations} override, or
+   *     this predicate if it already omits them
    */
   public OmitMethodsPredicate omittingOverriddenMethods(
       Collection<? extends TypedOperation> omittedOperations) {
-    Set<Method> newOverriddenMethods = new HashSet<>(overriddenMethods);
+    // Group the omitted methods by receiver class, so that each class's hierarchy is examined once.
+    Map<Class<?>, Set<Method>> omittedMethodsByReceiver = new LinkedHashMap<>();
     for (TypedOperation omitted : omittedOperations) {
       AccessibleObject reflectionObject = omitted.getOperation().getReflectionObject();
-      if (reflectionObject instanceof Method) {
-        Method m = (Method) reflectionObject;
-        // The operation's declaring type may be a subclass that inherits m. Search from that
-        // subclass, so that methods it implements via m (such as methods of interfaces that the
-        // subclass implements but m's declaring class does not) are found.
-        Class<?> receiverClass = m.getDeclaringClass();
-        if (omitted instanceof TypedClassOperation) {
-          Class<?> declaringTypeClass =
-              ((TypedClassOperation) omitted).getDeclaringType().getRuntimeClass();
-          if (receiverClass.isAssignableFrom(declaringTypeClass)) {
-            receiverClass = declaringTypeClass;
-          }
+      if (!(reflectionObject instanceof Method)) {
+        continue;
+      }
+      Method m = (Method) reflectionObject;
+      // The operation's declaring type can be a subclass that inherits m. Search from that
+      // subclass, so that methods it implements via m (such as methods of interfaces that the
+      // subclass implements but m's declaring class does not) are found.
+      Class<?> receiverClass = m.getDeclaringClass();
+      if (omitted instanceof TypedClassOperation) {
+        Class<?> declaringTypeClass =
+            ((TypedClassOperation) omitted).getDeclaringType().getRuntimeClass();
+        if (receiverClass.isAssignableFrom(declaringTypeClass)) {
+          receiverClass = declaringTypeClass;
         }
-        newOverriddenMethods.addAll(overriddenMethods(m, receiverClass));
+      }
+      omittedMethodsByReceiver.computeIfAbsent(receiverClass, k -> new HashSet<>()).add(m);
+    }
+
+    Map<Method, Set<Class<?>>> newOverriddenMethods = new HashMap<>();
+    for (Map.Entry<Method, Set<Class<?>>> entry : overriddenMethods.entrySet()) {
+      newOverriddenMethods.put(entry.getKey(), new HashSet<>(entry.getValue()));
+    }
+    boolean changed = false;
+    for (Map.Entry<Class<?>, Set<Method>> entry : omittedMethodsByReceiver.entrySet()) {
+      Class<?> receiverClass = entry.getKey();
+      for (Method overridden : overriddenMethods(entry.getValue(), receiverClass)) {
+        changed |=
+            newOverriddenMethods
+                .computeIfAbsent(overridden, k -> new HashSet<>())
+                .add(receiverClass);
       }
     }
-    if (newOverriddenMethods.equals(overriddenMethods)) {
+    if (!changed) {
       return this;
     }
     if (logOmit) {
@@ -136,6 +162,22 @@ public class OmitMethodsPredicate {
    * @return true if this predicate omits the operation
    */
   public boolean shouldOmit(final TypedClassOperation operation) {
+    return shouldOmit(operation, null);
+  }
+
+  /**
+   * Returns true if the operation is a constructor or method call that this predicate omits, when
+   * the run-time class of the receiver is {@code receiverClass}. This is like {@link
+   * #shouldOmit(TypedClassOperation)}, but it does not omit a call to a method that is overridden
+   * by an omitted method if, on a receiver of class {@code receiverClass}, the call does not
+   * dispatch to an omitted method.
+   *
+   * @param operation the operation for the method or constructor
+   * @param receiverClass the run-time class of the receiver, or null if it is unknown; ignored if
+   *     the operation is not a call to an instance method
+   * @return true if this predicate omits the operation on a receiver of class {@code receiverClass}
+   */
+  public boolean shouldOmit(TypedClassOperation operation, @Nullable Class<?> receiverClass) {
     if (logOmit) {
       Log.logPrintf("shouldOmit: testing %s [%s]%n", operation, operation.getClass());
     }
@@ -144,14 +186,11 @@ public class OmitMethodsPredicate {
       return false;
     }
 
-    if (!overriddenMethods.isEmpty()) {
-      AccessibleObject reflectionObject = operation.getOperation().getReflectionObject();
-      if (reflectionObject != null && overriddenMethods.contains(reflectionObject)) {
-        if (logOmit) {
-          Log.logPrintf("shouldOmit(%s): overridden by an omitted method%n", operation);
-        }
-        return true;
+    if (isOverriddenByOmittedMethod(operation, receiverClass)) {
+      if (logOmit) {
+        Log.logPrintf("shouldOmit(%s): overridden by an omitted method%n", operation);
       }
+      return true;
     }
 
     if (omitPatterns.isEmpty()) {
@@ -163,6 +202,40 @@ public class OmitMethodsPredicate {
     }
 
     return shouldOmitMethod(operation);
+  }
+
+  /**
+   * Returns true if the operation calls a method that is overridden by a method that this predicate
+   * omits (see {@link #omittingOverriddenMethods}). Does not check whether an omit pattern matches
+   * the operation.
+   *
+   * @param operation an operation
+   * @param receiverClass the run-time class of the receiver, or null if it is unknown
+   * @return true if a call to the operation, on a receiver of class {@code receiverClass}, might
+   *     dispatch to an omitted method that overrides the operation's method
+   */
+  boolean isOverriddenByOmittedMethod(
+      TypedClassOperation operation, @Nullable Class<?> receiverClass) {
+    if (overriddenMethods.isEmpty()) {
+      return false;
+    }
+    AccessibleObject reflectionObject = operation.getOperation().getReflectionObject();
+    if (!(reflectionObject instanceof Method)) {
+      return false;
+    }
+    Set<Class<?>> dispatchingClasses = overriddenMethods.get(reflectionObject);
+    if (dispatchingClasses == null) {
+      return false;
+    }
+    if (receiverClass == null) {
+      return true;
+    }
+    for (Class<?> dispatchingClass : dispatchingClasses) {
+      if (dispatchingClass.isAssignableFrom(receiverClass)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -295,34 +368,45 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Returns the methods that the given method overrides or implements, as a member of {@code
-   * receiverClass}.
+   * Returns the methods whose calls, on an instance of {@code receiverClass}, might dispatch to one
+   * of the given methods: the methods that they override or implement as members of {@code
+   * receiverClass}, plus each of the given methods that {@code receiverClass} inherits rather than
+   * declares.
    *
-   * @param m a method
-   * @param receiverClass the class that declares {@code m}, or a subclass of it that inherits
-   *     {@code m}
-   * @return the methods, declared in strict supertypes of {@code receiverClass} other than the
-   *     class that declares {@code m}, that {@code m} overrides or implements in {@code
-   *     receiverClass}
+   * @param methods methods of {@code receiverClass}, each declared in it or inherited by it
+   * @param receiverClass a class
+   * @return the methods whose calls, on an instance of {@code receiverClass}, might dispatch to one
+   *     of {@code methods}
    */
-  private static Set<Method> overriddenMethods(Method m, Class<?> receiverClass) {
+  private static Set<Method> overriddenMethods(Collection<Method> methods, Class<?> receiverClass) {
     Set<Method> result = new HashSet<>();
-    int mods = m.getModifiers();
-    if (Modifier.isStatic(mods) || Modifier.isPrivate(mods)) {
-      return result;
-    }
-    Class<?> declaringClass = m.getDeclaringClass();
-    Class<?>[] paramTypes = m.getParameterTypes();
-    // Null if some generic signature is malformed or names a type that is not present.
-    @Nullable Map<TypeVariable<?>, Type> typeArguments = supertypeTypeArguments(receiverClass);
-    for (Class<?> supertype : strictSupertypes(receiverClass)) {
-      if (supertype == declaringClass) {
-        // m itself, or a bridge method; neither is overridden by m.
+    // The given methods that can override another method, indexed by name.
+    Map<String, List<Method>> methodsByName = new HashMap<>();
+    for (Method m : methods) {
+      int mods = m.getModifiers();
+      if (Modifier.isStatic(mods) || Modifier.isPrivate(mods)) {
         continue;
       }
+      if (m.getDeclaringClass() != receiverClass) {
+        // receiverClass inherits m, so the receiver of a call to m might be an instance of
+        // receiverClass.
+        result.add(m);
+      }
+      methodsByName.computeIfAbsent(m.getName(), k -> new ArrayList<>()).add(m);
+    }
+    if (methodsByName.isEmpty()) {
+      return result;
+    }
+
+    // The type arguments are computed lazily, because computing them is relatively expensive and
+    // most supertypes declare no method with the same name and arity as a given method.
+    boolean typeArgumentsComputed = false;
+    // Null if some generic signature is malformed or names a type that is not present.
+    @Nullable Map<TypeVariable<?>, Type> typeArguments = null;
+    for (Class<?> supertype : strictSupertypes(receiverClass)) {
       for (Method candidate : supertype.getDeclaredMethods()) {
-        if (!candidate.getName().equals(m.getName())
-            || candidate.getParameterCount() != paramTypes.length) {
+        List<Method> sameNameMethods = methodsByName.get(candidate.getName());
+        if (sameNameMethods == null) {
           continue;
         }
         int candidateMods = candidate.getModifiers();
@@ -331,12 +415,26 @@ public class OmitMethodsPredicate {
         }
         boolean isPackagePrivate =
             !Modifier.isPublic(candidateMods) && !Modifier.isProtected(candidateMods);
-        if (isPackagePrivate
-            && !Objects.equals(declaringClass.getPackage(), supertype.getPackage())) {
-          continue;
-        }
-        if (hasParameterTypes(candidate, paramTypes, typeArguments)) {
-          result.add(candidate);
+        for (Method m : sameNameMethods) {
+          Class<?> declaringClass = m.getDeclaringClass();
+          if (supertype == declaringClass) {
+            // m itself, or a bridge method; neither is overridden by m.
+            continue;
+          }
+          if (candidate.getParameterCount() != m.getParameterCount()) {
+            continue;
+          }
+          if (isPackagePrivate
+              && !Objects.equals(declaringClass.getPackage(), supertype.getPackage())) {
+            continue;
+          }
+          if (!typeArgumentsComputed) {
+            typeArguments = supertypeTypeArguments(receiverClass);
+            typeArgumentsComputed = true;
+          }
+          if (hasParameterTypes(candidate, m.getParameterTypes(), typeArguments)) {
+            result.add(candidate);
+          }
         }
       }
     }
@@ -414,7 +512,7 @@ public class OmitMethodsPredicate {
    * Returns the type arguments that the given class supplies, directly or transitively, to the type
    * parameters of its strict supertypes. For example, if class {@code Foo} implements {@code
    * Comparable<Foo>}, the result maps the type parameter {@code T} of {@code Comparable} to {@code
-   * Foo}. A type argument may refer to type parameters of other classes; {@link #erasure} resolves
+   * Foo}. A type argument can refer to type parameters of other classes; {@link #erasure} resolves
    * them. A supertype that is used as a raw type contributes no type arguments.
    *
    * @param c a class
@@ -524,6 +622,9 @@ public class OmitMethodsPredicate {
 
   @Override
   public String toString() {
-    return "OmitMethodsPredicate: " + omitPatterns;
+    if (overriddenMethods.isEmpty()) {
+      return "OmitMethodsPredicate: " + omitPatterns;
+    }
+    return "OmitMethodsPredicate: " + omitPatterns + ", overridden methods: " + overriddenMethods;
   }
 }

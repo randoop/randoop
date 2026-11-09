@@ -20,8 +20,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
 import randoop.main.ThrowClassNameError;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.omitinputs.p.C;
+import randoop.reflection.omitinputs.p.G;
 import randoop.reflection.omitinputs.p.M1Interface;
+import randoop.reflection.omitinputs.q.D;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -54,7 +58,7 @@ public class OmitMethodsTest {
           "randoop.reflection.omitinputs.p.C",
           "randoop.reflection.omitinputs.q.D");
 
-  /** The package of the classes under test, as a regular expression. */
+  /** Matches the package of the classes under test, at the beginning of a signature. */
   private static final String P = "^randoop\\.reflection\\.omitinputs\\.p\\.";
 
   private static ClassOrInterfaceType gType;
@@ -137,6 +141,38 @@ public class OmitMethodsTest {
     assertDoesNotHaveMethod("G.m2", operations);
     assertHasMethod("E.m2", operations);
     assertHasMethod("G.m1", operations);
+  }
+
+  @Test
+  public void testPM2MatchReceiverClass() throws Exception {
+    OmitMethodsPredicate predicate =
+        createModel(CLASSNAMES, P + "P\\.m2\\(\\)").getOmitMethodsPredicate();
+    TypedClassOperation gm2 = TypedOperation.forMethod(G.class.getMethod("m2"));
+    // A G receiver might be a P, whose m2 is omitted.
+    assertTrue(predicate.shouldOmit(gm2));
+    assertTrue(predicate.shouldOmit(gm2, randoop.reflection.omitinputs.p.P.class));
+    assertTrue(predicate.shouldOmit(gm2, C.class));
+    // A call to G.m2 on a G or a D does not dispatch to P.m2.
+    assertFalse(predicate.shouldOmit(gm2, G.class));
+    assertFalse(predicate.shouldOmit(gm2, D.class));
+  }
+
+  @Test
+  public void testInheritedMethodMatch() throws Exception {
+    // C inherits m1 from G.
+    OperationModel model = createModel(CLASSNAMES, P + "C\\.m1\\(\\)");
+    Collection<TypedOperation> operations = model.getOperations();
+    // A call to G.m1 or M1Interface.m1 might dispatch to G.m1 on a C.
+    assertDoesNotHaveMethod("G.m1", operations);
+    assertDoesNotHaveMethod("M1Interface.m1", operations);
+    assertHasMethod("E.m1", operations);
+    assertHasMethod("G.m2", operations);
+
+    OmitMethodsPredicate predicate = model.getOmitMethodsPredicate();
+    TypedClassOperation gm1 = TypedOperation.forMethod(G.class.getMethod("m1"));
+    assertTrue(predicate.shouldOmit(gm1, C.class));
+    assertFalse(predicate.shouldOmit(gm1, G.class));
+    assertFalse(predicate.shouldOmit(gm1, D.class));
   }
 
   @Test

@@ -34,9 +34,9 @@ New command-line arguments:
 
 Changed command-line arguments:
 
-* `--omit-methods`:  If Randoop omits method M, it also omits every method
-  that M overrides, because a call to an overridden method might dispatch
-  to M.
+* `--omit-methods`:  If Randoop omits method M of a class under test, it also
+  omits every method that M overrides, because a call to an overridden method
+  might dispatch to M.
 
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.

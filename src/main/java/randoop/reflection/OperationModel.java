@@ -200,11 +200,11 @@ public final class OperationModel {
     model.operations.addAll(
         model.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
-    model.omitOverriddenMethods();
     // Add the constructor "Object()".
     model.addObjectConstructor();
     // An operation that is omitted in one place but added in another is not omitted.
     model.omittedOperations.removeAll(model.operations);
+    model.omitOverriddenMethods();
 
     if (GenInputsAbstract.call_non_sut_methods) {
       model.setSutParameterOnlyTypes();
@@ -901,13 +901,23 @@ public final class OperationModel {
    * omitted method at run time. Moves such methods from {@link #operations} to {@link
    * #omittedOperations}, and updates {@link #omitMethodsPredicate} to omit them.
    */
+  @SuppressWarnings(
+      "ReferenceEquality") // omittingOverriddenMethods returns its receiver if unchanged
   private void omitOverriddenMethods() {
-    omitMethodsPredicate = omitMethodsPredicate.omittingOverriddenMethods(omittedOperations);
+    OmitMethodsPredicate newPredicate =
+        omitMethodsPredicate.omittingOverriddenMethods(omittedOperations);
+    if (newPredicate == omitMethodsPredicate) {
+      return;
+    }
+    omitMethodsPredicate = newPredicate;
+    // No omit pattern matches any element of `operations`, so test only whether an omitted method
+    // overrides it.
     Iterator<TypedOperation> itor = operations.iterator();
     while (itor.hasNext()) {
       TypedOperation operation = itor.next();
       if (operation instanceof TypedClassOperation
-          && omitMethodsPredicate.shouldOmit((TypedClassOperation) operation)) {
+          && omitMethodsPredicate.isOverriddenByOmittedMethod(
+              (TypedClassOperation) operation, null)) {
         itor.remove();
         omittedOperations.add(operation);
       }
