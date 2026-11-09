@@ -208,7 +208,7 @@ public final class SequenceCollection {
       Statement statement = sequence.getStatement(0);
       if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
           && statement.isNonreceivingInitialization()) {
-        primitiveValues.add(statement.getValue());
+        primitiveValues.add(canonicalizePrimitiveValue(statement.getValue(), outType));
       }
     }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
@@ -233,6 +233,51 @@ public final class SequenceCollection {
       }
     }
     checkRep();
+  }
+
+  /**
+   * Converts a value to the wrapper class of its declared type. A primitive initialization may
+   * store a value of a narrower type than the one it declares (for example, a {@code Byte} for a
+   * {@code short} variable). The runtime value of such a variable has the declared type, so {@link
+   * #primitiveValues} stores the value converted to that type.
+   *
+   * @param value a primitive wrapper or a String
+   * @param type the declared type of the value: a primitive type or String
+   * @return the value, converted to the wrapper class of {@code type} if {@code type} is primitive
+   */
+  @SuppressWarnings({
+    "signedness:method.invocation" // Randoop's primitive values are Java's signed values
+  })
+  private static Object canonicalizePrimitiveValue(Object value, Type type) {
+    if (!type.isPrimitive()) {
+      return value;
+    }
+    Class<?> cls = type.getRuntimeClass();
+    if (cls == boolean.class || cls == char.class) {
+      // No other primitive type widens to boolean or char.
+      return value;
+    }
+    Number n;
+    if (value instanceof Character) {
+      n = Integer.valueOf((Character) value);
+    } else {
+      n = (Number) value;
+    }
+    if (cls == byte.class) {
+      return n.byteValue();
+    } else if (cls == short.class) {
+      return n.shortValue();
+    } else if (cls == int.class) {
+      return n.intValue();
+    } else if (cls == long.class) {
+      return n.longValue();
+    } else if (cls == float.class) {
+      return n.floatValue();
+    } else if (cls == double.class) {
+      return n.doubleValue();
+    } else {
+      throw new RandoopBug("Unexpected primitive type " + type);
+    }
   }
 
   /**

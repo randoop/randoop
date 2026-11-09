@@ -231,7 +231,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
+    int numComponents = componentManager.numGeneratedSequences();
+    if (numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
       clearComponents();
       if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
         clearMemoryThreshold =
