@@ -65,6 +65,21 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound substitute(Substitution substitution) {
+    if (boundType instanceof GenericArrayType) {
+      // A generic array type, such as `List<String>[]`, need not contain a type variable.  Such a
+      // bound is materialized even by an empty substitution, so that it can be compared with types.
+      if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      // If the element type is a type variable, a later substitution might map it to the null
+      // type.  A LazyReferenceBound leaves the bound unresolved in that case.
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
+    }
     if (substitution.isEmpty()) {
       return this;
     }
@@ -97,17 +112,6 @@ class LazyParameterBound extends ParameterBound {
       return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
     }
 
-    if (boundType instanceof GenericArrayType) {
-      TypeArgument typeArgument = substitute(boundType, substitution);
-      if (typeArgument == null) {
-        return this;
-      }
-      // If the element type is a type variable, a later substitution might map it to the null
-      // type.  A LazyReferenceBound leaves the bound unresolved in that case.
-      return ReferenceBound.forTypeLazyIfGeneric(
-          ((ReferenceArgument) typeArgument).getReferenceType());
-    }
-
     throw new RandoopBug(
         "lazy parameter bounds should be a type variable, parameterized type, or array type");
   }
@@ -138,8 +142,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution maps the component type of an array
-   *     type to the null type or if {@code type} is not a type variable, parameterized type, class,
+   * @return the type argument, or null if the substitution maps the component type of an array type
+   *     to the null type or if {@code type} is not a type variable, parameterized type, class,
    *     array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
@@ -427,8 +431,9 @@ class LazyParameterBound extends ParameterBound {
    * #completeSubstitution(Substitution)}. Returns null if the result is still this bound, which
    * happens if the substitution maps the component type of an array type to the null type, for
    * which there is no array type, so that no type satisfies this bound. Otherwise, the result is
-   * still this bound only for a kind of type that {@link #substitute(Substitution)} does not handle;
-   * then this method also fails an assertion. Comparing the unchanged bound would recurse forever.
+   * still this bound only for a kind of type that {@link #substitute(Substitution)} does not
+   * handle; then this method also fails an assertion. Comparing the unchanged bound would recurse
+   * forever.
    *
    * @param completeSubstitution a substitution that maps every type variable in this bound
    * @return this bound with the substitution applied, or null
@@ -446,11 +451,16 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Each type variable in this bound stands for itself, so this bound is compared after it is
-   * converted to a {@link ReferenceBound}. Returns false if it cannot be converted.
+   * <p>Returns true if {@code upperBound} is {@code Object}, which is an upper bound of every
+   * reference type. Otherwise, each type variable in this bound stands for itself, so this bound is
+   * compared after it is converted to a {@link ReferenceBound}. Returns false if it cannot be
+   * converted.
    */
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    if (upperBound.isObject()) {
+      return true;
+    }
     ReferenceBound converted = toReferenceBound();
     return converted != null && converted.hasUpperBound(upperBound, substitution);
   }
@@ -470,11 +480,17 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
-   * cannot be determined without a substitution for its type variables.
+   * <p>Compares {@code lowerBound} with the {@link ReferenceBound} that {@link #toReferenceBound()}
+   * converts this bound to. If this bound cannot be converted, returns true only if {@code
+   * lowerBound} is the null type, because the type of this bound cannot be determined without a
+   * substitution for its type variables.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    ReferenceBound converted = toReferenceBound();
+    if (converted != null) {
+      return converted.hasLowerBound(lowerBound, substitution);
+    }
     return lowerBound.isNullType(substitution);
   }
 

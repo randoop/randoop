@@ -113,8 +113,7 @@ public class WildcardContainmentTest {
   }
 
   /**
-   * Returns the first type argument of the type of the field of this class that has the given
-   * name.
+   * Returns the first type argument of the type of the field of this class that has the given name.
    *
    * @param fieldName the name of a field of this class, whose type is parameterized
    * @return the first type argument of the type of the field

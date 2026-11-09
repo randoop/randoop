@@ -20,7 +20,7 @@ class EagerReferenceBound extends ReferenceBound {
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    if (isUnchangedBy(referenceType)) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
