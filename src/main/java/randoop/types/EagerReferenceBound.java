@@ -87,27 +87,17 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       TypeVariable variable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
-        // The type variable can be argType itself, as in LazyReferenceBound.isUpperBound.  Checking
+        // The type variable can be argType or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  For `K extends Comparable<K>`, K can be a class that
+        // is comparable to itself, even if argType is a subclass of it that is not.  Checking
         // argType against the upper bound of the type variable instead would leave the type
         // variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
         // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
         // type variable are checked with the mappings of `subst`, because they can mention other
         // type variables that `subst` instantiates.
-        if (variable.canBeInstantiatedBy((ReferenceType) argType, subst)) {
-          return true;
-        }
-        // The type variable can also be a strict supertype of argType.  For `<S extends
-        // Comparable<S>, U extends S>`, a class Sub that extends Base, where Base implements
-        // Comparable<Base>, satisfies the bound of U, with Base for S.
-        if (argType instanceof ClassOrInterfaceType) {
-          for (ClassOrInterfaceType supertype :
-              ((ClassOrInterfaceType) argType).getSupertypesStrict()) {
-            if (variable.canBeInstantiatedBy(supertype, subst)) {
-              return true;
-            }
-          }
-        }
-        return false;
+        // For `<S extends Comparable<S>, U extends S>`, a class Sub that extends Base, where Base
+        // implements Comparable<Base>, satisfies the bound of U, with Base for S.
+        return variable.canBeInstantiatedBySupertypeOf((ReferenceType) argType, subst);
       }
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }

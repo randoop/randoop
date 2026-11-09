@@ -1517,6 +1517,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
+  @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // only its type is used
   static class Version<U> implements Comparable<Version<U>> {
     @Override
     public int compareTo(Version<U> other) {
@@ -1626,5 +1627,79 @@ public class TypeVariableTest {
         GenericClassType.forClass(Map.class).instantiate(capture, JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+  }
+
+  /**
+   * A chain of type parameters, each bounded by the previous one.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code K}
+   * @param <W> a type parameter bounded by {@code V}
+   */
+  static class ChainedBound<K, V extends K, W extends V> {}
+
+  @Test
+  public void testChainedBoundWithInstantiatedEnd() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ChainedBound.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    TypeVariable w = parameters.get(2);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);
+    // With K := Number, W and V can both be Integer.
+    assertTrue(w.canBeInstantiatedBy(integerType, new Substitution(k, numberType)));
+    assertFalse(w.canBeInstantiatedBy(integerType, new Substitution(k, JavaTypes.STRING_TYPE)));
+    // With V := Number, W can be Integer.
+    assertTrue(w.canBeInstantiatedBy(integerType, new Substitution(v, numberType)));
+    assertFalse(w.canBeInstantiatedBy(integerType, new Substitution(v, JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A type parameter bounded by a sibling with a self-referential bound.
+   *
+   * @param <K> a type parameter with a self-referential bound
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class BoundedBySelfComparable<K extends Comparable<K>, V extends K> {}
+
+  /** A class that is comparable to itself. */
+  abstract static class SelfComparable implements Comparable<SelfComparable> {}
+
+  /**
+   * A subclass of {@link SelfComparable}. It is comparable to {@link SelfComparable}, not to
+   * itself.
+   */
+  abstract static class SelfComparableSubclass extends SelfComparable {}
+
+  @Test
+  public void testVariableBoundIsSupertype() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(BoundedBySelfComparable.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    ReferenceType subclass = ClassOrInterfaceType.forClass(SelfComparableSubclass.class);
+    // K := SelfComparable and V := SelfComparableSubclass.
+    assertTrue(v.canBeInstantiatedBy(subclass));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(subclass, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(subclass, new Substitution()));
+    // No supertype of ComparableToOther is comparable to itself.
+    ReferenceType other = ClassOrInterfaceType.forClass(ComparableToOther.class);
+    assertFalse(v.canBeInstantiatedBy(other));
+    assertFalse(new EagerReferenceBound(k).isUpperBound(other, new Substitution()));
+    assertFalse(new LazyReferenceBound(k).isUpperBound(other, new Substitution()));
+  }
+
+  /** A field whose type has a wildcard bounded by an array type with no type variable. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<? extends List<String>[]> arrayWildcardField;
+
+  @Test
+  public void testVariableFreeArrayWildcardBound() throws NoSuchFieldException {
+    TypeVariable capture = typeArgument(capturedFieldType("arrayWildcardField"), 0);
+    ReferenceType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertTrue(capture.canBeInstantiatedBy(ArrayType.ofComponentType(listOfString)));
+    assertFalse(capture.canBeInstantiatedBy(ArrayType.ofComponentType(JavaTypes.STRING_TYPE)));
   }
 }
