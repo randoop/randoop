@@ -24,6 +24,7 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType the {@code Class} raw type
    */
   GenericClassType(Class<?> rawType) {
+    super();
     this.rawType = rawType;
     this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
   }
@@ -266,7 +267,9 @@ public class GenericClassType extends ParameterizedType {
       return true;
     }
     if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-      if (otherType.isRawtype()) {
+      if (otherType.isRawtype()
+          || (otherType instanceof ClassOrInterfaceType
+              && ((ClassOrInterfaceType) otherType).isGenericForm())) {
         return true;
       }
       if (otherType instanceof InstantiatedType) {

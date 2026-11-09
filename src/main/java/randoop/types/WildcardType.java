@@ -25,6 +25,7 @@ class WildcardType extends ParameterType {
 
   /** Do not create a wildcard type without a bound. */
   private WildcardType() {
+    super();
     //  do not create object
     this.hasUpperBound = false;
   }
