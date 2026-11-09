@@ -149,9 +149,10 @@ class LazyReferenceBound extends EagerReferenceBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
-      // of the substitution, because they can mention type variables that it instantiates.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
+      // The unknown type variable can be argType itself, or one of its supertypes.  Its bounds are
+      // checked with the mappings of the substitution, because they can mention type variables
+      // that it instantiates.
+      return unknown.canBeInstantiatedBySupertypeOf((ReferenceType) argType, substitution);
     }
     return super.isUpperBound(argType, substitution);
   }
@@ -165,8 +166,10 @@ class LazyReferenceBound extends EagerReferenceBound {
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
-   * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
-   * within a lower bound, since the lower bound of the type variable is usually the null type.
+   * For an upper bound, it is also enough that the type variable can be instantiated by a supertype
+   * of {@code argType}. Comparing {@code argType} with the bounds of the type variable instead would
+   * accept any type as within a lower bound, since the lower bound of the type variable is usually
+   * the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

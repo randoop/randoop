@@ -102,6 +102,14 @@ public abstract class ParameterBound {
       TypeVariable eagerBound = TypeVariable.forType(type);
       return new EagerReferenceBound(eagerBound);
     }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      // A LazyParameterBound for an array type with no type variable, such as List<String>[],
+      // could never be instantiated, because no substitution changes it.
+      ReferenceType arrayType = ArrayType.forType(type);
+      if (arrayType.getTypeParameters().isEmpty()) {
+        return new EagerReferenceBound(arrayType);
+      }
+    }
     return new LazyParameterBound(type);
   }
 

@@ -283,9 +283,9 @@ public abstract class TypeVariable extends ParameterType {
     if (getUpperTypeBound().isVariable()) {
       TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
       if (unknown != null) {
-        // The unknown type variable can be `otherType` itself; see
+        // The unknown type variable can be `otherType` itself, or one of its supertypes; see
         // EagerReferenceBound.isUpperBound(Type, Substitution).
-        if (!unknown.canBeInstantiatedBy(otherType, substitution)) {
+        if (!unknown.canBeInstantiatedBySupertypeOf(otherType, substitution)) {
           return false;
         }
       } else if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
@@ -323,6 +323,34 @@ public abstract class TypeVariable extends ParameterType {
     } else {
       return null;
     }
+  }
+
+  /**
+   * Returns true if the given type or one of its supertypes can instantiate this variable, when the
+   * other type variables are instantiated as by the given substitution. Then the given type is
+   * within an upper bound that is this variable, if this variable is not otherwise determined.
+   *
+   * <p>Only the supertypes of a class or interface type are tried. For any other type, such as an
+   * array type, only the type itself is tried.
+   *
+   * @param otherType the type, not a variable
+   * @param context a substitution for other type variables; any mapping of this variable in it is
+   *     ignored
+   * @return true if {@code otherType} or one of its supertypes can instantiate this variable
+   */
+  boolean canBeInstantiatedBySupertypeOf(ReferenceType otherType, Substitution context) {
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (otherType instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
+        if (canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
