@@ -402,7 +402,7 @@ public class OmitMethodsPredicate {
     // most supertypes declare no method with the same name and arity as a given method.
     boolean typeArgumentsComputed = false;
     // Null if some generic signature is malformed or names a type that is not present.
-    @Nullable Map<TypeVariable<?>, Type> typeArguments = null;
+    Map<TypeVariable<?>, Type> typeArguments = null;
     for (Class<?> supertype : strictSupertypes(receiverClass)) {
       for (Method candidate : supertype.getDeclaredMethods()) {
         List<Method> sameNameMethods = methodsByName.get(candidate.getName());
