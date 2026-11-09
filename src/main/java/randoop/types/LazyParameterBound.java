@@ -25,6 +25,7 @@ class LazyParameterBound extends ParameterBound {
    * @param boundType the reflection type for this bound
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
+    super();
     this.boundType = boundType;
   }
 
@@ -223,34 +224,14 @@ class LazyParameterBound extends ParameterBound {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, because the bound is a {@code java.lang.reflect.Type}, which cannot contain a
+   * capture variable.
+   */
   @Override
   public boolean hasCaptureVariable() {
-    return hasCaptureVariable(boundType);
-  }
-
-  /**
-   * Returns true if the given type has a capture variable.
-   *
-   * @param type the type to test
-   * @return true if the given type has a capture variable
-   */
-  private static boolean hasCaptureVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
-        if (hasCaptureVariable(bound)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) type;
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasCaptureVariable(argType)) {
-          return true;
-        }
-      }
-    }
     return false;
   }
 
@@ -312,7 +293,9 @@ class LazyParameterBound extends ParameterBound {
   /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
   static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
-    public LazyBoundException() {}
+    public LazyBoundException() {
+      super();
+    }
 
     /** ID for serializing this class. */
     private static final long serialVersionUID = 20190508;

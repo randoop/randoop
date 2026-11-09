@@ -2,11 +2,15 @@
 
 ## Version ?? (?? ??, 2026)
 
-Randoop compiles under Java 21-26 and runs under Java 8-26.
+Randoop compiles under Java 21-27 and runs under Java 8-27.
 
 Renamed command-line argument `--silently-ignore-bad-class-names` to
 `--ignore-bad-class-names`, because Randoop prints a warning for each class that
 cannot be found or loaded.  The old name still works.
+
+With `--progressdisplay=false`, Randoop now exits when a test runs for more
+than 10 seconds, as it already did by default (unless `--usethreads` is
+given).  Previously, `--progressdisplay=false` disabled that check.
 
 New command-line arguments:
 
@@ -30,11 +34,11 @@ New command-line arguments:
 
 Changed command-line arguments:
 
-* `--omit-methods`:  If Randoop omits method M, it also omits every method
-  that M overrides, because a call to an overridden method might dispatch
-  to M.  Randoop no longer omits methods that override M.  A pattern must
-  match the signature in the class that declares a method, not in a class
-  that inherits it.
+* `--omit-methods`:  If Randoop omits method M of a class under test, it also
+  omits every method that M overrides, because a call to an overridden method
+  might dispatch to M.  Randoop no longer omits methods that override M.  A
+  pattern must match the signature in the class that declares a method, not
+  in a class that inherits it.
 
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
@@ -42,6 +46,10 @@ rather than with the `javac` and `java` that are on the PATH.
 When a generated test expects an exception that the JVM throws implicitly,
 such as `NullPointerException` or `ClassCastException`, the test's failure
 message omits the exception's message, which can differ from run to run.
+
+With `--usethreads`, a bug in Randoop that is revealed while executing a test
+is reported (as it is without `--usethreads`).  Previously, Randoop treated it
+as a timeout, discarded the test, and continued generating tests.
 
 ## Version 4.3.4 (June 6, 2025)
 

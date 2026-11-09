@@ -19,8 +19,12 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
 import randoop.main.ThrowClassNameError;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.omitinputs.p.C;
+import randoop.reflection.omitinputs.p.G;
 import randoop.reflection.omitinputs.p.M1Interface;
+import randoop.reflection.omitinputs.q.D;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -53,7 +57,7 @@ public class OmitMethodsTest {
           "randoop.reflection.omitinputs.p.C",
           "randoop.reflection.omitinputs.q.D");
 
-  /** The package of the classes under test, as a regular expression. */
+  /** Matches the package of the classes under test, at the beginning of a signature. */
   private static final String P = "^randoop\\.reflection\\.omitinputs\\.p\\.";
 
   @Test
@@ -122,6 +126,20 @@ public class OmitMethodsTest {
     // E.m1 and G.m1 override M1Interface.m1, so they are not omitted.
     assertHasMethod("E.m1", operations);
     assertHasMethod("G.m1", operations);
+  }
+
+  @Test
+  public void testPM2MatchReceiverClass() throws Exception {
+    OmitMethodsPredicate predicate =
+        createModel(CLASSNAMES, P + "P\\.m2\\(\\)").getOmitMethodsPredicate();
+    TypedClassOperation gm2 = TypedOperation.forMethod(G.class.getMethod("m2"));
+    // A G receiver might be a P, whose m2 is omitted.
+    assertTrue(predicate.shouldOmit(gm2));
+    assertTrue(predicate.shouldOmit(gm2, randoop.reflection.omitinputs.p.P.class));
+    assertTrue(predicate.shouldOmit(gm2, C.class));
+    // A call to G.m2 on a G or a D does not dispatch to P.m2.
+    assertFalse(predicate.shouldOmit(gm2, G.class));
+    assertFalse(predicate.shouldOmit(gm2, D.class));
   }
 
   @Test
