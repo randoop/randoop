@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -137,10 +139,21 @@ class EagerReferenceBound extends ReferenceBound {
     if (type.equals(variable) || variable.canBeInstantiatedBy(type, substitution)) {
       return true;
     }
-    if (variable instanceof ExplicitTypeVariable && type instanceof ClassOrInterfaceType) {
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
-        if (variable.canBeInstantiatedBy(supertype, substitution)) {
-          return true;
+    if (variable instanceof ExplicitTypeVariable) {
+      if (type instanceof ClassOrInterfaceType) {
+        for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+          if (variable.canBeInstantiatedBy(supertype, substitution)) {
+            return true;
+          }
+        }
+      } else if (type.isVariable()) {
+        // A supertype of a type variable's upper bound is a supertype of the type variable.  For
+        // `X extends Comparable<X>` and `V extends Integer`, X can be Integer.  This recursion
+        // terminates, because the bounds of type variables cannot form a cycle of type variables.
+        for (ReferenceType boundType : upperBoundTypes((TypeVariable) type)) {
+          if (canBeSupertype(variable, boundType, substitution)) {
+            return true;
+          }
         }
       }
     }
@@ -152,5 +165,30 @@ class EagerReferenceBound extends ReferenceBound {
           && variable.canBeInstantiatedBy(lowerBoundType, substitution);
     }
     return false;
+  }
+
+  /**
+   * Returns the types in the resolved upper bound of the given type variable: the bound type, or
+   * each member type of an intersection bound.
+   *
+   * @param variable a type variable
+   * @return the types in the upper bound of {@code variable}
+   */
+  private static List<ReferenceType> upperBoundTypes(TypeVariable variable) {
+    ParameterBound bound = variable.getResolvedUpperTypeBound();
+    List<ParameterBound> bounds =
+        bound instanceof IntersectionTypeBound
+            ? ((IntersectionTypeBound) bound).getBounds()
+            : Collections.singletonList(bound);
+    List<ReferenceType> result = new ArrayList<>(bounds.size());
+    for (ParameterBound b : bounds) {
+      if (b instanceof ReferenceBound) {
+        ReferenceType boundType = ((ReferenceBound) b).getBoundType();
+        if (!boundType.isObject()) {
+          result.add(boundType);
+        }
+      }
+    }
+    return result;
   }
 }
