@@ -32,10 +32,11 @@ public abstract class TypeVariable extends ParameterType {
   private @Nullable ParameterBound resolvedLowerBound = null;
 
   /**
-   * The pairs of a type variable's key and a type for which {@link
+   * The pairs of a type variable and a type for which {@link
    * #upperBoundIsSubtypeOfOrEqualTo(ReferenceType)} is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<Object>>> upperBoundSubtypeChecks =
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<ReferenceType>>> upperBoundSubtypeChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
@@ -199,8 +200,8 @@ public abstract class TypeVariable extends ParameterType {
     }
     // A subtype test of the bound can test this variable against the same type again, as for
     // `Capture0 extends Comparable<? super Capture0>`.  Assume that the inner test fails.
-    Set<List<Object>> inProgress = upperBoundSubtypeChecks.get();
-    List<Object> check = Arrays.asList(getVariableKey(), otherType);
+    Set<List<ReferenceType>> inProgress = upperBoundSubtypeChecks.get();
+    List<ReferenceType> check = Arrays.asList(this, otherType);
     if (!inProgress.add(check)) {
       return false;
     }
