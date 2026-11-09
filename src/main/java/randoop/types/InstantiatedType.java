@@ -294,6 +294,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
+  }
+
+  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     if (super.isGeneric(ignoreWildcards)) { // enclosing type is generic
       return true;
@@ -441,11 +446,19 @@ public class InstantiatedType extends ParameterizedType {
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // first and second clauses
     if (otherType instanceof InstantiatedType) {
-      if (Subtyping.isSubtypeOrEqual(this, (InstantiatedType) otherType, new Substitution())) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      if (Subtyping.isSubtypeOrEqual(this, otherInstantiatedType, new Substitution())) {
         return true;
       }
-      // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
-      // a raw type as a subtype of every generic type of the same class.
+      // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+      // is also a subtype of the generic form of its class, and of the generic form of the class
+      // of each of its parameterized supertypes.
+      if (otherInstantiatedType.isGenericForm()
+          && (otherType.runtimeClassIs(this.getRuntimeClass())
+              || this.getMatchingSupertype(otherInstantiatedType.getGenericClassType()) != null)) {
+        return true;
+      }
+      // No other rule below applies to another instantiation of the same class.
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         return false;
       }
@@ -461,6 +474,8 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
