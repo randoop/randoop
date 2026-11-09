@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
@@ -159,7 +160,7 @@ final class Subtyping {
       return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    ParameterBound bound = wildcard.getTypeBound();
+    ParameterBound bound = resolve(wildcard.getTypeBound());
     if (!(bound instanceof ReferenceBound)) {
       return false;
     }
@@ -222,7 +223,8 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType)) {
+    // InstantiatedType.equals ignores enclosing types, so they are compared separately.
+    if (type.equals(otherType) && sameEnclosingTypes(type, otherType, substitution)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -237,6 +239,12 @@ final class Subtyping {
       }
       return componentType.equals(otherComponentType);
     }
+    if (type instanceof NonParameterizedType && otherType instanceof NonParameterizedType) {
+      // The types can differ in the type arguments of their enclosing types, as for
+      // Outer<String>.Inner and Outer<U>.Inner, where U is an unknown.
+      return type.getRuntimeClass().equals(otherType.getRuntimeClass())
+          && sameEnclosingTypes(type, otherType, substitution);
+    }
     if (!(type instanceof InstantiatedType && otherType instanceof InstantiatedType)) {
       return false;
     }
@@ -245,6 +253,9 @@ final class Subtyping {
     if (!instantiatedType
         .getGenericClassType()
         .equals(otherInstantiatedType.getGenericClassType())) {
+      return false;
+    }
+    if (!sameEnclosingTypes(type, otherType, substitution)) {
       return false;
     }
     List<TypeArgument> typeArguments = instantiatedType.getTypeArguments();
@@ -261,6 +272,60 @@ final class Subtyping {
       }
     }
     return true;
+  }
+
+  /**
+   * Returns true if the given types have the same enclosing type, or if neither is a member class.
+   *
+   * @param type a type
+   * @param otherType a type, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if the enclosing types of {@code type} and {@code otherType} are the same type
+   */
+  private static boolean sameEnclosingTypes(
+      ReferenceType type, ReferenceType otherType, Substitution substitution) {
+    ClassOrInterfaceType enclosing = enclosingType(type);
+    ClassOrInterfaceType otherEnclosing = enclosingType(otherType);
+    if (enclosing == null || otherEnclosing == null) {
+      return enclosing == otherEnclosing;
+    }
+    return isSameType(enclosing, otherEnclosing, substitution);
+  }
+
+  /**
+   * Returns the enclosing type of the given type, if it is a member class.
+   *
+   * @param type a type
+   * @return the enclosing type of {@code type}, or null if it is not a member class
+   */
+  private static @Nullable ClassOrInterfaceType enclosingType(ReferenceType type) {
+    if (type instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+      if (classType.isMemberClass()) {
+        return classType.enclosingType;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the given wildcard bound, with a {@link LazyParameterBound} resolved to a {@link
+   * ReferenceBound} whose type contains the type variables of the lazy bound. Whether those type
+   * variables stand for unknowns is determined by the substitution with which the result is
+   * compared, as for any other bound.
+   *
+   * @param bound a wildcard bound
+   * @return {@code bound} with a lazy bound resolved, or {@code bound} itself if it cannot be
+   */
+  private static ParameterBound resolve(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ParameterBound resolved =
+          ((LazyParameterBound) bound).substituteWithUnknowns(new Substitution());
+      if (resolved != null) {
+        return resolved;
+      }
+    }
+    return bound;
   }
 
   /**
@@ -284,8 +349,8 @@ final class Subtyping {
     if (wildcard.hasUpperBound() != otherWildcard.hasUpperBound()) {
       return false;
     }
-    ParameterBound bound = wildcard.getTypeBound();
-    ParameterBound otherBound = otherWildcard.getTypeBound();
+    ParameterBound bound = resolve(wildcard.getTypeBound());
+    ParameterBound otherBound = resolve(otherWildcard.getTypeBound());
     return bound instanceof ReferenceBound
         && otherBound instanceof ReferenceBound
         && isSameType(

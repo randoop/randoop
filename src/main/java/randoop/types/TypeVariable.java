@@ -114,6 +114,14 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
+      // A type variable is a subtype of its upper bound.  The check below would not recognize a
+      // bound that mentions this variable, such as Comparable<CAP> for CAP extends Comparable<CAP>,
+      // because it substitutes the bound for this variable within the bound.
+      ParameterBound resolvedUpperBound = getResolvedUpperTypeBound();
+      if (resolvedUpperBound instanceof ReferenceBound
+          && ((ReferenceBound) resolvedUpperBound).getBoundType().equals(otherType)) {
+        return true;
+      }
       Substitution substitution = getSubstitution((ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
@@ -258,7 +266,7 @@ public abstract class TypeVariable extends ParameterType {
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution context) {
     Substitution substitution = context.withMapping(this, otherType);
     if (getLowerTypeBound().isVariable()) {
-      if (!variableBoundAllows(getLowerTypeBound(), substitution, otherType)) {
+      if (!variableBoundAllows(getLowerTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -267,7 +275,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      if (!variableBoundAllows(getUpperTypeBound(), substitution, otherType)) {
+      if (!variableBoundAllows(getUpperTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -279,17 +287,20 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns true if the given type can instantiate the type variable that is the given bound of
-   * this variable. That type variable might not be instantiated by the substitution; then it stands
-   * for an unknown type.
+   * Returns true if the given type is within the given bound of this variable, which is a type
+   * variable. If the substitution instantiates that type variable, the given type is compared with
+   * the instantiation. Otherwise, the type variable stands for an unknown type, and the result is
+   * true if the given type can instantiate it.
    *
    * @param bound a bound of this variable that is a type variable
+   * @param isUpper true if {@code bound} is the upper bound of this variable, false if it is the
+   *     lower bound
    * @param substitution the substitution of {@code otherType} for this variable
    * @param otherType the possibly instantiating type, not a variable
-   * @return true if {@code otherType} can instantiate the type variable that is {@code bound}
+   * @return true if {@code otherType} is within {@code bound}
    */
   private boolean variableBoundAllows(
-      ParameterBound bound, Substitution substitution, ReferenceType otherType) {
+      ParameterBound bound, boolean isUpper, Substitution substitution, ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
     TypeVariable variable;
     if (substituted instanceof ReferenceBound
@@ -298,6 +309,12 @@ public abstract class TypeVariable extends ParameterType {
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
+    } else if (substituted instanceof ReferenceBound) {
+      // The substitution instantiates the type variable by a type that is not a variable, such as
+      // Object for V in W extends V.
+      return isUpper
+          ? substituted.isUpperBound(otherType, substitution)
+          : substituted.isLowerBound(otherType, substitution);
     } else {
       return false;
     }
