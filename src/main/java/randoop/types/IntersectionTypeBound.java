@@ -42,9 +42,9 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * Returns the type bounds of this intersection bound. The result must not be modified.
+   * Returns the member bounds of this intersection bound. The result must not be modified.
    *
-   * @return the type bounds of this intersection bound
+   * @return the member bounds of this intersection bound
    */
   List<ParameterBound> getBounds() {
     return Collections.unmodifiableList(boundList);

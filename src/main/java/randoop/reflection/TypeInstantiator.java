@@ -4,6 +4,7 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -315,9 +316,10 @@ public class TypeInstantiator {
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
-   *         <li>For each remaining type variable, compute its candidate types: the input types that
-   *             are within its bounds, ignoring any bound that mentions another type variable, and
-   *             that are consistent with the substitution; see {@link
+   *         <li>For each remaining type variable, compute its candidate types: the input types, and
+   *             the types that the substitution maps type variables to, that are within its
+   *             bounds, ignoring any bound that mentions another type variable, and that are
+   *             consistent with the substitution; see {@link
    *             #consistentCandidatesByVariable(List, Substitution)}. If some type variable has no
    *             candidate types, the attempt fails.
    *         <li>Because the candidate types are computed for each type variable separately, a
@@ -361,8 +363,8 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            // Not necessarily a ParameterizedType: a member class such as Outer<T>.Inner is generic
-            // because of its enclosing type.
+            // The type need not be a parameterized type:  a non-generic member class of a generic
+            // class, such as Outer<T>.Inner, is generic because its enclosing type is.
             List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
@@ -378,6 +380,15 @@ public class TypeInstantiator {
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              }
+              allMatched = false;
+              break;
+            }
+            // The substitution can conflict with an earlier one, for example if two parameter
+            // types contain copies of one capture variable.  Then extending would throw.
+            if (!substitution.isConsistentWith(subst)) {
+              if (Log.isLoggingOn()) {
+                failure = subst + " for " + origParamType + " conflicts with " + substitution;
               }
               allMatched = false;
               break;
@@ -477,8 +488,10 @@ public class TypeInstantiator {
    * with the given substitution.
    *
    * <p>A candidate type for one of the type variables, {@code X}, is in the map's value for {@code
-   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, and if, when {@code
-   * substitution} is extended by mapping {@code X} to it, each type variable that {@code
+   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is one of the
+   * {@link #inferredTypes(Substitution)} that is within the bounds of {@code X}, or is the type that
+   * {@code substitution} gives to a type variable whose bounds contain {@code X}, and if, when
+   * {@code substitution} is extended by mapping {@code X} to it, each type variable that {@code
    * substitution} instantiates and whose bounds contain {@code X} and no other uninstantiated type
    * variable is within its bounds. For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<?
    * extends K, ? extends V>)}, if {@code substitution} maps the capture of {@code ? extends K} to
@@ -493,12 +506,24 @@ public class TypeInstantiator {
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
+    List<ReferenceType> inferredTypes = inferredTypes(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
       List<TypeVariable> constrained =
           constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
+      candidates.addAll(candidateTypes(parameter, inferredTypes));
       if (!constrained.isEmpty()) {
+        // The types of the constrained type variables are also candidates, even if they are not
+        // input types.  For example, an input type can be List<Foo> though Foo is not an input
+        // type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a candidate for
+        // T.  The bounds of `parameter` itself are checked when the substitution is completed.
+        for (TypeVariable variable : constrained) {
+          ReferenceType type = substitution.get(variable);
+          if (type != null && !type.isGeneric() && !candidates.contains(type)) {
+            candidates.add(type);
+          }
+        }
         candidates.removeIf(
             candidate ->
                 !satisfiesBounds(
@@ -511,6 +536,31 @@ public class TypeInstantiator {
       result.put(parameter, candidates);
     }
     return result;
+  }
+
+  /**
+   * Returns the types that the given substitution maps type variables to and that are not {@link
+   * #inputTypes input types}. Such a type, which may be a type argument of an input type, can
+   * instantiate another type variable. For example, for {@code <T> void copy(List<? super T>,
+   * List<? extends T>)}, if {@code substitution} maps both capture variables to {@code Integer}
+   * because the input types contain {@code List<Integer>}, then {@code T} can be {@code Integer}
+   * even if {@code Integer} is not an input type.
+   *
+   * @param substitution a substitution
+   * @return the non-generic types in the range of {@code substitution} that are not input types
+   */
+  private List<ReferenceType> inferredTypes(Substitution substitution) {
+    Set<ReferenceType> result = new LinkedHashSet<>();
+    for (TypeVariable variable : substitution.keySet()) {
+      ReferenceType type = substitution.get(variable);
+      if (type != null
+          && !type.isGeneric()
+          && !type.equals(JavaTypes.NULL_TYPE)
+          && !inputTypes.contains(type)) {
+        result.add(type);
+      }
+    }
+    return new ArrayList<>(result);
   }
 
   /**
@@ -946,11 +996,24 @@ public class TypeInstantiator {
    * @return the list of candidate instantiations of the type argument
    */
   private List<ReferenceType> candidateTypes(TypeVariable argument) {
+    return candidateTypes(argument, inputTypes);
+  }
+
+  /**
+   * Returns the given types that potentially satisfy the bounds on the argument, as in {@link
+   * #candidateTypes(TypeVariable)}.
+   *
+   * @param argument the type argument
+   * @param types the types to choose from
+   * @return the elements of {@code types} that are candidate instantiations of the type argument
+   */
+  private static List<ReferenceType> candidateTypes(
+      TypeVariable argument, Collection<? extends Type> types) {
     ParameterBound lowerBound = getLowerBound(argument);
     ParameterBound upperBound = getUpperBound(argument);
 
-    List<ReferenceType> typeList = new ArrayList<>(inputTypes.size());
-    for (Type inputType : inputTypes) {
+    List<ReferenceType> typeList = new ArrayList<>(types.size());
+    for (Type inputType : types) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
         Substitution substitution = new Substitution(argument, inputRefType);
@@ -972,7 +1035,7 @@ public class TypeInstantiator {
    * @return the upperbound of the argument if no other type parameter is needed, the {@code Object}
    *     bound otherwise
    */
-  private ParameterBound getUpperBound(TypeVariable argument) {
+  private static ParameterBound getUpperBound(TypeVariable argument) {
     ParameterBound upperBound = argument.getUpperTypeBound();
     List<TypeVariable> parameters = upperBound.getTypeParameters();
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
@@ -990,7 +1053,7 @@ public class TypeInstantiator {
    * @return the lower bound of the argument if no other type parameter is needed, the {@link
    *     JavaTypes#NULL_TYPE} otherwise
    */
-  private ParameterBound getLowerBound(TypeVariable argument) {
+  private static ParameterBound getLowerBound(TypeVariable argument) {
     ParameterBound lowerBound = argument.getLowerTypeBound();
     List<TypeVariable> parameters = lowerBound.getTypeParameters();
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {

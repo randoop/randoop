@@ -80,7 +80,9 @@ public class InstantiatedType extends ParameterizedType {
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
-   * Conversion</a>.
+   * Conversion</a>. A type argument that is not a wildcard is unchanged, even if it contains a
+   * wildcard: for example, the capture conversion of {@code List<List<?>>} is {@code
+   * List<List<?>>}.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
    * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
@@ -292,6 +294,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
+  }
+
+  @Override
   public boolean isGeneric(boolean ignoreWildcards) {
     if (super.isGeneric(ignoreWildcards)) { // enclosing type is generic
       return true;
@@ -378,7 +385,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // A conflict arises when, for example, Map<String, Integer> is matched against Map<T, T>.
+          // The arguments can map a type variable to different types, as for Map<X, X> and
+          // Map<String, Integer>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
@@ -454,9 +462,9 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
-        // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
-        // a raw type as a subtype of every generic type of the same class.
-        return i == thisTypeArguments.size();
+        // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+        // is also a subtype of the generic form of its class.
+        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.
@@ -478,6 +486,8 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 
