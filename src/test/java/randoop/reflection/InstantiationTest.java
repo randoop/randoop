@@ -278,6 +278,7 @@ public class InstantiationTest {
       // <K, V extends K> K widen(V)
       TypedClassOperation widenInstance = instantiator.instantiate(widen);
       assertNotNull("instantiation failed for " + widen, widenInstance);
+      assertFalse(widenInstance + " should not be generic", widenInstance.isGeneric());
       Type k = widenInstance.getOutputType();
       Type v = widenInstance.getInputTypes().get(0);
       assertTrue(v + " should be a subtype of " + k, v.isSubtypeOfOrEqualTo(k));
@@ -285,6 +286,7 @@ public class InstantiationTest {
       // <A, B extends A, C extends B> A chain(B, C)
       TypedClassOperation chainInstance = instantiator.instantiate(chain);
       assertNotNull("instantiation failed for " + chain, chainInstance);
+      assertFalse(chainInstance + " should not be generic", chainInstance.isGeneric());
       Type a = chainInstance.getOutputType();
       Type b = chainInstance.getInputTypes().get(0);
       Type c = chainInstance.getInputTypes().get(1);

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -21,7 +22,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 class CaptureTypeVariable extends TypeVariable {
 
   /** The ID counter for capture conversion variables. */
-  private static int count = 0;
+  private static final AtomicInteger count = new AtomicInteger();
 
   /** The integer ID of this capture variable. */
   private final int varID;
@@ -53,10 +54,10 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
-    this.varID = count++;
+    this.varID = count.getAndIncrement();
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
@@ -213,6 +214,12 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
+      // rather than the substitution's copy.  If the substitution maps this capture variable to a
+      // copy of it with other bounds, that copy is the result.
+      type = null;
+    }
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
@@ -220,6 +227,9 @@ class CaptureTypeVariable extends TypeVariable {
     Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(varID)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
+      // If the enclosing call creates a copy with new bounds, this occurrence in the copy's bound
+      // is still the original variable, not the copy.  Returning the copy would make the copy's
+      // bound refer to the copy, and then `equals` on two such copies would not terminate.
       return type != null ? type : this;
     }
     try {
