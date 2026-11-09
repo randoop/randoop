@@ -196,8 +196,10 @@ public final class ReplacementFileReader {
    * <p>A signature such as {@code pkg.C(int)} has two interpretations: method {@code C} of class
    * {@code pkg}, or a constructor of class {@code pkg.C}. This uses the method interpretation if
    * that method exists, and otherwise uses the constructor interpretation if class {@code pkg.C}
-   * exists. A signature such as {@code C(int)}, with no period before the parenthesis, is a
-   * constructor of class {@code C} in the unnamed package.
+   * exists. If class {@code pkg} is unreadable, this uses the constructor interpretation if that
+   * constructor exists, and otherwise reports that class {@code pkg} is unreadable. A signature
+   * such as {@code C(int)}, with no period before the parenthesis, denotes a constructor of class
+   * {@code C} in the unnamed package.
    *
    * <p>A nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
    *
@@ -237,7 +239,30 @@ public final class ReplacementFileReader {
     MethodSignature constructor = signature.toConstructorSignature().resolveNestedClassnames();
     // Mention the constructor interpretation only if the name looks like a class name.
     boolean mentionConstructor = Character.isUpperCase(signature.getName().charAt(0));
-    if (classExists(signature.getClassname())) {
+    boolean methodClassExists;
+    try {
+      methodClassExists = classExists(signature.getClassname());
+    } catch (IllegalClassFormatException e) {
+      // The method interpretation's class is unreadable; try the constructor interpretation.
+      boolean constructorClassExists;
+      try {
+        constructorClassExists = classExists(constructor.getClassname());
+      } catch (IllegalClassFormatException e2) {
+        e.addSuppressed(e2);
+        throw e;
+      }
+      if (!constructorClassExists) {
+        throw e;
+      }
+      try {
+        constructor.toMethod();
+      } catch (NoSuchMethodException | ClassNotFoundException | IllegalClassFormatException e2) {
+        e.addSuppressed(e2);
+        throw e;
+      }
+      return constructor;
+    }
+    if (methodClassExists) {
       try {
         signature.toMethod();
         return signature;
