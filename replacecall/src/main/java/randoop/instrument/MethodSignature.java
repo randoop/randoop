@@ -81,36 +81,13 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
-   * Creates a {@link MethodSignature} object from string representations of its method name and
-   * types.
-   *
-   * @param fullMethodName fully-qualified name of method
-   * @param params binary names of parameter types
-   * @return the {@link MethodSignature} for the method represented by the string
-   */
-  static MethodSignature of(String fullMethodName, @FqBinaryName String[] params) {
-    int dotPos = fullMethodName.lastIndexOf('.');
-    if (dotPos < 1) {
-      throw new IllegalArgumentException(
-          "Fully-qualified method name expected, no period found: " + fullMethodName);
-    }
-    String classname = fullMethodName.substring(0, dotPos);
-    String methodName = fullMethodName.substring(dotPos + 1);
-    Type[] paramTypes = new Type[params.length];
-    for (int i = 0; i < params.length; i++) {
-      // TODO: This seems incorrect, since it doesn't handle arrays.
-      paramTypes[i] = BcelUtil.fqBinaryNameToType(params[i]);
-    }
-
-    return new MethodSignature(classname, methodName, paramTypes);
-  }
-
-  /**
    * Reads a signature string and builds the corresponding {@link MethodSignature}.
    *
-   * <p>The signature string must start with the fully-qualified classname, followed by the method
-   * name, and then the fully-qualified parameter types in parentheses. Note that a signature does
-   * not include a return type.
+   * <p>The signature string must start with the binary name of the class, followed by a period, the
+   * method name, and then the fully-qualified parameter types in parentheses. The method name must
+   * be a Java identifier or {@code <init>}. The parameter types are separated by commas, and
+   * whitespace is permitted around them. No text, not even whitespace, may precede the classname or
+   * follow the closing parenthesis. Note that a signature does not include a return type.
    *
    * @param signature the method signature string, all types must be fully-qualified
    * @return the {@link MethodSignature} for the method represented by the signature string
@@ -118,27 +95,110 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
-    if (parenPos < 1) {
+    if (parenPos < 0) {
       throw new IllegalArgumentException(
-          "Method signature expected, did not find beginning parenthesis: " + signature);
+          "Method signature expected, did not find beginning parenthesis");
     }
     String fullMethodName = signature.substring(0, parenPos);
-    int lastParenPos = signature.lastIndexOf(')');
-    if (lastParenPos < parenPos + 1) {
+    int dotPos = fullMethodName.lastIndexOf('.');
+    String classname = dotPos < 0 ? "" : fullMethodName.substring(0, dotPos);
+    String methodName = fullMethodName.substring(dotPos + 1);
+    if (!isBinaryName(classname) || !(isIdentifier(methodName) || methodName.equals("<init>"))) {
       throw new IllegalArgumentException(
-          "Method signature expected, mismatched parenthesis: " + signature);
+          "Method signature expected, bad fully-qualified method name \"" + fullMethodName + "\"");
     }
-    String paramString = signature.substring(parenPos + 1, lastParenPos);
+    if (!signature.endsWith(")")) {
+      throw new IllegalArgumentException(
+          "Method signature expected, does not end with closing parenthesis");
+    }
+    String paramString = signature.substring(parenPos + 1, signature.length() - 1).trim();
+    // The limit -1 makes split() retain trailing empty strings, so trailing commas are rejected.
     @SuppressWarnings("signature:assignment") // dynamically checked just below
     @FqBinaryName String[] parameters =
-        paramString.isEmpty() ? new String[0] : paramString.trim().split("\\s*,\\s*");
-    for (String parameter : parameters) {
-      if (!Signatures.isFqBinaryName(parameter)) {
-        throw new IllegalArgumentException(
-            "Bad parameter type \"" + parameter + "\" in signature: " + signature);
+        paramString.isEmpty() ? new String[0] : paramString.split("\\s*,\\s*", -1);
+    Type[] paramTypes = new Type[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      String parameter = parameters[i];
+      if (parameter.isEmpty()) {
+        throw new IllegalArgumentException("Empty parameter type");
+      }
+      if (!isFqBinaryName(parameter)) {
+        throw new IllegalArgumentException("Bad parameter type \"" + parameter + "\"");
+      }
+      // TODO: This seems incorrect, since it doesn't handle arrays.
+      paramTypes[i] = BcelUtil.fqBinaryNameToType(parameter);
+    }
+    return new MethodSignature(classname, methodName, paramTypes);
+  }
+
+  // The methods in {@link Signatures} recognize only ASCII identifiers, but Java permits non-ASCII
+  // identifiers. The following methods use {@link Signatures} for ASCII strings, and otherwise
+  // check identifiers using {@link Character#isJavaIdentifierStart} and {@link
+  // Character#isJavaIdentifierPart}. A non-ASCII identifier is never a keyword or literal.
+
+  /**
+   * Returns true if the given string is a Java identifier, possibly containing non-ASCII
+   * characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a Java identifier
+   */
+  private static boolean isIdentifier(String s) {
+    if (isAscii(s)) {
+      return Signatures.isIdentifier(s);
+    }
+    if (!Character.isJavaIdentifierStart(s.codePointAt(0))) {
+      return false;
+    }
+    return s.codePoints().allMatch(Character::isJavaIdentifierPart);
+  }
+
+  /**
+   * Returns true if the given string is a binary name, possibly containing non-ASCII characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a binary name
+   */
+  private static boolean isBinaryName(String s) {
+    if (isAscii(s)) {
+      return Signatures.isBinaryName(s);
+    }
+    // The limit -1 makes split() retain trailing empty strings, so a trailing period is rejected.
+    for (String segment : s.split("\\.", -1)) {
+      if (!isIdentifier(segment)) {
+        return false;
       }
     }
-    return of(fullMethodName, parameters);
+    return true;
+  }
+
+  /**
+   * Returns true if the given string is a fully-qualified binary name, possibly containing
+   * non-ASCII characters.
+   *
+   * @param s a string
+   * @return true if {@code s} is a fully-qualified binary name
+   */
+  private static boolean isFqBinaryName(String s) {
+    if (isAscii(s)) {
+      return Signatures.isFqBinaryName(s);
+    }
+    String elementType = s;
+    while (elementType.endsWith("[]")) {
+      elementType = elementType.substring(0, elementType.length() - 2);
+    }
+    // A primitive type name is ASCII, so a non-ASCII element type must be a binary name.
+    return isBinaryName(elementType);
+  }
+
+  /**
+   * Returns true if the given string contains only ASCII characters.
+   *
+   * @param s a string
+   * @return true if every character of {@code s} is ASCII
+   */
+  private static boolean isAscii(String s) {
+    return s.chars().allMatch(c -> c < 128);
   }
 
   @Override
@@ -194,6 +254,34 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns the signature string for this {@link MethodSignature} in the format of Randoop's {@code
+   * randoop.reflection.RawSignature#toString()}, except that every class name is a binary name.
+   *
+   * <p>The format differs from {@link #toString()}: a constructor is written {@code
+   * pkg.C(argument-list)} rather than {@code pkg.C.<init>(argument-list)}, and parameter types are
+   * separated by "," without a space.
+   *
+   * <p>The format differs from {@code RawSignature#toString()} in how a parameter type is written.
+   * {@code RawSignature} writes the declaring class as a binary name (such as {@code
+   * java.util.AbstractMap$SimpleEntry}), but each parameter type as a canonical name (such as
+   * {@code java.util.Map.Entry}). This method writes both as binary names (such as {@code
+   * java.util.Map$Entry}), because a canonical name cannot be computed from a binary name without
+   * loading the class: a "$" in a binary name may separate the name of a nested class from the name
+   * of its enclosing class, or it may be part of a class name.
+   *
+   * @return the signature string for this {@link MethodSignature} in Randoop's format, with binary
+   *     names
+   */
+  public String toRawSignatureString() {
+    String[] typeNames = new String[paramTypes.length];
+    for (int i = 0; i < paramTypes.length; i++) {
+      typeNames[i] = Signatures.fieldDescriptorToBinaryName(paramTypes[i].getSignature());
+    }
+    String executableName = name.equals("<init>") ? classname : classname + "." + name;
+    return executableName + "(" + String.join(",", typeNames) + ")";
+  }
+
+  /**
    * Returns the fully-qualified class name of this {@link MethodSignature}.
    *
    * @return the fully-qualified class name of this {@link MethodSignature}
@@ -209,6 +297,15 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    */
   String getName() {
     return name;
+  }
+
+  /**
+   * Returns true if this {@link MethodSignature} represents a constructor.
+   *
+   * @return true if this {@link MethodSignature} represents a constructor
+   */
+  boolean isConstructor() {
+    return name.equals("<init>");
   }
 
   /**
@@ -229,7 +326,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
    * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
    * If the class exists, but the method is not found, it checks to see if there is a superclass and
-   * repeats the search process.
+   * repeats the search process. Constructors are not inherited, so it does not search superclasses
+   * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -251,8 +349,11 @@ public final class MethodSignature implements Comparable<MethodSignature> {
       JavaClass currentClass;
       try {
         currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (Throwable e) {
-        throw new IllegalClassFormatException("Unable to read: " + currentClassname);
+      } catch (ReplacementFileReader.ReplacementException e) {
+        IllegalClassFormatException icfe =
+            new IllegalClassFormatException("Unable to read " + currentClassname);
+        icfe.initCause(e);
+        throw icfe;
       }
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
@@ -266,12 +367,16 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         }
       }
 
+      if (isConstructor()) {
+        throw new NoSuchMethodException("Constructor " + this + " not found");
+      }
+
       // Method not found; perhaps inherited from superclass.
       // Cannot use "currentClass = currentClass.getSuperClass()" because the superclass might
       // not have been loaded into BCEL yet.
       if (currentClass.getSuperclassNameIndex() == 0) {
         // The current class is Object; the search completed without finding a matching method.
-        throw new NoSuchMethodException("Method " + this.name + " not found");
+        throw new NoSuchMethodException("Method " + this + " not found");
       }
       currentClassname = currentClass.getSuperclassName();
     }

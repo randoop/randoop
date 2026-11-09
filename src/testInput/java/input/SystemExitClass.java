@@ -25,7 +25,7 @@ public class SystemExitClass {
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.value);
+    return Objects.hashCode(this.value);
   }
 
   @Override

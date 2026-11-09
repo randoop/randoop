@@ -7,7 +7,9 @@ import randoop.sequence.ExecutableSequence;
 public class DummyCheckGenerator extends TestCheckGenerator {
 
   /** Creates a DummyCheckGenerator. */
-  public DummyCheckGenerator() {}
+  public DummyCheckGenerator() {
+    super();
+  }
 
   @Override
   public TestChecks<?> generateTestChecks(ExecutableSequence eseq)

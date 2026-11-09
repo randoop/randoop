@@ -12,10 +12,19 @@ import randoop.types.TypeTuple;
  */
 public final class EnumValue extends ObjectContract {
 
+  /** The enum constant that the checked value must equal. */
   public final Enum<?> value;
+
+  /** The enum type that declares {@link #value}. */
   private final Type type;
 
+  /**
+   * Creates a check that a value equals the given enum constant.
+   *
+   * @param value the enum constant that the checked value must equal
+   */
   public EnumValue(Enum<?> value) {
+    super();
     this.value = value;
     this.type = Type.forClass(value.getDeclaringClass());
   }
@@ -34,7 +43,7 @@ public final class EnumValue extends ObjectContract {
 
   @Override
   public int hashCode() {
-    return Objects.hash(value);
+    return Objects.hashCode(value);
   }
 
   @Override

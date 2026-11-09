@@ -19,7 +19,7 @@ import randoop.util.Util;
 public final class TestUtils {
 
   /** Setting to true causes system test runNoOutputTest to fail. */
-  static boolean debug = false;
+  private static final boolean debug = false;
 
   /** Do not instantiate. */
   private TestUtils() {
@@ -155,7 +155,10 @@ public final class TestUtils {
     if (filename.isEmpty()) {
       throw new IllegalArgumentException();
     }
-    try (@SuppressWarnings("JdkObsolete") // The replacement requires JDK 11.
+    try (@SuppressWarnings({
+          "JdkObsolete",
+          "PreferCharsetOverload"
+        }) // The replacement requires JDK 11.
         PrintWriter pw = new PrintWriter(new File(filename), UTF_8.name())) {
       setOperationLog(pw, generator);
     } catch (IOException e) {

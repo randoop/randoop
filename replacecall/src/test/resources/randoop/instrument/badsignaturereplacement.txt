@@ -1,0 +1,2 @@
+//bad replacement file
+randoop.MethodReplacements.getAgentPath(int x) randoop.mock.java.awt.Component.show()

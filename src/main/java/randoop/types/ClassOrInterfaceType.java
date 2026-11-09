@@ -40,7 +40,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   protected @Nullable ClassOrInterfaceType enclosingType = null;
 
   /** Creates a ClassOrInterfaceType. */
-  public ClassOrInterfaceType() {}
+  public ClassOrInterfaceType() {
+    super();
+  }
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a {@code
@@ -121,7 +123,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(enclosingType);
+    return Objects.hashCode(enclosingType);
   }
 
   /**
@@ -473,6 +475,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isNestedClass() && !isStatic();
   }
 
+  /**
+   * Returns true if this type is the generic form of its class: the type that the class declaration
+   * denotes, in which the type arguments of the class and of its enclosing types are their own type
+   * parameters. Examples are {@code List<E>}, {@code Outer<T>.Inner}, and {@code String}. Raw
+   * {@code List} and {@code List<T>} for a type variable {@code T} other than the type parameter of
+   * {@code List} are not generic forms.
+   *
+   * @return true if this type is the generic form of its class
+   */
+  public boolean isGenericForm() {
+    return !isMemberClass() || enclosingType.isGenericForm();
+  }
+
   @Override
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public boolean isParameterized() {
@@ -516,18 +531,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    if ((this instanceof NonParameterizedType) && otherType.isGeneric()) {
-      Class<?> thisClass = this.getRuntimeClass();
-      Class<?> otherClass = otherType.getRuntimeClass();
-      if (thisClass == otherClass) {
-        return true;
+    if (otherType.isVariable()) {
+      // A class or interface type is a subtype of a type variable only if it is a subtype of the
+      // variable's lower bound, as for a capture variable of `? super String`.
+      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
+      if (!(lowerBound instanceof EagerReferenceBound)) {
+        return false;
       }
+      ReferenceType lowerBoundType = ((EagerReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
 
-    if (!otherType.isReferenceType()) {
-      return false;
-    }
-    if (otherType.isArray()) {
+    if (!(otherType instanceof ClassOrInterfaceType)) {
       return false;
     }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
@@ -622,6 +638,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public boolean hasWildcard() {
     return false;
+  }
+
+  /**
+   * Returns true if some type argument of this type, or of an enclosing type, is a wildcard. These
+   * are the wildcards that {@link #applyCaptureConversion()} converts. Unlike {@link
+   * #hasWildcard()}, does not look within type arguments.
+   *
+   * @return true if some type argument of this type or of an enclosing type is a wildcard
+   */
+  public boolean hasWildcardArgument() {
+    return isMemberClass() && enclosingType.hasWildcardArgument();
   }
 
   @Override

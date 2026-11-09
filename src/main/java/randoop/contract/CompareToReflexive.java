@@ -12,8 +12,15 @@ public final class CompareToReflexive extends ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();
 
   /** Private constructor to enforce singleton. */
-  private CompareToReflexive() {}
+  private CompareToReflexive() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToReflexive getInstance() {
     return instance;
   }
@@ -39,7 +46,8 @@ public final class CompareToReflexive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

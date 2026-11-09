@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,12 +22,10 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
-import org.plumelib.util.EntryReader;
-import org.plumelib.util.EntryReader.CommentFormat;
-import org.plumelib.util.EntryReader.EntryFormat;
 import randoop.MethodReplacements;
 
 /**
@@ -66,6 +66,7 @@ public final class ReplaceCallAgent {
   @SuppressWarnings("nullness:initialization.static.field.uninitialized") // set in premain()
   static Path debugPath;
 
+  /** Print progress information, such as the arguments with which the agent is started. */
   @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
   public static boolean verbose = false;
@@ -106,9 +107,8 @@ public final class ReplaceCallAgent {
             agentArgs, instrumentation);
       }
 
-      debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
-      boolean createDebugDiretory = debug && debug_directory != null && !debug_directory.isEmpty();
-      if (createDebugDiretory) {
+      debugPath = Paths.get("").toAbsolutePath();
+      if (debug && debug_directory != null && !debug_directory.isEmpty()) {
         debugPath = debugPath.resolve(debug_directory);
         if (!Files.exists(debugPath)) {
           Files.createDirectory(debugPath);
@@ -206,7 +206,7 @@ public final class ReplaceCallAgent {
 
       // Communicate the list of replaced methods to Randoop to omit direct calls
       List<String> signatureList =
-          CollectionsPlume.mapList(MethodSignature::toString, replacementMap.keySet());
+          CollectionsPlume.mapList(MethodSignature::toRawSignatureString, replacementMap.keySet());
       MethodReplacements.setReplacedMethods(signatureList);
 
       // Create the transformer and add to the class loader instrumentation
@@ -216,15 +216,17 @@ public final class ReplaceCallAgent {
       instrumentation.addTransformer(transformer);
 
     } catch (Throwable e) {
-      replaceCallExit(e.getMessage());
+      e.printStackTrace();
+      replaceCallExit(e.toString());
     }
   }
 
   /**
-   * Exit the program due to an exception in the ReplaceCall agent.
+   * Exit the program due to an error in the ReplaceCall agent.
    *
-   * @param message the exception's message
+   * @param message the error message to print
    */
+  @TerminatesExecution
   private static void replaceCallExit(String message) {
     System.err.println("Error in replacecall agent: " + message);
     System.err.println(
@@ -247,21 +249,14 @@ public final class ReplaceCallAgent {
    * @return the set of excluded package prefixes from the file
    * @throws IOException if there is an error reading the file
    */
-  private static Set<String> loadExclusions(@Owning Reader exclusionReader, String filename)
-      throws IOException {
+  /*package-private*/ static Set<String> loadExclusions(
+      @Owning Reader exclusionReader, String filename) throws IOException {
     Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
-    try (EntryReader reader =
-        new EntryReader(exclusionReader, filename, EntryFormat.DEFAULT, CommentFormat.C, null)) {
-      for (String line : reader) {
-        String trimmed = line.trim();
-        if (!trimmed.isEmpty()) {
-          if (trimmed.charAt(trimmed.length() - 1) != '.') {
-            trimmed = trimmed + ".";
-          }
-          excludedPackagePrefixes.add(trimmed);
-        }
-      }
-    }
+    EntryFileReader.forEachEntry(
+        exclusionReader,
+        filename,
+        (String entry, int lineNumber) ->
+            excludedPackagePrefixes.add(entry.endsWith(".") ? entry : entry + "."));
     return excludedPackagePrefixes;
   }
 
@@ -298,13 +293,20 @@ public final class ReplaceCallAgent {
   /**
    * Extracts the path from a URL of type jar.
    *
-   * @param url the url to extract the path from
-   * @return the path for the jar file, as a string
+   * @param url the url to extract the path from, such as {@code
+   *     jar:file:/path/to/my%20file.jar!/path/to/MyClass.class}
+   * @return the path for the jar file, as a string, such as {@code /path/to/my file.jar}
    */
   static String getJarPathFromURL(URL url) {
-    String jarPath = url.getPath();
-    int offset = System.getProperty("os.name").startsWith("Windows") ? 2 : 1;
-    return jarPath.substring(jarPath.indexOf(':') + offset, jarPath.indexOf('!'));
+    // The path of a jar URL is a file URL, followed by "!/" and the entry name.
+    String path = url.getPath();
+    String jarFileURL = path.substring(0, path.indexOf("!/"));
+    try {
+      // Unlike URL.getPath(), Paths.get(URI) decodes escapes such as "%20".
+      return Paths.get(new URI(jarFileURL)).toString();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Malformed jar URL: " + url, e);
+    }
   }
 
   /**

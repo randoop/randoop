@@ -108,7 +108,7 @@ public class ErrorRevealingChecks implements TestChecks<ErrorRevealingChecks> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(checks);
+    return Objects.hashCode(checks);
   }
 
   /**

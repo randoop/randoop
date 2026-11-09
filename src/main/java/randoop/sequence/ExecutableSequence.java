@@ -314,7 +314,8 @@ public class ExecutableSequence {
 
       for (int i = 0; i < this.sequence.size(); i++) {
 
-        Object[] inputValues = getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
+        @Nullable Object[] inputValues =
+            getRuntimeInputs(executionResults.outcomes, sequence.getInputs(i));
 
         if (i == this.sequence.size() - 1) {
           // This is the last statement in the sequence.
@@ -324,7 +325,7 @@ public class ExecutableSequence {
             // call.
             ExpectedOutcomeTable outcomeTable = operation.checkPrestate(inputValues);
             if (outcomeTable.isInvalidCall()) {
-              checks = new InvalidChecks(new InvalidValueCheck(this, i));
+              checks = new InvalidChecks(new InvalidValueCheck());
               return;
             }
             gen = outcomeTable.addPostCheckGenerator(gen);
@@ -378,12 +379,30 @@ public class ExecutableSequence {
     }
   }
 
-  public Object[] getRuntimeInputs(List<Variable> inputs) {
+  /**
+   * Returns the run-time values of the given variables, from the execution of this sequence. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
+  public @Nullable Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.outcomes, inputs);
   }
 
-  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
-    Object[] ros = getRuntimeValuesForVars(inputs, outcome);
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally. If any of the values is
+   * null, records that this sequence has a null input.
+   *
+   * @param outcome the outcomes of executing the statements of this sequence
+   * @param inputs the variables whose values to return
+   * @return the run-time values of the given variables, in the same order
+   */
+  private @Nullable Object[] getRuntimeInputs(
+      List<ExecutionOutcome> outcome, List<Variable> inputs) {
+    @Nullable Object[] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {
       if (ro == null) {
         this.hasNullInput = true;
@@ -401,13 +420,22 @@ public class ExecutableSequence {
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
-  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+  public static @Nullable Object[] getRuntimeValuesForVars(
+      List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.outcomes);
   }
 
-  private static Object[] getRuntimeValuesForVars(
+  /**
+   * Returns the run-time values of the given variables, from the given execution outcomes. Each
+   * variable must have been created by a statement that executed normally.
+   *
+   * @param vars the variables whose values to return
+   * @param execution the outcomes of executing the statements of a sequence
+   * @return the run-time values of the given variables, in the same order
+   */
+  private static @Nullable Object[] getRuntimeValuesForVars(
       List<Variable> vars, List<ExecutionOutcome> execution) {
-    Object[] runtimeObjects = new Object[vars.size()];
+    @Nullable Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
       assert execution.get(creatingStatementIdx) instanceof NormalExecution
@@ -543,10 +571,19 @@ public class ExecutableSequence {
         && ((MethodCall) op.getOperation()).getMethod().equals(OBJECT_GETCLASS);
   }
 
-  // Execute the index-th statement in the sequence.
-  // Precondition: this method has been invoked on 0..index-1.
+  /**
+   * Executes the index-th statement in the given sequence, and stores its outcome in {@code
+   * outcome}.
+   *
+   * <p>Precondition: this method has been invoked on 0..index-1.
+   *
+   * @param s the sequence
+   * @param outcome the outcomes of executing the statements of {@code s}; side-effected
+   * @param index the index of the statement to execute
+   * @param inputVariables the run-time values of the statement's inputs
+   */
   private static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      Sequence s, List<ExecutionOutcome> outcome, int index, @Nullable Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -612,13 +649,14 @@ public class ExecutableSequence {
   }
 
   /**
-   * The result of executing the index-th element of the sequence.
+   * Returns the runtime value of the index-th element of the sequence. Throws Error if that
+   * element's execution did not complete normally.
    *
    * @param index which element to obtain
-   * @return the result of executing the index-th element of the sequence, if that element's
-   *     execution completed normally
+   * @return the runtime value of the index-th element of the sequence, or null if that value is
+   *     null
    */
-  private Object getValue(int index) {
+  private @Nullable Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
       return ((NormalExecution) result).getRuntimeValue();
@@ -652,10 +690,12 @@ public class ExecutableSequence {
    * mapping to {@link #variableMap}.
    *
    * @param variable the variable to use as a value in variableMap
-   * @param value the Java value to use as a key in variableMap
+   * @param value the Java value to use as a key in variableMap; this method does nothing if it is
+   *     null
    * @param refValues the set of all reference values; is side-effected by this method
    */
-  private void addReferenceValue(Variable variable, Object value, Set<ReferenceValue> refValues) {
+  private void addReferenceValue(
+      Variable variable, @Nullable Object value, Set<ReferenceValue> refValues) {
     if (value != null) {
       Type type = variable.getType();
       if (type.isReferenceType() && !type.isString()) {
@@ -675,10 +715,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
       // TODO: Should this be only reference values, not all values?
       Object value = getValue(i);
-      if (value != null) {
-        Variable variable = sequence.getVariable(i);
-        addReferenceValue(variable, value, values);
-      }
+      Variable variable = sequence.getVariable(i);
+      addReferenceValue(variable, value, values);
     }
     return new ArrayList<>(values);
   }
@@ -702,11 +740,25 @@ public class ExecutableSequence {
   /**
    * Returns some variable that has the given value in the outcome of executing this sequence.
    *
-   * @param value the value
+   * <p>Only values returned by {@link #getLastStatementValues} or {@link #getAllValues} are
+   * recorded, so the value must have been returned by one of those methods.
+   *
+   * @param value the value, which was returned by {@link #getLastStatementValues} or {@link
+   *     #getAllValues}
    * @return a variable that has the given value
+   * @throws RandoopBug if no variable has been recorded for the given value
    */
   public Variable getVariable(Object value) {
-    return variableMap.get(value).iterator().next();
+    Set<Variable> variables = variableMap.get(value);
+    if (variables == null) {
+      // Do not call value.toString(), which can throw an exception or not terminate.
+      throw new RandoopBug(
+          String.format(
+              "No variable has been recorded for the given value, of class %s with identity hash"
+                  + " code %d; was it returned by getLastStatementValues() or getAllValues()?",
+              value.getClass().getName(), System.identityHashCode(value)));
+    }
+    return variables.iterator().next();
   }
 
   /**
@@ -719,6 +771,12 @@ public class ExecutableSequence {
     return getResult(i) instanceof NormalExecution;
   }
 
+  /**
+   * Returns the index of the first statement whose execution did not terminate normally.
+   *
+   * @return the index of the first statement that did not execute normally, or -1 if every
+   *     statement executed normally
+   */
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
       if (!isNormalExecution(i)) {
@@ -728,6 +786,11 @@ public class ExecutableSequence {
     return -1;
   }
 
+  /**
+   * Returns true if every statement of this sequence terminated normally.
+   *
+   * @return true if every statement of this sequence terminated normally
+   */
   public boolean isNormalExecution() {
     return getNonNormalExecutionIndex() == -1;
   }
@@ -799,7 +862,7 @@ public class ExecutableSequence {
     if (checks == null) {
       throw new Error("hashCode() called prematurely");
     }
-    return Objects.hash(sequence.hashCode(), checks.hashCode());
+    return Objects.hash(sequence, checks);
   }
 
   @Override

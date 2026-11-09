@@ -20,7 +20,7 @@ public class LoadingWithAnnotationTest {
 
   @Test
   public void test() {
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
+    GenInputsAbstract.ignore_bad_class_names = false;
     GenInputsAbstract.classlist = Paths.get("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.require_covered_classes =

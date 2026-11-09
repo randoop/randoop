@@ -50,6 +50,13 @@ val testJdkVersionString =
   providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().majorVersion)
 val testJdkVersion = Integer.valueOf(testJdkVersionString)
 
+// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness) on project `p`.
+// The code does not yet type-check under the Nullness Checker, and -Werror would make javac stop at
+// the first class that has a warning.  Without -Werror, the build reports every warning, so that CI
+// can report the ones on lines that a pull request changes.
+fun werror(p: Project): List<String> =
+  if (p.hasProperty("cfNullness")) listOf() else listOf("-Werror")
+
 /* Common build configuration for Randoop and agents */
 allprojects {
   apply(plugin = "java")
@@ -144,7 +151,6 @@ allprojects {
         // Uncomment -proc:none to disable all annotation processing and speed up the build.
         // "-proc:none",
 
-        "-Werror",
         "-Awarns",
         "-Xmaxwarns",
         "10000",
@@ -156,7 +162,7 @@ allprojects {
         // -processing: suppresses "No processor claimed any of these annotations ..."
         // -options: suppresses "target value 8 is obsolete and will be removed in a future release"
         "-Xlint:-processing,-options",
-      )
+      ) + werror(project)
   }
 
   configure<JacocoPluginExtension> {
@@ -244,6 +250,8 @@ dependencies {
   /* sourceSet test uses JUnit and some use testInput source set */
   testImplementation(libs.commons.codec)
   testImplementation(libs.hamcrest.all)
+  /* DefaultOmitMethodsTest checks the Joda-Time signatures in omitmethods-defaults.txt. */
+  testImplementation(libs.joda.time)
   configurations["junit"].dependencies.forEach { testImplementation(it) }
   testImplementation(sourceSets["testInput"].output)
 
@@ -285,10 +293,9 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(
       listOf(
         "-g",
-        "-Werror",
         "-Xlint",
         "-Xlint:-classfile,-options",
-      ),
+      ) + werror(project),
     )
   }
 }
@@ -404,7 +411,9 @@ allprojects {
         .getByType(CheckerFrameworkCompileExtension::class.java)
         .enabled = false
     } else {
-      options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror", "-Xlint:-options"))
+      options.compilerArgs.addAll(
+        listOf("-Xlint:all,-processing", "-Xlint:-options") + werror(project),
+      )
 
       options.errorprone {
         enabled = isJava17orHigher
@@ -587,6 +596,8 @@ val systemTest =
     setWorkingDir(layout.buildDirectory)
     testClassesDirs = sourceSets["systemTest"].output.classesDirs
     classpath = sourceSets["systemTest"].runtimeClasspath
+    // The coverageGoalsTest task runs it.
+    filter { excludeTestsMatching("randoop.main.CoverageGoalsTest") }
 
     /*
      * Show as much as possible to console.
@@ -601,6 +612,23 @@ val systemTest =
   }
 
 systemTest { dependsOn(tasks.shadowJar) }
+
+/*
+ * Checks the system tests' coverage goals for every JDK that CI tests.  Unlike the systemTest
+ * task, it does not run Randoop, so it is fast.  The systemTest task depends on it, so that a bad
+ * coverage goal makes systemTest fail before it runs Randoop.
+ */
+val coverageGoalsTest =
+  tasks.register<Test>("coverageGoalsTest") {
+    group = "Verification"
+    description = "Check the system tests' coverage goals"
+    testClassesDirs = sourceSets["systemTest"].output.classesDirs
+    classpath = sourceSets["systemTest"].runtimeClasspath
+    filter { includeTestsMatching("randoop.main.CoverageGoalsTest") }
+    testLogging { exceptionFormat = TestExceptionFormat.FULL }
+  }
+
+systemTest { dependsOn(coverageGoalsTest) }
 
 /*
  * Link the systemTest task into the project check task.

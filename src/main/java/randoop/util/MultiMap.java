@@ -26,6 +26,11 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     map = new LinkedHashMap<>();
   }
 
+  /**
+   * Creates a new, empty MultiMap with the given initial capacity.
+   *
+   * @param initialCapacity the initial capacity of the backing map
+   */
   public MultiMap(int initialCapacity) {
     map = new LinkedHashMap<>(initialCapacity);
   }
@@ -55,18 +60,34 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     map.put(key, new LinkedHashSet<>(values));
   }
 
+  /**
+   * Adds each key-value mapping in the given map to this multimap.
+   *
+   * @param m the mappings to add
+   */
   public void addAll(Map<? extends K, ? extends V> m) {
     for (K t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
+  /**
+   * Adds a mapping from the given key to each of the given values.
+   *
+   * @param key the key
+   * @param values the values to add for the key
+   */
   public void addAll(K key, Collection<? extends V> values) {
     for (V t2 : values) {
       add(key, t2);
     }
   }
 
+  /**
+   * Adds all the mappings in the given multimap to this multimap.
+   *
+   * @param mmap the mappings to add
+   */
   public void addAll(MultiMap<K, V> mmap) {
     for (Map.Entry<K, Set<V>> entry : mmap.map.entrySet()) {
       addAll(entry.getKey(), entry.getValue());
@@ -92,6 +113,13 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     return values.remove(value);
   }
 
+  /**
+   * Removes the given key and all its values from this multimap.
+   *
+   * @param key the key to remove
+   * @return true, since the key was present
+   * @throws IllegalStateException if the key is not in this multimap
+   */
   public boolean remove(K key) {
     Set<V> values = map.get(key);
     if (values == null) {
@@ -111,10 +139,17 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     return map.keySet();
   }
 
+  /**
+   * Returns true if this multimap contains the given key.
+   *
+   * @param obj the key to look up
+   * @return true if this multimap contains the given key
+   */
   public boolean contains(K obj) {
     return map.containsKey(obj);
   }
 
+  /** Removes all mappings from this multimap. */
   public void clear() {
     map.clear();
   }
@@ -124,6 +159,11 @@ public class MultiMap<K extends @Signed Object, V extends @Signed Object>
     return map.size();
   }
 
+  /**
+   * Returns true if this multimap contains no keys.
+   *
+   * @return true if this multimap contains no keys
+   */
   public boolean isEmpty() {
     return map.isEmpty();
   }

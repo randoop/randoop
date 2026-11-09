@@ -17,8 +17,15 @@ public final class CompareToTransitive extends ObjectContract {
   private static final CompareToTransitive instance = new CompareToTransitive();
 
   /** Private constructor to enforce singleton. */
-  private CompareToTransitive() {}
+  private CompareToTransitive() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToTransitive getInstance() {
     return instance;
   }
@@ -51,7 +58,7 @@ public final class CompareToTransitive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(
               JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));

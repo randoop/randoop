@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 
 /** Provides the environment for running JUnit tests. */
@@ -91,7 +92,8 @@ public class TestEnvironment {
    */
   private List<String> commandPrefix() {
     List<String> command = new ArrayList<>(agentMap.size() + 9);
-    command.add("java");
+    // Run the tests on the JDK that runs Randoop, regardless of which java is on the PATH.
+    command.add(Globals.jdkBinDir.resolve("java").toString());
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
     command.add("-XX:+HeapDumpOnOutOfMemoryError");

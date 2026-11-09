@@ -15,6 +15,10 @@ junit.
 org.hamcrest.
 org.junit.
 
+// or Gradle classes:
+org.gradle.
+worker.org.gradle.
+
 // The following are library classes used by Randoop for which package relocation
 // is not applied, and for which replacing calls to System.exit causes failure.
 com.sun.tools.javac.

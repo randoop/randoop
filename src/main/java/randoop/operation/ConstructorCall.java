@@ -30,18 +30,13 @@ public final class ConstructorCall extends CallableOperation {
   /** The constructor that is called by this ConstructorCall. */
   private final Constructor<?> constructor;
 
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
-  private int hashCodeCached = 0;
-  private boolean hashCodeComputed = false;
-
   /**
    * Creates object corresponding to the given reflection constructor.
    *
    * @param constructor reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
+    super();
     if (constructor == null) {
       throw new IllegalArgumentException("constructor should not be null.");
     }
@@ -154,11 +149,7 @@ public final class ConstructorCall extends CallableOperation {
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.constructor.hashCode();
-    }
-    return hashCodeCached;
+    return this.constructor.hashCode();
   }
 
   @Override

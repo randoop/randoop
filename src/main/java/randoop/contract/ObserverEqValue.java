@@ -53,6 +53,7 @@ public final class ObserverEqValue extends ObjectContract {
    * @param value the run-time result of calling the observer: a primitive value or String
    */
   public ObserverEqValue(TypedOperation observer, Object value) {
+    super();
     assert observer.isMethodCall() || observer.isConstructorCall()
         : "Observer must be MethodCall or ConstructorCall, got " + observer;
     this.observer = observer;
@@ -134,7 +135,7 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

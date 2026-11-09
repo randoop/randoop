@@ -10,7 +10,9 @@ public final class DummyVariable extends Variable {
   public static final DummyVariable DUMMY = new DummyVariable();
 
   /** Create a DummyVariable. */
-  private DummyVariable() {}
+  private DummyVariable() {
+    super();
+  }
 
   @Override
   public String toString() {

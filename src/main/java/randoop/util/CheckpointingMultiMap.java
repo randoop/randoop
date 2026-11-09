@@ -70,6 +70,7 @@ public class CheckpointingMultiMap<K extends @Signed Object, V extends @Signed O
     }
   }
 
+  /** Creates a new, empty CheckpointingMultiMap with no marks. */
   public CheckpointingMultiMap() {
     map = new LinkedHashMap<>();
     marks = new ArrayList<>();

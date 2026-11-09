@@ -58,7 +58,7 @@ public final class Sequence {
 
   /** Create a new, empty sequence. */
   public Sequence() {
-    this(SIList.empty(), 0, 0);
+    this(SIList.empty(), 0, 0, 0);
   }
 
   /**
@@ -69,9 +69,12 @@ public final class Sequence {
    * @param statements the statements of the new sequence
    * @param hashCode the hashcode for the new sequence
    * @param netSize the net size for the new sequence
+   * @param numCheckedStatements the number of leading statements that are already known to satisfy
+   *     the representation invariant; {@link #checkRep} checks only the statements after them
    */
   @SuppressWarnings("nullness:method.invocation") // initialized enough: computeLastStatementInfo()
-  private Sequence(SIList<Statement> statements, int hashCode, int netSize) {
+  private Sequence(
+      SIList<Statement> statements, int hashCode, int netSize, int numCheckedStatements) {
     if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
     }
@@ -81,7 +84,7 @@ public final class Sequence {
     this.computeLastStatementInfo();
     this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
-    this.checkRep();
+    this.checkRep(numCheckedStatements);
   }
 
   /**
@@ -90,7 +93,7 @@ public final class Sequence {
    * @param statements the statements
    */
   public Sequence(SIList<Statement> statements) {
-    this(statements, computeHashcode(statements), computeNetSize(statements));
+    this(statements, computeHashcode(statements), computeNetSize(statements), 0);
   }
 
   /**
@@ -147,6 +150,14 @@ public final class Sequence {
     return inputSequence.extend(operation, inputs);
   }
 
+  /**
+   * Creates a sequence that extends the sequence underlying {@code elementsSequence} with one call
+   * to the given operation, using the outputs of {@code elementsSequence} as the inputs.
+   *
+   * @param operation the operation for the sequence
+   * @param elementsSequence the sequence whose outputs are the inputs to the operation
+   * @return the sequence that applies the operation to the outputs of {@code elementsSequence}
+   */
   public static Sequence createSequence(TypedOperation operation, TupleSequence elementsSequence) {
     List<Variable> inputs =
         CollectionsPlume.mapList(
@@ -169,8 +180,9 @@ public final class Sequence {
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.netSize : this.netSize + 1;
+    // This sequence's statements were checked when it was created.
     return new Sequence(
-        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize);
+        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize, size);
   }
 
   /**
@@ -213,7 +225,10 @@ public final class Sequence {
       newNetSize += c.netSize;
       statements1.add(c.statements);
     }
-    return new Sequence(SIList.concat(statements1), newHashCode, newNetSize);
+    SIList<Statement> newStatements = SIList.concat(statements1);
+    // Each of the sequences was checked when it was created.  A statement's inputs are given by
+    // relative indices, so they still refer to statements of the same sequence.
+    return new Sequence(newStatements, newHashCode, newNetSize, newStatements.size());
   }
 
   /**
@@ -404,10 +419,21 @@ public final class Sequence {
    */
   private BitSet activeFlags;
 
+  /**
+   * Returns true if any statement in this sequence is active.
+   *
+   * @return true if any statement in this sequence is active
+   */
   public boolean hasActiveFlags() {
     return !activeFlags.isEmpty();
   }
 
+  /**
+   * Returns true if the given statement's result is active.
+   *
+   * @param i the index of a statement in this sequence
+   * @return true if the given statement's result is active
+   */
   boolean isActive(int i) {
     return activeFlags.get(i);
   }
@@ -416,10 +442,16 @@ public final class Sequence {
     activeFlags.set(0, this.size());
   }
 
+  /** Marks every statement in this sequence as inactive. */
   public void clearAllActiveFlags() {
     activeFlags.clear(0, this.size());
   }
 
+  /**
+   * Marks the statement at the given index as inactive.
+   *
+   * @param i the index of the statement to mark inactive
+   */
   public void clearActiveFlag(int i) {
     activeFlags.clear(i);
   }
@@ -518,8 +550,14 @@ public final class Sequence {
     }
   }
 
-  /** Representation invariant check. */
-  private void checkRep() {
+  /**
+   * Representation invariant check. Does nothing unless {@link GenInputsAbstract#debug_checks} is
+   * true.
+   *
+   * @param numCheckedStatements the number of leading statements that are already known to satisfy
+   *     the representation invariant; this method checks only the statements after them
+   */
+  private void checkRep(int numCheckedStatements) {
 
     if (!GenInputsAbstract.debug_checks) {
       return;
@@ -529,7 +567,7 @@ public final class Sequence {
       throw new RuntimeException("statements == null");
     }
 
-    for (int si = 0; si < this.statements.size(); si++) { // `si` is used later
+    for (int si = numCheckedStatements; si < this.statements.size(); si++) { // `si` is used later
 
       Statement statementWithInputs = this.statements.get(si);
 
@@ -595,6 +633,9 @@ public final class Sequence {
     }
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
+      return false;
+    }
+    if (this.hashCode != other.hashCode) {
       return false;
     }
     for (int i = 0; i < this.statements.size(); i++) {
@@ -794,7 +835,13 @@ public final class Sequence {
     return new Variable(this, index);
   }
 
-  void checkIndex(int i) {
+  /**
+   * Throws an exception if the given index is not the index of a statement in this sequence.
+   *
+   * @param i an index
+   * @throws IllegalArgumentException if {@code i} is out of range
+   */
+  private void checkIndex(int i) {
     if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
     }
