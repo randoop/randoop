@@ -4,7 +4,6 @@ import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -156,6 +155,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toString() {
     return String.format(
-        "<ObserverEqValue %s, value = '%s'", observer, StringsPlume.toStringAndClass(value));
+        "<ObserverEqValue %s, value = '%s'", observer, Util.toStringAndClassSafely(value));
   }
 }

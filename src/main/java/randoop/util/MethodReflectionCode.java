@@ -82,12 +82,12 @@ public final class MethodReflectionCode extends ReflectionCode {
       if (receiver != null) {
         sb.append(lineSep);
         sb.append("  receiver: ");
-        sb.append(Util.toStringAndClassSafely(receiver));
+        sb.append(Util.toStringAndClassSafely(receiver, true));
       }
       for (Object input : inputs) {
         sb.append(lineSep);
         sb.append("  ");
-        sb.append(Util.toStringAndClassSafely(input));
+        sb.append(Util.toStringAndClassSafely(input, true));
       }
       throw new ReflectionCodeException(sb.toString(), e);
     }
@@ -99,7 +99,7 @@ public final class MethodReflectionCode extends ReflectionCode {
         + ": "
         + method
         + " receiver: "
-        + Util.toStringAndClassSafely(receiver)
+        + Util.toStringAndClassSafely(receiver, true)
         + " args: "
         + Util.elementsToStringAndClassSafely(inputs)
         + " "
