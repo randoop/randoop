@@ -375,8 +375,7 @@ public class Substitution {
 
   /**
    * Returns the concrete type mapped from the type variable by this substitution. Returns null if
-   * the variable is not in the substitution. A copy of a type variable, which can have different
-   * bounds, maps to the same type as the type variable.
+   * the variable is not in the substitution.
    *
    * @param parameter the variable
    * @return the concrete type mapped from the variable in this substitution, or null if there is no

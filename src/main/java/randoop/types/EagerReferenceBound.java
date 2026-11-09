@@ -89,8 +89,7 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ReferenceType argReferenceType = (ReferenceType) argType;
-      if (thisBoundType.isVariable()
-          && TypeVariable.isSameVariable(thisBoundType, getBoundType())) {
+      if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
         // The substitution does not replace the type variable, so it stands for an unknown type.
         // Checking argType against the upper bound of the type variable instead would leave the
         // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
@@ -135,8 +134,7 @@ class EagerReferenceBound extends ReferenceBound {
    */
   private static boolean canBeSupertype(
       TypeVariable variable, ReferenceType type, Substitution substitution) {
-    if (TypeVariable.isSameVariable(type, variable)
-        || variable.canBeInstantiatedBy(type, substitution)) {
+    if (type.equals(variable) || variable.canBeInstantiatedBy(type, substitution)) {
       return true;
     }
     if (variable instanceof ExplicitTypeVariable && type instanceof ClassOrInterfaceType) {
