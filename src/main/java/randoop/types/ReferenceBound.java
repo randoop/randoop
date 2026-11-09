@@ -131,4 +131,34 @@ public abstract class ReferenceBound extends ParameterBound {
   public boolean isVariable() {
     return boundType.isVariable();
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if {@code bound} is neither a {@link ReferenceBound} nor a {@link
+   * LazyParameterBound} that can be converted to one.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    ReferenceType type = asReferenceType(bound);
+    return type != null && isLowerBound(type, substitution);
+  }
+
+  /**
+   * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
+   * LazyParameterBound} that can be converted to one. Otherwise, returns null.
+   *
+   * @param bound a bound
+   * @return the type of {@code bound}, or null
+   */
+  private static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
+  }
 }
