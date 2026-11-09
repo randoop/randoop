@@ -44,6 +44,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @param value the value of the term
    */
   public NonreceiverTerm(Type type, Object value) {
+    super();
     if (type == null || type.isVoid()) {
       throw new RandoopBug("type should not be null or void: " + type);
     }

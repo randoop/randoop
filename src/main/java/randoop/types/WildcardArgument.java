@@ -16,6 +16,7 @@ public class WildcardArgument extends TypeArgument {
    * @param argumentType the wildcard type
    */
   WildcardArgument(WildcardType argumentType) {
+    super();
     this.argumentType = argumentType;
   }
 

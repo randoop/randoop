@@ -17,7 +17,9 @@ public final class CompareToEquals extends ObjectContract {
    * Creates the singleton CompareToEquals; is only ever called once. Clients should call {@link
    * #getInstance}.
    */
-  private CompareToEquals() {}
+  private CompareToEquals() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
@@ -48,7 +50,7 @@ public final class CompareToEquals extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));
 
   @Override
