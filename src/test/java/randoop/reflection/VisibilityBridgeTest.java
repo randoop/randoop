@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertTrue;
-import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -120,7 +119,6 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
-    return new LinkedHashSet<>(
-        OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC));
+    return new LinkedHashSet<>(OperationExtractor.operations(c));
   }
 }
