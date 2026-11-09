@@ -392,8 +392,9 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
-            // The parameter type need not be a ParameterizedType:  for a member class with no type
-            // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.
+            // The parameter type is a parameterized type such as `List<T>`, or a member class of a
+            // generic class, such as `Outer<T>.Inner`, which has no type parameters of its own and
+            // is a NonParameterizedType rather than a ParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {

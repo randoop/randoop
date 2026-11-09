@@ -82,6 +82,26 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
 
+  /**
+   * Returns true if the given result of applying a substitution to the type of this bound is the
+   * same as the type of this bound, so that the substitution can return this bound.
+   *
+   * <p>A copy of a type variable equals the original even if its bounds differ. So if the type of
+   * this bound is a type variable, as {@code Y} in {@code Y extends List<X>}, then a substitution
+   * for {@code X} yields a copy that equals {@code Y} but whose bound is the substituted one. That
+   * copy is kept, rather than the original.
+   *
+   * @param substitutedType the type of this bound, with a substitution applied
+   * @return true if {@code substitutedType} is the same as the type of this bound
+   */
+  @SuppressWarnings("ReferenceEquality") // the identical type is unchanged, even a type variable
+  boolean isUnchangedBy(ReferenceType substitutedType) {
+    if (substitutedType == boundType) {
+      return true;
+    }
+    return substitutedType.equals(boundType) && !substitutedType.isVariable();
+  }
+
   @Override
   public boolean hasCaptureVariable() {
     return boundType.hasCaptureVariable();

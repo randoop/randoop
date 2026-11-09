@@ -41,6 +41,19 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) result).getBoundType());
   }
 
+  @Test
+  public void testObjectIsUpperBoundOfLazyBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters().get(1);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    // Object is an upper bound of every reference type, including the type of a lazy bound.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isUpperBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(bound, new Substitution()));
+  }
+
   /**
    * A type parameter whose self-referential bound contains an array of the type parameter.
    *
