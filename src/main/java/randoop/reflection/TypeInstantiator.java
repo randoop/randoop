@@ -23,7 +23,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -361,8 +360,10 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type need not be a parameterized type:  it can be a non-parameterized
+            // member class whose enclosing class is generic.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -373,10 +374,19 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              }
+              allMatched = false;
+              break;
+            }
+            // The substitution can conflict with an earlier one, for example if two parameter
+            // types contain copies of one capture variable.  Then extending would throw.
+            if (!substitution.isConsistentWith(subst)) {
+              if (Log.isLoggingOn()) {
+                failure = subst + " for " + origParamType + " conflicts with " + substitution;
               }
               allMatched = false;
               break;

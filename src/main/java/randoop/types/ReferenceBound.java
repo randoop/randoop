@@ -105,4 +105,34 @@ public abstract class ReferenceBound extends ParameterBound {
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     return lowerBound.isLowerBound(boundType, substitution);
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The type of the given bound is compared with this bound by {@link #isUpperBound(Type,
+   * Substitution)}. An intersection bound is within this bound if one of its components is, since
+   * the intersection is a subtype of each of its components. A {@link LazyParameterBound} is
+   * compared after the substitution is applied to it; a type variable in it that the substitution
+   * does not instantiate stands for an unknown type. Returns false for any other kind of bound.
+   */
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof ReferenceBound) {
+      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isUpperBound(component, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (bound instanceof LazyParameterBound) {
+      ParameterBound substituted =
+          ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
+      return substituted != null && isUpperBound(substituted, substitution);
+    }
+    return false;
+  }
 }

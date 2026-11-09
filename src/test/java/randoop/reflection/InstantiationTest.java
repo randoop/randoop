@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -289,6 +290,38 @@ public class InstantiationTest {
       Type c = chainInstance.getInputTypes().get(1);
       assertTrue(b + " should be a subtype of " + a, b.isSubtypeOfOrEqualTo(a));
       assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable that is instantiated by matching a parameterized
+   * parameter type, and whose bound mentions two type variables that remain to be instantiated: the
+   * instantiation satisfies that bound, whatever the random choices.
+   */
+  @Test
+  public void testMatchedVariableBoundInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    InstantiatedType mapType =
+        JDKTypes.HASH_MAP_TYPE.instantiate(
+            JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    InstantiatedType listOfMaps = JDKTypes.ARRAY_LIST_TYPE.instantiate(mapType);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(listOfMaps, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <K, V, M extends Map<K, V>> K someKey(Collection<M>)
+    TypedClassOperation someKey =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("someKey", Collection.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(someKey);
+      assertNotNull("instantiation failed for " + someKey, instance);
+      // M := HashMap<String, Integer> satisfies M extends Map<K, V> only if K := String.
+      assertEquals(JDKTypes.COLLECTION_TYPE.instantiate(mapType), instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
     }
     Randomness.setSeed(0);
   }
