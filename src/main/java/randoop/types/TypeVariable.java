@@ -101,8 +101,15 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isReferenceType()) {
       // A type variable is a subtype of its upper bound.  The test below does not always recognize
       // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it
-      // substitutes otherType for this variable within the bound.
+      // substitutes otherType for this variable within the bound.  For a type parameter, such a
+      // bound is a LazyParameterBound, so convert it to a ReferenceBound to compare it.
       ParameterBound upperBound = getUpperTypeBound();
+      if (upperBound instanceof LazyParameterBound) {
+        ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
+        if (converted != null) {
+          upperBound = converted;
+        }
+      }
       if (upperBound instanceof ReferenceBound
           && ((ReferenceBound) upperBound).getBoundType().equals(otherType)) {
         return true;

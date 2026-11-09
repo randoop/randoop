@@ -21,7 +21,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class CaptureTypeVariable extends TypeVariable {
 
-  /** The ID counter for capture conversion variables. */
+  /**
+   * The ID counter for capture conversion variables. It is atomic so that concurrent capture
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
+   */
   private static final AtomicInteger count = new AtomicInteger();
 
   /** The integer ID of this capture variable. */
