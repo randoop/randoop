@@ -464,14 +464,17 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    if (super.isSubtypeOfOrEqualTo(otherType)) {
-      return true;
-    }
-
     // wildcard clause
     if (this.hasWildcardArgument()) { // JLS 4.10.2
-      // old note says this has to be tested first
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of.  The
+      // supertypes of this type itself would have wildcards as nested type arguments:  for
+      // `Nested<T> extends ArrayList<List<T>>`, the superclass of `Nested<?>` would be
+      // `ArrayList<List<?>>`, but `Nested<?>` is not a subtype of `List<List<?>>`.
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
+    }
+
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
     }
 
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
