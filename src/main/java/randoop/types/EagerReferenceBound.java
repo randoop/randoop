@@ -110,8 +110,16 @@ class EagerReferenceBound extends ReferenceBound {
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false if {@code bound} is not a {@link ReferenceBound}.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return isUpperBound(getBoundType(), substitution);
+    if (!(bound instanceof ReferenceBound)) {
+      return false;
+    }
+    return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
   }
 }
