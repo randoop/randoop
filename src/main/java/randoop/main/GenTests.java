@@ -935,7 +935,7 @@ public class GenTests extends GenInputsAbstract {
       Set<TypedClassOperation> typeOperations = sideEffectFreeMethodsByType.getValues(t);
       for (TypedClassOperation tco : typeOperations) {
         if (!RegressionCaptureGenerator.isAssertableMethod(
-            tco, omitMethodsPredicate, accessibilityPredicate)) {
+            tco, omitMethodsPredicate, accessibilityPredicate, null)) {
           continue;
         }
 

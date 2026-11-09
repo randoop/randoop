@@ -12,6 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
+ * A substitution leaves an array bound unresolved if it maps the element type to the null type,
+ * because there is no array of the null type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -29,6 +31,15 @@ class LazyReferenceBound extends ReferenceBound {
     if (substitution.isEmpty()) {
       return this;
     }
+    if (getBoundType().isArray()) {
+      Type elementType = ((ArrayType) getBoundType()).getElementType();
+      // There is no array of the null type, so leave the bound unresolved.
+      if (elementType.isVariable()
+          && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType))) {
+        return this;
+      }
+    }
+
     ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;

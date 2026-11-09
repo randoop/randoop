@@ -1151,6 +1151,25 @@ public class TypeVariableTest {
     assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
   }
 
+  @Test
+  public void testPartialSubstitutionIntoNestedSiblingBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NestedSiblingLast.class).getTypeParameters();
+    TypeVariable s = parameters.get(0);
+    TypeVariable t = parameters.get(1);
+    // The bound of t is Map<t, List<s>>.  The substitution instantiates s but not t.
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(s, JavaTypes.STRING_TYPE));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
   /**
    * A type parameter whose bound contains the type parameter, but not as the last type argument.
    *
@@ -1336,6 +1355,36 @@ public class TypeVariableTest {
     assertTrue(otherCapture.isInstantiationOf(capture));
   }
 
+  @Test
+  public void testInstantiationOfCaptureVariableByVariableWithReflectiveBound()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // The bound of t is Map<t, String>, represented reflectively.  The bound of the capture
+    // variable, with t substituted for it, is also Map<t, String>.
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    assertTrue(t.isInstantiationOf(capture));
+  }
+
+  /**
+   * A class whose type parameter has the intersection bound {@code Number & Runnable}.
+   *
+   * @param <T> the type parameter
+   */
+  static class NumberRunnableBound<T extends Number & Runnable> {}
+
+  @Test
+  public void testInstantiationByVariableWithIntersectionBound() {
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof IntersectionTypeBound);
+    // Number & Runnable is within the bound Number.
+    assertTrue(t.isInstantiationOf(u));
+    // Number is not within the bound Number & Runnable.
+    assertFalse(u.isInstantiationOf(t));
+  }
+
   /**
    * A generic class that is comparable to itself.
    *
@@ -1369,7 +1418,9 @@ public class TypeVariableTest {
     // The bound of the capture variable is Comparable<capture>, which refers to the capture
     // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
-    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
+    assertTrue(
+        capture + " should be a subtype of its bound " + bound,
+        capture.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test
