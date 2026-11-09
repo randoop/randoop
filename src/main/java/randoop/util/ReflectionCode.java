@@ -125,7 +125,7 @@ public abstract class ReflectionCode {
     } else if (exceptionThrown == null) {
       return "returned: " + Util.toStringAndClassSafely(retval);
     } else {
-      return "threw: " + exceptionThrown;
+      return "threw: " + Util.toStringSafely(exceptionThrown);
     }
   }
 

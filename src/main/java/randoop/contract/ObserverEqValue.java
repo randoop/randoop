@@ -12,6 +12,7 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -62,7 +63,7 @@ public final class ObserverEqValue extends ObjectContract {
       throw new RandoopBug(
           String.format(
               "Cannot represent %s as a literal; observer = %s",
-              StringsPlume.toStringAndClass(value), observer));
+              Util.toStringAndClassSafely(value), observer));
     }
   }
 

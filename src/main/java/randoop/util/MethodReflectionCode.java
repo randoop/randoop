@@ -57,10 +57,9 @@ public final class MethodReflectionCode extends ReflectionCode {
     Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
-      try {
-        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, status());
-      } catch (OutOfMemoryError e) {
-        Log.logPrintf("runReflectionCodeRaw(%s) => OutOfMemoryError, %s%n", method, status());
+      if (Log.isLoggingOn()) {
+        Log.logPrintf(
+            "runReflectionCodeRaw(%s) => %s%n", method, Util.toStringAndClassSafely(retval));
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(

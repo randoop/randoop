@@ -19,6 +19,7 @@ import randoop.test.InvalidExceptionCheck;
 import randoop.test.ObjectCheck;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
+import randoop.util.Util;
 
 /**
  * An object contract represents a property that must hold of any object of a given class. It is
@@ -136,9 +137,11 @@ public abstract class ObjectContract {
       }
     } else if (outcome instanceof ExceptionalExecution) {
       Throwable e = ((ExceptionalExecution) outcome).getException();
-      Log.logPrintf(
-          "checkContract(): Contract %s [%s] threw exception of class %s with message %s%n",
-          toCodeString(), getClass(), e.getClass(), e.getMessage());
+      if (Log.isLoggingOn()) {
+        Log.logPrintf(
+            "checkContract(): Contract %s [%s] threw %s%n",
+            toCodeString(), getClass(), Util.toStringSafely(e));
+      }
       if (e instanceof RandoopBug) {
         throw (RandoopBug) e;
       }

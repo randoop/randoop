@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
@@ -231,30 +232,101 @@ public final class Util {
   }
 
   /**
-   * Returns the result of {@link StringsPlume#toStringAndClass} for the given value. If the value's
-   * {@code toString()} throws, returns the names of the value's class and of the thrown class
-   * instead, as in "[java.util.HashMap whose toString() threw java.lang.StackOverflowError]".
+   * Returns {@link StringsPlume#toStringAndClass(Object)} for the given value: the value's {@code
+   * toString()} and its class, as in "hello [class java.lang.String]". For an array, list, or map,
+   * prints each element and its class.
    *
-   * <p>Use this method to print a value created by code under test. Its {@code toString()} is code
-   * under test, which can throw, such as a {@code StackOverflowError} for a collection that
-   * contains itself.
+   * <p>Use this method to print a value created by code under test, whose {@code toString()} is
+   * also code under test. This method does not throw, even if printing the value throws; see {@link
+   * #toStringAndClassSafely(Object, boolean)}.
    *
    * @param value a value, possibly null
    * @return a printed representation of the value and its class
    */
   public static String toStringAndClassSafely(@Nullable Object value) {
+    return toStringAndClassSafely(value, false);
+  }
+
+  /**
+   * Returns {@link StringsPlume#toStringAndClass(Object, boolean)} for the given value: the value's
+   * {@code toString()} and its class, as in "hello [class java.lang.String]".
+   *
+   * <p>Use this method to print a value created by code under test, whose {@code toString()} is
+   * also code under test. This method does not throw, even if printing the value throws. Instead,
+   * if the value's {@code toString()} throws, as {@code HashMap.toString()} throws {@code
+   * StackOverflowError} for a map that contains itself indirectly, it returns
+   * "exception_when_calling_toString [class java.util.HashMap]: java.lang.StackOverflowError". If
+   * printing the elements of an array, list, or map throws, as when iterating over a list throws
+   * {@code ConcurrentModificationException}, it returns "exception_when_printing_elements [class
+   * java.util.ArrayList]: java.util.ConcurrentModificationException".
+   *
+   * <p>When {@code toString()} throws an {@code Exception}, plume-util 1.14.0 returns
+   * "exception_when_calling_toString [class java.util.HashMap]", without naming the exception. Once
+   * Randoop uses a plume-util version that includes plume-lib/plume-util#823, {@code
+   * StringsPlume.toStringAndClass} never throws and names the exception, so it can replace this
+   * method.
+   *
+   * @param value a value, possibly null
+   * @param shallow if true, do not print the elements of an array, list, or map
+   * @return a printed representation of the value and its class
+   */
+  public static String toStringAndClassSafely(@Nullable Object value, boolean shallow) {
+    if (value == null) {
+      return "null";
+    }
     try {
-      return StringsPlume.toStringAndClass(value);
+      return StringsPlume.toStringAndClass(value, shallow);
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath t) {
+      // Thread.stop() throws ThreadDeath; let it stop the thread.
+      throw t;
+    } catch (Throwable t) {
+      // Catching every Throwable is necessary:  a value that contains itself can make printing
+      // throw StackOverflowError, and printing a huge value can throw OutOfMemoryError.
+      boolean printsElements =
+          !shallow && (value.getClass().isArray() || value instanceof List || value instanceof Map);
+      return String.format(
+          "%s [%s]: %s",
+          printsElements ? "exception_when_printing_elements" : "exception_when_calling_toString",
+          value.getClass(),
+          t.getClass().getName());
+    }
+  }
+
+  /**
+   * Returns the given value's {@code toString()}, as in "java.lang.IllegalStateException: bad
+   * state". If the value's {@code toString()} throws, returns a message as {@link
+   * #toStringAndClassSafely(Object, boolean)} does, as in "exception_when_calling_toString [class
+   * java.lang.IllegalStateException]: java.lang.StackOverflowError".
+   *
+   * <p>Use this method to print a value created by code under test, whose {@code toString()} is
+   * also code under test. For example, {@code Throwable.toString()} calls {@code
+   * getLocalizedMessage()}, which code under test can override.
+   *
+   * @param value a value
+   * @return the value's {@code toString()}, or a message that names the value's class and the
+   *     thrown class
+   */
+  public static String toStringSafely(Object value) {
+    try {
+      return value.toString();
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath t) {
+      // Thread.stop() throws ThreadDeath; let it stop the thread.
+      throw t;
     } catch (Throwable t) {
       return String.format(
-          "[%s whose toString() threw %s]",
-          (value == null ? "null" : value.getClass().getName()), t.getClass().getName());
+          "exception_when_calling_toString [%s]: %s", value.getClass(), t.getClass().getName());
     }
   }
 
   /**
    * Returns a printed representation of the given values and their classes, as in "[hello [class
-   * java.lang.String], null]". Prints each value with {@link #toStringAndClassSafely}.
+   * java.lang.String], null, [I@1b6d3586 [class [I]]". Prints each value with {@link
+   * #toStringAndClassSafely(Object, boolean)}, without printing the elements of an array, list, or
+   * map, so the result for a huge array is short.
    *
    * @param values an array of values, each possibly null
    * @return a printed representation of the values and their classes
@@ -262,7 +334,7 @@ public final class Util {
   public static String elementsToStringAndClassSafely(@Nullable Object[] values) {
     StringJoiner result = new StringJoiner(", ", "[", "]");
     for (Object value : values) {
-      result.add(toStringAndClassSafely(value));
+      result.add(toStringAndClassSafely(value, true));
     }
     return result.toString();
   }
