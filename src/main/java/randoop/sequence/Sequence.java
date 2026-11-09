@@ -622,6 +622,9 @@ public final class Sequence {
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return false;
     }
+    if (this.hashCode != other.hashCode) {
+      return false;
+    }
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
       Statement otherStatement = other.statements.get(i);
@@ -825,7 +828,7 @@ public final class Sequence {
    * @param i an index
    * @throws IllegalArgumentException if {@code i} is out of range
    */
-  void checkIndex(int i) {
+  private void checkIndex(int i) {
     if (i < 0 || i > size() - 1) {
       throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
     }

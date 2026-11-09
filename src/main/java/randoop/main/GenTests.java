@@ -388,7 +388,7 @@ public class GenTests extends GenInputsAbstract {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
-    if (silently_ignore_bad_class_names) {
+    if (ignore_bad_class_names) {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
@@ -1204,8 +1204,8 @@ public class GenTests extends GenInputsAbstract {
    * @return the parsed fixture text, or null if {@code filename} is null or the fixture text cannot
    *     be parsed
    */
-  private static BlockStmt parseFixtureFile(
-      String filename, String fixtureKind, List<String> errors) {
+  private static @Nullable BlockStmt parseFixtureFile(
+      @Nullable String filename, String fixtureKind, List<String> errors) {
     try {
       return JUnitCreator.parseFixture(getFileText(filename));
     } catch (ParseException e) {

@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement method is private
+java.lang.Math.abs(int) randoop.instrument.testmocks.MethodMocks.abs(int)

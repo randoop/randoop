@@ -29,7 +29,6 @@ import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
 import org.plumelib.util.EntryReader.CommentFormat;
 import org.plumelib.util.EntryReader.EntryFormat;
-import org.plumelib.util.StringsPlume;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
 import randoop.condition.RandoopSpecificationError;
@@ -106,6 +105,9 @@ public final class OperationModel {
 
   /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations = new TreeSet<>();
+
+  /** Set of operations that {@link #omitMethodsPredicate} excluded from {@link #operations}. */
+  private final Set<TypedOperation> omittedOperations = new TreeSet<>();
 
   /** For debugging only. */
   private List<Pattern> omitMethods;
@@ -196,6 +198,8 @@ public final class OperationModel {
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
     // Add the constructor "Object()".
     model.addObjectConstructor();
+    // An operation that is omitted in one place but added in another is not omitted.
+    model.omittedOperations.removeAll(model.operations);
 
     if (GenInputsAbstract.call_non_sut_methods) {
       model.setSutParameterOnlyTypes();
@@ -567,14 +571,28 @@ public final class OperationModel {
    */
   public void logOperations(Writer out) {
     try {
-      out.write("Operations: (" + operations.size() + ")" + Globals.lineSep);
-      for (TypedOperation t : operations) {
-        out.write("  " + StringsPlume.toStringAndClass(t.toString()));
-        out.write(Globals.lineSep);
-        out.flush();
-      }
+      writeOperations(out, "Operations", operations);
+      writeOperations(out, "Omitted operations", omittedOperations);
+      out.flush();
     } catch (IOException e) {
       throw new RandoopBug("Error while logging operations", e);
+    }
+  }
+
+  /**
+   * Writes a heading that contains the label and the number of operations, then writes each
+   * operation on its own line.
+   *
+   * @param out the Writer on which to produce output
+   * @param label the label for the heading
+   * @param ops the operations to write
+   * @throws IOException if writing fails
+   */
+  private static void writeOperations(Writer out, String label, Set<TypedOperation> ops)
+      throws IOException {
+    out.write(label + ": (" + ops.size() + ")" + Globals.lineSep);
+    for (TypedOperation t : ops) {
+      out.write("  " + t + Globals.lineSep);
     }
   }
 
@@ -759,23 +777,27 @@ public final class OperationModel {
       ReflectionPredicate reflectionPredicate,
       SpecificationCollection operationSpecifications)
       throws RandoopSpecificationError {
+    ReflectionManager mgr = new ReflectionManager(accessibility);
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
       Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
       try {
-        Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(
+        OperationExtractor extractor =
+            OperationExtractor.extract(
+                mgr,
                 classType,
                 reflectionPredicate,
                 omitMethodsPredicate,
                 accessibility,
                 operationSpecifications);
+        Collection<TypedOperation> oneClassOperations = extractor.getOperations();
         Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
         for (TypedOperation op : oneClassOperations) {
           Log.logPrintf("    %s%n", op);
         }
         operations.addAll(oneClassOperations);
+        omittedOperations.addAll(extractor.getOmittedOperations());
       } catch (RandoopSpecificationError e) {
         // A malformed specification is a user error; do not silently drop the class.
         throw e;
@@ -819,7 +841,9 @@ public final class OperationModel {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, accessibility, reflectionPredicate);
-            if (!omitMethodsPredicate.shouldOmit(operation)) {
+            if (omitMethodsPredicate.shouldOmit(operation)) {
+              omittedOperations.add(operation);
+            } else {
               result.add(operation);
             }
           } catch (FailedPredicateException e) {
