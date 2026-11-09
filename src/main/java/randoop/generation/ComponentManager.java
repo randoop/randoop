@@ -61,8 +61,6 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  // The next two variables are only for the use of method clearGeneratedSequences().
-
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
    *
@@ -73,9 +71,7 @@ public class ComponentManager {
 
   /**
    * Decides which constructors/methods are callable from the generated test code. This predicate
-   * matches the visibility rules chosen for the overall test package. This field exists so that if
-   * the user calls {@link #clearGeneratedSequences}, we can create a new {@link
-   * DemandDrivenInputCreator} with the same accessibility rules.
+   * matches the visibility rules chosen for the overall test package.
    */
   private final AccessibilityPredicate accessibility;
 
@@ -211,12 +207,16 @@ public class ComponentManager {
 
   /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
+   * Also removes the demand-driven input creator's secondary sequences, but retains its diagnostic
+   * information (visited and uninstantiable types).
    */
   void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
     numSeedSequencesAdded = gralComponents.numSequencesAdded();
-    initDemandDrivenIfEnabled();
+    if (GenInputsAbstract.call_non_sut_methods) {
+      gralComponents.getDemandDrivenInputCreator().clearSecondarySequences();
+    }
   }
 
   /**
