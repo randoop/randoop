@@ -245,6 +245,9 @@ public final class SequenceCollection {
    * @param type the declared type of the value: a primitive type or String
    * @return the value, converted to the wrapper class of {@code type} if {@code type} is primitive
    */
+  @SuppressWarnings({
+    "signedness:method.invocation" // Randoop's primitive values are Java's signed values
+  })
   private static Object canonicalizePrimitiveValue(Object value, Type type) {
     if (!type.isPrimitive()) {
       return value;
