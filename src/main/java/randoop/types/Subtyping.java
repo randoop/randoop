@@ -39,6 +39,10 @@ final class Subtyping {
     if (type.equals(otherType) || otherType.isObject()) {
       return true;
     }
+    // The null type is a subtype of every reference type (JLS section 4.10.2).
+    if (type.equals(JavaTypes.NULL_TYPE)) {
+      return true;
+    }
     if (substitution.isUnknown(otherType)) {
       TypeVariable unknown = (TypeVariable) otherType;
       // The unknown may be the type or any of its supertypes.
@@ -210,7 +214,7 @@ final class Subtyping {
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
    * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound.
+   * upper bound or a member of it, if it is an intersection.
    *
    * @param lowerType the possible subtype, which may be an unknown
    * @param type the possible supertype
@@ -237,13 +241,38 @@ final class Subtyping {
       }
     }
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
-    if (!(unknownBound instanceof ReferenceBound)) {
-      return false;
+    if (unknownBound instanceof ReferenceBound) {
+      return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
-    ReferenceType unknownBoundType =
-        ((ReferenceBound) unknownBound).getBoundType().substitute(substitution);
-    return isSubtypeOrEqual(unknownBoundType, type, substitution)
-        && satisfiesBound(unknownBoundType, unknown, substitution);
+    if (unknownBound instanceof IntersectionTypeBound) {
+      // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
+      // B can be Number, which is a subtype of Serializable.
+      for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
+        if (member instanceof ReferenceBound
+            && boundCanBeSubtype((ReferenceBound) member, type, unknown, substitution)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if the type of the given bound of an unknown is a subtype of, or equal to, {@code
+   * type}, and the unknown can be that type.
+   *
+   * @param bound an upper bound, or a member of an intersection upper bound, of {@code unknown}
+   * @param type the possible supertype
+   * @param unknown a type variable that stands for an unknown type
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code unknown} can be the type of {@code bound}, which is a subtype of {@code
+   *     type}
+   */
+  private static boolean boundCanBeSubtype(
+      ReferenceBound bound, ReferenceType type, TypeVariable unknown, Substitution substitution) {
+    ReferenceType boundType = bound.getBoundType().substitute(substitution);
+    return isSubtypeOrEqual(boundType, type, substitution)
+        && satisfiesBound(boundType, unknown, substitution);
   }
 
   /**

@@ -23,7 +23,6 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -391,7 +390,9 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            // The parameter type need not be a parameterized type:  it can be a member class that
+            // has no type parameters of its own, but whose enclosing type is generic.
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -401,7 +402,7 @@ public class TypeInstantiator {
             }
             choseAmongSeveral |= matches.size() > 1;
             Substitution extended =
-                selectSubstitution((ParameterizedType) origParamType, matches, substitution);
+                selectSubstitution((ClassOrInterfaceType) origParamType, matches, substitution);
             if (extended == null) {
               if (Log.isLoggingOn()) {
                 failure =
