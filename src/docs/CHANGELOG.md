@@ -32,6 +32,12 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+Changed command-line arguments:
+
+* `--omit-methods`:  If Randoop omits method M of a class under test, it also
+  omits every method that M overrides, because a call to an overridden method
+  might dispatch to M.
+
 New command-line arguments to the replacecall agent:
 
 * `--disable-default-replacement` disables a default replacement
