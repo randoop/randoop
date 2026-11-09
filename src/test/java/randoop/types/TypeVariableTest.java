@@ -238,6 +238,81 @@ public class TypeVariableTest {
   static class FieldTypes {
     /** A wildcard type whose type parameter has a self-referential bound. */
     SelfComparableBound<?> selfComparableWildcard;
+
+    /** A wildcard type with a lower bound. */
+    Comparable<? super String> superStringWildcard;
+  }
+
+  @Test
+  public void testLazyBoundOfCaptureWithLowerBound() {
+    TypeVariable capture = captureVariable("superStringWildcard");
+    ParameterBound bound = new LazyReferenceBound(capture);
+    // String is the lower bound of the capture of `? super String`.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isLowerBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isLowerBound(bound, new Substitution()));
+  }
+
+  @Test
+  public void testUpperBoundOfBound() {
+    ParameterBound numberBound =
+        new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class));
+    // The supplied bound is compared, not the receiver.
+    assertFalse(
+        numberBound.isUpperBound(
+            new EagerReferenceBound(JavaTypes.OBJECT_TYPE), new Substitution()));
+    assertTrue(
+        numberBound.isUpperBound(
+            new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive()), new Substitution()));
+  }
+
+  /**
+   * A type parameter bounded by a sibling.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class SiblingBound<K, V extends K> {}
+
+  @Test
+  public void testVariableBoundResolvedToConcreteType() {
+    TypeVariable k = typeParameter(SiblingBound.class, 0);
+    TypeVariable v = typeParameter(SiblingBound.class, 1);
+    ReferenceType number = ClassOrInterfaceType.forClass(Number.class);
+    ReferenceType integer = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    assertTrue(v.canBeInstantiatedBy(integer, new Substitution(k, number)));
+    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, number)));
+  }
+
+  @Test
+  public void testLazyReferenceBoundUsesSubstitutionForUnknownVariable() {
+    TypeVariable k = typeParameter(PartiallySubstitutedRecursiveBound.class, 0);
+    TypeVariable v = typeParameter(PartiallySubstitutedRecursiveBound.class, 1);
+    ReferenceType integerKeyed = ClassOrInterfaceType.forClass(IntegerKeyedMapOfSelf.class);
+    ReferenceType stringKeyed = ClassOrInterfaceType.forClass(StringKeyedMapOfSelf.class);
+    Substitution kIsString = new Substitution(k, JavaTypes.STRING_TYPE);
+    // V is unknown, but with K := String its bound is Map<String, List<V>>, which an
+    // Integer-keyed map violates.
+    LazyReferenceBound bound = new LazyReferenceBound(v);
+    assertFalse(bound.isUpperBound(integerKeyed, kIsString));
+    assertTrue(bound.isUpperBound(stringKeyed, kIsString));
+    assertFalse(bound.isLowerBound(integerKeyed, kIsString));
+    assertTrue(bound.isLowerBound(stringKeyed, kIsString));
+  }
+
+  /**
+   * A type parameter whose bound contains an array class.
+   *
+   * @param <T> a type parameter bounded by {@code Pair<T, String[]>}
+   */
+  static class ArrayClassPairBound<T extends Pair<T, String[]>> {}
+
+  @Test
+  public void testArrayClassInLazyBound() {
+    TypeVariable t = typeParameter(ArrayClassPairBound.class, 0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
+    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
   }
 
   /**
@@ -378,6 +453,42 @@ public class TypeVariableTest {
     TypeVariable t = typeParameter(ArrayPairBound.class, 0);
     assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
     assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
+  }
+
+  /**
+   * A type parameter whose bound contains a fixed array type.
+   *
+   * @param <T> a type parameter bounded by {@code Pair<T[], String[]>}
+   */
+  static class FixedArrayPairBound<T extends Pair<T[], String[]>> {}
+
+  /** A class that satisfies the bound of {@link FixedArrayPairBound}. */
+  abstract static class SelfArrayStringArrayPair
+      implements Pair<SelfArrayStringArrayPair[], String[]> {}
+
+  @Test
+  public void testFixedArrayInLazyBound() {
+    TypeVariable t = typeParameter(FixedArrayPairBound.class, 0);
+    assertTrue(
+        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayStringArrayPair.class)));
+  }
+
+  /**
+   * A type parameter bounded by another type parameter that has no bound.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class UnboundedVariableBound<K, V extends K> {}
+
+  @Test
+  public void testInstantiatedVariableBound() {
+    TypeVariable k = typeParameter(UnboundedVariableBound.class, 0);
+    TypeVariable v = typeParameter(UnboundedVariableBound.class, 1);
+    assertTrue(
+        v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, JavaTypes.OBJECT_TYPE)));
+    assertFalse(
+        v.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE, new Substitution(k, JavaTypes.STRING_TYPE)));
   }
 
   @Test
@@ -540,7 +651,9 @@ public class TypeVariableTest {
   @Test
   public void testSubstituteCopyForOriginal() {
     TypeVariable e = typeParameter(Outer.class, 0);
-    TypeVariable t = typeParameter(Outer.Inner.class, 0);
+    // Not typeParameter(Outer.Inner.class, 0), which is E if the cached GenericClassType for Inner
+    // has its enclosing type set.
+    TypeVariable t = TypeVariable.forType(Outer.Inner.class.getTypeParameters()[0]);
     TypeVariable copy = (TypeVariable) t.substitute(new Substitution(e, JavaTypes.STRING_TYPE));
     // Substituting a copy with other bounds yields that copy.
     TypeVariable result = (TypeVariable) t.substitute(new Substitution(t, copy));
@@ -1151,6 +1264,25 @@ public class TypeVariableTest {
     assertFalse(typeParameter(ListStringBound.class).isInstantiationOf(t));
   }
 
+  @Test
+  public void testPartialSubstitutionIntoNestedSiblingBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NestedSiblingLast.class).getTypeParameters();
+    TypeVariable s = parameters.get(0);
+    TypeVariable t = parameters.get(1);
+    // The bound of t is Map<t, List<s>>.  The substitution instantiates s but not t.
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(s, JavaTypes.STRING_TYPE));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(
+                t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
   /**
    * A type parameter whose bound contains the type parameter, but not as the last type argument.
    *
@@ -1336,6 +1468,36 @@ public class TypeVariableTest {
     assertTrue(otherCapture.isInstantiationOf(capture));
   }
 
+  @Test
+  public void testInstantiationOfCaptureVariableByVariableWithReflectiveBound()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // The bound of t is Map<t, String>, represented reflectively.  The bound of the capture
+    // variable, with t substituted for it, is also Map<t, String>.
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    assertTrue(t.isInstantiationOf(capture));
+  }
+
+  /**
+   * A class whose type parameter has the intersection bound {@code Number & Runnable}.
+   *
+   * @param <T> the type parameter
+   */
+  static class NumberRunnableBound<T extends Number & Runnable> {}
+
+  @Test
+  public void testInstantiationByVariableWithIntersectionBound() {
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof IntersectionTypeBound);
+    // Number & Runnable is within the bound Number.
+    assertTrue(t.isInstantiationOf(u));
+    // Number is not within the bound Number & Runnable.
+    assertFalse(u.isInstantiationOf(t));
+  }
+
   /**
    * A generic class that is comparable to itself.
    *
@@ -1363,17 +1525,17 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testSubtypeTestOfCaptureVariableAgainstItsBoundTerminates()
-      throws NoSuchFieldException {
+  public void testSubtypeTestOfCaptureVariableAgainstItsBound() throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("selfComparableField");
     TypeVariable capture = typeArgument(capturedType, 0);
-    // The bound of the capture variable is Comparable<capture>.  The subtype test substitutes
-    // Comparable<capture> for capture, so each substitution into the bound nests it more deeply.
-    // This test checks only that the subtype test terminates.  Its result is imprecise:  it is
-    // false, though capture is a subtype of its bound, because the subtype test compares
-    // Comparable<Comparable<capture>> with Comparable<capture>.
+    // The bound of the capture variable is Comparable<capture>, which refers to the capture
+    // variable.  Substituting Comparable<capture> for capture in the bound would nest it more
+    // deeply with each substitution.  The subtype test terminates, and compares the declared bound
+    // with itself.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
-    boolean unused = capture.isSubtypeOfOrEqualTo(bound);
+    assertTrue(
+        capture + " should be a subtype of its bound " + bound,
+        capture.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test

@@ -12,6 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
+ * A substitution leaves an array bound unresolved if it maps the element type to the null type,
+ * because there is no array of the null type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -29,6 +31,15 @@ class LazyReferenceBound extends ReferenceBound {
     if (substitution.isEmpty()) {
       return this;
     }
+    if (getBoundType().isArray()) {
+      Type elementType = ((ArrayType) getBoundType()).getElementType();
+      // There is no array of the null type, so leave the bound unresolved.
+      if (elementType.isVariable()
+          && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType))) {
+        return this;
+      }
+    }
+
     ReferenceType referenceType = getBoundType().substitute(substitution);
     if (referenceType.equals(getBoundType())) {
       return this;
@@ -52,8 +63,9 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
+      // of the substitution, because they can mention type variables that it instantiates.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -78,8 +90,9 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
+      // of the substitution, because they can mention type variables that it instantiates.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -111,11 +124,16 @@ class LazyReferenceBound extends ReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
-   * contains type variables.
+   * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
+   * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
+   * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
+   * is the null type, because the type of this bound contains type variables.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (getBoundType() instanceof CaptureTypeVariable) {
+      return super.hasLowerBound(lowerBound, substitution);
+    }
     return lowerBound.isNullType(substitution);
   }
 }

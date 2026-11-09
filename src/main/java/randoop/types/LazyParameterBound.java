@@ -65,6 +65,21 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound substitute(Substitution substitution) {
+    if (boundType instanceof GenericArrayType) {
+      // A generic array type, such as `List<String>[]`, need not contain a type variable.  Such a
+      // bound is materialized even by an empty substitution, so that it can be compared with types.
+      if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      // If the element type is a type variable, a later substitution might map it to the null
+      // type.  A LazyReferenceBound leaves the bound unresolved in that case.
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
+    }
     if (substitution.isEmpty()) {
       return this;
     }
@@ -97,17 +112,24 @@ class LazyParameterBound extends ParameterBound {
       return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
     }
 
-    if (boundType instanceof GenericArrayType) {
-      TypeArgument typeArgument = substitute(boundType, substitution);
-      if (typeArgument == null) {
-        return this;
-      }
-      return ReferenceBound.forTypeLazyIfGeneric(
-          ((ReferenceArgument) typeArgument).getReferenceType());
-    }
-
     throw new RandoopBug(
         "lazy parameter bounds should be a type variable, parameterized type, or array type");
+  }
+
+  /**
+   * Returns a {@link ReferenceBound} that represents the same type as this bound. Each type
+   * variable that occurs in this bound remains a type variable in the result.
+   *
+   * @return a reference bound equivalent to this bound, or null if this bound contains a kind of
+   *     type that {@link #substitute(Substitution)} does not handle
+   */
+  @Nullable ReferenceBound toReferenceBound() {
+    List<TypeVariable> parameters = getTypeParameters();
+    // Map each type variable to itself, so that substitute() converts this bound without changing
+    // the type that it represents.
+    ParameterBound result =
+        substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
+    return result instanceof ReferenceBound ? (ReferenceBound) result : null;
   }
 
   /**
@@ -120,8 +142,9 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if {@code type} is not a kind of type that this method
-   *     handles or if the substitution maps the component type of an array type to the null type
+   * @return the type argument, or null if the substitution maps the component type of an array type
+   *     to the null type or if {@code type} is not a type variable, parameterized type, class,
+   *     array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -316,6 +339,25 @@ class LazyParameterBound extends ParameterBound {
     return b != null && b.isLowerBound(argType, substitution);
   }
 
+  /**
+   * Returns true if the given substitution maps some type variable in this bound to the null type.
+   * If a substitution maps every type variable in this bound but does not instantiate this bound,
+   * then either it maps the component type of an array type to the null type, for which there is no
+   * array type, or this bound contains a kind of type that {@link #substitute(Substitution)} does
+   * not handle.
+   *
+   * @param substitution a type substitution
+   * @return true if {@code substitution} maps a type variable in this bound to the null type
+   */
+  private boolean mapsSomeTypeParameterToNullType(Substitution substitution) {
+    for (TypeVariable parameter : getTypeParameterList()) {
+      if (JavaTypes.NULL_TYPE.equals(substitution.get(parameter))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   public boolean isObject() {
     return false;
@@ -387,9 +429,11 @@ class LazyParameterBound extends ParameterBound {
   /**
    * Applies a substitution that maps every type variable in this bound, as returned by {@link
    * #completeSubstitution(Substitution)}. Returns null if the result is still this bound, which
-   * happens if the substitution maps the component type of an array type to the null type, or for a
-   * kind of type that {@link #substitute(Substitution)} does not handle. Comparing the unchanged
-   * bound would recurse forever.
+   * happens if the substitution maps the component type of an array type to the null type, for
+   * which there is no array type, so that no type satisfies this bound. Otherwise, the result is
+   * still this bound only for a kind of type that {@link #substitute(Substitution)} does not
+   * handle; then this method also fails an assertion. Comparing the unchanged bound would recurse
+   * forever.
    *
    * @param completeSubstitution a substitution that maps every type variable in this bound
    * @return this bound with the substitution applied, or null
@@ -397,6 +441,8 @@ class LazyParameterBound extends ParameterBound {
   private @Nullable ParameterBound instantiate(Substitution completeSubstitution) {
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
+      assert mapsSomeTypeParameterToNullType(completeSubstitution)
+          : "substitution " + completeSubstitution + " does not instantiate " + this;
       return null;
     }
     return b;
@@ -428,11 +474,17 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, because the type of this bound
-   * cannot be determined without a substitution for its type variables.
+   * <p>Compares {@code lowerBound} with the {@link ReferenceBound} that {@link #toReferenceBound()}
+   * converts this bound to. If this bound cannot be converted, returns true only if {@code
+   * lowerBound} is the null type, because the type of this bound cannot be determined without a
+   * substitution for its type variables.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    ReferenceBound converted = toReferenceBound();
+    if (converted != null) {
+      return converted.hasLowerBound(lowerBound, substitution);
+    }
     return lowerBound.isNullType(substitution);
   }
 

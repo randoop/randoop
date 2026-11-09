@@ -217,6 +217,12 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
+      // rather than the substitution's copy.  If the substitution maps this capture variable to a
+      // copy of it with other bounds, that copy is the result.
+      type = null;
+    }
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
@@ -224,6 +230,9 @@ class CaptureTypeVariable extends TypeVariable {
     Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(varID)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
+      // If the enclosing call creates a copy with new bounds, this occurrence in the copy's bound
+      // is still the original variable, not the copy.  Returning the copy would make the copy's
+      // bound refer to the copy, and then `equals` on two such copies would not terminate.
       return type != null ? type : this;
     }
     try {

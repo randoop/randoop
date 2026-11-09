@@ -101,6 +101,11 @@ public class TypeInstantiatorTest {
       }
       instantiated++;
       // The input types are the receiver, the key extractor, and the key comparator.
+      ReferenceType receiverType = typeArgument(operation.getInputTypes().get(0), 0);
+      ReferenceType extractorInputType = typeArgument(operation.getInputTypes().get(1), 0);
+      assertTrue(
+          "ill-typed instantiation " + operation,
+          receiverType.isSubtypeOfOrEqualTo(extractorInputType));
       ReferenceType keyType = typeArgument(operation.getInputTypes().get(1), 1);
       ReferenceType comparedType = typeArgument(operation.getInputTypes().get(2), 0);
       assertTrue(
@@ -165,6 +170,44 @@ public class TypeInstantiatorTest {
       assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
     }
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
+  }
+
+  /**
+   * A method whose parameter type has a wildcard whose lower bound is a bounded type parameter.
+   *
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Number> void consume(List<? super T> list) {}
+
+  /**
+   * Tests a wildcard whose lower bound is a type variable that is not yet instantiated when the
+   * parameter type is matched. {@code <T extends Number> void consume(List<? super T>)} can be
+   * instantiated with a {@code List<Object>}, by choosing {@code Number} for {@code T}, though
+   * {@code Object} cannot instantiate {@code T}.
+   */
+  @Test
+  public void testWildcardLowerBoundUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(GenericClassType.forClass(List.class).instantiate(JavaTypes.OBJECT_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consume =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consume", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consume);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(JavaTypes.OBJECT_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consume, instantiated > 0);
   }
 
   /**
