@@ -328,9 +328,7 @@ public class TypeInstantiator {
    * <p>This method makes one or more attempts to build such a substitution. Each attempt makes new
    * random choices and either returns a substitution or fails. An attempt starts with an empty
    * substitution and does the following. In step 1, the chosen input type must instantiate each
-   * type variable whose bounds are instantiated within its bounds. In step 2, the remaining type
-   * variables include those that occur only in the bounds of instantiated type variables, such as
-   * {@code T} in {@code <T> void copy(List<? super T>, List<? extends T>)}.
+   * type variable whose bounds are instantiated within its bounds.
    *
    * <ol>
    *   <li>Instantiate the type variables in the parameterized parameter types. For each parameter
@@ -344,10 +342,8 @@ public class TypeInstantiator {
    *         <li>If the parameter type is some other generic type, such as {@code T} or {@code T[]},
    *             defer its type variables to step 2.
    *       </ul>
-   *   <li>Instantiate the remaining type variables: those in the return type, those deferred in
-   *       step 1, and those in the bounds of any of these or of the type variables that the
-   *       substitution instantiates; see {@link #uninstantiatedVariables(Collection,
-   *       Substitution)}. The return type need not be an input type.
+   *   <li>Instantiate the remaining type variables: those in the return type and those deferred in
+   *       step 1. The return type need not be an input type.
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
@@ -363,6 +359,13 @@ public class TypeInstantiator {
    *             such a combination finds none, the attempt fails.
    *       </ul>
    * </ol>
+   *
+   * <p>The remaining type variables in step 2 also include each type variable that occurs in the
+   * bounds of an instantiated or remaining type variable, such as {@code T} in {@code <T> void
+   * copy(List<? super T>, List<? extends T>)}, where {@code T} occurs only in the bounds of the
+   * wildcards; see {@link #addBoundTypeVariables(Set, Substitution)}. Checking the bounds of the
+   * capture variables of the wildcards against the type chosen for {@code T} ensures that the types
+   * chosen for the wildcards are consistent with one another.
    *
    * <p>If an attempt fails, and step 1 chose among several input types for some parameter type,
    * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
@@ -430,9 +433,10 @@ public class TypeInstantiator {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
         }
-        List<TypeVariable> parameters = uninstantiatedVariables(typeParameters, substitution);
+        typeParameters.removeAll(substitution.keySet());
+        addBoundTypeVariables(typeParameters, substitution);
 
-        if (parameters.isEmpty()) {
+        if (typeParameters.isEmpty()) {
           // The substitution instantiates every type variable in the parameter and return types.
           if (satisfiesBounds(substitution)) {
             return substitution;
@@ -441,6 +445,7 @@ public class TypeInstantiator {
             failure = substitution + " does not satisfy the bounds";
           }
         } else {
+          List<TypeVariable> parameters = new ArrayList<>(typeParameters);
           Map<TypeVariable, List<ReferenceType>> candidatesByVariable =
               consistentCandidatesByVariable(parameters, substitution);
           if (candidatesByVariable == null) {
@@ -468,6 +473,40 @@ public class TypeInstantiator {
     }
     Log.logPrintf("TypeInstantiator: no instantiation of %s: %s%n", operation, failure);
     return null;
+  }
+
+  /**
+   * Adds to the given set each type variable that the given substitution does not instantiate and
+   * that occurs in the bounds of a type variable that is in the set or that the substitution
+   * instantiates. Repeats until no more type variables are added, so the set also contains each
+   * such type variable that occurs in the bounds of an added type variable.
+   *
+   * <p>For example, in {@code <T> void copy(List<? super T>, List<? extends T>)}, {@code T} occurs
+   * only in the bounds of the capture variables of the wildcards. If {@code substitution}
+   * instantiates those capture variables, then this adds {@code T} to {@code typeParameters}.
+   * Instantiating {@code T} lets {@link #satisfiesBounds(Substitution)} check that the types chosen
+   * for the wildcards are consistent with one another.
+   *
+   * @param typeParameters type variables that {@code substitution} does not instantiate; is
+   *     side-effected
+   * @param substitution a substitution
+   */
+  private static void addBoundTypeVariables(
+      Set<TypeVariable> typeParameters, Substitution substitution) {
+    Set<TypeVariable> instantiated = substitution.keySet();
+    Deque<TypeVariable> worklist = new ArrayDeque<>(instantiated);
+    worklist.addAll(typeParameters);
+    while (!worklist.isEmpty()) {
+      TypeVariable variable = worklist.remove();
+      List<TypeVariable> boundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : boundVariables) {
+        if (!instantiated.contains(boundVariable) && typeParameters.add(boundVariable)) {
+          worklist.add(boundVariable);
+        }
+      }
+    }
   }
 
   /**
@@ -734,58 +773,8 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
-  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
-    for (TypeVariable parameter : parameters) {
-      if (substitution.get(parameter) == null) {
-        throw new IllegalArgumentException(
-            "substitution " + substitution + " does not instantiate " + parameter);
-      }
-    }
     return new BoundsCheck(parameters).test(substitution);
-  }
-
-  /**
-   * Returns the type variables that must be instantiated to extend the given substitution to the
-   * given type variables. These are the given type variables that the substitution does not
-   * instantiate, plus the type variables in their bounds and in the bounds of the variables of the
-   * substitution, transitively. For example, in {@code <T> void Collections.copy(List<? super T>,
-   * List<? extends T>)}, the parameter types are instantiated by instantiating their capture
-   * variables, and only the bounds of the capture variables mention {@code T}.
-   *
-   * @param variables type variables to be instantiated
-   * @param substitution a substitution
-   * @return the type variables that must be instantiated to extend {@code substitution} to {@code
-   *     variables}
-   */
-  private static List<TypeVariable> uninstantiatedVariables(
-      Collection<TypeVariable> variables, Substitution substitution) {
-    Deque<TypeVariable> worklist = new ArrayDeque<>(variables);
-    for (TypeVariable variable : substitution.keySet()) {
-      worklist.addAll(boundVariables(variable));
-    }
-    List<TypeVariable> result = new ArrayList<>();
-    while (!worklist.isEmpty()) {
-      TypeVariable variable = worklist.remove();
-      if (!containsVariable(substitution.keySet(), variable)
-          && !containsVariable(result, variable)) {
-        result.add(variable);
-        worklist.addAll(boundVariables(variable));
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Returns the type variables that occur in the bounds of the given type variable.
-   *
-   * @param variable a type variable
-   * @return the type variables that occur in the bounds of {@code variable}
-   */
-  private static List<TypeVariable> boundVariables(TypeVariable variable) {
-    List<TypeVariable> result = new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
-    result.addAll(variable.getUpperTypeBound().getTypeParameters());
-    return result;
   }
 
   /**
@@ -804,6 +793,18 @@ public class TypeInstantiator {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the type variables that occur in the bounds of the given type variable.
+   *
+   * @param variable a type variable
+   * @return the type variables that occur in the bounds of {@code variable}
+   */
+  private static List<TypeVariable> boundVariables(TypeVariable variable) {
+    List<TypeVariable> result = new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+    result.addAll(variable.getUpperTypeBound().getTypeParameters());
+    return result;
   }
 
   /**
