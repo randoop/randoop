@@ -10,7 +10,6 @@ import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.omitinputs.p.C;
@@ -59,13 +58,11 @@ public class TypedClassOperationTest {
 
   private Set<TypedOperation> getOperations(ClassOrInterfaceType type)
       throws RandoopSpecificationError {
-    OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(
-            type, reflectionPredicate, omitMethodsPredicate, accessibility);
+        OperationExtractor.operations(type, reflectionPredicate, accessibility);
     return new TreeSet<>(oneClassOperations);
   }
 }
