@@ -15,8 +15,14 @@ public class RunnerThread extends Thread {
   /** The code to run. Set by {@link #setup}. */
   private @MonotonicNonNull ReflectionCode code;
 
-  /** True if the most recent call to {@link #run} has completed normally. Set by {@link #run}. */
-  boolean runFinished;
+  /** True if the most recent call to {@link #run} returned normally. Set by {@link #run}. */
+  volatile boolean runFinished;
+
+  /**
+   * The throwable that the most recent call to {@link #run} threw, or null if it threw none. Set by
+   * {@link #run}.
+   */
+  volatile @Nullable Throwable thrown;
 
   /** The state of the thread: which method must be called next. */
   private NextCallMustBe state;
@@ -42,6 +48,7 @@ public class RunnerThread extends Thread {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
+    this.thrown = null;
     this.state = NextCallMustBe.SETUP;
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
@@ -70,7 +77,13 @@ public class RunnerThread extends Thread {
       throw new IllegalStateException();
     }
     runFinished = false;
-    executeReflectionCode();
+    thrown = null;
+    try {
+      executeReflectionCode();
+    } catch (Throwable e) {
+      thrown = e;
+      throw e;
+    }
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }
