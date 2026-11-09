@@ -8,8 +8,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
@@ -206,7 +208,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * initially contains a set of primitive sequences; this method puts those primitives in this set.
    */
   // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
+  @RequiresNonNull("this.runtimePrimitivesSeen")
+  private void initializeRuntimePrimitivesSeen(
+      @UnderInitialization(AbstractGenerator.class) ForwardGenerator this) {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
       try {
