@@ -22,6 +22,7 @@ import java.util.StringJoiner;
 import org.checkerframework.checker.mustcall.qual.Owning;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
 import org.plumelib.util.CollectionsPlume;
@@ -107,9 +108,8 @@ public final class ReplaceCallAgent {
             agentArgs, instrumentation);
       }
 
-      debugPath = Paths.get("").toAbsolutePath().toAbsolutePath();
-      boolean createDebugDiretory = debug && debug_directory != null && !debug_directory.isEmpty();
-      if (createDebugDiretory) {
+      debugPath = Paths.get("").toAbsolutePath();
+      if (debug && debug_directory != null && !debug_directory.isEmpty()) {
         debugPath = debugPath.resolve(debug_directory);
         if (!Files.exists(debugPath)) {
           Files.createDirectory(debugPath);
@@ -217,15 +217,17 @@ public final class ReplaceCallAgent {
       instrumentation.addTransformer(transformer);
 
     } catch (Throwable e) {
-      replaceCallExit(e.getMessage());
+      e.printStackTrace();
+      replaceCallExit(e.toString());
     }
   }
 
   /**
-   * Exit the program due to an exception in the ReplaceCall agent.
+   * Exit the program due to an error in the ReplaceCall agent.
    *
-   * @param message the exception's message
+   * @param message the error message to print
    */
+  @TerminatesExecution
   private static void replaceCallExit(String message) {
     System.err.println("Error in replacecall agent: " + message);
     System.err.println(

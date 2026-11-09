@@ -1,7 +1,5 @@
 package randoop.instrument;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 /** Exception representing an error in a replacement file. */
 class ReplacementFileException extends Exception {
 
@@ -69,7 +67,7 @@ class ReplacementFileException extends Exception {
    * @return the message of this exception, followed by the messages of its causes
    */
   private String messageWithCauses() {
-    @Nullable String result = super.getMessage();
+    String result = super.getMessage();
     for (Throwable t = getCause(); t != null; t = t.getCause()) {
       String message = t.getMessage();
       if (message == null) {
