@@ -133,7 +133,9 @@ java7.util7.TreeMap.get(java.lang.Object) ignore
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude8
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude8
+java7.util7.TreeMap.headMap(java.lang.Object) ignore17+ # calls headMap(Object, boolean)
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) ignore17+
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) include11
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude

@@ -217,6 +217,12 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
+      // rather than the substitution's copy.  If the substitution maps this capture variable to a
+      // copy of it with other bounds, that copy is the result.
+      type = null;
+    }
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
