@@ -93,6 +93,7 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param substitutedType the type of this bound, with a substitution applied
    * @return true if {@code substitutedType} is the same as the type of this bound
    */
+  @SuppressWarnings("ReferenceEquality") // the identical type is unchanged, even a type variable
   boolean isUnchangedBy(ReferenceType substitutedType) {
     if (substitutedType == boundType) {
       return true;
