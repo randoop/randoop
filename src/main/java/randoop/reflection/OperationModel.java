@@ -112,7 +112,11 @@ public final class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** User-supplied predicate for methods that should not be used during test generation. */
+  /**
+   * User-supplied predicate for methods that should not be used during test generation. After
+   * {@link #omitOverriddenMethods} is called, it also omits the methods that omitted methods
+   * override.
+   */
   private OmitMethodsPredicate omitMethodsPredicate;
 
   /**
@@ -200,6 +204,7 @@ public final class OperationModel {
     model.addObjectConstructor();
     // An operation that is omitted in one place but added in another is not omitted.
     model.omittedOperations.removeAll(model.operations);
+    model.omitOverriddenMethods();
 
     if (GenInputsAbstract.call_non_sut_methods) {
       model.setSutParameterOnlyTypes();
@@ -824,7 +829,7 @@ public final class OperationModel {
    *     not compile
    */
   private List<TypedClassOperation> getOperationsFromFile(
-      Path methodSignatures_file,
+      @Nullable Path methodSignatures_file,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, RandoopSpecificationError {
@@ -888,6 +893,34 @@ public final class OperationModel {
       return TypedOperation.forConstructor((Constructor<?>) accessibleObject);
     } else {
       return TypedOperation.forMethod((Method) accessibleObject);
+    }
+  }
+
+  /**
+   * Omits every method that an omitted method overrides, because a call to it might dispatch to the
+   * omitted method at run time. Moves such methods from {@link #operations} to {@link
+   * #omittedOperations}, and updates {@link #omitMethodsPredicate} to omit them.
+   */
+  @SuppressWarnings(
+      "ReferenceEquality") // omittingOverriddenMethods returns its receiver if unchanged
+  private void omitOverriddenMethods() {
+    OmitMethodsPredicate newPredicate =
+        omitMethodsPredicate.omittingOverriddenMethods(omittedOperations);
+    if (newPredicate == omitMethodsPredicate) {
+      return;
+    }
+    omitMethodsPredicate = newPredicate;
+    // No omit pattern matches any element of `operations`, so test only whether an omitted method
+    // overrides it.
+    Iterator<TypedOperation> itor = operations.iterator();
+    while (itor.hasNext()) {
+      TypedOperation operation = itor.next();
+      if (operation instanceof TypedClassOperation
+          && omitMethodsPredicate.isOverriddenByOmittedMethod(
+              (TypedClassOperation) operation, null)) {
+        itor.remove();
+        omittedOperations.add(operation);
+      }
     }
   }
 
