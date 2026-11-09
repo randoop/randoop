@@ -243,7 +243,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // so the same sequences could be re-executed on every step.
     int numComponents = componentManager.numGeneratedSequences();
     if (numComponents != numComponentsAfterClear) {
-      if (numComponents % GenInputsAbstract.clear == 0) {
+      if (numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
         clearComponents();
       } else if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
           && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {

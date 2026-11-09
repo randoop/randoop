@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,9 +18,7 @@ import randoop.condition.RandoopSpecificationError;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
-import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.types.ClassOrInterfaceType;
@@ -46,7 +43,7 @@ public class FieldReflectionTest {
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
 
-    final Set<TypedOperation> operations = getConcreteOperations(c);
+    final List<TypedOperation> operations = OperationExtractor.operations(c);
 
     // number of operations is twice number of fields plus constructor and getter minus one for each
     // constant
@@ -83,20 +80,6 @@ public class FieldReflectionTest {
     }
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-  }
-
-  private Set<TypedOperation> getConcreteOperations(
-      Class<?> c,
-      ReflectionPredicate reflectionPredicate,
-      AccessibilityPredicate accessibilityPredicate)
-      throws RandoopSpecificationError {
-    return new LinkedHashSet<>(
-        OperationExtractor.operations(
-            c, reflectionPredicate, OmitMethodsPredicate.NO_OMISSION, accessibilityPredicate));
-  }
-
   /**
    * inheritedFields looks for operations built for inherited fields. Avoid hidden fields, because
    * we cannot get to them without reflection.
@@ -123,7 +106,7 @@ public class FieldReflectionTest {
         expected.add(f);
       }
     }
-    Set<TypedOperation> actual = getConcreteOperations(c);
+    List<TypedOperation> actual = OperationExtractor.operations(c);
 
     try {
       for (Field f : expected) {
@@ -160,7 +143,7 @@ public class FieldReflectionTest {
     }
 
     ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
-    Set<TypedOperation> actual = getConcreteOperations(c, filter, IS_PUBLIC);
+    List<TypedOperation> actual = OperationExtractor.operations(c, filter, IS_PUBLIC);
 
     assertEquals(3, actual.size());
 
