@@ -482,7 +482,8 @@ public class TypeVariableTest {
         bound instanceof LazyReferenceBound);
     assertEquals(
         GenericClassType.forClass(Map.class)
-            .instantiate(t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+            .instantiate(
+                t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
         ((ReferenceBound) bound).getBoundType());
   }
 
@@ -669,6 +670,43 @@ public class TypeVariableTest {
     TypeVariable otherCapture =
         typeArgument(capturedFieldType("selfFirstArgumentWildcardField"), 0);
     assertTrue(otherCapture.isInstantiationOf(capture));
+  }
+
+  @Test
+  public void testInstantiationOfCaptureVariableByVariableWithReflectiveBound()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("selfFirstArgumentWildcardField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // The bound of t is Map<t, String>, represented reflectively.  The bound of the capture
+    // variable, with t substituted for it, is also Map<t, String>.
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    assertTrue(t.isInstantiationOf(capture));
+  }
+
+  /**
+   * A class whose type parameter has an intersection bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class IntersectionBound<T extends Number & Runnable> {}
+
+  /**
+   * A class whose type parameter is bounded by {@code Number}.
+   *
+   * @param <U> the type parameter
+   */
+  static class NumberBound<U extends Number> {}
+
+  @Test
+  public void testInstantiationByVariableWithIntersectionBound() {
+    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof IntersectionTypeBound);
+    // Number & Runnable is within the bound Number.
+    assertTrue(t.isInstantiationOf(u));
+    // Number is not within the bound Number & Runnable.
+    assertFalse(u.isInstantiationOf(t));
   }
 
   /**
