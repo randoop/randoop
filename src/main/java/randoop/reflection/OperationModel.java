@@ -829,7 +829,7 @@ public final class OperationModel {
    *     not compile
    */
   private List<TypedClassOperation> getOperationsFromFile(
-      Path methodSignatures_file,
+      @Nullable Path methodSignatures_file,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
       throws SignatureParseException, RandoopSpecificationError {

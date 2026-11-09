@@ -127,12 +127,14 @@ public class OmitMethodsPredicate {
       return false;
     }
 
-    if (!overriddenMethods.isEmpty()
-        && overriddenMethods.contains(operation.getOperation().getReflectionObject())) {
-      if (logOmit) {
-        Log.logPrintf("shouldOmit(%s): overridden by an omitted method%n", operation);
+    if (!overriddenMethods.isEmpty()) {
+      AccessibleObject reflectionObject = operation.getOperation().getReflectionObject();
+      if (reflectionObject != null && overriddenMethods.contains(reflectionObject)) {
+        if (logOmit) {
+          Log.logPrintf("shouldOmit(%s): overridden by an omitted method%n", operation);
+        }
+        return true;
       }
-      return true;
     }
 
     if (omitPatterns.isEmpty()) {
