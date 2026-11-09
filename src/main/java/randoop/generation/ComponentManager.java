@@ -58,8 +58,6 @@ public class ComponentManager {
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
 
-  // The next two variables are only for the use of method clearGeneratedSequences().
-
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
    *
@@ -67,14 +65,6 @@ public class ComponentManager {
    * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
-
-  /**
-   * Decides which constructors/methods are callable from the generated test code. This predicate
-   * matches the visibility rules chosen for the overall test package. This field exists so that if
-   * the user calls {@link #clearGeneratedSequences}, we can create a new {@link
-   * DemandDrivenInputCreator} with the same accessibility rules.
-   */
-  private final AccessibilityPredicate accessibility;
 
   /**
    * Create an empty component manager, with an immutable empty seed sequence set.
@@ -102,15 +92,6 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
-    this.accessibility = accessibility;
-    initDemandDrivenIfEnabled();
-  }
-
-  /**
-   * If demand-driven input generation is enabled, set up the demand-driven input creator for the
-   * component manager.
-   */
-  private void initDemandDrivenIfEnabled() {
     if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
@@ -194,7 +175,12 @@ public class ComponentManager {
   void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
-    initDemandDrivenIfEnabled();
+    if (GenInputsAbstract.call_non_sut_methods) {
+      // Reuse the existing creator rather than replacing it, so that no stale creator can copy
+      // pre-clear sequences into the pool, and so that its visited types (reported at the end of
+      // the run) cover the whole run.
+      gralComponents.getDemandDrivenInputCreator().clear();
+    }
   }
 
   /**
