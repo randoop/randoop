@@ -1554,6 +1554,15 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubtypeTestOfExplicitVariableAgainstItsBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    // The bound of t is a LazyParameterBound for Comparable<t>, which refers to t.
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    InstantiatedType bound = GenericClassType.forClass(Comparable.class).instantiate(t);
+    assertTrue(t + " should be a subtype of its bound " + bound, t.isSubtypeOfOrEqualTo(bound));
+  }
+
+  @Test
   public void testTypeParametersAfterSubstituteIntoSiblingOfCaptureVariable()
       throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("nestedSiblingLastField");
