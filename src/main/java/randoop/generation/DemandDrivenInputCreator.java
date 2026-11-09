@@ -161,6 +161,14 @@ public class DemandDrivenInputCreator {
   }
 
   /**
+   * Removes all sequences from the secondary sequence collection. Retains the visited types and the
+   * uninstantiable types, which do not depend on the contents of any sequence collection.
+   */
+  public void clearSecondarySequences() {
+    secondarySequenceCollection.clear();
+  }
+
+  /**
    * Returns the set of visited types.
    *
    * @return the set of visited types

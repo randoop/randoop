@@ -75,6 +75,14 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final List<TypedOperation> removedParameterlessOperations = new ArrayList<>();
 
+  /**
+   * The size of the component set immediately after it was last cleared, or -1 if it has never been
+   * cleared. If the component set still has this size, then it has not changed since the last
+   * clear, and clearing it again would only discard the duplicate tracking in {@link
+   * #sequencesSinceClear} and restore {@link #removedParameterlessOperations}.
+   */
+  private int numComponentsAfterClear = -1;
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -215,6 +223,7 @@ public class ForwardGenerator extends AbstractGenerator {
     operations.addAll(removedParameterlessOperations);
     removedParameterlessOperations.clear();
     inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
+    numComponentsAfterClear = componentManager.numGeneratedSequences();
   }
 
   @Override
@@ -227,12 +236,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      clearComponents();
-    }
-    if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      clearComponents();
+    // Do not clear a component set that is unchanged since the last clear.  Doing so would not
+    // shrink it, but would discard duplicate tracking and restore removed parameterless operations,
+    // so the same sequences could be re-executed on every step.
+    int numComponents = componentManager.numGeneratedSequences();
+    if (numComponents != numComponentsAfterClear) {
+      if (numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
+        clearComponents();
+      } else if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+          && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+        clearComponents();
+      }
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
