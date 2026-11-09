@@ -2,7 +2,7 @@
 
 ## Version ?? (?? ??, 2026)
 
-Randoop compiles under Java 21-26 and runs under Java 8-26.
+Randoop compiles under Java 21-27 and runs under Java 8-27.
 
 Renamed command-line argument `--silently-ignore-bad-class-names` to
 `--ignore-bad-class-names`, because Randoop prints a warning for each class that
@@ -38,6 +38,10 @@ rather than with the `javac` and `java` that are on the PATH.
 When a generated test expects an exception that the JVM throws implicitly,
 such as `NullPointerException` or `ClassCastException`, the test's failure
 message omits the exception's message, which can differ from run to run.
+
+With `--usethreads`, a bug in Randoop that is revealed while executing a test
+is reported (as it is without `--usethreads`).  Previously, Randoop treated it
+as a timeout, discarded the test, and continued generating tests.
 
 ## Version 4.3.4 (June 6, 2025)
 
