@@ -384,9 +384,11 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
+            // The substitution can conflict with an earlier one, for example if two parameter
+            // types contain copies of one capture variable.  Then extending would throw.
             if (!substitution.isConsistentWith(subst)) {
               if (Log.isLoggingOn()) {
-                failure = subst + " conflicts with " + substitution;
+                failure = subst + " for " + origParamType + " conflicts with " + substitution;
               }
               allMatched = false;
               break;
@@ -486,9 +488,10 @@ public class TypeInstantiator {
    * with the given substitution.
    *
    * <p>A candidate type for one of the type variables, {@code X}, is in the map's value for {@code
-   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X} or one of the {@link
-   * #inferredTypes(Substitution)} that is within the bounds of {@code X}, and if, when {@code
-   * substitution} is extended by mapping {@code X} to it, each type variable that {@code
+   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is one of the
+   * {@link #inferredTypes(Substitution)} that is within the bounds of {@code X}, or is the type that
+   * {@code substitution} gives to a type variable whose bounds contain {@code X}, and if, when
+   * {@code substitution} is extended by mapping {@code X} to it, each type variable that {@code
    * substitution} instantiates and whose bounds contain {@code X} and no other uninstantiated type
    * variable is within its bounds. For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<?
    * extends K, ? extends V>)}, if {@code substitution} maps the capture of {@code ? extends K} to
@@ -511,6 +514,16 @@ public class TypeInstantiator {
       List<ReferenceType> candidates = candidateTypes(parameter);
       candidates.addAll(candidateTypes(parameter, inferredTypes));
       if (!constrained.isEmpty()) {
+        // The types of the constrained type variables are also candidates, even if they are not
+        // input types.  For example, an input type can be List<Foo> though Foo is not an input
+        // type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a candidate for
+        // T.  The bounds of `parameter` itself are checked when the substitution is completed.
+        for (TypeVariable variable : constrained) {
+          ReferenceType type = substitution.get(variable);
+          if (type != null && !type.isGeneric() && !candidates.contains(type)) {
+            candidates.add(type);
+          }
+        }
         candidates.removeIf(
             candidate ->
                 !satisfiesBounds(
