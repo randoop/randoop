@@ -468,6 +468,24 @@ public class TypeVariableTest {
     }
   }
 
+  @Test
+  public void testPartialSubstitutionIntoNestedSiblingBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NestedSiblingLast.class).getTypeParameters();
+    TypeVariable s = parameters.get(0);
+    TypeVariable t = parameters.get(1);
+    // The bound of t is Map<t, List<s>>.  The substitution instantiates s but not t.
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(s, JavaTypes.STRING_TYPE));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(t, GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
   /**
    * A type parameter whose bound contains the type parameter, but not as the last type argument.
    *
@@ -686,7 +704,9 @@ public class TypeVariableTest {
     // The bound of the capture variable is Comparable<capture>, which refers to the capture
     // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
-    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
+    assertTrue(
+        capture + " should be a subtype of its bound " + bound,
+        capture.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test

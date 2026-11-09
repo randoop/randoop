@@ -220,6 +220,9 @@ class CaptureTypeVariable extends TypeVariable {
     Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(varID)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
+      // If the enclosing call creates a copy with new bounds, this occurrence in the copy's bound
+      // is still the original variable, not the copy.  Returning the copy would make the copy's
+      // bound refer to the copy, and then `equals` on two such copies would not terminate.
       return type != null ? type : this;
     }
     try {
