@@ -319,7 +319,7 @@ public class EnumReflectionTest {
   private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
     Set<ClassOrInterfaceType> classTypes =
         DeclarationExtractor.classTypes(c, new DefaultReflectionPredicate(), IS_PUBLIC);
-    return OperationExtractor.operations(classTypes, new DefaultReflectionPredicate(), IS_PUBLIC);
+    return OperationExtractor.operations(classTypes);
   }
 
   private TypedClassOperation createEnumOperation(Enum<?> e) {
