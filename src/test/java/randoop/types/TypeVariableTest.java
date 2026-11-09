@@ -1609,6 +1609,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
+  @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // a test fixture
   static class Version<U> implements Comparable<Version<U>> {
     @Override
     public int compareTo(Version<U> other) {
