@@ -169,6 +169,50 @@ public class TypeInstantiatorTest {
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
   }
 
+  /**
+   * Tests that each operation is instantiated when the input types allow only one choice. The tests
+   * with several choices succeed if any one choice is instantiated, so they would not detect that
+   * a valid choice is always rejected.
+   */
+  @Test
+  public void testSingleValidChoice() throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation copy =
+        TypedOperation.forMethod(Collections.class.getMethod("copy", List.class, List.class));
+    for (ClassOrInterfaceType elementType :
+        new ClassOrInterfaceType[] {JavaTypes.STRING_TYPE, INTEGER_TYPE}) {
+      Set<Type> inputTypes = new LinkedHashSet<>();
+      addTypes(elementType, inputTypes);
+      addTypes(GenericClassType.forClass(ArrayList.class).instantiate(elementType), inputTypes);
+      assertSomeInstantiation(new TypeInstantiator(inputTypes), copy);
+    }
+
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(
+        GenericClassType.forClass(List.class).instantiate(ClassOrInterfaceType.forClass(Node.class)),
+        inputTypes);
+    assertSomeInstantiation(
+        new TypeInstantiator(inputTypes),
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("kOnlyInBound", List.class)));
+  }
+
+  /**
+   * Asserts that the given instantiator instantiates the given operation in at least one of {@link
+   * #ATTEMPTS} attempts.
+   *
+   * @param instantiator the type instantiator
+   * @param operation the operation to instantiate
+   */
+  private static void assertSomeInstantiation(
+      TypeInstantiator instantiator, TypedClassOperation operation) {
+    for (int i = 0; i < ATTEMPTS; i++) {
+      if (instantiator.instantiate(operation) != null) {
+        return;
+      }
+    }
+    throw new AssertionError("no instantiation of " + operation);
+  }
+
   /** Declares fields whose types, and their supertypes, are the input types for the tests. */
   @SuppressWarnings("UnusedVariable") // the fields' types are used, via reflection
   private static class InputTypes {

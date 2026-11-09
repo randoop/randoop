@@ -228,7 +228,7 @@ public abstract class TypeVariable extends ParameterType {
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution context) {
     Substitution substitution = context.withMapping(this, otherType);
     if (getLowerTypeBound().isVariable()) {
-      if (!variableBoundAllows(getLowerTypeBound(), substitution, otherType)) {
+      if (!variableBoundAllows(getLowerTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -237,7 +237,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      if (!variableBoundAllows(getUpperTypeBound(), substitution, otherType)) {
+      if (!variableBoundAllows(getUpperTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -249,17 +249,25 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns true if the given type can instantiate the type variable that is the given bound of
-   * this variable. That type variable might not be instantiated by the substitution; then it stands
-   * for an unknown type.
+   * Returns true if the given type is within the given bound of this variable, where the bound is a
+   * type variable. If the substitution instantiates that type variable, the instantiated bound is
+   * compared with the given type. Otherwise, that type variable stands for an unknown type: for an
+   * upper bound, the given type is within it if the given type or one of its supertypes can
+   * instantiate that type variable; for a lower bound, if the given type can instantiate that type
+   * variable.
    *
    * @param bound a bound of this variable that is a type variable
+   * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
+   *     the lower bound
    * @param substitution the substitution of {@code otherType} for this variable
    * @param otherType the possibly instantiating type, not a variable
-   * @return true if {@code otherType} can instantiate the type variable that is {@code bound}
+   * @return true if {@code otherType} is within {@code bound}
    */
   private boolean variableBoundAllows(
-      ParameterBound bound, Substitution substitution, ReferenceType otherType) {
+      ParameterBound bound,
+      boolean isUpperBound,
+      Substitution substitution,
+      ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
     TypeVariable variable;
     if (substituted instanceof ReferenceBound
@@ -269,9 +277,42 @@ public abstract class TypeVariable extends ParameterType {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {
-      return false;
+      // The substitution instantiates the type variable, so the bound is a known type.
+      return isUpperBound
+          ? substituted.isUpperBound(otherType, substitution)
+          : substituted.isLowerBound(otherType, substitution);
     }
-    return variable.canBeInstantiatedBy(otherType, substitution);
+    return isUpperBound
+        ? variable.canBeInstantiatedBySupertypeOf(otherType, substitution)
+        : variable.canBeInstantiatedBy(otherType, substitution);
+  }
+
+  /**
+   * Returns true if the given type or one of its supertypes can instantiate this variable, when the
+   * other type variables are instantiated as by the given substitution. Then the given type is
+   * within an upper bound that is this variable, if this variable is not otherwise determined.
+   *
+   * <p>Only the supertypes of a class or interface type are tried. For any other type, such as an
+   * array type, only the type itself is tried.
+   *
+   * @param otherType the type, not a variable
+   * @param context a substitution for other type variables; any mapping of this variable in it is
+   *     ignored
+   * @return true if {@code otherType} or one of its supertypes can instantiate this variable
+   */
+  boolean canBeInstantiatedBySupertypeOf(ReferenceType otherType, Substitution context) {
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (otherType instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
+        if (canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
