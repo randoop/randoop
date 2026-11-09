@@ -174,11 +174,12 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Removes all sequences from the secondary sequence collection. Also forgets which types were
-   * found to be uninstantiable for the purpose of skipping them, because instantiability can depend
-   * on the contents of the main sequence collection (see {@link #uninstantiableTypesSinceClear}).
-   * Retains the diagnostic information: the visited types and the cumulative set of uninstantiable
-   * types.
+   * Removes all sequences from the secondary sequence collection, so that sequences created before
+   * the main sequence collection was cleared are not reintroduced into it. Also forgets which types
+   * were found to be uninstantiable for the purpose of skipping them, because instantiability can
+   * depend on the contents of the main sequence collection (see {@link
+   * #uninstantiableTypesSinceClear}). Retains the diagnostic information: the visited types (which
+   * are reported for the whole run) and the cumulative set of uninstantiable types.
    */
   public void clearSecondarySequences() {
     secondarySequenceCollection.clear();
