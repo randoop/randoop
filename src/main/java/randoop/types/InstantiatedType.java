@@ -382,7 +382,9 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // Bindings conflict if a type variable occurs twice, as in Map<T, T>, and the type
+          // arguments differ, as in Map<String, Integer>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           substitution = substitution.extend(subst);
@@ -490,7 +492,8 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Returns true if each type argument of the given type contains the corresponding type argument
-   * of this type. The given type must be an instantiation of the same generic class as this type.
+   * of this type, including the type arguments of the enclosing types of member classes, if both
+   * are recorded. The given type must be an instantiation of the same generic class as this type.
    *
    * @param otherType an instantiation of the same generic class as this type
    * @return true if each type argument of {@code otherType} contains that of this type
@@ -502,6 +505,13 @@ public class InstantiatedType extends ParameterizedType {
       if (!otherTypeArguments.get(i).contains(argumentList.get(i))) {
         return false;
       }
+    }
+    // For a member class of a generic class, Outer<String>.Inner<Integer> is not a subtype of
+    // Outer<Number>.Inner<Integer>.
+    if (enclosingType instanceof InstantiatedType
+        && otherType.enclosingType instanceof InstantiatedType) {
+      return ((InstantiatedType) enclosingType)
+          .typeArgumentsAreContainedBy((InstantiatedType) otherType.enclosingType);
     }
     return true;
   }

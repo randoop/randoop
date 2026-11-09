@@ -383,6 +383,19 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testIdentitySubstitutionKeyedByCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    // An identity mapping keyed by an equal copy with other bounds preserves the receiver's bounds.
+    ReferenceType result = capture.substitute(new Substitution(copy, copy));
+    assertTrue(result instanceof TypeVariable);
+    assertEquals(capture.getLowerTypeBound(), ((TypeVariable) result).getLowerTypeBound());
+    assertEquals(capture.getUpperTypeBound(), ((TypeVariable) result).getUpperTypeBound());
+  }
+
+  @Test
   public void testSubstitutionOfCaptureVariableCopy() {
     TypeVariable capture = captureVariable("selfComparableWildcard");
     TypeVariable copy =

@@ -199,14 +199,19 @@ final class Subtyping {
   }
 
   /**
-   * Returns the type of the bound of the given wildcard, or null if the bound is not a {@link
-   * ReferenceBound}.
+   * Returns the type of the bound of the given wildcard, or null if the bound is neither a {@link
+   * ReferenceBound} nor a {@link LazyParameterBound} that can be converted to one. A lazy bound,
+   * such as {@code Comparable<T>} in {@code ? extends Comparable<T>}, is converted so that it can
+   * be compared with types.
    *
    * @param wildcard a wildcard type argument
    * @return the type of the bound of {@code wildcard}, or null
    */
   private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
     ParameterBound bound = wildcard.getTypeBound();
+    if (bound instanceof LazyParameterBound) {
+      bound = ((LazyParameterBound) bound).toReferenceBound();
+    }
     return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
   }
 
