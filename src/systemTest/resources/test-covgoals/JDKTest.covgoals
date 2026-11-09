@@ -77,9 +77,8 @@ java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # 
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) include11
 java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude11
-java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude27
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
-java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude25-
+java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
@@ -87,13 +86,12 @@ java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, 
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection) exclude8
-java7.util7.Collections.min(java7.util7.Collection) exclude25-
+java7.util7.Collections.min(java7.util7.Collection) exclude
 java7.util7.Collections.min(java7.util7.Collection) include11
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
 java7.util7.Collections.shuffle(java7.util7.List) exclude
 java7.util7.Collections.singletonIterator(java.lang.Object) ignore
-java7.util7.Collections.sort(java7.util7.List) exclude27
 java7.util7.Collections.swap(java.lang.Object[], int, int) exclude
 java7.util7.Collections.synchronizedMap(java7.util7.Map) ignore
 java7.util7.Collections.unmodifiableCollection(java7.util7.Collection) ignore17 # different on Azure vs CircleCI?
@@ -135,8 +133,8 @@ java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude17+
 java7.util7.TreeMap.get(java.lang.Object) ignore17+
 java7.util7.TreeMap.get(java.lang.Object) ignore8
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
-java7.util7.TreeMap.headMap(java.lang.Object) exclude25-
-java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude25-
+java7.util7.TreeMap.headMap(java.lang.Object) exclude
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) include11
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude
@@ -163,9 +161,9 @@ java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
-java7.util7.TreeSet.headSet(java.lang.Object) exclude25-
+java7.util7.TreeSet.headSet(java.lang.Object) exclude
 java7.util7.TreeSet.headSet(java.lang.Object) include11
-java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude25-
+java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.headSet(java.lang.Object, boolean) include11
 java7.util7.TreeSet.higher(java.lang.Object) ignore8
 java7.util7.TreeSet.last() ignore
