@@ -93,7 +93,21 @@ class EagerReferenceBound extends ReferenceBound {
         // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
         // type variable are checked with the mappings of `subst`, because they can mention other
         // type variables that `subst` instantiates.
-        return variable.canBeInstantiatedBy((ReferenceType) argType, subst);
+        if (variable.canBeInstantiatedBy((ReferenceType) argType, subst)) {
+          return true;
+        }
+        // The type variable can also be a strict supertype of argType.  For `<S extends
+        // Comparable<S>, U extends S>`, a class Sub that extends Base, where Base implements
+        // Comparable<Base>, satisfies the bound of U, with Base for S.
+        if (argType instanceof ClassOrInterfaceType) {
+          for (ClassOrInterfaceType supertype :
+              ((ClassOrInterfaceType) argType).getSupertypesStrict()) {
+            if (variable.canBeInstantiatedBy(supertype, subst)) {
+              return true;
+            }
+          }
+        }
+        return false;
       }
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
