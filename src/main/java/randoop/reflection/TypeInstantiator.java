@@ -4,7 +4,6 @@ import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -430,9 +429,7 @@ public class TypeInstantiator {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
         }
-        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
-        Set<TypeVariable> instantiated = substitution.keySet();
-        typeParameters.removeIf(variable -> containsVariable(instantiated, variable));
+        typeParameters.removeAll(substitution.keySet());
         addBoundTypeVariables(typeParameters, substitution);
 
         if (typeParameters.isEmpty()) {
@@ -475,23 +472,6 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the index in the given list of the given type variable or a copy of it, or -1 if the
-   * list contains neither.
-   *
-   * @param variables type variables
-   * @param variable a type variable
-   * @return the index of {@code variable} or a copy of it in {@code variables}, or -1
-   */
-  private static int indexOfVariable(List<TypeVariable> variables, TypeVariable variable) {
-    for (int i = 0; i < variables.size(); i++) {
-      if (TypeVariable.isSameVariable(variables.get(i), variable)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  /**
    * Adds to the given set each type variable that the given substitution does not instantiate and
    * that occurs in the bounds of a type variable that is in the set or that the substitution
    * instantiates. Repeats until no more type variables are added, so the set also contains each
@@ -518,10 +498,7 @@ public class TypeInstantiator {
           new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
       boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
       for (TypeVariable boundVariable : boundVariables) {
-        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
-        if (!containsVariable(instantiated, boundVariable)
-            && !containsVariable(typeParameters, boundVariable)) {
-          typeParameters.add(boundVariable);
+        if (!instantiated.contains(boundVariable) && typeParameters.add(boundVariable)) {
           worklist.add(boundVariable);
         }
       }
@@ -551,12 +528,8 @@ public class TypeInstantiator {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      List<TypeVariable> constrained = new ArrayList<>();
-      for (Map.Entry<TypeVariable, List<TypeVariable>> entry : constrainedVariables.entrySet()) {
-        if (TypeVariable.isSameVariable(entry.getKey(), parameter)) {
-          constrained.addAll(entry.getValue());
-        }
-      }
+      List<TypeVariable> constrained =
+          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
       if (!constrained.isEmpty()) {
         candidates.removeIf(
@@ -589,20 +562,13 @@ public class TypeInstantiator {
     Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
     Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
     for (TypeVariable variable : instantiated) {
-      // The uninstantiated type variables in the bounds of `variable`, without copies.
-      // Compare with isSameVariable, because a type variable can be a copy with other bounds.
-      List<TypeVariable> boundVariables = new ArrayList<>();
-      List<TypeVariable> allBoundVariables =
-          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
-      allBoundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
-      for (TypeVariable boundVariable : allBoundVariables) {
-        if (!containsVariable(instantiated, boundVariable)
-            && !containsVariable(boundVariables, boundVariable)) {
-          boundVariables.add(boundVariable);
-        }
-      }
+      // The uninstantiated type variables in the bounds of `variable`.
+      Set<TypeVariable> boundVariables =
+          new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      boundVariables.removeAll(instantiated);
       if (boundVariables.size() == 1) {
-        TypeVariable boundVariable = boundVariables.get(0);
+        TypeVariable boundVariable = boundVariables.iterator().next();
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }
@@ -655,8 +621,7 @@ public class TypeInstantiator {
       needed.add(variable);
       int last = -1;
       for (TypeVariable neededVariable : needed) {
-        // Compare with isSameVariable, because a type variable can be a copy with other bounds.
-        last = Math.max(last, indexOfVariable(parameters, neededVariable));
+        last = Math.max(last, parameters.indexOf(neededVariable));
       }
       if (last == -1) {
         checkFirst.add(variable);
@@ -799,25 +764,6 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns true if the given collection contains the given type variable, possibly with different
-   * bounds.
-   *
-   * @param variables a collection of type variables
-   * @param variable a type variable
-   * @return true if {@code variables} contains {@code variable}, possibly with different bounds
-   * @see TypeVariable#isSameVariable
-   */
-  private static boolean containsVariable(
-      Collection<? extends TypeVariable> variables, TypeVariable variable) {
-    for (TypeVariable v : variables) {
-      if (TypeVariable.isSameVariable(v, variable)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Returns the type variables that occur in the bounds of the given type variable.
    *
    * @param variable a type variable
@@ -840,7 +786,7 @@ public class TypeInstantiator {
    */
   private static boolean boundsAreInstantiated(TypeVariable variable, Substitution substitution) {
     for (TypeVariable boundVariable : boundVariables(variable)) {
-      if (!containsVariable(substitution.keySet(), boundVariable)) {
+      if (!substitution.keySet().contains(boundVariable)) {
         return false;
       }
     }
@@ -1026,7 +972,7 @@ public class TypeInstantiator {
    */
   private static boolean occursInBounds(TypeVariable variable, List<TypeVariable> variables) {
     for (TypeVariable v : variables) {
-      if (containsVariable(boundVariables(v), variable)) {
+      if (boundVariables(v).contains(variable)) {
         return true;
       }
     }

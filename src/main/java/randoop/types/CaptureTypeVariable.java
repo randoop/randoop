@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -36,6 +35,7 @@ class CaptureTypeVariable extends TypeVariable {
    * {@code Capture0 extends Comparable<? super Capture0>}. When the substitution reaches such an
    * occurrence, it does not apply the substitution to the variable's bounds again.
    */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<Integer>> substituteIsExecuting =
       ThreadLocal.withInitial(HashSet::new);
 
@@ -43,6 +43,7 @@ class CaptureTypeVariable extends TypeVariable {
    * The ids of the capture variables whose {@link #getTypeParameters()} is executing on the current
    * thread. See {@link #substituteIsExecuting}.
    */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<Integer>> getTypeParametersIsExecuting =
       ThreadLocal.withInitial(HashSet::new);
 
@@ -92,14 +93,12 @@ class CaptureTypeVariable extends TypeVariable {
   /**
    * {@inheritDoc}
    *
-   * @return the ID of this capture variable, an integer such as 7 that capture conversion assigns
-   *     in creation order
+   * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
+   * and wildcards differ. Substitution creates a copy of a capture variable whose bounds and
+   * wildcard differ, and the copy stands for the same capture variable.
+   *
+   * @return true if the capture variables are the same capture variable, false otherwise
    */
-  @Override
-  Object getVariableKey() {
-    return this.varID;
-  }
-
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -109,14 +108,12 @@ class CaptureTypeVariable extends TypeVariable {
       return false;
     }
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
-    return this.varID == variable.varID
-        && this.wildcard.equals(variable.wildcard)
-        && super.equals(variable);
+    return this.varID == variable.varID;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, super.hashCode());
+    return Integer.hashCode(varID);
   }
 
   @Override

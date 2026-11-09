@@ -15,7 +15,8 @@ public abstract class TypeVariable extends ParameterType {
    * The pairs of a type variable and a type for which {@link #canBeInstantiatedBy(ReferenceType)}
    * is in progress, in the current thread.
    */
-  private static final ThreadLocal<Set<List<Object>>> instantiationChecks =
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<ReferenceType>>> instantiationChecks =
       ThreadLocal.withInitial(HashSet::new);
 
   /**
@@ -170,23 +171,12 @@ public abstract class TypeVariable extends ParameterType {
    *     itself
    */
   private Substitution getIdentitySubstitution() {
-    List<TypeVariable> parameters = new ArrayList<>();
-    parameters.add(this);
-    List<TypeVariable> boundVariables = new ArrayList<>(getLowerTypeBound().getTypeParameters());
-    boundVariables.addAll(getUpperTypeBound().getTypeParameters());
-    for (TypeVariable variable : boundVariables) {
-      // Compare keys, so that a copy of a type variable is not a separate entry.
-      boolean present = false;
-      for (TypeVariable parameter : parameters) {
-        if (parameter.getVariableKey().equals(variable.getVariableKey())) {
-          present = true;
-          break;
-        }
-      }
-      if (!present) {
-        parameters.add(variable);
-      }
-    }
+    // A copy of a type variable equals the original, so it is not a separate entry.
+    Set<TypeVariable> variables = new LinkedHashSet<>();
+    variables.add(this);
+    variables.addAll(getLowerTypeBound().getTypeParameters());
+    variables.addAll(getUpperTypeBound().getTypeParameters());
+    List<TypeVariable> parameters = new ArrayList<>(variables);
     return new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
   }
 
@@ -229,36 +219,6 @@ public abstract class TypeVariable extends ParameterType {
    */
   private Substitution getSubstitution(ReferenceType otherType) {
     return new Substitution(this, otherType);
-  }
-
-  /**
-   * Returns an object that a type variable shares with its copies. Substitution can create a copy
-   * of a type variable whose bounds differ, such as by having a lazy part resolved. {@link
-   * #equals(Object)} distinguishes the copy from the original, but they have equal keys.
-   *
-   * @return an object that a type variable shares with its copies, and with no other type variable
-   */
-  Object getVariableKey() {
-    return this;
-  }
-
-  /**
-   * Returns true if the two types are equal or are the same type variable, possibly with different
-   * bounds.
-   *
-   * @param type a type
-   * @param otherType a type
-   * @return true if the two types are equal or are the same type variable
-   * @see #getVariableKey()
-   */
-  public static boolean isSameVariable(ReferenceType type, ReferenceType otherType) {
-    // Comparing keys is cheaper than equals(), which compares bounds.
-    if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
-      return ((TypeVariable) type)
-          .getVariableKey()
-          .equals(((TypeVariable) otherType).getVariableKey());
-    }
-    return type.equals(otherType);
   }
 
   @Override
@@ -315,14 +275,8 @@ public abstract class TypeVariable extends ParameterType {
     // Checking a bound can check the same instantiation again, through mutually recursive bounds
     // such as `<X extends Comparable<Y>, Y extends List<X>>`.  As for any recursive bound, assume
     // that the inner check succeeds.
-    // Identify type variables by their keys, because substitution creates copies of them.
-    Set<List<Object>> inProgress = instantiationChecks.get();
-    List<Object> check =
-        Arrays.asList(
-            getVariableKey(),
-            otherType instanceof TypeVariable
-                ? ((TypeVariable) otherType).getVariableKey()
-                : otherType);
+    Set<List<ReferenceType>> inProgress = instantiationChecks.get();
+    List<ReferenceType> check = Arrays.asList(this, otherType);
     if (!inProgress.add(check)) {
       return true;
     }
