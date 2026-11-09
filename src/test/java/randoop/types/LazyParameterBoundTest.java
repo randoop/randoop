@@ -103,11 +103,11 @@ public class LazyParameterBoundTest {
     java.lang.reflect.WildcardType wildcard =
         (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
     ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
-    assertTrue(bound instanceof LazyParameterBound);
+    // The bound contains no type variable, so it is eager, and a substitution does not change it.
+    assertTrue(bound instanceof EagerReferenceBound);
     ArrayType arrayOfList =
         ArrayType.ofComponentType(
             GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
-    // An empty substitution materializes the bound.
     assertEquals(new EagerReferenceBound(arrayOfList), bound.substitute(new Substitution()));
     assertTrue(bound.isUpperBound(arrayOfList, new Substitution()));
     assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
