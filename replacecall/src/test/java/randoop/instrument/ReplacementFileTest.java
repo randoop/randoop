@@ -70,6 +70,32 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void badMethodNameMethodTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badmethodnamereplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "badmethodnamereplacement.txt:2: Bad original signature: Method signature expected, bad"
+            + " fully-qualified method name \"foo\" for line:"
+            + " foo(int) randoop.mock.java.awt.Component.show()";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
+  public void spaceBeforeParenMethodTest() throws IOException, ReplacementFileException {
+    Path file =
+        Paths.get("build/resources/test/randoop/instrument/spacebeforeparenreplacement.txt");
+    thrown.expect(ReplacementFileException.class);
+    String msg =
+        "spacebeforeparenreplacement.txt:2: Bad original signature: Method signature expected, bad"
+            + " fully-qualified method name \"javax.mail.Service.connect \" for line:"
+            + " javax.mail.Service.connect ()"
+            + " randoop.mock.javax.mail.Service.connect(javax.mail.Service)";
+    thrown.expectMessage(msg);
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void badReplacementSignatureMethodTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/badreplacementsignature.txt");
     thrown.expect(ReplacementFileException.class);
@@ -206,6 +232,18 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void inheritedConstructorTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/inheritedconstructor.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "inheritedconstructor.txt:2: Bad original method: Constructor java.lang.Integer.<init>()"
+            + " not found for line:"
+            + " java.lang.Integer.<init>()"
+            + " randoop.mock.java.util.RandomReplace.randomWithSeedZero()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/packagereplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
@@ -233,6 +271,16 @@ public class ReplacementFileTest {
     Path file = Paths.get("build/resources/test/randoop/instrument/javaxmailreplacement.txt");
     Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
     assertEquals(4, map.size());
+    assertEquals(
+        MethodSignature.of("randoop.mock.javax.mail.Service.connect(javax.mail.Service)"),
+        map.get(MethodSignature.of("javax.mail.Service.connect()")));
+  }
+
+  @Test
+  public void trailingCommentReplacementTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/trailingcommentreplacement.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+    assertEquals(1, map.size());
     assertEquals(
         MethodSignature.of("randoop.mock.javax.mail.Service.connect(javax.mail.Service)"),
         map.get(MethodSignature.of("javax.mail.Service.connect()")));
