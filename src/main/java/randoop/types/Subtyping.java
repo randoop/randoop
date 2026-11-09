@@ -51,7 +51,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (equalsWithEnclosingTypes(type, otherType) || otherType.isObject()) {
+    if (isEqual(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
@@ -85,7 +85,8 @@ final class Subtyping {
       return true;
     }
     if (otherType.isVariable()) {
-      // A type variable that stands for itself is a supertype of its lower bound.
+      // A type variable that stands for itself is a supertype of its lower bound.  For example, if
+      // CAP is the capture of `? super T`, then T <: CAP, even though T's upper bound is not.
       ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
       if (!(lowerBound instanceof ReferenceBound)) {
         return false;
@@ -326,28 +327,6 @@ final class Subtyping {
   }
 
   /**
-   * Returns true if the given types are equal, including the enclosing types of member classes.
-   * {@link InstantiatedType#equals(Object)} does not compare enclosing types.
-   *
-   * @param type a type
-   * @param otherType a type
-   * @return true if the types are equal, including their enclosing types
-   */
-  private static boolean equalsWithEnclosingTypes(ReferenceType type, ReferenceType otherType) {
-    if (!type.equals(otherType)) {
-      return false;
-    }
-    if (type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType) {
-      ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
-      ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
-      if (enclosingType != null && otherEnclosingType != null) {
-        return equalsWithEnclosingTypes(enclosingType, otherEnclosingType);
-      }
-    }
-    return true;
-  }
-
-  /**
    * Returns true if the given types have the same enclosing type, or if neither is a member class.
    *
    * @param type a type
@@ -399,6 +378,31 @@ final class Subtyping {
       }
     }
     return bound;
+  }
+
+  /**
+   * Returns true if {@code type} equals {@code otherType}, including the type arguments of their
+   * enclosing types, if both are recorded. {@link InstantiatedType#equals(Object)} ignores the
+   * enclosing type, so it considers {@code Outer<String>.Inner<Integer>} and {@code
+   * Outer<Number>.Inner<Integer>} equal.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if {@code type} equals {@code otherType}, including their enclosing types
+   */
+  private static boolean isEqual(ReferenceType type, ReferenceType otherType) {
+    if (!type.equals(otherType)) {
+      return false;
+    }
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
+      return true;
+    }
+    ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
+    ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
+    if (enclosingType == null || otherEnclosingType == null) {
+      return true;
+    }
+    return isEqual(enclosingType, otherEnclosingType);
   }
 
   /**

@@ -489,8 +489,9 @@ public class TypeInstantiator {
    *
    * <p>A candidate type for one of the type variables, {@code X}, is in the map's value for {@code
    * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is one of the
-   * {@link #inferredTypes(Substitution)} that is within the bounds of {@code X}, or is the type that
-   * {@code substitution} gives to a type variable whose bounds contain {@code X}, and if, when
+   * {@link #inferredTypes(Substitution)} that potentially satisfies the bounds of {@code X} (such a
+   * type need not be an input type: it can be a type argument of one), or is the type that {@code
+   * substitution} gives to a type variable whose bounds contain {@code X}, and if, when
    * {@code substitution} is extended by mapping {@code X} to it, each type variable that {@code
    * substitution} instantiates and whose bounds contain {@code X} and no other uninstantiated type
    * variable is within its bounds. For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<?
@@ -512,6 +513,10 @@ public class TypeInstantiator {
       List<TypeVariable> constrained =
           constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
+      // A type that the substitution gives to another type variable is also a candidate, if it is
+      // within the bounds of `parameter`.  For example, for `<E extends Enum<E>, T extends E> void
+      // consume(List<? super T>)`, if the substitution maps the capture of `? super T` to MyEnum,
+      // then MyEnum is a candidate for E, even if MyEnum is not an input type.
       candidates.addAll(candidateTypes(parameter, inferredTypes));
       if (!constrained.isEmpty()) {
         // The types of the constrained type variables are also candidates, even if they are not
@@ -1016,14 +1021,32 @@ public class TypeInstantiator {
     for (Type inputType : types) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
-        Substitution substitution = new Substitution(argument, inputRefType);
-        if (lowerBound.isLowerBound(inputRefType, substitution)
-            && upperBound.isUpperBound(inputRefType, substitution)) {
+        if (isWithinBounds(argument, inputRefType, lowerBound, upperBound)) {
           typeList.add(inputRefType);
         }
       }
     }
     return typeList;
+  }
+
+  /**
+   * Returns true if the given type is within the given bounds, when it instantiates the given type
+   * variable.
+   *
+   * @param argument the type variable
+   * @param type a type
+   * @param lowerBound the lower bound to test, from {@link #getLowerBound(TypeVariable)}
+   * @param upperBound the upper bound to test, from {@link #getUpperBound(TypeVariable)}
+   * @return true if {@code type} is within {@code lowerBound} and {@code upperBound}
+   */
+  private static boolean isWithinBounds(
+      TypeVariable argument,
+      ReferenceType type,
+      ParameterBound lowerBound,
+      ParameterBound upperBound) {
+    Substitution substitution = new Substitution(argument, type);
+    return lowerBound.isLowerBound(type, substitution)
+        && upperBound.isUpperBound(type, substitution);
   }
 
   /**
