@@ -66,8 +66,7 @@ public class SequenceCollectionClearTest {
   @Test
   public void testInstantiatorAfterClear() throws Exception {
     TypedClassOperation appleOp =
-        TypedOperation.forMethod(
-            SequenceCollectionClearTest.class.getMethod("apple", Apple.class));
+        TypedOperation.forMethod(SequenceCollectionClearTest.class.getMethod("apple", Apple.class));
     TypedClassOperation bananaOp =
         TypedOperation.forMethod(
             SequenceCollectionClearTest.class.getMethod("banana", Banana.class));
