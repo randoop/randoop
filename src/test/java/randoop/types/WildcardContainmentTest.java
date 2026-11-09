@@ -23,6 +23,16 @@ public class WildcardContainmentTest {
    */
   public static class NumberBox<T extends Number> {}
 
+  /**
+   * A generic class whose supertype has a nested type argument that mentions the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  public static class Nested<T> extends ArrayList<List<T>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261109;
+  }
+
   /** A field of type {@code List<Integer>}. */
   public List<Integer> listInteger;
 
@@ -52,6 +62,12 @@ public class WildcardContainmentTest {
 
   /** A field of type {@code List<List<?>>}. */
   public List<List<?>> listListQ;
+
+  /** A field of type {@code Nested<?>}. */
+  public Nested<?> nestedQ;
+
+  /** A field of type {@code Nested<Integer>}. */
+  public Nested<Integer> nestedInteger;
 
   /** A field of type {@code ArrayList<Integer>}. */
   public ArrayList<Integer> arrayListInteger;
@@ -96,6 +112,30 @@ public class WildcardContainmentTest {
     return type(subField).isSubtypeOfOrEqualTo(type(superField));
   }
 
+  /**
+   * Returns the first type argument of the type of the field of this class that has the given
+   * name.
+   *
+   * @param fieldName the name of a field of this class, whose type is parameterized
+   * @return the first type argument of the type of the field
+   */
+  private static TypeArgument argument(String fieldName) {
+    return ((InstantiatedType) type(fieldName)).getTypeArguments().get(0);
+  }
+
+  /**
+   * Returns true if the first type argument of the type of one field contains the first type
+   * argument of the type of another field.
+   *
+   * @param containingField the name of the field whose type argument is the possible container
+   * @param containedField the name of the field whose type argument is possibly contained
+   * @return true if the type argument of {@code containingField} contains that of {@code
+   *     containedField}
+   */
+  private static boolean contains(String containingField, String containedField) {
+    return argument(containingField).contains(argument(containedField));
+  }
+
   @Test
   public void typeArgumentInWildcardTest() {
     assertTrue(isSubtype("listInteger", "listQ"));
@@ -126,6 +166,35 @@ public class WildcardContainmentTest {
     // A type argument that is not a wildcard contains only itself.
     assertFalse(isSubtype("listListInteger", "listListQ"));
     assertTrue(isSubtype("listListQ", "listListQ"));
+  }
+
+  @Test
+  public void directContainmentTest() {
+    // A concrete type argument contains only itself.
+    assertTrue(contains("listInteger", "listInteger"));
+    assertFalse(contains("listInteger", "listNumber"));
+    assertFalse(contains("listInteger", "listExtendsInteger"));
+    // An upper-bounded wildcard contains the subtypes of its bound.
+    assertTrue(contains("listExtendsNumber", "listInteger"));
+    assertTrue(contains("listExtendsNumber", "listNumber"));
+    assertFalse(contains("listExtendsNumber", "listObject"));
+    assertTrue(contains("listQ", "listObject"));
+    assertTrue(contains("listExtendsNumber", "listExtendsInteger"));
+    assertTrue(contains("listExtendsNumber", "listExtendsNumber"));
+    // A lower-bounded wildcard contains the supertypes of its bound.
+    assertTrue(contains("listSuperInteger", "listInteger"));
+    assertTrue(contains("listSuperInteger", "listNumber"));
+    assertTrue(contains("listSuperInteger", "listObject"));
+    assertFalse(contains("listSuperNumber", "listInteger"));
+    assertTrue(contains("listSuperInteger", "listSuperNumber"));
+    assertFalse(contains("listSuperNumber", "listSuperInteger"));
+  }
+
+  @Test
+  public void nestedSupertypeArgumentTest() {
+    assertTrue(isSubtype("nestedInteger", "listListInteger"));
+    // The supertype of Nested<?> is List<List<CAP#1>>, which is not a subtype of List<List<?>>.
+    assertFalse(isSubtype("nestedQ", "listListQ"));
   }
 
   @Test

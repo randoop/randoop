@@ -162,6 +162,11 @@ class WildcardType extends ParameterType {
    * @return true if this wildcard contains the other wildcard, false otherwise
    */
   public boolean contains(WildcardType otherType) {
+    // Containment is reflexive.  Checking it for a bound that refers to a type variable with a
+    // recursive bound, as in `? extends List<T>` for `T extends Comparable<T>`, can fail.
+    if (this.equals(otherType)) {
+      return true;
+    }
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound) {
         return otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound());
@@ -190,10 +195,10 @@ class WildcardType extends ParameterType {
    */
   public boolean containsType(ReferenceType type) {
     ParameterBound bound = getTypeBound();
-    if (!(bound instanceof EagerReferenceBound)) {
+    if (!(bound instanceof ReferenceBound)) {
       return false;
     }
-    ReferenceType boundType = ((EagerReferenceBound) bound).getBoundType();
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (hasUpperBound) {
       return type.isSubtypeOfOrEqualTo(boundType);
     } else {

@@ -89,15 +89,21 @@ final class Subtyping {
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-      InstantiatedType supertype =
-          ((ClassOrInterfaceType) type)
-              .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
-      if (supertype == null) {
-        return false;
-      }
       // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
-      // section 4.10.2).
+      // section 4.10.2).  Capture the type before searching its supertypes, so that a capture
+      // variable, not a wildcard, replaces the type parameter in a nested type argument of the
+      // supertype.  For `Nested<T> extends ArrayList<List<T>>`, the supertype of `Nested<?>` is
+      // `List<List<CAP#1>>`, which is not a subtype of `List<List<?>>`.
+      InstantiatedType supertype;
       try {
+        ClassOrInterfaceType capturedType =
+            type instanceof InstantiatedType
+                ? ((InstantiatedType) type).applyCaptureConversion()
+                : (ClassOrInterfaceType) type;
+        supertype = capturedType.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+        if (supertype == null) {
+          return false;
+        }
         supertype = supertype.applyCaptureConversion();
       } catch (LazyBoundException e) {
         return false;

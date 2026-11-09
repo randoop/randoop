@@ -352,6 +352,20 @@ public class TypeVariableTest {
             .isUpperBound(stringKeyed, kIsString.extend(new Substitution(w, stringKeyed))));
   }
 
+  @Test
+  public void testVariableBoundInstantiatedInContext() {
+    TypeVariable k = typeParameter(PartiallySubstitutedRecursiveBound.class, 0);
+    TypeVariable v = typeParameter(PartiallySubstitutedRecursiveBound.class, 1);
+    TypeVariable w = typeParameter(PartiallySubstitutedRecursiveBound.class, 2);
+    ReferenceType integerKeyed = ClassOrInterfaceType.forClass(IntegerKeyedMapOfSelf.class);
+    ReferenceType stringKeyed = ClassOrInterfaceType.forClass(StringKeyedMapOfSelf.class);
+    // With V := StringKeyedMapOfSelf, W can be StringKeyedMapOfSelf but not IntegerKeyedMapOfSelf.
+    Substitution context =
+        new Substitution(k, JavaTypes.STRING_TYPE).extend(new Substitution(v, stringKeyed));
+    assertTrue(w.canBeInstantiatedBy(stringKeyed, context));
+    assertFalse(w.canBeInstantiatedBy(integerKeyed, context));
+  }
+
   /**
    * A pair.
    *

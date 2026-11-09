@@ -103,6 +103,11 @@ public class TypeInstantiatorTest {
       }
       instantiated++;
       // The input types are the receiver, the key extractor, and the key comparator.
+      ReferenceType receiverElementType = typeArgument(operation.getInputTypes().get(0), 0);
+      ReferenceType extractorInputType = typeArgument(operation.getInputTypes().get(1), 0);
+      assertTrue(
+          "ill-typed instantiation " + operation,
+          receiverElementType.isSubtypeOfOrEqualTo(extractorInputType));
       ReferenceType keyType = typeArgument(operation.getInputTypes().get(1), 1);
       ReferenceType comparedType = typeArgument(operation.getInputTypes().get(2), 0);
       assertTrue(
