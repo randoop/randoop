@@ -411,8 +411,8 @@ public class Substitution {
 
   /**
    * Returns the type variables mapped from by this. The result is unmodifiable, so that removing a
-   * type variable from it cannot make {@link #map} inconsistent with {@link #rawMap} and the
-   * caches of this substitution.
+   * type variable from it cannot make {@link #map} inconsistent with {@link #rawMap} and the caches
+   * of this substitution.
    *
    * @return the type variables mapped from by this
    */

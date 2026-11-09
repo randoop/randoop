@@ -85,9 +85,8 @@ final class Subtyping {
       return true;
     }
     if (otherType.isVariable()) {
-      // A type variable that stands for itself is a supertype of its lower bound:  a capture
-      // variable whose lower bound is `type` is a supertype of `type`, even if `type` is a type
-      // variable.
+      // A type variable that stands for itself is a supertype of its lower bound.  For example, if
+      // CAP is the capture of `? super T`, then T <: CAP, even though T's upper bound is not.
       ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
       if (!(lowerBound instanceof ReferenceBound)) {
         return false;
@@ -388,9 +387,9 @@ final class Subtyping {
   }
 
   /**
-   * Returns true if the two types are equal, including the enclosing types of member classes at
-   * any depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it
-   * treats {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
+   * Returns true if the two types are equal, including the enclosing types of member classes at any
+   * depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it treats
+   * {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
    *
    * @param type a type
    * @param otherType another type
