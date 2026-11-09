@@ -101,13 +101,13 @@ public class TypeInstantiatorTest {
       }
       instantiated++;
       // The input types are the receiver, the key extractor, and the key comparator.
-      ReferenceType receiverType = typeArgument(operation.getInputTypes().get(0), 0);
+      ReferenceType receiverElementType = typeArgument(operation.getInputTypes().get(0), 0);
       ReferenceType extractorInputType = typeArgument(operation.getInputTypes().get(1), 0);
-      assertTrue(
-          "ill-typed instantiation " + operation,
-          receiverType.isSubtypeOfOrEqualTo(extractorInputType));
       ReferenceType keyType = typeArgument(operation.getInputTypes().get(1), 1);
       ReferenceType comparedType = typeArgument(operation.getInputTypes().get(2), 0);
+      assertTrue(
+          "ill-typed instantiation " + operation,
+          receiverElementType.isSubtypeOfOrEqualTo(extractorInputType));
       assertTrue(
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
@@ -253,6 +253,53 @@ public class TypeInstantiatorTest {
       assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
     }
     assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
+  }
+
+  /**
+   * A method whose type parameter {@code T} occurs only, and twice, in the bound of another type
+   * parameter.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of {@code S}
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<T, T>, T> void repeatedInBound(List<S> list) {}
+
+  /**
+   * Tests that the occurrences of a type variable that occurs only in the bound of another type
+   * variable are instantiated consistently. In {@code <S extends Map<T, T>, T> void
+   * repeatedInBound(List<S> list)}, {@code S} must not be instantiated as {@code HashMap<String,
+   * Integer>}, for which no single type for {@code T} satisfies the bound.
+   */
+  @Test
+  public void testBoundRepeatsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    InstantiatedType consistentMap =
+        hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    InstantiatedType inconsistentMap = hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE);
+    addTypes(listType.instantiate(inconsistentMap), inputTypes);
+    addTypes(listType.instantiate(consistentMap), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation repeatedInBound =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("repeatedInBound", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(repeatedInBound);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(consistentMap, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + repeatedInBound, instantiated > 0);
   }
 
   /**
