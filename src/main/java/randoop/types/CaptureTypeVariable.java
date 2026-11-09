@@ -23,7 +23,8 @@ class CaptureTypeVariable extends TypeVariable {
 
   /**
    * The ID counter for capture conversion variables. It is atomic so that concurrent capture
-   * conversions do not give distinct variables the same ID, which would make them equal.
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
    */
   private static final AtomicInteger count = new AtomicInteger();
 
