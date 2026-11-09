@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
@@ -100,7 +102,19 @@ public class OmitMethodsPredicate {
     for (TypedOperation omitted : omittedOperations) {
       AccessibleObject reflectionObject = omitted.getOperation().getReflectionObject();
       if (reflectionObject instanceof Method) {
-        newOverriddenMethods.addAll(overriddenMethods((Method) reflectionObject));
+        Method m = (Method) reflectionObject;
+        // The operation's declaring type may be a subclass that inherits m. Search from that
+        // subclass, so that methods it implements via m (such as methods of interfaces that the
+        // subclass implements but m's declaring class does not) are found.
+        Class<?> receiverClass = m.getDeclaringClass();
+        if (omitted instanceof TypedClassOperation) {
+          Class<?> declaringTypeClass =
+              ((TypedClassOperation) omitted).getDeclaringType().getRuntimeClass();
+          if (receiverClass.isAssignableFrom(declaringTypeClass)) {
+            receiverClass = declaringTypeClass;
+          }
+        }
+        newOverriddenMethods.addAll(overriddenMethods(m, receiverClass));
       }
     }
     if (newOverriddenMethods.equals(overriddenMethods)) {
@@ -281,13 +295,17 @@ public class OmitMethodsPredicate {
   }
 
   /**
-   * Returns the methods that the given method overrides.
+   * Returns the methods that the given method overrides or implements, as a member of {@code
+   * receiverClass}.
    *
    * @param m a method
-   * @return the methods, declared in strict supertypes of the class that declares {@code m}, that
-   *     {@code m} overrides
+   * @param receiverClass the class that declares {@code m}, or a subclass of it that inherits
+   *     {@code m}
+   * @return the methods, declared in strict supertypes of {@code receiverClass} other than the
+   *     class that declares {@code m}, that {@code m} overrides or implements in {@code
+   *     receiverClass}
    */
-  private static Set<Method> overriddenMethods(Method m) {
+  private static Set<Method> overriddenMethods(Method m, Class<?> receiverClass) {
     Set<Method> result = new HashSet<>();
     int mods = m.getModifiers();
     if (Modifier.isStatic(mods) || Modifier.isPrivate(mods)) {
@@ -295,8 +313,13 @@ public class OmitMethodsPredicate {
     }
     Class<?> declaringClass = m.getDeclaringClass();
     Class<?>[] paramTypes = m.getParameterTypes();
-    Map<TypeVariable<?>, Type> typeArguments = supertypeTypeArguments(declaringClass);
-    for (Class<?> supertype : strictSupertypes(declaringClass)) {
+    // Null if some generic signature is malformed or names a type that is not present.
+    @Nullable Map<TypeVariable<?>, Type> typeArguments = supertypeTypeArguments(receiverClass);
+    for (Class<?> supertype : strictSupertypes(receiverClass)) {
+      if (supertype == declaringClass) {
+        // m itself, or a bridge method; neither is overridden by m.
+        continue;
+      }
       for (Method candidate : supertype.getDeclaredMethods()) {
         if (!candidate.getName().equals(m.getName())
             || candidate.getParameterCount() != paramTypes.length) {
@@ -326,21 +349,30 @@ public class OmitMethodsPredicate {
    * from {@code Foo}, the parameter types of {@code Comparable.compareTo(T)} erase to {@code
    * [Foo]}.
    *
+   * <p>If generic signature information is unavailable (because a generic signature is malformed or
+   * names a type that is not present), this method conservatively returns true if {@code candidate}
+   * might have the given parameter types: that is, if each of its erased parameter types is a
+   * supertype of the corresponding element of {@code paramTypes}.
+   *
    * @param candidate a method declared in a supertype of the subclass
    * @param paramTypes parameter types
    * @param typeArguments the type arguments of the subclass's supertypes, as returned by {@link
-   *     #supertypeTypeArguments}
-   * @return true if the parameter types of {@code candidate}, as seen from the subclass, erase to
-   *     {@code paramTypes}
+   *     #supertypeTypeArguments}; null if they could not be determined
+   * @return true if the parameter types of {@code candidate}, as seen from the subclass, erase (or
+   *     might erase) to {@code paramTypes}
    */
   private static boolean hasParameterTypes(
-      Method candidate, Class<?>[] paramTypes, Map<TypeVariable<?>, Type> typeArguments) {
+      Method candidate, Class<?>[] paramTypes, @Nullable Map<TypeVariable<?>, Type> typeArguments) {
+    if (typeArguments == null) {
+      return mightHaveParameterTypes(candidate, paramTypes);
+    }
     Type[] candidateParamTypes;
     try {
       candidateParamTypes = candidate.getGenericParameterTypes();
-    } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-      // The generic signature names a type that is not present; compare the erased types.
-      return Arrays.equals(candidate.getParameterTypes(), paramTypes);
+    } catch (TypeNotPresentException
+        | MalformedParameterizedTypeException
+        | GenericSignatureFormatError e) {
+      return mightHaveParameterTypes(candidate, paramTypes);
     }
     if (candidateParamTypes.length != paramTypes.length) {
       // The generic parameter types can omit synthetic parameters.
@@ -348,6 +380,30 @@ public class OmitMethodsPredicate {
     }
     for (int i = 0; i < paramTypes.length; i++) {
       if (!erasure(candidateParamTypes[i], typeArguments).equals(paramTypes[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if {@code candidate} might have the given parameter types, after substitution of
+   * type arguments for its class's type parameters: that is, if each erased parameter type of
+   * {@code candidate} is a supertype of the corresponding element of {@code paramTypes}. Used when
+   * generic signature information is unavailable.
+   *
+   * @param candidate a method declared in a supertype of the subclass
+   * @param paramTypes parameter types
+   * @return true if the erased parameter types of {@code candidate} are supertypes of {@code
+   *     paramTypes}
+   */
+  private static boolean mightHaveParameterTypes(Method candidate, Class<?>[] paramTypes) {
+    Class<?>[] candidateParamTypes = candidate.getParameterTypes();
+    if (candidateParamTypes.length != paramTypes.length) {
+      return false;
+    }
+    for (int i = 0; i < paramTypes.length; i++) {
+      if (!candidateParamTypes[i].isAssignableFrom(paramTypes[i])) {
         return false;
       }
     }
@@ -363,9 +419,10 @@ public class OmitMethodsPredicate {
    *
    * @param c a class
    * @return a map from type parameters of the strict supertypes of {@code c} to their type
-   *     arguments
+   *     arguments, or null if some generic signature is malformed or names a type that is not
+   *     present
    */
-  private static Map<TypeVariable<?>, Type> supertypeTypeArguments(Class<?> c) {
+  private static @Nullable Map<TypeVariable<?>, Type> supertypeTypeArguments(Class<?> c) {
     Map<TypeVariable<?>, Type> result = new HashMap<>();
     Set<Class<?>> visited = new HashSet<>();
     List<Class<?>> worklist = new ArrayList<>();
@@ -373,22 +430,20 @@ public class OmitMethodsPredicate {
     while (!worklist.isEmpty()) {
       Class<?> current = worklist.remove(worklist.size() - 1);
       List<Type> genericSupertypes = new ArrayList<>();
-      // If a generic signature names a type that is not present, fall back to the raw supertypes,
-      // which contribute no type arguments.
       Type genericSuperclass;
+      Type[] genericInterfaces;
       try {
         genericSuperclass = current.getGenericSuperclass();
-      } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-        genericSuperclass = current.getSuperclass();
+        genericInterfaces = current.getGenericInterfaces();
+      } catch (TypeNotPresentException
+          | MalformedParameterizedTypeException
+          | GenericSignatureFormatError e) {
+        // The type arguments cannot be determined; the caller compares parameter types
+        // conservatively.
+        return null;
       }
       if (genericSuperclass != null) {
         genericSupertypes.add(genericSuperclass);
-      }
-      Type[] genericInterfaces;
-      try {
-        genericInterfaces = current.getGenericInterfaces();
-      } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-        genericInterfaces = current.getInterfaces();
       }
       Collections.addAll(genericSupertypes, genericInterfaces);
       for (Type genericSupertype : genericSupertypes) {
