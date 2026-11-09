@@ -30,6 +30,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     "PMD.ArrayIsStoredDirectly"
   })
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+    super();
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }
