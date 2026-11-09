@@ -197,7 +197,8 @@ public final class ReplacementFileReader {
    * {@code pkg}, or a constructor of class {@code pkg.C}. This uses the method interpretation if
    * that method exists, and otherwise uses the constructor interpretation if class {@code pkg.C}
    * exists. If class {@code pkg} is unreadable, this uses the constructor interpretation if that
-   * constructor exists, and otherwise reports that class {@code pkg} is unreadable. A signature
+   * constructor exists, and otherwise reports that class {@code pkg} is unreadable, along with why
+   * the constructor interpretation failed. A signature
    * such as {@code C(int)}, with no period before the parenthesis, denotes a constructor of class
    * {@code C} in the unnamed package.
    *
@@ -250,6 +251,12 @@ public final class ReplacementFileReader {
         throw e;
       }
       if (!constructorClassExists) {
+        if (mentionConstructor) {
+          e.addSuppressed(
+              new ClassNotFoundException(
+                  String.format(
+                      "Class %s not found, for a constructor", constructor.getClassname())));
+        }
         throw e;
       }
       try {
