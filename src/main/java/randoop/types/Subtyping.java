@@ -316,7 +316,7 @@ final class Subtyping {
     ClassOrInterfaceType enclosing = enclosingType(type);
     ClassOrInterfaceType otherEnclosing = enclosingType(otherType);
     if (enclosing == null || otherEnclosing == null) {
-      return enclosing == otherEnclosing;
+      return enclosing == null && otherEnclosing == null;
     }
     return isSameType(enclosing, otherEnclosing, substitution);
   }
