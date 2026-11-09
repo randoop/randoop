@@ -25,7 +25,7 @@ import org.junit.Test;
 public class CoverageGoalsTest {
 
   /** The JDK versions that CI tests. Keep this in sync with {@code .azure/jobs.m4}. */
-  private static final int[] CI_JDK_VERSIONS = {8, 11, 17, 21, 25, 26};
+  private static final int[] CI_JDK_VERSIONS = {8, 11, 17, 21, 25, 27};
 
   /**
    * Processes each coverage-goals file for each JDK version that CI tests.
