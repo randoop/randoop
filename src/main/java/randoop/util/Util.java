@@ -274,6 +274,9 @@ public final class Util {
     if (value == null) {
       return "null";
     }
+    // TODO: Once Randoop uses a plume-util version that includes plume-lib/plume-util#823,
+    // replace the rest of this method body by `return StringsPlume.toStringAndClass(value,
+    // shallow);`, or replace calls to this method by calls to StringsPlume.toStringAndClass.
     try {
       return StringsPlume.toStringAndClass(value, shallow);
     } catch (
