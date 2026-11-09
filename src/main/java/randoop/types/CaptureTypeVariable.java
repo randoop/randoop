@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -20,8 +21,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class CaptureTypeVariable extends TypeVariable {
 
-  /** The ID counter for capture conversion variables. */
-  private static int count = 0;
+  /**
+   * The ID counter for capture conversion variables. It is atomic so that concurrent capture
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
+   */
+  private static final AtomicInteger count = new AtomicInteger();
 
   /** The integer ID of this capture variable. */
   private final int varID;
@@ -53,10 +58,10 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
-    this.varID = count++;
+    this.varID = count.getAndIncrement();
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
