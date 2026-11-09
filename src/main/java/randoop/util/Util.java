@@ -286,11 +286,10 @@ public final class Util {
       // throw StackOverflowError, and printing a huge value can throw OutOfMemoryError.
       boolean printsElements =
           !shallow && (value.getClass().isArray() || value instanceof List || value instanceof Map);
-      return String.format(
-          "%s [%s]: %s",
+      return printingFailed(
           printsElements ? "exception_when_printing_elements" : "exception_when_calling_toString",
-          value.getClass(),
-          t.getClass().getName());
+          value,
+          t);
     }
   }
 
@@ -317,8 +316,32 @@ public final class Util {
       // Thread.stop() throws ThreadDeath; let it stop the thread.
       throw t;
     } catch (Throwable t) {
-      return String.format(
-          "exception_when_calling_toString [%s]: %s", value.getClass(), t.getClass().getName());
+      return printingFailed("exception_when_calling_toString", value, t);
+    }
+  }
+
+  /**
+   * Returns a message saying that printing the given value threw, as in
+   * "exception_when_calling_toString [class java.util.HashMap]: java.lang.StackOverflowError". If
+   * creating that message throws, as when the heap is exhausted, returns {@code kind} itself, which
+   * requires no allocation.
+   *
+   * @param kind what threw, such as "exception_when_calling_toString"
+   * @param value the value whose printing threw
+   * @param t what printing the value threw
+   * @return a message that names {@code kind}, the value's class, and the thrown class
+   */
+  private static String printingFailed(String kind, Object value, Throwable t) {
+    try {
+      return String.format("%s [%s]: %s", kind, value.getClass(), t.getClass().getName());
+    } catch (
+        @SuppressWarnings("removal")
+        ThreadDeath t2) {
+      // Thread.stop() throws ThreadDeath; let it stop the thread.
+      throw t2;
+    } catch (Throwable t2) {
+      // Formatting can throw OutOfMemoryError if printing the value exhausted the heap.
+      return kind;
     }
   }
 
