@@ -95,6 +95,22 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
+   * Returns a {@link ReferenceBound} that represents the same type as this bound. Each type
+   * variable that occurs in this bound remains a type variable in the result.
+   *
+   * @return a reference bound equivalent to this bound, or null if this bound contains a kind of
+   *     type that {@link #substitute(Substitution)} does not handle
+   */
+  @Nullable ReferenceBound toReferenceBound() {
+    List<TypeVariable> parameters = getTypeParameters();
+    // Map each type variable to itself, so that substitute() converts this bound without changing
+    // the type that it represents.
+    ParameterBound result =
+        substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
+    return result instanceof ReferenceBound ? (ReferenceBound) result : null;
+  }
+
+  /**
    * Applies a substitution to a reflection type that occurs as an actual argument of a
    * parameterized type bound, to create a type argument to a {@link
    * randoop.types.ParameterizedType}.
