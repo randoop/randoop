@@ -294,7 +294,8 @@ public class CaptureConversionTest {
     // The upper bound includes List<?>, not List<CaptureN>.
     ParameterBound upperBound = captureVariable.getUpperTypeBound();
     assertFalse(upperBound.hasCaptureVariable());
-    assertTrue(upperBound.toString().contains("java.util.List<?>"));
+    WildcardArgument wildcard = (WildcardArgument) wildcardInBoundType.getTypeArguments().get(0);
+    assertTrue(isGlbWithObject(upperBound, wildcard.getTypeBound()));
   }
 
   /** A field whose type has a wildcard within the lower bound of a wildcard type argument. */
@@ -317,7 +318,9 @@ public class CaptureConversionTest {
     // The lower bound is List<?>, not List<CaptureN>.
     ParameterBound lowerBound = captureVariable.getLowerTypeBound();
     assertFalse(lowerBound.hasCaptureVariable());
-    assertTrue(lowerBound.toString().contains("java.util.List<?>"));
+    WildcardArgument wildcard =
+        (WildcardArgument) wildcardInLowerBoundType.getTypeArguments().get(0);
+    assertEquals(wildcard.getTypeBound(), lowerBound);
   }
 
   /** A field whose type has a wildcard type argument. */

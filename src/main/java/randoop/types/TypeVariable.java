@@ -116,7 +116,9 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isReferenceType()) {
       // A type variable is a subtype of its upper bound.  The check below would not recognize a
       // bound that mentions this variable, such as Comparable<CAP> for CAP extends Comparable<CAP>,
-      // because it substitutes the bound for this variable within the bound.
+      // because it substitutes the bound for this variable within the bound.  For a type
+      // parameter, such as T extends Comparable<T>, the bound is a LazyParameterBound, which the
+      // resolved bound converts to a ReferenceBound.
       ParameterBound resolvedUpperBound = getResolvedUpperTypeBound();
       if (resolvedUpperBound instanceof ReferenceBound
           && ((ReferenceBound) resolvedUpperBound).getBoundType().equals(otherType)) {

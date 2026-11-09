@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,19 @@ public class LazyParameterBoundTest {
             .instantiate(
                 GenericClassType.forClass(List.class).instantiate(u), JavaTypes.STRING_TYPE),
         ((ReferenceBound) result).getBoundType());
+  }
+
+  @Test
+  public void testObjectIsUpperBoundOfLazyBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters().get(1);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    // Object is an upper bound of every reference type, including the type of a lazy bound.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isUpperBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(bound, new Substitution()));
   }
 
   /**
@@ -158,5 +172,24 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(ConcreteArrayArgumentBound.class).getTypeParameters().get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
+  }
+
+  /**
+   * A type parameter whose bound contains a wildcard bounded by a concrete array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardConcreteArrayBound<T extends Map<T[], ? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardConcreteArrayBound}. */
+  @SuppressWarnings("serial")
+  static class WildcardConcreteArrayMap extends HashMap<WildcardConcreteArrayMap[], String[]> {}
+
+  @Test
+  public void testWildcardConcreteArrayBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardConcreteArrayBound.class).getTypeParameters().get(0);
+    assertTrue(
+        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(WildcardConcreteArrayMap.class)));
   }
 }

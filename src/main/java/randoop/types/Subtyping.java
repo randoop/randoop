@@ -36,7 +36,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType) || otherType.isObject()) {
+    if (isEqual(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
@@ -361,6 +361,31 @@ final class Subtyping {
       }
     }
     return bound;
+  }
+
+  /**
+   * Returns true if {@code type} equals {@code otherType}, including the type arguments of their
+   * enclosing types, if both are recorded. {@link InstantiatedType#equals(Object)} ignores the
+   * enclosing type, so it considers {@code Outer<String>.Inner<Integer>} and {@code
+   * Outer<Number>.Inner<Integer>} equal.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if {@code type} equals {@code otherType}, including their enclosing types
+   */
+  private static boolean isEqual(ReferenceType type, ReferenceType otherType) {
+    if (!type.equals(otherType)) {
+      return false;
+    }
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
+      return true;
+    }
+    ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
+    ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
+    if (enclosingType == null || otherEnclosingType == null) {
+      return true;
+    }
+    return isEqual(enclosingType, otherEnclosingType);
   }
 
   /**
