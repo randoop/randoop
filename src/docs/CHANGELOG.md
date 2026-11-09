@@ -32,6 +32,12 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+Changed command-line arguments:
+
+* `--omit-methods`:  If Randoop omits method M of a class under test, it also
+  omits every method that M overrides, because a call to an overridden method
+  might dispatch to M.
+
 The replacecall agent removes single and double quotes from its options.  A
 filename that contains whitespace, a single quote, or a double quote must be
 quoted.  See the
