@@ -94,7 +94,9 @@ public abstract class ParameterBound {
       return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {
-      return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
+      // ReferenceType.forType represents an array class, such as String[], as an ArrayType, as
+      // LazyParameterBound does for a fixed array type in a type argument.
+      return new EagerReferenceBound(ReferenceType.forType(type));
     }
     if (isTypeVariable(type)) {
       TypeVariable eagerBound = TypeVariable.forType(type);
