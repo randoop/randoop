@@ -55,8 +55,13 @@ public class TypeInstantiator {
   /**
    * The input types: the types of the values that Randoop's sequence pool can produce, and their
    * supertypes. For example, if the pool can produce an {@code ArrayList<String>}, then {@code
-   * List<String>} and {@code Object} are also input types. The set needs to be closed under
+   * List<String>} and {@code Object} are also input types. The set should be closed under
    * supertypes: if a type is in the set, then so are all of its supertypes.
+   *
+   * <p>{@link randoop.sequence.SequenceCollection} adds the supertypes of class and interface types
+   * but not those of array types. So, if the pool can produce a {@code String[]} but no value of a
+   * class type that implements {@code Cloneable}, then {@code Cloneable} is not an input type, and this
+   * class does not choose it as a type argument.
    */
   private final Set<Type> inputTypes;
 
