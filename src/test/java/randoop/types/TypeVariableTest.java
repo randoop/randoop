@@ -294,8 +294,38 @@ public class TypeVariableTest {
     TypeVariable copy =
         capture.createCopyWithBounds(
             capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-    assertFalse(capture.equals(copy));
-    assertTrue(TypeVariable.isSameVariable(capture, copy));
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
+  }
+
+  /**
+   * A class with a field whose type has a wildcard with a type parameter as its lower bound.
+   *
+   * @param <U> a type parameter with no bound
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperWildcardField<U> {
+    /** A wildcard type whose lower bound is a type parameter with no bound. */
+    Comparable<? super U> superU;
+  }
+
+  @Test
+  public void testSubstitutedCaptureVariableCopy() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType)
+                Type.forType(SuperWildcardField.class.getDeclaredField("superU").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // Substitution changes the lower bound of the capture of `? super U`, and its wildcard.
+    ReferenceType copy =
+        capture.substitute(
+            new Substitution(typeParameter(SuperWildcardField.class, 0), JavaTypes.STRING_TYPE));
+    assertTrue(copy instanceof CaptureTypeVariable);
+    assertEquals(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE), ((TypeVariable) copy).getLowerTypeBound());
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
   }
 
   @Test
@@ -377,14 +407,26 @@ public class TypeVariableTest {
     TypeVariable y = typeParameter(ListBound.class, 1);
     // Substituting into the bound of Y creates a copy of Y whose bound is List<String>.
     TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
-    assertFalse(y.equals(copy));
-    assertTrue(TypeVariable.isSameVariable(y, copy));
+    assertEquals(y, copy);
+    assertEquals(y.hashCode(), copy.hashCode());
     InstantiatedType listOfString =
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     // A substitution for a type parameter applies to a copy of it with different bounds.
     Substitution substitution = new Substitution(y, listOfString);
     assertEquals(listOfString, substitution.get(copy));
     assertEquals(listOfString, copy.substitute(substitution));
+  }
+
+  /** Bounds whose types are copies of a type variable are equal and have equal hash codes. */
+  @Test
+  public void testBoundsOfTypeVariableCopiesAreEqual() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    ParameterBound bound = new EagerReferenceBound(y);
+    ParameterBound copyBound = new LazyReferenceBound(copy);
+    assertEquals(bound, copyBound);
+    assertEquals(bound.hashCode(), copyBound.hashCode());
   }
 
   @Test
@@ -453,7 +495,7 @@ public class TypeVariableTest {
   public void testCopyWithResolvedBound() {
     TypeVariable t = typeParameter(SelfComparableBound.class, 0);
     TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
-    assertTrue(TypeVariable.isSameVariable(t, copy));
+    assertEquals(t, copy);
     assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
     assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
     // The copy's bound refers to the copy itself, not to an unknown.
@@ -468,7 +510,9 @@ public class TypeVariableTest {
     InstantiatedType listOfString =
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     assertEquals(listOfString, ((ReferenceBound) copy.getUpperTypeBound()).getBoundType());
-    assertTrue(TypeVariable.isSameVariable(y, copy));
+    // A copy is the same type variable as the original.
+    assertEquals(y, copy);
+    assertEquals(y.hashCode(), copy.hashCode());
     // Mapping the type variable to itself keeps the copy's bound.
     TypeVariable result = (TypeVariable) copy.substitute(new Substitution(y, y));
     assertEquals(listOfString, ((ReferenceBound) result.getUpperTypeBound()).getBoundType());
