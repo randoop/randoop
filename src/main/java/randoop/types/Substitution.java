@@ -4,6 +4,7 @@ import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -409,12 +410,13 @@ public class Substitution {
   }
 
   /**
-   * Returns the type variables mapped from by this.
+   * Returns the type variables mapped from by this. The result is unmodifiable, because removing a
+   * type variable from it would not update {@link #rawMap} or the caches.
    *
    * @return the type variables mapped from by this
    */
   public Set<@KeyFor("this.map") TypeVariable> keySet() {
-    return map.keySet();
+    return Collections.unmodifiableSet(map.keySet());
   }
 
   /** Print the entries of this substitution to standard out on multiple lines. */

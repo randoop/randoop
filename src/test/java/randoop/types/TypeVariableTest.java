@@ -259,6 +259,9 @@ public class TypeVariableTest {
 
     /** A wildcard type whose type parameter has a self-referential bound. */
     SelfComparableBound<?> selfComparableWildcard;
+
+    /** A map whose key and value types are the same type parameter. */
+    Map<U, U> mapUU;
   }
 
   /**
@@ -1522,5 +1525,37 @@ public class TypeVariableTest {
     assertFalse(capture.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
     assertTrue(capture.isSubtypeOfOrEqualTo(fieldType("comparableWildcard")));
     assertTrue(capture.isSubtypeOfOrEqualTo(comparable.instantiate(capture)));
+  }
+
+  /**
+   * A type parameter whose bound is a sibling type parameter.
+   *
+   * @param <K> the bound
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class SiblingVariableBound<K, V extends K> {}
+
+  @Test
+  public void testVariableBoundInstantiatedByContext() {
+    TypeVariable k = typeParameter(SiblingVariableBound.class, 0);
+    TypeVariable v = typeParameter(SiblingVariableBound.class, 1);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    // V extends K, and K is Object or Number.
+    assertTrue(
+        v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, JavaTypes.OBJECT_TYPE)));
+    Substitution kIsNumber = new Substitution(k, ReferenceType.forClass(Number.class));
+    assertTrue(v.canBeInstantiatedBy(integerType, kIsNumber));
+    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, kIsNumber));
+  }
+
+  @Test
+  public void testConflictingInstantiatingSubstitution() {
+    ReferenceType mapUU = fieldType("mapUU");
+    GenericClassType map = GenericClassType.forClass(Map.class);
+    ReferenceType stringType = JavaTypes.STRING_TYPE;
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    // U cannot be both String and Integer.
+    assertNull(map.instantiate(stringType, integerType).getInstantiatingSubstitution(mapUU));
+    assertNotNull(map.instantiate(stringType, stringType).getInstantiatingSubstitution(mapUU));
   }
 }

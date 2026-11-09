@@ -368,6 +368,9 @@ public class InstantiatedType extends ParameterizedType {
 
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
+    if (substitution == null) {
+      return null;
+    }
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
@@ -375,7 +378,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // A conflict arises when, for example, Map<String, Integer> is matched against Map<T, T>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           substitution = substitution.extend(subst);

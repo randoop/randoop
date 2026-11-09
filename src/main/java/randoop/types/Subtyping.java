@@ -51,7 +51,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType) || otherType.isObject()) {
+    if (equalsWithEnclosingTypes(type, otherType) || otherType.isObject()) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -254,7 +254,7 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType)) {
+    if (equalsWithEnclosingTypes(type, otherType)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -290,6 +290,34 @@ final class Subtyping {
               : contains(otherTypeArgument, typeArguments.get(i), substitution);
       if (!same) {
         return false;
+      }
+    }
+    // For a member class of a generic class, the enclosing types must also be the same.
+    ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
+    ClassOrInterfaceType otherEnclosingType = otherInstantiatedType.enclosingType;
+    if (enclosingType != null && otherEnclosingType != null) {
+      return isSameType(enclosingType, otherEnclosingType, substitution);
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the given types are equal, including the enclosing types of member classes.
+   * {@link InstantiatedType#equals(Object)} does not compare enclosing types.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if the types are equal, including their enclosing types
+   */
+  private static boolean equalsWithEnclosingTypes(ReferenceType type, ReferenceType otherType) {
+    if (!type.equals(otherType)) {
+      return false;
+    }
+    if (type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
+      ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
+      if (enclosingType != null && otherEnclosingType != null) {
+        return equalsWithEnclosingTypes(enclosingType, otherEnclosingType);
       }
     }
     return true;
