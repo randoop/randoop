@@ -194,6 +194,15 @@ public class ForwardGenerator extends AbstractGenerator {
     inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
   }
 
+  /**
+   * Returns the selector that chooses input sequences. For use by tests.
+   *
+   * @return the selector that chooses input sequences
+   */
+  InputSequenceSelector getInputSequenceSelector() {
+    return inputSequenceSelector;
+  }
+
   @Override
   public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
