@@ -343,7 +343,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null) {
+        if (supertypeSubstitution == null
+            || !substitution.isConsistentWith(supertypeSubstitution)) {
           return null;
         }
         substitution = substitution.extend(supertypeSubstitution);

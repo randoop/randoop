@@ -66,6 +66,11 @@ public class ParameterBoundTest {
     assertTrue(intersection.isLowerBound(numberBound, new Substitution()));
     assertFalse(intersection.isLowerBound(integerBound, new Substitution()));
     assertFalse(intersection.isLowerBound(stringBound, new Substitution()));
+    // A member other than the first can make the intersection a lower bound.
+    ParameterBound runnableBound = ParameterBound.forType(ReferenceType.forClass(Runnable.class));
+    ParameterBound numberAndRunnable =
+        new IntersectionTypeBound(Arrays.asList(numberBound, runnableBound));
+    assertTrue(numberAndRunnable.isLowerBound(runnableBound, new Substitution()));
   }
 
   /** A lazy bound that the substitution does not instantiate is not a lower bound of anything. */
