@@ -4,9 +4,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -140,6 +142,22 @@ public class DemandDrivenInputCreator {
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
 
   /**
+   * Types that have candidate producers (see {@link #getCandidateProducers}), none of which has yet
+   * been usable. For example, a generic producer is not usable while the type instantiator cannot
+   * instantiate it from the types of the sequences in {@link #sequenceCollection}. Unlike a type in
+   * {@link #uninstantiableTypes}, such a type is retried on every request, because the types of the
+   * sequences change during a run. A type is removed from this set when one of its producers
+   * becomes usable.
+   */
+  private final Set<Type> typesWithoutUsableProducers = new LinkedHashSet<>();
+
+  /**
+   * A cache for {@link #getCandidateProducers}. The candidate producers of a type do not change
+   * during a run.
+   */
+  private final Map<Type, List<TypedOperation>> candidateProducersCache = new HashMap<>();
+
+  /**
    * A predicate that determines what constructors/methods are accessible (e.g., {@code public}) to
    * be used during demand-driven input creation.
    */
@@ -210,9 +228,10 @@ public class DemandDrivenInputCreator {
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
    *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
-   *       type declares no accessible producers. A type whose producers exist but are not currently
-   *       usable (e.g., a generic producer that cannot be instantiated from the currently-known
-   *       types) is not recorded, so that it can be retried later.
+   *       type has no candidate producers. If the target type has candidate producers but none of
+   *       them is usable now (e.g., a generic producer that cannot be instantiated from the types
+   *       of the current sequences), adds the target type to {@code typesWithoutUsableProducers}
+   *       instead, so that a later call retries it.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -233,20 +252,20 @@ public class DemandDrivenInputCreator {
     List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
-      if (hasAccessibleProducer(targetType)) {
-        // Some accessible producer exists, but none is currently usable (e.g., a generic producer
-        // could not be instantiated from the currently-known types).  Do not record the type as
-        // uninstantiable, because a later call may succeed once more types are known.
-        Log.logPrintf("No usable producer methods found for type %s at this time.%n", targetType);
-      } else {
+      if (getCandidateProducers(targetType).isEmpty()) {
         Log.logPrintf(
             "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
             targetType);
         // Track the types with no producers.
         uninstantiableTypes.add(targetType);
+      } else if (typesWithoutUsableProducers.add(targetType)) {
+        // A later call might succeed, once the type instantiator knows more types.  Log only the
+        // first failure, because this method retries the type on every call.
+        Log.logPrintf("No usable producer methods found yet for type %s.%n", targetType);
       }
       return SIList.empty();
     }
+    typesWithoutUsableProducers.remove(targetType);
 
     // For each producer method, create a sequence if possible.
     for (TypedOperation producerMethod : producerMethods) {
@@ -301,14 +320,8 @@ public class DemandDrivenInputCreator {
       // Add to `result` all constructors and methods that return an instance of the current type
       // and are accessible to Randoop.
 
-      // Iterate over the operations and check if they can produce the target type.
-      for (TypedOperation op : getAccessibleOperations(currentType)) {
+      for (TypedOperation op : getCandidateProducers(currentType)) {
         Type opOutputType = op.getOutputType();
-
-        // Only consider operations that produce instances of the type we're currently resolving
-        if (!isProducer(op, currentType)) {
-          continue;
-        }
 
         if (opOutputType.isGeneric()) {
           TypedClassOperation instantiated =
@@ -343,40 +356,30 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns the accessible constructors and methods declared in the given type.
+   * Returns the candidate producers of the given type: the accessible constructors and static
+   * methods that the type declares and whose output type is assignable to the type. A candidate
+   * producer is not necessarily usable: a generic one is usable only if the type instantiator can
+   * instantiate it.
    *
-   * @param type the type whose operations to return
-   * @return the accessible constructors and methods declared in {@code type}
+   * @param type a type
+   * @return the candidate producers of {@code type}
    */
-  private List<TypedOperation> getAccessibleOperations(Type type) {
-    try {
-      return OperationExtractor.operations(
-          type.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
-    } catch (RandoopSpecificationError e) {
-      // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
-      throw new RandoopBug("specification error for type " + type, e);
-    }
-  }
-
-  /**
-   * Returns true if the given type declares some accessible producer of itself, regardless of
-   * whether that producer is currently usable (e.g., whether a generic producer can be
-   * instantiated).
-   *
-   * @param type the type to check
-   * @return true if {@code type} declares an accessible producer of itself
-   */
-  private boolean hasAccessibleProducer(Type type) {
-    if (type.isNonreceiverType()) {
-      // Consistent with getProducers, which never finds producers for non-receiver types.
-      return false;
-    }
-    for (TypedOperation op : getAccessibleOperations(type)) {
-      if (isProducer(op, type)) {
-        return true;
+  private List<TypedOperation> getCandidateProducers(Type type) {
+    List<TypedOperation> result = candidateProducersCache.get(type);
+    if (result == null) {
+      List<TypedOperation> operations;
+      try {
+        operations =
+            OperationExtractor.operations(
+                type.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+      } catch (RandoopSpecificationError e) {
+        // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
+        throw new RandoopBug("specification error for type " + type, e);
       }
+      result = CollectionsPlume.filter(operations, (TypedOperation op) -> isProducer(op, type));
+      candidateProducersCache.put(type, result);
     }
-    return false;
+    return result;
   }
 
   /**
@@ -501,17 +504,19 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of producer methods, and no calls to {@link #createSequencesForType} could ever create
-   * sequences of these types. Future calls to {@link #createSequencesForType} will not generate
-   * sequences for these types.
+   * Returns the types that demand-driven input creation has not instantiated: the uninstantiable
+   * types, which have no producer methods, and the types none of whose producer methods has been
+   * usable so far. No call to {@link #createSequencesForType} could ever create sequences of an
+   * uninstantiable type, and future calls will not try to.
    *
    * <p>This method exists only so that {@code GenTests} can print them for the user.
    *
-   * @return an unmodifiable set of uninstantiable types
+   * @return the types that demand-driven input creation has not instantiated
    */
   public Set<Type> getUninstantiableTypes() {
-    return Collections.unmodifiableSet(uninstantiableTypes);
+    Set<Type> result = new LinkedHashSet<>(uninstantiableTypes);
+    result.addAll(typesWithoutUsableProducers);
+    return Collections.unmodifiableSet(result);
   }
 
   /**
