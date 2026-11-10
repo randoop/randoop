@@ -63,9 +63,9 @@ public final class SequenceCollection {
    * <p>A client can compare two values of this count to cheaply tell whether the types used by
    * {@link #typeInstantiator} have changed; for example, {@link
    * randoop.generation.DemandDrivenInputCreator} retries a type whose generic producers could not
-   * be instantiated only after this count changes. This is a counter rather than the size of
-   * {@link #typesAndSupertypes} because a clear followed by additions can restore the size with
-   * different types.
+   * be instantiated only after this count changes. This is a counter rather than the size of {@link
+   * #typesAndSupertypes} because a clear followed by additions can restore the size with different
+   * types.
    */
   private int typesModificationCount = 0;
 
