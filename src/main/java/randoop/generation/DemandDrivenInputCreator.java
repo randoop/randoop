@@ -22,7 +22,6 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -135,13 +134,6 @@ public class DemandDrivenInputCreator {
   private final Set<Type> visitedTypes = new HashSet<>();
 
   /**
-   * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
-   * List<T>} or {@code T}), produces a concrete TypedClassOperation by choosing concrete type
-   * arguments (e.g., {@code T->String}).
-   */
-  private final TypeInstantiator typeInstantiator;
-
-  /**
    * A set of SUT types that are non-instantiable. This is used to avoid generating sequences
    * through {@link DemandDrivenInputCreator} for such types.
    */
@@ -159,18 +151,23 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection.
-   * @param typeInstantiator a type instantiator that creates concrete instances of
-   *     TypedClassOperation
    * @param accessibility decides which constructors/methods are callable from the generated test
    *     code
    */
   public DemandDrivenInputCreator(
-      SequenceCollection sequenceCollection,
-      TypeInstantiator typeInstantiator,
-      AccessibilityPredicate accessibility) {
+      SequenceCollection sequenceCollection, AccessibilityPredicate accessibility) {
     this.sequenceCollection = sequenceCollection;
-    this.typeInstantiator = typeInstantiator;
     this.accessibility = accessibility;
+  }
+
+  /**
+   * Removes all sequences from the secondary sequence collection, so that sequences created before
+   * the main sequence collection was cleared are not reintroduced into it. Retains the visited
+   * types (which are reported for the whole run) and the uninstantiable types (which do not depend
+   * on the contents of any sequence collection).
+   */
+  public void clear() {
+    secondarySequenceCollection.clear();
   }
 
   /**
@@ -314,7 +311,8 @@ public class DemandDrivenInputCreator {
         }
 
         if (opOutputType.isGeneric()) {
-          TypedClassOperation instantiated = typeInstantiator.instantiate((TypedClassOperation) op);
+          TypedClassOperation instantiated =
+              sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
           if (instantiated == null) {
             continue; // Skip if instantiation fails
           }
