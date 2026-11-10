@@ -330,8 +330,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
-   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
-   *     found on the classpath
+   * @throws ClassNotFoundException if the containing class of this {@link MethodSignature}, or a
+   *     superclass that is searched, is not found on the classpath
    * @throws NoSuchMethodException if the containing class of this {@link MethodSignature} does not
    *     have the represented method as a member
    * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}
@@ -346,15 +346,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
     String currentClassname = classname;
     while (true) {
       // Check that the class exists
-      JavaClass currentClass;
-      try {
-        currentClass = ReplacementFileReader.getJavaClassFromClassname(currentClassname);
-      } catch (ReplacementFileReader.ReplacementException e) {
-        IllegalClassFormatException icfe =
-            new IllegalClassFormatException("Unable to read " + currentClassname);
-        icfe.initCause(e);
-        throw icfe;
-      }
+      JavaClass currentClass = ReplacementFileReader.readJavaClass(currentClassname);
       if (currentClass == null) {
         throw new ClassNotFoundException("Class " + currentClassname + " not found");
       }
@@ -398,6 +390,17 @@ public final class MethodSignature implements Comparable<MethodSignature> {
         | IllegalClassFormatException e) {
       return false;
     }
+  }
+
+  /**
+   * Returns the signature of the constructor of the class whose fully-qualified name is the
+   * fully-qualified method name of this {@link MethodSignature}. For example, if this represents
+   * method {@code Class(int)} of class {@code pkg}, the result is {@code pkg.Class.<init>(int)}.
+   *
+   * @return the constructor signature whose class name is the full method name of this
+   */
+  MethodSignature toConstructorSignature() {
+    return new MethodSignature(classname + "." + name, "<init>", paramTypes);
   }
 
   /**

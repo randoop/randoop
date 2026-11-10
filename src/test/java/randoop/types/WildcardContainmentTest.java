@@ -119,6 +119,7 @@ public class WildcardContainmentTest {
     assertFalse(isSubtype("listQ", "listExtendsNumber"));
     assertFalse(isSubtype("listQ", "listSuperInteger"));
     assertFalse(isSubtype("listExtendsNumber", "listExtendsInteger"));
+    assertFalse(isSubtype("listExtendsInteger", "listInteger"));
   }
 
   @Test

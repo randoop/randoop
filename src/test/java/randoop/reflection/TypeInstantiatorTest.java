@@ -103,8 +103,13 @@ public class TypeInstantiatorTest {
       }
       instantiated++;
       // The input types are the receiver, the key extractor, and the key comparator.
+      ReferenceType receiverElementType = typeArgument(operation.getInputTypes().get(0), 0);
+      ReferenceType extractorInputType = typeArgument(operation.getInputTypes().get(1), 0);
       ReferenceType keyType = typeArgument(operation.getInputTypes().get(1), 1);
       ReferenceType comparedType = typeArgument(operation.getInputTypes().get(2), 0);
+      assertTrue(
+          "ill-typed instantiation " + operation,
+          receiverElementType.isSubtypeOfOrEqualTo(extractorInputType));
       assertTrue(
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
@@ -167,6 +172,51 @@ public class TypeInstantiatorTest {
       assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
     }
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
+  }
+
+  /**
+   * Tests that each operation is instantiated when the input types allow only one choice. The tests
+   * with several choices succeed if any one choice is instantiated, so they would not detect that a
+   * valid choice is always rejected.
+   */
+  @Test
+  public void testSingleValidChoice() throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation copy =
+        TypedOperation.forMethod(Collections.class.getMethod("copy", List.class, List.class));
+    for (ClassOrInterfaceType elementType :
+        new ClassOrInterfaceType[] {JavaTypes.STRING_TYPE, INTEGER_TYPE}) {
+      Set<Type> inputTypes = new LinkedHashSet<>();
+      addTypes(elementType, inputTypes);
+      addTypes(GenericClassType.forClass(ArrayList.class).instantiate(elementType), inputTypes);
+      assertSomeInstantiation(new TypeInstantiator(inputTypes), copy);
+    }
+
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Node.class)),
+        inputTypes);
+    assertSomeInstantiation(
+        new TypeInstantiator(inputTypes),
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("kOnlyInBound", List.class)));
+  }
+
+  /**
+   * Asserts that the given instantiator instantiates the given operation in at least one of {@link
+   * #ATTEMPTS} attempts.
+   *
+   * @param instantiator the type instantiator
+   * @param operation the operation to instantiate
+   */
+  private static void assertSomeInstantiation(
+      TypeInstantiator instantiator, TypedClassOperation operation) {
+    for (int i = 0; i < ATTEMPTS; i++) {
+      if (instantiator.instantiate(operation) != null) {
+        return;
+      }
+    }
+    throw new AssertionError("no instantiation of " + operation);
   }
 
   /** Declares fields whose types, and their supertypes, are the input types for the tests. */
@@ -376,6 +426,136 @@ public class TypeInstantiatorTest {
                   new Substitution(JavaTypes.COMPARABLE_TYPE.getTypeParameters(), elementType))));
     }
     assertTrue("no instantiation found", instantiations > 0);
+  }
+
+  /**
+   * A method whose parameter type has a wildcard whose lower bound is a bounded type parameter.
+   *
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Number> void consume(List<? super T> list) {}
+
+  /**
+   * Tests a wildcard whose lower bound is a type variable that is not yet instantiated when the
+   * parameter type is matched. {@code <T extends Number> void consume(List<? super T>)} can be
+   * instantiated with a {@code List<Object>}, by choosing {@code Number} for {@code T}, though
+   * {@code Object} cannot instantiate {@code T}.
+   */
+  @Test
+  public void testWildcardLowerBoundUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(GenericClassType.forClass(List.class).instantiate(JavaTypes.OBJECT_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consume =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consume", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consume);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(JavaTypes.OBJECT_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consume, instantiated > 0);
+  }
+
+  /** An enum that is not an input type in {@link #testBoundVariableFromTypeArgument}. */
+  private enum Color {
+    /** The only constant. */
+    RED
+  }
+
+  /**
+   * A method whose type parameter {@code E} occurs only in the bounds of other type parameters.
+   *
+   * @param <E> an enum type
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E extends Enum<E>, T extends E> void consumeEnum(List<? super T> list) {}
+
+  /**
+   * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
+   * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
+   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
+   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
+   */
+  @Test
+  public void testBoundVariableFromTypeArgument()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType colorType = ClassOrInterfaceType.forClass(Color.class);
+    addTypes(GenericClassType.forClass(List.class).instantiate(colorType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consumeEnum =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consumeEnum", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consumeEnum);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
+  }
+
+  /**
+   * A method whose type parameter {@code T} occurs only, and twice, in the bound of another type
+   * parameter.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of {@code S}
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<T, T>, T> void repeatedInBound(List<S> list) {}
+
+  /**
+   * Tests that the occurrences of a type variable that occurs only in the bound of another type
+   * variable are instantiated consistently. In {@code <S extends Map<T, T>, T> void
+   * repeatedInBound(List<S> list)}, {@code S} must not be instantiated as {@code HashMap<String,
+   * Integer>}, for which no single type for {@code T} satisfies the bound.
+   */
+  @Test
+  public void testBoundRepeatsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    InstantiatedType consistentMap =
+        hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    InstantiatedType inconsistentMap = hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE);
+    addTypes(listType.instantiate(inconsistentMap), inputTypes);
+    addTypes(listType.instantiate(consistentMap), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation repeatedInBound =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("repeatedInBound", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(repeatedInBound);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(consistentMap, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + repeatedInBound, instantiated > 0);
   }
 
   /**

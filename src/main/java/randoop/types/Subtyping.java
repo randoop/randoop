@@ -36,7 +36,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType) || otherType.isObject()) {
+    if (isEqual(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
@@ -199,14 +199,19 @@ final class Subtyping {
   }
 
   /**
-   * Returns the type of the bound of the given wildcard, or null if the bound is not a {@link
-   * ReferenceBound}.
+   * Returns the type of the bound of the given wildcard, or null if the bound is neither a {@link
+   * ReferenceBound} nor a {@link LazyParameterBound} that can be converted to one. A lazy bound,
+   * such as {@code Comparable<T>} in {@code ? extends Comparable<T>}, is converted so that it can
+   * be compared with types.
    *
    * @param wildcard a wildcard type argument
    * @return the type of the bound of {@code wildcard}, or null
    */
   private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
     ParameterBound bound = wildcard.getTypeBound();
+    if (bound instanceof LazyParameterBound) {
+      bound = ((LazyParameterBound) bound).toReferenceBound();
+    }
     return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
   }
 
@@ -285,7 +290,7 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (type.equals(otherType)) {
+    if (isEqual(type, otherType)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -323,7 +328,40 @@ final class Subtyping {
         return false;
       }
     }
+    // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the type
+    // arguments of the enclosing types must also be the same, if both are recorded.
+    ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
+    ClassOrInterfaceType otherEnclosingType = otherInstantiatedType.enclosingType;
+    if (enclosingType instanceof InstantiatedType
+        && otherEnclosingType instanceof InstantiatedType) {
+      return isSameType(enclosingType, otherEnclosingType, substitution);
+    }
     return true;
+  }
+
+  /**
+   * Returns true if {@code type} equals {@code otherType}, including the type arguments of their
+   * enclosing types, if both are recorded. {@link InstantiatedType#equals(Object)} ignores the
+   * enclosing type, so it considers {@code Outer<String>.Inner<Integer>} and {@code
+   * Outer<Number>.Inner<Integer>} equal.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if {@code type} equals {@code otherType}, including their enclosing types
+   */
+  private static boolean isEqual(ReferenceType type, ReferenceType otherType) {
+    if (!type.equals(otherType)) {
+      return false;
+    }
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
+      return true;
+    }
+    ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
+    ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
+    if (enclosingType == null || otherEnclosingType == null) {
+      return true;
+    }
+    return isEqual(enclosingType, otherEnclosingType);
   }
 
   /**

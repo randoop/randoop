@@ -23,7 +23,8 @@ class CaptureTypeVariable extends TypeVariable {
 
   /**
    * The ID counter for capture conversion variables. It is atomic so that concurrent capture
-   * conversions do not give distinct variables the same ID, which would make them equal.
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
    */
   private static final AtomicInteger count = new AtomicInteger();
 
@@ -217,6 +218,12 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
+      // rather than the substitution's copy.  If the substitution maps this capture variable to a
+      // copy of it with other bounds, that copy is the result.
+      type = null;
+    }
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;

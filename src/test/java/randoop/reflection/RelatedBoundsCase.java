@@ -1,5 +1,9 @@
 package randoop.reflection;
 
+import java.util.Collection;
+import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /** Methods whose type variables have bounds that mention other type variables of the method. */
 public class RelatedBoundsCase {
 
@@ -27,5 +31,20 @@ public class RelatedBoundsCase {
    */
   public static <A, B extends A, C extends B> A chain(B b, C c) {
     return b;
+  }
+
+  /**
+   * Returns null. The parameter type is parameterized, so {@code M} is instantiated by matching an
+   * input type, and the bound of {@code M} mentions {@code K} and {@code V}, which remain to be
+   * instantiated.
+   *
+   * @param <K> the result type
+   * @param <V> the value type of the maps
+   * @param <M> the type of the maps
+   * @param maps a collection of maps
+   * @return null
+   */
+  public static <K, V, M extends Map<K, V>> @Nullable K someKey(Collection<M> maps) {
+    return null;
   }
 }

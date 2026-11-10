@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.types.ExampleClassesForTests.A;
@@ -21,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
@@ -320,5 +322,33 @@ public class ParameterizedTypeTest {
         }
       }
     }
+  }
+
+  /**
+   * A class with a field whose type has the same type variable as both type arguments.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SameKeyAndValue<T> {
+    /** A map whose keys and values have the same type. */
+    Map<T, T> map;
+  }
+
+  /** A field of type {@code Map<String, Integer>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private Map<String, Integer> stringToInteger;
+
+  @Test
+  public void testConflictingInstantiatingSubstitution() throws NoSuchFieldException {
+    ReferenceType sameKeyAndValue =
+        (ReferenceType)
+            Type.forType(SameKeyAndValue.class.getDeclaredField("map").getGenericType());
+    ReferenceType stringToIntegerType =
+        (ReferenceType)
+            Type.forType(
+                ParameterizedTypeTest.class.getDeclaredField("stringToInteger").getGenericType());
+    // T cannot be both String and Integer.
+    assertNull(stringToIntegerType.getInstantiatingSubstitution(sameKeyAndValue));
   }
 }
