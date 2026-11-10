@@ -9,11 +9,20 @@ import randoop.types.TypeTuple;
  * The contract: Checks the transitivity of equals for an object {@code (x0.equals(x1) &&
  * x1.equals(x2)) ==> x0.equals(x2)}.
  */
-public class EqualsTransitive extends ObjectContract {
+public final class EqualsTransitive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsTransitive instance = new EqualsTransitive();
 
-  private EqualsTransitive() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsTransitive() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsTransitive getInstance() {
     return instance;
   }
@@ -24,7 +33,10 @@ public class EqualsTransitive extends ObjectContract {
     Object o2 = objects[1];
     Object o3 = objects[2];
 
-    return !(o1.equals(o2) && o2.equals(o3)) || o1.equals(o3);
+    if (o1.equals(o2) && o2.equals(o3)) {
+      return o1.equals(o3);
+    }
+    return true;
   }
 
   @Override
@@ -33,7 +45,7 @@ public class EqualsTransitive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
@@ -54,14 +66,13 @@ public class EqualsTransitive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(Globals.lineSep);
     b.append("// Transitivity of equals");
     b.append(Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2)");
-    b.append(");");
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2));");
     return b.toString();
   }
 }

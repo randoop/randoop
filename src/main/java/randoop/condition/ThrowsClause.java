@@ -1,6 +1,7 @@
 package randoop.condition;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.ClassOrInterfaceType;
 
 /** Represents an expected exception in a throws-condition. */
@@ -42,7 +43,7 @@ public class ThrowsClause {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

@@ -163,7 +163,7 @@ public class SequenceCompilerTest {
   }
 
   private SequenceCompiler getSequenceCompiler() {
-    List<String> compilerOptions = new ArrayList<>();
+    List<String> compilerOptions = new ArrayList<>(2);
     // These are javac compilerOptions
     compilerOptions.add("-Xmaxerrs");
     compilerOptions.add("1000");

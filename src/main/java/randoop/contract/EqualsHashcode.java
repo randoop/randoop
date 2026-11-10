@@ -6,10 +6,19 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o1.hashCode() == o2.hashCode()}. */
 public final class EqualsHashcode extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsHashcode instance = new EqualsHashcode();
 
-  private EqualsHashcode() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsHashcode() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsHashcode getInstance() {
     return instance;
   }
@@ -20,7 +29,10 @@ public final class EqualsHashcode extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
+    if (o1.equals(o2)) {
+      return o1.hashCode() == o2.hashCode();
+    }
+    return true;
   }
 
   @Override
@@ -29,7 +41,7 @@ public final class EqualsHashcode extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
@@ -49,11 +61,10 @@ public final class EqualsHashcode extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
-    b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ")
+        .append(toCommentString())
+        .append("\", x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true);");
     return b.toString();
   }
 }

@@ -6,10 +6,19 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(x0)==true}. */
 public final class EqualsReflexive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReflexive instance = new EqualsReflexive();
 
-  private EqualsReflexive() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsReflexive() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsReflexive getInstance() {
     return instance;
   }
@@ -30,7 +39,7 @@ public final class EqualsReflexive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -49,11 +58,10 @@ public final class EqualsReflexive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x0)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.equals(x0));");
     return b.toString();
   }
 }

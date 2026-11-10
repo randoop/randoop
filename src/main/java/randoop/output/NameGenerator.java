@@ -10,6 +10,7 @@ public class NameGenerator {
 
   /** The number to use for the next name to generate. */
   private int counter;
+
   /** The format string to generate a name; takes one integer parameter. */
   private String format;
 
@@ -37,7 +38,7 @@ public class NameGenerator {
   }
 
   /**
-   * Return a new gensym (unique identifier).
+   * Returns a new gensym (unique identifier).
    *
    * @return the next identifier in the sequence produced by this
    */

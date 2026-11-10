@@ -3,6 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -31,13 +33,14 @@ public class ArrayCreation extends CallableOperation {
    * @param arrayType the type of the created array
    */
   ArrayCreation(ArrayType arrayType) {
+    super();
     this.elementType = arrayType.getElementType();
     this.componentType = arrayType.getComponentType();
     this.dimensions = arrayType.getDimensions();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -67,11 +70,16 @@ public class ArrayCreation extends CallableOperation {
   // The argument array contains a single Integer.
   public ExecutionOutcome execute(Object[] input) {
     assert input.length == 1 : "requires array dimension as input";
-    int length = ((Integer) input[0]).intValue();
-    long startTime = System.currentTimeMillis();
-    Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(theArray, totalTime);
+    Object theArray;
+    // Record the exceptions that the generated code `new T[length]` would throw.
+    try {
+      @SuppressWarnings("PMD.UnnecessaryBoxing") // bug in PMD
+      int length = ((Integer) input[0]).intValue();
+      theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
+    } catch (NullPointerException | NegativeArraySizeException | OutOfMemoryError e) {
+      return new ExceptionalExecution(e, 0);
+    }
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
@@ -82,7 +90,7 @@ public class ArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     Variable inputVar = inputVars.get(0);
-    b.append("new").append(" ").append(this.elementType.getFqName());
+    b.append("new").append(' ').append(this.elementType.getFqName());
     b.append("[ ");
     String param = getArgumentString(inputVar);
     b.append(param).append(" ]");
@@ -93,8 +101,9 @@ public class ArrayCreation extends CallableOperation {
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    StringBuilder result =
-        new StringBuilder(elementType.getBinaryName() + "[ " + inputTypes.get(0) + " ]");
+    StringBuilder result = new StringBuilder();
+    result.append(elementType.getBinaryName());
+    result.append("[ ").append(inputTypes.get(0)).append(" ]");
     for (int i = 1; i < dimensions; i++) {
       result.append("[]");
     }

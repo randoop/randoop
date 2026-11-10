@@ -10,7 +10,7 @@ import randoop.types.TypeTuple;
  * Represents operations that have no declaring class, such as literal value, cast, or array
  * creation/access/assignment.
  */
-class TypedTermOperation extends TypedOperation {
+public class TypedTermOperation extends TypedOperation {
 
   /**
    * Creates a {@link TypedOperation} for a given operation and input and output types.
@@ -19,7 +19,7 @@ class TypedTermOperation extends TypedOperation {
    * @param inputTypes the input types
    * @param outputType the output type
    */
-  TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
+  public TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
     super(operation, inputTypes, outputType, null);
   }
 

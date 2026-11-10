@@ -1,11 +1,13 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
@@ -31,11 +33,11 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** Creates an empty type tuple. */
   public TypeTuple() {
-    this(new ArrayList<Type>());
+    this(new ArrayList<>(0));
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -48,7 +50,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(list);
+    return Objects.hashCode(list);
   }
 
   @Override
@@ -65,7 +67,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
   public TypeTuple substitute(Substitution substitution) {
-    List<Type> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>(this.list.size());
     for (Type type : this.list) {
       Type newType = type.substitute(substitution);
       if (newType != null) {
@@ -78,8 +80,8 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Applies a capture conversion to each component of this type type tuple. Returns a new
-   * TypeTuple; the receiver is not side-effected.
+   * Applies a capture conversion to each component of this type tuple. Returns a new TypeTuple; the
+   * receiver is not side-effected.
    *
    * @return a new type tuple after performing a capture conversion
    */
@@ -89,7 +91,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the ith component type of this tuple.
+   * Returns the ith component type of this tuple.
    *
    * @param i the component index
    * @return the component type at the position
@@ -104,7 +106,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(this.list.size());
     for (Type type : this.list) {
       if (type.isReferenceType()) {
         paramSet.addAll(((ReferenceType) type).getTypeParameters());
@@ -114,13 +116,14 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Indicates whether any of the types in this type tuple contains a wildcard.
+   * Returns true if some type in this type tuple has a wildcard that capture conversion converts.
    *
-   * @return true if there is at least one wildcard occurrence
+   * @return true if some type in this type tuple has a wildcard type argument
+   * @see ClassOrInterfaceType#hasWildcardArgument()
    */
-  public boolean hasWildcard() {
+  public boolean hasWildcardArgument() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
+      if (type.isClassOrInterfaceType() && ((ClassOrInterfaceType) type).hasWildcardArgument()) {
         return true;
       }
     }
@@ -128,7 +131,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Indicates whether any of the types in this type tuple contains a capture variable.
+   * Returns true if any of the types in this type tuple contains a capture variable.
    *
    * @return true if there is at least one capture variable occurrence
    */
@@ -142,7 +145,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Indicates whether the tuple is empty.
+   * Returns true if the tuple is empty.
    *
    * @return true if the tuple has no components, false otherwise
    */
@@ -151,7 +154,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Return the number of components of the tuple.
+   * Returns the number of components of the tuple.
    *
    * @return the number of components of this tuple
    */
@@ -160,7 +163,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Indicates whether the tuple has any generic components.
+   * Returns true if the tuple has any generic components.
    *
    * @param ignoreWildcards if true, disregard wildcards when checking for generics
    * @return true if any component of tuple is generic, false if none are
@@ -176,7 +179,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   @Override
   public Iterator<Type> iterator() {
-    return new TypeIterator(list.iterator());
+    return Collections.unmodifiableList(list).iterator();
   }
 
   @Override
@@ -192,29 +195,5 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
       result = list.get(i).compareTo(tuple.list.get(i));
     }
     return result;
-  }
-
-  private static class TypeIterator implements Iterator<Type> {
-
-    private Iterator<Type> iterator;
-
-    public TypeIterator(Iterator<Type> iterator) {
-      this.iterator = iterator;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return iterator.hasNext();
-    }
-
-    @Override
-    public Type next() {
-      return iterator.next();
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
   }
 }

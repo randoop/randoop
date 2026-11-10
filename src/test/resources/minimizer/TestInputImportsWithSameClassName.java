@@ -5,10 +5,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputImportsWithSameClassName {
 
-  /* This test input uses ClassA belonging to package dir_a and ClassA belonging to
-   * package dir_b. It would be nicer if the minimizer retained the
-   * fully-qualified type name for both instances of ClassA.
-   */
+  // This test input uses ClassA belonging to package dir_a and ClassA belonging to
+  // package dir_b.
 
   @Test
   public void test1() throws Throwable {

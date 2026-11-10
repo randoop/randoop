@@ -6,7 +6,7 @@ package randoop.sequence;
  * previously terminated normally, throws an exception. Includes information needed to report the
  * error.
  */
-public class SequenceExceptionError extends Error {
+public class SequenceExceptionError extends RuntimeException {
 
   /** ID for serialization. */
   private static final long serialVersionUID = 4778297090156993454L;
@@ -15,6 +15,7 @@ public class SequenceExceptionError extends Error {
   private Throwable e;
 
   /** The test sequence. */
+  @SuppressWarnings("serial")
   private ExecutableSequence testSequence;
 
   /** The position of the statement that threw the exception. */

@@ -11,6 +11,11 @@ public class ExcludeTestPredicate implements Predicate<ExecutableSequence> {
   /** The sequences to forbid. */
   private Set<Sequence> excludeSet;
 
+  /**
+   * Creates a predicate that forbids the given sequences.
+   *
+   * @param excludeSet the sequences to forbid
+   */
   public ExcludeTestPredicate(Set<Sequence> excludeSet) {
     this.excludeSet = excludeSet;
   }

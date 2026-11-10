@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -14,6 +15,7 @@ import randoop.types.ReferenceArgument;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 
+/** Chooses descriptive names for the variables of a sequence, based on the variables' types. */
 class VariableRenamer {
 
   /** The sequence in which every variable will be renamed. */
@@ -22,13 +24,18 @@ class VariableRenamer {
   /** Maximum depth to concatenate parameterized type names. */
   private static final int VAR_NAME_MAX_DEPTH = 2;
 
+  /**
+   * Creates a VariableRenamer for the given sequence.
+   *
+   * @param sequence the sequence whose variables will be renamed; must not be null
+   */
   public VariableRenamer(Sequence sequence) {
     assert sequence != null : "The given sequence to rename cannot be null";
     this.sequence = sequence;
   }
 
   /**
-   * Heuristically transforms variables to better names based on its type name. Here are some
+   * Heuristically transforms variables to better names based on their type names. Here are some
    * examples:
    *
    * <pre>{@code
@@ -122,7 +129,7 @@ class VariableRenamer {
 
       List<TypeArgument> arglist = ((ClassOrInterfaceType) type).getTypeArguments();
       // TODO: This test seems like a hack.  Shouldn't the arglist always be empty
-      /// for a parameterized type?
+      // for a parameterized type?
       if (!arglist.isEmpty()) {
         // Only use the first type argument to construct the name to simplify things.
         TypeArgument argument = arglist.get(0);
@@ -149,7 +156,8 @@ class VariableRenamer {
    * @return capitalized form of variable name
    */
   private static String capitalizeString(String variableName) {
-    return variableName.substring(0, 1).toUpperCase() + variableName.substring(1);
+    return variableName.substring(0, 1).toUpperCase(Locale.getDefault())
+        + variableName.substring(1);
   }
 
   /**
@@ -160,6 +168,7 @@ class VariableRenamer {
    * @return variableName with the first letter lowercased
    */
   private static String lowercaseFirstCharacter(String variableName) {
-    return variableName.substring(0, 1).toLowerCase() + variableName.substring(1);
+    return variableName.substring(0, 1).toLowerCase(Locale.getDefault())
+        + variableName.substring(1);
   }
 }

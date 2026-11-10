@@ -7,10 +7,19 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code o1.equals(o2) ==> o2.equals(o1)}. */
 public final class EqualsSymmetric extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
-  private EqualsSymmetric() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsSymmetric() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsSymmetric getInstance() {
     return instance;
   }
@@ -21,7 +30,7 @@ public final class EqualsSymmetric extends ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    return !o1.equals(o2) || o2.equals(o1);
+    return o1.equals(o2) == o2.equals(o1);
   }
 
   @Override
@@ -30,7 +39,7 @@ public final class EqualsSymmetric extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 
   @Override
@@ -50,14 +59,13 @@ public final class EqualsSymmetric extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(256);
     b.append(Globals.lineSep);
     b.append("// This assertion (symmetry of equals) fails ");
     b.append(Globals.lineSep);
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x1) == x1.equals(x0)");
-    b.append(");");
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.equals(x1) == x1.equals(x0));");
     return b.toString();
   }
 }

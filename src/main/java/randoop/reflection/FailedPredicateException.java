@@ -3,6 +3,7 @@ package randoop.reflection;
 /** Represents when a user provides a signature that is excluded by a predicate. */
 public class FailedPredicateException extends Exception {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = 1L;
 
   /**

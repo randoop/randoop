@@ -196,7 +196,7 @@ public class TreeMap<K,V>
         try {
             buildFromSorted(m.size(), m.entrySet().iterator(), null, null);
         } catch (java.io.IOException cannotHappen) {
-        } catch (ClassNotFoundException cannotHappen) {
+        } catch (ClassNotFoundException   | NoClassDefFoundError cannotHappen) {
         }
     }
 
@@ -316,7 +316,7 @@ public class TreeMap<K,V>
                     buildFromSorted(mapSize, map.entrySet().iterator(),
                                     null, null);
                 } catch (java.io.IOException cannotHappen) {
-                } catch (ClassNotFoundException cannotHappen) {
+                } catch (ClassNotFoundException  | NoClassDefFoundError cannotHappen) {
                 }
                 return;
             }
@@ -639,7 +639,7 @@ public class TreeMap<K,V>
         try {
             clone.buildFromSorted(size, entrySet().iterator(), null, null);
         } catch (java.io.IOException cannotHappen) {
-        } catch (ClassNotFoundException cannotHappen) {
+        } catch (ClassNotFoundException  | NoClassDefFoundError cannotHappen) {
         }
 
         return clone;
@@ -2303,7 +2303,7 @@ public class TreeMap<K,V>
         try {
             buildFromSorted(set.size(), set.iterator(), null, defaultVal);
         } catch (java.io.IOException cannotHappen) {
-        } catch (ClassNotFoundException cannotHappen) {
+        } catch (ClassNotFoundException  | NoClassDefFoundError cannotHappen) {
         }
     }
 

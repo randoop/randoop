@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.RandoopClassNameError;
 import randoop.main.gentests.classes.AnotherDependency;
 import randoop.main.gentests.classes.AnotherTestedClass;
 import randoop.main.gentests.classes.ConstructorDependency;
@@ -46,7 +47,8 @@ public class AutoAddDependenciesTest {
   }
 
   @Test
-  public void getClassnamesFromArgsShouldIncludeDependenciesToConstructorOfProvidedClass() {
+  public void getClassnamesFromArgsShouldIncludeDependenciesToConstructorOfProvidedClass()
+      throws RandoopClassNameError {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
 
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
@@ -57,7 +59,8 @@ public class AutoAddDependenciesTest {
   }
 
   @Test
-  public void getClassnamesFromArgsShouldIncludeDependenciesOfMethodOfProvidedClass() {
+  public void getClassnamesFromArgsShouldIncludeDependenciesOfMethodOfProvidedClass()
+      throws RandoopClassNameError {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
 
     Set<@ClassGetName String> classnames = GenInputsAbstract.getClassnamesFromArgs(accessibility);
@@ -68,7 +71,8 @@ public class AutoAddDependenciesTest {
   }
 
   @Test
-  public void getClassnamesFromArgsShouldNotIncludeOmittedDependency() {
+  public void getClassnamesFromArgsShouldNotIncludeOmittedDependency()
+      throws RandoopClassNameError {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
     String methodDependencyPattern = ".*ethod.*";
     GenInputsAbstract.omit_classes.add(Pattern.compile(methodDependencyPattern));
@@ -81,7 +85,8 @@ public class AutoAddDependenciesTest {
   }
 
   @Test
-  public void getClassnamesFromArgsShouldNotIncludeDependencyOfOmittedClass() {
+  public void getClassnamesFromArgsShouldNotIncludeDependencyOfOmittedClass()
+      throws RandoopClassNameError {
     GenInputsAbstract.testclass.add(TestedClass.class.getName());
     GenInputsAbstract.testclass.add(AnotherTestedClass.class.getName());
     Pattern anotherTestedClassPattern = Pattern.compile(".*erTested.*");

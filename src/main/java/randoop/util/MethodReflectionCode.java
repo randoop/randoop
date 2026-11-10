@@ -5,7 +5,6 @@ import static randoop.Globals.lineSep;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import org.plumelib.util.StringsPlume;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
@@ -13,8 +12,10 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   /** The method to be called. */
   private final Method method;
+
   /** The receiver, or null for a static method. */
   private final Object receiver;
+
   /** The arguments that the method is applied to. */
   private final Object[] inputs;
 
@@ -25,8 +26,12 @@ public final class MethodReflectionCode extends ReflectionCode {
    * @param receiver the receiver, or null for a static method
    * @param inputs the arguments that the method is applied to
    */
-  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
+  @SuppressWarnings({
+    "deprecation", // AccessibleObject.isAccessible() has no replacement in Java 8.
+    "PMD.ArrayIsStoredDirectly"
+  })
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
+    super();
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -52,46 +57,52 @@ public final class MethodReflectionCode extends ReflectionCode {
     Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
-      try {
+      if (Log.isLoggingOn()) {
         Log.logPrintf(
-            "runReflectionCodeRaw(%s) => %s%n", method, StringsPlume.toStringAndClass(retval));
-      } catch (OutOfMemoryError e) {
-        Log.logPrintf(
-            "runReflectionCodeRaw(%s) => [OutOfMemoryError, %s]%n", method, retval.getClass());
+            "runReflectionCodeRaw(%s) => %s%n", method, Util.toStringAndClassSafely(retval));
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(
             "receiver was null - expected NPE from call to: " + method);
       }
+    } catch (ReflectionCodeException e) {
+      throw e;
     } catch (NullPointerException e) {
       this.exceptionThrown = e;
     } catch (InvocationTargetException e) {
       // The underlying method threw an exception
       this.exceptionThrown = e.getCause();
     } catch (Throwable e) {
-      // Any other exception indicates Randoop should not have called the method
-      String message =
+      // Any other exception indicates Randoop should not have called the method in this way.
+      int numArgs = (receiver == null ? 0 : 1) + inputs.length;
+      StringBuilder sb = new StringBuilder();
+      sb.append(
           String.format(
-              "error invoking %s on %d arguments:",
-              method, (receiver == null ? 0 : 1) + inputs.length);
+              "error invoking %s on %s:", method, StringsPlume.nPlural(numArgs, "argument")));
       if (receiver != null) {
-        message += lineSep + "  " + receiver;
+        sb.append(lineSep);
+        sb.append("  receiver: ");
+        sb.append(Util.toStringAndClassSafely(receiver, true));
       }
       for (Object input : inputs) {
-        message += lineSep + "  " + input;
+        sb.append(lineSep);
+        sb.append("  ");
+        sb.append(Util.toStringAndClassSafely(input, true));
       }
-      throw new ReflectionCodeException(message, e);
+      throw new ReflectionCodeException(sb.toString(), e);
     }
   }
 
   @Override
   public String toString() {
-    return "Call to "
+    return getClass().getSimpleName()
+        + ": "
         + method
         + " receiver: "
-        + receiver
+        + Util.toStringAndClassSafely(receiver, true)
         + " args: "
-        + Arrays.toString(inputs)
+        + Util.elementsToStringAndClassSafely(inputs)
+        + " "
         + status();
   }
 }

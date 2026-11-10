@@ -1,5 +1,7 @@
 package randoop.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
  * #hasRun()} indicates whether it has been run.
@@ -17,27 +19,45 @@ public abstract class ReflectionCode {
   // Before runReflectionCodeRaw is executed, both of these fields are null. After
   // runReflectionCodeRaw is executed, if exceptionThrown is null, then retval is the returned value
   // (which might be null).
-  protected Object retval;
-  protected Throwable exceptionThrown;
+  /** The value yielded by execution. */
+  protected @Nullable Object retval;
 
+  /** The exception thrown by execution. */
+  protected @Nullable Throwable exceptionThrown;
+
+  /** Creates a ReflectionCode. */
+  public ReflectionCode() {}
+
+  /**
+   * Returns true if this code has started execution.
+   *
+   * @return true if this code has started execution
+   */
   public final boolean hasStarted() {
     return hasStarted;
   }
 
+  /**
+   * Returns true if this code has completed execution.
+   *
+   * @return true if this code has completed execution
+   */
   public final boolean hasRun() {
     return hasRun;
   }
 
+  /** Mark that execution has started. */
   protected final void setHasStarted() {
     if (hasStarted) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasStarted() twice");
     }
     hasStarted = true;
   }
 
+  /** Mark that execution has completed. */
   protected final void setHasRun() {
     if (hasRun) {
-      throw new ReflectionCodeException("cannot run this twice");
+      throw new ReflectionCodeException("cannot call setHasRun() twice");
     }
     hasRun = true;
   }
@@ -47,14 +67,14 @@ public abstract class ReflectionCode {
    *
    * <ol>
    *   <li>This method calls {@link #runReflectionCodeRaw()} to perform the actual work. {@link
-   *       #runReflectionCodeRaw()} sets the {@code .retVal} or {@code exceptionThrown} field, or
+   *       #runReflectionCodeRaw()} sets the {@code retVal} or {@code exceptionThrown} field, or
    *       throws an exception if there is a bug in Randoop.
    * </ol>
    *
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  public final void runReflectionCode() throws ReflectionCodeException {
+  public final void runReflectionCode() {
     this.setHasStarted();
     runReflectionCodeRaw();
     this.setHasRun();
@@ -67,16 +87,23 @@ public abstract class ReflectionCode {
    * @throws ReflectionCodeException if execution results in conflicting error and success states;
    *     this results from a bug in Randoop
    */
-  protected abstract void runReflectionCodeRaw() throws ReflectionCodeException;
+  protected abstract void runReflectionCodeRaw();
 
-  public Object getReturnValue() {
+  /**
+   * Returns the value returned by the execution. The result is null if the execution returned null
+   * or if the execution threw an exception; call {@link #getExceptionThrown} to distinguish these
+   * two cases.
+   *
+   * @return the value returned by the execution, or null if it returned null or threw an exception
+   */
+  public @Nullable Object getReturnValue() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
     return retval;
   }
 
-  public Throwable getExceptionThrown() {
+  public @Nullable Throwable getExceptionThrown() {
     if (!hasRun()) {
       throw new IllegalStateException("run first, then ask");
     }
@@ -90,30 +117,47 @@ public abstract class ReflectionCode {
    */
   protected String status() {
     if (!hasStarted() && !hasRun()) {
-      return " not run yet";
+      return "not run yet";
     } else if (hasStarted() && !hasRun()) {
-      return " failed to run";
+      return "failed to run";
     } else if (!hasStarted() && hasRun()) {
-      return " ILLEGAL STATE";
+      return "ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return " returned: " + retval;
+      return "returned: " + Util.toStringAndClassSafely(retval);
     } else {
-      return " threw: " + exceptionThrown;
+      return "threw: " + Util.toStringSafely(exceptionThrown);
     }
   }
 
   /** Indicates a bug in the ReflectionCode class. */
   static final class ReflectionCodeException extends IllegalStateException {
+    /** ID for serializing this class. */
     private static final long serialVersionUID = -7508201027241079866L;
 
+    /**
+     * Creates a ReflectionCodeException.
+     *
+     * @param msg the detail message
+     */
     ReflectionCodeException(String msg) {
       super(msg);
     }
 
+    /**
+     * Creates a ReflectionCodeException.
+     *
+     * @param msg the detail message
+     * @param cause the cause
+     */
     ReflectionCodeException(String msg, Throwable cause) {
       super(msg, cause);
     }
 
+    /**
+     * Creates a ReflectionCodeException.
+     *
+     * @param cause the cause
+     */
     ReflectionCodeException(Throwable cause) {
       super(cause);
     }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="All Java Rules"
+         xmlns="http://sourceforge.net"
+         xmlns:xsi="http://w3.org"
+         xsi:schemaLocation="http://sourceforge.net https://sourceforge.net">
+    <description>MDE PMD Java rules</description>
+
+    <!-- 1. Best Practices: Enforces generally accepted best practices -->
+    <rule ref="category/java/bestpractices.xml">
+      <exclude name="ExhaustiveSwitchHasDefault"/> <!-- A default is protection against future changes to the enum. -->
+      <exclude name="ForLoopVariableCount"/>
+      <exclude name="LiteralsFirstInComparisons"/> <!-- worse readability to guard against null -->
+      <exclude name="RelianceOnDefaultCharset"/> <!-- Since Java 18, the default is UTF-8 -->
+      <exclude name="UnitTestContainsTooManyAsserts"/>
+      <exclude name="UseVarargs"/> <!-- rarely desirable -->
+
+      <!-- Good rules, but a heavy lift to apply. Do so later. -->
+      <exclude name="AvoidPrintStackTrace"/>
+      <exclude name="SystemPrintln"/>
+      <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
+    </rule>
+
+    <!-- 2. Code Style: Enforces specific coding styles and conventions -->
+    <rule ref="category/java/codestyle.xml">
+      <exclude name="ConfusingTernary"/> <!-- Prevents most logical and clear ordering. -->
+      <exclude name="LocalVariableCouldBeFinal"/> <!-- too much clutter -->
+      <exclude name="LongVariable"/>
+      <exclude name="MethodArgumentCouldBeFinal"/>
+      <exclude name="OnlyOneReturn"/>
+      <exclude name="ShortClassName"/>
+      <exclude name="ShortVariable"/>
+      <exclude name="TooManyStaticImports"/>
+      <exclude name="UselessParentheses"/> <!-- Redundant parens can emphasize subexpressions in string concatenation. -->
+    </rule>
+    <rule ref="category/java/codestyle.xml/EmptyControlStatement">
+        <properties>
+            <property name="allowCommentedBlocks" value="true" />
+        </properties>
+    </rule>
+
+    <!-- 3. Design: Helps discover software design issues -->
+    <rule ref="category/java/design.xml">
+      <exclude name="AvoidDeeplyNestedIfStmts"/>
+      <exclude name="CognitiveComplexity"/>
+      <exclude name="CollapsibleIfStatements"/>
+      <exclude name="CouplingBetweenObjects"/>
+      <exclude name="CyclomaticComplexity"/>
+      <exclude name="ExcessiveImports" />
+      <exclude name="ExcessivePublicCount" />
+      <exclude name="GodClass"/>
+      <exclude name="LawOfDemeter"/>
+      <exclude name="LoosePackageCoupling"/> <!-- requires configuration -->
+      <exclude name="NPathComplexity"/>
+      <exclude name="NcssCount"/>
+      <exclude name="SimplifyBooleanReturns"/> <!-- too-clever one-liners can be hard to understand -->
+      <exclude name="TooManyFields"/>
+      <exclude name="TooManyMethods"/>
+
+      <!-- Good rules, but a heavy lift to apply. Do so later. -->
+      <exclude name="AvoidThrowingRawExceptionTypes"/>
+    </rule>
+
+    <!-- 4. Documentation: Rules related to code documentation and Javadocs -->
+    <rule ref="category/java/documentation.xml">
+      <exclude name="CommentSize"/>
+      <exclude name="UncommentedEmptyConstructor"/> <!-- other linters require a no-argument constructor -->
+    </rule>
+
+    <!-- 5. Error Prone: Detects constructs that are broken, confusing, or runtime-error prone -->
+    <rule ref="category/java/errorprone.xml">
+      <exclude name="AvoidDuplicateLiterals"/>
+      <exclude name="AvoidFieldNameMatchingMethodName"/>
+      <exclude name="AvoidLiteralsInIfCondition"/>
+      <exclude name="CompareObjectsWithEquals"/> <!-- use the Interning Checker instead -->
+      <exclude name="DoNotTerminateVM"/> <!-- specific to J2EE -->
+      <exclude name="NullAssignment"/>
+      <exclude name="ReturnEmptyCollectionRatherThanNull"/>
+
+      <!-- Good rules, but a heavy lift to apply. Do so later. -->
+      <exclude name="AvoidCatchingGenericException"/>
+    </rule>
+    <rule ref="category/java/errorprone.xml/AssignmentInOperand">
+        <properties>
+            <property name="allowIncrementDecrement" value="true" />
+        </properties>
+    </rule>
+
+    <!-- 6. Multithreading: Flags issues when dealing with multiple threads of execution -->
+    <rule ref="category/java/multithreading.xml">
+      <exclude name="DoNotUseThreads"/> <!-- limited applicability -->
+      <exclude name="UseConcurrentHashMap"/> <!-- limited applicability -->
+    </rule>
+
+    <!-- 7. Performance: Flags suboptimal code that can affect execution efficiency -->
+    <rule ref="category/java/performance.xml">
+      <exclude name="ConsecutiveAppendsShouldReuse"/>
+      <exclude name="RedundantFieldInitializer"/> <!-- explicit initializer is clearer -->
+    </rule>
+
+    <!-- 8. Security: Flags potential security flaws and vulnerabilities -->
+    <rule ref="category/java/security.xml">
+    </rule>
+
+</ruleset>

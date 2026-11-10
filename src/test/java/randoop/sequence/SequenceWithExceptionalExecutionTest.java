@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.Test;
 import randoop.DummyVisitor;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedClassOperation;
@@ -39,7 +40,7 @@ import randoop.util.MultiMap;
 public class SequenceWithExceptionalExecutionTest {
 
   @Test
-  public void testArrayStoreException() {
+  public void testArrayStoreException() throws RandoopSpecificationError {
     ArrayType arrayType =
         ArrayType.ofComponentType(JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE));
     ArrayType rawArrayType = ArrayType.ofComponentType(JDKTypes.ARRAY_LIST_TYPE.getRawtype());

@@ -1,5 +1,7 @@
 package randoop.contract;
 
+import java.util.regex.Matcher;
+import org.checkerframework.checker.regex.qual.Regex;
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
 import randoop.util.ObjectContractReflectionCode;
@@ -7,10 +9,11 @@ import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /** Utility methods for safely executing and printing {@link ObjectContract} code. */
-public class ObjectContractUtils {
+public final class ObjectContractUtils {
 
+  /** Do not instantiate. */
   private ObjectContractUtils() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -35,8 +38,9 @@ public class ObjectContractUtils {
   public static String localizeContractCode(String str, Variable... vars) {
     for (int i = 0; i < vars.length; i++) {
       // See documentation for ObjectContract.toCommentString().
-      String pattern = "\\bx" + i + "\\b";
-      str = str.replaceAll(pattern, vars[i].getName());
+      @SuppressWarnings("regex:assignment")
+      @Regex String pattern = "\\bx" + i + "\\b";
+      str = str.replaceAll(pattern, Matcher.quoteReplacement(vars[i].getName()));
     }
     return str;
   }

@@ -48,7 +48,9 @@ public class CoveredClassVisitor implements ExecutionVisitor {
     try {
       Method m = c.getMethod("randoop_checkAndReset");
       m.setAccessible(true);
-      return (boolean) m.invoke(null);
+      @SuppressWarnings("nullness:unboxing.of.nullable") // known return type
+      boolean result = (boolean) m.invoke(null);
+      return result;
     } catch (NoSuchMethodException e) {
       throw new Error("Cannot find instrumentation method: " + e);
     } catch (SecurityException e) {

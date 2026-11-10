@@ -27,6 +27,12 @@ public class SubTypeSet {
   /** If true, then {@link #mark} and {@link #undoLastStep()} are supported. */
   private boolean supportsCheckpoints;
 
+  /**
+   * Creates an empty SubTypeSet.
+   *
+   * @param supportsCheckpoints if true, then {@link #mark} and {@link #undoLastStep()} are
+   *     supported
+   */
   public SubTypeSet(boolean supportsCheckpoints) {
     if (supportsCheckpoints) {
       this.supportsCheckpoints = true;
@@ -63,7 +69,9 @@ public class SubTypeSet {
    * @param c the type to be added
    */
   public void add(Type c) {
-    if (c == null) throw new IllegalArgumentException("c cannot be null.");
+    if (c == null) {
+      throw new IllegalArgumentException("c cannot be null.");
+    }
     if (types.contains(c)) {
       return;
     }
@@ -80,7 +88,9 @@ public class SubTypeSet {
   }
 
   private void addQueryType(Type type) {
-    if (type == null) throw new IllegalArgumentException("c cannot be null.");
+    if (type == null) {
+      throw new IllegalArgumentException("c cannot be null.");
+    }
     Set<Type> keySet = subTypes.keySet();
     if (keySet.contains(type)) {
       return;

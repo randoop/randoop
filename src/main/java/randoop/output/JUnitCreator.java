@@ -1,7 +1,16 @@
 package randoop.output;
 
+import static com.github.javaparser.GeneratedJavaParserConstants.EOF;
+import static com.github.javaparser.GeneratedJavaParserConstants.RBRACE;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.Position;
+import com.github.javaparser.Problem;
+import com.github.javaparser.Token;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -41,16 +50,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.StringsPlume;
 import randoop.Globals;
 import randoop.main.GenTests;
+import randoop.main.RandoopBug;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 @SuppressWarnings("deprecation") // TODO: fix. "new ClassOrInterfaceType()" does not handle generics
-public class JUnitCreator {
+public final class JUnitCreator {
 
   /** An instance of a Java parser. */
-  static JavaParser javaParser = new JavaParser();
+  private static final JavaParser javaParser = new JavaParser();
+
+  /**
+   * A Java parser for fixture text. It accepts every feature of the latest Java version that
+   * JavaParser supports, because fixture text is written by the user.
+   */
+  private static final JavaParser fixtureParser =
+      new JavaParser(
+          new ParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.CURRENT));
 
   /** The "public" modifier. */
   private final NodeList<Modifier> PUBLIC = new NodeList<>(Modifier.publicModifier());
@@ -70,16 +92,16 @@ public class JUnitCreator {
   private Map<String, Integer> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
-  private BlockStmt beforeAllBody = null;
+  private @Nullable BlockStmt beforeAllBody = null;
 
   /** The Java text for AfterAll method of generated test class. */
-  private BlockStmt afterAllBody = null;
+  private @Nullable BlockStmt afterAllBody = null;
 
   /** The Java text for BeforeEach method of generated test class. */
-  private BlockStmt beforeEachBody = null;
+  private @Nullable BlockStmt beforeEachBody = null;
 
   /** The Java text for AfterEach method of generated test class. */
-  private BlockStmt afterEachBody = null;
+  private @Nullable BlockStmt afterEachBody = null;
 
   /** The JUnit annotation for the BeforeAll option. */
   private static final String BEFORE_ALL = "BeforeClass";
@@ -105,12 +127,42 @@ public class JUnitCreator {
   /** The method name for the AfterEach option. */
   private static final String AFTER_EACH_METHOD = "teardown";
 
+  /**
+   * The definition of {@code assertArrayEquals(boolean[], boolean[])}. Needed if Randoop's
+   * generated tests are run under JUnit 4.11 or earlier. JUnit version 4.11 contains {@code
+   * assertArrayEquals} for other types of arrays, but not for boolean arrays.
+   */
+  private static final String BOOLEAN_ARRAY_EQUALS_METHOD =
+      StringsPlume.joinLines(
+          "public void assertBooleanArrayEquals(boolean[] expectedArray, boolean[] actualArray) {",
+          "  if (expectedArray.length != actualArray.length) {",
+          "    throw new AssertionError(\"Array lengths differ: \"",
+          "        + expectedArray.length + \" != \" + actualArray.length);",
+          "  }",
+          "  for (int i = 0; i < expectedArray.length; i++) {",
+          "    if (expectedArray[i] != actualArray[i]) {",
+          "      throw new AssertionError(\"Arrays differ at index \" + i + \": \"",
+          "          + expectedArray[i] + \" != \" + actualArray[i]);",
+          "    }",
+          "  }",
+          "}");
+
+  /**
+   * Create a JUnitCreator object.
+   *
+   * @param junit_package_name the package name for the generated test classes
+   * @param beforeAllBody the Java text for BeforeAll method of generated test class, or null
+   * @param afterAllBody the Java text for AfterAll method of generated test class, or null
+   * @param beforeEachBody the Java text for BeforeEach method of generated test class, or null
+   * @param afterEachBody the Java text for AfterEach method of generated test class, or null
+   * @return the JUnitCreator object
+   */
   public static JUnitCreator getTestCreator(
       String junit_package_name,
-      BlockStmt beforeAllBody,
-      BlockStmt afterAllBody,
-      BlockStmt beforeEachBody,
-      BlockStmt afterEachBody) {
+      @Nullable BlockStmt beforeAllBody,
+      @Nullable BlockStmt afterAllBody,
+      @Nullable BlockStmt beforeEachBody,
+      @Nullable BlockStmt afterEachBody) {
     assert !Objects.equals(junit_package_name, "");
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllBody != null) {
@@ -128,6 +180,11 @@ public class JUnitCreator {
     return junitCreator;
   }
 
+  /**
+   * Creates a JUnitCreator. Clients should call {@link #getTestCreator}.
+   *
+   * @param packageName the package name for the generated test classes
+   */
   private JUnitCreator(String packageName) {
     assert !Objects.equals(packageName, "");
     this.packageName = packageName;
@@ -258,6 +315,14 @@ public class JUnitCreator {
       }
     }
 
+    // If boolean array assert is enabled, add assertBooleanArrayEquals(boolean[], boolean[]) method
+    // to the test class.
+    // This is a backward compatibility feature in case the user is using JUnit 4.11 or below
+    // when running the generated tests.
+    MethodDeclaration assertBooleanArrayEqualsMethod =
+        javaParser.parseMethodDeclaration(BOOLEAN_ARRAY_EQUALS_METHOD).getResult().get();
+    bodyDeclarations.add(assertBooleanArrayEqualsMethod);
+
     for (ExecutableSequence eseq : sequences) {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), eseq);
       if (testMethod != null) {
@@ -303,8 +368,13 @@ public class JUnitCreator {
 
     // TODO make sequence generate list of JavaParser statements
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
+    BlockStmt sequenceBlock;
     // try {
-    BlockStmt sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    try {
+      sequenceBlock = javaParser.parseBlock(sequenceBlockString).getResult().get();
+    } catch (Exception e) {
+      throw new RandoopBug("Cannot parse: " + sequenceBlockString, e);
+    }
     statements.addAll(sequenceBlock.getStatements());
     // }
     // catch (ParseException e) {
@@ -436,7 +506,10 @@ public class JUnitCreator {
 
       String testVariable = instanceNameGen.next();
       ClassOrInterfaceType testClassType = new ClassOrInterfaceType(testClass);
-      @SuppressWarnings("deprecation") // "new ClassOrInterfaceType()" does not handle generics
+      @SuppressWarnings({
+        "deprecation", // "new ClassOrInterfaceType()" does not handle generics
+        "PMD.UseDiamondOperator" // cannot infer for an empty list
+      })
       VariableDeclarator variableDecl =
           new VariableDeclarator(
               testClassType,
@@ -501,7 +574,8 @@ public class JUnitCreator {
     NodeList<Expression> args = new NodeList<>(new IntegerLiteralExpr("1"));
     NodeList<Statement> exitStatement =
         new NodeList<>(
-            new ExpressionStmt(new MethodCallExpr(new NameExpr("System"), "exit", args)));
+            new ExpressionStmt(
+                new MethodCallExpr(new NameExpr("Runtime.getRuntime()"), "exit", args)));
     exitCall.setStatements(exitStatement);
     bodyStatements.add(new IfStmt(new NameExpr(failureVariableName), exitCall, null));
 
@@ -519,16 +593,129 @@ public class JUnitCreator {
     return compilationUnit.toString();
   }
 
-  public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
+  /**
+   * Parses fixture text, which is a sequence of Java statements.
+   *
+   * @param bodyText the lines of the fixture text, or null
+   * @return a block containing the statements, or null if {@code bodyText} is null
+   * @throws ParseException if {@code bodyText} is not a sequence of Java statements. The message
+   *     describes each error and gives its position as a line and column of {@code bodyText}. The
+   *     cause is the parser's exception for the first error.
+   */
+  public static @Nullable BlockStmt parseFixture(@Nullable List<String> bodyText)
+      throws ParseException {
     if (bodyText == null) {
       return null;
     }
+    // The text is parsed as a block.  The "{" is on the first line of bodyText, so that line
+    // numbers match bodyText.  The "}" is on a line of its own, after the last line of bodyText.
     StringBuilder blockText = new StringBuilder();
-    blockText.append("{").append(Globals.lineSep);
+    blockText.append('{');
     for (String line : bodyText) {
       blockText.append(line).append(Globals.lineSep);
     }
-    blockText.append(Globals.lineSep).append("}");
-    return javaParser.parseBlock(blockText.toString()).getResult().get();
+    blockText.append('}');
+    ParseResult<BlockStmt> result = fixtureParser.parseBlock(blockText.toString());
+    // JavaParser recovers from some syntax errors, so a result can be present even if there are
+    // problems.
+    if (result.isSuccessful()) {
+      return result.getResult().get();
+    }
+    StringJoiner message = new StringJoiner(Globals.lineSep);
+    for (Problem problem : result.getProblems()) {
+      message.add(describeFixtureProblem(problem, bodyText.size()));
+    }
+    ParseException exception = new ParseException(message.toString());
+    for (Problem problem : result.getProblems()) {
+      Throwable cause = problem.getCause().orElse(null);
+      if (cause == null) {
+        continue;
+      }
+      if (exception.getCause() == null) {
+        exception.initCause(cause);
+      } else {
+        exception.addSuppressed(cause);
+      }
+    }
+    throw exception;
+  }
+
+  /** Matches a position in a JavaParser message, such as " at line 3, column 1". */
+  private static final Pattern MESSAGE_POSITION =
+      Pattern.compile("\\s+at line (\\d+), column (\\d+)");
+
+  /**
+   * Returns a description of a problem in fixture text, including its position in the fixture text.
+   *
+   * @param problem a problem that JavaParser found in the block that {@link #parseFixture} creates
+   * @param numLines the number of lines of fixture text
+   * @return a description of {@code problem}
+   */
+  private static String describeFixtureProblem(Problem problem, int numLines) {
+    String message = problem.getMessage();
+    // The token at which the problem occurs.
+    Token token = null;
+    Throwable cause = problem.getCause().orElse(null);
+    if (cause instanceof ParseException) {
+      ParseException e = (ParseException) cause;
+      Token current = e.currentToken;
+      if (current != null && current.next != null) {
+        if (current.kind == RBRACE && expectsOnlyEof(e)) {
+          // A "}" in the fixture text closed the block, and more text follows it.
+          token = current;
+          message = "Unmatched \"}\".";
+        } else {
+          // The parser accepted `current` and rejected the token after it.
+          token = current.next;
+        }
+      }
+    }
+
+    // The position of the problem in the block.
+    Position position;
+    if (token != null) {
+      position = new Position(token.beginLine, token.beginColumn);
+    } else {
+      position =
+          problem.getLocation().flatMap(TokenRange::toRange).map(range -> range.begin).orElse(null);
+    }
+    // Some messages, such as those for lexical errors, contain a position in the block.  Remove it,
+    // because it is not a position in the fixture text.
+    Matcher matcher = MESSAGE_POSITION.matcher(message);
+    if (matcher.find()) {
+      if (position == null) {
+        position =
+            new Position(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+      }
+      message = matcher.replaceFirst("");
+    }
+    if (position == null) {
+      return message;
+    }
+
+    int line = position.line;
+    int column = position.column;
+    if (line > numLines) {
+      return "At end of text: " + message + " (Randoop adds \"}\" after the fixture text.)";
+    }
+    if (line == 1) {
+      // Account for the "{" that precedes the first line.
+      column--;
+    }
+    return String.format("Line %d, column %d: %s", line, column, message);
+  }
+
+  /**
+   * Returns true if the only token that the parser expected was the end of input.
+   *
+   * @param e a parse exception
+   * @return true if {@code e} reports that the parser expected only the end of input
+   */
+  private static boolean expectsOnlyEof(ParseException e) {
+    int[][] expected = e.expectedTokenSequences;
+    return expected != null
+        && expected.length == 1
+        && expected[0].length == 1
+        && expected[0][0] == EOF;
   }
 }

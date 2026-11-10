@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -63,7 +63,7 @@ public class Person {
         }
     }
 
-/// getter methods ///////////////////////////////////
+// getter methods ///////////////////////////////////
 
     public String toString() { return name; }
     public String getName() { return name; }

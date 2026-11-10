@@ -5,6 +5,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.condition.ExecutableSpecification;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.ParameterType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -15,6 +16,14 @@ import randoop.types.TypeTuple;
  * not done in reflection.
  */
 public class TypedClassOperationWithCast extends TypedClassOperation {
+  /**
+   * Creates a TypedClassOperationWithCast with no specification.
+   *
+   * @param op the operation
+   * @param declaringType the declaring type of the operation
+   * @param inputTypes the input types of the operation
+   * @param outputType the output type of the operation
+   */
   TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,
@@ -23,6 +32,15 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     this(op, declaringType, inputTypes, outputType, null);
   }
 
+  /**
+   * Creates a TypedClassOperationWithCast.
+   *
+   * @param op the operation
+   * @param declaringType the declaring type of the operation
+   * @param inputTypes the input types of the operation
+   * @param outputType the output type of the operation
+   * @param execSpec the specification of the operation, or null
+   */
   TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,
@@ -69,14 +87,19 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
     ExecutionOutcome outcome = super.execute(input);
     if (outcome instanceof NormalExecution) {
       NormalExecution execution = (NormalExecution) outcome;
-      Object result = null;
+      // If the output type is an uninstantiated type variable, getRuntimeClass() would throw.
+      // In that case, skip the cast and return the value as-is.
+      if (getOutputType() instanceof ParameterType) {
+        return outcome;
+      }
+      Object result;
       try {
         result = getOutputType().getRuntimeClass().cast(execution.getRuntimeValue());
       } catch (ClassCastException e) {
         return new ExceptionalExecution(e, 0);
       }
       if (result != null) {
-        return new NormalExecution(result, execution.getExecutionTime());
+        return new NormalExecution(result, execution.getExecutionTimeNanos());
       }
     }
     return outcome;

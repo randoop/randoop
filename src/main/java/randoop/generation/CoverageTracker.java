@@ -47,7 +47,7 @@ public class CoverageTracker {
   private final Map<String, Double> branchCoverageMap = new HashMap<>();
 
   /** Names of all the classes under test. */
-  private final Set<@BinaryName String> classesUnderTest = new HashSet<>();
+  protected final Set<@BinaryName String> classesUnderTest = new HashSet<>();
 
   /**
    * Initialize the coverage tracker.
@@ -58,6 +58,9 @@ public class CoverageTracker {
     for (ClassOrInterfaceType classOrInterfaceType : classInterfaceTypes) {
       @SuppressWarnings("signature") // class is non-array, so getName() returns @BinaryName
       @BinaryName String bn = classOrInterfaceType.getRuntimeClass().getName();
+      if (GenInputsAbstract.bloodhound_logging) {
+        System.out.println("classUnderTest: " + bn);
+      }
       classesUnderTest.add(bn);
     }
   }
@@ -69,34 +72,34 @@ public class CoverageTracker {
   private void collectCoverageInformation() {
     try {
       // Retrieve the execution data from the Jacoco Java agent.
-      final InputStream execDataStream;
-      try {
-        execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+
+      try (InputStream execDataStream =
+          new ByteArrayInputStream(RT.getAgent().getExecutionData(false))) {
+
+        final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
+
+        // The reader requires a session info visitor, however we do not need any information from
+        // it.
+        reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
+        reader.setExecutionDataVisitor(
+            new IExecutionDataVisitor() {
+              @Override
+              public void visitClassExecution(final ExecutionData data) {
+                // Add the execution data for each class into the execution data store.
+                executionData.put(data);
+              }
+            });
+        reader.read();
       } catch (IllegalStateException e) {
-        System.err.println(
+        System.out.println(
             "If the error notes: 'JaCoCo agent not started', the issue is likely "
                 + "that the Jacoco agent is not included as a Java agent.");
-        System.err.println(
+        System.out.println(
             "To do so, add "
-                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar -javaagent:jacocoagent.jar' "
-                + "to the command line argument.");
-        throw (e);
+                + "'-Xbootclasspath/a:/path/to/jacocoagent.jar"
+                + " -javaagent:/path/to/jacocoagent.jar' to the command line argument.");
+        throw e;
       }
-
-      final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
-
-      // The reader requires a session info visitor, however we do not need any information from it.
-      reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
-      reader.setExecutionDataVisitor(
-          new IExecutionDataVisitor() {
-            @Override
-            public void visitClassExecution(final ExecutionData data) {
-              // Add the execution data for each class into the execution data store.
-              executionData.put(data);
-            }
-          });
-      reader.read();
-      execDataStream.close();
     } catch (IOException e) {
       System.err.println("Error in Coverage Tracker in collecting coverage information.");
       e.printStackTrace(System.err);
@@ -122,10 +125,8 @@ public class CoverageTracker {
     // produced by Jacoco and store it in the coverageBuilder local variable.
     for (@BinaryName String className : classesUnderTest) {
       String resource = getResourceFromClassName(className);
-      InputStream original = getClass().getResourceAsStream(resource);
-      try {
+      try (InputStream original = getClass().getResourceAsStream(resource)) {
         analyzer.analyzeClass(original, className);
-        original.close();
       } catch (IOException e) {
         throw new Error(e);
       }
@@ -185,8 +186,8 @@ public class CoverageTracker {
   }
 
   /** An {@link ISessionInfoVisitor} that does nothing. */
-  private static class DummySessionInfoVisitor implements ISessionInfoVisitor {
-    /** Singleton instance of this class. */
+  private static final class DummySessionInfoVisitor implements ISessionInfoVisitor {
+    /** The singleton instance of this class. */
     public static final DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
 
     /** Initializes the session info visitor. */
@@ -199,6 +200,8 @@ public class CoverageTracker {
      * @param info session information
      */
     @Override
-    public void visitSessionInfo(final SessionInfo info) {}
+    public void visitSessionInfo(final SessionInfo info) {
+      // The session information is not used by this class.
+    }
   }
 }

@@ -3,13 +3,11 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.List;
 import org.junit.Test;
 import randoop.Globals;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -27,18 +25,17 @@ public class ClassReflectionTest {
   //   assertEquals(5, actual.size());
   // }
 
-  private List<TypedOperation> getConcreteOperations(Class<?> c) {
-    return OperationExtractor.operations(
-        c, new DefaultReflectionPredicate(), OmitMethodsPredicate.NO_OMISSION, IS_PUBLIC);
+  private List<TypedOperation> getConcreteOperations(Class<?> c) throws RandoopSpecificationError {
+    return OperationExtractor.operations(c);
   }
 
   @Test
-  public void innerClassTest() {
+  public void innerClassTest() throws RandoopSpecificationError {
     Class<?> outer = randoop.test.ClassWithInnerClass.class;
     Class<?> inner;
     try {
       inner = Class.forName("randoop.test.ClassWithInnerClass$A");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("could not load inner class" + e.getMessage());
       throw new Error("unreachable");
     }

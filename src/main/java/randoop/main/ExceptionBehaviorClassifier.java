@@ -1,19 +1,20 @@
 package randoop.main;
 
 import java.util.ConcurrentModificationException;
+import java.util.concurrent.TimeoutException;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.TimeoutExceededException;
 
 /**
  * Static method {@link #classify} classifies exceptions thrown by a test sequence based on the
  * {@link GenInputsAbstract.BehaviorType} command-line arguments.
  */
-public class ExceptionBehaviorClassifier {
+public final class ExceptionBehaviorClassifier {
 
+  /** Do not instantiate. */
   private ExceptionBehaviorClassifier() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -70,7 +71,7 @@ public class ExceptionBehaviorClassifier {
         return GenInputsAbstract.sof_exception;
       }
 
-      if (t instanceof TimeoutExceededException) {
+      if (t instanceof TimeoutException) {
         return BehaviorType.INVALID;
       }
 

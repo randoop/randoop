@@ -14,7 +14,7 @@ public class OptionsCache {
 
   /** Creates an object for caching the state of command-line arguments. */
   public OptionsCache() {
-    cacheList = new ArrayList<>();
+    cacheList = new ArrayList<>(3);
     cacheList.add(new StaticCache(GenInputsAbstract.class));
     cacheList.add(new StaticCache(ReflectionExecutor.class));
     cacheList.add(new StaticCache(AbstractGenerator.class));

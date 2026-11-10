@@ -3,6 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -26,8 +28,10 @@ import randoop.types.TypeTuple;
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  // State variables.
+  /** The length of the created array, which is also the number of initializer elements. */
   private final int length;
+
+  /** The element type of the created array. */
   private final Type elementType;
 
   /**
@@ -38,6 +42,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @param arrayType the type of array this operation creates
    */
   InitializedArrayCreation(ArrayType arrayType, int length) {
+    super();
     assert length >= 0 : "array length may not be negative: " + length;
 
     this.elementType = arrayType.getComponentType();
@@ -60,18 +65,15 @@ public final class InitializedArrayCreation extends CallableOperation {
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput) {
-    if (statementInput.length > length) {
+    if (statementInput.length != length) {
       throw new IllegalArgumentException(
-          "Too many arguments: " + statementInput.length + ", capacity: " + length);
+          "Wrong number of arguments: " + statementInput.length + ", expected: " + length);
     }
-    long startTime = System.currentTimeMillis();
-    assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) {
       Array.set(theArray, i, statementInput[i]);
     }
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(theArray, totalTime);
+    return new NormalExecution(theArray, 0);
   }
 
   @Override
@@ -87,22 +89,19 @@ public final class InitializedArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    if (inputVars.size() > length) {
+    if (inputVars.size() != length) {
       throw new IllegalArgumentException(
-          "Too many arguments: " + inputVars.size() + ", capacity: " + length);
+          "Wrong number of arguments: " + inputVars.size() + ", expected: " + length);
     }
 
     String arrayTypeName = this.elementType.getFqName();
 
     b.append("new ").append(arrayTypeName).append("[] { ");
-    for (int i = 0; i < inputVars.size(); i++) {
-      if (i > 0) {
-        b.append(", ");
-      }
-
-      String param = getArgumentString(inputVars.get(i));
-      b.append(param);
+    StringJoiner sj = new StringJoiner(", ");
+    for (Variable inputVar : inputVars) {
+      sj.add(getArgumentString(inputVar));
     }
+    b.append(sj);
     b.append(" }");
   }
 
@@ -112,7 +111,7 @@ public final class InitializedArrayCreation extends CallableOperation {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }
@@ -165,7 +164,7 @@ public final class InitializedArrayCreation extends CallableOperation {
     Type elementType;
     try {
       elementType = Type.forName(elementTypeName);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new OperationParseException("Type not found for array element type " + elementTypeName);
     }
 

@@ -7,6 +7,9 @@ import randoop.Globals;
 /** Common behavior for source builder classes. */
 abstract class SourceBuilder {
 
+  /** Creates a SourceBuilder. */
+  public SourceBuilder() {}
+
   /**
    * Creates a line from the given tokens with the current indentation and separated by spaces.
    *
@@ -18,14 +21,14 @@ abstract class SourceBuilder {
   }
 
   /**
-   * Return the source for this declaration as lines of {@code Strings}
+   * Returns the source for this declaration as lines of {@code Strings}
    *
    * @return the list of lines in this declaration
    */
   abstract List<String> toLines();
 
   /**
-   * Return this declaration as a {@code String}.
+   * Returns this declaration as a {@code String}.
    *
    * @return the {@code String} for this declaration
    */

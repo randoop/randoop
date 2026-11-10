@@ -1,7 +1,10 @@
 package randoop.condition;
 
+import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
- * Represents a pair of a an executable guard expression and an executable throws clause.
+ * Represents a pair of an executable guard expression and an executable throws clause.
  *
  * <p>Corresponds to a {@link randoop.condition.specification.ThrowsCondition}.
  */
@@ -26,6 +29,23 @@ class GuardThrowsPair {
   GuardThrowsPair(ExecutableBooleanExpression guard, ThrowsClause throwsClause) {
     this.guard = guard;
     this.throwsClause = throwsClause;
+  }
+
+  @Override
+  public boolean equals(@Nullable Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (!(object instanceof GuardThrowsPair)) {
+      return false;
+    }
+    GuardThrowsPair other = (GuardThrowsPair) object;
+    return this.guard.equals(other.guard) && this.throwsClause.equals(other.throwsClause);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(guard, throwsClause);
   }
 
   @Override

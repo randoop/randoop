@@ -2,6 +2,8 @@ package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
@@ -23,18 +25,19 @@ public final class Statement {
   /** The operation (method call, constructor call, primitive values declaration, etc.). */
   private final TypedOperation operation;
 
-  // The list of values used as input to the statement.
-  //
-  // NOTE that the inputs to a statement are not a list
-  // of Variables, but a list of RelativeNegativeIndex objects.
-  // See that class for an explanation.
+  /**
+   * The list of values used as input to the statement.
+   *
+   * <p>The inputs to a statement are not a list of Variables, but a list of RelativeNegativeIndex
+   * objects. See that class for an explanation.
+   */
   final List<RelativeNegativeIndex> inputs;
 
   /**
    * Create a new statement of type statement that takes as input the given values.
    *
    * @param operation the operation of this statement
-   * @param inputVariables the variable that are used in this statement
+   * @param inputVariables the variables that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
@@ -47,7 +50,7 @@ public final class Statement {
    * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
-    this(operation, new ArrayList<RelativeNegativeIndex>());
+    this(operation, new ArrayList<>(0));
   }
 
   /**
@@ -56,7 +59,7 @@ public final class Statement {
    * @return true if operation is the same, the number of inputs is the same, and inputs are equal
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -80,13 +83,23 @@ public final class Statement {
 
   @Override
   public int hashCode() {
-    return java.util.Objects.hash(operation, inputs);
+    return Objects.hash(operation, inputs);
   }
 
+  /**
+   * Returns the output type of this statement's operation.
+   *
+   * @return the output type of this statement's operation
+   */
   public Type getOutputType() {
     return operation.getOutputType();
   }
 
+  /**
+   * Returns the input types of this statement's operation.
+   *
+   * @return the input types of this statement's operation
+   */
   public TypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
@@ -107,12 +120,20 @@ public final class Statement {
       }
       String typeName = type.getFqName();
       b.append(typeName);
-      b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
+      b.append(' ').append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
-    b.append(";");
+    b.append(';');
   }
 
+  /**
+   * Returns a parsable representation of this statement, of the form "{@code VAR = OPCLASS :
+   * OPERATION : VAR ... VAR}", where OPCLASS is the simple name of the operation's class.
+   *
+   * @param variableName the name of the variable to which this statement's result is assigned
+   * @param inputs the input variables of this statement
+   * @return a parsable string representation of this statement
+   */
   public String toParsableString(String variableName, List<Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
@@ -123,7 +144,7 @@ public final class Statement {
     b.append(" : ");
     for (Variable v : inputs) {
       b.append(v.toString());
-      b.append(" ");
+      b.append(' ');
     }
     return b.toString();
   }
@@ -159,7 +180,8 @@ public final class Statement {
    * @param inputs list of objects to use as inputs to execution
    * @return object representing outcome of computation
    */
-  public ExecutionOutcome execute(Object[] inputs) {
+  @SuppressWarnings("nullness:argument") // operations do not yet declare that inputs may be null
+  public ExecutionOutcome execute(@Nullable Object[] inputs) {
     return operation.execute(inputs);
   }
 
@@ -169,7 +191,7 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement
    */
-  public Type getDeclaringClass() {
+  public @Nullable Type getDeclaringClass() {
     if (operation instanceof TypedClassOperation) {
       return ((TypedClassOperation) operation).getDeclaringType();
     }
@@ -213,7 +235,7 @@ public final class Statement {
   // Do not use the short output format if the value is null, because
   // the variable type may disambiguate among overloaded methods.
   // (It would be even nicer to add a cast where the null is used.)
-  public String getInlinedForm() {
+  public @Nullable String getInlinedForm() {
     if (isNonreceivingInitialization() && !isNullInitialization()) {
       return Value.toCodeString(operation.getValue());
     }
@@ -221,9 +243,9 @@ public final class Statement {
   }
 
   /**
-   * getValue returns the "value" for a statement. Is only meaningful if statement is an assignment
-   * of a constant value. Appeals to {@link CallableOperation} to throw appropriate exception when
-   * unable to provide a value.
+   * Returns the "value" for a statement. Is only meaningful if statement is an assignment of a
+   * literal value. Appeals to {@link CallableOperation} to throw appropriate exception when unable
+   * to provide a value.
    *
    * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *

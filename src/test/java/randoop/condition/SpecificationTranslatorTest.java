@@ -39,7 +39,7 @@ public class SpecificationTranslatorTest {
   // cases: static method, non-static method, check return, parameters, and receiver
 
   @Test
-  public void testPrintWriterAppend() {
+  public void testPrintWriterAppend() throws RandoopSpecificationError {
     Method method = getPrintWriterAppendMethod();
     List<String> parameterList = new ArrayList<>();
     parameterList.add("c");
@@ -136,7 +136,7 @@ public class SpecificationTranslatorTest {
   }
 
   @Test
-  public void testSignatureFromFile() {
+  public void testSignatureFromFile() throws RandoopSpecificationError {
     String specFileName = "test/randoop/condition/java-io-PrintWriter.json";
     Path specFile = Paths.get(specFileName);
     List<Path> specList = new ArrayList<>();

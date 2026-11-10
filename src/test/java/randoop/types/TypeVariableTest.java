@@ -9,13 +9,14 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.test.VariablesInput;
 
 public class TypeVariableTest {
   @Test
-  public void testInstantiationPredicate() {
+  public void testInstantiationPredicate() throws RandoopSpecificationError {
     Class<?> c = VariablesInput.class;
     Set<Method> methods =
         new TreeSet<>(

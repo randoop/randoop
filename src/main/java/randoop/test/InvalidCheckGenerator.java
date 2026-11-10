@@ -1,13 +1,19 @@
 package randoop.test;
 
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.ExecutableSequence;
 
 /** Generates invalid checks. */
 public class InvalidCheckGenerator extends TestCheckGenerator {
+
+  /** Creates an InvalidCheckGenerator. */
+  public InvalidCheckGenerator() {
+    super();
+  }
+
   @Override
-  public InvalidChecks generateTestChecks(ExecutableSequence eseq) {
-    InvalidChecks checks = new InvalidChecks();
-    checks.add(new InvalidValueCheck(eseq, eseq.sequence.size() - 1));
-    return checks;
+  public InvalidChecks generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
+    return new InvalidChecks(new InvalidValueCheck());
   }
 }

@@ -11,10 +11,11 @@ import randoop.types.Type;
  * randoop.operation.Operation} that is a {@link randoop.operation.FieldGet} or {@link
  * randoop.operation.FieldSet} operation.
  */
-public class FieldParser {
+public final class FieldParser {
 
+  /** Do not instantiate. */
   private FieldParser() {
-    throw new Error("Do not instantiate");
+    throw new UnsupportedOperationException("Do not instantiate");
   }
 
   /**
@@ -34,7 +35,7 @@ public class FieldParser {
     ClassOrInterfaceType classType;
     try {
       classType = (ClassOrInterfaceType) Type.forName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);
     }

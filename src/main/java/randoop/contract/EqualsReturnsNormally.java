@@ -6,10 +6,19 @@ import randoop.types.TypeTuple;
 
 /** Checks that calling equals() on an object does not throw an exception. */
 public final class EqualsReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
-  private EqualsReturnsNormally() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsReturnsNormally() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsReturnsNormally getInstance() {
     return instance;
   }
@@ -21,8 +30,11 @@ public final class EqualsReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection EqualsWithItself,ResultOfMethodCallIgnored
-      o.equals(o);
+      @SuppressWarnings({
+        "UnusedVariable",
+        "PMD.UnusedLocalVariable"
+      }) // Execute equals() but ignore its value.
+      boolean ignore = o.equals(o);
     } catch (Exception e) {
       return false;
     }
@@ -35,7 +47,7 @@ public final class EqualsReturnsNormally extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -54,11 +66,6 @@ public final class EqualsReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals()");
-    b.append(");");
-    return b.toString();
+    return "x0.equals(x0);";
   }
 }

@@ -2,7 +2,7 @@ package randoop.test;
 
 import java.util.Collections;
 import java.util.Set;
-import randoop.main.RandoopBug;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An empty or singleton set. It contains at most one InvalidExceptionCheck or InvalidValueCheck,
@@ -13,10 +13,13 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   /** An empty, immutable set of invalid checks. */
   public static final InvalidChecks EMPTY = new InvalidChecks();
 
-  // Either an InvalidExceptionCheck or an InvalidValueCheck.
-  private Check check;
+  /**
+   * The sole member of this set, or null if this set is empty. If non-null, either an {@link
+   * InvalidExceptionCheck} or an {@link InvalidValueCheck}.
+   */
+  private @Nullable Check check;
 
-  /** Create an empty, mutable set of invalid checks. */
+  /** Create an empty set of invalid checks. */
   public InvalidChecks() {}
 
   /**
@@ -25,7 +28,10 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
    * @param check the sole member of the newly-created singleton set
    */
   public InvalidChecks(Check check) {
-    add(check);
+    if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
+      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
+    }
+    this.check = check;
   }
 
   @Override
@@ -57,37 +63,13 @@ public class InvalidChecks implements TestChecks<InvalidChecks> {
   }
 
   @Override
-  public ExceptionCheck getExceptionCheck() {
+  public @Nullable ExceptionCheck getExceptionCheck() {
     // TODO is this right?  The result might be an InvalidValueCheck
     if (check instanceof InvalidExceptionCheck) {
       return (InvalidExceptionCheck) check;
     } else {
       return null;
     }
-  }
-
-  @Override
-  public void add(Check check) {
-    if (this == EMPTY) {
-      throw new RandoopBug("Don't add to InvalidChecks.EMPTY");
-    }
-    if (this.check != null) {
-      throw new RandoopBug(
-          String.format("add(%s) when InvalidChecks already contains %s", check, this.check));
-    }
-    if (!((check instanceof InvalidExceptionCheck) || (check instanceof InvalidValueCheck))) {
-      throw new Error("Expected Invalid{Exception,Value}Check, got " + check);
-    }
-    this.check = check;
-  }
-
-  @Override
-  public InvalidChecks commonChecks(InvalidChecks other) {
-    InvalidChecks common = new InvalidChecks();
-    if (this.check != null && check.equals(other.check)) {
-      common.add(check);
-    }
-    return common;
   }
 
   @Override

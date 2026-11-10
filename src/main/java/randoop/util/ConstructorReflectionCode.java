@@ -2,13 +2,13 @@ package randoop.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
 
   /** The constructor to be called. */
   private final Constructor<?> constructor;
+
   /**
    * The arguments that the constructor is applied to. If an inner class constructor has a receiver,
    * it is the first element of this array.
@@ -20,10 +20,15 @@ public final class ConstructorReflectionCode extends ReflectionCode {
    *
    * @param constructor the constructor to be called
    * @param inputs the arguments that the constructor is applied to. If an inner class constructor
-   *     has a receiver, it is the first element of this array.
+   *     has a receiver, it is the first element of this array. The client must not change this
+   *     after the constructor invocation.
    */
-  @SuppressWarnings("deprecation") // AccessibleObject.isAccessible() has no replacement in Java 8.
+  @SuppressWarnings({
+    "deprecation", // AccessibleObject.isAccessible() has no replacement in Java 8.
+    "PMD.ArrayIsStoredDirectly"
+  })
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+    super();
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }
@@ -44,7 +49,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     }
   }
 
-  @SuppressWarnings("Finally")
+  @SuppressWarnings({
+    "Finally",
+    "signedness:assignment" // reflection
+  })
   @Override
   public void runReflectionCodeRaw() {
     try {
@@ -52,14 +60,29 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     } catch (InvocationTargetException e) {
       // The underlying constructor threw an exception
       this.exceptionThrown = e.getCause();
+      // new Error(
+      //     String.format(
+      //         "Failure in newInstance: constructor=%s, args=%s%n",
+      //         this.constructor, Arrays.toString(this.inputs)),
+      //     e);
     } catch (Throwable e) {
       // Any other exception indicates Randoop should not have called the constructor
-      throw new ReflectionCodeException(e);
+      throw new ReflectionCodeException(
+          String.format(
+              "Failure in newInstance: constructor=%s, args=%s%n",
+              this.constructor, Util.elementsToStringAndClassSafely(this.inputs)),
+          e);
     }
   }
 
   @Override
   public String toString() {
-    return "Call to " + constructor + ", args: " + Arrays.toString(inputs) + status();
+    return getClass().getSimpleName()
+        + ": "
+        + constructor
+        + ", args: "
+        + Util.elementsToStringAndClassSafely(inputs)
+        + " "
+        + status();
   }
 }

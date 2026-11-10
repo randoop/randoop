@@ -7,6 +7,7 @@ package randoop.main;
  */
 public class RandoopBug extends RuntimeException {
 
+  /** ID for serializing this class. */
   private static final long serialVersionUID = -5508231959912731870L;
 
   /** Create a RandoopBug with no additional details. */

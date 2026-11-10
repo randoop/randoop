@@ -16,9 +16,10 @@ import randoop.NotExecuted;
  */
 public final class Execution {
 
-  // The execution outcome of each statement.
+  /** The execution outcome of each statement. */
   final List<ExecutionOutcome> outcomes;
 
+  /** The instrumented classes that were covered by the execution. */
   private Set<Class<?>> coveredClasses;
 
   /**
@@ -43,7 +44,7 @@ public final class Execution {
   }
 
   /**
-   * Get the outcome in the i-th slot.
+   * Returns the outcome in the i-th slot.
    *
    * @param i the statement position
    * @return the outcome of the ith statement
@@ -52,10 +53,20 @@ public final class Execution {
     return outcomes.get(i);
   }
 
+  /**
+   * Records that the execution covered the given class.
+   *
+   * @param c a class that the execution covered
+   */
   void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
+  /**
+   * Returns the classes that the execution covered.
+   *
+   * @return the classes that the execution covered
+   */
   Set<Class<?>> getCoveredClasses() {
     return coveredClasses;
   }

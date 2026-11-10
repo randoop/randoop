@@ -1,18 +1,28 @@
 package randoop.sequence;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.Type;
 
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable> {
 
-  // The index of the statement that creates this value.
+  /** The index of the statement that creates this value. */
   public final int index;
 
-  // The sequence that creates this value.
+  /** The sequence that creates this value. */
   public final Sequence sequence;
 
+  /**
+   * Creates a variable for the result of the statement at the given index in the given sequence.
+   *
+   * @param owner the sequence that creates this value
+   * @param i the index of the statement that creates this value
+   * @throws IllegalArgumentException if {@code owner} is null or {@code i} is negative
+   */
   public Variable(Sequence owner, int i) {
-    if (owner == null) throw new IllegalArgumentException("missing owner");
+    if (owner == null) {
+      throw new IllegalArgumentException("missing owner");
+    }
     if (i < 0) {
       throw new IllegalArgumentException("negative index: " + i);
     }
@@ -21,6 +31,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   /** Do not use! Only for use by DummyVariable. */
+  @SuppressWarnings("nullness:assignment") // dummy value
   protected Variable() {
     index = 0;
     sequence = null;
@@ -32,7 +43,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -112,9 +123,13 @@ public class Variable implements Comparable<Variable> {
   @SuppressWarnings("ReferenceEquality")
   @Override
   public int compareTo(Variable o) {
-    if (o == null) throw new IllegalArgumentException();
-    if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (Integer.valueOf(this.index).compareTo(o.index));
+    if (o == null) {
+      throw new IllegalArgumentException();
+    }
+    if (o.sequence != this.sequence) {
+      throw new IllegalArgumentException();
+    }
+    return Integer.valueOf(this.index).compareTo(o.index);
   }
 
   /**
@@ -144,7 +159,7 @@ public class Variable implements Comparable<Variable> {
    * True if this variable's value should be inlined as a literal at call sites, rather than
    * referencing the variable.
    *
-   * @return whether this variable's value should be inlined as a literal at call sites
+   * @return true if this variable's value should be inlined as a literal at call sites
    */
   public boolean shouldInlineLiterals() {
     return sequence.shouldInlineLiterals();

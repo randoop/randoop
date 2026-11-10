@@ -1,6 +1,10 @@
 package randoop.test;
 
 import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.plumelib.util.StringsPlume;
 import randoop.Globals;
@@ -17,12 +21,29 @@ import randoop.Globals;
 public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
+   * Exception classes whose message is omitted from generated tests. The JVM throws these
+   * exceptions implicitly, such as when code dereferences null. The HotSpot JVM's just-in-time
+   * compiler may replace a frequently thrown one by a preallocated exception that has no message.
+   * Whether that happens depends on timing, so the message could differ from one run of Randoop to
+   * another.
+   */
+  private static final Set<Class<?>> omitMessageClasses =
+      Collections.unmodifiableSet(
+          new HashSet<>(
+              Arrays.asList(
+                  ArithmeticException.class,
+                  ArrayIndexOutOfBoundsException.class,
+                  ArrayStoreException.class,
+                  ClassCastException.class,
+                  NullPointerException.class)));
+
+  /**
    * Creates check that enforces expectation that an exception is thrown by the statement at the
    * statement index.
    *
    * <p>These are created before the test is classified as normal, exceptional, or invalid behavior.
-   * For example, this could be created with a TimeoutExceededException, but the sequence would
-   * later be classified as invalid.
+   * For example, this could be created with a TimeoutException, but the sequence would later be
+   * classified as invalid.
    *
    * @param exception the expected exception
    * @param statementIndex the index of the statement in the sequence where exception is thrown
@@ -39,20 +60,31 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
-    String message;
-    if (exception.getClass().isAnonymousClass()) {
-      message = "Expected anonymous exception";
-    } else {
-      String exceptionMessage;
-      try {
-        exceptionMessage = "; message: " + toAscii(exception.getMessage());
-      } catch (Throwable t) {
-        exceptionMessage = " whose getMessage() throws an exception";
+    String assertionMessage;
+    {
+      String message;
+      if (exception.getClass().isAnonymousClass()) {
+        message = "Expected anonymous exception";
+      } else {
+        String exceptionMessage;
+        if (omitMessageClasses.contains(exception.getClass())) {
+          exceptionMessage = "";
+        } else {
+          try {
+            exceptionMessage = "; message: " + toAscii(exception.getMessage());
+          } catch (Throwable t) {
+            exceptionMessage = " whose getMessage() throws an exception";
+          }
+        }
+        message = "Expected exception of type " + getExceptionName() + exceptionMessage;
       }
-      message = "Expected exception of type " + getExceptionName() + exceptionMessage;
+      assertionMessage = StringsPlume.escapeJava(message);
     }
-    String assertion = "org.junit.Assert.fail(\"" + StringsPlume.escapeJava(message) + "\")";
-    b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
+    b.append(Globals.lineSep)
+        .append("  org.junit.Assert.fail(\"")
+        .append(assertionMessage)
+        .append("\");")
+        .append(Globals.lineSep);
   }
 
   /**
@@ -63,7 +95,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * @return the string converted to ASCII
    */
   private @PolyNull String toAscii(@PolyNull String str) {
-    if (str == null) return null;
+    if (str == null) {
+      return null;
+    }
     String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
     String ascii = normalized.replaceAll("[^ -~]", "?");
     return ascii;
@@ -76,11 +110,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
-    String condition;
-    String message;
     if (exception.getClass().isAnonymousClass()) {
-      condition = "e.getClass().isAnonymousClass()";
-      message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
+      String condition = "e.getClass().isAnonymousClass()";
+      String message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
       String assertion = "org.junit.Assert.fail(\"" + message + ")";
       b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
       b.append("    ").append(assertion).append(";").append(Globals.lineSep);

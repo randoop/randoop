@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -28,17 +29,16 @@ import randoop.types.Substitution;
 public class OperationExtractorTest {
 
   @Test
-  public void concreteClassTest() {
+  public void concreteClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.ConcreteClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(c.getName(), classType.getBinaryName());
 
     assertEquals(14, operations.size());
@@ -58,11 +58,11 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void genericClassTest() {
+  public void genericClassTest() throws RandoopSpecificationError {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("didn't find class: " + e);
       throw new Error("Unreachable");
     }
@@ -73,18 +73,17 @@ public class OperationExtractorTest {
     Substitution substitution =
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(21, operations.size());
   }
 
   @Test
-  public void memberOfGenericTest() {
+  public void memberOfGenericTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericTreeWithInnerNode";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
@@ -96,8 +95,7 @@ public class OperationExtractorTest {
         new Substitution(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.substitute(substitution);
 
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(4, operations.size());
 
     ClassOrInterfaceType memberType = null;
@@ -116,26 +114,25 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void memberExtendingEnclosingTest() {
+  public void memberExtendingEnclosingTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.GenericWithInnerSub$Inner";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     assertFalse(classType.isParameterized());
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(classType);
     assertEquals(3, operations.size());
   }
 
   @Test
-  public void partialInstantiationTest() {
+  public void partialInstantiationTest() throws RandoopSpecificationError {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
         new ReflectionManager(
@@ -146,14 +143,14 @@ public class OperationExtractorTest {
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     assertFalse(classType.isGeneric());
     assertFalse(classType.isParameterized());
-    assertFalse(classType.getTypeParameters().size() > 0);
+    assertTrue(classType.getTypeParameters().isEmpty());
     final OperationExtractor extractor =
         new OperationExtractor(classType, new DefaultReflectionPredicate(), IS_PUBLIC);
     mgr.apply(extractor, classType.getRuntimeClass());
@@ -162,19 +159,17 @@ public class OperationExtractorTest {
   }
 
   @Test
-  public void inaccessibleArgumentTest() {
-    AccessibilityPredicate accessibility = IS_PUBLIC;
+  public void inaccessibleArgumentTest() throws RandoopSpecificationError {
     String classname = "randoop.reflection.accessibilitytest.InaccessibleArgumentInput";
     Class<?> c;
     try {
       c = TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       fail("did not find class: " + e);
       throw new Error("Unreachable");
     }
 
-    final Collection<TypedOperation> operations =
-        OperationExtractor.operations(c, new DefaultReflectionPredicate(), accessibility);
+    final Collection<TypedOperation> operations = OperationExtractor.operations(c);
     assertEquals(3, operations.size());
     for (TypedOperation operation : operations) {
       assertThat(

@@ -33,13 +33,13 @@ class SystemTestEnvironment {
   /** The path of the testInput class files. */
   private final Path testInputClassDir;
 
-  /** the path to the java agent. null by default. */
+  /** The path to the java agent. null by default. */
   private Path javaAgentPath;
 
-  /** the argument string for the java agent during generation. null by default */
+  /** The argument string for the java agent during generation. null by default. */
   private String javaAgentArgumentString;
 
-  /** the argument string for the java agent during test runs. null by default */
+  /** The argument string for the java agent during test runs. null by default. */
   private String javaAgentTestArgumentString;
 
   /**

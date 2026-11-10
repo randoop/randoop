@@ -7,11 +7,20 @@ import randoop.types.TypeTuple;
 /**
  * The contract: Checks that an object is reflexive over compareTo. {@code x0.compareTo(x0) == 0}.
  */
-public class CompareToReflexive extends ObjectContract {
+public final class CompareToReflexive extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToReflexive instance = new CompareToReflexive();
 
-  private CompareToReflexive() {}
+  /** Private constructor to enforce singleton. */
+  private CompareToReflexive() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToReflexive getInstance() {
     return instance;
   }
@@ -37,7 +46,8 @@ public class CompareToReflexive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -56,9 +66,11 @@ public class CompareToReflexive extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(128);
     b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
+    b.append("\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", ");
     b.append("x0.compareTo(x0) == 0");
     b.append(");");
     return b.toString();

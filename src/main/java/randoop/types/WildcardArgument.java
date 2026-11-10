@@ -2,23 +2,21 @@ package randoop.types;
 
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-/**
- * Represents a wildcard type argument to a parameterized type.
- *
- * <p>The subclasses represent the type bound as given for the wildcard.
- */
+/** Represents a wildcard type argument to a parameterized type. */
 public class WildcardArgument extends TypeArgument {
 
-  /** the wildcard type */
+  /** The wildcard type. */
   private final WildcardType argumentType;
 
   /**
-   * Initializes the bound type.
+   * Creates a WildcardArgument.
    *
    * @param argumentType the wildcard type
    */
   WildcardArgument(WildcardType argumentType) {
+    super();
     this.argumentType = argumentType;
   }
 
@@ -38,13 +36,20 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
+  /**
+   * Creates a {@code WildcardArgument} from a {@link ReferenceType}, which must be a {@link
+   * WildcardType}.
+   *
+   * @param argumentType the wildcard type
+   * @return the {@code WildcardArgument} for the given wildcard type
+   */
   public static WildcardArgument forType(ReferenceType argumentType) {
     assert argumentType instanceof WildcardType : "argument type must be wildcard type";
     return new WildcardArgument((WildcardType) argumentType);
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -57,7 +62,7 @@ public class WildcardArgument extends TypeArgument {
 
   @Override
   public int hashCode() {
-    return Objects.hash(argumentType);
+    return Objects.hashCode(argumentType);
   }
 
   @Override
@@ -84,20 +89,6 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(argType);
   }
 
-  /**
-   * Applies a capture conversion to the bound of this {@link WildcardArgument}.
-   *
-   * @return this wildcard argument with capture conversion applied to the type bound
-   * @see ReferenceType#applyCaptureConversion()
-   */
-  public WildcardArgument applyCaptureConversion() {
-    WildcardType wildcardType = argumentType.applyCaptureConversion();
-    if (wildcardType.equals(argumentType)) {
-      return this;
-    }
-    return new WildcardArgument(wildcardType);
-  }
-
   @Override
   public boolean contains(TypeArgument argument) {
     return argument.isWildcard()
@@ -105,7 +96,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Return the type of the upper/lower bound of this wildcard argument.
+   * Returns the type of the upper/lower bound of this wildcard argument.
    *
    * @return the type of the bound of this wildcard argument
    */
@@ -124,8 +115,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Indicates whether this wildcard argument has an upper bound. (If not, then it has a lower
-   * bound.)
+   * Returns true if this wildcard argument has an upper bound. (If not, then it has a lower bound.)
    *
    * @return true if this wildcard argument has an upper bound, false if it has a lower bound
    */
@@ -167,7 +157,7 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
-  public Substitution getInstantiatingSubstitution(TypeArgument goalType) {
+  public @Nullable Substitution getInstantiatingSubstitution(TypeArgument goalType) {
     if (this.equals(goalType)) {
       return new Substitution();
     }
@@ -196,6 +186,11 @@ public class WildcardArgument extends TypeArgument {
     return false;
   }
 
+  /**
+   * Returns the wildcard type of this argument.
+   *
+   * @return the wildcard type of this argument
+   */
   WildcardType getWildcardType() {
     return argumentType;
   }

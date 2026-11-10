@@ -1,18 +1,37 @@
 package randoop.util;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+/**
+ * A thread that runs a {@link ReflectionCode}. To run the code in this thread, call {@link #setup}
+ * and then {@link #start}. A thread can be started only once.
+ *
+ * <p>Calls to {@link #setup} and {@link #run} must alternate. {@link #start} calls {@link #run} in
+ * this thread; a direct call to {@link #run} executes the code in the calling thread.
+ */
 public class RunnerThread extends Thread {
 
-  // Fields assigned when calling setup(..)
-  private ReflectionCode code;
+  /** The code to run. Set by {@link #setup}. */
+  private @MonotonicNonNull ReflectionCode code;
 
-  // Fields assigned when calling run()
-  boolean runFinished;
+  /** True if the most recent call to {@link #run} returned normally. Set by {@link #run}. */
+  volatile boolean runFinished;
 
-  // The state of the thread.
+  /**
+   * The throwable that the most recent call to {@link #run} threw, or null if it threw none. Set by
+   * {@link #run}.
+   */
+  volatile @Nullable Throwable thrown;
+
+  /** The state of the thread: which method must be called next. */
   private NextCallMustBe state;
 
+  /** Which method must be called next on a {@code RunnerThread}. */
   private enum NextCallMustBe {
+    /** {@link RunnerThread#setup} must be called next. */
     SETUP,
+    /** {@link RunnerThread#run} must be called next. */
     RUN
   }
 
@@ -21,36 +40,61 @@ public class RunnerThread extends Thread {
    *
    * @param threadGroup the group for this thread
    */
-  RunnerThread(ThreadGroup threadGroup) {
+  @SuppressWarnings({
+    "initialization:method.invocation", // needed for CF 3.49.4 and earlier
+    "PMD.ConstructorCallsOverridableMethod"
+  })
+  RunnerThread(@Nullable ThreadGroup threadGroup) {
     super(threadGroup, "randoop.util.RunnerThread");
     this.code = null;
     this.runFinished = false;
+    this.thrown = null;
     this.state = NextCallMustBe.SETUP;
     this.setUncaughtExceptionHandler(RandoopUncaughtRunnerThreadExceptionHandler.getHandler());
   }
 
+  /**
+   * Sets the code that the next call to {@link #run} will execute.
+   *
+   * @param code the code to run
+   * @throws IllegalStateException if {@link #run} must be called next
+   * @throws IllegalArgumentException if {@code code} is null
+   */
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP) throw new IllegalStateException();
-    if (code == null) throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP) {
+      throw new IllegalStateException();
+    }
+    if (code == null) {
+      throw new IllegalArgumentException("code cannot be null.");
+    }
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN) throw new IllegalStateException();
+    if (state != NextCallMustBe.RUN) {
+      throw new IllegalStateException();
+    }
     runFinished = false;
-    executeReflectionCode();
+    thrown = null;
+    try {
+      executeReflectionCode();
+    } catch (Throwable e) {
+      thrown = e;
+      throw e;
+    }
     runFinished = true;
     this.state = NextCallMustBe.SETUP;
   }
 
-  private void executeReflectionCode() throws ReflectionCode.ReflectionCodeException {
+  /** Runs the {@link ReflectionCode} that this thread was set up with. */
+  private void executeReflectionCode() {
     code.runReflectionCode();
   }
 
   /**
-   * Return the ReflectionCode that is being, or was, run.
+   * Returns the ReflectionCode that is being, or was, run.
    *
    * @return the ReflectionCode that is being, or was, run
    */

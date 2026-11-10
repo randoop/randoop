@@ -22,7 +22,7 @@ public class RatTermVec {
   // RI(r) = r.terms != null && forall i=0 to r.terms.size()-1, T(r,i) is-a Term
 
   // CP: Daikon detects properties of the terms in this RatTermVec
-  // more easily if this.terms is an array instaed. Daikon (or dfej)
+  // more easily if this.terms is an array instead. Daikon (or dfej)
   // should be changed so that this class doesn't have to be
   // modified, but for now, I'll modify it manually and make
   // this.terms an array. Since this is anyway a hack, I'll simplify

@@ -3,10 +3,12 @@ package randoop.test;
 import static randoop.main.GenInputsAbstract.BehaviorType.ERROR;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.RandoopSpecificationError;
 import randoop.contract.ObjectContract;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.sequence.ExecutableSequence;
@@ -33,6 +35,7 @@ import randoop.util.TupleSet;
  */
 public final class ContractCheckingGenerator extends TestCheckGenerator {
 
+  /** The contracts to check on the values produced by executing a sequence. */
   private ContractSet contracts;
 
   /**
@@ -43,6 +46,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     c.getArity() == 1}.
    */
   public ContractCheckingGenerator(ContractSet contracts) {
+    super();
     this.contracts = contracts;
   }
 
@@ -55,7 +59,8 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    * contracts in {@code contracts}.
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
 
     int finalIndex = eseq.sequence.size() - 1;
     ExecutionOutcome finalResult = eseq.getResult(finalIndex);
@@ -98,7 +103,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
 
         // 2. check binary over all pairs of values.
         // Rationale:  this call might have side-effected some previously-existing value.
-        List<ReferenceValue> inputValues = eseq.getInputValues();
+        List<ReferenceValue> inputValues = eseq.getAllValues();
         TupleSet<ReferenceValue> inputTuples = new TupleSet<>();
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getWithArity(2);
@@ -124,7 +129,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Return a TestChecks that contains only the given check.
+   * Returns a TestChecks that contains only the given check.
    *
    * @param check the sole member of the singleton TestChecks
    * @return a TestChecks that contains only the given check
@@ -150,7 +155,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
    *     sequence is invalid, null otherwise.
    */
-  Check checkContracts(
+  @Nullable Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
       Object[] values = getValues(tuple);
@@ -176,7 +181,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
   }
 
   /**
-   * Indicates whether the given list of values matches the types in the type tuple. Contracts may
+   * Returns true if the given list of values matches the types in the type tuple. Contracts may
    * have generic input types, so this method checks for consistent substitutions across value
    * types.
    *

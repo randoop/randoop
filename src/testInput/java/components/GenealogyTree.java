@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -51,7 +51,7 @@ public class GenealogyTree extends JTree {
         renderer.setOpenIcon(personIcon);
         setCellRenderer(renderer);
     }
-    
+
     /**
      * Get the selected item in the tree, and call showAncestor with this
      * item on the model.

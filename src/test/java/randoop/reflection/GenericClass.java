@@ -54,7 +54,8 @@ public class GenericClass<T> {
     theGenericList.addAll(l);
   }
 
-  // this is a concrete operation inside of a generic class should be in generic operations pool
+  // this is a concrete operation inside of a generic class; it should be in the generic operations
+  // pool
   public int getTheGenericListLength() {
     return theGenericList.size();
   }

@@ -1,6 +1,7 @@
 package randoop.contract;
 
 import java.util.Arrays;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
@@ -14,8 +15,13 @@ import randoop.types.TypeTuple;
  */
 public final class IsNotNull extends ObjectContract {
 
+  /** Creates an IsNotNull. */
+  public IsNotNull() {
+    super();
+  }
+
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -39,7 +45,7 @@ public final class IsNotNull extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -48,9 +54,7 @@ public final class IsNotNull extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertNotNull(x0);");
-    return b.toString();
+    return "org.junit.Assert.assertNotNull(x0);";
   }
 
   @Override

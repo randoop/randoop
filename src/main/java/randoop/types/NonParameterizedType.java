@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -46,11 +48,12 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @param runtimeType the runtime class for the type
    */
   public NonParameterizedType(Class<?> runtimeType) {
+    super();
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
     this.runtimeType = runtimeType;
     Class<?> enclosingClass = runtimeType.getEnclosingClass();
     if (enclosingClass != null) {
-      this.setEnclosingType(ClassOrInterfaceType.forClass(enclosingClass));
+      this.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
     }
   }
 
@@ -60,7 +63,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return true if the runtime types are the same, false otherwise
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -73,7 +76,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(runtimeType);
+    return Objects.hashCode(runtimeType);
   }
 
   @Override
@@ -107,6 +110,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType getRawtype() {
+    if (this.isMemberClass()) {
+      // Special case: non-parameterized member classes can still carry type variables from
+      // their enclosing type. Rawifying only the member class is not enough.
+      NonParameterizedType rawEnclosingType = enclosingType.getRawtype();
+      if (!enclosingType.equals(rawEnclosingType)) {
+        NonParameterizedType rawType = new NonParameterizedType(runtimeType);
+        rawType.enclosingType = rawEnclosingType;
+        return rawType;
+      }
+    }
     return this;
   }
 
@@ -119,6 +132,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
   }
 
+  @Pure
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;
@@ -126,21 +140,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.isObject()) {
-      return this;
-    }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      if (superclass != null) {
-        return NonParameterizedType.forClass(superclass);
-      }
+      return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
+      return supertype == null ? null : forType(supertype);
     }
-    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override
@@ -152,8 +158,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>Specifically checks for <a
-   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
-   * (section 5.1.7)</a>
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.7">boxing
+   * conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -175,7 +181,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    return runtimeType.isEnum();
+    // Return true if the run-time type is an enum type or is an enum constant.
+    if (runtimeType.isEnum()) {
+      return true;
+    }
+    // An enum constant is represented (by the javac compiler) as a subclass of an enum type.
+    Class<?> superClass = getRuntimeClass().getSuperclass();
+    return superClass != null && superClass.isEnum();
   }
 
   /**
@@ -197,6 +209,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return !isRawtype() && super.isGenericForm();
+  }
+
+  @Override
   public boolean isInterface() {
     return runtimeType.isInterface();
   }
@@ -209,6 +226,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public boolean isStatic() {
     return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Also returns true if {@code otherType} is the generic form of this type's class (see {@link
+   * ClassOrInterfaceType#isGenericForm()}). For example, raw {@code List} is a subtype of {@code
+   * List<E>}, and {@code Outer<String>.Inner} is a subtype of {@code Outer<T>.Inner}. This is not a
+   * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
+   * {@code List<T>} for a type variable {@code T}; it is assignable to one only by unchecked
+   * conversion.
+   */
+  @Override
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+    return otherType instanceof ClassOrInterfaceType
+        && otherType.runtimeClassIs(runtimeType)
+        && ((ClassOrInterfaceType) otherType).isGenericForm();
   }
 
   /**

@@ -17,7 +17,7 @@ public class EqualsToNullTests extends TestCase {
   // public void test2() throws Exception {
   // class EqualToEverything{
   // @Override
-  // public boolean equals(Object obj) {
+  // public boolean equals(@Nullable Object obj) {
   // return true;
   // }
   // }

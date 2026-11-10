@@ -6,37 +6,88 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.signedness.qual.Signed;
 
-/** Implements an IMultiMap with a java.util.LinkedHashMap. */
-public class MultiMap<K, V> implements IMultiMap<K, V> {
+/**
+ * Implements an IMultiMap with a java.util.LinkedHashMap.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ */
+// @Signed so the keys and values can be printed.
+public class MultiMap<K extends @Signed Object, V extends @Signed Object>
+    implements IMultiMap<K, V> {
 
+  /** The backing map. */
   private final Map<K, Set<V>> map;
 
+  /** Creates a new, empty MultiMap. */
   public MultiMap() {
     map = new LinkedHashMap<>();
   }
 
+  /**
+   * Creates a new, empty MultiMap with the given initial capacity.
+   *
+   * @param initialCapacity the initial capacity of the backing map
+   */
   public MultiMap(int initialCapacity) {
     map = new LinkedHashMap<>(initialCapacity);
   }
 
-  public void put(K key, Collection<? extends V> values) {
-    if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<V>(values));
+  /**
+   * Returns an immutable, empty multimap.
+   *
+   * @param <K> the type of the keys
+   * @param <V> the type of the values
+   * @return an immutable, empty multimap
+   */
+  @SuppressWarnings({"unchecked"})
+  public static <K extends @Signed Object, V extends @Signed Object> MultiMap<K, V> empty() {
+    return EmptyMultiMap.instance;
   }
 
+  /**
+   * Adds a key-values mapping to this multimap.
+   *
+   * @param key the key
+   * @param values the values
+   */
+  public void put(K key, Collection<? extends V> values) {
+    if (contains(key)) {
+      remove(key);
+    }
+    map.put(key, new LinkedHashSet<>(values));
+  }
+
+  /**
+   * Adds each key-value mapping in the given map to this multimap.
+   *
+   * @param m the mappings to add
+   */
   public void addAll(Map<? extends K, ? extends V> m) {
     for (K t1 : m.keySet()) {
       add(t1, m.get(t1));
     }
   }
 
+  /**
+   * Adds a mapping from the given key to each of the given values.
+   *
+   * @param key the key
+   * @param values the values to add for the key
+   */
   public void addAll(K key, Collection<? extends V> values) {
     for (V t2 : values) {
       add(key, t2);
     }
   }
 
+  /**
+   * Adds all the mappings in the given multimap to this multimap.
+   *
+   * @param mmap the mappings to add
+   */
   public void addAll(MultiMap<K, V> mmap) {
     for (Map.Entry<K, Set<V>> entry : mmap.map.entrySet()) {
       addAll(entry.getKey(), entry.getValue());
@@ -62,6 +113,13 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     return values.remove(value);
   }
 
+  /**
+   * Removes the given key and all its values from this multimap.
+   *
+   * @param key the key to remove
+   * @return true, since the key was present
+   * @throws IllegalStateException if the key is not in this multimap
+   */
   public boolean remove(K key) {
     Set<V> values = map.get(key);
     if (values == null) {
@@ -81,10 +139,17 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     return map.keySet();
   }
 
+  /**
+   * Returns true if this multimap contains the given key.
+   *
+   * @param obj the key to look up
+   * @return true if this multimap contains the given key
+   */
   public boolean contains(K obj) {
     return map.containsKey(obj);
   }
 
+  /** Removes all mappings from this multimap. */
   public void clear() {
     map.clear();
   }
@@ -94,6 +159,11 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
     return map.size();
   }
 
+  /**
+   * Returns true if this multimap contains no keys.
+   *
+   * @return true if this multimap contains no keys
+   */
   public boolean isEmpty() {
     return map.isEmpty();
   }
@@ -101,5 +171,97 @@ public class MultiMap<K, V> implements IMultiMap<K, V> {
   @Override
   public String toString() {
     return map.toString();
+  }
+
+  /**
+   * An immutable, empty multimap.
+   *
+   * @param <K> the type of keys
+   * @param <V> the type of values
+   */
+  private static final class EmptyMultiMap<K extends @Signed Object, V extends @Signed Object>
+      extends MultiMap<K, V> {
+
+    /** The canonical EmptyMultiMap. */
+    @SuppressWarnings({"rawtypes"})
+    public static EmptyMultiMap instance = new EmptyMultiMap<>();
+
+    /**
+     * Creates an immutable, empty multimap. Should only be called once, because all EmptyMultiMaps
+     * are the same.
+     */
+    private EmptyMultiMap() {
+      super(0);
+    }
+
+    @Override
+    public void put(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.put");
+    }
+
+    @Override
+    public void addAll(Map<? extends K, ? extends V> m) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(K key, Collection<? extends V> values) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public void addAll(MultiMap<K, V> mmap) {
+      throw new UnsupportedOperationException("EmptyMultiMap.addAll");
+    }
+
+    @Override
+    public boolean add(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.add");
+    }
+
+    @Override
+    public boolean remove(K key, V value) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public boolean remove(K key) {
+      throw new UnsupportedOperationException("EmptyMultiMap.remove");
+    }
+
+    @Override
+    public Set<V> getValues(K key) {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public Set<K> keySet() {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public boolean contains(K obj) {
+      return false;
+    }
+
+    @Override
+    public void clear() {
+      throw new UnsupportedOperationException("EmptyMultiMap.clear");
+    }
+
+    @Override
+    public int size() {
+      return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "{}";
+    }
   }
 }

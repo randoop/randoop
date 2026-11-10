@@ -1,6 +1,7 @@
 package randoop.condition.specification;
 
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Abstract class for representations of conditions that can be attached to methods and
@@ -9,6 +10,7 @@ import java.util.Objects;
  * <p>Every specification clause has at least a guard (which this class provides). Some clauses have
  * more parts, so subclasses of this class can add fields.
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class SpecificationClause {
 
   // NOTE: changing field names or @SerializedName annotations could affect integration with other
@@ -20,7 +22,8 @@ public abstract class SpecificationClause {
   /** The {@link Guard} for this specification. */
   private final Guard guard;
 
-  /** Gson serialization requires a default constructor. */
+  /** Gson serialization requires a no-argument constructor. */
+  @SuppressWarnings("nullness:assignment") // dummy constructor for Gson serialization
   protected SpecificationClause() {
     this.description = "";
     this.guard = null;
@@ -47,7 +50,7 @@ public abstract class SpecificationClause {
   }
 
   /**
-   * Return the {@link Guard} of this {@link SpecificationClause}.
+   * Returns the {@link Guard} of this {@link SpecificationClause}.
    *
    * @return the guard of this specification
    */
@@ -56,7 +59,7 @@ public abstract class SpecificationClause {
   }
 
   @Override
-  public boolean equals(Object object) {
+  public boolean equals(@Nullable Object object) {
     if (this == object) {
       return true;
     }

@@ -3,6 +3,7 @@ package randoop.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.SequenceExecutionException;
@@ -18,9 +19,16 @@ import randoop.types.Type;
  */
 public class AccessibleField {
 
+  /** The reflective field, which has been made accessible. */
   private Field field;
+
+  /** The type of the class that declares the field. */
   private final ClassOrInterfaceType declaringType;
+
+  /** True if the field is final. */
   private boolean isFinal;
+
+  /** True if the field is static. */
   private boolean isStatic;
 
   /**
@@ -61,7 +69,7 @@ public class AccessibleField {
     } else {
       sb.append(inputVars.get(0).getName());
     }
-    return sb.append(".").append(getName()).toString();
+    return sb.append('.').append(getName()).toString();
   }
 
   /**
@@ -82,7 +90,7 @@ public class AccessibleField {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     }
@@ -148,6 +156,11 @@ public class AccessibleField {
     return isStatic;
   }
 
+  /**
+   * Returns true if the field is final.
+   *
+   * @return true if the field is final
+   */
   public boolean isFinal() {
     return isFinal;
   }
@@ -162,6 +175,11 @@ public class AccessibleField {
     return reflectionPredicate.test(field);
   }
 
+  /**
+   * Returns the underlying reflective {@link Field} object.
+   *
+   * @return the reflective field
+   */
   public Field getRawField() {
     return field;
   }

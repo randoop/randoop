@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import static randoop.reflection.TypedClassOperationProvider.signatureToOperation;
 
 import java.io.BufferedWriter;
@@ -16,16 +15,23 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.UtilPlume;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -41,6 +47,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.contract.SizeToArrayLength;
 import randoop.generation.ComponentManager;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
@@ -53,8 +60,10 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MultiMap;
+import randoop.util.Util;
 
 /**
  * {@code OperationModel} represents the information context from which tests are generated. The
@@ -70,42 +79,62 @@ import randoop.util.MultiMap;
  * <p>This class manages all information about generic classes internally, and instantiates any type
  * variables in operations before returning them.
  */
-public class OperationModel {
+public final class OperationModel {
 
   /** The set of class declaration types for this model. */
-  private Set<ClassOrInterfaceType> classTypes;
+  // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
+  private Set<ClassOrInterfaceType> classTypes = new TreeSet<>();
 
-  /** The set of input types for this model. */
-  private Set<Type> inputTypes;
+  /**
+   * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
+   * TypeExtractor}.
+   */
+  private Set<Type> inputTypes = new TreeSet<>();
 
   /** The set of classes used as goals in the covered-class test filter. */
-  private final LinkedHashSet<Class<?>> coveredClassesGoal;
+  private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
-  /** Map for singleton sequences of literals extracted from classes. */
-  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
+  /** The storage for constant information. */
+  private ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues;
+  private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
 
   /** Set of object contracts used to generate tests. */
   private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes. */
-  private final Set<TypedOperation> operations;
+  private final Set<TypedOperation> operations = new TreeSet<>();
+
+  /** Set of operations that {@link #omitMethodsPredicate} excluded from {@link #operations}. */
+  private final Set<TypedOperation> omittedOperations = new TreeSet<>();
 
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
-  /** User-supplied predicate for methods that should not be used during test generation. */
+  /**
+   * User-supplied predicate for methods that should not be used during test generation. After
+   * {@link #omitOverriddenMethods} is called, it also omits the methods that omitted methods
+   * override.
+   */
   private OmitMethodsPredicate omitMethodsPredicate;
 
-  /** Create an empty model of test context. */
-  private OperationModel() {
-    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
-    classTypes = new TreeSet<>();
-    inputTypes = new TreeSet<>();
-    classLiteralMap = new MultiMap<>();
-    annotatedTestValues = new LinkedHashSet<>();
+  /**
+   * The types that are SUT-parameters-only types. In other words, these are the types that appear
+   * as formal parameters of methods in the software under test (SUT), but no methods or
+   * constructors in the SUT return these types. {@link randoop.generation.DemandDrivenInputCreator}
+   * tries to create values of these types.
+   *
+   * <p>This is populated by {@link #setSutParameterOnlyTypes}.
+   */
+  private Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
+
+  /**
+   * Create an empty model of test context.
+   *
+   * @param omitMethods the patterns for operations that should be omitted
+   */
+  private OperationModel(List<Pattern> omitMethods) {
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
@@ -120,10 +149,12 @@ public class OperationModel {
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
 
-    coveredClassesGoal = new LinkedHashSet<>();
-    operations = new TreeSet<>();
+    this.omitMethods = omitMethods;
+    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
   }
 
+  // TODO: Much or all of this should be done in the constructor, rather than having a factory
+  // method.
   /**
    * Factory method to construct an operation model for a particular set of classes.
    *
@@ -141,6 +172,8 @@ public class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -151,32 +184,37 @@ public class OperationModel {
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
       SpecificationCollection operationSpecifications)
-      throws SignatureParseException, NoSuchMethodException {
+      throws SignatureParseException,
+          NoSuchMethodException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
 
-    OperationModel model = new OperationModel();
-
-    // for debugging only
-    model.omitMethods = omitMethods;
+    OperationModel model = new OperationModel(omitMethods);
 
     model.addClassTypes(
-        accessibility,
-        reflectionPredicate,
-        classnames,
-        coveredClassesGoalNames,
-        errorHandler,
-        literalsFileList);
+        accessibility, reflectionPredicate, classnames, coveredClassesGoalNames, errorHandler);
 
-    model.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
     TypedClassOperationProvider operationProvider =
         new TypedClassOperationProvider(model.omitMethodsPredicate);
 
+    // Add methods from the classes.
     model.operations.addAll(
         operationProvider.getOperationsFromClasses(
             model.classTypes, accessibility, reflectionPredicate, operationSpecifications));
+    // Add methods from the --methodlist command-line argument.
     model.operations.addAll(
         operationProvider.getOperationsFromFile(
             GenInputsAbstract.methodlist, accessibility, reflectionPredicate));
+    model.omittedOperations.addAll(operationProvider.getOmittedOperations());
+    // Add the constructor "Object()".
     model.addObjectConstructor();
+    // An operation that is omitted in one place but added in another is not omitted.
+    model.omittedOperations.removeAll(model.operations);
+    model.omitOverriddenMethods();
+
+    if (GenInputsAbstract.call_non_sut_methods) {
+      model.setSutParameterOnlyTypes();
+    }
 
     return model;
   }
@@ -196,6 +234,8 @@ public class OperationModel {
    * @return the operation model for the parameters
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -204,11 +244,14 @@ public class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException,
+          SignatureParseException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     return createModel(
         accessibility,
         reflectionPredicate,
-        new ArrayList<Pattern>(),
+        new ArrayList<>(0),
         classnames,
         coveredClassnames,
         errorHandler,
@@ -232,6 +275,8 @@ public class OperationModel {
    * @return the {@link OperationModel} constructed with the given arguments
    * @throws SignatureParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   public static OperationModel createModel(
       AccessibilityPredicate accessibility,
@@ -241,7 +286,10 @@ public class OperationModel {
       Set<@ClassGetName String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
-      throws NoSuchMethodException, SignatureParseException {
+      throws NoSuchMethodException,
+          SignatureParseException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     return createModel(
         accessibility,
         reflectionPredicate,
@@ -254,51 +302,68 @@ public class OperationModel {
   }
 
   /**
-   * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Adds literal sequences/statistics to the component manager.
+   *
+   * <p>Reads external {@code --literals-file} entries (ignoring the token {@code "CLASSES"}) into
+   * {@link #scopeToLiteralStatistics}, and attaches the statistics to {@code compMgr} when needed.
    *
    * @param compMgr the component manager
-   * @param literalsFile the list of literals file names
-   * @param literalsLevel the level of literals to add
    */
-  public void addClassLiterals(
-      ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
-
-    // Add a (1-element) sequence corresponding to each literal to the component
-    // manager.
-
-    for (String filename : literalsFile) {
-      MultiMap<ClassOrInterfaceType, Sequence> literalmap;
-      if (filename.equals("CLASSES")) {
-        literalmap = classLiteralMap;
-      } else {
-        literalmap = LiteralFileReader.parse(filename);
+  public void addClassLiterals(ComponentManager compMgr) {
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.NONE) {
+      return;
+    }
+    // Add sequences from external literals files (ignore "CLASSES").
+    Map<ClassOrInterfaceType, Set<Sequence>> sequencesPerType = new LinkedHashMap<>();
+    for (String literalsFile : GenInputsAbstract.literals_file) {
+      if (literalsFile.equals("CLASSES")) {
+        continue;
       }
-
-      for (ClassOrInterfaceType type : literalmap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
-        for (Sequence seq : literalmap.getValues(type)) {
-          switch (literalsLevel) {
-            case CLASS:
-              compMgr.addClassLevelLiteral(type, seq);
-              break;
-            case PACKAGE:
-              assert pkg != null;
-              compMgr.addPackageLevelLiteral(pkg, seq);
-              break;
-            case ALL:
-              compMgr.addGeneratedSequence(seq);
-              break;
-            default:
-              throw new Error(
-                  "Unexpected error in GenTests.  Please report at"
-                      + " https://github.com/randoop/randoop/issues , providing the information"
-                      + " requested at"
-                      + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .");
-          }
+      // Parse external literals file and record the sequences provided by LiteralFileReader in
+      // scopeToLiteralStatistics.
+      // If a class appears multiple times (or is also mined from bytecode),
+      // numClasses/numClassesWith become inflated, which distorts TF-IDF.
+      MultiMap<ClassOrInterfaceType, Sequence> fileToValues = LiteralFileReader.parse(literalsFile);
+      for (ClassOrInterfaceType type : fileToValues.keySet()) {
+        Collection<Sequence> sequences = fileToValues.getValues(type);
+        sequencesPerType.computeIfAbsent(type, __ -> new LinkedHashSet<>()).addAll(sequences);
+        for (Sequence seq : sequences) {
+          scopeToLiteralStatistics.incrementNumUses(type, seq, 1);
         }
       }
     }
+    for (Map.Entry<ClassOrInterfaceType, Set<Sequence>> e : sequencesPerType.entrySet()) {
+      scopeToLiteralStatistics.recordSequencesInClass(e.getKey(), e.getValue());
+    }
+
+    // Attach statistics to the component manager only when they will be used.
+    if (shouldUseLiteralStatistics()) {
+      compMgr.setScopeToLiteralStatistics(scopeToLiteralStatistics);
+    }
+
+    // Do not add literals to the pool (even if literals_level == ALL), because they will be added
+    // later, on demand, by `ComponentManager.getSequencesForParam()`.
+  }
+
+  /**
+   * Returns true if Randoop should mine literals from bytecode.
+   *
+   * @return true if TF-IDF is enabled, or if the special token "CLASSES" appears in {@code
+   *     --literals-file}; false otherwise
+   */
+  private boolean shouldMineLiteralsFromBytecode() {
+    return GenInputsAbstract.literal_tfidf || GenInputsAbstract.literals_file.contains("CLASSES");
+  }
+
+  /**
+   * Returns true if literal statistics are needed during generation.
+   *
+   * @return true if literal mining is enabled or any literals file is provided (including
+   *     "CLASSES"); false otherwise
+   */
+  private boolean shouldUseLiteralStatistics() {
+    return GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
+        && (shouldMineLiteralsFromBytecode() || !GenInputsAbstract.literals_file.isEmpty());
   }
 
   /**
@@ -326,14 +391,17 @@ public class OperationModel {
   public static MultiMap<Type, TypedClassOperation> readOperations(
       @Nullable Path file, boolean ignoreParseError) throws OperationParseException {
     if (file != null) {
-      try (EntryReader er = new EntryReader(file, "(//|#).*$", null)) {
-        return OperationModel.readOperations(er, ignoreParseError);
+      try (EntryReader er =
+          new EntryReader(file, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
+        return readOperations(er, ignoreParseError);
       } catch (IOException e) {
-        String message = String.format("Error while reading file %s: %s%n", file, e.getMessage());
+        String message =
+            String.format(
+                "Error while reading file %s: %s%n", Util.pathAndAbsolute(file), e.getMessage());
         throw new RandoopUsageError(message, e);
       }
     }
-    return new MultiMap<>();
+    return new MultiMap<>(0);
   }
 
   /**
@@ -363,9 +431,13 @@ public class OperationModel {
         }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
+      } catch (RandoopSpecificationError e) {
+        throw new RandoopUsageError(
+            String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e.getMessage()), e);
       }
-      if (operation.getInputTypes().size() > 0) {
-        operationsMap.add(operation.getInputTypes().get(0), operation);
+      TypeTuple inputTypes = operation.getInputTypes();
+      if (!inputTypes.isEmpty()) {
+        operationsMap.add(inputTypes.get(0), operation);
       }
     }
     return operationsMap;
@@ -399,10 +471,14 @@ public class OperationModel {
       throw new RandoopBug("input stream is null for file " + filename);
     }
     // Read method omissions from user-provided file
-    try (EntryReader er = new EntryReader(is, filename, "^#.*", null)) {
-      return OperationModel.readOperations(er, ignoreParseError);
+    try (EntryReader er =
+        new EntryReader(is, "UTF-8", filename, EntryFormat.DEFAULT, CommentFormat.SHELL, null)) {
+      return readOperations(er, ignoreParseError);
     } catch (IOException e) {
-      String message = String.format("Error while reading file %s: %s%n", filename, e.getMessage());
+      String message =
+          String.format(
+              "Error while reading file %s: %s%n",
+              Util.filenameAndAbsolute(filename), e.getMessage());
       throw new RandoopUsageError(message, e);
     }
   }
@@ -437,12 +513,22 @@ public class OperationModel {
   }
 
   /**
-   * Return the operations of this model as a list.
+   * Returns the operations of this model as a list.
    *
    * @return the operations of this model
    */
   public List<TypedOperation> getOperations() {
     return new ArrayList<>(operations);
+  }
+
+  /**
+   * Returns the (non-null) set of SUT-parameter-only types. May be empty. Demand-driven input
+   * creator {@link randoop.generation.DemandDrivenInputCreator} creates sequences for these types.
+   *
+   * @return the SUT-parameter-only types
+   */
+  public Set<Type> getSutParameterOnlyTypes() {
+    return sutParameterOnlyTypes;
   }
 
   /**
@@ -473,6 +559,7 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  /** Output the operations of this model, if logging is enabled. */
   public void log() {
     if (Log.isLoggingOn()) {
       logOperations(GenInputsAbstract.log);
@@ -495,14 +582,28 @@ public class OperationModel {
    */
   public void logOperations(Writer out) {
     try {
-      out.write("Operations: (" + operations.size() + ")" + Globals.lineSep);
-      for (TypedOperation t : operations) {
-        out.write("  " + t.toString());
-        out.write(Globals.lineSep);
-        out.flush();
-      }
+      writeOperations(out, "Operations", operations);
+      writeOperations(out, "Omitted operations", omittedOperations);
+      out.flush();
     } catch (IOException e) {
       throw new RandoopBug("Error while logging operations", e);
+    }
+  }
+
+  /**
+   * Writes a heading that contains the label and the number of operations, then writes each
+   * operation on its own line.
+   *
+   * @param out the Writer on which to produce output
+   * @param label the label for the heading
+   * @param ops the operations to write
+   * @throws IOException if writing fails
+   */
+  private static void writeOperations(Writer out, String label, Set<TypedOperation> ops)
+      throws IOException {
+    out.write(label + ": (" + ops.size() + ")" + Globals.lineSep);
+    for (TypedOperation t : ops) {
+      out.write("  " + t + Globals.lineSep);
     }
   }
 
@@ -533,7 +634,7 @@ public class OperationModel {
       out.write(String.format("  classTypes = %s%n", classTypes));
       out.write(String.format("  inputTypes = %s%n", inputTypes));
       out.write(String.format("  coveredClassesGoal = %s%n", coveredClassesGoal));
-      out.write(String.format("  classLiteralMap = %s%n", classLiteralMap));
+      out.write(String.format("  scopeToLiteralStatistics = %s%n", scopeToLiteralStatistics));
       out.write(String.format("  annotatedTestValues = %s%n", annotatedTestValues));
       out.write(String.format("  contracts = %s%n", contracts));
       out.write(String.format("  omitMethods = [%n"));
@@ -561,22 +662,26 @@ public class OperationModel {
    * @param coveredClassesGoalNames the names of classes used as goals in the covered-class
    *     heuristic
    * @param errorHandler the handler for bad class names
-   * @param literalsFileList the list of literals file names
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for a member of one of the classes is
+   *     malformed
    */
   private void addClassTypes(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
       Set<@ClassGetName String> coveredClassesGoalNames,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) {
+      ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError, RandoopSpecificationError {
     ReflectionManager mgr = new ReflectionManager(accessibility);
     mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, accessibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+
+    // Mine literals only when requested via flags or CLASSES.
+    if (shouldMineLiteralsFromBytecode()) {
+      mgr.add(new ClassLiteralExtractor(this.scopeToLiteralStatistics));
     }
 
     // Collect classes under test
@@ -606,17 +711,20 @@ public class OperationModel {
             }
           }
           System.out.printf(
-              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.",
+              "Cannot instantiate non-accessible %s specified via --testclass or --classlist%s.%n",
               c, hasAccessibleStaticMethod ? "; will use its static methods" : "");
         }
         if (classIsAccessible || hasAccessibleStaticMethod) {
           try {
             mgr.apply(c);
             succeeded++;
+          } catch (RandoopSpecificationError e) {
+            // A malformed specification is a user error; do not silently ignore the class.
+            throw e;
           } catch (Throwable e) {
             System.out.printf(
-                "Cannot get methods for %s specified via --testclass or --classlist due to"
-                    + " exception:%n%s%n",
+                "Cannot get methods for %s specified via "
+                    + "--testclass or --classlist due to exception:%n%s%n",
                 c.getName(), UtilPlume.stackTraceToString(e));
           }
         }
@@ -648,12 +756,14 @@ public class OperationModel {
    * @param errorHandler is called if no such class exists
    * @return the Class whose name is {@code classname}. May return null if {@code errorHandler} just
    *     warns on bad names.
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    */
   private static @Nullable Class<?> getClass(
-      @ClassGetName String classname, ClassNameErrorHandler errorHandler) {
+      @ClassGetName String classname, ClassNameErrorHandler errorHandler)
+      throws RandoopClassNameError {
     try {
       return TypeNames.getTypeForName(classname);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | NoClassDefFoundError e) {
       errorHandler.handle(classname, e);
     } catch (Throwable e) {
       if (e.getCause() != null) {
@@ -662,6 +772,34 @@ public class OperationModel {
       errorHandler.handle(classname, e);
     }
     return null;
+  }
+
+  /**
+   * Omits every method that an omitted method overrides, because a call to it might dispatch to the
+   * omitted method at run time. Moves such methods from {@link #operations} to {@link
+   * #omittedOperations}, and updates {@link #omitMethodsPredicate} to omit them.
+   */
+  @SuppressWarnings(
+      "ReferenceEquality") // omittingOverriddenMethods returns its receiver if unchanged
+  private void omitOverriddenMethods() {
+    OmitMethodsPredicate newPredicate =
+        omitMethodsPredicate.omittingOverriddenMethods(omittedOperations);
+    if (newPredicate == omitMethodsPredicate) {
+      return;
+    }
+    omitMethodsPredicate = newPredicate;
+    // No omit pattern matches any element of `operations`, so test only whether an omitted method
+    // overrides it.
+    Iterator<TypedOperation> itor = operations.iterator();
+    while (itor.hasNext()) {
+      TypedOperation operation = itor.next();
+      if (operation instanceof TypedClassOperation
+          && omitMethodsPredicate.isOverriddenByOmittedMethod(
+              (TypedClassOperation) operation, null)) {
+        itor.remove();
+        omittedOperations.add(operation);
+      }
+    }
   }
 
   /** Creates and adds the Object class default constructor call to the concrete operations. */
@@ -675,5 +813,34 @@ public class OperationModel {
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
     classTypes.add(operation.getDeclaringType());
     operations.add(operation);
+  }
+
+  /**
+   * Sets field {@link OperationModel#sutParameterOnlyTypes} to SUT-parameter types that are not
+   * SUT-return types.
+   */
+  private void setSutParameterOnlyTypes() {
+    // `outputTypes` is all return types of all SUT operations.
+    Set<Type> outputTypes = new LinkedHashSet<>();
+    for (TypedOperation operation : operations) {
+      Type outputType = operation.getOutputType();
+      if (outputType != null) {
+        outputTypes.add(outputType);
+      }
+    }
+
+    // Filter out non-receiver types and Object from the input types.
+    Set<Type> filteredInputTypes = new LinkedHashSet<>();
+    for (Type inputType : inputTypes) {
+      if (!inputType.isNonreceiverType() && !inputType.isArray() && !inputType.isObject()) {
+        filteredInputTypes.add(inputType);
+      }
+    }
+
+    // Compute field `sutParameterOnlyTypes` as the input types that are not in the output types.
+    Set<Type> computed = new LinkedHashSet<>(filteredInputTypes);
+    computed.removeAll(outputTypes);
+    sutParameterOnlyTypes.clear();
+    sutParameterOnlyTypes.addAll(computed);
   }
 }

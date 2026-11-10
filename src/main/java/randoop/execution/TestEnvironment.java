@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 
 /** Provides the environment for running JUnit tests. */
 public class TestEnvironment {
 
-  /** The process timeout in milliseconds. Defaults to 15 minutes. */
-  private long timeout = 15 * 60 * 1000;
+  /** The process timeout in milliseconds. Defaults to 20 minutes. */
+  private long timeoutMillis = 20 * 60 * 1000;
 
   /** The classpath for the tests. */
   private final String testClasspath;
@@ -62,10 +63,11 @@ public class TestEnvironment {
   /**
    * Set the test execution timeout.
    *
-   * @param timeout the time in milliseconds that a test is allowed to run before being terminated
+   * @param timeoutMillis the time in milliseconds that a test is allowed to run before being
+   *     terminated
    */
-  public void setTimeout(long timeout) {
-    this.timeout = timeout;
+  public void setTimeoutMillis(long timeoutMillis) {
+    this.timeoutMillis = timeoutMillis;
   }
 
   /**
@@ -76,11 +78,10 @@ public class TestEnvironment {
    * @return the {@link RunCommand.Status} object for the execution of the test class
    * @throws CommandException if there is an error running the test command
    */
-  public RunCommand.Status runTest(String testClassName, Path workingDirectory)
-      throws CommandException {
+  public RunCommand.Status runTest(String testClassName, Path workingDirectory) {
     List<String> command = commandPrefix();
     command.add(testClassName);
-    return RunCommand.run(command, workingDirectory, timeout);
+    return RunCommand.run(command, workingDirectory, timeoutMillis);
   }
 
   /**
@@ -90,8 +91,9 @@ public class TestEnvironment {
    * @return the base command to run JUnit tests in this environment, without a test class name
    */
   private List<String> commandPrefix() {
-    List<String> command = new ArrayList<>();
-    command.add("java");
+    List<String> command = new ArrayList<>(agentMap.size() + 9);
+    // Run the tests on the JDK that runs Randoop, regardless of which java is on the PATH.
+    command.add(Globals.jdkBinDir.resolve("java").toString());
     command.add("-ea");
     command.add("-Xmx" + GenInputsAbstract.jvm_max_memory);
     command.add("-XX:+HeapDumpOnOutOfMemoryError");

@@ -6,10 +6,19 @@ import randoop.types.TypeTuple;
 
 /** Checks that calling hashCode() on an object does not throw an exception. */
 public final class HashCodeReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
-  private HashCodeReturnsNormally() {}
+  /** Private constructor to enforce singleton. */
+  private HashCodeReturnsNormally() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static HashCodeReturnsNormally getInstance() {
     return instance;
   }
@@ -20,8 +29,11 @@ public final class HashCodeReturnsNormally extends ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      // noinspection ResultOfMethodCallIgnored
-      o.hashCode();
+      @SuppressWarnings({
+        "UnusedVariable",
+        "PMD.UnusedLocalVariable"
+      }) // Execute hashCode() but ignore its value.
+      int ignore = o.hashCode();
     } catch (Exception e) {
       return false;
     }
@@ -34,7 +46,7 @@ public final class HashCodeReturnsNormally extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -53,11 +65,6 @@ public final class HashCodeReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.hashCode()");
-    b.append(");");
-    return b.toString();
+    return "x0.hashCode();";
   }
 }

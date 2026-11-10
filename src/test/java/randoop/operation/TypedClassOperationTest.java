@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OmitMethodsPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.omitinputs.p.C;
@@ -17,7 +17,7 @@ import randoop.types.ClassOrInterfaceType;
 
 public class TypedClassOperationTest {
   @Test
-  public void testOperationForType() {
+  public void testOperationForType() throws RandoopSpecificationError {
     ClassOrInterfaceType cType = ClassOrInterfaceType.forClass(C.class);
     Set<TypedOperation> operations = getOperations(cType);
 
@@ -56,14 +56,13 @@ public class TypedClassOperationTest {
     return signature;
   }
 
-  private Set<TypedOperation> getOperations(ClassOrInterfaceType type) {
-    OmitMethodsPredicate omitMethodsPredicate = OmitMethodsPredicate.NO_OMISSION;
+  private Set<TypedOperation> getOperations(ClassOrInterfaceType type)
+      throws RandoopSpecificationError {
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(
-            type, reflectionPredicate, omitMethodsPredicate, accessibility);
+        OperationExtractor.operations(type, reflectionPredicate, accessibility);
     return new TreeSet<>(oneClassOperations);
   }
 }

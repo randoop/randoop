@@ -10,13 +10,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.EntryReader;
+import org.plumelib.util.EntryReader.CommentFormat;
+import org.plumelib.util.EntryReader.EntryFormat;
 import org.plumelib.util.UtilPlume;
+import randoop.condition.RandoopSpecificationError;
 import randoop.condition.SpecificationCollection;
 import randoop.main.RandoopUsageError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
+import randoop.util.Log;
+import randoop.util.Util;
 
 /**
  * {@code TypedClassOperationProvider} encapsulates the logic of transformation
@@ -27,8 +34,21 @@ public class TypedClassOperationProvider {
 
   private final OmitMethodsPredicate omitMethodsPredicate;
 
+  /** The operations that {@link #omitMethodsPredicate} excluded from the returned operations. */
+  private final Set<TypedOperation> omittedOperations = new TreeSet<>();
+
   public TypedClassOperationProvider(OmitMethodsPredicate omitMethodsPredicate) {
     this.omitMethodsPredicate = omitMethodsPredicate;
+  }
+
+  /**
+   * Returns the operations that {@link #omitMethodsPredicate} excluded from the results of the
+   * methods of this provider.
+   *
+   * @return the omitted operations
+   */
+  public Set<TypedOperation> getOmittedOperations() {
+    return omittedOperations;
   }
 
   /**
@@ -40,25 +60,39 @@ public class TypedClassOperationProvider {
    * @param operationSpecifications the collection of {@link
    *     randoop.condition.specification.OperationSpecification}
    * @return operations from classTypes
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
   public List<TypedOperation> getOperationsFromClasses(
       Set<ClassOrInterfaceType> classTypes,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
-      SpecificationCollection operationSpecifications) {
+      SpecificationCollection operationSpecifications)
+      throws RandoopSpecificationError {
     List<TypedOperation> operations = new ArrayList<>();
+    ReflectionManager mgr = new ReflectionManager(accessibility);
     Iterator<ClassOrInterfaceType> itor = classTypes.iterator();
     while (itor.hasNext()) {
       ClassOrInterfaceType classType = itor.next();
+      Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
       try {
-        Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(
+        OperationExtractor extractor =
+            OperationExtractor.extract(
+                mgr,
                 classType,
                 reflectionPredicate,
                 omitMethodsPredicate,
                 accessibility,
                 operationSpecifications);
+        Collection<TypedOperation> oneClassOperations = extractor.getOperations();
+        Log.logPrintf("addOperationsFromClasses: classType=%s%n", classType);
+        for (TypedOperation op : oneClassOperations) {
+          Log.logPrintf("    %s%n", op);
+        }
         operations.addAll(oneClassOperations);
+        omittedOperations.addAll(extractor.getOmittedOperations());
+      } catch (RandoopSpecificationError e) {
+        // A malformed specification is a user error; do not silently drop the class.
+        throw e;
       } catch (Throwable e) {
         // TODO: What is an example of this?  Should an error be raised, rather than this
         // easy-to-overlook output?
@@ -79,24 +113,30 @@ public class TypedClassOperationProvider {
    * @param reflectionPredicate the reflection predicate
    * @return operations read from the file
    * @throws SignatureParseException if any signature is syntactically invalid
+   * @throws RandoopSpecificationError if a specification derived from a method's annotations does
+   *     not compile
    */
   public List<TypedClassOperation> getOperationsFromFile(
-      Path methodSignaturesFile,
+      @Nullable Path methodSignaturesFile,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException {
+      throws SignatureParseException, RandoopSpecificationError {
     List<TypedClassOperation> result = new ArrayList<>();
     if (methodSignaturesFile == null) {
       return result;
     }
-    try (EntryReader reader = new EntryReader(methodSignaturesFile, "(//|#).*$", null)) {
+    try (EntryReader reader =
+        new EntryReader(
+            methodSignaturesFile, EntryFormat.DEFAULT, new CommentFormat("(//|#).*$"), null)) {
       for (String line : reader) {
         String sig = line.trim();
         if (!sig.isEmpty()) {
           try {
             TypedClassOperation operation =
                 signatureToOperation(sig, accessibility, reflectionPredicate);
-            if (!omitMethodsPredicate.shouldOmit(operation)) {
+            if (omitMethodsPredicate.shouldOmit(operation)) {
+              omittedOperations.add(operation);
+            } else {
               result.add(operation);
             }
           } catch (FailedPredicateException e) {
@@ -105,7 +145,8 @@ public class TypedClassOperationProvider {
         }
       }
     } catch (IOException e) {
-      throw new RandoopUsageError("Problem reading file " + methodSignaturesFile, e);
+      throw new RandoopUsageError(
+          "Problem reading file " + Util.pathAndAbsolute(methodSignaturesFile), e);
     }
     return result;
   }
@@ -120,12 +161,14 @@ public class TypedClassOperationProvider {
    * @throws FailedPredicateException if the accessibility or reflection predicate returns false on
    *     the class or the method or constructor
    * @throws SignatureParseException if the signature cannot be parsed
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
    */
   public static TypedClassOperation signatureToOperation(
       String signature,
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate)
-      throws SignatureParseException, FailedPredicateException {
+      throws SignatureParseException, FailedPredicateException, RandoopSpecificationError {
     AccessibleObject accessibleObject;
     accessibleObject = SignatureParser.parse(signature, accessibility, reflectionPredicate);
     if (accessibleObject == null) {
@@ -135,7 +178,7 @@ public class TypedClassOperationProvider {
               signature, accessibility, reflectionPredicate));
     }
     if (accessibleObject instanceof Constructor) {
-      return TypedOperation.forConstructor((Constructor) accessibleObject);
+      return TypedOperation.forConstructor((Constructor<?>) accessibleObject);
     } else {
       return TypedOperation.forMethod((Method) accessibleObject);
     }

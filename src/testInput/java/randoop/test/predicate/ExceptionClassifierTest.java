@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ExceptionBehaviorClassifier;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenInputsAbstract;
@@ -72,7 +73,7 @@ public class ExceptionClassifierTest {
   }
 
   @Test
-  public void testNullNPE() {
+  public void testNullNPE() throws RandoopSpecificationError {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     Class<?> c = CUTForExceptionPredicate.class;
     ClassOrInterfaceType classType = NonParameterizedType.forClass(c);

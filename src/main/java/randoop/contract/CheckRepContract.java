@@ -4,11 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -22,13 +25,23 @@ import randoop.types.TypeTuple;
  */
 public final class CheckRepContract extends ObjectContract {
 
+  /** The representation check method that this contract calls. */
   public final Method checkRepMethod;
+
+  /** The operation for calling {@link #checkRepMethod}. */
   private final TypedClassOperation operation;
-  boolean returnsBoolean; // derived from checkRepMethod
-  public final Class<?> declaringClass; // derived from checkRepMethod
+
+  /**
+   * True if {@link #checkRepMethod} returns {@code boolean}, false if it returns {@code void}.
+   * Derived from {@link #checkRepMethod}.
+   */
+  private final boolean returnsBoolean;
+
+  /** The class that declares {@link #checkRepMethod}. Derived from {@link #checkRepMethod}. */
+  public final Class<?> declaringClass;
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -41,10 +54,21 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public int hashCode() {
-    return Objects.hash(checkRepMethod);
+    return Objects.hashCode(checkRepMethod);
   }
 
-  public CheckRepContract(Method checkRepMethod) {
+  /**
+   * Creates a contract from the given representation check method.
+   *
+   * @param checkRepMethod a public instance method with no parameters and with return type {@code
+   *     boolean} or {@code void}
+   * @throws IllegalArgumentException if {@code checkRepMethod} is null, or if its return type is
+   *     neither {@code boolean} nor {@code void}
+   * @throws RandoopSpecificationError if a specification derived from the method's annotations does
+   *     not compile
+   */
+  public CheckRepContract(Method checkRepMethod) throws RandoopSpecificationError {
+    super();
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");
     }
@@ -53,9 +77,10 @@ public final class CheckRepContract extends ObjectContract {
     assert !Modifier.isStatic(modifiers);
     assert checkRepMethod.getParameterTypes().length == 0;
     this.operation = TypedOperation.forMethod(checkRepMethod);
-    if (operation.getOutputType().equals(JavaTypes.BOOLEAN_TYPE)) {
+    Type outputType = operation.getOutputType();
+    if (outputType.equals(JavaTypes.BOOLEAN_TYPE)) {
       this.returnsBoolean = true;
-    } else if (operation.getOutputType().equals(JavaTypes.VOID_TYPE)) {
+    } else if (outputType.equals(JavaTypes.VOID_TYPE)) {
       this.returnsBoolean = false;
     } else {
       throw new IllegalArgumentException("check-rep method must have void or boolean return type");
@@ -110,14 +135,12 @@ public final class CheckRepContract extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder(128);
     b.append(Globals.lineSep);
     b.append("// Check representation invariant.").append(Globals.lineSep);
     if (returnsBoolean) {
-      b.append("org.junit.Assert.assertTrue(");
-      b.append("\"Representation invariant failed: ").append(toCommentString()).append("\", ");
-      b.append("x0.").append(checkRepMethod.getName()).append("()");
-      b.append(");");
+      b.append("org.junit.Assert.assertTrue(\"Representation invariant failed: ");
+      b.append(toCommentString()).append("\", x0.").append(checkRepMethod.getName()).append("());");
     } else {
       b.append("x0.").append(checkRepMethod.getName()).append("();");
     }

@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
+import randoop.condition.RandoopSpecificationError;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ParameterizedType;
 import randoop.types.PrimitiveType;
@@ -26,16 +27,19 @@ class TypeExtractor extends DefaultClassVisitor {
    * Creates a visitor that adds discovered concrete types to the given set if they satisfy the
    * accessibility predicate.
    *
-   * @param inputTypes the set of concrete types
+   * @param inputTypes the set of concrete types. A client passes a (typically empty) set, this
+   *     class populates the set, and the client reads the set it passed in.
    * @param predicate the accessibility predicate
    */
   TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
+    super();
     this.inputTypes = inputTypes;
     this.predicate = predicate;
   }
 
   @Override
-  public void visit(Class<?> c, ReflectionManager reflectionManager) {
+  public void visit(Class<?> c, ReflectionManager reflectionManager)
+      throws RandoopSpecificationError {
     addIfConcrete(ClassOrInterfaceType.forClass(c));
     reflectionManager.apply(this, c);
   }
@@ -83,7 +87,7 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Determines whether the given general type is not generic, and, if so, adds the concrete type to
+   * Returns true if the given general type is not generic, and, if so, adds the concrete type to
    * the input types of this object.
    *
    * @param type the general type

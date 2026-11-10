@@ -6,10 +6,19 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code x0.equals(null)==false}. */
 public final class EqualsToNullRetFalse extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 
-  private EqualsToNullRetFalse() {}
+  /** Private constructor to enforce singleton. */
+  private EqualsToNullRetFalse() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static EqualsToNullRetFalse getInstance() {
     return instance;
   }
@@ -27,7 +36,7 @@ public final class EqualsToNullRetFalse extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -46,11 +55,10 @@ public final class EqualsToNullRetFalse extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!x0.equals(null)");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertTrue(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", !x0.equals(null));");
     return b.toString();
   }
 }

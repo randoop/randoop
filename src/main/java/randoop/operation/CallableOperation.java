@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -13,6 +14,9 @@ import randoop.types.TypeTuple;
  * implementations of Operation predicates that are false except for a few kinds of operations.
  */
 public abstract class CallableOperation implements Operation {
+
+  /** Creates a CallableOperation. */
+  public CallableOperation() {}
 
   @Override
   public boolean isStatic() {
@@ -55,8 +59,8 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Checks whether reflective object contained in an {@link Operation} satisfies the predicate.
-   * Since there is no reflective object in an {@code CallableOperation}, returns false.
+   * Returns true if the reflective object contained in an {@link Operation} satisfies the
+   * predicate. Since there is no reflective object in a {@code CallableOperation}, returns false.
    *
    * @param reflectionPredicate {@link ReflectionPredicate} against which object to be checked
    * @return false as there is no object to check
@@ -67,7 +71,7 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Performs this operation using the array of input values. Returns the results of execution as an
+   * Performs this operation using the array of input values. Returns the results of execution as a
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
@@ -113,9 +117,10 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Returns a string representation of this Operation, which can be read by static parse method for
-   * class. For a class C implementing the Operation interface, this method should return a String s
-   * such that parsing the string returns an object equivalent to this object, i.e.
+   * Returns a string representation of this Operation (not an invocation of this Operation), which
+   * can be read by the static parse method for the class in which the method is defined. For a
+   * class C implementing the Operation interface, this method should return a String s such that
+   * parsing the string returns an object equivalent to this object, i.e.
    * C.parse(this.s).equals(this).
    *
    * @param declaringType the declaring type for this operation
@@ -126,7 +131,14 @@ public abstract class CallableOperation implements Operation {
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
 
-  public AccessibleObject getReflectionObject() {
+  /**
+   * Returns the reflection object (such as a {@code Method} or {@code Constructor}) that this
+   * operation invokes, or null if this operation is not implemented by a reflection object.
+   *
+   * @return the reflection object for this operation, or null if there is none
+   */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+  public @Nullable AccessibleObject getReflectionObject() {
     return null;
   }
 }

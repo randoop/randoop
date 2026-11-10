@@ -3,7 +3,7 @@ package randoop.contract;
 import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
-import org.plumelib.util.StringsPlume;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -11,6 +11,7 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -29,7 +30,7 @@ public final class ObserverEqValue extends ObjectContract {
   public Object value;
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (o == this) {
       return true;
     }
@@ -52,6 +53,7 @@ public final class ObserverEqValue extends ObjectContract {
    * @param value the run-time result of calling the observer: a primitive value or String
    */
   public ObserverEqValue(TypedOperation observer, Object value) {
+    super();
     assert observer.isMethodCall() || observer.isConstructorCall()
         : "Observer must be MethodCall or ConstructorCall, got " + observer;
     this.observer = observer;
@@ -60,7 +62,7 @@ public final class ObserverEqValue extends ObjectContract {
       throw new RandoopBug(
           String.format(
               "Cannot represent %s as a literal; observer = %s",
-              StringsPlume.toStringAndClass(value), observer));
+              Util.toStringAndClassSafely(value), observer));
     }
   }
 
@@ -113,11 +115,6 @@ public final class ObserverEqValue extends ObjectContract {
       } else {
         b.append(String.format("org.junit.Assert.assertFalse(%s);", call));
       }
-    } else if (observer.getOutputType().isPrimitive()
-        && !value.equals(Double.NaN)
-        && !value.equals(Float.NaN)) {
-      b.append(
-          String.format("org.junit.Assert.assertEquals(%s, %s);", call, Value.toCodeString(value)));
     } else { // string
       // System.out.printf("value = %s - %s%n", value, value.getClass());
       b.append(
@@ -138,7 +135,7 @@ public final class ObserverEqValue extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -158,6 +155,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toString() {
     return String.format(
-        "<ObserverEqValue %s, value = '%s'", observer, StringsPlume.toStringAndClass(value));
+        "<ObserverEqValue %s, value = '%s'", observer, Util.toStringAndClassSafely(value));
   }
 }

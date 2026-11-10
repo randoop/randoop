@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
+import randoop.condition.RandoopSpecificationError;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -26,6 +28,7 @@ import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.util.Randomness;
 
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
@@ -87,12 +90,12 @@ public class InstantiationTest {
     assertEquals(methodNames.size(), methodCount);
   }
 
-  /**
+  /*
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
    * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
    * C_BST<String>}.
    *
-   * <p>it should be possible for it to pass with {@code B_BST}.
+   * <p>It should be possible for it to pass with {@code B_BST}.
    */
   /*
   @Test
@@ -165,7 +168,7 @@ public class InstantiationTest {
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     try {
       addTypes(Type.forName("randoop.reflection.StringComparator"), inputTypes);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException  | NoClassDefFoundError e) {
       fail("cannot build type for comparator");
     }
     Set<String> nullOKNames = new HashSet<>();
@@ -176,7 +179,7 @@ public class InstantiationTest {
     int count = 0;
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
       count++;
     }
     assertEquals(24, count);
@@ -203,7 +206,8 @@ public class InstantiationTest {
     assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse(
+          "should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
     }
   }
 
@@ -250,6 +254,45 @@ public class InstantiationTest {
     }
   }
 
+  /**
+   * Tests the instantiation of type variables whose bounds mention other type variables of the same
+   * method: each instantiation succeeds and satisfies the bounds, whatever the random choices.
+   */
+  @Test
+  public void testRelatedBoundsInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation widen =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("widen", Object.class));
+    TypedClassOperation chain =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("chain", Object.class, Object.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+
+      // <K, V extends K> K widen(V)
+      TypedClassOperation widenInstance = instantiator.instantiate(widen);
+      assertNotNull("instantiation failed for " + widen, widenInstance);
+      Type k = widenInstance.getOutputType();
+      Type v = widenInstance.getInputTypes().get(0);
+      assertTrue(v + " should be a subtype of " + k, v.isSubtypeOfOrEqualTo(k));
+
+      // <A, B extends A, C extends B> A chain(B, C)
+      TypedClassOperation chainInstance = instantiator.instantiate(chain);
+      assertNotNull("instantiation failed for " + chain, chainInstance);
+      Type a = chainInstance.getOutputType();
+      Type b = chainInstance.getInputTypes().get(0);
+      Type c = chainInstance.getInputTypes().get(1);
+      assertTrue(b + " should be a subtype of " + a, b.isSubtypeOfOrEqualTo(a));
+      assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
+    }
+    Randomness.setSeed(0);
+  }
+
   /* disabled until fix type parameter management
   @Test
   public void testLazyConversionInstantiation() {
@@ -290,6 +333,10 @@ public class InstantiationTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
+    } catch (RandoopClassNameError e) {
+      fail("bad class name: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
     assertNotNull(model);
     return model;
@@ -359,8 +406,7 @@ public class InstantiationTest {
     if (type.isClassOrInterfaceType()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       if (!(classType.isGeneric() || classType.hasWildcard())) {
-        typeSet.add(classType);
-        typeSet.addAll(classType.getSuperTypes());
+        typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
   }

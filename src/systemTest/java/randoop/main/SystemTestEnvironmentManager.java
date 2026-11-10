@@ -68,7 +68,7 @@ class SystemTestEnvironmentManager {
    *
    * @param classpath the system test classpath
    * @param buildDir the build directory
-   * @return the system test environment with
+   * @return the system test environment
    */
   static SystemTestEnvironmentManager createSystemTestEnvironmentManager(
       String classpath, Path buildDir) {

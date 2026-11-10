@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package components;
 
@@ -113,7 +113,7 @@ public class LabelDemo extends JPanel {
             public void run() {
 		//Turn off metal's use of bold fonts
 	        UIManager.put("swing.boldMetal", Boolean.FALSE);
-                
+
 		createAndShowGUI();
             }
         });

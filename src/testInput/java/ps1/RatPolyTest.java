@@ -1159,7 +1159,7 @@ public class RatPolyTest extends TestCase {
   }
 
   public void testDivExamplesFromSpec() {
-    // seperated this testclasses case out because it has a dependency on
+    // separated this testclasses case out because it has a dependency on
     // both "parse" and "div" functioning properly
 
     // example 1 from spec
@@ -1167,7 +1167,7 @@ public class RatPolyTest extends TestCase {
   }
 
   public void testDivExamplesFromSpec1() {
-    // seperated this testclasses case out because it has a dependency on
+    // separated this testclasses case out because it has a dependency on
     // both "parse" and "div" functioning properly
 
     // example 2 from spec

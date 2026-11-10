@@ -19,9 +19,17 @@ import randoop.sequence.Sequence;
  */
 public class TestValueExtractor extends DefaultClassVisitor {
 
+  /** The set to which this visitor adds sequences for the values of annotated fields. */
   private final Set<Sequence> valueSequences;
 
+  /**
+   * Creates a visitor that adds sequences for the values of {@code @TestValue}-annotated fields to
+   * the given set.
+   *
+   * @param valueSequences the set to which sequences are added; is side-effected
+   */
   public TestValueExtractor(Set<Sequence> valueSequences) {
+    super();
     this.valueSequences = valueSequences;
   }
 
@@ -86,7 +94,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
       }
 
       if (!fieldType.isArray()) {
-        valueList = Collections.singletonList(value);
+        valueList = Collections.<Object>singletonList(value);
       } else {
         int length = Array.getLength(value);
         valueList = new ArrayList<>(length);

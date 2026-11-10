@@ -98,7 +98,7 @@ package java7.util7;
  * unequal hash codes cannot be equal.)  More generally, implementations of
  * the various Collections Framework interfaces are free to take advantage of
  * the specified behavior of underlying {@link Object} methods wherever the
- * implementor deems it appropriate.
+ * implementer deems it appropriate.
  *
  * <p>This interface is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
@@ -412,7 +412,7 @@ public interface Collection<E> extends Iterable<E> {
      * or a <tt>List</tt>) must exercise care if they choose to override the
      * <tt>Object.equals</tt>.  It is not necessary to do so, and the simplest
      * course of action is to rely on <tt>Object</tt>'s implementation, but
-     * the implementor may wish to implement a "value comparison" in place of
+     * the implementer may wish to implement a "value comparison" in place of
      * the default "reference comparison."  (The <tt>List</tt> and
      * <tt>Set</tt> interfaces mandate such value comparisons.)<p>
      *

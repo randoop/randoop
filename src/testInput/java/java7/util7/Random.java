@@ -27,7 +27,7 @@ package java7.util7;
 import java.io.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-/// Using sun.misc.Unsafe is not permitted in Java 9+.
+// Using sun.misc.Unsafe is not permitted in Java 9+.
 // import sun.misc.Unsafe;
 
 /**
@@ -539,7 +539,7 @@ class Random implements java.io.Serializable {
         if (seedVal < 0)
           throw new java.io.StreamCorruptedException(
                               "Random: invalid seed");
-        /// Using sun.misc.Unsafe is not permitted in Java 9+.
+        // Using sun.misc.Unsafe is not permitted in Java 9+.
         // resetSeed(seedVal);
         nextNextGaussian = fields.get("nextNextGaussian", 0.0);
         haveNextNextGaussian = fields.get("haveNextNextGaussian", false);
@@ -563,7 +563,7 @@ class Random implements java.io.Serializable {
         s.writeFields();
     }
 
-    /// Using sun.misc.Unsafe is not permitted in Java 9+.
+    // Using sun.misc.Unsafe is not permitted in Java 9+.
     // // Support for resetting seed while deserializing
     // private static final Unsafe unsafe = Unsafe.getUnsafe();
     // private static final long seedOffset;

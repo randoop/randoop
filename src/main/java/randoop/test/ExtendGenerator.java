@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.condition.RandoopSpecificationError;
 import randoop.sequence.ExecutableSequence;
 
 /**
@@ -8,7 +9,10 @@ import randoop.sequence.ExecutableSequence;
  */
 public class ExtendGenerator extends TestCheckGenerator {
 
+  /** The generator whose invalid and error checks take precedence. */
   private TestCheckGenerator firstGenerator;
+
+  /** The generator whose checks are used if the first finds no invalid or error behavior. */
   private TestCheckGenerator secondGenerator;
 
   /**
@@ -20,6 +24,7 @@ public class ExtendGenerator extends TestCheckGenerator {
    * @param secondGenerator the visitor to identify other checks for the sequence
    */
   public ExtendGenerator(TestCheckGenerator firstGenerator, TestCheckGenerator secondGenerator) {
+    super();
     this.firstGenerator = firstGenerator;
     this.secondGenerator = secondGenerator;
   }
@@ -33,14 +38,15 @@ public class ExtendGenerator extends TestCheckGenerator {
    *     return the checks object produced by the second generator
    */
   @Override
-  public TestChecks<?> generateTestChecks(ExecutableSequence eseq) {
+  public TestChecks<?> generateTestChecks(ExecutableSequence eseq)
+      throws RandoopSpecificationError {
     TestChecks<?> checks = firstGenerator.generateTestChecks(eseq);
     if (checks.hasInvalidBehavior() || checks.hasErrorBehavior()) {
       return checks;
     } else {
       TestChecks<?> secondChecks = secondGenerator.generateTestChecks(eseq);
       if (secondChecks.hasChecks()) {
-        return secondGenerator.generateTestChecks(eseq);
+        return secondChecks;
       }
       return checks;
     }

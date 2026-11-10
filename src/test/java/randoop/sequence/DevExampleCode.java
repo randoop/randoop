@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
 import randoop.Globals;
+import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedOperation;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -81,11 +82,13 @@ public class DevExampleCode {
               + " java.util.TreeSet<java.lang.String>((java.util.Collection<java.lang.String>)strList0);"
               + Globals.lineSep
               + "java.util.Set<java.lang.String> strSet5 ="
-              + " java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>)strSet4);"
+              + " java.util.Collections.synchronizedSet((java.util.Set<java.lang.String>) strSet4);"
               + Globals.lineSep,
           s.toCodeString());
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
+    } catch (RandoopSpecificationError e) {
+      fail("bad specification: " + e.getMessage());
     }
   }
 }

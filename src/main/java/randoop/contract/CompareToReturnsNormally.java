@@ -5,16 +5,29 @@ import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
 /** Checks that calling compareTo() on an object does not throw an exception. */
-public class CompareToReturnsNormally extends ObjectContract {
+public final class CompareToReturnsNormally extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
-  private CompareToReturnsNormally() {}
+  /** Private constructor to enforce singleton. */
+  private CompareToReturnsNormally() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static CompareToReturnsNormally getInstance() {
     return instance;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({
+    "unchecked",
+    "rawtypes",
+    "PMD.UselessPureMethodCall" // called to see if it throws
+  })
   @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
@@ -36,7 +49,8 @@ public class CompareToReturnsNormally extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COMPARABLE_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -55,11 +69,6 @@ public class CompareToReturnsNormally extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.compareTo()");
-    b.append(");");
-    return b.toString();
+    return "x0.compareTo(x0);";
   }
 }

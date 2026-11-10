@@ -25,11 +25,13 @@ class PackagePrivateClass {
   private boolean fourMethod(boolean b) {
     return b;
   }
+
   //
   public int oneField;
   int twoField;
   protected int threeField;
   private int fourField;
+
   //
   public enum oneEnum {
     ONE,

@@ -7,10 +7,19 @@ import randoop.types.TypeTuple;
 
 /** The contract: {@code c.toArray().length == c.size()} for all Collections c. */
 public final class SizeToArrayLength extends ObjectContract {
+  /** The singleton instance of this class. */
   private static final SizeToArrayLength instance = new SizeToArrayLength();
 
-  private SizeToArrayLength() {}
+  /** Private constructor to enforce singleton. */
+  private SizeToArrayLength() {
+    super();
+  }
 
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
   public static SizeToArrayLength getInstance() {
     return instance;
   }
@@ -33,7 +42,8 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {
@@ -52,11 +62,10 @@ public final class SizeToArrayLength extends ObjectContract {
 
   @Override
   public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    b.append("org.junit.Assert.assertEquals(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.toArray().length, x0.size()");
-    b.append(");");
+    StringBuilder b = new StringBuilder(128);
+    b.append("org.junit.Assert.assertEquals(\"Contract failed: ");
+    b.append(toCommentString());
+    b.append("\", x0.toArray().length, x0.size());");
     return b.toString();
   }
 }
