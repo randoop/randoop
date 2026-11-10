@@ -22,17 +22,13 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.BoundsCheck;
-import randoop.types.InstantiatedType;
-import randoop.types.ReferenceType;
-import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.types.TypeVariable;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -308,28 +304,20 @@ public class DemandDrivenInputCreator {
         throw new RandoopBug("specification error for type " + currentType, e);
       }
       for (TypedOperation op : operations) {
-        op = instantiateToProduce(op, currentType);
-        Type opOutputType = op.getOutputType();
-
-        // Only consider operations that produce instances of the type we're currently resolving
-        if (!isProducer(op, currentType)) {
+        // Only constructors and static methods can produce a value without a receiver.
+        if (!op.isConstructorCall() && !op.isStatic()) {
+          continue;
+        }
+        TypedOperation producer = instantiateToProduce((TypedClassOperation) op, currentType);
+        if (producer == null) {
           continue;
         }
 
-        if (opOutputType.isGeneric()) {
-          TypedClassOperation instantiated =
-              sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
-          if (instantiated == null) {
-            continue; // Skip if instantiation fails
-          }
-          op = instantiated;
-        }
-
         // Add this operation as a producer of the type.
-        result.add(op);
+        result.add(producer);
 
         // Add each of its parameter types for further processing.
-        for (Type paramType : op.getInputTypes()) {
+        for (Type paramType : producer.getInputTypes()) {
           worklist.addFirst(paramType);
         }
       }
@@ -349,55 +337,20 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns the given operation, instantiated so that its output type is the given parameterized
-   * type, if possible. For example, if {@code op} is {@code static <T extends Marker> Box<T> of(T)}
-   * and {@code type} is {@code Box<MarkerImpl>}, returns {@code static Box<MarkerImpl>
-   * of(MarkerImpl)}. Without this instantiation, the output type {@code Box<T>} of {@code op} is
-   * not assignable to {@code type}.
+   * Returns the given operation, instantiated if it is generic, if its output type is assignable to
+   * the given type.
    *
-   * @param op an operation
+   * @param op a constructor or static method
    * @param type the type for {@code op} to produce
-   * @return {@code op}, instantiated so that its output type is {@code type}; or {@code op} itself
-   *     if its output type is not generic, if {@code type} is not a parameterized type of the same
-   *     generic class, or if the instantiation would violate a bound of a type parameter
+   * @return {@code op}, instantiated if it is generic, whose output type is assignable to {@code
+   *     type}; or null if there is no such instantiation or none was found
+   * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
    */
-  private static TypedOperation instantiateToProduce(TypedOperation op, Type type) {
-    Type outputType = op.getOutputType();
-    if (!(type instanceof InstantiatedType
-        && outputType instanceof ReferenceType
-        && outputType.isGeneric())) {
-      return op;
+  private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
+    if (op.isGeneric()) {
+      return sequenceCollection.getTypeInstantiator().instantiate(op, type);
     }
-    Substitution substitution =
-        ((InstantiatedType) type).getInstantiatingSubstitution((ReferenceType) outputType);
-    if (substitution == null || substitution.isEmpty()) {
-      return op;
-    }
-    List<TypeVariable> parameters = new ArrayList<>(substitution.keySet());
-    List<ReferenceType> arguments = new ArrayList<>(parameters.size());
-    for (TypeVariable parameter : parameters) {
-      arguments.add(substitution.getOrDefault(parameter, parameter));
-    }
-    if (!new BoundsCheck(parameters).test(arguments, substitution)) {
-      return op;
-    }
-    return op.substitute(substitution);
-  }
-
-  /**
-   * True iff `op` can produce an instance of `currentType` without needing a receiver.
-   *
-   * @param op the operation to check
-   * @param currentType the type to produce
-   * @return true if {@code op} can produce an instance of {@code currentType}
-   */
-  private boolean isProducer(TypedOperation op, Type currentType) {
-    // Output must be assignable to the goal type.
-    if (!currentType.isAssignableFrom(op.getOutputType())) {
-      return false;
-    }
-    // Only allow constructors and static methods (no receiver needed).
-    return op.isConstructorCall() || op.isStatic();
+    return type.isAssignableFrom(op.getOutputType()) ? op : null;
   }
 
   /**

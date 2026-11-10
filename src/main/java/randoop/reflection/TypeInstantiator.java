@@ -130,6 +130,88 @@ public class TypeInstantiator {
   }
 
   /**
+   * Instantiate the given operation so that its output type is assignable to the given type. If
+   * {@code goalType} is a parameterized type and the output type of {@code operation} is a
+   * parameterized type of the same generic class, then the output type of the result is {@code
+   * goalType}. For example, if {@code operation} is {@code static <T extends Marker> Box<T> of(T)}
+   * and {@code goalType} is {@code Box<MarkerImpl>}, returns {@code static Box<MarkerImpl>
+   * of(MarkerImpl)}. Chooses type arguments for the remaining type parameters, such as those that
+   * occur only in the parameter types of {@code operation}, as {@link
+   * #instantiate(TypedClassOperation)} does.
+   *
+   * @param operation a generic operation
+   * @param goalType the type to which the output type of the result is assignable
+   * @return an instantiated version of {@code operation} whose output type is assignable to {@code
+   *     goalType}, or null if none was found
+   */
+  public @Nullable TypedClassOperation instantiate(TypedClassOperation operation, Type goalType) {
+    assert operation.isGeneric() || operation.hasWildcardTypes()
+        : "operation " + operation + " must be generic or have wildcards";
+
+    Type outputType = operation.getOutputType();
+    if (goalType instanceof InstantiatedType
+        && outputType instanceof ParameterizedType
+        && ((ParameterizedType) outputType)
+            .getGenericClassType()
+            .equals(((InstantiatedType) goalType).getGenericClassType())) {
+      InstantiatedType goalInstantiatedType = (InstantiatedType) goalType;
+      Substitution substitution =
+          outputSubstitution((ParameterizedType) outputType, goalInstantiatedType);
+      if (substitution != null
+          && operation.getDeclaringType().equals(goalInstantiatedType.getGenericClassType())) {
+        // A static method does not use the type parameters of its class, such as T in Box<T>.
+        // Instantiate them as in the goal type, as for a constructor, so that the declaring type
+        // is not generic.  Otherwise, instantiate(TypedClassOperation) would fail to instantiate
+        // the declaring type.
+        Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
+        substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
+      }
+      if (substitution == null || !satisfiesBounds(substitution)) {
+        return null;
+      }
+      operation = operation.substitute(substitution);
+      if (operation.isGeneric() || operation.hasWildcardTypes()) {
+        operation = instantiate(operation);
+      }
+    } else if (goalType.isAssignableFrom(outputType)) {
+      operation = instantiate(operation);
+    } else {
+      return null;
+    }
+    if (operation == null || !goalType.isAssignableFrom(operation.getOutputType())) {
+      return null;
+    }
+    return operation;
+  }
+
+  /**
+   * Returns a substitution that, applied to the given output type, yields the given goal type. For
+   * example, for {@code Box<T>} and {@code Box<MarkerImpl>}, returns the substitution that maps
+   * {@code T} to {@code MarkerImpl}.
+   *
+   * @param outputType the output type of an operation
+   * @param goalType a parameterized type of the same generic class as {@code outputType}
+   * @return a substitution that maps {@code outputType} to {@code goalType}, or null if there is no
+   *     such substitution
+   */
+  private static @Nullable Substitution outputSubstitution(
+      ParameterizedType outputType, InstantiatedType goalType) {
+    Substitution substitution;
+    if (outputType instanceof GenericClassType) {
+      // The output type of a constructor of a generic class, such as Box<T>.
+      substitution = goalType.getTypeSubstitution();
+    } else if (goalType.isInstantiationOf(outputType)) {
+      substitution = goalType.getInstantiatingSubstitution(outputType);
+    } else {
+      return null;
+    }
+    if (substitution == null || !outputType.substitute(substitution).equals(goalType)) {
+      return null;
+    }
+    return substitution;
+  }
+
+  /**
    * Returns a substitution that instantiates the {@code SortedSet} type of the given constructor. A
    * {@code SortedSet} may be built so that the element type {@code E} is ordered either explicitly
    * with a {@code Comparator<E>}, or the element type satisfies {@code E implements Comparable<E>}.
