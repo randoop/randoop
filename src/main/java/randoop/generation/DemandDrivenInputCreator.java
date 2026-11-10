@@ -211,8 +211,8 @@ public class DemandDrivenInputCreator {
    *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
-   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if no producers
-   *       found.
+   *   <li>Logs a warning and adds the target type to the {@code uninstantiableTypes} set if the
+   *       target type declares no producers.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -233,11 +233,6 @@ public class DemandDrivenInputCreator {
     List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
-      Log.logPrintf(
-          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
-          targetType);
-      // Track the types with no producers.
-      uninstantiableTypes.add(targetType);
       return SIList.empty();
     }
 
@@ -272,6 +267,7 @@ public class DemandDrivenInputCreator {
    *       <li>all new producers discovered recursively while inspecting and constructing the
    *           necessary parameter types.
    *     </ul>
+   *     The list is empty if no producer of {@code targetType} could be instantiated.
    */
   private List<TypedOperation> getProducers(Type targetType) {
     List<TypedOperation> result = new ArrayList<>();
@@ -279,6 +275,8 @@ public class DemandDrivenInputCreator {
     Deque<Type> worklist = new ArrayDeque<>();
     Set<Type> processed = new HashSet<>();
     worklist.add(targetType);
+    // True if `targetType` declares a producer, even one that could not be instantiated.
+    boolean targetHasProducer = false;
 
     while (!worklist.isEmpty()) {
       Type currentType = worklist.remove();
@@ -308,6 +306,9 @@ public class DemandDrivenInputCreator {
         // Only consider operations that produce instances of the type we're currently resolving
         if (!isProducer(op, currentType)) {
           continue;
+        }
+        if (currentType.equals(targetType)) {
+          targetHasProducer = true;
         }
 
         // A generic operation must be instantiated even if its output type is not generic, as in
@@ -342,6 +343,18 @@ public class DemandDrivenInputCreator {
           worklist.addFirst(paramType);
         }
       }
+    }
+
+    // A type with no producers is uninstantiable.  A type whose producers could not be
+    // instantiated is not recorded as uninstantiable, because instantiation chooses type arguments
+    // from the main sequence collection, so it might succeed after that collection grows.
+    if (!targetHasProducer) {
+      Log.logPrintf(
+          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
+          targetType);
+      uninstantiableTypes.add(targetType);
+    } else if (result.isEmpty()) {
+      Log.logPrintf("No producer methods for type %s could be instantiated.%n", targetType);
     }
 
     // Reverse so that producers for parameter types (dependencies) appear
