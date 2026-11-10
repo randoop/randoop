@@ -210,9 +210,9 @@ public class DemandDrivenInputCreator {
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
    *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
-   *       type declares no accessible producers. A type whose producers exist but are not
-   *       currently usable (e.g., a generic producer that cannot be instantiated from the
-   *       currently-known types) is not recorded, so that it can be retried later.
+   *       type declares no accessible producers. A type whose producers exist but are not currently
+   *       usable (e.g., a generic producer that cannot be instantiated from the currently-known
+   *       types) is not recorded, so that it can be retried later.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
