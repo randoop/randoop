@@ -209,8 +209,10 @@ public class DemandDrivenInputCreator {
    *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
-   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if no producers
-   *       found.
+   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
+   *       type declares no accessible producers. A type whose producers exist but are not
+   *       currently usable (e.g., a generic producer that cannot be instantiated from the
+   *       currently-known types) is not recorded, so that it can be retried later.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -231,11 +233,18 @@ public class DemandDrivenInputCreator {
     List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
-      Log.logPrintf(
-          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
-          targetType);
-      // Track the types with no producers.
-      uninstantiableTypes.add(targetType);
+      if (hasAccessibleProducer(targetType)) {
+        // Some accessible producer exists, but none is currently usable (e.g., a generic producer
+        // could not be instantiated from the currently-known types).  Do not record the type as
+        // uninstantiable, because a later call may succeed once more types are known.
+        Log.logPrintf("No usable producer methods found for type %s at this time.%n", targetType);
+      } else {
+        Log.logPrintf(
+            "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
+            targetType);
+        // Track the types with no producers.
+        uninstantiableTypes.add(targetType);
+      }
       return SIList.empty();
     }
 
@@ -293,16 +302,7 @@ public class DemandDrivenInputCreator {
       // and are accessible to Randoop.
 
       // Iterate over the operations and check if they can produce the target type.
-      List<TypedOperation> operations;
-      try {
-        operations =
-            OperationExtractor.operations(
-                currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
-      } catch (RandoopSpecificationError e) {
-        // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
-        throw new RandoopBug("specification error for type " + currentType, e);
-      }
-      for (TypedOperation op : operations) {
+      for (TypedOperation op : getAccessibleOperations(currentType)) {
         Type opOutputType = op.getOutputType();
 
         // Only consider operations that produce instances of the type we're currently resolving
@@ -340,6 +340,43 @@ public class DemandDrivenInputCreator {
     visitedTypes.addAll(processed);
 
     return result;
+  }
+
+  /**
+   * Returns the accessible constructors and methods declared in the given type.
+   *
+   * @param type the type whose operations to return
+   * @return the accessible constructors and methods declared in {@code type}
+   */
+  private List<TypedOperation> getAccessibleOperations(Type type) {
+    try {
+      return OperationExtractor.operations(
+          type.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+    } catch (RandoopSpecificationError e) {
+      // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
+      throw new RandoopBug("specification error for type " + type, e);
+    }
+  }
+
+  /**
+   * Returns true if the given type declares some accessible producer of itself, regardless of
+   * whether that producer is currently usable (e.g., whether a generic producer can be
+   * instantiated).
+   *
+   * @param type the type to check
+   * @return true if {@code type} declares an accessible producer of itself
+   */
+  private boolean hasAccessibleProducer(Type type) {
+    if (type.isNonreceiverType()) {
+      // Consistent with getProducers, which never finds producers for non-receiver types.
+      return false;
+    }
+    for (TypedOperation op : getAccessibleOperations(type)) {
+      if (isProducer(op, type)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
