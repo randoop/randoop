@@ -149,6 +149,8 @@ public class TypeInstantiator {
         : "operation " + operation + " must be generic or have wildcards";
 
     Type outputType = operation.getOutputType();
+    // The instantiated operation, or null if none was found.
+    TypedClassOperation result;
     if (goalType instanceof InstantiatedType
         && outputType instanceof ParameterizedType
         && ((ParameterizedType) outputType)
@@ -169,19 +171,20 @@ public class TypeInstantiator {
       if (substitution == null || !satisfiesBounds(substitution)) {
         return null;
       }
-      operation = operation.substitute(substitution);
-      if (operation.isGeneric() || operation.hasWildcardTypes()) {
-        operation = instantiate(operation);
-      }
+      TypedClassOperation substituted = operation.substitute(substitution);
+      result =
+          substituted.isGeneric() || substituted.hasWildcardTypes()
+              ? instantiate(substituted)
+              : substituted;
     } else if (goalType.isAssignableFrom(outputType)) {
-      operation = instantiate(operation);
+      result = instantiate(operation);
     } else {
       return null;
     }
-    if (operation == null || !goalType.isAssignableFrom(operation.getOutputType())) {
+    if (result == null || !goalType.isAssignableFrom(result.getOutputType())) {
       return null;
     }
-    return operation;
+    return result;
   }
 
   /**
