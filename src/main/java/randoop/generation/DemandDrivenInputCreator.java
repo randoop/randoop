@@ -16,12 +16,14 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.condition.RandoopSpecificationError;
+import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -310,9 +312,22 @@ public class DemandDrivenInputCreator {
 
         // A generic operation must be instantiated even if its output type is not generic, as in
         // `static <T> Foo of(T x)`, because a sequence cannot supply a value of a type variable.
-        if (op.isGeneric() || op.hasWildcardTypes()) {
-          TypedClassOperation instantiated =
-              sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
+        // A non-generic operation with only wildcard types, as in `static Foo of(Box<?> b)`, is
+        // not instantiated:  instantiation would require an instantiation of `Box` in the main
+        // sequence collection, but the worklist can create a `Box` instead.
+        if (op.isGeneric()) {
+          TypedClassOperation instantiated;
+          try {
+            instantiated =
+                sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
+          } catch (Throwable e) {
+            if (GenInputsAbstract.fail_on_generation_error) {
+              throw new RandoopInstantiationError(op.toString(), e);
+            }
+            DemandDrivenLog.logPrintf("Error instantiating operation %s%n", op);
+            DemandDrivenLog.logStackTrace(e);
+            continue;
+          }
           if (instantiated == null) {
             continue; // Skip if instantiation fails
           }
