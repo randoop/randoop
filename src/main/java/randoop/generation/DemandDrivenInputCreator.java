@@ -149,6 +149,9 @@ public class DemandDrivenInputCreator {
    * in {@link #sequenceCollection}. Unlike a type in {@link #uninstantiableTypes}, such a type is
    * retried, but only after those types change. A type is removed from this map when one of its
    * producers becomes usable.
+   *
+   * <p>Not retrying while the types are unchanged is a heuristic: the type instantiator makes
+   * random choices, so a retry with the same types could succeed where the previous attempt failed.
    */
   private final Map<Type, Integer> typesWithoutUsableProducers = new HashMap<>();
 

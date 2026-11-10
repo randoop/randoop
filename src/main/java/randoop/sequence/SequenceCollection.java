@@ -59,6 +59,13 @@ public final class SequenceCollection {
   /**
    * The number of times that {@link #typesAndSupertypes} has changed. It increases whenever a type
    * is added to {@link #typesAndSupertypes} or this collection is cleared.
+   *
+   * <p>A client can compare two values of this count to cheaply tell whether the types used by
+   * {@link #typeInstantiator} have changed; for example, {@link
+   * randoop.generation.DemandDrivenInputCreator} retries a type whose generic producers could not
+   * be instantiated only after this count changes. This is a counter rather than the size of
+   * {@link #typesAndSupertypes} because a clear followed by additions can restore the size with
+   * different types.
    */
   private int typesModificationCount = 0;
 
