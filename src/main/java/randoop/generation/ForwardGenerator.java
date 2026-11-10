@@ -8,8 +8,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
@@ -29,7 +31,6 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -75,9 +76,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * components as {@link #allSequences}, in the same order, but can be accessed by index.
    */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
-
-  /** Instantiates generic operations with concrete type arguments. */
-  private final TypeInstantiator instantiator;
 
   /** How to select sequences as input for creating new sequences. */
   private final InputSequenceSelector inputSequenceSelector;
@@ -144,7 +142,6 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
-    this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
 
@@ -211,7 +208,9 @@ public class ForwardGenerator extends AbstractGenerator {
    * initially contains a set of primitive sequences; this method puts those primitives in this set.
    */
   // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
+  @RequiresNonNull("this.runtimePrimitivesSeen")
+  private void initializeRuntimePrimitivesSeen(
+      @UnderInitialization(AbstractGenerator.class) ForwardGenerator this) {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
       try {
@@ -486,7 +485,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
-        operation = instantiator.instantiate((TypedClassOperation) operation);
+        operation =
+            componentManager.getTypeInstantiator().instantiate((TypedClassOperation) operation);
       } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
