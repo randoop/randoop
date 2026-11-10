@@ -105,9 +105,9 @@ class LazyReferenceBound extends ReferenceBound {
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
    * For an upper bound, it is also enough that the type variable can be instantiated by a supertype
-   * of {@code argType}. Comparing {@code argType} with the bounds of the type variable instead would
-   * accept any type as within a lower bound, since the lower bound of the type variable is usually
-   * the null type.
+   * of {@code argType}. Comparing {@code argType} with the bounds of the type variable instead
+   * would accept any type as within a lower bound, since the lower bound of the type variable is
+   * usually the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

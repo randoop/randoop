@@ -138,8 +138,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution maps the component type of an array
-   *     type to the null type or if {@code type} is not a type variable, parameterized type, class,
+   * @return the type argument, or null if the substitution maps the component type of an array type
+   *     to the null type or if {@code type} is not a type variable, parameterized type, class,
    *     array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
@@ -410,8 +410,9 @@ class LazyParameterBound extends ParameterBound {
    * #completeSubstitution(Substitution)}. Returns null if the result is still this bound, which
    * happens if the substitution maps the component type of an array type to the null type, for
    * which there is no array type, so that no type satisfies this bound. Otherwise, the result is
-   * still this bound only for a kind of type that {@link #substitute(Substitution)} does not handle;
-   * then this method also fails an assertion. Comparing the unchanged bound would recurse forever.
+   * still this bound only for a kind of type that {@link #substitute(Substitution)} does not
+   * handle; then this method also fails an assertion. Comparing the unchanged bound would recurse
+   * forever.
    *
    * @param completeSubstitution a substitution that maps every type variable in this bound
    * @return this bound with the substitution applied, or null
