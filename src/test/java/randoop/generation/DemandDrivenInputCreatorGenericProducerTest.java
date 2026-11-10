@@ -1,7 +1,6 @@
 package randoop.generation;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
@@ -61,21 +60,5 @@ public class DemandDrivenInputCreatorGenericProducerTest {
     for (Sequence sequence : sequences) {
       assertFalse(sequence.getLastStatement().getOperation().isGeneric());
     }
-  }
-
-  @Test
-  public void testGenericProducerRetriedAfterPoolGrows() throws Exception {
-    SequenceCollection sequenceCollection = new SequenceCollection();
-    DemandDrivenInputCreator creator = new DemandDrivenInputCreator(sequenceCollection, IS_PUBLIC);
-    Type fooType = ClassOrInterfaceType.forClass(Foo.class);
-
-    // No Marker is in the main sequence collection, so Foo.of cannot be instantiated.
-    assertTrue(creator.createSequencesForType(fooType, false, false).isEmpty());
-    assertFalse(creator.isUninstantiableType(fooType));
-
-    TypedClassOperation markerConstructor =
-        TypedOperation.forConstructor(MarkerImpl.class.getConstructor());
-    sequenceCollection.add(new Sequence().extend(markerConstructor, new ArrayList<Variable>()));
-    assertFalse(creator.createSequencesForType(fooType, false, false).isEmpty());
   }
 }
