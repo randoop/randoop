@@ -32,6 +32,16 @@ New command-line arguments:
 * `--include-superclass-literals` makes literals from superclasses available
   when testing a subclass (only meaningful with `--literals-level=CLASS`)
 
+Changed command-line arguments:
+
+* `--omit-methods`:  If Randoop omits method M of a class under test, it also
+  omits every method that M overrides, because a call to an overridden method
+  might dispatch to M.
+
+In a replacecall replacement file, a constructor may be written as
+`package-name.classname(argument-list)`, as in a Randoop fully-qualified
+signature.
+
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
 
