@@ -56,6 +56,12 @@ public final class SequenceCollection {
    */
   private final Set<Type> typesAndSupertypes = new TreeSet<>();
 
+  /**
+   * The number of times that {@link #typesAndSupertypes} has changed. It increases whenever a type
+   * is added to {@link #typesAndSupertypes} or this collection is cleared.
+   */
+  private int typesModificationCount = 0;
+
   /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
@@ -109,6 +115,7 @@ public final class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
+    this.typesModificationCount++;
     this.sequenceCount = 0;
     checkRep();
   }
@@ -203,11 +210,17 @@ public final class SequenceCollection {
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
+        boolean typesChanged;
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
+          typesChanged =
+              typesAndSupertypes.addAll(
+                  ((ClassOrInterfaceType) formalType).getSupertypesInclusive());
         } else {
-          typesAndSupertypes.add(formalType);
+          typesChanged = typesAndSupertypes.add(formalType);
+        }
+        if (typesChanged) {
+          typesModificationCount++;
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
@@ -384,6 +397,17 @@ public final class SequenceCollection {
       result.addAll(a);
     }
     return result;
+  }
+
+  /**
+   * Returns the number of times that the types used by {@link #getTypeInstantiator} have changed.
+   * If two calls return the same number, then the type instantiator used the same types between
+   * them.
+   *
+   * @return the number of times that the types used by the type instantiator have changed
+   */
+  public int getTypesModificationCount() {
+    return typesModificationCount;
   }
 
   /**

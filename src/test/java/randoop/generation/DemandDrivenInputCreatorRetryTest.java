@@ -80,7 +80,6 @@ public class DemandDrivenInputCreatorRetryTest {
     // No Marker is known, so the generic producer Holder.box cannot be instantiated.
     assertTrue(creator.createSequencesForType(holderType, false, false).isEmpty());
     assertFalse(creator.isUninstantiableType(holderType));
-    assertTrue(creator.getUninstantiableTypes().contains(holderType));
 
     // Once a Marker is known, Holder.box is usable.
     TypedClassOperation markerConstructor =
@@ -88,7 +87,6 @@ public class DemandDrivenInputCreatorRetryTest {
     sequenceCollection.add(new Sequence().extend(markerConstructor, new ArrayList<Variable>()));
     assertFalse(creator.createSequencesForType(holderType, false, false).isEmpty());
     assertFalse(creator.isUninstantiableType(holderType));
-    assertFalse(creator.getUninstantiableTypes().contains(holderType));
   }
 
   @Test

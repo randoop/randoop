@@ -142,14 +142,15 @@ public class DemandDrivenInputCreator {
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
 
   /**
-   * Types that have candidate producers (see {@link #getCandidateProducers}), none of which has yet
-   * been usable. For example, a generic producer is not usable while the type instantiator cannot
-   * instantiate it from the types of the sequences in {@link #sequenceCollection}. Unlike a type in
-   * {@link #uninstantiableTypes}, such a type is retried on every request, because the types of the
-   * sequences change during a run. A type is removed from this set when one of its producers
-   * becomes usable.
+   * Maps each type whose candidate producers (see {@link #getCandidateProducers}) were all unusable
+   * at the type's most recent request to the value of {@link
+   * SequenceCollection#getTypesModificationCount} at that request. For example, a generic producer
+   * is not usable while the type instantiator cannot instantiate it from the types of the sequences
+   * in {@link #sequenceCollection}. Unlike a type in {@link #uninstantiableTypes}, such a type is
+   * retried, but only after those types change. A type is removed from this map when one of its
+   * producers becomes usable.
    */
-  private final Set<Type> typesWithoutUsableProducers = new LinkedHashSet<>();
+  private final Map<Type, Integer> typesWithoutUsableProducers = new HashMap<>();
 
   /**
    * A cache for {@link #getCandidateProducers}. The candidate producers of a type do not change
@@ -182,7 +183,9 @@ public class DemandDrivenInputCreator {
    * Removes all sequences from the secondary sequence collection, so that sequences created before
    * the main sequence collection was cleared are not reintroduced into it. Retains the visited
    * types (which are reported for the whole run) and the uninstantiable types (which do not depend
-   * on the contents of any sequence collection).
+   * on the contents of any sequence collection). Also retains the types without usable producers;
+   * clearing the main sequence collection changes its types, so the next request for such a type
+   * retries it.
    */
   public void clear() {
     secondarySequenceCollection.clear();
@@ -195,18 +198,6 @@ public class DemandDrivenInputCreator {
    */
   public Set<Type> getVisitedTypes() {
     return visitedTypes;
-  }
-
-  /**
-   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of accessible producer methods in the type itself.
-   *
-   * <p>TODO: Later, producer methods for this type that are defined by a different type.
-   *
-   * @return a set of uninstantiable types
-   */
-  public Set<Type> getUninstantiableTypesSet() {
-    return uninstantiableTypes;
   }
 
   /**
@@ -230,8 +221,8 @@ public class DemandDrivenInputCreator {
    *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
    *       type has no candidate producers. If the target type has candidate producers but none of
    *       them is usable now (e.g., a generic producer that cannot be instantiated from the types
-   *       of the current sequences), adds the target type to {@code typesWithoutUsableProducers}
-   *       instead, so that a later call retries it.
+   *       of the current sequences), records the target type in {@code typesWithoutUsableProducers}
+   *       instead, so that a later call retries it once those types change.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -249,6 +240,14 @@ public class DemandDrivenInputCreator {
   @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
   public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
+    int typesModificationCount = sequenceCollection.getTypesModificationCount();
+    Integer failedAtCount = typesWithoutUsableProducers.get(targetType);
+    if (failedAtCount != null && failedAtCount == typesModificationCount) {
+      // The type instantiator has the same types as at the last attempt, which found no usable
+      // producer.
+      return SIList.empty();
+    }
+
     List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
@@ -258,10 +257,13 @@ public class DemandDrivenInputCreator {
             targetType);
         // Track the types with no producers.
         uninstantiableTypes.add(targetType);
-      } else if (typesWithoutUsableProducers.add(targetType)) {
+      } else {
         // A later call might succeed, once the type instantiator knows more types.  Log only the
-        // first failure, because this method retries the type on every call.
-        Log.logPrintf("No usable producer methods found yet for type %s.%n", targetType);
+        // first of consecutive failures.
+        if (failedAtCount == null) {
+          Log.logPrintf("No usable producer methods found yet for type %s.%n", targetType);
+        }
+        typesWithoutUsableProducers.put(targetType, typesModificationCount);
       }
       return SIList.empty();
     }
@@ -504,19 +506,17 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns the types that demand-driven input creation has not instantiated: the uninstantiable
-   * types, which have no producer methods, and the types none of whose producer methods has been
-   * usable so far. No call to {@link #createSequencesForType} could ever create sequences of an
-   * uninstantiable type, and future calls will not try to.
+   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
+   * absence of producer methods, and no calls to {@link #createSequencesForType} could ever create
+   * sequences of these types. Future calls to {@link #createSequencesForType} will not generate
+   * sequences for these types.
    *
    * <p>This method exists only so that {@code GenTests} can print them for the user.
    *
-   * @return the types that demand-driven input creation has not instantiated
+   * @return an unmodifiable set of uninstantiable types
    */
   public Set<Type> getUninstantiableTypes() {
-    Set<Type> result = new LinkedHashSet<>(uninstantiableTypes);
-    result.addAll(typesWithoutUsableProducers);
-    return Collections.unmodifiableSet(result);
+    return Collections.unmodifiableSet(uninstantiableTypes);
   }
 
   /**
