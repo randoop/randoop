@@ -16,14 +16,13 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.condition.RandoopSpecificationError;
-import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -310,26 +309,32 @@ public class DemandDrivenInputCreator {
           continue;
         }
 
-        // A generic operation must be instantiated even if its output type is not generic, as in
-        // `static <T> Foo of(T x)`, because a sequence cannot supply a value of a type variable.
-        // A non-generic operation with only wildcard types, as in `static Foo of(Box<?> b)`, is
-        // not instantiated:  instantiation would require an instantiation of `Box` in the main
-        // sequence collection, but the worklist can create a `Box` instead.
+        // Instantiate an operation whose types contain a type variable, even if its output type
+        // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`.
+        // Do not instantiate an operation whose types contain wildcards but no type variable, as
+        // in `static Foo of(Box<?> b)`.  Instantiating it would replace `Box<?>` by a `Box` type
+        // that is already in the main sequence collection, and would fail if there is none.  Left
+        // uninstantiated, the operation can use any `Box`, such as one that the worklist creates,
+        // provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does not
+        // do so until https://github.com/randoop/randoop/pull/1983 lands.
         if (op.isGeneric()) {
           TypedClassOperation instantiated;
           try {
             instantiated =
                 sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
           } catch (Throwable e) {
-            if (GenInputsAbstract.fail_on_generation_error) {
-              throw new RandoopInstantiationError(op.toString(), e);
-            }
-            DemandDrivenLog.logPrintf("Error instantiating operation %s%n", op);
-            DemandDrivenLog.logStackTrace(e);
+            TypeInstantiator.handleInstantiationException(op, e);
+            DemandDrivenLog.logPrintf("Instantiation error for operation %s%n", op);
             continue;
           }
           if (instantiated == null) {
-            continue; // Skip if instantiation fails
+            DemandDrivenLog.logPrintf("Failed to instantiate operation %s%n", op);
+            continue;
+          }
+          // The type arguments that the instantiation chose might make the output type not
+          // assignable to the current type.
+          if (!currentType.isAssignableFrom(instantiated.getOutputType())) {
+            continue;
           }
           op = instantiated;
         }

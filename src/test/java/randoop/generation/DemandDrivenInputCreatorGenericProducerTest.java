@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
@@ -46,13 +47,24 @@ public class DemandDrivenInputCreatorGenericProducerTest {
     }
   }
 
-  @Test
-  public void testGenericProducerWithNonGenericOutput() throws Exception {
+  /**
+   * Returns a sequence collection that contains only a sequence that creates a {@link MarkerImpl}.
+   *
+   * @return a sequence collection that contains only a sequence that creates a {@link MarkerImpl}
+   * @throws NoSuchMethodException if the constructor of {@link MarkerImpl} is not found
+   */
+  private static SequenceCollection markerImplCollection() throws NoSuchMethodException {
     SequenceCollection sequenceCollection = new SequenceCollection();
     TypedClassOperation markerConstructor =
         TypedOperation.forConstructor(MarkerImpl.class.getConstructor());
     sequenceCollection.add(new Sequence().extend(markerConstructor, new ArrayList<Variable>()));
-    DemandDrivenInputCreator creator = new DemandDrivenInputCreator(sequenceCollection, IS_PUBLIC);
+    return sequenceCollection;
+  }
+
+  @Test
+  public void testGenericProducerWithNonGenericOutput() throws Exception {
+    DemandDrivenInputCreator creator =
+        new DemandDrivenInputCreator(markerImplCollection(), IS_PUBLIC);
     Type fooType = ClassOrInterfaceType.forClass(Foo.class);
 
     SIList<Sequence> sequences = creator.createSequencesForType(fooType, false, false);
@@ -60,5 +72,19 @@ public class DemandDrivenInputCreatorGenericProducerTest {
     for (Sequence sequence : sequences) {
       assertFalse(sequence.getLastStatement().getOperation().isGeneric());
     }
+  }
+
+  /**
+   * Tests that a generic producer is skipped, without an exception, when the main sequence
+   * collection contains no type that its type variable can be instantiated to.
+   */
+  @Test
+  public void testGenericProducerWithoutCandidateType() {
+    DemandDrivenInputCreator creator =
+        new DemandDrivenInputCreator(new SequenceCollection(), IS_PUBLIC);
+    Type fooType = ClassOrInterfaceType.forClass(Foo.class);
+
+    SIList<Sequence> sequences = creator.createSequencesForType(fooType, false, false);
+    assertTrue(sequences.isEmpty());
   }
 }

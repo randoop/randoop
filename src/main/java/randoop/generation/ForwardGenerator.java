@@ -31,6 +31,7 @@ import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -488,18 +489,10 @@ public class ForwardGenerator extends AbstractGenerator {
         operation =
             componentManager.getTypeInstantiator().instantiate((TypedClassOperation) operation);
       } catch (Throwable e) {
-        if (GenInputsAbstract.fail_on_generation_error) {
-          if (operation.isMethodCall() || operation.isConstructorCall()) {
-            String opName = operation.getOperation().getReflectionObject().toString();
-            throw new RandoopInstantiationError(opName, e);
-          }
-        } else {
-          operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
-          Log.logPrintf("Sequence discarded: Instantiation error for operation%n %s%n", operation);
-          Log.logStackTrace(e);
-          System.out.printf("Instantiation error for operation%n %s%n", operation);
-          return null;
-        }
+        TypeInstantiator.handleInstantiationException(operation, e);
+        operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
+        Log.logPrintf("Sequence discarded: operation %s%n", operation);
+        return null;
       }
       if (operation == null) { // failed to instantiate generic
         Log.logPrintf("Failed to instantiate generic operation%n", operation);
@@ -511,6 +504,9 @@ public class ForwardGenerator extends AbstractGenerator {
     InputsAndSuccessFlag inputs;
     try {
       inputs = selectInputs(operation);
+    } catch (RandoopInstantiationError e) {
+      // Demand-driven input creation failed to instantiate a producer of an input.
+      throw e;
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
         throw new RandoopGenerationError(operation, e);
