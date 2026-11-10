@@ -38,6 +38,10 @@ Changed command-line arguments:
   omits every method that M overrides, because a call to an overridden method
   might dispatch to M.
 
+In a replacecall replacement file, a constructor may be written as
+`package-name.classname(argument-list)`, as in a Randoop fully-qualified
+signature.
+
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
 

@@ -1,5 +1,10 @@
 package randoop.instrument;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /** Exception representing an error in a replacement file. */
 class ReplacementFileException extends Exception {
 
@@ -59,14 +64,31 @@ class ReplacementFileException extends Exception {
 
   /**
    * Returns the message of this exception, followed by the messages of its causes, separated by ":
-   * ". A cause that has no message is represented by its {@code toString()}. A cause message that
-   * already appears in the result is omitted.
+   * ". Then come the messages of the exceptions suppressed by any of those exceptions (and of their
+   * causes), each introduced by "; also: ". An exception that has no message is represented by its
+   * {@code toString()}. A message that already appears in the result is omitted.
    *
-   * @return the message of this exception, followed by the messages of its causes
+   * @return the message of this exception, followed by the messages of its causes and of the
+   *     exceptions that they suppress
    */
   private String messageWithCauses() {
-    String result = super.getMessage();
-    for (Throwable t = getCause(); t != null; t = t.getCause()) {
+    String result = appendMessages(super.getMessage(), getCause(), ": ");
+    return result != null ? result : "unknown error";
+  }
+
+  /**
+   * Appends to {@code result} the messages of {@code first} and its causes, followed by the
+   * messages of the exceptions that they suppress.
+   *
+   * @param result the message so far, or null if there is none
+   * @param first the first exception whose message to append, or null if there is none
+   * @param separator the separator to put before the message of {@code first}
+   * @return {@code result}, extended with the messages
+   */
+  private static @Nullable String appendMessages(
+      @Nullable String result, @Nullable Throwable first, String separator) {
+    List<Throwable> suppressed = new ArrayList<>();
+    for (Throwable t = first; t != null; t = t.getCause()) {
       String message = t.getMessage();
       if (message == null) {
         message = t.toString();
@@ -74,9 +96,14 @@ class ReplacementFileException extends Exception {
       if (result == null) {
         result = message;
       } else if (!result.contains(message)) {
-        result = result + ": " + message;
+        result = result + separator + message;
       }
+      separator = ": ";
+      suppressed.addAll(Arrays.asList(t.getSuppressed()));
     }
-    return result != null ? result : "unknown error";
+    for (Throwable s : suppressed) {
+      result = appendMessages(result, s, "; also: ");
+    }
+    return result;
   }
 }
