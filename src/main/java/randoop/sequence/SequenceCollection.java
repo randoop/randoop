@@ -57,6 +57,19 @@ public final class SequenceCollection {
    */
   private final Set<Type> typesAndSupertypes = new TreeSet<>();
 
+  /**
+   * The number of times that {@link #typesAndSupertypes} has changed. It increases whenever a type
+   * is added to {@link #typesAndSupertypes} or this collection is cleared.
+   *
+   * <p>A client can compare two values of this count to cheaply tell whether the types used by
+   * {@link #typeInstantiator} have changed; for example, {@link
+   * randoop.generation.DemandDrivenInputCreator} retries a type whose generic producers could not
+   * be instantiated only after this count changes. This is a counter rather than the size of {@link
+   * #typesAndSupertypes} because a clear followed by additions can restore the size with different
+   * types.
+   */
+  private int typesModificationCount = 0;
+
   /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
@@ -137,6 +150,7 @@ public final class SequenceCollection {
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
     this.primitiveValues.clear();
+    this.typesModificationCount++;
     this.sequenceCount = 0;
     this.numSequencesAdded = 0;
     checkRep();
@@ -244,11 +258,17 @@ public final class SequenceCollection {
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
+        boolean typesChanged;
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
+          typesChanged =
+              typesAndSupertypes.addAll(
+                  ((ClassOrInterfaceType) formalType).getSupertypesInclusive());
         } else {
-          typesAndSupertypes.add(formalType);
+          typesChanged = typesAndSupertypes.add(formalType);
+        }
+        if (typesChanged) {
+          typesModificationCount++;
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
@@ -487,6 +507,17 @@ public final class SequenceCollection {
    */
   public boolean containsPrimitiveValue(Object value) {
     return primitiveValues.contains(value);
+  }
+
+  /**
+   * Returns the number of times that the types used by {@link #getTypeInstantiator} have changed.
+   * If two calls return the same number, then the type instantiator used the same types between
+   * them.
+   *
+   * @return the number of times that the types used by the type instantiator have changed
+   */
+  public int getTypesModificationCount() {
+    return typesModificationCount;
   }
 
   /**
