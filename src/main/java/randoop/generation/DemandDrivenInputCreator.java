@@ -26,8 +26,13 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.BoundsCheck;
+import randoop.types.InstantiatedType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
 import randoop.util.DemandDrivenLog;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -303,6 +308,7 @@ public class DemandDrivenInputCreator {
         throw new RandoopBug("specification error for type " + currentType, e);
       }
       for (TypedOperation op : operations) {
+        op = instantiateToProduce(op, currentType);
         Type opOutputType = op.getOutputType();
 
         // Only consider operations that produce instances of the type we're currently resolving
@@ -340,6 +346,42 @@ public class DemandDrivenInputCreator {
     visitedTypes.addAll(processed);
 
     return result;
+  }
+
+  /**
+   * Returns the given operation, instantiated so that its output type is the given parameterized
+   * type, if possible. For example, if {@code op} is {@code static <T extends Marker> Box<T> of(T)}
+   * and {@code type} is {@code Box<MarkerImpl>}, returns {@code static Box<MarkerImpl>
+   * of(MarkerImpl)}. Without this instantiation, the output type {@code Box<T>} of {@code op} is
+   * not assignable to {@code type}.
+   *
+   * @param op an operation
+   * @param type the type for {@code op} to produce
+   * @return {@code op}, instantiated so that its output type is {@code type}; or {@code op} itself
+   *     if its output type is not generic, if {@code type} is not a parameterized type of the same
+   *     generic class, or if the instantiation would violate a bound of a type parameter
+   */
+  private static TypedOperation instantiateToProduce(TypedOperation op, Type type) {
+    Type outputType = op.getOutputType();
+    if (!(type instanceof InstantiatedType
+        && outputType instanceof ReferenceType
+        && outputType.isGeneric())) {
+      return op;
+    }
+    Substitution substitution =
+        ((InstantiatedType) type).getInstantiatingSubstitution((ReferenceType) outputType);
+    if (substitution == null || substitution.isEmpty()) {
+      return op;
+    }
+    List<TypeVariable> parameters = new ArrayList<>(substitution.keySet());
+    List<ReferenceType> arguments = new ArrayList<>(parameters.size());
+    for (TypeVariable parameter : parameters) {
+      arguments.add(substitution.getOrDefault(parameter, parameter));
+    }
+    if (!new BoundsCheck(parameters).test(arguments, substitution)) {
+      return op;
+    }
+    return op.substitute(substitution);
   }
 
   /**
