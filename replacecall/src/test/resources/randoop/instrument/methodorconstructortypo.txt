@@ -1,0 +1,2 @@
+// bad replacement file for testing: neither a method nor a constructor
+java.util.AbstractMap.SimpleEntryy(java.lang.Object,java.lang.Object) randoop.instrument.SampleReplacements.newSimpleEntry(java.lang.Object,java.lang.Object)
