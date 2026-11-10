@@ -4,7 +4,6 @@ import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
 import randoop.main.RandoopBug;
 import randoop.operation.CallableOperation;
 import randoop.operation.TypedOperation;
@@ -12,6 +11,7 @@ import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.util.Util;
 
 /**
  * A check recording the value that an observer method returned during execution, e.g. a check
@@ -62,7 +62,7 @@ public final class ObserverEqValue extends ObjectContract {
       throw new RandoopBug(
           String.format(
               "Cannot represent %s as a literal; observer = %s",
-              StringsPlume.toStringAndClass(value), observer));
+              Util.toStringAndClassSafely(value), observer));
     }
   }
 
@@ -155,6 +155,6 @@ public final class ObserverEqValue extends ObjectContract {
   @Override
   public String toString() {
     return String.format(
-        "<ObserverEqValue %s, value = '%s'", observer, StringsPlume.toStringAndClass(value));
+        "<ObserverEqValue %s, value = '%s'", observer, Util.toStringAndClassSafely(value));
   }
 }
