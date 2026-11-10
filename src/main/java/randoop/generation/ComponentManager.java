@@ -64,12 +64,6 @@ public class ComponentManager {
   private final Collection<Sequence> gralSeeds;
 
   /**
-   * Decides which constructors/methods are callable from the generated test code. This predicate
-   * matches the visibility rules chosen for the overall test package.
-   */
-  private final AccessibilityPredicate accessibility;
-
-  /**
    * Create an empty component manager, with an immutable empty seed sequence set.
    *
    * @param accessibility decides which constructors/methods are callable from the generated test
@@ -95,15 +89,6 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
-    this.accessibility = accessibility;
-    initDemandDrivenIfEnabled();
-  }
-
-  /**
-   * If demand-driven input generation is enabled, set up the demand-driven input creator for the
-   * component manager.
-   */
-  private void initDemandDrivenIfEnabled() {
     if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
@@ -197,13 +182,17 @@ public class ComponentManager {
 
   /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
-   * Also removes the demand-driven input creator's secondary sequences, but retains its diagnostic
-   * information (visited and uninstantiable types).
+   * Also removes the demand-driven input creator's secondary sequences and lets it reconsider types
+   * it found uninstantiable, but retains its diagnostic information (visited and uninstantiable
+   * types).
    */
   void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
     if (GenInputsAbstract.call_non_sut_methods) {
+      // Reuse the existing creator rather than replacing it, so that no stale creator can copy
+      // pre-clear sequences into the pool, and so that its visited types (reported at the end of
+      // the run) cover the whole run.
       gralComponents.getDemandDrivenInputCreator().clearSecondarySequences();
     }
   }
