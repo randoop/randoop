@@ -1,2 +1,2 @@
 //bad replacement file
-foo(int) randoop.mock.java.awt.Component.show()
+java.awt.Component.1foo(int) randoop.mock.java.awt.Component.show()
