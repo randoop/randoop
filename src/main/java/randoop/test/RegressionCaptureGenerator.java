@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.StringsPlume;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -209,7 +210,8 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
                   }
                 }
 
-                if (!isAssertableMethod(m, omitMethodsPredicate, isAccessible)) {
+                if (!isAssertableMethod(
+                    m, omitMethodsPredicate, isAccessible, runtimeValue.getClass())) {
                   continue;
                 }
 
@@ -286,15 +288,18 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
    *     should not be called
    * @param accessibility the predicate used to check whether a method or constructor is accessible
    *     to call
+   * @param receiverClass the run-time class of the value that the assertion would pass to {@code
+   *     m}, or null if it is unknown
    * @return true if we can use this method or constructor in a side-effect-free assertion
    * @throws IllegalArgumentException if m is not either a Method or a Constructor
    */
   public static boolean isAssertableMethod(
       TypedClassOperation m,
       OmitMethodsPredicate omitMethodsPredicate,
-      AccessibilityPredicate accessibility) {
+      AccessibilityPredicate accessibility,
+      @Nullable Class<?> receiverClass) {
 
-    if (omitMethodsPredicate.shouldOmit(m)) {
+    if (omitMethodsPredicate.shouldOmit(m, receiverClass)) {
       return false;
     }
 
