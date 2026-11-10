@@ -1,7 +1,7 @@
 package randoop;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
+import randoop.util.Util;
 
 /**
  * Means that the statement that this result represents completed normally.
@@ -51,6 +51,6 @@ public class NormalExecution extends ExecutionOutcome {
    */
   @Override
   public String toString() {
-    return String.format("[NormalExecution %s]", StringsPlume.toStringAndClass(result));
+    return String.format("[NormalExecution %s]", Util.toStringAndClassSafely(result));
   }
 }
