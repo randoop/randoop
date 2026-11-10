@@ -1,7 +1,5 @@
 package randoop.util;
 
-import java.util.Arrays;
-import org.plumelib.util.ArraysPlume;
 import randoop.contract.ObjectContract;
 
 /** Reflection code that evaluates an {@link ObjectContract} on given values. */
@@ -40,10 +38,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
     return "Check of ObjectContract "
         + c
         + " args: "
-        + Arrays.toString(objs)
-        + ", arg types: "
-        + Arrays.toString(
-            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), objs, Class.class))
+        + Util.elementsToStringAndClassSafely(objs)
         + " "
         + status();
   }
