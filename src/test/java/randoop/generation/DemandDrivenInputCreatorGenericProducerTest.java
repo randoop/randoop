@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
@@ -13,11 +14,15 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 
 /**
  * Tests that {@link DemandDrivenInputCreator} instantiates a generic producer whose output type is
- * not generic.
+ * not generic, and a producer with wildcard types but no type variable.
  */
 public class DemandDrivenInputCreatorGenericProducerTest {
 
@@ -44,6 +49,32 @@ public class DemandDrivenInputCreatorGenericProducerTest {
      */
     public static <T extends Marker> Foo of(T value) {
       return new Foo();
+    }
+  }
+
+  /**
+   * A generic class.
+   *
+   * @param <T> the type parameter, which is not used
+   */
+  public static class Box<T> {
+    /** Creates a Box. */
+    public Box() {}
+  }
+
+  /** A class whose only producer has a wildcard parameter type and no type variable. */
+  public static class Bar {
+    /** Creates a Bar; not accessible to Randoop. */
+    private Bar() {}
+
+    /**
+     * Returns a new Bar.
+     *
+     * @param box a Box, which is ignored
+     * @return a new Bar
+     */
+    public static Bar of(Box<?> box) {
+      return new Bar();
     }
   }
 
@@ -86,5 +117,30 @@ public class DemandDrivenInputCreatorGenericProducerTest {
 
     SIList<Sequence> sequences = creator.createSequencesForType(fooType, false, false);
     assertTrue(sequences.isEmpty());
+  }
+
+  /**
+   * Tests that a producer with a wildcard parameter type and no type variable is instantiated with
+   * a {@link Box} type from the main sequence collection.
+   */
+  @Test
+  public void testWildcardProducer() throws Exception {
+    SequenceCollection sequenceCollection = markerImplCollection();
+    ReferenceType markerImplType = ClassOrInterfaceType.forClass(MarkerImpl.class);
+    TypeVariable boxParameter = GenericClassType.forClass(Box.class).getTypeParameters().get(0);
+    TypedClassOperation boxConstructor =
+        TypedOperation.forConstructor(Box.class.getConstructor())
+            .substitute(new Substitution(boxParameter, markerImplType));
+    sequenceCollection.add(new Sequence().extend(boxConstructor, new ArrayList<Variable>()));
+    DemandDrivenInputCreator creator = new DemandDrivenInputCreator(sequenceCollection, IS_PUBLIC);
+    Type barType = ClassOrInterfaceType.forClass(Bar.class);
+
+    SIList<Sequence> sequences = creator.createSequencesForType(barType, false, false);
+    assertFalse(sequences.isEmpty());
+    for (Sequence sequence : sequences) {
+      TypedOperation operation = sequence.getLastStatement().getOperation();
+      assertEquals(barType, operation.getOutputType());
+      assertFalse(operation.hasWildcardTypes());
+    }
   }
 }

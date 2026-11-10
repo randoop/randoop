@@ -310,33 +310,23 @@ public class DemandDrivenInputCreator {
         }
 
         // Instantiate an operation whose types contain a type variable, even if its output type
-        // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`.
-        // Do not instantiate an operation whose types contain wildcards but no type variable, as
-        // in `static Foo of(Box<?> b)`.  Instantiating it would replace `Box<?>` by a `Box` type
-        // that is already in the main sequence collection, and would fail if there is none.  Left
-        // uninstantiated, the operation can use any `Box`, such as one that the worklist creates,
-        // provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does not
-        // do so until https://github.com/randoop/randoop/pull/1983 lands.
-        if (op.isGeneric()) {
-          TypedClassOperation instantiated;
-          try {
-            instantiated =
-                sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
-          } catch (Throwable e) {
-            TypeInstantiator.handleInstantiationException(op, e);
-            DemandDrivenLog.logPrintf("Instantiation error for operation %s%n", op);
+        // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`, so
+        // skip the operation if it cannot be instantiated.
+        //
+        // Also instantiate an operation whose types contain wildcards but no type variable, as in
+        // `static Foo of(Box<?> b)`.  Instantiation replaces `Box<?>` by a `Box` type that is
+        // already in the main sequence collection, and fails if there is none.  In that case, use
+        // the operation uninstantiated:  it can use any `Box`, such as one that the worklist
+        // creates, provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does
+        // not do so until https://github.com/randoop/randoop/pull/1983 lands.
+        if (op.isGeneric() || op.hasWildcardTypes()) {
+          TypedClassOperation instantiated =
+              instantiateProducer((TypedClassOperation) op, currentType);
+          if (instantiated != null) {
+            op = instantiated;
+          } else if (op.isGeneric()) {
             continue;
           }
-          if (instantiated == null) {
-            DemandDrivenLog.logPrintf("Failed to instantiate operation %s%n", op);
-            continue;
-          }
-          // The type arguments that the instantiation chose might make the output type not
-          // assignable to the current type.
-          if (!currentType.isAssignableFrom(instantiated.getOutputType())) {
-            continue;
-          }
-          op = instantiated;
         }
 
         // Add this operation as a producer of the type.
@@ -360,6 +350,36 @@ public class DemandDrivenInputCreator {
     visitedTypes.addAll(processed);
 
     return result;
+  }
+
+  /**
+   * Returns the given producer, instantiated so that its output type is assignable to the given
+   * type, or null if it cannot be so instantiated.
+   *
+   * @param op a producer whose types contain a type variable or a wildcard
+   * @param type the type for {@code op} to produce
+   * @return {@code op}, instantiated, whose output type is assignable to {@code type}; or null if
+   *     the type instantiator found no instantiation, found one whose output type is not assignable
+   *     to {@code type}, or threw an exception
+   */
+  private @Nullable TypedClassOperation instantiateProducer(TypedClassOperation op, Type type) {
+    TypedClassOperation instantiated;
+    try {
+      instantiated = sequenceCollection.getTypeInstantiator().instantiate(op);
+    } catch (Throwable e) {
+      TypeInstantiator.handleInstantiationException(op, e);
+      DemandDrivenLog.logPrintf("Instantiation error for operation %s%n", op);
+      return null;
+    }
+    if (instantiated == null) {
+      DemandDrivenLog.logPrintf("Failed to instantiate operation %s%n", op);
+      return null;
+    }
+    // The type arguments that the instantiation chose might make the output type not assignable.
+    if (!type.isAssignableFrom(instantiated.getOutputType())) {
+      return null;
+    }
+    return instantiated;
   }
 
   /**
