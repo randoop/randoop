@@ -53,12 +53,10 @@ public class ComponentManager {
    * #clearGeneratedSequences}.
    */
   // "gral" probably stands for "general".
-  private SequenceCollection gralComponents;
+  private final SequenceCollection gralComponents;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
-
-  // The next three variables are only for the use of method clearGeneratedSequences().
 
   /**
    * The sequences that were given pre-generation to the component manager (via its constructor).
@@ -67,26 +65,6 @@ public class ComponentManager {
    * the client calls {@link #clearGeneratedSequences}.
    */
   private final Collection<Sequence> gralSeeds;
-
-  /**
-   * Decides which constructors/methods are callable from the generated test code. This predicate
-   * matches the visibility rules chosen for the overall test package. This field exists so that if
-   * the user calls {@link #clearGeneratedSequences}, we can create a new {@link
-   * DemandDrivenInputCreator} with the same accessibility rules.
-   */
-  private final AccessibilityPredicate accessibility;
-
-  /**
-   * Types that are SUT-parameters but not SUT-returned.
-   *
-   * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
-   * when no existing instances are available. This set is kept so that if the user calls {@link
-   * #clearGeneratedSequences}, we can re-add these types to the {@link DemandDrivenInputCreator}
-   * associated with {@link #gralComponents}.
-   *
-   * <p>This variable is used only by {@link #clearGeneratedSequences}.
-   */
-  private final Set<Type> sutParameterNeverReturnedTypes = new LinkedHashSet<>();
 
   /**
    * Create an empty component manager, with an immutable empty seed sequence set.
@@ -114,19 +92,8 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
-    this.accessibility = accessibility;
-    initDemandDrivenIfEnabled();
-  }
-
-  /**
-   * If demand-driven input generation is enabled, set up the demand-driven input creator for the
-   * component manager.
-   */
-  private void initDemandDrivenIfEnabled() {
     if (GenInputsAbstract.call_non_sut_methods) {
-      DemandDrivenInputCreator ddic =
-          new DemandDrivenInputCreator(
-              gralComponents, gralComponents.getTypeInstantiator(), accessibility);
+      DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
     }
   }
@@ -154,7 +121,6 @@ public class ComponentManager {
       return;
     }
     gralComponents.addSutParameterOnlyTypes(types);
-    this.sutParameterNeverReturnedTypes.addAll(types);
   }
 
   /**
@@ -207,10 +173,13 @@ public class ComponentManager {
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
    */
   /*package*/ void clearGeneratedSequences() {
-    gralComponents = new SequenceCollection(this.gralSeeds);
-    initDemandDrivenIfEnabled();
-    if (!sutParameterNeverReturnedTypes.isEmpty()) {
-      gralComponents.addSutParameterOnlyTypes(sutParameterNeverReturnedTypes);
+    gralComponents.clear();
+    gralComponents.addAll(gralSeeds);
+    if (GenInputsAbstract.call_non_sut_methods) {
+      // Reuse the existing creator rather than replacing it, so that no stale creator can copy
+      // pre-clear sequences into the pool, and so that its visited types (reported at the end of
+      // the run) cover the whole run.
+      gralComponents.getDemandDrivenInputCreator().clear();
     }
   }
 
@@ -350,9 +319,9 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the type instantiator for the general components.
+   * Returns the type instantiator for the current component set.
    *
-   * @return the type instantiator for the general components
+   * @return the type instantiator for the current component set
    */
   /*package*/ TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
