@@ -43,6 +43,10 @@ filename that contains whitespace, a single quote, or a double quote must be
 quoted.  See the
 [manual](https://randoop.github.io/randoop/manual/index.html#replacecall-options).
 
+In a replacecall replacement file, a constructor may be written as
+`package-name.classname(argument-list)`, as in a Randoop fully-qualified
+signature.
+
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
 
