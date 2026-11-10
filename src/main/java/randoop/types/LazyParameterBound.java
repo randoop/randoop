@@ -120,8 +120,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if {@code type} is not a kind of type that this method
-   *     handles
+   * @return the type argument, or null if {@code type} is not a type variable, parameterized type,
+   *     class, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
