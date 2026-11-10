@@ -303,14 +303,14 @@ public class DemandDrivenInputCreator {
         throw new RandoopBug("specification error for type " + currentType, e);
       }
       for (TypedOperation op : operations) {
-        Type opOutputType = op.getOutputType();
-
         // Only consider operations that produce instances of the type we're currently resolving
         if (!isProducer(op, currentType)) {
           continue;
         }
 
-        if (opOutputType.isGeneric()) {
+        // A generic operation must be instantiated even if its output type is not generic, as in
+        // `static <T> Foo of(T x)`, because a sequence cannot supply a value of a type variable.
+        if (op.isGeneric() || op.hasWildcardTypes()) {
           TypedClassOperation instantiated =
               sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
           if (instantiated == null) {
