@@ -120,6 +120,20 @@ public class ReplacementFileTest {
   }
 
   @Test
+  public void badClassFileConstructorTest() throws IOException, ReplacementFileException {
+    Path file = Paths.get("build/resources/test/randoop/instrument/badclassfileconstructor.txt");
+    thrown.expect(ReplacementFileException.class);
+    thrown.expectMessage(
+        "badclassfileconstructor.txt:2: Bad original method: Unable to read"
+            + " randoop.instrument.NotAClass: Error reading class file:"
+            + " randoop/instrument/NotAClass.class: ");
+    thrown.expectMessage(
+        "; also: Class randoop.instrument.NotAClass.Missing not found, for a constructor for line:"
+            + " randoop.instrument.NotAClass.Missing(int) randoop.mock.java.awt.Component.show()");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(file);
+  }
+
+  @Test
   public void badArgTypeMethodTest() throws IOException, ReplacementFileException {
     Path file = Paths.get("build/resources/test/randoop/instrument/badargumenttypereplacement.txt");
     thrown.expect(ReplacementFileException.class);
