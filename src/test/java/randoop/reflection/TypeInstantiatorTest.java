@@ -466,6 +466,51 @@ public class TypeInstantiatorTest {
     assertTrue("no instantiation of " + consume, instantiated > 0);
   }
 
+  /** An enum that is not an input type in {@link #testBoundVariableFromTypeArgument}. */
+  private enum Color {
+    /** The only constant. */
+    RED
+  }
+
+  /**
+   * A method whose type parameter {@code E} occurs only in the bounds of other type parameters.
+   *
+   * @param <E> an enum type
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E extends Enum<E>, T extends E> void consumeEnum(List<? super T> list) {}
+
+  /**
+   * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
+   * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
+   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
+   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
+   */
+  @Test
+  public void testBoundVariableFromTypeArgument()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType colorType = ClassOrInterfaceType.forClass(Color.class);
+    addTypes(GenericClassType.forClass(List.class).instantiate(colorType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consumeEnum =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consumeEnum", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consumeEnum);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
+  }
+
   /**
    * A method whose type parameter {@code T} occurs only, and twice, in the bound of another type
    * parameter.
