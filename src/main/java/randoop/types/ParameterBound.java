@@ -149,6 +149,10 @@ public abstract class ParameterBound {
         }
       }
     }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return hasTypeVariable(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType(), variableSet);
+    }
     if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
