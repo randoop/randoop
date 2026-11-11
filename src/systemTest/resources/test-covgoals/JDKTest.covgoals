@@ -1,7 +1,9 @@
 java7.util7.ArrayList.addAll(int, java7.util7.Collection) ignore17+
 java7.util7.ArrayList.addAll(java7.util7.Collection) ignore17+
+java7.util7.ArrayList.elementData(int) exclude25
 java7.util7.ArrayList.ensureCapacity(int) exclude
 java7.util7.ArrayList.fastRemove(int) ignore
+java7.util7.ArrayList.get(int) exclude25
 java7.util7.ArrayList.hugeCapacity(int) exclude
 java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude
 java7.util7.ArrayList.removeRange(int, int) exclude
@@ -109,7 +111,9 @@ java7.util7.LinkedList.set(int, java.lang.Object) include11
 java7.util7.LinkedList.unlink(java7.util7.LinkedList.Node) ignore8
 java7.util7.LinkedList.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Observable.clearChanged() exclude
+java7.util7.Observable.deleteObservers() exclude25
 java7.util7.Observable.setChanged() exclude
+java7.util7.Stack.empty() exclude25
 java7.util7.Stack.peek() ignore
 java7.util7.Stack.pop() ignore
 java7.util7.Stack.push(java.lang.Object) ignore
@@ -149,6 +153,7 @@ java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude11-
 java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
+java7.util7.TreeSet.contains(java.lang.Object) exclude25
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
