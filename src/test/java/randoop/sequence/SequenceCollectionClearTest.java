@@ -78,6 +78,7 @@ public class SequenceCollectionClearTest {
     assertNull(instantiator.instantiate(bananaOp));
 
     collection.clear();
+    assertNull(instantiator.instantiate(appleOp));
     collection.add(constructorSequence(Banana.class));
 
     // The instantiator obtained before clearing is the collection's current instantiator.

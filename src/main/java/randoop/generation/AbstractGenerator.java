@@ -139,6 +139,9 @@ public abstract class AbstractGenerator {
   /** The sequences that have been classified as error or regression tests. */
   protected final Set<Sequence> outputSequences = new HashSet<>();
 
+  /** The sequences classified as error tests. A subset of {@link #outputSequences}. */
+  protected final Set<Sequence> outputErrorSequences = new HashSet<>();
+
   /**
    * A filter to determine whether a sequence should be added to the output sequence lists. Returns
    * true if the sequence should be output.
@@ -358,6 +361,7 @@ public abstract class AbstractGenerator {
             num_failing_sequences++;
             outErrorSeqs.add(eSeq);
             outputSequences.add(eSeq.sequence);
+            outputErrorSequences.add(eSeq.sequence);
           } else {
             outRegressionSeqs.add(eSeq);
             outputSequences.add(eSeq.sequence);

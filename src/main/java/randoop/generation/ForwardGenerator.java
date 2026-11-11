@@ -77,7 +77,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * The size of the component set immediately after it was last cleared, or -1 if it has never been
    * cleared. If the component set still has this size, then it has not changed since the last
    * clear, and clearing it again would only discard the duplicate tracking in {@link
-   * #sequencesSinceClear} and restore {@link #removedParameterlessOperations}.
+   * #sequencesSinceClear} and restore {@link #removedParameterlessOperations}. (The demand-driven
+   * secondary pool, which a clear also empties, is tracked separately; see {@link #step}.)
    */
   private int numComponentsAfterClear = -1;
 
@@ -242,13 +243,16 @@ public class ForwardGenerator extends AbstractGenerator {
     // shrink it, but would discard duplicate tracking and restore removed parameterless operations,
     // so the same sequences could be re-executed on every step.
     int numComponents = componentManager.numGeneratedSequences();
-    if (numComponents != numComponentsAfterClear) {
-      if (numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
-        clearComponents();
-      } else if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-          && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-        clearComponents();
-      }
+    boolean componentsChanged = numComponents != numComponentsAfterClear;
+    // The secondary pool of demand-driven input creation is empty immediately after a clear.  It
+    // can grow while the component set does not, so consider it when checking memory use.
+    boolean secondaryPoolChanged = componentManager.numSecondarySequences() != 0;
+    if (componentsChanged && numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
+      clearComponents();
+    } else if ((componentsChanged || secondaryPoolChanged)
+        && SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
+        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+      clearComponents();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
@@ -327,8 +331,13 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // A sequence that was output as a test before the component set was last cleared is not output
-    // again.
-    return outputSequences.contains(eSeq.sequence) ? null : eSeq;
+    // again, unless it now reveals a failure and was not output as an error-revealing test.  Such a
+    // sequence behaves nondeterministically, so report it rather than discarding the failure.
+    if (outputSequences.contains(eSeq.sequence)
+        && !(eSeq.hasFailure() && !outputErrorSequences.contains(eSeq.sequence))) {
+      return null;
+    }
+    return eSeq;
   }
 
   @Override
