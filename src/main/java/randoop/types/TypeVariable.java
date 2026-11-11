@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -124,19 +125,7 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isReferenceType()) {
       // A type variable is a subtype of its upper bound.  The test below does not always recognize
       // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it
-      // substitutes otherType for this variable within the bound.  For a type parameter, such a
-      // bound is a LazyParameterBound, so convert it to a ReferenceBound to compare it.
-      ParameterBound upperBound = getUpperTypeBound();
-      if (upperBound instanceof LazyParameterBound) {
-        ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
-        if (converted != null) {
-          upperBound = converted;
-        }
-      }
-      if (upperBound instanceof ReferenceBound
-          && ((ReferenceBound) upperBound).getBoundType().equals(otherType)) {
-        return true;
-      }
+      // substitutes otherType for this variable within the bound.
       if (upperBoundIsSubtypeOfOrEqualTo((ReferenceType) otherType)) {
         return true;
       }
@@ -202,16 +191,37 @@ public abstract class TypeVariable extends ParameterType {
    * of the given type. The bound can mention this variable, as {@code Comparable<Capture0>} does
    * for {@code Capture0 extends Comparable<Capture0>}.
    *
-   * <p>Returns false if the upper bound is not a single reference type, or if this check is already
-   * in progress for this variable and type in the current thread.
+   * <p>If the upper bound is an intersection type, returns true if some member of it is a subtype
+   * of or equal to the given type, since this variable is a subtype of each member. For example,
+   * the capture of {@code ? extends Number} has the upper bound {@code Object & Number}.
+   *
+   * <p>Returns false if no member of the upper bound is a reference type that is a subtype of or
+   * equal to the given type. Assumes that the subtype test fails if this check is already in
+   * progress for this variable and type in the current thread, but recognizes a member that equals
+   * the given type even then.
    *
    * @param otherType a reference type
    * @return true if the upper bound of this variable is a subtype of or equal to {@code otherType}
    */
   private boolean upperBoundIsSubtypeOfOrEqualTo(ReferenceType otherType) {
     ParameterBound upperBound = getUpperTypeBound();
-    if (!(upperBound instanceof ReferenceBound)) {
-      return false;
+    List<ParameterBound> members =
+        upperBound instanceof IntersectionTypeBound
+            ? ((IntersectionTypeBound) upperBound).getBounds()
+            : Collections.singletonList(upperBound);
+    for (ParameterBound member : members) {
+      // For a type parameter, a bound that refers to a type variable is a LazyParameterBound, so
+      // convert it to a ReferenceBound to compare it.
+      if (member instanceof LazyParameterBound) {
+        ReferenceBound converted = ((LazyParameterBound) member).toReferenceBound();
+        if (converted != null) {
+          member = converted;
+        }
+      }
+      if (member instanceof ReferenceBound
+          && ((ReferenceBound) member).getBoundType().equals(otherType)) {
+        return true;
+      }
     }
     // A subtype test of the bound can test this variable against the same type again, as for
     // `Capture0 extends Comparable<? super Capture0>`.  Assume that the inner test fails.
@@ -221,7 +231,13 @@ public abstract class TypeVariable extends ParameterType {
       return false;
     }
     try {
-      return ((ReferenceBound) upperBound).getBoundType().isSubtypeOfOrEqualTo(otherType);
+      for (ParameterBound member : members) {
+        if (member instanceof ReferenceBound
+            && ((ReferenceBound) member).getBoundType().isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
+      }
+      return false;
     } finally {
       inProgress.remove(check);
     }
