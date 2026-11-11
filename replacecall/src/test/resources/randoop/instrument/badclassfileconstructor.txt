@@ -1,0 +1,2 @@
+// The method interpretation's class file is not valid, and the constructor interpretation's class does not exist
+randoop.instrument.NotAClass.Missing(int) randoop.mock.java.awt.Component.show()
