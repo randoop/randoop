@@ -381,8 +381,13 @@ public class TypeInstantiator {
       TypedClassOperation operation, int orderedIndex) {
     assert operation.isConstructorCall() : "only call with constructors: " + operation;
 
-    List<TypeVariable> typeParameters = operation.getDeclaringType().getTypeParameters();
-    TypeVariable orderedParameter = typeParameters.get(orderedIndex);
+    ClassOrInterfaceType declaringType = operation.getDeclaringType();
+    // For a member class of a generic class, typeParameters starts with the type parameters of the
+    // enclosing classes, and ends with those of the member class, which orderedIndex indexes.
+    List<TypeVariable> typeParameters = declaringType.getTypeParameters();
+    int ownParameterCount = declaringType.getRuntimeClass().getTypeParameters().length;
+    TypeVariable orderedParameter =
+        typeParameters.get(typeParameters.size() - ownParameterCount + orderedIndex);
 
     // If this constructor has an argument that orders T, such as a Comparator<T> or a
     // SortedSet<T>, then orderingType is the generic class of that argument, and orderingIndex is
@@ -455,7 +460,15 @@ public class TypeInstantiator {
     if (!(argumentType instanceof ReferenceArgument)) {
       return null;
     }
-    return new Substitution(typeParameter, ((ReferenceArgument) argumentType).getReferenceType());
+    ReferenceType selected = ((ReferenceArgument) argumentType).getReferenceType();
+    Substitution result = new Substitution(typeParameter, selected);
+    // Check the bounds of typeParameter as candidateTypes does, ignoring bounds that mention other
+    // type variables.
+    if (!getLowerBound(typeParameter).isLowerBound(selected, result)
+        || !getUpperBound(typeParameter).isUpperBound(selected, result)) {
+      return null;
+    }
+    return result;
   }
 
   /**
@@ -1233,6 +1246,25 @@ public class TypeInstantiator {
    * @return true if {@code type} is a subtype of {@code Comparable<? super type>}
    */
   /*package-private*/ static boolean isComparable(ReferenceType type) {
+    // Not computeIfAbsent, for consistency with orderedTypeParameterIndex.
+    Boolean result = isComparableCache.get(type);
+    if (result == null) {
+      result = computeIsComparable(type);
+      isComparableCache.put(type, result);
+    }
+    return result;
+  }
+
+  /** Memoizes {@link #isComparable}. */
+  private static final Map<ReferenceType, Boolean> isComparableCache = new HashMap<>();
+
+  /**
+   * Computes the result of {@link #isComparable}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a subtype of {@code Comparable<? super type>}
+   */
+  private static boolean computeIsComparable(ReferenceType type) {
     if (!(type instanceof ClassOrInterfaceType)) {
       return false;
     }
