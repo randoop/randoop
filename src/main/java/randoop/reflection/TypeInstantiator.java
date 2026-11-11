@@ -2,8 +2,10 @@ package randoop.reflection;
 
 import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -415,13 +417,16 @@ public class TypeInstantiator {
    *       </ul>
    * </ol>
    *
+   * <p>The remaining type variables in step 2 also include each type variable that occurs in the
+   * bounds of an instantiated or remaining type variable, such as {@code T} in {@code <T> void
+   * copy(List<? super T>, List<? extends T>)}, where {@code T} occurs only in the bounds of the
+   * wildcards; see {@link #addTransitiveBoundTypeVariables(Set, Substitution)}. Checking the bounds
+   * of the capture variables of the wildcards against the type chosen for {@code T} ensures that
+   * the types chosen for the wildcards are consistent with one another.
+   *
    * <p>If an attempt fails, and step 1 chose among several input types for some parameter type,
    * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
    * Otherwise, another attempt would start from the same substitution, so this returns null.
-   *
-   * <p>A type variable that occurs only in the bounds of wildcards, such as {@code T} in {@code <T>
-   * void copy(List<? super T>, List<? extends T>)}, is not instantiated. Therefore, this does not
-   * check that the types chosen for those wildcards are consistent with one another.
    *
    * @param operation an operation
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
@@ -481,6 +486,7 @@ public class TypeInstantiator {
           }
         }
         typeParameters.removeAll(substitution.keySet());
+        addTransitiveBoundTypeVariables(typeParameters, substitution);
 
         if (typeParameters.isEmpty()) {
           // The substitution instantiates every type variable in the parameter and return types.
@@ -520,16 +526,60 @@ public class TypeInstantiator {
   }
 
   /**
+   * Adds to the given set each type variable that the given substitution does not instantiate and
+   * that occurs in the bounds of a type variable that is in the set or that the substitution
+   * instantiates. Repeats until no more type variables are added, so the set also contains each
+   * such type variable that occurs in the bounds of an added type variable.
+   *
+   * <p>For example, in {@code <T> void copy(List<? super T>, List<? extends T>)}, {@code T} occurs
+   * only in the bounds of the capture variables of the wildcards. If {@code substitution}
+   * instantiates those capture variables, then this adds {@code T} to {@code typeParameters}.
+   * Instantiating {@code T} lets {@link #satisfiesBounds(Substitution)} check that the types chosen
+   * for the wildcards are consistent with one another.
+   *
+   * @param typeParameters type variables that {@code substitution} does not instantiate; this
+   *     method adds to it
+   * @param substitution a substitution
+   */
+  private static void addTransitiveBoundTypeVariables(
+      Set<TypeVariable> typeParameters, Substitution substitution) {
+    Set<? extends TypeVariable> instantiated = substitution.keySet();
+    Deque<TypeVariable> worklist = new ArrayDeque<>(instantiated);
+    worklist.addAll(typeParameters);
+    while (!worklist.isEmpty()) {
+      TypeVariable variable = worklist.remove();
+      List<TypeVariable> boundVariables =
+          new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      for (TypeVariable boundVariable : boundVariables) {
+        if (!instantiated.contains(boundVariable) && typeParameters.add(boundVariable)) {
+          worklist.add(boundVariable);
+        }
+      }
+    }
+  }
+
+  /**
    * Returns a map from each of the given type variables to its candidate types that are consistent
    * with the given substitution.
    *
-   * <p>A candidate type for one of the type variables, {@code X}, is in the map's value for {@code
-   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, and if, when {@code
-   * substitution} is extended by mapping {@code X} to it, each type variable that {@code
-   * substitution} instantiates and whose bounds contain {@code X} and no other uninstantiated type
-   * variable is within its bounds. For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<?
-   * extends K, ? extends V>)}, if {@code substitution} maps the capture of {@code ? extends K} to
-   * {@code Integer}, then the result contains only supertypes of {@code Integer} for {@code K}.
+   * <p>Let {@code X} be one of the given type variables. A type variable that {@code substitution}
+   * instantiates is <i>constrained by</i> {@code X} if its bounds mention {@code X} and no other
+   * type variable that {@code substitution} does not instantiate; see {@link
+   * #constrainedVariables(Substitution)}. The map's value for {@code X} contains each type that
+   * satisfies both of these conditions:
+   *
+   * <ul>
+   *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, or it is the
+   *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
+   *       X}.
+   *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
+   *       variable constrained by {@code X} is within its bounds.
+   * </ul>
+   *
+   * <p>For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<? extends K, ? extends V>)}, if
+   * {@code substitution} maps the capture of {@code ? extends K} to {@code Integer}, then the
+   * result contains only supertypes of {@code Integer} for {@code K}.
    *
    * @param parameters type variables that {@code substitution} does not instantiate
    * @param substitution a substitution
@@ -546,6 +596,16 @@ public class TypeInstantiator {
           constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
       if (!constrained.isEmpty()) {
+        // The types of the constrained type variables are also candidates, even if they are not
+        // input types.  For example, an input type can be List<Foo> though Foo is not an input
+        // type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a candidate for
+        // T.  The bounds of `parameter` itself are checked when the substitution is completed.
+        for (TypeVariable variable : constrained) {
+          ReferenceType type = substitution.get(variable);
+          if (type != null && !type.isGeneric() && !candidates.contains(type)) {
+            candidates.add(type);
+          }
+        }
         candidates.removeIf(
             candidate ->
                 !satisfiesBounds(
