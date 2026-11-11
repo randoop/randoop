@@ -818,6 +818,23 @@ public class TypeVariableTest {
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
   }
 
+  /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
+  @SuppressWarnings("serial") // never instantiated
+  abstract static class RunnableNumber extends Number implements Runnable {}
+
+  @Test
+  public void testLowerBoundOfIntersection() {
+    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    assertTrue(intersection instanceof IntersectionTypeBound);
+    Substitution substitution = new Substitution();
+    ReferenceBound runnableNumber =
+        new EagerReferenceBound(ClassOrInterfaceType.forClass(RunnableNumber.class));
+    assertTrue(runnableNumber.isLowerBound(intersection, substitution));
+    // Integer is a Number but not a Runnable.
+    ReferenceBound integer = new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive());
+    assertFalse(integer.isLowerBound(intersection, substitution));
+  }
+
   /**
    * A type parameter whose self-referential bound contains an array type.
    *
