@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.MapsP;
 import org.plumelib.util.SIList;
 import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
@@ -18,8 +17,6 @@ import randoop.reflection.TypeInstantiator;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
-import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -31,7 +28,7 @@ import randoop.util.Log;
  *
  * <ul>
  *   <li>Seed sequences supplied at construction time, which are preserved across calls to {@link
- *       #clearGeneratedSequences()}, and
+ *       #clearGeneratedSequences()} and are not counted by {@link #numGeneratedSequences()}, and
  *   <li>Sequences generated during the current run.
  * </ul>
  *
@@ -54,6 +51,12 @@ public class ComponentManager {
    */
   // "gral" probably stands for "general".
   private final SequenceCollection gralComponents;
+
+  /**
+   * The number of seed sequences that were added to {@link #gralComponents} when it was populated,
+   * as counted by {@link SequenceCollection#numSequencesAdded}.
+   */
+  private int numSeedSequencesAdded;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
@@ -92,6 +95,7 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
@@ -99,13 +103,16 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences stored by this manager.
+   * Returns the number of sequences that have been added to this manager's component set since it
+   * was created or since the last call to {@link #clearGeneratedSequences}. The count includes
+   * sequences added by {@link #addGeneratedSequence} and by the {@link DemandDrivenInputCreator}.
+   * Seed sequences are not counted, nor are sequences that were not stored because they have no
+   * active outputs.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
-  // FIXME subtract size of seeds!
   public int numGeneratedSequences() {
-    return gralComponents.size();
+    return gralComponents.numSequencesAdded() - numSeedSequencesAdded;
   }
 
   /**
@@ -170,16 +177,34 @@ public class ComponentManager {
   }
 
   /**
+   * Unless the component set already contains a sequence that consists of a single initialization
+   * to the given value, adds such a sequence to the component set. A literal does not prevent
+   * adding the value, because a literal is not in the component set and some operations cannot
+   * select it.
+   *
+   * @param value a primitive wrapper or a String
+   */
+  void addPrimitiveValueIfNew(Object value) {
+    if (!gralComponents.containsPrimitiveValue(value)) {
+      addGeneratedSequence(Sequence.createSequenceForPrimitive(value));
+    }
+  }
+
+  /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
+   * Also removes the demand-driven input creator's secondary sequences and lets it reconsider types
+   * it found uninstantiable, but retains its diagnostic information (visited and uninstantiable
+   * types).
    */
   void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     if (GenInputsAbstract.call_non_sut_methods) {
       // Reuse the existing creator rather than replacing it, so that no stale creator can copy
       // pre-clear sequences into the pool, and so that its visited types (reported at the end of
       // the run) cover the whole run.
-      gralComponents.getDemandDrivenInputCreator().clear();
+      gralComponents.getDemandDrivenInputCreator().clearSecondarySequences();
     }
   }
 
@@ -284,36 +309,6 @@ public class ComponentManager {
     return scopeToLiteralStatistics
         .getLiteralStatistics(declaringType)
         .getSequencesForType(neededType);
-  }
-
-  /**
-   * Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
-   * "int var0 = 1"), including general components and literals.
-   *
-   * @return the sequences for primitive values
-   */
-  Set<Sequence> getAllPrimitiveSequences() {
-
-    Set<Sequence> result = new LinkedHashSet<>();
-    // Include literal-derived primitive sequences unless disabled.
-    if (GenInputsAbstract.literals_level != GenInputsAbstract.ClassLiteralsMode.NONE
-        && scopeToLiteralStatistics != null) {
-      for (Sequence seq : scopeToLiteralStatistics.getAllSequences()) {
-        Type outType = seq.getLastVariable().getType();
-        if (outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE)) {
-          result.add(seq);
-        }
-      }
-    }
-
-    // Add primitive sequences from general components.
-    // This uses CollectionsPlume.addAll() because Collection.addAll() can't take an Iterable.
-    for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
-      CollectionsPlume.addAll(result, gralComponents.getSequencesForType(type, true, false));
-    }
-    CollectionsPlume.addAll(
-        result, gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true, false));
-    return result;
   }
 
   /**

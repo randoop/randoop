@@ -105,7 +105,7 @@ public class ICSE07ContainersTest {
 
     Set<Sequence> seeds = SeedSequences.defaultSeeds();
     ComponentManager componentMgr = new ComponentManager(seeds, accessibility);
-    assertEquals(seeds.size(), componentMgr.numGeneratedSequences());
+    assertEquals(0, componentMgr.numGeneratedSequences());
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
