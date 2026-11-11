@@ -71,7 +71,7 @@ java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Clas
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) include11
 java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # inconsistent Java 8 vs 9, so ignore
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude
-java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude
+java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude11
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
@@ -124,8 +124,7 @@ java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.get(java.lang.Object) ignore
 java7.util7.TreeMap.get(java.lang.Object) include11
-java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude
-java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) include11
+java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude17+
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
@@ -143,16 +142,19 @@ java7.util7.TreeMap.setColor(java7.util7.TreeMap.Entry, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude
+java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) include11
 java7.util7.TreeMap.tailMap(java.lang.Object) exclude
-java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude11-
+java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude8
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
 java7.util7.TreeMap.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.TreeSet.add(java.lang.Object) exclude11-
+java7.util7.TreeSet.add(java.lang.Object) include11
 java7.util7.TreeSet.ceiling(java.lang.Object) ignore8
 java7.util7.TreeSet.contains(java.lang.Object) ignore8
 java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
 java7.util7.TreeSet.headSet(java.lang.Object) exclude
+java7.util7.TreeSet.headSet(java.lang.Object) include11
 java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude
 java7.util7.TreeSet.higher(java.lang.Object) ignore8
 java7.util7.TreeSet.last() ignore
@@ -163,8 +165,8 @@ java7.util7.TreeSet.remove(java.lang.Object) ignore
 java7.util7.TreeSet.remove(java.lang.Object) include11
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore
-java7.util7.TreeSet.tailSet(java.lang.Object) exclude11-
-java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude11-
+java7.util7.TreeSet.tailSet(java.lang.Object) exclude8
+java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude8
 java7.util7.TreeSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Vector.addAll(int, java7.util7.Collection) ignore
 java7.util7.Vector.addAll(int, java7.util7.Collection) include11
