@@ -158,23 +158,50 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
+   * <p>A bound that is not an {@link EagerReferenceBound} (such as a lazy bound) cannot be compared
+   * by subtyping. For such a bound, this method checks only the cases that do not require
+   * subtyping: {@code ?} contains every wildcard, and every wildcard contains itself. Otherwise it
+   * conservatively returns false.
+   *
    * @param otherType the wildcard to check for
    * @return true if this wildcard contains the other wildcard, false otherwise
    */
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {
+      if (this.getUpperTypeBound().isObject()) {
+        return true;
+      }
       if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound());
+        return isSubtypeOfOrEqualTo(otherType.getUpperTypeBound(), this.getUpperTypeBound());
       } else {
-        return this.getUpperTypeBound().isObject();
+        return false;
       }
     } else {
       if (otherType.hasUpperBound) {
         return false;
       } else {
-        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
+        return isSubtypeOfOrEqualTo(this.getLowerTypeBound(), otherType.getLowerTypeBound());
       }
     }
+  }
+
+  /**
+   * Returns true if the type of the first bound is a subtype of the type of the second bound.
+   * Returns false if the bounds differ and either is not an {@link EagerReferenceBound}, because
+   * subtyping is not implemented for other bounds.
+   *
+   * @param subBound the possible subtype bound
+   * @param superBound the possible supertype bound
+   * @return true if {@code subBound} is known to be a subtype of {@code superBound}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ParameterBound subBound, ParameterBound superBound) {
+    if (subBound.equals(superBound)) {
+      return true;
+    }
+    if (subBound instanceof EagerReferenceBound && superBound instanceof EagerReferenceBound) {
+      return subBound.isSubtypeOfOrEqualTo(superBound);
+    }
+    return false;
   }
 
   /**
