@@ -827,12 +827,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
-  static class Version<U> implements Comparable<Version<U>> {
-    @Override
-    public int compareTo(Version<U> other) {
-      return 0;
-    }
-  }
+  abstract static class Version<U> implements Comparable<Version<U>> {}
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
@@ -945,6 +940,23 @@ public class TypeVariableTest {
         GenericClassType.forClass(Map.class).instantiate(capture, JavaTypes.STRING_TYPE),
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+  }
+
+  /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
+  @SuppressWarnings("serial") // never instantiated
+  abstract static class RunnableNumber extends Number implements Runnable {}
+
+  @Test
+  public void testLowerBoundOfIntersection() {
+    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    assertTrue(intersection instanceof IntersectionTypeBound);
+    Substitution substitution = new Substitution();
+    ReferenceBound runnableNumber =
+        new EagerReferenceBound(ClassOrInterfaceType.forClass(RunnableNumber.class));
+    assertTrue(runnableNumber.isLowerBound(intersection, substitution));
+    // Integer is a Number but not a Runnable.
+    ReferenceBound integer = new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive());
+    assertFalse(integer.isLowerBound(intersection, substitution));
   }
 
   /**
