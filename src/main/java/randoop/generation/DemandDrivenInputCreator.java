@@ -24,6 +24,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.AccessibilityPredicate;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
@@ -344,22 +345,16 @@ public class DemandDrivenInputCreator {
       // and are accessible to Randoop.
 
       for (TypedOperation op : getCandidateProducers(currentType)) {
-        Type opOutputType = op.getOutputType();
-
-        if (opOutputType.isGeneric()) {
-          TypedClassOperation instantiated =
-              sequenceCollection.getTypeInstantiator().instantiate((TypedClassOperation) op);
-          if (instantiated == null) {
-            continue; // Skip if instantiation fails
-          }
-          op = instantiated;
+        TypedOperation producer = instantiateToProduce((TypedClassOperation) op, currentType);
+        if (producer == null) {
+          continue;
         }
 
         // Add this operation as a producer of the type.
-        result.add(op);
+        result.add(producer);
 
         // Add each of its parameter types for further processing.
-        for (Type paramType : op.getInputTypes()) {
+        for (Type paramType : producer.getInputTypes()) {
           worklist.addFirst(paramType);
         }
       }
@@ -380,9 +375,10 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns the candidate producers of the given type: the accessible constructors and static
-   * methods that the type declares and whose output type is assignable to the type. A candidate
-   * producer is not necessarily usable: a generic one is usable only if the type instantiator can
-   * instantiate it.
+   * methods that the type declares and that are generic or whose output type is assignable to the
+   * type. A candidate producer is not necessarily usable: a generic one is usable only if the type
+   * instantiator can instantiate it so that its output type is assignable to the type (see {@link
+   * #instantiateToProduce}).
    *
    * @param type a type
    * @return the candidate producers of {@code type}
@@ -406,19 +402,38 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * True iff `op` can produce an instance of `currentType` without needing a receiver.
+   * True iff `op` might produce an instance of `currentType` without needing a receiver: it is a
+   * constructor or static method, and it is generic or its output type is assignable to {@code
+   * currentType}.
    *
    * @param op the operation to check
    * @param currentType the type to produce
-   * @return true if {@code op} can produce an instance of {@code currentType}
+   * @return true if {@code op} is a candidate producer of {@code currentType}
    */
   private boolean isProducer(TypedOperation op, Type currentType) {
-    // Output must be assignable to the goal type.
-    if (!currentType.isAssignableFrom(op.getOutputType())) {
+    // Only allow constructors and static methods (no receiver needed).
+    if (!op.isConstructorCall() && !op.isStatic()) {
       return false;
     }
-    // Only allow constructors and static methods (no receiver needed).
-    return op.isConstructorCall() || op.isStatic();
+    // A generic operation might be instantiable so that its output is assignable to the goal type.
+    return op.isGeneric() || currentType.isAssignableFrom(op.getOutputType());
+  }
+
+  /**
+   * Returns the given operation, instantiated if it is generic, if its output type is assignable to
+   * the given type.
+   *
+   * @param op a constructor or static method
+   * @param type the type for {@code op} to produce
+   * @return {@code op}, instantiated if it is generic, whose output type is assignable to {@code
+   *     type}; or null if there is no such instantiation or none was found
+   * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
+   */
+  private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
+    if (op.isGeneric()) {
+      return sequenceCollection.getTypeInstantiator().instantiate(op, type);
+    }
+    return type.isAssignableFrom(op.getOutputType()) ? op : null;
   }
 
   /**
