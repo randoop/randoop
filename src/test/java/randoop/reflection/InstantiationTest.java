@@ -7,9 +7,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
@@ -25,6 +27,7 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -291,6 +294,73 @@ public class InstantiationTest {
       assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests that the instantiation of {@code <K, V> Map<K, V> unmodifiableMap(Map<? extends K, ?
+   * extends V>)} respects the bounds of the capture variables that it instantiates from an input
+   * type: the key type of the argument is a subtype of the key type of the result, even though
+   * many candidate types for {@code K} are incompatible with it.
+   */
+  @Test
+  public void testCaptureBoundsInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(
+        JDKTypes.HASH_MAP_TYPE.instantiate(
+            JavaTypes.INT_TYPE.toBoxedPrimitive(), JavaTypes.STRING_TYPE),
+        inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation unmodifiableMap =
+        TypedOperation.forMethod(Collections.class.getMethod("unmodifiableMap", Map.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(unmodifiableMap);
+      assertNotNull("instantiation failed for " + unmodifiableMap, instance);
+      InstantiatedType argType = (InstantiatedType) instance.getInputTypes().get(0);
+      InstantiatedType resultType = (InstantiatedType) instance.getOutputType();
+      for (int i = 0; i < 2; i++) {
+        Type argTypeArgument =
+            ((ReferenceArgument) argType.getTypeArguments().get(i)).getReferenceType();
+        Type resultTypeArgument =
+            ((ReferenceArgument) resultType.getTypeArguments().get(i)).getReferenceType();
+        assertTrue(
+            argTypeArgument + " should be a subtype of " + resultTypeArgument,
+            argTypeArgument.isSubtypeOfOrEqualTo(resultTypeArgument));
+      }
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a method whose parameter type is a member type, {@code
+   * MemberTypeOuter<U>.Inner}, that has no type parameters of its own.
+   */
+  @Test
+  public void testMemberTypeInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType innerType =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
+            .substitute(
+                new Substitution(
+                    GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
+                    JavaTypes.STRING_TYPE));
+    assertFalse(innerType + " should not be generic", innerType.isGeneric());
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(innerType.getSupertypesInclusive());
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation use =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("use", MemberTypeOuter.Inner.class));
+
+    TypedClassOperation instance = instantiator.instantiate(use);
+    assertNotNull("instantiation failed for " + use, instance);
+    assertEquals(innerType, instance.getInputTypes().get(0));
   }
 
   /* disabled until fix type parameter management

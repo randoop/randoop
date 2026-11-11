@@ -442,7 +442,9 @@ public class TypeInstantiator {
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            // The parameter type need not be a ParameterizedType: it can be a member type, such as
+            // Outer<T>.Inner, that is generic only because its enclosing type is.
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -453,7 +455,7 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;

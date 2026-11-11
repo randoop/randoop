@@ -20,6 +20,7 @@ import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
+import randoop.util.Randomness;
 
 /** Tests that {@link TypeInstantiator} favors comparable type arguments. */
 public class ComparableTypeArgumentTest {
@@ -41,11 +42,13 @@ public class ComparableTypeArgumentTest {
   /**
    * Asserts that instantiating the given operation, whose output type has one type argument,
    * chooses a comparable type argument more often than choosing uniformly among the input types
-   * would.
+   * would, but still sometimes chooses a non-comparable type argument.
    *
    * @param operation an operation whose output type is a generic class with one type parameter
    */
   private void assertComparableIsFavored(TypedClassOperation operation) {
+    // Make the result independent of the random choices of other tests.
+    Randomness.setSeed(0);
     // Only one of these input types, String, is comparable.
     Set<Type> inputTypes = new LinkedHashSet<>();
     for (Class<?> c : new Class<?>[] {String.class, Thread.class, BitSet.class}) {
@@ -68,6 +71,10 @@ public class ComparableTypeArgumentTest {
     assertTrue(
         "Comparable type arguments: " + comparableCount + " of " + TRIALS,
         comparableCount > TRIALS * 0.4);
+    // Non-comparable candidates remain selectable.
+    assertTrue(
+        "Comparable type arguments: " + comparableCount + " of " + TRIALS,
+        comparableCount < TRIALS);
   }
 
   @Test
