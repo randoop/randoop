@@ -203,8 +203,8 @@ public class DemandDrivenInputCreator {
    * depend on the contents of the main sequence collection (see {@link
    * #uninstantiableTypesSinceClear}). Retains the diagnostic information: the visited types (which
    * are reported for the whole run) and the cumulative set of uninstantiable types. Also retains
-   * the types without usable producers; clearing the main sequence collection changes its types,
-   * so the next request for such a type retries it.
+   * the types without usable producers; clearing the main sequence collection changes its types, so
+   * the next request for such a type retries it.
    */
   public void clearSecondarySequences() {
     secondarySequenceCollection.clear();
@@ -239,8 +239,8 @@ public class DemandDrivenInputCreator {
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
    *   <li>Logs warnings and adds a target type to the {@code uninstantiableTypes} and {@code
-   *       uninstantiableTypesSinceClear} sets if the target type has no candidate producers. If
-   *       the target type has candidate producers but none of them is usable now (e.g., a generic
+   *       uninstantiableTypesSinceClear} sets if the target type has no candidate producers. If the
+   *       target type has candidate producers but none of them is usable now (e.g., a generic
    *       producer that cannot be instantiated from the types of the current sequences), records
    *       the target type in {@code typesWithoutUsableProducers} instead, so that a later call
    *       retries it once those types change.
