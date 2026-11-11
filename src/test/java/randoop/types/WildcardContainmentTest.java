@@ -293,6 +293,44 @@ public class WildcardContainmentTest {
     assertTrue(childExtendsArray.isSubtypeOfOrEqualTo(type("arrayListQ")));
   }
 
+  /**
+   * A method whose type parameter has a recursive bound.
+   *
+   * @param <T> a type parameter with a recursive bound
+   */
+  public static <T extends Comparable<T>> void recursiveBound() {}
+
+  /**
+   * Returns a wildcard argument whose bound is a {@link LazyReferenceBound}, as a substitution
+   * creates for a bound type that contains a type variable.
+   *
+   * @param boundType the type of the bound
+   * @param hasUpperBound true if the wildcard has an upper bound ({@code ? extends}), false if it
+   *     has a lower bound ({@code ? super})
+   * @return the wildcard argument
+   */
+  private static WildcardArgument lazyWildcard(ReferenceType boundType, boolean hasUpperBound) {
+    return new WildcardArgument(new WildcardType(new LazyReferenceBound(boundType), hasUpperBound));
+  }
+
+  @Test(timeout = 10000)
+  public void lazyBoundContainmentTest() throws NoSuchMethodException {
+    TypeVariable t =
+        TypeVariable.forType(
+            WildcardContainmentTest.class.getMethod("recursiveBound").getTypeParameters()[0]);
+    ReferenceType listT = GenericClassType.forClass(List.class).instantiate(t);
+    ReferenceType arrayListT = JDKTypes.ARRAY_LIST_TYPE.instantiate(t);
+    WildcardArgument extendsListT = lazyWildcard(listT, true);
+    WildcardArgument extendsArrayListT = lazyWildcard(arrayListT, true);
+    WildcardArgument superListT = lazyWildcard(listT, false);
+    WildcardArgument superArrayListT = lazyWildcard(arrayListT, false);
+    // ArrayList<T> is a subtype of List<T>.
+    assertTrue(extendsListT.contains(extendsArrayListT));
+    assertFalse(extendsArrayListT.contains(extendsListT));
+    assertTrue(superArrayListT.contains(superListT));
+    assertFalse(superListT.contains(superArrayListT));
+  }
+
   @Test
   public void captureConversionTest() {
     // The capture variable of NumberBox<?> has upper bound Number, from the type parameter.
