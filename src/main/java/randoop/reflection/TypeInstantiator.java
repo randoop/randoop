@@ -134,13 +134,13 @@ public class TypeInstantiator {
    * {@code goalType} is a parameterized type and the output type of {@code operation} is a
    * parameterized type of the same generic class, then the output type of the result is {@code
    * goalType}. For example, if {@code operation} is {@code static <T extends Marker> Box<T> of(T)}
-   * and {@code goalType} is {@code Box<MarkerImpl>}, returns {@code static Box<MarkerImpl>
-   * of(MarkerImpl)}. Chooses type arguments for the remaining type parameters, such as those that
-   * occur only in the parameter types of {@code operation}, as {@link
-   * #instantiate(TypedClassOperation)} does.
+   * and {@code goalType} is {@code Box<MarkerImpl>}, this method returns {@code static
+   * Box<MarkerImpl> of(MarkerImpl)}. This method chooses type arguments for the remaining type
+   * parameters, such as those that occur only in the parameter types of {@code operation}, as
+   * {@link #instantiate(TypedClassOperation)} does.
    *
    * @param operation a generic operation
-   * @param goalType the type to which the output type of the result is assignable
+   * @param goalType a type
    * @return an instantiated version of {@code operation} whose output type is assignable to {@code
    *     goalType}, or null if none was found
    */
