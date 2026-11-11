@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
  * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
  * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
- * substitution does not instantiate.
+ * substitution maps to no type or to a type variable.
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
@@ -44,13 +44,13 @@ class LazyReferenceBound extends ReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, can contain type variables that the substitution does
-   * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
-   * in {@link #getUnknownVariable(Type, Substitution)}.
+   * <p>The bound type can still contain type variables after the substitution is applied. It is
+   * compared as an {@link EagerReferenceBound} would be, except as described in {@link
+   * #getUnknownTypeVariable(Type, Substitution)}.
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    TypeVariable unknown = getUnknownVariable(argType, substitution);
+    TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
       return unknown.canBeInstantiatedBy((ReferenceType) argType);
@@ -70,13 +70,13 @@ class LazyReferenceBound extends ReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The bound type, after substitution, can contain type variables that the substitution does
-   * not instantiate. It is compared as an {@link EagerReferenceBound} would be, except as described
-   * in {@link #getUnknownVariable(Type, Substitution)}.
+   * <p>The bound type can still contain type variables after the substitution is applied. It is
+   * compared as an {@link EagerReferenceBound} would be, except as described in {@link
+   * #getUnknownTypeVariable(Type, Substitution)}.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    TypeVariable unknown = getUnknownVariable(argType, substitution);
+    TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
       return unknown.canBeInstantiatedBy((ReferenceType) argType);
@@ -85,9 +85,9 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   /**
-   * Returns the type variable that the bound type is after the given substitution is applied, if
-   * the substitution does not instantiate it and {@code argType} is a reference type that is not a
-   * variable. Otherwise, returns null.
+   * Returns the bound type after the given substitution is applied, if the bound type is a type
+   * variable, the substitution maps it to no type or to a type variable, and {@code argType} is a
+   * reference type that is not a type variable. Otherwise, returns null.
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
@@ -98,9 +98,10 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
-   * @return the uninstantiated type variable that the bound type is, or null
+   * @return the bound type after substitution, if it is a type variable as described above;
+   *     otherwise null
    */
-  private @Nullable TypeVariable getUnknownVariable(Type argType, Substitution substitution) {
+  private @Nullable TypeVariable getUnknownTypeVariable(Type argType, Substitution substitution) {
     if (!getBoundType().isVariable() || !argType.isReferenceType() || argType.isVariable()) {
       return null;
     }

@@ -21,9 +21,10 @@ public abstract class ReferenceBound extends ParameterBound {
 
   /**
    * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
-   * type contains a type variable, as in {@code Map<T, String>}, and an {@link EagerReferenceBound}
-   * otherwise. Other code also creates an {@link EagerReferenceBound} whose type contains a type
-   * variable, so not every bound that contains a type variable is a {@link LazyReferenceBound}.
+   * type contains a type variable, as in {@code Map<T, String>}. The bound is an {@link
+   * EagerReferenceBound} otherwise. Other code also creates an {@link EagerReferenceBound} whose
+   * type contains a type variable, so not every bound that contains a type variable is a {@link
+   * LazyReferenceBound}.
    *
    * @param boundType a reference type
    * @return a bound whose type is {@code boundType}
@@ -102,11 +103,21 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns false if {@code bound} is neither a {@link ReferenceBound} nor a {@link
-   * LazyParameterBound} that can be converted to one.
+   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is a lower bound
+   * on every one of its members, since a type is a subtype of the intersection if and only if it is
+   * a subtype of each member. Returns false if {@code bound} is a {@link LazyParameterBound} that
+   * contains a kind of type that it cannot convert to a {@link ReferenceBound}.
    */
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (!isLowerBound(member, substitution)) {
+          return false;
+        }
+      }
+      return true;
+    }
     ReferenceType type = asReferenceType(bound);
     return type != null && isLowerBound(type, substitution);
   }
@@ -116,8 +127,8 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
    * on any of its members, since the intersection is a subtype of each member. Returns false if
-   * {@code bound} is neither an intersection, a {@link ReferenceBound}, nor a {@link
-   * LazyParameterBound} that can be converted to one.
+   * {@code bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot
+   * convert to a {@link ReferenceBound}.
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
@@ -135,7 +146,7 @@ public abstract class ReferenceBound extends ParameterBound {
 
   /**
    * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
-   * LazyParameterBound} that can be converted to one. Otherwise, returns null.
+   * LazyParameterBound} that can be converted to a {@link ReferenceBound}. Otherwise, returns null.
    *
    * @param bound a bound
    * @return the type of {@code bound}, or null

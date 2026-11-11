@@ -73,7 +73,7 @@ class LazyParameterBound extends ParameterBound {
       if (!instantiatesAny(boundType, substitution)) {
         return this;
       }
-      // Type variables that the substitution does not instantiate remain type variables, so a
+      // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
@@ -115,7 +115,7 @@ class LazyParameterBound extends ParameterBound {
    * parameterized type bound, to create a type argument to a {@link
    * randoop.types.ParameterizedType}.
    *
-   * <p>A type variable that {@code substitution} does not instantiate remains a type variable in
+   * <p>A type variable that {@code substitution} does not map to a type remains a type variable in
    * the result.
    *
    * @param type the reflection type
@@ -186,11 +186,11 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Returns true if the given substitution instantiates some type variable that occurs in the given
-   * reflection type.
+   * Returns true if {@code substitution} instantiates some type variable that occurs in {@code
+   * type}.
    *
-   * @param type the reflection type
-   * @param substitution the type substitution
+   * @param type a reflection type
+   * @param substitution a type substitution
    * @return true if {@code substitution} instantiates a type variable that occurs in {@code type}
    */
   private static boolean instantiatesAny(java.lang.reflect.Type type, Substitution substitution) {
