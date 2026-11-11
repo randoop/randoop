@@ -137,10 +137,23 @@ public class DemandDrivenInputCreator {
   private final Set<Type> visitedTypes = new HashSet<>();
 
   /**
-   * A set of SUT types that are non-instantiable. This is used to avoid generating sequences
-   * through {@link DemandDrivenInputCreator} for such types.
+   * A set of SUT types that were found to be non-instantiable, at any time during this run. This is
+   * cumulative diagnostic information for the user; it is retained when sequences are cleared.
+   *
+   * @see #uninstantiableTypesSinceClear
    */
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
+
+  /**
+   * A set of SUT types that were found to be non-instantiable since the sequence collections were
+   * last cleared. This is used to avoid generating sequences through {@link
+   * DemandDrivenInputCreator} for such types.
+   *
+   * <p>Whether a type is instantiable can depend on the contents of the main sequence collection:
+   * instantiating a generic producer uses the types in that collection. Therefore, this set is
+   * reset by {@link #clearSecondarySequences}, so that producers are reconsidered after a clear.
+   */
+  private final Set<Type> uninstantiableTypesSinceClear = new HashSet<>();
 
   /**
    * Maps each type whose candidate producers (see {@link #getCandidateProducers}) were all unusable
@@ -185,14 +198,17 @@ public class DemandDrivenInputCreator {
 
   /**
    * Removes all sequences from the secondary sequence collection, so that sequences created before
-   * the main sequence collection was cleared are not reintroduced into it. Retains the visited
-   * types (which are reported for the whole run) and the uninstantiable types (which do not depend
-   * on the contents of any sequence collection). Also retains the types without usable producers;
-   * clearing the main sequence collection changes its types, so the next request for such a type
-   * retries it.
+   * the main sequence collection was cleared are not reintroduced into it. Also forgets which types
+   * were found to be uninstantiable for the purpose of skipping them, because instantiability can
+   * depend on the contents of the main sequence collection (see {@link
+   * #uninstantiableTypesSinceClear}). Retains the diagnostic information: the visited types (which
+   * are reported for the whole run) and the cumulative set of uninstantiable types. Also retains
+   * the types without usable producers; clearing the main sequence collection changes its types, so
+   * the next request for such a type retries it.
    */
-  public void clear() {
+  public void clearSecondarySequences() {
     secondarySequenceCollection.clear();
+    uninstantiableTypesSinceClear.clear();
   }
 
   /**
@@ -222,11 +238,12 @@ public class DemandDrivenInputCreator {
    *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
-   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
-   *       type has no candidate producers. If the target type has candidate producers but none of
-   *       them is usable now (e.g., a generic producer that cannot be instantiated from the types
-   *       of the current sequences), records the target type in {@code typesWithoutUsableProducers}
-   *       instead, so that a later call retries it once those types change.
+   *   <li>Logs warnings and adds a target type to the {@code uninstantiableTypes} and {@code
+   *       uninstantiableTypesSinceClear} sets if the target type has no candidate producers. If the
+   *       target type has candidate producers but none of them is usable now (e.g., a generic
+   *       producer that cannot be instantiated from the types of the current sequences), records
+   *       the target type in {@code typesWithoutUsableProducers} instead, so that a later call
+   *       retries it once those types change.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -261,6 +278,7 @@ public class DemandDrivenInputCreator {
             targetType);
         // Track the types with no producers.
         uninstantiableTypes.add(targetType);
+        uninstantiableTypesSinceClear.add(targetType);
       } else {
         // A later call might succeed, once the type instantiator knows more types.  Log only the
         // first of consecutive failures.
@@ -539,12 +557,13 @@ public class DemandDrivenInputCreator {
 
   /**
    * Checks if the given type is uninstantiable, meaning it has no accessible producer methods that
-   * create instances of it.
+   * create instances of it. Only considers determinations made since the last call to {@link
+   * #clearSecondarySequences}.
    *
    * @param type the type to check
    * @return true if the type is uninstantiable, false otherwise
    */
   public boolean isUninstantiableType(Type type) {
-    return uninstantiableTypes.contains(type);
+    return uninstantiableTypesSinceClear.contains(type);
   }
 }

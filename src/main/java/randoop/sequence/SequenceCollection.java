@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -73,6 +74,14 @@ public final class SequenceCollection {
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
+
+  /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
    * sequenceMap.
    */
@@ -122,6 +131,7 @@ public final class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.typesModificationCount++;
     this.sequenceCount = 0;
     checkRep();
@@ -206,6 +216,15 @@ public final class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        primitiveValues.add(canonicalizePrimitiveValue(statement.getValue(), outType));
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -234,6 +253,51 @@ public final class SequenceCollection {
       }
     }
     checkRep();
+  }
+
+  /**
+   * Converts a value to the wrapper class of its declared type. A primitive initialization may
+   * store a value of a narrower type than the one it declares (for example, a {@code Byte} for a
+   * {@code short} variable). The runtime value of such a variable has the declared type, so {@link
+   * #primitiveValues} stores the value converted to that type.
+   *
+   * @param value a primitive wrapper or a String
+   * @param type the declared type of the value: a primitive type or String
+   * @return the value, converted to the wrapper class of {@code type} if {@code type} is primitive
+   */
+  @SuppressWarnings({
+    "signedness:method.invocation" // Randoop's primitive values are Java's signed values
+  })
+  private static Object canonicalizePrimitiveValue(Object value, Type type) {
+    if (!type.isPrimitive()) {
+      return value;
+    }
+    Class<?> cls = type.getRuntimeClass();
+    if (cls == boolean.class || cls == char.class) {
+      // No other primitive type widens to boolean or char.
+      return value;
+    }
+    Number n;
+    if (value instanceof Character) {
+      n = Integer.valueOf((Character) value);
+    } else {
+      n = (Number) value;
+    }
+    if (cls == byte.class) {
+      return n.byteValue();
+    } else if (cls == short.class) {
+      return n.shortValue();
+    } else if (cls == int.class) {
+      return n.intValue();
+    } else if (cls == long.class) {
+      return n.longValue();
+    } else if (cls == float.class) {
+      return n.floatValue();
+    } else if (cls == double.class) {
+      return n.doubleValue();
+    } else {
+      throw new RandoopBug("Unexpected primitive type " + type);
+    }
   }
 
   /**
@@ -404,6 +468,18 @@ public final class SequenceCollection {
       result.addAll(a);
     }
     return result;
+  }
+
+  /**
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
+   *
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
   }
 
   /**

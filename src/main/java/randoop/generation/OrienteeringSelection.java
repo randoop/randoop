@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -193,6 +194,29 @@ public class OrienteeringSelection extends InputSequenceSelector {
       eSeq.exectime = 1;
     }
     createSequenceDetailsWithExecutionTime(eSeq.sequence, eSeq.exectime);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation discards the details and weights of all sequences other than {@code
+   * retainedSequences}. If a discarded sequence is later a candidate, its details are recreated on
+   * demand.
+   */
+  @Override
+  public void componentsCleared(Set<Sequence> retainedSequences) {
+    sequenceDetailsMap.keySet().retainAll(retainedSequences);
+    weightMap.keySet().retainAll(retainedSequences);
+  }
+
+  /**
+   * Returns the weight of the given sequence, or null if this has no details for it.
+   *
+   * @param sequence a sequence
+   * @return the weight of the sequence, or null
+   */
+  @Nullable Double getWeight(Sequence sequence) {
+    return weightMap.get(sequence);
   }
 
   /**
