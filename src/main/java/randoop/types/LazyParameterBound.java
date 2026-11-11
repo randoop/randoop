@@ -85,7 +85,8 @@ class LazyParameterBound extends ParameterBound {
         return this;
       }
       // If the element type is a type variable, a later substitution might map it to the null
-      // type.  A LazyReferenceBound leaves the bound unresolved in that case.
+      // type.  The LazyReferenceBound that forTypeLazyIfGeneric returns for a generic array type
+      // leaves the bound unresolved in that case.
       return ReferenceBound.forTypeLazyIfGeneric(
           ((ReferenceArgument) typeArgument).getReferenceType());
     }
@@ -104,7 +105,7 @@ class LazyParameterBound extends ParameterBound {
       if (!instantiatesAny(boundType, substitution)) {
         return this;
       }
-      // Type variables that the substitution does not instantiate remain type variables, so a
+      // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
       java.lang.reflect.Type[] actualTypeArgs =
           ((ParameterizedType) boundType).getActualTypeArguments();
@@ -151,14 +152,21 @@ class LazyParameterBound extends ParameterBound {
    * parameterized type bound, to create a type argument to a {@link
    * randoop.types.ParameterizedType}.
    *
-   * <p>A type variable that {@code substitution} does not instantiate remains a type variable in
+   * <p>A type variable that {@code substitution} does not map to a type remains a type variable in
    * the result.
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution maps the component type of an array type
-   *     to the null type or if {@code type} is not a type variable, parameterized type, class,
-   *     array type, or wildcard
+   * @return the type argument that results from applying {@code substitution} to {@code type}, or
+   *     null if any of the following holds:
+   *     <ul>
+   *       <li>{@code type} contains an array type whose component type {@code substitution} maps to
+   *           the null type, or
+   *       <li>{@code type} is not a type variable, parameterized type, class, generic array type,
+   *           or wildcard.
+   *     </ul>
+   *     The first condition does not apply within the bound of a wildcard; such a bound remains
+   *     lazy instead.
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -188,7 +196,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      // ReferenceType.forType represents an array class, such as String[], as an ArrayType.
+      // ReferenceType.forType represents an array class, such as String[], as an ArrayType.  By
+      // contrast, ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
       return TypeArgument.forType(ReferenceType.forType(type));
     }
 
@@ -238,11 +247,11 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Returns true if the given substitution instantiates some type variable that occurs in the given
-   * reflection type.
+   * Returns true if {@code substitution} instantiates some type variable that occurs in {@code
+   * type}.
    *
-   * @param type the reflection type
-   * @param substitution the type substitution
+   * @param type a reflection type
+   * @param substitution a type substitution
    * @return true if {@code substitution} instantiates a type variable that occurs in {@code type}
    */
   private static boolean instantiatesAny(java.lang.reflect.Type type, Substitution substitution) {

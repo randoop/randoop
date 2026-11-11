@@ -101,8 +101,9 @@ public class ExplicitTypeVariable extends TypeVariable {
 
   /**
    * Returns true if the given bound represents the same type as the upper bound of this variable.
-   * The two can differ in representation: a substitution that maps each type variable in a {@link
-   * LazyParameterBound} to itself yields a {@link ReferenceBound} for the same type.
+   * The two can differ in representation: {@link LazyParameterBound#substitute}, given a
+   * substitution that maps each type variable in the bound to itself, returns a {@link
+   * ReferenceBound} for the same type.
    *
    * <p>Treating such bounds as different would make {@link #substitute(Substitution)} create a copy
    * of this variable that is not equal to it. Then {@link TypeVariable#isInstantiationOf} on a
