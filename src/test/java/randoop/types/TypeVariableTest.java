@@ -1638,7 +1638,7 @@ public class TypeVariableTest {
 
   @Test
   public void testLowerBoundOfIntersection() {
-    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    ParameterBound intersection = typeParameter(NumberRunnableBound.class, 0).getUpperTypeBound();
     assertTrue(intersection instanceof IntersectionTypeBound);
     Substitution substitution = new Substitution();
     ReferenceBound runnableNumber =
