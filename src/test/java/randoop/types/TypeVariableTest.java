@@ -689,7 +689,7 @@ public class TypeVariableTest {
    *
    * @param <T> the type parameter
    */
-  static class IntersectionBound<T extends Number & Runnable> {}
+  static class NumberAndRunnableBound<T extends Number & Runnable> {}
 
   /**
    * A class whose type parameter is bounded by {@code Number}.
@@ -700,7 +700,7 @@ public class TypeVariableTest {
 
   @Test
   public void testInstantiationByVariableWithIntersectionBound() {
-    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable t = typeParameter(NumberAndRunnableBound.class, 0);
     TypeVariable u = typeParameter(NumberBound.class, 0);
     assertTrue(t.getUpperTypeBound() instanceof IntersectionTypeBound);
     // Number & Runnable is within the bound Number.
@@ -824,7 +824,8 @@ public class TypeVariableTest {
 
   @Test
   public void testLowerBoundOfIntersection() {
-    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    ParameterBound intersection =
+        typeParameter(NumberAndRunnableBound.class, 0).getUpperTypeBound();
     assertTrue(intersection instanceof IntersectionTypeBound);
     Substitution substitution = new Substitution();
     ReferenceBound runnableNumber =
