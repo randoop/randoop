@@ -203,6 +203,31 @@ public class WildcardContainmentTest {
     assertFalse(isSubtype("arrayListInteger", "collectionString"));
   }
 
+  /**
+   * A method whose parameters are lower-bounded wildcards with type-variable bounds.
+   *
+   * @param <T> a type parameter
+   * @param <U> a type parameter that is a subtype of T
+   * @param superT a list whose type argument is {@code ? super T}
+   * @param superU a list whose type argument is {@code ? super U}
+   */
+  public static <T, U extends T> void superVariables(
+      List<? super T> superT, List<? super U> superU) {}
+
+  @Test
+  public void lowerBoundTypeVariableTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        WildcardContainmentTest.class
+            .getMethod("superVariables", List.class, List.class)
+            .getGenericParameterTypes();
+    Type superT = Type.forType(parameterTypes[0]);
+    Type superU = Type.forType(parameterTypes[1]);
+    // The capture of `? super T` has lower bound T, and U is a subtype of T.
+    assertTrue(superT.isSubtypeOfOrEqualTo(superU));
+    assertTrue(superT.isSubtypeOfOrEqualTo(superT));
+    assertFalse(superU.isSubtypeOfOrEqualTo(superT));
+  }
+
   @Test
   public void captureConversionTest() {
     // The capture variable of NumberBox<?> has upper bound Number, from the type parameter.
