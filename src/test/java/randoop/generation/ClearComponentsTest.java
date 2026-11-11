@@ -114,9 +114,14 @@ public class ClearComponentsTest {
     Double seedWeight = selector.getWeight(seed);
     assertNotNull(seedWeight);
 
+    assertTrue(selector.hasDetails(seed));
+    assertTrue(selector.hasDetails(generated));
+
     selector.componentsCleared(Collections.singleton(seed));
     assertEquals(seedWeight, selector.getWeight(seed));
     assertNull(selector.getWeight(generated));
+    assertTrue(selector.hasDetails(seed));
+    assertFalse(selector.hasDetails(generated));
   }
 
   /** Clearing the component set keeps the small-tests weights of the retained sequences only. */
@@ -226,6 +231,94 @@ public class ClearComponentsTest {
     }
     assertFalse(gen.getAllSequences().isEmpty());
     assertEquals(numCreatedBeforeClear + gen.getAllSequences().size(), gen.numGeneratedSequences());
+  }
+
+  /** {@link ForwardGenerator#step} clears the component set when it reaches {@code --clear}. */
+  @Test
+  public void stepClearsAtCountThreshold() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    GenInputsAbstract.clear_memory = Long.MAX_VALUE;
+    int numSeeds = componentMgr.numGeneratedSequences();
+    GenInputsAbstract.clear = numSeeds + 3;
+
+    int numClears = 0;
+    for (int i = 0; i < 1000; i++) {
+      int numComponentsBefore = componentMgr.numGeneratedSequences();
+      gen.step();
+      if (numComponentsBefore == GenInputsAbstract.clear) {
+        // The step cleared the component set before creating at most one new sequence.
+        numClears++;
+        assertTrue(componentMgr.numGeneratedSequences() <= numSeeds + 1);
+        assertTrue(gen.getAllSequences().size() <= 1);
+      } else {
+        assertTrue(componentMgr.numGeneratedSequences() <= GenInputsAbstract.clear);
+      }
+    }
+    assertTrue(numClears > 0);
+  }
+
+  /** {@link ForwardGenerator#step} clears the component set when memory is low. */
+  @Test
+  public void stepClearsAtMemoryThreshold() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    int numSeeds = componentMgr.numGeneratedSequences();
+    GenInputsAbstract.clear_memory = 0;
+
+    boolean poolGrew = false;
+    // Each step garbage-collects, so do few steps.
+    for (int i = 0; i < 20; i++) {
+      gen.step();
+      // Every step clears the sequences that the previous step created.
+      int numComponents = componentMgr.numGeneratedSequences();
+      assertTrue(numComponents <= numSeeds + 1);
+      assertTrue(gen.getAllSequences().size() <= 1);
+      poolGrew |= numComponents > numSeeds;
+    }
+    assertTrue(poolGrew);
+  }
+
+  /**
+   * When memory is low, {@link ForwardGenerator#step} does not clear a component set and history
+   * that are unchanged since the last clear, but does clear if the history has grown even though
+   * the component set has not.
+   */
+  @Test
+  public void stepAvoidsRedundantMemoryClears() throws Exception {
+    GenInputsAbstract.input_selection = GenInputsAbstract.InputSelectionMode.ORIENTEERING;
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    OrienteeringSelection selector = (OrienteeringSelection) gen.getInputSequenceSelector();
+    GenInputsAbstract.clear_memory = Long.MAX_VALUE;
+    for (int i = 0; i < 100; i++) {
+      gen.step();
+    }
+
+    gen.clearComponents();
+    // With no operations, a step creates no sequence.
+    gen.operations.clear();
+    // A clear would discard the selector's details of a sequence that is not retained.
+    Sequence notRetained = Sequence.createSequenceForPrimitive(4242);
+    assertFalse(seeds.contains(notRetained));
+    selector.selectInputSequence(SIList.from(Collections.singletonList(notRetained)));
+    assertTrue(selector.hasDetails(notRetained));
+    int numComponents = componentMgr.numGeneratedSequences();
+
+    GenInputsAbstract.clear_memory = 0;
+    assertNull(gen.step());
+    assertEquals(numComponents, componentMgr.numGeneratedSequences());
+    assertTrue(gen.getAllSequences().isEmpty());
+    assertTrue(selector.hasDetails(notRetained));
+
+    // The history grows, but the component set does not.
+    gen.getAllSequences().add(notRetained);
+    assertNull(gen.step());
+    assertTrue(gen.getAllSequences().isEmpty());
+    assertFalse(selector.hasDetails(notRetained));
   }
 
   /** A parameterless operation is used again after a clear. */
