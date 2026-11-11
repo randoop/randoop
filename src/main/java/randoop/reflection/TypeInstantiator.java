@@ -157,8 +157,9 @@ public class TypeInstantiator {
             .getGenericClassType()
             .equals(((InstantiatedType) goalType).getGenericClassType())) {
       InstantiatedType goalInstantiatedType = (InstantiatedType) goalType;
+      // The substitution that makes the output type of the operation equal to the goal type.
       Substitution substitution =
-          outputSubstitution((ParameterizedType) outputType, goalInstantiatedType);
+          matchingSubstitution((ParameterizedType) outputType, goalInstantiatedType);
       if (substitution != null
           && operation.getDeclaringType().equals(goalInstantiatedType.getGenericClassType())) {
         // A static method does not use the type parameters of its class, such as T in Box<T>.
@@ -188,27 +189,28 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns a substitution that, applied to the given output type, yields the given goal type. For
-   * example, for {@code Box<T>} and {@code Box<MarkerImpl>}, returns the substitution that maps
-   * {@code T} to {@code MarkerImpl}.
+   * Returns the substitution that, applied to the given parameterized type, yields the given
+   * instantiated type. For example, for {@code Box<T>} and {@code Box<MarkerImpl>}, returns the
+   * substitution that maps {@code T} to {@code MarkerImpl}.
    *
-   * @param outputType the output type of an operation
-   * @param goalType a parameterized type of the same generic class as {@code outputType}
-   * @return a substitution that maps {@code outputType} to {@code goalType}, or null if there is no
-   *     such substitution
+   * @param pattern a parameterized type that can contain type variables, such as {@code Box<T>}
+   * @param instance a parameterized type of the same generic class as {@code pattern}, such as
+   *     {@code Box<MarkerImpl>}
+   * @return the substitution {@code s} such that {@code pattern.substitute(s)} equals {@code
+   *     instance}, or null if there is no such substitution
    */
-  private static @Nullable Substitution outputSubstitution(
-      ParameterizedType outputType, InstantiatedType goalType) {
+  private static @Nullable Substitution matchingSubstitution(
+      ParameterizedType pattern, InstantiatedType instance) {
     Substitution substitution;
-    if (outputType instanceof GenericClassType) {
-      // The output type of a constructor of a generic class, such as Box<T>.
-      substitution = goalType.getTypeSubstitution();
-    } else if (goalType.isInstantiationOf(outputType)) {
-      substitution = goalType.getInstantiatingSubstitution(outputType);
+    if (pattern instanceof GenericClassType) {
+      // A generic class type, such as Box<T>.  The output type of a constructor has this form.
+      substitution = instance.getTypeSubstitution();
+    } else if (instance.isInstantiationOf(pattern)) {
+      substitution = instance.getInstantiatingSubstitution(pattern);
     } else {
       return null;
     }
-    if (substitution == null || !outputType.substitute(substitution).equals(goalType)) {
+    if (substitution == null || !pattern.substitute(substitution).equals(instance)) {
       return null;
     }
     return substitution;
