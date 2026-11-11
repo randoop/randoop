@@ -157,7 +157,8 @@ public class TypeInstantiator {
             .getGenericClassType()
             .equals(((InstantiatedType) goalType).getGenericClassType())) {
       InstantiatedType goalInstantiatedType = (InstantiatedType) goalType;
-      // The substitution that makes the output type of the operation equal to the goal type.
+      // The substitution that makes the output type of the operation equal to the goal type.  The
+      // output type of a constructor is a generic class type, such as Box<T>.
       Substitution substitution =
           matchingSubstitution((ParameterizedType) outputType, goalInstantiatedType);
       if (substitution != null
@@ -194,7 +195,7 @@ public class TypeInstantiator {
    * substitution that maps {@code T} to {@code MarkerImpl}.
    *
    * @param pattern a parameterized type that can contain type variables, such as {@code Box<T>}
-   * @param instance a parameterized type of the same generic class as {@code pattern}, such as
+   * @param instance the instantiated type of the same generic class as {@code pattern}, such as
    *     {@code Box<MarkerImpl>}
    * @return the substitution {@code s} such that {@code pattern.substitute(s)} equals {@code
    *     instance}, or null if there is no such substitution
@@ -203,7 +204,7 @@ public class TypeInstantiator {
       ParameterizedType pattern, InstantiatedType instance) {
     Substitution substitution;
     if (pattern instanceof GenericClassType) {
-      // A generic class type, such as Box<T>.  The output type of a constructor has this form.
+      // A generic class type, such as Box<T>.
       substitution = instance.getTypeSubstitution();
     } else if (instance.isInstantiationOf(pattern)) {
       substitution = instance.getInstantiatingSubstitution(pattern);
