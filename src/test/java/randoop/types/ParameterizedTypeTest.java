@@ -336,7 +336,7 @@ public class ParameterizedTypeTest {
   }
 
   /** A field of type {@code Map<String, Integer>}. */
-  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
   private Map<String, Integer> stringToInteger;
 
   @Test

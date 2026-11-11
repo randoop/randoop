@@ -205,19 +205,23 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean upperBoundIsSubtypeOfOrEqualTo(ReferenceType otherType) {
     ParameterBound upperBound = getUpperTypeBound();
-    List<ParameterBound> members =
+    List<ParameterBound> asWritten =
         upperBound instanceof IntersectionTypeBound
             ? ((IntersectionTypeBound) upperBound).getBounds()
             : Collections.singletonList(upperBound);
-    for (ParameterBound member : members) {
-      // For a type parameter, a bound that refers to a type variable is a LazyParameterBound, so
-      // convert it to a ReferenceBound to compare it.
+    // For a type parameter, a bound that refers to a type variable is a LazyParameterBound, so
+    // convert it to a ReferenceBound to compare it.
+    List<ParameterBound> members = new ArrayList<>(asWritten.size());
+    for (ParameterBound member : asWritten) {
       if (member instanceof LazyParameterBound) {
         ReferenceBound converted = ((LazyParameterBound) member).toReferenceBound();
         if (converted != null) {
           member = converted;
         }
       }
+      members.add(member);
+    }
+    for (ParameterBound member : members) {
       if (member instanceof ReferenceBound
           && ((ReferenceBound) member).getBoundType().equals(otherType)) {
         return true;

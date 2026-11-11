@@ -1561,6 +1561,22 @@ public class TypeVariableTest {
     assertTrue(t + " should be a subtype of its bound " + bound, t.isSubtypeOfOrEqualTo(bound));
   }
 
+  /**
+   * A type parameter whose self-referential bound is a class type.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayListBound<T extends ArrayList<T>> {}
+
+  @Test
+  public void testSubtypeTestOfExplicitVariableAgainstSupertypeOfItsBound() {
+    TypeVariable t = typeParameter(SelfArrayListBound.class, 0);
+    // The bound of t is a LazyParameterBound for ArrayList<t>, which is a subtype of List<t>.
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    InstantiatedType listOfT = GenericClassType.forClass(List.class).instantiate(t);
+    assertTrue(t + " should be a subtype of " + listOfT, t.isSubtypeOfOrEqualTo(listOfT));
+  }
+
   @Test
   public void testTypeParametersAfterSubstituteIntoSiblingOfCaptureVariable()
       throws NoSuchFieldException {
