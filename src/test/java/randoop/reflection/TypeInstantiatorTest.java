@@ -176,8 +176,8 @@ public class TypeInstantiatorTest {
 
   /**
    * Tests that each operation is instantiated when the input types allow only one choice. The tests
-   * with several choices succeed if any one choice is instantiated, so they would not detect that
-   * a valid choice is always rejected.
+   * with several choices succeed if any one choice is instantiated, so they would not detect that a
+   * valid choice is always rejected.
    */
   @Test
   public void testSingleValidChoice() throws NoSuchMethodException, RandoopSpecificationError {
@@ -193,8 +193,12 @@ public class TypeInstantiatorTest {
 
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(
-        GenericClassType.forClass(List.class).instantiate(ClassOrInterfaceType.forClass(Node.class)),
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Node.class)),
         inputTypes);
+    // The bound `V extends Map<K, V>` requires that K be String, since Node extends
+    // HashMap<String, Node>.  The candidate types for K are the input types.
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
     assertSomeInstantiation(
         new TypeInstantiator(inputTypes),
         TypedOperation.forMethod(
