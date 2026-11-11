@@ -142,9 +142,16 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution maps the component type of an array type
-   *     to the null type or if {@code type} is not a type variable, parameterized type, class,
-   *     array type, or wildcard
+   * @return the type argument that results from applying {@code substitution} to {@code type}, or
+   *     null if any of the following holds:
+   *     <ul>
+   *       <li>{@code type} contains an array type whose component type {@code substitution} maps to
+   *           the null type, or
+   *       <li>{@code type} is not a type variable, parameterized type, class, generic array type,
+   *           or wildcard.
+   *     </ul>
+   *     The first condition does not apply within the bound of a wildcard; such a bound remains
+   *     lazy instead.
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -174,7 +181,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      // ReferenceType.forType represents an array class, such as String[], as an ArrayType.
+      // ReferenceType.forType converts an array class such as String[] to an ArrayType.  By
+      // contrast, ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
       return TypeArgument.forType(ReferenceType.forType(type));
     }
 

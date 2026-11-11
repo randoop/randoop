@@ -159,7 +159,9 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
     */
-    if (this.isInstantiationOf(goalType)) {
+    // The runtime class check is needed because `isInstantiationOf` returns true for distinct
+    // member classes whose enclosing types match.
+    if (this.runtimeClassIs(goalType.getRuntimeClass()) && this.isInstantiationOf(goalType)) {
       return this;
     }
     return super.getMatchingSupertype(goalType);
@@ -470,7 +472,11 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null && superType.isSubtypeOfOrEqualTo(otherType)) {
+      // The runtime class check ensures that the recursive call uses the second clause above, and
+      // so terminates.
+      if (superType != null
+          && superType.runtimeClassIs(otherType.getRuntimeClass())
+          && superType.isSubtypeOfOrEqualTo(otherType)) {
         return true;
       }
     }
