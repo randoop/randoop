@@ -99,4 +99,19 @@ public class DemandDrivenInputCreatorRetryTest {
     assertTrue(creator.isUninstantiableType(noProducerType));
     assertTrue(creator.getUninstantiableTypes().contains(noProducerType));
   }
+
+  @Test
+  public void testReconsiderAfterClear() {
+    DemandDrivenInputCreator creator =
+        new DemandDrivenInputCreator(new SequenceCollection(), IS_PUBLIC);
+    Type noProducerType = ClassOrInterfaceType.forClass(NoProducer.class);
+
+    assertTrue(creator.createSequencesForType(noProducerType, false, false).isEmpty());
+    assertTrue(creator.isUninstantiableType(noProducerType));
+
+    creator.clearSecondarySequences();
+    // The type is reconsidered after a clear, but remains in the cumulative diagnostic set.
+    assertFalse(creator.isUninstantiableType(noProducerType));
+    assertTrue(creator.getUninstantiableTypes().contains(noProducerType));
+  }
 }
