@@ -26,6 +26,15 @@ class LazyParameterBound extends ParameterBound {
   private @Nullable List<TypeVariable> typeParameters = null;
 
   /**
+   * The result of {@link #toReferenceBound()}, which may be null; meaningful only if {@link
+   * #referenceBoundComputed} is true.
+   */
+  private @Nullable ReferenceBound referenceBound = null;
+
+  /** True if {@link #referenceBound} has been computed. */
+  private boolean referenceBoundComputed = false;
+
+  /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
    * @param boundType the reflection type for this bound
@@ -124,12 +133,17 @@ class LazyParameterBound extends ParameterBound {
    *     type that {@link #substitute(Substitution)} does not handle
    */
   @Nullable ReferenceBound toReferenceBound() {
+    if (referenceBoundComputed) {
+      return referenceBound;
+    }
     List<TypeVariable> parameters = getTypeParameters();
     // Map each type variable to itself, so that substitute() converts this bound without changing
     // the type that it represents.
     ParameterBound result =
         substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
-    return result instanceof ReferenceBound ? (ReferenceBound) result : null;
+    referenceBound = result instanceof ReferenceBound ? (ReferenceBound) result : null;
+    referenceBoundComputed = true;
+    return referenceBound;
   }
 
   /**

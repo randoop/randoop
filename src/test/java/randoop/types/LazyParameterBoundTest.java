@@ -106,8 +106,12 @@ public class LazyParameterBoundTest {
             FieldTypes.class.getDeclaredField("arrayOfListWildcard").getGenericType();
     java.lang.reflect.WildcardType wildcard =
         (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
-    ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
-    assertTrue(bound instanceof LazyParameterBound);
+    // ParameterBound.forTypes creates an eager bound for an array type with no type variable, so
+    // construct the lazy bound directly to test LazyParameterBound.substitute.
+    assertTrue(
+        ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds())
+            instanceof EagerReferenceBound);
+    ParameterBound bound = new LazyParameterBound(wildcard.getUpperBounds()[0]);
     ArrayType arrayOfList =
         ArrayType.ofComponentType(
             GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
