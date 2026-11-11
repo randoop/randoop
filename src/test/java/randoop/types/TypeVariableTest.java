@@ -1622,4 +1622,19 @@ public class TypeVariableTest {
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
   }
+
+  /**
+   * A class whose type parameter's bound is a class that refers to the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayListBound<T extends ArrayList<T>> {}
+
+  @Test
+  public void testSubtypeOfSupertypeOfSelfReferentialBound() {
+    TypeVariable t = typeParameter(SelfArrayListBound.class, 0);
+    // T is a subtype of its bound ArrayList<T>, which is a subtype of List<T>.
+    InstantiatedType listOfT = GenericClassType.forClass(List.class).instantiate(t);
+    assertTrue(t + " should be a subtype of " + listOfT, t.isSubtypeOfOrEqualTo(listOfT));
+  }
 }
