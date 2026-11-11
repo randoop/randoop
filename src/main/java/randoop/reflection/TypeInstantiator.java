@@ -540,7 +540,7 @@ public class TypeInstantiator {
    */
   private static void addBoundTypeVariables(
       Set<TypeVariable> typeParameters, Substitution substitution) {
-    Set<TypeVariable> instantiated = substitution.keySet();
+    Set<? extends TypeVariable> instantiated = substitution.keySet();
     Deque<TypeVariable> worklist = new ArrayDeque<>(instantiated);
     worklist.addAll(typeParameters);
     while (!worklist.isEmpty()) {
