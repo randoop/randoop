@@ -714,12 +714,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
-  static class Version<U> implements Comparable<Version<U>> {
-    @Override
-    public int compareTo(Version<U> other) {
-      return 0;
-    }
-  }
+  abstract static class Version<U> implements Comparable<Version<U>> {}
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
