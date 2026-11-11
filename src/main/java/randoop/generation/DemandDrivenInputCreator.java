@@ -327,31 +327,16 @@ public class DemandDrivenInputCreator {
       // and are accessible to Randoop.
 
       for (TypedOperation op : getCandidateProducers(currentType)) {
-        // Instantiate an operation whose types contain a type variable, even if its output type
-        // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`, so
-        // skip the operation if it cannot be instantiated.
-        //
-        // Also instantiate an operation whose types contain wildcards but no type variable, as in
-        // `static Foo of(Box<?> b)`.  Instantiation replaces `Box<?>` by a `Box` type that is
-        // already in the main sequence collection, and fails if there is none.  In that case, use
-        // the operation uninstantiated:  it can use any `Box`, such as one that the worklist
-        // creates, provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does
-        // not do so until https://github.com/randoop/randoop/pull/1983 lands.
-        if (op.isGeneric() || op.hasWildcardTypes()) {
-          TypedClassOperation instantiated =
-              instantiateProducer((TypedClassOperation) op, currentType);
-          if (instantiated != null) {
-            op = instantiated;
-          } else if (op.isGeneric()) {
-            continue;
-          }
+        TypedOperation producer = instantiateToProduce((TypedClassOperation) op, currentType);
+        if (producer == null) {
+          continue;
         }
 
         // Add this operation as a producer of the type.
-        result.add(op);
+        result.add(producer);
 
         // Add each of its parameter types for further processing.
-        for (Type paramType : op.getInputTypes()) {
+        for (Type paramType : producer.getInputTypes()) {
           worklist.addFirst(paramType);
         }
       }
@@ -383,7 +368,7 @@ public class DemandDrivenInputCreator {
   private @Nullable TypedClassOperation instantiateProducer(TypedClassOperation op, Type type) {
     TypedClassOperation instantiated;
     try {
-      instantiated = sequenceCollection.getTypeInstantiator().instantiate(op);
+      instantiated = sequenceCollection.getTypeInstantiator().instantiate(op, type);
     } catch (Throwable e) {
       TypeInstantiator.handleInstantiationException(op, e);
       DemandDrivenLog.logPrintf("Instantiation error for operation %s%n", op);
@@ -402,9 +387,10 @@ public class DemandDrivenInputCreator {
 
   /**
    * Returns the candidate producers of the given type: the accessible constructors and static
-   * methods that the type declares and whose output type is assignable to the type. A candidate
-   * producer is not necessarily usable: a generic one is usable only if the type instantiator can
-   * instantiate it.
+   * methods that the type declares and that are generic or whose output type is assignable to the
+   * type. A candidate producer is not necessarily usable: a generic one is usable only if the type
+   * instantiator can instantiate it so that its output type is assignable to the type (see {@link
+   * #instantiateToProduce}).
    *
    * @param type a type
    * @return the candidate producers of {@code type}
@@ -428,19 +414,53 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * True iff `op` can produce an instance of `currentType` without needing a receiver.
+   * True iff `op` might produce an instance of `currentType` without needing a receiver: it is a
+   * constructor or static method, and it is generic or its output type is assignable to {@code
+   * currentType}.
    *
    * @param op the operation to check
    * @param currentType the type to produce
-   * @return true if {@code op} can produce an instance of {@code currentType}
+   * @return true if {@code op} is a candidate producer of {@code currentType}
    */
   private boolean isProducer(TypedOperation op, Type currentType) {
-    // Output must be assignable to the goal type.
-    if (!currentType.isAssignableFrom(op.getOutputType())) {
+    // Only allow constructors and static methods (no receiver needed).
+    if (!op.isConstructorCall() && !op.isStatic()) {
       return false;
     }
-    // Only allow constructors and static methods (no receiver needed).
-    return op.isConstructorCall() || op.isStatic();
+    // A generic operation might be instantiable so that its output is assignable to the goal type.
+    return op.isGeneric() || currentType.isAssignableFrom(op.getOutputType());
+  }
+
+  /**
+   * Returns the given operation, instantiated if it is generic or has wildcard types, if its output
+   * type is assignable to the given type.
+   *
+   * @param op a constructor or static method
+   * @param type the type for {@code op} to produce
+   * @return {@code op}, instantiated if it is generic or has wildcard types, whose output type is
+   *     assignable to {@code type}; or null if there is no such instantiation or none was found
+   * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
+   */
+  private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
+    // Instantiate an operation whose types contain a type variable, even if its output type
+    // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`, so
+    // skip the operation if it cannot be instantiated.
+    //
+    // Also instantiate an operation whose types contain wildcards but no type variable, as in
+    // `static Foo of(Box<?> b)`.  Instantiation replaces `Box<?>` by a `Box` type that is
+    // already in the main sequence collection, and fails if there is none.  In that case, use
+    // the operation uninstantiated:  it can use any `Box`, such as one that the worklist
+    // creates, provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does
+    // not do so until https://github.com/randoop/randoop/pull/1983 lands.
+    if (op.isGeneric() || op.hasWildcardTypes()) {
+      TypedClassOperation instantiated = instantiateProducer(op, type);
+      if (instantiated != null) {
+        return instantiated;
+      } else if (op.isGeneric()) {
+        return null;
+      }
+    }
+    return type.isAssignableFrom(op.getOutputType()) ? op : null;
   }
 
   /**
