@@ -120,9 +120,17 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param type the reflection type
    * @param substitution the type substitution
-   * @return the type argument, or null if the substitution does not map a type variable in {@code
-   *     type}, if the substitution maps the component type of an array type to the null type, or
-   *     if {@code type} is not a type variable, parameterized type, class, array type, or wildcard
+   * @return the type argument that results from applying {@code substitution} to {@code type}, or
+   *     null if any of the following holds:
+   *     <ul>
+   *       <li>{@code type} contains a type variable that {@code substitution} does not map,
+   *       <li>{@code type} contains an array type whose component type {@code substitution} maps to
+   *           the null type, or
+   *       <li>{@code type} is not a type variable, parameterized type, class, generic array type,
+   *           or wildcard.
+   *     </ul>
+   *     The first two conditions do not apply within the bound of a wildcard; such a bound remains
+   *     lazy instead.
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -152,7 +160,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      // Use the array-aware conversion, so that an array class such as String[] is an ArrayType.
+      // This call converts an array class such as String[] to an ArrayType.  By contrast,
+      // ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
       return TypeArgument.forType(type);
     }
 
@@ -255,7 +264,7 @@ class LazyParameterBound extends ParameterBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
-      checkMapsAllTypeParameters(substitution);
+      checkSubstitutionMapsAllTypeParameters(substitution);
       // The substitution maps an array component type to the null type, so no type satisfies it.
       return false;
     }
@@ -263,15 +272,15 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * Throws an exception if the substitution does not map every type parameter of this bound. If
-   * the substitution maps every type parameter but does not instantiate this bound, then it maps
-   * the component type of an array type to the null type, for which there is no array type.
+   * Throws an exception if the substitution does not map every type parameter of this bound. If the
+   * substitution maps every type parameter but does not instantiate this bound, then it maps the
+   * component type of an array type to the null type, for which there is no array type.
    *
    * @param substitution the substitution
    * @throws IllegalArgumentException if the substitution does not map a type parameter of this
    *     bound
    */
-  private void checkMapsAllTypeParameters(Substitution substitution) {
+  private void checkSubstitutionMapsAllTypeParameters(Substitution substitution) {
     for (TypeVariable parameter : getTypeParameters()) {
       if (substitution.get(parameter) == null) {
         throw new IllegalArgumentException(
@@ -302,7 +311,7 @@ class LazyParameterBound extends ParameterBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
-      checkMapsAllTypeParameters(substitution);
+      checkSubstitutionMapsAllTypeParameters(substitution);
       // The substitution maps an array component type to the null type, so no type satisfies it.
       return false;
     }
