@@ -235,8 +235,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * ClassOrInterfaceType#isGenericForm()}). For example, raw {@code List} is a subtype of {@code
    * List<E>}, and {@code Outer<String>.Inner} is a subtype of {@code Outer<T>.Inner}. This is not a
    * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
-   * {@code List<T>} for a type variable {@code T}; it is assignable to one only by unchecked
-   * conversion.
+   * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
+   * only by unchecked conversion.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
