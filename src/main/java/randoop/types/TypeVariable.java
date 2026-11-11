@@ -209,8 +209,8 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for an
-   * unknown type, and the result is true if {@code otherType} can instantiate it.
+   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
+   * an unknown type, and the result is true if {@code otherType} can instantiate it.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
