@@ -404,9 +404,8 @@ public class TypeInstantiator {
    *         <li>For each remaining type variable, compute its candidate types: the input types, and
    *             the types that the substitution gives to type variables, that are within its
    *             bounds, ignoring any bound that mentions another type variable, and that are
-   *             consistent with the substitution; see {@link
-   *             #consistentCandidatesByVariable(List, Substitution)}. If some type variable has no
-   *             candidate types, the attempt fails.
+   *             consistent with the substitution; see {@link #consistentCandidatesByVariable(List,
+   *             Substitution)}. If some type variable has no candidate types, the attempt fails.
    *         <li>Because the candidate types are computed for each type variable separately, a
    *             combination of them can violate the bounds. Return a randomly selected combination
    *             of candidate types that, when added to the substitution, satisfies the bounds; see
@@ -573,15 +572,16 @@ public class TypeInstantiator {
    * with the given substitution.
    *
    * <p>A candidate type for one of the type variables, {@code X}, is in the map's value for {@code
-   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is a type that {@code
-   * substitution} gives to some type variable and that potentially satisfies the bounds of {@code
-   * X} (such a type need not be an input type: it can be a type argument of one), or is the type
-   * that {@code substitution} gives to a type variable whose bounds contain {@code X}, and if, when
-   * {@code substitution} is extended by mapping {@code X} to it, each type variable that {@code
-   * substitution} instantiates and whose bounds contain {@code X} and no other uninstantiated type
-   * variable is within its bounds. For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<?
-   * extends K, ? extends V>)}, if {@code substitution} maps the capture of {@code ? extends K} to
-   * {@code Integer}, then the result contains only supertypes of {@code Integer} for {@code K}.
+   * X} if it is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is a type that
+   * {@code substitution} gives to some type variable and that potentially satisfies the bounds of
+   * {@code X} (such a type need not be an input type: it can be a type argument of one), or is the
+   * type that {@code substitution} gives to a type variable whose bounds contain {@code X}, and if,
+   * when {@code substitution} is extended by mapping {@code X} to it, each type variable that
+   * {@code substitution} instantiates and whose bounds contain {@code X} and no other
+   * uninstantiated type variable is within its bounds. For example, for {@code <K, V> Map<K, V>
+   * unmodifiableMap(Map<? extends K, ? extends V>)}, if {@code substitution} maps the capture of
+   * {@code ? extends K} to {@code Integer}, then the result contains only supertypes of {@code
+   * Integer} for {@code K}.
    *
    * @param parameters type variables that {@code substitution} does not instantiate
    * @param substitution a substitution
