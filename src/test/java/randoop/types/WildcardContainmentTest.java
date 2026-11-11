@@ -33,6 +33,56 @@ public class WildcardContainmentTest {
     private static final long serialVersionUID = 20261109;
   }
 
+  /**
+   * A generic class with generic member classes.
+   *
+   * @param <T> the type parameter
+   */
+  public static class Outer<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    public class Inner1<U> {}
+
+    /**
+     * Another generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    public class Inner2<U> {}
+  }
+
+  /**
+   * A generic subclass of {@code ArrayList}.
+   *
+   * @param <X> the type parameter
+   */
+  public static class Child<X> extends ArrayList<X> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261110;
+  }
+
+  /** A field of type {@code Outer<String>.Inner1<Integer>}. */
+  public Outer<String>.Inner1<Integer> inner1;
+
+  /** A field of type {@code Outer<String>.Inner2<Integer>}. */
+  public Outer<String>.Inner2<Integer> inner2;
+
+  /** A field of type {@code ArrayList<?>}. */
+  public ArrayList<?> arrayListQ;
+
+  /**
+   * Returns {@code Child<? extends T[]>}, whose wildcard has a lazy bound.
+   *
+   * @param <T> the type parameter
+   * @return null
+   */
+  public <T> Child<? extends T[]> childExtendsArray() {
+    return null;
+  }
+
   /** A field of type {@code List<Integer>}. */
   public List<Integer> listInteger;
 
@@ -226,6 +276,21 @@ public class WildcardContainmentTest {
     assertTrue(superT.isSubtypeOfOrEqualTo(superU));
     assertTrue(superT.isSubtypeOfOrEqualTo(superT));
     assertFalse(superU.isSubtypeOfOrEqualTo(superT));
+  }
+
+  @Test
+  public void distinctMemberClassTest() {
+    assertFalse(isSubtype("inner1", "inner2"));
+    assertFalse(isSubtype("inner2", "inner1"));
+    assertTrue(isSubtype("inner1", "inner1"));
+  }
+
+  @Test
+  public void lazyBoundTest() throws NoSuchMethodException {
+    Type childExtendsArray =
+        Type.forType(
+            WildcardContainmentTest.class.getMethod("childExtendsArray").getGenericReturnType());
+    assertTrue(childExtendsArray.isSubtypeOfOrEqualTo(type("arrayListQ")));
   }
 
   @Test
