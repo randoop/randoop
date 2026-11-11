@@ -81,7 +81,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * clear, and clearing it again would only discard the duplicate tracking in {@link
    * #sequencesSinceClear} and restore {@link #removedParameterlessOperations}. (If {@link
    * #sequencesSinceClear} is non-empty, then clearing it frees memory, so {@link #step} clears it
-   * when memory is low.)
+   * when memory is low.) (The demand-driven secondary pool, which a clear also empties, is tracked
+   * separately; see {@link #step}.)
    */
   private int numComponentsAfterClear = -1;
 
@@ -255,9 +256,12 @@ public class ForwardGenerator extends AbstractGenerator {
     // memory that clearing frees.
     int numComponents = componentManager.numGeneratedSequences();
     boolean componentsChanged = numComponents != numComponentsAfterClear;
+    // The secondary pool of demand-driven input creation is empty immediately after a clear.  It
+    // can grow while the component set does not, so consider it when checking memory use.
+    boolean secondaryPoolChanged = componentManager.numSecondarySequences() != 0;
     if (componentsChanged && numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
       clearComponents();
-    } else if ((componentsChanged || !sequencesSinceClear.isEmpty())
+    } else if ((componentsChanged || secondaryPoolChanged || !sequencesSinceClear.isEmpty())
         && SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
         && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
       clearComponents();
@@ -336,8 +340,13 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // A sequence that was output as a test before the component set was last cleared is not output
-    // again.
-    return outputSequences.contains(eSeq.sequence) ? null : eSeq;
+    // again, unless it now reveals a failure and was not output as an error-revealing test.  Such a
+    // sequence behaves nondeterministically, so report it rather than discarding the failure.
+    if (outputSequences.contains(eSeq.sequence)
+        && !(eSeq.hasFailure() && !outputErrorSequences.contains(eSeq.sequence))) {
+      return null;
+    }
+    return eSeq;
   }
 
   /**
