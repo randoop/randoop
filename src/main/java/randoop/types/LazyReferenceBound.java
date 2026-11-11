@@ -10,7 +10,10 @@ import java.util.List;
  * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
  *
  * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substitution would replace a type variable with another type variable.
+ * the substitution would replace a type variable with another type variable, or would produce an
+ * array type whose element type is a type variable. A later substitution leaves such an array bound
+ * unresolved if it maps the element type to the null type, because there is no array of the null
+ * type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -35,6 +38,15 @@ class LazyReferenceBound extends ReferenceBound {
       }
     }
 
+    if (getBoundType().isArray()) {
+      Type elementType = ((ArrayType) getBoundType()).getElementType();
+      // There is no array of the null type, so leave the bound unresolved.
+      if (elementType.isVariable()
+          && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType))) {
+        return this;
+      }
+    }
+
     ReferenceType referenceType = getBoundType().substitute(substitution);
 
     if (referenceType.equals(getBoundType())) {
@@ -54,6 +66,13 @@ class LazyReferenceBound extends ReferenceBound {
       // But highly unlikely so for now only including code to do else case
       return new EagerReferenceBound(referenceType);
     }
+
+    if (getBoundType().isArray()) {
+      if (((ArrayType) referenceType).getElementType().isVariable()) {
+        return new LazyReferenceBound(referenceType);
+      }
+      return new EagerReferenceBound(referenceType);
+    }
     return this;
   }
 
@@ -71,6 +90,13 @@ class LazyReferenceBound extends ReferenceBound {
         if (argType.isVariable()) {
           parameters.add((TypeVariable) argType);
         }
+      }
+      return parameters;
+    } else if (getBoundType().isArray()) {
+      Type elementType = ((ArrayType) getBoundType()).getElementType();
+      List<TypeVariable> parameters = new ArrayList<>(1);
+      if (elementType.isVariable()) {
+        parameters.add((TypeVariable) elementType);
       }
       return parameters;
     } else {
