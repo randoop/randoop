@@ -38,6 +38,7 @@ class LazyReferenceBound extends ReferenceBound {
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
     if (isUnchangedBy(referenceType)) {
       return this;
     }
@@ -128,9 +129,10 @@ class LazyReferenceBound extends ReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
-      // of the substitution, because they can mention type variables that it instantiates.
-      if (unknown.canBeInstantiatedBy((ReferenceType) argType, substitution)) {
+      // The unknown type variable can be argType itself, or its lower bound.  Its bounds are
+      // checked with the mappings of the substitution, because they can mention type variables
+      // that it instantiates.
+      if (unknown.canBeSupertypeOf((ReferenceType) argType, substitution)) {
         return true;
       }
       // The unknown type variable can also be any supertype of argType.
@@ -156,6 +158,8 @@ class LazyReferenceBound extends ReferenceBound {
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
+   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}.
    * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
    * within a lower bound, since the lower bound of the type variable is usually the null type.
    *
