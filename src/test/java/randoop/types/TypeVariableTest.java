@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
@@ -1503,12 +1504,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
-  static class Version<U> implements Comparable<Version<U>> {
-    @Override
-    public int compareTo(Version<U> other) {
-      return 0;
-    }
-  }
+  abstract static class Version<U> implements Comparable<Version<U>> {}
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
@@ -1652,5 +1648,98 @@ public class TypeVariableTest {
         captureBound.isUpperBound(
             ClassOrInterfaceType.forClass(Integer.class), new Substitution()));
     assertFalse(captureBound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+  }
+
+  /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
+  @SuppressWarnings("serial") // never instantiated
+  abstract static class RunnableNumber extends Number implements Runnable {}
+
+  @Test
+  public void testLowerBoundOfIntersection() {
+    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    assertTrue(intersection instanceof IntersectionTypeBound);
+    Substitution substitution = new Substitution();
+    ReferenceBound runnableNumber =
+        new EagerReferenceBound(ClassOrInterfaceType.forClass(RunnableNumber.class));
+    assertTrue(runnableNumber.isLowerBound(intersection, substitution));
+    // Integer is a Number but not a Runnable.
+    ReferenceBound integer = new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive());
+    assertFalse(integer.isLowerBound(intersection, substitution));
+  }
+
+  /**
+   * A class whose type parameter's bound is a class that refers to the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayListBound<T extends ArrayList<T>> {}
+
+  @Test
+  public void testSubtypeOfSupertypeOfSelfReferentialBound() {
+    TypeVariable t = typeParameter(SelfArrayListBound.class, 0);
+    // T is a subtype of its bound ArrayList<T>, which is a subtype of List<T>.
+    InstantiatedType listOfT = GenericClassType.forClass(List.class).instantiate(t);
+    assertTrue(t + " should be a subtype of " + listOfT, t.isSubtypeOfOrEqualTo(listOfT));
+  }
+
+  @Test
+  public void testLazyBoundWithNestedArrayOfNullType() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    InstantiatedType listOfArray =
+        GenericClassType.forClass(List.class).instantiate(ArrayType.ofComponentType(t));
+    LazyReferenceBound bound = new LazyReferenceBound(listOfArray);
+    // There is no array of the null type, so the bound List<T[]> is left unresolved.
+    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+  }
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableBase implements Comparable<ComparableBase> {}
+
+  /** A subclass of a class that is comparable to itself. */
+  abstract static class ComparableSub extends ComparableBase {}
+
+  @Test
+  public void testLazyUpperBoundOfUnknownVariableTriesSupertypes() {
+    // The unknown T, with T extends Comparable<T>, can be ComparableBase, a supertype of
+    // ComparableSub, though it cannot be ComparableSub.
+    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(ComparableSub.class), new Substitution()));
+  }
+
+  @Test
+  public void testLazyParameterBoundHasUpperBoundOfItsType() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    ParameterBound lazyBound = t.getUpperTypeBound();
+    assertTrue(lazyBound instanceof LazyParameterBound);
+    ReferenceType comparableOfT = GenericClassType.forClass(Comparable.class).instantiate(t);
+    // Both bounds are Comparable<T>.
+    assertTrue(new EagerReferenceBound(comparableOfT).isUpperBound(lazyBound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(lazyBound, new Substitution()));
+  }
+
+  /**
+   * A class with a field whose type has a wildcard bounded below by the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperOfParameter<T> {
+    /** A wildcard type whose lower bound is the type parameter. */
+    Comparable<? super T> superOfT;
+  }
+
+  @Test
+  public void testVariableIsSubtypeOfCaptureWithItAsLowerBound() throws NoSuchFieldException {
+    TypeVariable t = typeParameter(SuperOfParameter.class, 0);
+    Field field = SuperOfParameter.class.getDeclaredField("superOfT");
+    InstantiatedType captured =
+        ((InstantiatedType) Type.forType(field.getGenericType())).applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // T is the lower bound of the capture of `? super T`.
+    assertTrue(Subtyping.isSubtypeOrEqual(t, capture, new Substitution()));
+    assertFalse(Subtyping.isSubtypeOrEqual(JavaTypes.OBJECT_TYPE, capture, new Substitution()));
   }
 }

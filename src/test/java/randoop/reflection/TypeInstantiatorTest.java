@@ -229,8 +229,8 @@ public class TypeInstantiatorTest {
   /**
    * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
    * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
-   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing {@code
-   * Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
+   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
+   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
    */
   @Test
   public void testBoundVariableFromTypeArgument()
