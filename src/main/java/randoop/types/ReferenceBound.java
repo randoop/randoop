@@ -20,6 +20,23 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
+   * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
+   * type contains a type variable, as in {@code Map<T, String>}. The bound is an {@link
+   * EagerReferenceBound} otherwise. Other code also creates an {@link EagerReferenceBound} whose
+   * type contains a type variable, so not every bound that contains a type variable is a {@link
+   * LazyReferenceBound}.
+   *
+   * @param boundType a reference type
+   * @return a bound whose type is {@code boundType}
+   */
+  static ReferenceBound forTypeLazyIfGeneric(ReferenceType boundType) {
+    if (boundType.isGeneric()) {
+      return new LazyReferenceBound(boundType);
+    }
+    return new EagerReferenceBound(boundType);
+  }
+
+  /**
    * Returns the {@link ReferenceType} bound of this type.
    *
    * @return the type for this bound
@@ -81,5 +98,67 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isVariable() {
     return boundType.isVariable();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is a lower bound
+   * on every one of its members, since a type is a subtype of the intersection if and only if it is
+   * a subtype of each member. Returns false if {@code bound} is a {@link LazyParameterBound} that
+   * contains a kind of type that it cannot convert to a {@link ReferenceBound}.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (!isLowerBound(member, substitution)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    ReferenceType type = asReferenceType(bound);
+    return type != null && isLowerBound(type, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
+   * on any of its members, since the intersection is a subtype of each member. Returns false if
+   * {@code bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot
+   * convert to a {@link ReferenceBound}.
+   */
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isUpperBound(member, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    ReferenceType type = asReferenceType(bound);
+    return type != null && isUpperBound(type, substitution);
+  }
+
+  /**
+   * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
+   * LazyParameterBound} that can be converted to a {@link ReferenceBound}. Otherwise, returns null.
+   *
+   * @param bound a bound
+   * @return the type of {@code bound}, or null
+   */
+  private static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 }
