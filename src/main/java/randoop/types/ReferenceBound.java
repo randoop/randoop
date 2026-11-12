@@ -60,16 +60,18 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>A {@link LazyReferenceBound} can be part of a recursive type, so the hash code is based on
-   * the string representation of the bound type to avoid recursive calls on {@code hashCode()}. All
-   * subclasses use this implementation, so that equal bounds have equal hash codes regardless of
-   * their subclass.
+   * <p>A {@link LazyReferenceBound} can be part of a recursive type, through the bounds of a type
+   * variable in the bound type. The hash code of a type variable does not depend on its bounds, so
+   * computing the hash code of the bound type terminates. That is also consistent with {@link
+   * #equals(Object)}: copies of a type variable are equal even when their bounds differ, so their
+   * string representations, which include the bounds, can differ. All subclasses use this
+   * implementation, so that equal bounds have equal hash codes regardless of their subclass.
    *
-   * @return the hashCode for the string representation of this bound
+   * @return the hash code of the type of this bound
    */
   @Override
   public int hashCode() {
-    return Objects.hashCode(boundType.toString());
+    return Objects.hashCode(boundType);
   }
 
   @Override
@@ -79,6 +81,24 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
+
+  /**
+   * Returns true if the given result of applying a substitution to the type of this bound is the
+   * same as the type of this bound, so that the substitution can return this bound.
+   *
+   * <p>A copy of a type variable equals the original even if its bounds differ. So if the type of
+   * this bound is a type variable, as {@code Y} in {@code Y extends List<X>}, then a substitution
+   * for {@code X} yields a copy that equals {@code Y} but whose bound is the substituted one. That
+   * copy is kept, rather than the original. Likewise for a type variable within the type of this
+   * bound, as {@code Y} in {@code List<Y>}. So this compares the bounds of the type variables too,
+   * as {@link TypeVariable#areIdentical(ReferenceType, ReferenceType)} does.
+   *
+   * @param substitutedType the type of this bound, with a substitution applied
+   * @return true if {@code substitutedType} is the same as the type of this bound
+   */
+  boolean isUnchangedBy(ReferenceType substitutedType) {
+    return TypeVariable.areIdentical(substitutedType, boundType);
+  }
 
   @Override
   public boolean hasCaptureVariable() {
@@ -100,65 +120,21 @@ public abstract class ReferenceBound extends ParameterBound {
     return boundType.isVariable();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is a lower bound
-   * on every one of its members, since a type is a subtype of the intersection if and only if it is
-   * a subtype of each member. Returns false if {@code bound} is a {@link LazyParameterBound} that
-   * contains a kind of type that it cannot convert to a {@link ReferenceBound}.
-   */
-  @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (!isLowerBound(member, substitution)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    ReferenceType type = asReferenceType(bound);
-    return type != null && isLowerBound(type, substitution);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
-   * on any of its members, since the intersection is a subtype of each member. Returns false if
-   * {@code bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot
-   * convert to a {@link ReferenceBound}.
-   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (isUpperBound(member, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    ReferenceType type = asReferenceType(bound);
-    return type != null && isUpperBound(type, substitution);
+    // Mapping each type variable that the substitution does not replace to itself makes it an
+    // unknown.
+    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+    return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
   }
 
-  /**
-   * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
-   * LazyParameterBound} that can be converted to a {@link ReferenceBound}. Otherwise, returns null.
-   *
-   * @param bound a bound
-   * @return the type of {@code bound}, or null
-   */
-  private static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
-      return converted == null ? null : converted.getBoundType();
-    }
-    if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType();
-    }
-    return null;
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    return lowerBound.isLowerBound(boundType, substitution);
+  }
+
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    return Subtyping.isSubtypeOrEqual(boundType, upperBound, substitution);
   }
 }

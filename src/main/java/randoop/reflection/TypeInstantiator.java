@@ -404,11 +404,11 @@ public class TypeInstantiator {
    *       <ul>
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
-   *         <li>For each remaining type variable, compute its candidate types: the input types that
-   *             are within its bounds, ignoring any bound that mentions another type variable, and
-   *             that are consistent with the substitution; see {@link
-   *             #consistentCandidatesByVariable(List, Substitution)}. If some type variable has no
-   *             candidate types, the attempt fails.
+   *         <li>For each remaining type variable, compute its candidate types: the input types, and
+   *             the types that the substitution gives to type variables, that are within its
+   *             bounds, ignoring any bound that mentions another type variable, and that are
+   *             consistent with the substitution; see {@link #consistentCandidatesByVariable(List,
+   *             Substitution)}. If some type variable has no candidate types, the attempt fails.
    *         <li>Because the candidate types are computed for each type variable separately, a
    *             combination of them can violate the bounds. Return a randomly selected combination
    *             of candidate types that, when added to the substitution, satisfies the bounds; see
@@ -449,8 +449,11 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type is a parameterized type such as `List<T>`, or a member class of a
+            // generic class, such as `Outer<T>.Inner`, which has no type parameters of its own and
+            // is not a ParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -461,10 +464,19 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              }
+              allMatched = false;
+              break;
+            }
+            // The substitution can conflict with an earlier one, for example if two parameter
+            // types contain copies of one capture variable.  Then extending would throw.
+            if (!substitution.isConsistentWith(subst)) {
+              if (Log.isLoggingOn()) {
+                failure = subst + " for " + origParamType + " conflicts with " + substitution;
               }
               allMatched = false;
               break;
@@ -570,9 +582,11 @@ public class TypeInstantiator {
    * satisfies both of these conditions:
    *
    * <ul>
-   *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, or it is the
-   *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
-   *       X}.
+   *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}; or it is a
+   *       non-generic type that {@code substitution} gives to some type variable and that
+   *       potentially satisfies the bounds of {@code X} (such a type need not be an input type: it
+   *       can be a type argument of one); or it is the non-generic type that {@code substitution}
+   *       gives to a type variable constrained by {@code X}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -590,11 +604,29 @@ public class TypeInstantiator {
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
+    // The types that the substitution gives to type variables.  They can be type arguments of input
+    // types without being input types themselves.
+    Set<ReferenceType> substitutedTypes = new LinkedHashSet<>();
+    for (TypeVariable variable : substitution.keySet()) {
+      ReferenceType type = substitution.get(variable);
+      if (type != null && !type.isGeneric()) {
+        substitutedTypes.add(type);
+      }
+    }
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
       List<TypeVariable> constrained =
           constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
+      // A type that the substitution gives to another type variable is also a candidate, if it is
+      // within the bounds of `parameter`.  For example, for `<E extends Enum<E>, T extends E> void
+      // consume(List<? super T>)`, if the substitution maps the capture of `? super T` to MyEnum,
+      // then MyEnum is a candidate for E, even if MyEnum is not an input type.
+      for (ReferenceType type : substitutedTypes) {
+        if (!candidates.contains(type) && isCandidateType(parameter, type)) {
+          candidates.add(type);
+        }
+      }
       if (!constrained.isEmpty()) {
         // The types of the constrained type variables are also candidates, even if they are not
         // input types.  For example, an input type can be List<Foo> though Foo is not an input
@@ -1060,14 +1092,44 @@ public class TypeInstantiator {
     for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
-        Substitution substitution = new Substitution(argument, inputRefType);
-        if (lowerBound.isLowerBound(inputRefType, substitution)
-            && upperBound.isUpperBound(inputRefType, substitution)) {
+        if (isWithinBounds(argument, inputRefType, lowerBound, upperBound)) {
           typeList.add(inputRefType);
         }
       }
     }
     return typeList;
+  }
+
+  /**
+   * Returns true if the given type potentially satisfies the bounds on the given type variable, as
+   * for the input types that {@link #candidateTypes(TypeVariable)} returns.
+   *
+   * @param argument the type variable
+   * @param type a type
+   * @return true if {@code type} potentially satisfies the bounds on {@code argument}
+   */
+  private boolean isCandidateType(TypeVariable argument, ReferenceType type) {
+    return isWithinBounds(argument, type, getLowerBound(argument), getUpperBound(argument));
+  }
+
+  /**
+   * Returns true if the given type is within the given bounds, when it instantiates the given type
+   * variable.
+   *
+   * @param argument the type variable
+   * @param type a type
+   * @param lowerBound the lower bound to test, from {@link #getLowerBound(TypeVariable)}
+   * @param upperBound the upper bound to test, from {@link #getUpperBound(TypeVariable)}
+   * @return true if {@code type} is within {@code lowerBound} and {@code upperBound}
+   */
+  private static boolean isWithinBounds(
+      TypeVariable argument,
+      ReferenceType type,
+      ParameterBound lowerBound,
+      ParameterBound upperBound) {
+    Substitution substitution = new Substitution(argument, type);
+    return lowerBound.isLowerBound(type, substitution)
+        && upperBound.isUpperBound(type, substitution);
   }
 
   /**
