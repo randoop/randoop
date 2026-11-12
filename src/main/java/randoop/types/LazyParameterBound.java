@@ -84,11 +84,11 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
+      ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
       // If the element type is a type variable, a later substitution might map it to the null
       // type.  The LazyReferenceBound that forTypeLazyIfGeneric returns for a generic array type
       // leaves the bound unresolved in that case.
-      return ReferenceBound.forTypeLazyIfGeneric(
-          ((ReferenceArgument) typeArgument).getReferenceType());
+      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
     }
     if (substitution.isEmpty()) {
       return this;
@@ -475,9 +475,10 @@ class LazyParameterBound extends ParameterBound {
    * {@inheritDoc}
    *
    * <p>Returns true if {@code upperBound} is {@code Object}, which is an upper bound of every
-   * reference type. Otherwise, each type variable in this bound stands for itself, so this bound is
-   * compared after it is converted to a {@link ReferenceBound}. Returns false if it cannot be
-   * converted.
+   * reference type. Otherwise, each type variable in this bound stands for itself, so {@code
+   * upperBound} is compared with the {@link ReferenceBound} that {@link #toReferenceBound()}
+   * converts this bound to. Returns false if this bound cannot be converted, because the type of
+   * this bound cannot be determined without a substitution for its type variables.
    */
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
