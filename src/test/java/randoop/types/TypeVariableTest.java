@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
@@ -991,5 +992,123 @@ public class TypeVariableTest {
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     assertTrue(capture.canBeInstantiatedBy(ArrayType.ofComponentType(listOfString)));
     assertFalse(capture.canBeInstantiatedBy(ArrayType.ofComponentType(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * Type parameters whose bounds form a cycle through a parameterized type: {@code V}'s bound
+   * mentions {@code W} and {@code A}, and {@code A extends W extends V}.
+   *
+   * @param <V> a type parameter whose bound refers to {@code W} and {@code A}
+   * @param <W> a type parameter bounded by {@code V}
+   * @param <A> a type parameter bounded by {@code W}
+   */
+  static class ChainedVariableBounds<V extends Pair<W, A>, W extends V, A extends W> {}
+
+  /** A class that is a pair of itself and itself, and so can instantiate {@code V}. */
+  abstract static class PairOfSelf implements Pair<PairOfSelf, PairOfSelf> {}
+
+  /**
+   * A class that cannot instantiate {@code V} in {@link ChainedVariableBounds}: that would need
+   * {@code W := PairOfSelfAndOther} and {@code A := PairOfSelf}, but {@code A extends W} does not
+   * hold, since {@link PairOfSelf} is not a subtype of {@link PairOfSelfAndOther}.
+   */
+  abstract static class PairOfSelfAndOther implements Pair<PairOfSelfAndOther, PairOfSelf> {}
+
+  /**
+   * Checking {@code V := PairOfSelfAndOther} substitutes it into the bound of {@code A}, which is
+   * {@code W}, whose bound is {@code V}. The substitution must reach the bound of {@code W} within
+   * the bound of {@code A}, so that {@code A := PairOfSelf} is checked against {@code
+   * PairOfSelfAndOther}.
+   */
+  @Test
+  public void testSubstitutionReachesBoundOfVariableInBound() {
+    TypeVariable v = typeParameter(ChainedVariableBounds.class, 0);
+    assertTrue(v.canBeInstantiatedBy(ClassOrInterfaceType.forClass(PairOfSelf.class)));
+    assertFalse(v.canBeInstantiatedBy(ClassOrInterfaceType.forClass(PairOfSelfAndOther.class)));
+  }
+
+  /**
+   * Type parameters, two of which are bounded by a type that contains {@code V}, whose bound
+   * contains {@code K}.
+   *
+   * @param <K> the key type
+   * @param <V> a type parameter whose bound refers to {@code K} and to itself
+   * @param <W> a type parameter bounded by {@code V}
+   * @param <Y> a type parameter bounded by a list of {@code V}
+   */
+  static class BoundsContainingKeyedMap<
+      K, V extends Map<K, List<V>>, W extends V, Y extends List<V>> {}
+
+  /** A map whose keys are integers. */
+  abstract static class IntegerKeyedMap implements Map<Integer, List<IntegerKeyedMap>> {}
+
+  /**
+   * A substitution for {@code K} changes the bound of {@code V}, and so the bounds of {@code W} and
+   * {@code Y}, which contain {@code V}.
+   */
+  @Test
+  public void testSubstitutionChangesBoundOfVariableInBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    Substitution keyIsString = new Substitution(parameters.get(0), JavaTypes.STRING_TYPE);
+    ReferenceType integerKeyedMap = ClassOrInterfaceType.forClass(IntegerKeyedMap.class);
+    TypeVariable w = parameters.get(2);
+    assertTrue(w.canBeInstantiatedBy(integerKeyedMap));
+    assertFalse(((TypeVariable) w.substitute(keyIsString)).canBeInstantiatedBy(integerKeyedMap));
+    TypeVariable y = parameters.get(3);
+    InstantiatedType listOfIntegerKeyedMap =
+        GenericClassType.forClass(List.class).instantiate(integerKeyedMap);
+    assertTrue(y.canBeInstantiatedBy(listOfIntegerKeyedMap));
+    assertFalse(
+        ((TypeVariable) y.substitute(keyIsString)).canBeInstantiatedBy(listOfIntegerKeyedMap));
+  }
+
+  /**
+   * The type parameters of a copy of a type variable, whose bound contains the original type
+   * variable, start with the copy.
+   */
+  @Test
+  public void testTypeParametersOfCopyStartWithCopy() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable copy =
+        (TypeVariable)
+            parameters
+                .get(1)
+                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertSame(copy, copy.getTypeParameters().get(0));
+  }
+
+  /**
+   * A type with a wildcard bounded below.
+   *
+   * @param <A> a type parameter
+   * @param <B> a type parameter bounded by {@code A}
+   */
+  static class SecondBoundedByFirst<A, B extends A> {}
+
+  /** A field whose type has a wildcard bounded below, for a type parameter that bounds another. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super Number, ? extends Comparable<?>> superNumberField;
+
+  /** A field whose type has a wildcard bounded below. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Comparable<? super Number> comparableSuperNumberField;
+
+  /**
+   * A subtype of the lower bound of a capture variable is within a bound that is the capture
+   * variable, even though it cannot instantiate the capture variable.
+   */
+  @Test
+  public void testSubtypeOfLowerBoundIsWithinVariableBound() throws NoSuchFieldException {
+    ReferenceType integer = ClassOrInterfaceType.forClass(Integer.class);
+    TypeVariable captureOfSuperNumber =
+        typeArgument(capturedFieldType("comparableSuperNumberField"), 0);
+    assertFalse(captureOfSuperNumber.canBeInstantiatedBy(integer));
+    assertTrue(
+        new EagerReferenceBound(captureOfSuperNumber).isUpperBound(integer, new Substitution()));
+    // Integer <: Number <: the capture variable for the first argument.
+    TypeVariable second = typeArgument(capturedFieldType("superNumberField"), 1);
+    assertTrue(second.canBeInstantiatedBy(integer));
   }
 }
