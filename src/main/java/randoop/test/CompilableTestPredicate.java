@@ -121,7 +121,8 @@ import randoop.util.Log;
    * @param packageName the package name for the test, null if no package
    * @return true if the code compiles (without error), false otherwise
    */
-  boolean testSource(String testClassName, CompilationUnit source, @Nullable String packageName) {
+  /*package*/ boolean testSource(
+      String testClassName, CompilationUnit source, @Nullable String packageName) {
     String sourceText = source.toString();
     return compiler.isCompilable(packageName, testClassName, sourceText);
   }

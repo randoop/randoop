@@ -65,25 +65,25 @@ public final class ClassFileConstants {
   // Some test values when this class file is used as input.
   // Byte, int, short, and char values are all stored in the .class file as int.
   /** A byte value for testing. */
-  static byte bb = 23;
+  /*package*/ static byte bb = 23;
 
   /** A double value for testing. */
-  static double d = 35.3;
+  /*package*/ static double d = 35.3;
 
   /** A float value for testing. */
-  static float f = 3.0f;
+  /*package*/ static float f = 3.0f;
 
   /** An int value for testing. */
-  static int ii = 20;
+  /*package*/ static int ii = 20;
 
   /** A long value for testing. */
-  static long ll = 200_000;
+  /*package*/ static long ll = 200_000;
 
   /** A short value for testing. */
-  static short s = 32_000;
+  /*package*/ static short s = 32_000;
 
   /** A char value for testing. */
-  static char c = 'a';
+  /*package*/ static char c = 'a';
 
   /** Stores constant values from a class file. */
   public static class ConstantSet {
@@ -727,7 +727,8 @@ public final class ClassFileConstants {
    * @param constant_pool a constant pool that is used if the constant is a String, Class, or Enum
    * @param cs the ConstantSet
    */
-  static void registerConstant(Constant constant, ConstantPool constant_pool, ConstantSet cs) {
+  /*package*/ static void registerConstant(
+      Constant constant, ConstantPool constant_pool, ConstantSet cs) {
     if (constant instanceof ConstantInteger) {
       int intValue = ((ConstantInteger) constant).getBytes();
       registerIntegerConstant(intValue, cs);
@@ -768,7 +769,7 @@ public final class ClassFileConstants {
    * @param value the double constant
    * @param cs the ConstantSet
    */
-  static void registerDoubleConstant(Double value, ConstantSet cs) {
+  /*package*/ static void registerDoubleConstant(Double value, ConstantSet cs) {
     cs.doubles.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }
@@ -779,7 +780,7 @@ public final class ClassFileConstants {
    * @param value the float constant
    * @param cs the ConstantSet
    */
-  static void registerFloatConstant(Float value, ConstantSet cs) {
+  /*package*/ static void registerFloatConstant(Float value, ConstantSet cs) {
     cs.floats.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }
@@ -790,7 +791,7 @@ public final class ClassFileConstants {
    * @param value the integer constant
    * @param cs the ConstantSet
    */
-  static void registerIntegerConstant(Integer value, ConstantSet cs) {
+  /*package*/ static void registerIntegerConstant(Integer value, ConstantSet cs) {
     cs.ints.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }
@@ -801,7 +802,7 @@ public final class ClassFileConstants {
    * @param value the long constant
    * @param cs the ConstantSet
    */
-  static void registerLongConstant(Long value, ConstantSet cs) {
+  /*package*/ static void registerLongConstant(Long value, ConstantSet cs) {
     cs.longs.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }
@@ -812,7 +813,7 @@ public final class ClassFileConstants {
    * @param value the String constant
    * @param cs the ConstantSet
    */
-  static void registerStringConstant(String value, ConstantSet cs) {
+  /*package*/ static void registerStringConstant(String value, ConstantSet cs) {
     cs.strings.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }
@@ -823,7 +824,7 @@ public final class ClassFileConstants {
    * @param value the Class constant
    * @param cs the ConstantSet
    */
-  static void registerClassConstant(Class<?> value, ConstantSet cs) {
+  /*package*/ static void registerClassConstant(Class<?> value, ConstantSet cs) {
     cs.classes.add(value);
     MapsP.incrementMap(cs.constantFrequency, value);
   }

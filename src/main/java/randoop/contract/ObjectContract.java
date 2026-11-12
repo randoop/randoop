@@ -200,7 +200,7 @@ public abstract class ObjectContract {
    * @param values the input values
    * @return an ObjectCheck indicating that a contract failed
    */
-  ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
+  /*package*/ ObjectCheck failedContract(ExecutableSequence eseq, Object[] values) {
     Variable[] varArray = new Variable[values.length];
     for (int i = 0; i < varArray.length; i++) {
       varArray[i] = eseq.getVariable(values[i]);

@@ -105,7 +105,7 @@ public abstract class CallableOperation implements Operation {
    * @param variable the variable for which the argument string is constructed
    * @return the argument string for the variable
    */
-  String getArgumentString(Variable variable) {
+  /*package*/ String getArgumentString(Variable variable) {
     String index = variable.getName();
     if (variable.shouldInlineLiterals()) {
       String shortIndex = variable.getDeclaringStatement().getInlinedForm();

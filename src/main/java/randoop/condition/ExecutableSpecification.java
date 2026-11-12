@@ -208,7 +208,7 @@ public class ExecutableSpecification {
    *
    * @param parentExecSpec the {@link ExecutableSpecification} to which to link
    */
-  void addParent(ExecutableSpecification parentExecSpec) {
+  /*package*/ void addParent(ExecutableSpecification parentExecSpec) {
     parentList.add(parentExecSpec);
   }
 

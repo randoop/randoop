@@ -66,7 +66,7 @@ public class OrienteeringSelection extends InputSequenceSelector {
      * @param sequence a sequence
      * @param executionTimeNanos execution time in nanoseconds
      */
-    SequenceDetails(Sequence sequence, long executionTimeNanos) {
+    /*package*/ SequenceDetails(Sequence sequence, long executionTimeNanos) {
       this(methodSizeSquareRoot(sequence), executionTimeNanos);
     }
 

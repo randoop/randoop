@@ -24,7 +24,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * @param inputTypes the input types of the operation
    * @param outputType the output type of the operation
    */
-  TypedClassOperationWithCast(
+  /*package*/ TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
@@ -41,7 +41,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
    * @param outputType the output type of the operation
    * @param execSpec the specification of the operation, or null
    */
-  TypedClassOperationWithCast(
+  /*package*/ TypedClassOperationWithCast(
       CallableOperation op,
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,

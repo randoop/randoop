@@ -96,7 +96,7 @@ public final class ReplacementFileReader {
    * @throws ReplacementFileException if there is an error in the replacement file
    * @see #readReplacements(Reader, String)
    */
-  static Map<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
+  /*package*/ static Map<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
       throws IOException, ReplacementFileException {
     try (Reader replacementReader =
         Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8)) {
@@ -116,6 +116,7 @@ public final class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
+  /*package*/
   @SuppressWarnings("nullness:argument") // https://tinyurl.com/cfissue/4006
   static Map<MethodSignature, MethodSignature> readReplacements(@Owning Reader in, String filename)
       throws ReplacementFileException, IOException {
@@ -715,7 +716,7 @@ public final class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  /*package-protected*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
+  /*package*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);
@@ -768,7 +769,7 @@ public final class ReplacementFileReader {
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  static class ReplacementException extends Exception {
+  /*package*/ static class ReplacementException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 
@@ -777,7 +778,7 @@ public final class ReplacementFileReader {
      *
      * @param message the error message
      */
-    ReplacementException(@Nullable String message) {
+    /*package*/ ReplacementException(@Nullable String message) {
       super(message);
     }
 
@@ -787,7 +788,7 @@ public final class ReplacementFileReader {
      * @param message the message
      * @param cause the error message
      */
-    ReplacementException(@Nullable String message, @Nullable Throwable cause) {
+    /*package*/ ReplacementException(@Nullable String message, @Nullable Throwable cause) {
       super(message, cause);
     }
   }

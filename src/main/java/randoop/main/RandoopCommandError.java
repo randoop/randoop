@@ -24,7 +24,7 @@ public class RandoopCommandError extends RandoopUsageError {
    * @param message the exception message
    * @param cause the causing exception
    */
-  RandoopCommandError(String message, Throwable cause) {
+  /*package*/ RandoopCommandError(String message, Throwable cause) {
     super(message, cause);
   }
 }

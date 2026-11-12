@@ -23,7 +23,7 @@ public class GenericClassType extends ParameterizedType {
    *
    * @param rawType the {@code Class} raw type
    */
-  GenericClassType(Class<?> rawType) {
+  /*package*/ GenericClassType(Class<?> rawType) {
     super();
     this.rawType = rawType;
     this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
@@ -102,7 +102,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
+  /*package*/ List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
     return CollectionsPlume.mapList(
         (java.lang.reflect.Type type) ->
             ClassOrInterfaceType.forType(type).substitute(substitution),
@@ -145,7 +145,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the instantiated type
    */
-  ClassOrInterfaceType getSuperclass(Substitution substitution) {
+  /*package*/ ClassOrInterfaceType getSuperclass(Substitution substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return JavaTypes.OBJECT_TYPE;

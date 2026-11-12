@@ -40,7 +40,7 @@ public class ExpectedExceptionCheckGen {
    * @return an {@code ExpectedExceptionCheck} object for exception and statement if exception is
    *     checked, and an {@code EmptyExceptionCheck} otherwise
    */
-  ExceptionCheck getExceptionCheck(
+  /*package*/ ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
 
