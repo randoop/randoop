@@ -1,16 +1,19 @@
 package randoop.types;
 
-import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds that would
- * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
+ * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
+ * substitution maps to no type or to a type variable.
  *
- * <p>Objects of this class are created by {@link LazyParameterBound#substitute(Substitution)} when
- * the substitution would replace a type variable with another type variable.
+ * <p>Objects of this class are created by {@link
+ * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
+ * A substitution leaves an array bound unresolved if it maps the element type to the null type,
+ * because there is no array of the null type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -25,81 +28,115 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound substitute(Substitution substitution) {
-    // If the substitution has no effect on this bound, just return this.
     if (substitution.isEmpty()) {
       return this;
     }
-    for (TypeVariable parameter : getTypeParameters()) {
-      if (substitution.get(parameter) == null) {
-        return this;
-      }
-    }
-
-    ReferenceType referenceType = getBoundType().substitute(substitution);
-
-    if (referenceType.equals(getBoundType())) {
+    // There is no array of the null type, so leave the bound unresolved.
+    if (mapsArrayElementToNullType(substitution)) {
       return this;
     }
 
-    if (getBoundType().isVariable()) {
-      if (referenceType.isVariable()) {
-        return new LazyReferenceBound(referenceType);
-      }
-      return new EagerReferenceBound(referenceType);
+    ReferenceType referenceType = getBoundType().substitute(substitution);
+    if (referenceType.equals(getBoundType())) {
+      return this;
     }
+    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
+  }
 
-    if (getBoundType().isParameterized()) {
-      // XXX technically, need to check if variable argument was replaced by variable
-      // if so should return new LazyReferenceBound(referenceType)
-      // But highly unlikely so for now only including code to do else case
-      return new EagerReferenceBound(referenceType);
+  /**
+   * Returns true if the bound type is an array type whose element type is a type variable that the
+   * given substitution maps to the null type. There is no array of the null type.
+   *
+   * @param substitution a type substitution
+   * @return true if {@code substitution} maps the element type of this array bound to the null type
+   */
+  private boolean mapsArrayElementToNullType(Substitution substitution) {
+    if (!getBoundType().isArray()) {
+      return false;
     }
-    return this;
+    Type elementType = ((ArrayType) getBoundType()).getElementType();
+    return elementType.isVariable()
+        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
   }
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    if (getBoundType().isVariable()) {
-      List<TypeVariable> parameters = new ArrayList<>(1);
-      parameters.add((TypeVariable) getBoundType());
-      return parameters;
-    } else if (getBoundType().isParameterized()) {
-      List<ReferenceType> referenceArgs =
-          ((InstantiatedType) getBoundType()).getReferenceArguments();
-      List<TypeVariable> parameters = new ArrayList<>(referenceArgs.size());
-      for (ReferenceType argType : referenceArgs) {
-        if (argType.isVariable()) {
-          parameters.add((TypeVariable) argType);
-        }
-      }
-      return parameters;
-    } else {
-      return new ArrayList<>(0);
-    }
+    return getBoundType().getTypeParameters();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type can still contain type variables after the substitution is applied. It is
+   * compared as an {@link EagerReferenceBound} would be, except as described in {@link
+   * #getUnknownTypeVariable(Type, Substitution)}.
+   */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isLowerBound(argType, substitution);
+    if (mapsArrayElementToNullType(substitution)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
+    TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
+    if (unknown != null) {
+      // The unknown type variable can be argType itself.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+    }
+    return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
 
   @Override
-  public boolean isSubtypeOfOrEqualTo(ParameterBound boundType) {
-    assert false : "LazyReferenceBound.isSubtypeOfOrEqualTo is not implemented";
+  public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      return getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
+    }
+    assert false : "not handling LazyReferenceBound subtype of other bound type";
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The bound type can still contain type variables after the substitution is applied. It is
+   * compared as an {@link EagerReferenceBound} would be, except as described in {@link
+   * #getUnknownTypeVariable(Type, Substitution)}.
+   */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    ReferenceBound b = this.substitute(substitution);
-    return !this.equals(b) && b.isUpperBound(argType, substitution);
+    if (mapsArrayElementToNullType(substitution)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
+    TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
+    if (unknown != null) {
+      // The unknown type variable can be argType itself.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+    }
+    return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
 
-  /*package*/
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    assert false : "isUpperBound(ParameterBound, Substitution) not implemented";
-    return false;
+  /**
+   * Returns the bound type after the given substitution is applied, if the bound type is a type
+   * variable, the substitution maps it to no type or to a type variable, and {@code argType} is a
+   * reference type that is not a type variable. Otherwise, returns null.
+   *
+   * <p>The substitution does not determine the type that the returned type variable will be. This
+   * class treats {@code argType} as within this bound if the type variable can be instantiated by
+   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
+   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
+   * instead would accept any type as within a lower bound, since the lower bound of the type
+   * variable is usually the null type.
+   *
+   * @param argType a type to compare with this bound
+   * @param substitution a type substitution
+   * @return the bound type after substitution, if it is a type variable as described above;
+   *     otherwise null
+   */
+  private @Nullable TypeVariable getUnknownTypeVariable(Type argType, Substitution substitution) {
+    if (!getBoundType().isVariable() || !argType.isReferenceType() || argType.isVariable()) {
+      return null;
+    }
+    ReferenceType boundType = getBoundType().substitute(substitution);
+    return boundType.isVariable() ? (TypeVariable) boundType : null;
   }
 }
