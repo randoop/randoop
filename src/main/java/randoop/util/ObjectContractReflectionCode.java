@@ -1,17 +1,15 @@
 package randoop.util;
 
-import java.util.Arrays;
-import org.plumelib.util.ArraysPlume;
 import randoop.contract.ObjectContract;
 
 /** Reflection code that evaluates an {@link ObjectContract} on given values. */
 public final class ObjectContractReflectionCode extends ReflectionCode {
 
   /** The contract to evaluate. */
-  final ObjectContract c;
+  private final ObjectContract c;
 
   /** The values that the contract is evaluated on. */
-  final Object[] objs;
+  private final Object[] objs;
 
   /**
    * Creates an ObjectContractReflectionCode that evaluates the given contract on the given values.
@@ -21,6 +19,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
    */
   @SuppressWarnings("PMD.ArrayIsStoredDirectly")
   public ObjectContractReflectionCode(final ObjectContract c, final Object... objs) {
+    super();
     this.c = c;
     this.objs = objs;
   }
@@ -39,10 +38,7 @@ public final class ObjectContractReflectionCode extends ReflectionCode {
     return "Check of ObjectContract "
         + c
         + " args: "
-        + Arrays.toString(objs)
-        + ", arg types: "
-        + Arrays.toString(
-            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), objs, Class.class))
+        + Util.elementsToStringAndClassSafely(objs)
         + " "
         + status();
   }

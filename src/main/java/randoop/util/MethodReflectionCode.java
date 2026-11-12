@@ -5,8 +5,6 @@ import static randoop.Globals.lineSep;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import org.plumelib.util.ArraysPlume;
 import org.plumelib.util.StringsPlume;
 
 /** Wraps a method together with its arguments, ready for execution. Can be run only once. */
@@ -33,6 +31,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     "PMD.ArrayIsStoredDirectly"
   })
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
+    super();
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -58,10 +57,9 @@ public final class MethodReflectionCode extends ReflectionCode {
     Log.logPrintf("runReflectionCodeRaw: %s%n", method);
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
-      try {
-        Log.logPrintf("runReflectionCodeRaw(%s) => %s%n", method, status());
-      } catch (OutOfMemoryError e) {
-        Log.logPrintf("runReflectionCodeRaw(%s) => OutOfMemoryError, %s%n", method, status());
+      if (Log.isLoggingOn()) {
+        Log.logPrintf(
+            "runReflectionCodeRaw(%s) => %s%n", method, Util.toStringAndClassSafely(retval));
       }
       if (receiver == null && isInstanceMethod()) {
         throw new ReflectionCodeException(
@@ -84,12 +82,12 @@ public final class MethodReflectionCode extends ReflectionCode {
       if (receiver != null) {
         sb.append(lineSep);
         sb.append("  receiver: ");
-        sb.append(StringsPlume.toStringAndClass(receiver));
+        sb.append(Util.toStringAndClassSafely(receiver, true));
       }
       for (Object input : inputs) {
         sb.append(lineSep);
         sb.append("  ");
-        sb.append(StringsPlume.toStringAndClass(input));
+        sb.append(Util.toStringAndClassSafely(input, true));
       }
       throw new ReflectionCodeException(sb.toString(), e);
     }
@@ -101,12 +99,9 @@ public final class MethodReflectionCode extends ReflectionCode {
         + ": "
         + method
         + " receiver: "
-        + StringsPlume.toStringAndClass(receiver)
+        + Util.toStringAndClassSafely(receiver, true)
         + " args: "
-        + Arrays.toString(inputs)
-        + ", arg types: "
-        + Arrays.toString(
-            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), inputs, Class.class))
+        + Util.elementsToStringAndClassSafely(inputs)
         + " "
         + status();
   }

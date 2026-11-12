@@ -28,6 +28,7 @@ import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.util.Randomness;
 
 /** Tests instantiation of type parameters by OperationModel. */
 public class InstantiationTest {
@@ -178,7 +179,7 @@ public class InstantiationTest {
     int count = 0;
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
       count++;
     }
     assertEquals(24, count);
@@ -229,7 +230,8 @@ public class InstantiationTest {
     assertFalse(classOperations.isEmpty());
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric(false));
-      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+      assertFalse(
+          "should not have wildcards" + operation, operation.getInputTypes().hasWildcardArgument());
     }
   }
 
@@ -274,6 +276,47 @@ public class InstantiationTest {
         assertFalse(operation.isGeneric());
       }
     }
+  }
+
+  /**
+   * Tests the instantiation of type variables whose bounds mention other type variables of the same
+   * method: each instantiation succeeds and satisfies the bounds, whatever the random choices.
+   */
+  @Test
+  public void testRelatedBoundsInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation widen =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("widen", Object.class));
+    TypedClassOperation chain =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("chain", Object.class, Object.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+
+      // <K, V extends K> K widen(V)
+      TypedClassOperation widenInstance = instantiator.instantiate(widen);
+      assertNotNull("instantiation failed for " + widen, widenInstance);
+      assertFalse(widenInstance + " should not be generic", widenInstance.isGeneric());
+      Type k = widenInstance.getOutputType();
+      Type v = widenInstance.getInputTypes().get(0);
+      assertTrue(v + " should be a subtype of " + k, v.isSubtypeOfOrEqualTo(k));
+
+      // <A, B extends A, C extends B> A chain(B, C)
+      TypedClassOperation chainInstance = instantiator.instantiate(chain);
+      assertNotNull("instantiation failed for " + chain, chainInstance);
+      assertFalse(chainInstance + " should not be generic", chainInstance.isGeneric());
+      Type a = chainInstance.getOutputType();
+      Type b = chainInstance.getInputTypes().get(0);
+      Type c = chainInstance.getInputTypes().get(1);
+      assertTrue(b + " should be a subtype of " + a, b.isSubtypeOfOrEqualTo(a));
+      assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
+    }
+    Randomness.setSeed(0);
   }
 
   /* disabled until fix type parameter management

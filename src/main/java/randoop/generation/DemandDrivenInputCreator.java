@@ -4,9 +4,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
@@ -135,17 +137,30 @@ public class DemandDrivenInputCreator {
   private final Set<Type> visitedTypes = new HashSet<>();
 
   /**
-   * Given a TypedOperation whose output or parameter types are unbound type variables (e.g., {@code
-   * List<T>} or {@code T}), produces a concrete TypedClassOperation by choosing concrete type
-   * arguments (e.g., {@code T->String}).
-   */
-  private final TypeInstantiator typeInstantiator;
-
-  /**
    * A set of SUT types that are non-instantiable. This is used to avoid generating sequences
    * through {@link DemandDrivenInputCreator} for such types.
    */
   private final Set<Type> uninstantiableTypes = new LinkedHashSet<>();
+
+  /**
+   * Maps each type whose candidate producers (see {@link #getCandidateProducers}) were all unusable
+   * at the type's most recent request to the value of {@link
+   * SequenceCollection#getTypesModificationCount} at that request. For example, a generic producer
+   * is not usable while the type instantiator cannot instantiate it from the types of the sequences
+   * in {@link #sequenceCollection}. Unlike a type in {@link #uninstantiableTypes}, such a type is
+   * retried, but only after those types change. A type is removed from this map when one of its
+   * producers becomes usable.
+   *
+   * <p>Not retrying while the types are unchanged is a heuristic: the type instantiator makes
+   * random choices, so a retry with the same types could succeed where the previous attempt failed.
+   */
+  private final Map<Type, Integer> typesWithoutUsableProducers = new HashMap<>();
+
+  /**
+   * A cache for {@link #getCandidateProducers}. The candidate producers of a type do not change
+   * during a run.
+   */
+  private final Map<Type, List<TypedOperation>> candidateProducersCache = new HashMap<>();
 
   /**
    * A predicate that determines what constructors/methods are accessible (e.g., {@code public}) to
@@ -159,18 +174,25 @@ public class DemandDrivenInputCreator {
    * @param sequenceCollection the sequence collection used for generating input sequences. This
    *     should be the component sequence collection ({@code gralComponents} from {@link
    *     ComponentManager}), i.e., Randoop's full sequence collection.
-   * @param typeInstantiator a type instantiator that creates concrete instances of
-   *     TypedClassOperation
    * @param accessibility decides which constructors/methods are callable from the generated test
    *     code
    */
   public DemandDrivenInputCreator(
-      SequenceCollection sequenceCollection,
-      TypeInstantiator typeInstantiator,
-      AccessibilityPredicate accessibility) {
+      SequenceCollection sequenceCollection, AccessibilityPredicate accessibility) {
     this.sequenceCollection = sequenceCollection;
-    this.typeInstantiator = typeInstantiator;
     this.accessibility = accessibility;
+  }
+
+  /**
+   * Removes all sequences from the secondary sequence collection, so that sequences created before
+   * the main sequence collection was cleared are not reintroduced into it. Retains the visited
+   * types (which are reported for the whole run) and the uninstantiable types (which do not depend
+   * on the contents of any sequence collection). Also retains the types without usable producers;
+   * clearing the main sequence collection changes its types, so the next request for such a type
+   * retries it.
+   */
+  public void clear() {
+    secondarySequenceCollection.clear();
   }
 
   /**
@@ -180,18 +202,6 @@ public class DemandDrivenInputCreator {
    */
   public Set<Type> getVisitedTypes() {
     return visitedTypes;
-  }
-
-  /**
-   * Returns the set of uninstantiable types. These are types that cannot be instantiated due to the
-   * absence of accessible producer methods in the type itself.
-   *
-   * <p>TODO: Later, producer methods for this type that are defined by a different type.
-   *
-   * @return a set of uninstantiable types
-   */
-  public Set<Type> getUninstantiableTypesSet() {
-    return uninstantiableTypes;
   }
 
   /**
@@ -212,8 +222,11 @@ public class DemandDrivenInputCreator {
    *   <li>Adds the returned sequences to the main sequence collection. Adds the returned sequences
    *       to the secondary sequence collection. This is the only way to add sequences to the
    *       secondary sequence collection.
-   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if no producers
-   *       found.
+   *   <li>Logs warnings and adds a target type to {@code uninstantiableTypes} set if the target
+   *       type has no candidate producers. If the target type has candidate producers but none of
+   *       them is usable now (e.g., a generic producer that cannot be instantiated from the types
+   *       of the current sequences), records the target type in {@code typesWithoutUsableProducers}
+   *       instead, so that a later call retries it once those types change.
    *   <li>Adds newly visited types to the {@code visitedTypes} set.
    * </ul>
    *
@@ -231,16 +244,34 @@ public class DemandDrivenInputCreator {
   @RequiresNonNull("this.secondarySequenceCollection.sequenceMap")
   public SIList<Sequence> createSequencesForType(
       Type targetType, boolean exactTypeMatch, boolean onlyReceivers) {
+    int typesModificationCount = sequenceCollection.getTypesModificationCount();
+    Integer failedAtCount = typesWithoutUsableProducers.get(targetType);
+    if (failedAtCount != null && failedAtCount == typesModificationCount) {
+      // The type instantiator has the same types as at the last attempt, which found no usable
+      // producer.
+      return SIList.empty();
+    }
+
     List<TypedOperation> producerMethods = getProducers(targetType);
 
     if (producerMethods.isEmpty()) {
-      Log.logPrintf(
-          "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
-          targetType);
-      // Track the types with no producers.
-      uninstantiableTypes.add(targetType);
+      if (getCandidateProducers(targetType).isEmpty()) {
+        Log.logPrintf(
+            "Warning: No producer methods found for type %s. Cannot create values of this type.%n",
+            targetType);
+        // Track the types with no producers.
+        uninstantiableTypes.add(targetType);
+      } else {
+        // A later call might succeed, once the type instantiator knows more types.  Log only the
+        // first of consecutive failures.
+        if (failedAtCount == null) {
+          Log.logPrintf("No usable producer methods found yet for type %s.%n", targetType);
+        }
+        typesWithoutUsableProducers.put(targetType, typesModificationCount);
+      }
       return SIList.empty();
     }
+    typesWithoutUsableProducers.remove(targetType);
 
     // For each producer method, create a sequence if possible.
     for (TypedOperation producerMethod : producerMethods) {
@@ -295,37 +326,17 @@ public class DemandDrivenInputCreator {
       // Add to `result` all constructors and methods that return an instance of the current type
       // and are accessible to Randoop.
 
-      // Iterate over the operations and check if they can produce the target type.
-      List<TypedOperation> operations;
-      try {
-        operations =
-            OperationExtractor.operations(
-                currentType.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
-      } catch (RandoopSpecificationError e) {
-        // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
-        throw new RandoopBug("specification error for type " + currentType, e);
-      }
-      for (TypedOperation op : operations) {
-        Type opOutputType = op.getOutputType();
-
-        // Only consider operations that produce instances of the type we're currently resolving
-        if (!isProducer(op, currentType)) {
+      for (TypedOperation op : getCandidateProducers(currentType)) {
+        TypedOperation producer = instantiateToProduce((TypedClassOperation) op, currentType);
+        if (producer == null) {
           continue;
         }
 
-        if (opOutputType.isGeneric()) {
-          TypedClassOperation instantiated = typeInstantiator.instantiate((TypedClassOperation) op);
-          if (instantiated == null) {
-            continue; // Skip if instantiation fails
-          }
-          op = instantiated;
-        }
-
         // Add this operation as a producer of the type.
-        result.add(op);
+        result.add(producer);
 
         // Add each of its parameter types for further processing.
-        for (Type paramType : op.getInputTypes()) {
+        for (Type paramType : producer.getInputTypes()) {
           worklist.addFirst(paramType);
         }
       }
@@ -345,19 +356,66 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * True iff `op` can produce an instance of `currentType` without needing a receiver.
+   * Returns the candidate producers of the given type: the accessible constructors and static
+   * methods that the type declares and that are generic or whose output type is assignable to the
+   * type. A candidate producer is not necessarily usable: a generic one is usable only if the type
+   * instantiator can instantiate it so that its output type is assignable to the type (see {@link
+   * #instantiateToProduce}).
+   *
+   * @param type a type
+   * @return the candidate producers of {@code type}
+   */
+  private List<TypedOperation> getCandidateProducers(Type type) {
+    List<TypedOperation> result = candidateProducersCache.get(type);
+    if (result == null) {
+      List<TypedOperation> operations;
+      try {
+        operations =
+            OperationExtractor.operations(
+                type.getRuntimeClass(), new DefaultReflectionPredicate(), accessibility);
+      } catch (RandoopSpecificationError e) {
+        // No specifications are passed to OperationExtractor.operations, so it cannot fail on one.
+        throw new RandoopBug("specification error for type " + type, e);
+      }
+      result = CollectionsPlume.filter(operations, (TypedOperation op) -> isProducer(op, type));
+      candidateProducersCache.put(type, result);
+    }
+    return result;
+  }
+
+  /**
+   * True iff `op` might produce an instance of `currentType` without needing a receiver: it is a
+   * constructor or static method, and it is generic or its output type is assignable to {@code
+   * currentType}.
    *
    * @param op the operation to check
    * @param currentType the type to produce
-   * @return true if {@code op} can produce an instance of {@code currentType}
+   * @return true if {@code op} is a candidate producer of {@code currentType}
    */
   private boolean isProducer(TypedOperation op, Type currentType) {
-    // Output must be assignable to the goal type.
-    if (!currentType.isAssignableFrom(op.getOutputType())) {
+    // Only allow constructors and static methods (no receiver needed).
+    if (!op.isConstructorCall() && !op.isStatic()) {
       return false;
     }
-    // Only allow constructors and static methods (no receiver needed).
-    return op.isConstructorCall() || op.isStatic();
+    // A generic operation might be instantiable so that its output is assignable to the goal type.
+    return op.isGeneric() || currentType.isAssignableFrom(op.getOutputType());
+  }
+
+  /**
+   * Returns the given operation, instantiated if it is generic, if its output type is assignable to
+   * the given type.
+   *
+   * @param op a constructor or static method
+   * @param type the type for {@code op} to produce
+   * @return {@code op}, instantiated if it is generic, whose output type is assignable to {@code
+   *     type}; or null if there is no such instantiation or none was found
+   * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
+   */
+  private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
+    if (op.isGeneric()) {
+      return sequenceCollection.getTypeInstantiator().instantiate(op, type);
+    }
+    return type.isAssignableFrom(op.getOutputType()) ? op : null;
   }
 
   /**

@@ -2,8 +2,6 @@ package randoop.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import org.plumelib.util.ArraysPlume;
 
 /** Wraps a constructor together with its arguments, ready for execution. Can be run only once. */
 public final class ConstructorReflectionCode extends ReflectionCode {
@@ -30,6 +28,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     "PMD.ArrayIsStoredDirectly"
   })
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
+    super();
     if (constructor == null) {
       throw new IllegalArgumentException("constructor is null");
     }
@@ -71,7 +70,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
       throw new ReflectionCodeException(
           String.format(
               "Failure in newInstance: constructor=%s, args=%s%n",
-              this.constructor, Arrays.toString(this.inputs)),
+              this.constructor, Util.elementsToStringAndClassSafely(this.inputs)),
           e);
     }
   }
@@ -82,10 +81,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
         + ": "
         + constructor
         + ", args: "
-        + Arrays.toString(inputs)
-        + ", arg types: "
-        + Arrays.toString(
-            ArraysPlume.mapArray(x -> x == null ? null : x.getClass(), inputs, Class.class))
+        + Util.elementsToStringAndClassSafely(inputs)
         + " "
         + status();
   }

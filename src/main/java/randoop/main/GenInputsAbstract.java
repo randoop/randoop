@@ -159,12 +159,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing regular expressions for methods to omit")
   public static @MonotonicNonNull List<Path> omit_classes_file = null;
 
-  // Documentation to add.
-  //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
-  //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
-  //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain circumstances and may be added in the future,
-  //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
@@ -174,7 +168,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>Randoop will not directly call a method whose <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
    * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression.
+   * interface whose signature matches the regular expression. Nor will Randoop directly call any
+   * method that such a method overrides (because such a call might dispatch to the omitted method
+   * at run time). Randoop considers only the omitted methods of the classes under test, so a call
+   * can still dispatch to an omitted method of a class that is not under test.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -256,8 +253,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>This option does not affect classes found via {@code --testjar} or {@code --test-package}.
    */
-  @Option("Warn about, rather than fail on, user-specified classes that cannot be found or loaded")
-  public static boolean silently_ignore_bad_class_names = false;
+  @Option(
+      value =
+          "Warn about, rather than fail on, user-specified classes that cannot be found or loaded",
+      aliases = {"--silently-ignore-bad-class-names"})
+  public static boolean ignore_bad_class_names = false;
 
   /**
    * (For debugging.) If an error or exception is thrown during type instantiation or input
