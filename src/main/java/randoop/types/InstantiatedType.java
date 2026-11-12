@@ -159,7 +159,9 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
     */
-    if (this.isInstantiationOf(goalType)) {
+    // The runtime class check is needed because `isInstantiationOf` returns true for distinct
+    // member classes whose enclosing types match.
+    if (this.runtimeClassIs(goalType.getRuntimeClass()) && this.isInstantiationOf(goalType)) {
       return this;
     }
     return super.getMatchingSupertype(goalType);
@@ -449,24 +451,30 @@ public class InstantiatedType extends ParameterizedType {
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-        List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
-        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
-        assert otherTypeArguments.size() == thisTypeArguments.size();
-        int i = 0;
-        while (i < thisTypeArguments.size()
-            && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
-          i++;
+        if (this.typeArgumentsAreContainedBy(otherInstantiatedType)) {
+          return true;
+        }
+        // JLS 4.10.2:  a type with wildcard type arguments is a subtype of the types whose type
+        // arguments contain the type arguments of its capture conversion.  Capture conversion
+        // incorporates the bounds of the type parameters into the capture variables.
+        if (this.hasWildcardArgument()
+            && this.applyCaptureConversion().typeArgumentsAreContainedBy(otherInstantiatedType)) {
+          return true;
         }
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        return otherInstantiatedType.isGenericForm();
       }
 
       // first clause.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null && superType.equals(otherType)) {
+      // The runtime class check ensures that the recursive call uses the second clause above, and
+      // so terminates.
+      if (superType != null
+          && superType.runtimeClassIs(otherType.getRuntimeClass())
+          && superType.isSubtypeOfOrEqualTo(otherType)) {
         return true;
       }
     }
@@ -484,6 +492,24 @@ public class InstantiatedType extends ParameterizedType {
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
     // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if each type argument of the given type contains the corresponding type argument
+   * of this type. The given type must be an instantiation of the same generic class as this type.
+   *
+   * @param otherType an instantiation of the same generic class as this type
+   * @return true if each type argument of {@code otherType} contains that of this type
+   */
+  private boolean typeArgumentsAreContainedBy(InstantiatedType otherType) {
+    List<TypeArgument> otherTypeArguments = otherType.getTypeArguments();
+    assert otherTypeArguments.size() == argumentList.size();
+    for (int i = 0; i < argumentList.size(); i++) {
+      if (!otherTypeArguments.get(i).contains(argumentList.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
