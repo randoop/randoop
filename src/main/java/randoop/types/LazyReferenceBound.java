@@ -37,7 +37,8 @@ class LazyReferenceBound extends ReferenceBound {
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
+    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
@@ -109,8 +110,8 @@ class LazyReferenceBound extends ReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
+      // The unknown type variable can be argType itself, or its lower bound.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -124,6 +125,8 @@ class LazyReferenceBound extends ReferenceBound {
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
+   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}.
    * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
    * within a lower bound, since the lower bound of the type variable is usually the null type.
    *
@@ -138,34 +141,5 @@ class LazyReferenceBound extends ReferenceBound {
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>An intersection bound is within this bound if one of its components is, since the
-   * intersection is a subtype of each of its components. A {@link LazyParameterBound} is compared
-   * after the substitution is applied to it; a type variable in it that the substitution does not
-   * instantiate stands for an unknown type. Returns false for any other kind of bound.
-   */
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof ReferenceBound) {
-      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
-    }
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
-        if (isUpperBound(component, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (bound instanceof LazyParameterBound) {
-      ParameterBound substituted =
-          ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
-      return substituted != null && isUpperBound(substituted, substitution);
-    }
-    return false;
   }
 }
