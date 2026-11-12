@@ -918,4 +918,37 @@ public class TypeVariableTest {
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
+
+  /**
+   * Type parameters whose bounds form a cycle through a parameterized type: {@code V}'s bound
+   * mentions {@code W} and {@code A}, and {@code A extends W extends V}.
+   *
+   * @param <V> a type parameter whose bound refers to {@code W} and {@code A}
+   * @param <W> a type parameter bounded by {@code V}
+   * @param <A> a type parameter bounded by {@code W}
+   */
+  static class ChainedVariableBounds<V extends Pair<W, A>, W extends V, A extends W> {}
+
+  /**
+   * A class that cannot instantiate {@code V} in {@link ChainedVariableBounds}: that would need
+   * {@code W := SubclassOfPairOfSubclassAndSelf} and {@code A := PairOfSubclassAndSelf}, but {@code
+   * A extends W} does not hold.
+   */
+  abstract static class PairOfSubclassAndSelf
+      implements Pair<SubclassOfPairOfSubclassAndSelf, PairOfSubclassAndSelf> {}
+
+  /** A proper subclass of {@link PairOfSubclassAndSelf}. */
+  abstract static class SubclassOfPairOfSubclassAndSelf extends PairOfSubclassAndSelf {}
+
+  /**
+   * Checking {@code V := PairOfSubclassAndSelf} checks, within the bounds of {@code A} and {@code
+   * W}, {@code V := PairOfSubclassAndSelf} again, with {@code W} and {@code A} also mapped to
+   * {@code PairOfSubclassAndSelf}. That nested check fails, so it must not be assumed to succeed
+   * just because a check of the same type variable and type is in progress.
+   */
+  @Test
+  public void testRecursionGuardRespectsContext() {
+    TypeVariable v = typeParameter(ChainedVariableBounds.class, 0);
+    assertFalse(v.canBeInstantiatedBy(ClassOrInterfaceType.forClass(PairOfSubclassAndSelf.class)));
+  }
 }
