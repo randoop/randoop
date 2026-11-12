@@ -69,10 +69,13 @@ java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignor
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) include11
 java7.util7.Collections.binarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude8
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude11
+java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude25
 java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # inconsistent Java 8 vs 9, so ignore
 java7.util7.Collections.checkedMap(java7.util7.Map, java.lang.Class, java.lang.Class) exclude8
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude11-
+java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude25
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
+java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) include25
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
@@ -122,8 +125,10 @@ java7.util7.TreeMap.containsKey(java.lang.Object) exclude8
 java7.util7.TreeMap.deleteEntry(java7.util7.TreeMap.Entry) ignore
 java7.util7.TreeMap.descendingKeyIterator() exclude
 java7.util7.TreeMap.firstKey() exclude
+java7.util7.TreeMap.firstKey() include25
 java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude11-
+java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude25
 java7.util7.TreeMap.get(java.lang.Object) exclude11
 java7.util7.TreeMap.get(java.lang.Object) ignore
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude8
@@ -143,8 +148,10 @@ java7.util7.TreeMap.rotateLeft(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.rotateRight(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.setColor(java7.util7.TreeMap.Entry, boolean) exclude
 java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) exclude11+
+java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean) include25
 java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) exclude11+
+java7.util7.TreeMap.successor(java7.util7.TreeMap.Entry) include25
 java7.util7.TreeMap.tailMap(java.lang.Object) exclude11-
 java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude11
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude
@@ -157,6 +164,7 @@ java7.util7.TreeSet.first() ignore
 java7.util7.TreeSet.floor(java.lang.Object) ignore8
 java7.util7.TreeSet.headSet(java.lang.Object) exclude11+
 java7.util7.TreeSet.headSet(java.lang.Object, boolean) exclude17+
+java7.util7.TreeSet.headSet(java.lang.Object, boolean) include25
 java7.util7.TreeSet.higher(java.lang.Object) ignore8
 java7.util7.TreeSet.last() ignore
 java7.util7.TreeSet.lower(java.lang.Object) ignore8
@@ -165,6 +173,7 @@ java7.util7.TreeSet.readObject(java.io.ObjectInputStream) exclude
 java7.util7.TreeSet.remove(java.lang.Object) ignore
 java7.util7.TreeSet.remove(java.lang.Object) include11
 java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) exclude11+
+java7.util7.TreeSet.subSet(java.lang.Object, boolean, java.lang.Object, boolean) include25
 java7.util7.TreeSet.subSet(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeSet.tailSet(java.lang.Object) exclude11+
 java7.util7.TreeSet.tailSet(java.lang.Object, boolean) exclude11+
@@ -177,6 +186,7 @@ java7.util7.Vector.ensureCapacity(int) exclude
 java7.util7.Vector.hugeCapacity(int) exclude
 java7.util7.Vector.removeRange(int, int) exclude
 java7.util7.Vector.writeObject(java.io.ObjectOutputStream) exclude
+java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude25
 java7.util7.WeakHashMap.eq(java.lang.Object, java.lang.Object) exclude8
 java7.util7.WeakHashMap.removeMapping(java.lang.Object) exclude
 java7.util7.WeakHashMap.unmaskNull(java.lang.Object) ignore
