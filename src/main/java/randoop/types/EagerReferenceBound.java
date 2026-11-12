@@ -20,6 +20,7 @@ class EagerReferenceBound extends ReferenceBound {
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
     if (isUnchangedBy(referenceType)) {
       return this;
     }
@@ -97,7 +98,7 @@ class EagerReferenceBound extends ReferenceBound {
         // type variables that `subst` instantiates.
         // For `<S extends Comparable<S>, U extends S>`, a class Sub that extends Base, where Base
         // implements Comparable<Base>, satisfies the bound of U, with Base for S.
-        return variable.canBeInstantiatedBySupertypeOf((ReferenceType) argType, subst);
+        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
