@@ -21,9 +21,10 @@ public abstract class ReferenceBound extends ParameterBound {
 
   /**
    * Returns a bound whose type is the given type. The bound is a {@link LazyReferenceBound} if the
-   * type contains a type variable, as in {@code Map<T, String>}, and an {@link EagerReferenceBound}
-   * otherwise. Other code also creates an {@link EagerReferenceBound} whose type contains a type
-   * variable, so not every bound that contains a type variable is a {@link LazyReferenceBound}.
+   * type contains a type variable, as in {@code Map<T, String>}. The bound is an {@link
+   * EagerReferenceBound} otherwise. Other code also creates an {@link EagerReferenceBound} whose
+   * type contains a type variable, so not every bound that contains a type variable is a {@link
+   * LazyReferenceBound}.
    *
    * @param boundType a reference type
    * @return a bound whose type is {@code boundType}

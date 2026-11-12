@@ -33,6 +33,56 @@ public class WildcardContainmentTest {
     private static final long serialVersionUID = 20261109;
   }
 
+  /**
+   * A generic class with generic member classes.
+   *
+   * @param <T> the type parameter
+   */
+  public static class Outer<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    public class Inner1<U> {}
+
+    /**
+     * Another generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    public class Inner2<U> {}
+  }
+
+  /**
+   * A generic subclass of {@code ArrayList}.
+   *
+   * @param <X> the type parameter
+   */
+  public static class Child<X> extends ArrayList<X> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261110;
+  }
+
+  /** A field of type {@code Outer<String>.Inner1<Integer>}. */
+  public Outer<String>.Inner1<Integer> inner1;
+
+  /** A field of type {@code Outer<String>.Inner2<Integer>}. */
+  public Outer<String>.Inner2<Integer> inner2;
+
+  /** A field of type {@code ArrayList<?>}. */
+  public ArrayList<?> arrayListQ;
+
+  /**
+   * Returns {@code Child<? extends T[]>}, whose wildcard has a lazy bound.
+   *
+   * @param <T> the type parameter
+   * @return null
+   */
+  public <T> Child<? extends T[]> childExtendsArray() {
+    return null;
+  }
+
   /** A field of type {@code List<Integer>}. */
   public List<Integer> listInteger;
 
@@ -201,6 +251,84 @@ public class WildcardContainmentTest {
     assertTrue(isSubtype("arrayListInteger", "collectionQ"));
     assertTrue(isSubtype("arrayListInteger", "collectionExtendsNumber"));
     assertFalse(isSubtype("arrayListInteger", "collectionString"));
+  }
+
+  /**
+   * A method whose parameters are lower-bounded wildcards with type-variable bounds.
+   *
+   * @param <T> a type parameter
+   * @param <U> a type parameter that is a subtype of T
+   * @param superT a list whose type argument is {@code ? super T}
+   * @param superU a list whose type argument is {@code ? super U}
+   */
+  public static <T, U extends T> void superVariables(
+      List<? super T> superT, List<? super U> superU) {}
+
+  @Test
+  public void lowerBoundTypeVariableTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        WildcardContainmentTest.class
+            .getMethod("superVariables", List.class, List.class)
+            .getGenericParameterTypes();
+    Type superT = Type.forType(parameterTypes[0]);
+    Type superU = Type.forType(parameterTypes[1]);
+    // The capture of `? super T` has lower bound T, and U is a subtype of T.
+    assertTrue(superT.isSubtypeOfOrEqualTo(superU));
+    assertTrue(superT.isSubtypeOfOrEqualTo(superT));
+    assertFalse(superU.isSubtypeOfOrEqualTo(superT));
+  }
+
+  @Test
+  public void distinctMemberClassTest() {
+    assertFalse(isSubtype("inner1", "inner2"));
+    assertFalse(isSubtype("inner2", "inner1"));
+    assertTrue(isSubtype("inner1", "inner1"));
+  }
+
+  @Test
+  public void lazyBoundTest() throws NoSuchMethodException {
+    Type childExtendsArray =
+        Type.forType(
+            WildcardContainmentTest.class.getMethod("childExtendsArray").getGenericReturnType());
+    assertTrue(childExtendsArray.isSubtypeOfOrEqualTo(type("arrayListQ")));
+  }
+
+  /**
+   * A method whose type parameter has a recursive bound.
+   *
+   * @param <T> a type parameter with a recursive bound
+   */
+  public static <T extends Comparable<T>> void recursiveBound() {}
+
+  /**
+   * Returns a wildcard argument whose bound is a {@link LazyReferenceBound}, as a substitution
+   * creates for a bound type that contains a type variable.
+   *
+   * @param boundType the type of the bound
+   * @param hasUpperBound true if the wildcard has an upper bound ({@code ? extends}), false if it
+   *     has a lower bound ({@code ? super})
+   * @return the wildcard argument
+   */
+  private static WildcardArgument lazyWildcard(ReferenceType boundType, boolean hasUpperBound) {
+    return new WildcardArgument(new WildcardType(new LazyReferenceBound(boundType), hasUpperBound));
+  }
+
+  @Test(timeout = 10000)
+  public void lazyBoundContainmentTest() throws NoSuchMethodException {
+    TypeVariable t =
+        TypeVariable.forType(
+            WildcardContainmentTest.class.getMethod("recursiveBound").getTypeParameters()[0]);
+    ReferenceType listT = GenericClassType.forClass(List.class).instantiate(t);
+    ReferenceType arrayListT = JDKTypes.ARRAY_LIST_TYPE.instantiate(t);
+    WildcardArgument extendsListT = lazyWildcard(listT, true);
+    WildcardArgument extendsArrayListT = lazyWildcard(arrayListT, true);
+    WildcardArgument superListT = lazyWildcard(listT, false);
+    WildcardArgument superArrayListT = lazyWildcard(arrayListT, false);
+    // ArrayList<T> is a subtype of List<T>.
+    assertTrue(extendsListT.contains(extendsArrayListT));
+    assertFalse(extendsArrayListT.contains(extendsListT));
+    assertTrue(superArrayListT.contains(superListT));
+    assertFalse(superListT.contains(superArrayListT));
   }
 
   @Test
