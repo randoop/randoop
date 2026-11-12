@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
@@ -1736,5 +1737,66 @@ public class TypeVariableTest {
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
     assertTrue(capture.canBeInstantiatedBy(ArrayType.ofComponentType(listOfString)));
     assertFalse(capture.canBeInstantiatedBy(ArrayType.ofComponentType(JavaTypes.STRING_TYPE)));
+  }
+
+  @Test
+  public void testLazyBoundWithNestedArrayOfNullType() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    InstantiatedType listOfArray =
+        GenericClassType.forClass(List.class).instantiate(ArrayType.ofComponentType(t));
+    LazyReferenceBound bound = new LazyReferenceBound(listOfArray);
+    // There is no array of the null type, so the bound List<T[]> is left unresolved.
+    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+  }
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableBase implements Comparable<ComparableBase> {}
+
+  /** A subclass of a class that is comparable to itself. */
+  abstract static class ComparableSub extends ComparableBase {}
+
+  @Test
+  public void testLazyUpperBoundOfUnknownVariableTriesSupertypes() {
+    // The unknown T, with T extends Comparable<T>, can be ComparableBase, a supertype of
+    // ComparableSub, though it cannot be ComparableSub.
+    LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(ComparableSub.class), new Substitution()));
+  }
+
+  @Test
+  public void testLazyParameterBoundHasUpperBoundOfItsType() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    ParameterBound lazyBound = t.getUpperTypeBound();
+    assertTrue(lazyBound instanceof LazyParameterBound);
+    ReferenceType comparableOfT = GenericClassType.forClass(Comparable.class).instantiate(t);
+    // Both bounds are Comparable<T>.
+    assertTrue(new EagerReferenceBound(comparableOfT).isUpperBound(lazyBound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(lazyBound, new Substitution()));
+  }
+
+  /**
+   * A class with a field whose type has a wildcard bounded below by the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperOfParameter<T> {
+    /** A wildcard type whose lower bound is the type parameter. */
+    Comparable<? super T> superOfT;
+  }
+
+  @Test
+  public void testVariableIsSubtypeOfCaptureWithItAsLowerBound() throws NoSuchFieldException {
+    TypeVariable t = typeParameter(SuperOfParameter.class, 0);
+    Field field = SuperOfParameter.class.getDeclaredField("superOfT");
+    InstantiatedType captured =
+        ((InstantiatedType) Type.forType(field.getGenericType())).applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // T is the lower bound of the capture of `? super T`.
+    assertTrue(Subtyping.isSubtypeOrEqual(t, capture, new Substitution()));
+    assertFalse(Subtyping.isSubtypeOrEqual(JavaTypes.OBJECT_TYPE, capture, new Substitution()));
   }
 }

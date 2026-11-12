@@ -460,12 +460,17 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code upperBound} is {@code Object}, which is an upper bound of every
-   * reference type, because the type of this bound cannot be determined without a substitution for
-   * its type variables.
+   * <p>Compares {@code upperBound} with the {@link ReferenceBound} that {@link #toReferenceBound()}
+   * converts this bound to. If this bound cannot be converted, returns true only if {@code
+   * upperBound} is {@code Object}, which is an upper bound of every reference type, because the
+   * type of this bound cannot be determined without a substitution for its type variables.
    */
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    ReferenceBound converted = toReferenceBound();
+    if (converted != null) {
+      return converted.hasUpperBound(upperBound, substitution);
+    }
     return upperBound.isObject();
   }
 

@@ -12,8 +12,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves an array bound unresolved if it maps the element type to the null type,
- * because there is no array of the null type.
+ * A substitution leaves a bound unresolved if it maps the element type of an array in the bound,
+ * such as {@code T[]} or {@code List<T[]>}, to the null type, because there is no array of the null
+ * type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -32,7 +33,7 @@ class LazyReferenceBound extends ReferenceBound {
       return this;
     }
     // There is no array of the null type, so leave the bound unresolved.
-    if (mapsArrayElementToNullType(substitution)) {
+    if (hasArrayOfNullType(getBoundType(), substitution)) {
       return this;
     }
 
@@ -44,19 +45,35 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   /**
-   * Returns true if the bound type is an array type whose element type is a type variable that the
-   * given substitution maps to the null type. There is no array of the null type.
+   * Returns true if applying the substitution to the given type would create an array of the null
+   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
+   * type is a type variable that the substitution maps to the null type. An example is {@code
+   * List<T[]>} with {@code T} mapped to the null type.
    *
+   * @param type a type
    * @param substitution a type substitution
-   * @return true if {@code substitution} maps the element type of this array bound to the null type
+   * @return true if substituting into {@code type} would create an array of the null type
    */
-  private boolean mapsArrayElementToNullType(Substitution substitution) {
-    if (!getBoundType().isArray()) {
-      return false;
+  private static boolean hasArrayOfNullType(Type type, Substitution substitution) {
+    if (type.isArray()) {
+      Type elementType = ((ArrayType) type).getElementType();
+      return (elementType.isVariable()
+              && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType)))
+          || hasArrayOfNullType(elementType, substitution);
     }
-    Type elementType = ((ArrayType) getBoundType()).getElementType();
-    return elementType.isVariable()
-        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
+    if (type instanceof InstantiatedType) {
+      InstantiatedType instantiatedType = (InstantiatedType) type;
+      for (TypeArgument argument : instantiatedType.getTypeArguments()) {
+        if (argument instanceof ReferenceArgument
+            && hasArrayOfNullType(
+                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
+          return true;
+        }
+      }
+      ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
+      return enclosingType != null && hasArrayOfNullType(enclosingType, substitution);
+    }
+    return false;
   }
 
   @Override
@@ -73,7 +90,7 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
+    if (hasArrayOfNullType(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
@@ -100,11 +117,12 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The bound type can still contain type variables after the substitution is applied. It is
    * compared as an {@link EagerReferenceBound} would be, except as described in {@link
-   * #getUnknownTypeVariable(Type, Substitution)}.
+   * #getUnknownTypeVariable(Type, Substitution)}. For an upper bound, the unknown type variable can
+   * be {@code argType} or any of its supertypes.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
+    if (hasArrayOfNullType(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
