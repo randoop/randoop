@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
+import java.lang.reflect.AccessibleObject;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +16,9 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -129,6 +132,27 @@ public class TypeInstantiator {
 
     // if operation == null failed to build instantiation
     return operation;
+  }
+
+  /**
+   * Handles an exception that {@link #instantiate(TypedClassOperation)} threw. If {@code
+   * --fail-on-generation-error} is set, throws a {@link RandoopInstantiationError}. Otherwise,
+   * reports the exception on standard output and in the log, and returns normally so that the
+   * caller can skip the operation.
+   *
+   * @param operation an operation that {@link #instantiate(TypedClassOperation)} was instantiating
+   * @param e the exception that {@link #instantiate(TypedClassOperation)} threw
+   * @throws RandoopInstantiationError if {@code --fail-on-generation-error} is set
+   */
+  public static void handleInstantiationException(TypedOperation operation, Throwable e) {
+    if (GenInputsAbstract.fail_on_generation_error) {
+      AccessibleObject reflectionObject = operation.getOperation().getReflectionObject();
+      String opName = reflectionObject != null ? reflectionObject.toString() : operation.toString();
+      throw new RandoopInstantiationError(opName, e);
+    }
+    Log.logPrintf("Instantiation error for operation%n %s%n", operation);
+    Log.logStackTrace(e);
+    System.out.printf("Instantiation error for operation%n %s%n", operation);
   }
 
   /**
