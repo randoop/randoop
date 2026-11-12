@@ -20,7 +20,8 @@ class EagerReferenceBound extends ReferenceBound {
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
+    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
@@ -85,7 +86,19 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      TypeVariable variable = (TypeVariable) thisBoundType;
+      if (argType.isReferenceType() && !argType.isVariable()) {
+        // The type variable can be argType or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  For `K extends Comparable<K>`, K can be a class that
+        // is comparable to itself, even if argType is a subclass of it that is not.  Checking
+        // argType against the upper bound of the type variable instead would leave the type
+        // variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
+        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
+        // type variable are checked with the mappings of `subst`, because they can mention other
+        // type variables that `subst` instantiates.
+        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
+      }
+      return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
