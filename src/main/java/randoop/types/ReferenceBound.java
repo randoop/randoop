@@ -89,17 +89,15 @@ public abstract class ReferenceBound extends ParameterBound {
    * <p>A copy of a type variable equals the original even if its bounds differ. So if the type of
    * this bound is a type variable, as {@code Y} in {@code Y extends List<X>}, then a substitution
    * for {@code X} yields a copy that equals {@code Y} but whose bound is the substituted one. That
-   * copy is kept, rather than the original.
+   * copy is kept, rather than the original. Likewise for a type variable within the type of this
+   * bound, as {@code Y} in {@code List<Y>}. So this compares the bounds of the type variables too,
+   * as {@link TypeVariable#areIdentical(ReferenceType, ReferenceType)} does.
    *
    * @param substitutedType the type of this bound, with a substitution applied
    * @return true if {@code substitutedType} is the same as the type of this bound
    */
-  @SuppressWarnings("ReferenceEquality") // the identical type is unchanged, even a type variable
   boolean isUnchangedBy(ReferenceType substitutedType) {
-    if (substitutedType == boundType) {
-      return true;
-    }
-    return substitutedType.equals(boundType) && !substitutedType.isVariable();
+    return TypeVariable.areIdentical(substitutedType, boundType);
   }
 
   @Override
