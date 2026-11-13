@@ -37,7 +37,8 @@ class LazyReferenceBound extends ReferenceBound {
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
+    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
@@ -80,7 +81,7 @@ class LazyReferenceBound extends ReferenceBound {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -109,8 +110,8 @@ class LazyReferenceBound extends ReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself, or its lower bound.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -122,10 +123,12 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
-   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
-   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
-   * instead would accept any type as within a lower bound, since the lower bound of the type
-   * variable is usually the null type.
+   * {@code argType}, with the other type variables instantiated as by the substitution, because
+   * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
+   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}.
+   * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
+   * within a lower bound, since the lower bound of the type variable is usually the null type.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
