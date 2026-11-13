@@ -3,10 +3,12 @@ package randoop.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -277,7 +279,9 @@ public class InstantiationTest {
       // <K, V extends K> K widen(V)
       TypedClassOperation widenInstance = instantiator.instantiate(widen);
       assertNotNull("instantiation failed for " + widen, widenInstance);
-      assertFalse(widenInstance + " should not be generic", widenInstance.isGeneric());
+      assertFalse(
+          widenInstance + " should not be generic",
+          widenInstance.isGeneric(/* ignoreWildcards= */ true));
       Type k = widenInstance.getOutputType();
       Type v = widenInstance.getInputTypes().get(0);
       assertTrue(v + " should be a subtype of " + k, v.isSubtypeOfOrEqualTo(k));
@@ -285,12 +289,97 @@ public class InstantiationTest {
       // <A, B extends A, C extends B> A chain(B, C)
       TypedClassOperation chainInstance = instantiator.instantiate(chain);
       assertNotNull("instantiation failed for " + chain, chainInstance);
-      assertFalse(chainInstance + " should not be generic", chainInstance.isGeneric());
+      assertFalse(
+          chainInstance + " should not be generic",
+          chainInstance.isGeneric(/* ignoreWildcards= */ true));
       Type a = chainInstance.getOutputType();
       Type b = chainInstance.getInputTypes().get(0);
       Type c = chainInstance.getInputTypes().get(1);
       assertTrue(b + " should be a subtype of " + a, b.isSubtypeOfOrEqualTo(a));
       assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests that a type variable that occurs only in wildcard bounds can be instantiated by a type
+   * argument of an input type, even if that type argument is not itself an input type.
+   */
+  @Test
+  public void testInferredTypeArgumentInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    // The input types include List<Integer>, but not Integer.
+    addTypes(
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()),
+        inputTypes);
+    assertFalse(inputTypes.contains(JavaTypes.INT_TYPE.toBoxedPrimitive()));
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <T> void copy(List<? super T>, List<? extends T>)
+    TypedClassOperation copy =
+        TypedOperation.forMethod(
+            java.util.Collections.class.getMethod("copy", List.class, List.class));
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation copyInstance = instantiator.instantiate(copy);
+      assertNotNull("instantiation failed for " + copy, copyInstance);
+      assertFalse(copyInstance.isGeneric(/* ignoreWildcards= */ true));
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests that a parameter type that would map a type variable to two different types does not
+   * cause an exception.
+   */
+  @Test
+  public void testConflictingInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(
+        GenericClassType.forClass(java.util.Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive()),
+        inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation sameKeyAndValue =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("sameKeyAndValue", java.util.Map.class));
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      // Map<String, Integer> is the only Map in the input types, and it is not a Map<X, X>.
+      assertNull(instantiator.instantiate(sameKeyAndValue));
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable that is instantiated by matching a parameterized
+   * parameter type, and whose bound mentions two type variables that remain to be instantiated: the
+   * instantiation satisfies that bound, whatever the random choices.
+   */
+  @Test
+  public void testMatchedVariableBoundInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    InstantiatedType mapType =
+        JDKTypes.HASH_MAP_TYPE.instantiate(
+            JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    InstantiatedType listOfMaps = JDKTypes.ARRAY_LIST_TYPE.instantiate(mapType);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(listOfMaps, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <K, V, M extends Map<K, V>> K someKey(Collection<M>)
+    TypedClassOperation someKey =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("someKey", Collection.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(someKey);
+      assertNotNull("instantiation failed for " + someKey, instance);
+      // M := HashMap<String, Integer> satisfies M extends Map<K, V> only if K := String.
+      assertEquals(JDKTypes.COLLECTION_TYPE.instantiate(mapType), instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
     }
     Randomness.setSeed(0);
   }
