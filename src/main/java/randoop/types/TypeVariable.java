@@ -427,7 +427,7 @@ public abstract class TypeVariable extends ParameterType {
       TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
       if (unknown != null) {
         // The unknown type variable can be `otherType` itself, one of its supertypes, or its lower
-        // bound; see EagerReferenceBound.isUpperBound(Type, Substitution).
+        // bound; see EagerReferenceBound.isUpperBound(Type, Substitution) and canBeSupertypeOf.
         if (!unknown.canBeSupertypeOf(otherType, substitution)) {
           return false;
         }

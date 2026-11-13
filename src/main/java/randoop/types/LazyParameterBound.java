@@ -532,18 +532,15 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Compares {@code lowerBound} with the {@link ReferenceBound} that {@link #toReferenceBound()}
-   * converts this bound to. If this bound cannot be converted, returns true only if {@code
-   * lowerBound} is the null type, because the type of this bound cannot be determined without a
-   * substitution for its type variables.
+   * <p>Unlike for other bounds, the substitution is also applied to this bound before {@code
+   * lowerBound} is compared with it; a type variable in this bound that the substitution does not
+   * instantiate stands for an unknown type, as in {@link #isUpperBound(Type, Substitution)}.
+   * Returns false if the result is not a {@link ReferenceBound}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    ReferenceBound converted = toReferenceBound();
-    if (converted != null) {
-      return converted.hasLowerBound(lowerBound, substitution);
-    }
-    return lowerBound.isNullType(substitution);
+    ParameterBound converted = substituteWithUnknowns(substitution);
+    return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
   }
 
   @Override
