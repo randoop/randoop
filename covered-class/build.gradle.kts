@@ -21,7 +21,7 @@ configurations {
 }
 
 dependencies {
-  "javassist"("org.javassist:javassist:3.+")
+  "javassist"(libs.javassist)
   implementation(project(path = ":", configuration = "shadow"))
   implementation(project(path = ":"))
 }

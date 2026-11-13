@@ -48,7 +48,7 @@ hamcrest-all = { group = "org.hamcrest", name = "hamcrest-all", version.ref = "h
 
 commons-codec = "commons-codec:commons-codec:1.23.0"
 
-javassist = "org.javassist:javassist:3.+"
+javassist = "org.javassist:javassist:3.33.0-GA"
 
 javax-mail = "com.sun.mail:javax.mail:1.6.2"
 
