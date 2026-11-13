@@ -16,7 +16,6 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
 import randoop.main.ThrowClassNameError;
@@ -61,21 +60,6 @@ public class OmitMethodsTest {
   /** Matches the package of the classes under test, at the beginning of a signature. */
   private static final String P = "^randoop\\.reflection\\.omitinputs\\.p\\.";
 
-  private static ClassOrInterfaceType gType;
-  private static ClassOrInterfaceType pType;
-  private static ClassOrInterfaceType cType;
-  private static ClassOrInterfaceType dType;
-  private static ClassOrInterfaceType eType;
-
-  @BeforeClass
-  public static void setup() {
-    gType = ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.G.class);
-    pType = ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.P.class);
-    cType = ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.C.class);
-    dType = ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.q.D.class);
-    eType = ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.E.class);
-  }
-
   @Test
   public void testNoOmission() throws Exception {
     Collection<TypedOperation> operations = createModel(CLASSNAMES, null).getOperations();
@@ -101,35 +85,26 @@ public class OmitMethodsTest {
   }
 
   @Test
-  public void testM1NameMatch() throws RandoopSpecificationError {
-    Set<TypedOperation> operations;
-    Pattern omitpattern = Pattern.compile("m1\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(pType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(cType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(dType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(eType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
+  public void testM1NameMatch() throws Exception {
+    Collection<TypedOperation> operations = createModel(CLASSNAMES, "m1\\(\\)").getOperations();
+    assertDoesNotHaveMethod("M1Interface.m1", operations);
+    assertDoesNotHaveMethod("E.m1", operations);
+    assertDoesNotHaveMethod("G.m1", operations);
+    assertHasMethod("E.m2", operations);
+    assertHasMethod("G.m2", operations);
+    assertHasMethod("P.m2", operations);
   }
 
   @Test
-  public void testGM2Match() throws RandoopSpecificationError {
-    Set<TypedOperation> operations;
-    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m2\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m2"));
-    operations = getOperations(pType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m2"));
-    operations = getOperations(cType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m2"));
-    operations = getOperations(dType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m2"));
-    operations = getOperations(eType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m2"));
+  public void testGM2Match() throws Exception {
+    Collection<TypedOperation> operations =
+        createModel(CLASSNAMES, P + "G\\.m2\\(\\)").getOperations();
+    assertDoesNotHaveMethod("G.m2", operations);
+    // P.m2 overrides G.m2, so it is not omitted.
+    assertHasMethod("P.m2", operations);
+    assertHasMethod("E.m2", operations);
+    assertHasMethod("M1Interface.m1", operations);
+    assertHasMethod("G.m1", operations);
   }
 
   @Test
@@ -140,6 +115,16 @@ public class OmitMethodsTest {
     // P.m2 overrides G.m2.
     assertDoesNotHaveMethod("G.m2", operations);
     assertHasMethod("E.m2", operations);
+    assertHasMethod("G.m1", operations);
+  }
+
+  @Test
+  public void testM1InterfaceMatch() throws Exception {
+    Collection<TypedOperation> operations =
+        createModel(CLASSNAMES, P + "M1Interface\\.m1\\(\\)").getOperations();
+    assertDoesNotHaveMethod("M1Interface.m1", operations);
+    // E.m1 and G.m1 override M1Interface.m1, so they are not omitted.
+    assertHasMethod("E.m1", operations);
     assertHasMethod("G.m1", operations);
   }
 
@@ -159,89 +144,11 @@ public class OmitMethodsTest {
 
   @Test
   public void testInheritedMethodMatch() throws Exception {
-    // C inherits m1 from G.
-    OperationModel model = createModel(CLASSNAMES, P + "C\\.m1\\(\\)");
-    Collection<TypedOperation> operations = model.getOperations();
-    // A call to G.m1 or M1Interface.m1 might dispatch to G.m1 on a C.
-    assertDoesNotHaveMethod("G.m1", operations);
-    assertDoesNotHaveMethod("M1Interface.m1", operations);
-    assertHasMethod("E.m1", operations);
-    assertHasMethod("G.m2", operations);
-
-    OmitMethodsPredicate predicate = model.getOmitMethodsPredicate();
-    TypedClassOperation gm1 = TypedOperation.forMethod(G.class.getMethod("m1"));
-    assertTrue(predicate.shouldOmit(gm1, C.class));
-    assertFalse(predicate.shouldOmit(gm1, G.class));
-    assertFalse(predicate.shouldOmit(gm1, D.class));
-  }
-
-  @Test
-  public void testPM1Match() throws RandoopSpecificationError {
-
-    Set<TypedOperation> operations;
-    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.P\\.m1\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(pType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(cType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(dType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(eType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-  }
-
-  @Test
-  public void testCM1Match() throws RandoopSpecificationError {
-
-    Set<TypedOperation> operations;
-    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.C\\.m1\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(pType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(cType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(dType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(eType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-  }
-
-  @Test
-  public void testM1InterfaceMatch() throws RandoopSpecificationError {
-
-    Set<TypedOperation> operations;
-    Pattern omitpattern =
-        Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.M1Interface\\.m1\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(pType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(cType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(dType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(eType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-  }
-
-  @Test
-  public void testDM1Match() throws RandoopSpecificationError {
-
-    Set<TypedOperation> operations;
-    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.q\\.D\\.m1\\(\\)");
-    operations = getOperations(gType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(pType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(cType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
-    operations = getOperations(dType, omitpattern);
-    assertFalse(hasMethodNamed(operations, "m1"));
-    operations = getOperations(eType, omitpattern);
-    assertTrue(hasMethodNamed(operations, "m1"));
+    // P and C inherit m1 from G, but do not declare it.
+    Collection<TypedOperation> operations =
+        createModel(CLASSNAMES, P + "[PC]\\.m1\\(\\)").getOperations();
+    assertHasMethod("M1Interface.m1", operations);
+    assertHasMethod("G.m1", operations);
   }
 
   @Test
@@ -288,22 +195,23 @@ public class OmitMethodsTest {
 
   @Test
   public void testOmittedOperations() throws RandoopSpecificationError {
-    Pattern omitpattern = Pattern.compile("^randoop\\.reflection\\.omitinputs\\.p\\.G\\.m1\\(\\)");
+    Pattern omitpattern = Pattern.compile(P + "G\\.m1\\(\\)");
     // m1 is declared in G.
-    assertOmittedM1(gType, omitpattern);
+    assertOmittedGM1(
+        ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.G.class), omitpattern);
     // m1 is inherited from G.
-    assertOmittedM1(cType, omitpattern);
+    assertOmittedGM1(
+        ClassOrInterfaceType.forClass(randoop.reflection.omitinputs.p.C.class), omitpattern);
   }
 
   /**
-   * Asserts that extracting the operations of {@code type} omits exactly {@code m1}, and that the
-   * omitted operation has {@code type} as its declaring type.
+   * Asserts that extracting the operations of {@code type} omits exactly {@code G.m1}.
    *
    * @param type the type whose operations to extract
-   * @param omitpattern the omit pattern, which should match {@code m1} and nothing else
+   * @param omitpattern the omit pattern, which should match {@code G.m1} and nothing else
    * @throws RandoopSpecificationError if a specification is malformed
    */
-  private void assertOmittedM1(ClassOrInterfaceType type, Pattern omitpattern)
+  private void assertOmittedGM1(ClassOrInterfaceType type, Pattern omitpattern)
       throws RandoopSpecificationError {
     AccessibilityPredicate accessibility =
         new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
@@ -315,11 +223,11 @@ public class OmitMethodsTest {
             new OmitMethodsPredicate(Collections.singletonList(omitpattern)),
             accessibility,
             null);
-    assertFalse(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m1"));
-    assertTrue(hasMethodNamed(new TreeSet<>(extractor.getOperations()), "m2"));
+    assertDoesNotHaveMethod("m1", extractor.getOperations());
+    assertHasMethod("m2", extractor.getOperations());
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
-    assertTrue(hasMethodNamed(omitted, "m1"));
+    assertHasMethod("G.m1", omitted);
   }
 
   /**
@@ -352,7 +260,7 @@ public class OmitMethodsTest {
    * Returns true if {@code operations} has a method with the given name.
    *
    * @param operations a collection of operations
-   * @param name a method name, optionally qualified by its simple class name
+   * @param name a method name, qualified by its simple class name
    * @return true if {@code operations} has a method with the given name
    */
   private static boolean hasMethodNamed(Collection<TypedOperation> operations, String name) {
@@ -362,19 +270,6 @@ public class OmitMethodsTest {
       }
     }
     return false;
-  }
-
-  private Set<TypedOperation> getOperations(ClassOrInterfaceType type, Pattern omitpattern)
-      throws RandoopSpecificationError {
-    List<Pattern> omitList = Collections.singletonList(omitpattern);
-    OmitMethodsPredicate omitMethodsPredicate = new OmitMethodsPredicate(omitList);
-    AccessibilityPredicate accessibility =
-        new AccessibilityPredicate.PackageAccessibilityPredicate("randoop.reflection");
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Collection<TypedOperation> oneClassOperations =
-        OperationExtractor.operations(
-            type, reflectionPredicate, omitMethodsPredicate, accessibility);
-    return new TreeSet<>(oneClassOperations);
   }
 
   /**

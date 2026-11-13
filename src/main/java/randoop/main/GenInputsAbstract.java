@@ -165,13 +165,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
    * replacecall} agent</a>.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose that the <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression. Nor will Randoop directly call any
-   * method that such a method overrides (because such a call might dispatch to the omitted method
-   * at run time). Randoop considers only the omitted methods of the classes under test, so a call
-   * can still dispatch to an omitted method of a class that is not under test.
+   * signature</a> of method M matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
+   * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
+   * signature names the class that declares M, not a class that inherits M. Randoop considers only
+   * the omitted methods of the classes under test, so a call can still dispatch to an omitted method
+   * of a class that is not under test.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
