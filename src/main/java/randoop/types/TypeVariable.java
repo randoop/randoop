@@ -191,16 +191,7 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isReferenceType()) {
       // A type variable is a subtype of its upper bound.  The test below does not always recognize
       // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it
-      // substitutes otherType for this variable within the bound.  For a type parameter, such a
-      // bound is a LazyParameterBound, so convert it to a ReferenceBound to compare it.
-      // upperBoundIsSubtypeOfOrEqualTo compares a bound that is not lazy.
-      ParameterBound upperBound = getUpperTypeBound();
-      if (upperBound instanceof LazyParameterBound) {
-        ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
-        if (converted != null && converted.getBoundType().equals(otherType)) {
-          return true;
-        }
-      }
+      // substitutes otherType for this variable within the bound.
       if (upperBoundIsSubtypeOfOrEqualTo((ReferenceType) otherType)) {
         return true;
       }
@@ -280,10 +271,22 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean upperBoundIsSubtypeOfOrEqualTo(ReferenceType otherType) {
     ParameterBound upperBound = getUpperTypeBound();
-    List<ParameterBound> members =
+    List<ParameterBound> asWritten =
         upperBound instanceof IntersectionTypeBound
             ? ((IntersectionTypeBound) upperBound).getBounds()
             : Collections.singletonList(upperBound);
+    // For a type parameter, a bound that refers to a type variable is a LazyParameterBound, so
+    // convert it to a ReferenceBound to compare it.
+    List<ParameterBound> members = new ArrayList<>(asWritten.size());
+    for (ParameterBound member : asWritten) {
+      if (member instanceof LazyParameterBound) {
+        ReferenceBound converted = ((LazyParameterBound) member).toReferenceBound();
+        if (converted != null) {
+          member = converted;
+        }
+      }
+      members.add(member);
+    }
     for (ParameterBound member : members) {
       if (member instanceof ReferenceBound
           && ((ReferenceBound) member).getBoundType().equals(otherType)) {
