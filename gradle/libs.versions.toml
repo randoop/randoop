@@ -1,6 +1,6 @@
 [versions]
 
-junit-junit = "4.+"
+junit-junit = "4.13.2"
 
 hamcrest = "1.3"
 
