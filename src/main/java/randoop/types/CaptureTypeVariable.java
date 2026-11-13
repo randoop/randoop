@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -21,8 +21,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class CaptureTypeVariable extends TypeVariable {
 
-  /** The ID counter for capture conversion variables. */
-  private static int count = 0;
+  /**
+   * The ID counter for capture conversion variables. It is atomic so that concurrent capture
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
+   */
+  private static final AtomicInteger count = new AtomicInteger();
 
   /** The integer ID of this capture variable. */
   private final int varID;
@@ -54,10 +58,10 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
-  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
-    this.varID = count++;
+    this.varID = count.getAndIncrement();
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
@@ -91,6 +95,15 @@ class CaptureTypeVariable extends TypeVariable {
     return wildcard;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
+   * and wildcards differ. Substitution creates a copy of a capture variable whose bounds and
+   * wildcard differ, and the copy stands for the same capture variable.
+   *
+   * @return true if the capture variables are the same capture variable, false otherwise
+   */
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -100,14 +113,12 @@ class CaptureTypeVariable extends TypeVariable {
       return false;
     }
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
-    return this.varID == variable.varID
-        && this.wildcard.equals(variable.wildcard)
-        && super.equals(variable);
+    return this.varID == variable.varID;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, super.hashCode());
+    return Integer.hashCode(varID);
   }
 
   @Override
@@ -207,6 +218,12 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
+      // rather than the substitution's copy.  If the substitution maps this capture variable to a
+      // copy of it with other bounds, that copy is the result.
+      type = null;
+    }
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;

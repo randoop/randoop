@@ -6,6 +6,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -43,6 +45,19 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) substituted).getBoundType());
   }
 
+  @Test
+  public void testObjectIsUpperBoundOfLazyBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters().get(1);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    // Object is an upper bound of every reference type, including the type of a lazy bound.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isUpperBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(bound, new Substitution()));
+  }
+
   /**
    * A type parameter whose self-referential bound contains an array of the type parameter.
    *
@@ -57,6 +72,49 @@ public class LazyParameterBoundTest {
     assertTrue(bound instanceof LazyParameterBound);
     // There is no array of the null type, so the substitution does not instantiate the bound.
     assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+  }
+
+  @Test
+  public void testCompareNullTypeForArrayComponent() {
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    // There is no array of the null type, so no type satisfies the substituted bound.
+    Substitution substitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+    assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, substitution));
+  }
+
+  @Test
+  public void testNullTypeForArrayComponentIsNotWithinBound() {
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    // The comparison rejects the null type, rather than failing an assertion.
+    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, new Substitution(t, JavaTypes.NULL_TYPE)));
+  }
+
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard whose upper bound is a generic array type that contains no type variable. */
+    List<? extends List<String>[]> arrayOfListWildcard;
+  }
+
+  @Test
+  public void testGenericArrayBoundWithoutTypeVariable() throws NoSuchFieldException {
+    java.lang.reflect.ParameterizedType fieldType =
+        (java.lang.reflect.ParameterizedType)
+            FieldTypes.class.getDeclaredField("arrayOfListWildcard").getGenericType();
+    java.lang.reflect.WildcardType wildcard =
+        (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
+    ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
+    // The bound contains no type variable, so it is eager, and a substitution does not change it.
+    assertTrue(bound instanceof EagerReferenceBound);
+    ArrayType arrayOfList =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    assertEquals(new EagerReferenceBound(arrayOfList), bound.substitute(new Substitution()));
+    assertTrue(bound.isUpperBound(arrayOfList, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
   @Test
@@ -117,5 +175,24 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(ConcreteArrayArgumentBound.class).getTypeParameters().get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
+  }
+
+  /**
+   * A type parameter whose bound contains a wildcard bounded by a concrete array type.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardConcreteArrayBound<T extends Map<T[], ? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardConcreteArrayBound}. */
+  @SuppressWarnings("serial")
+  static class WildcardConcreteArrayMap extends HashMap<WildcardConcreteArrayMap[], String[]> {}
+
+  @Test
+  public void testWildcardConcreteArrayBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardConcreteArrayBound.class).getTypeParameters().get(0);
+    assertTrue(
+        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(WildcardConcreteArrayMap.class)));
   }
 }
