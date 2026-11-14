@@ -300,7 +300,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
 
       // A class with a covariant override also has a bridge method with the same parameter types.
       // Prefer the override, whose return type is the one that call sites use.
-      @Nullable Method bridge = null;
+      Method bridge = null;
       for (Method m : currentClass.getMethods()) {
         if (m.getName().equals(this.name) && Arrays.equals(m.getArgumentTypes(), this.paramTypes)) {
           if ((m.getAccessFlags() & Const.ACC_BRIDGE) != 0) {

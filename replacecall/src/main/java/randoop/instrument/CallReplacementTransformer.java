@@ -506,7 +506,7 @@ public class CallReplacementTransformer extends InstructionListUtils
         "%s.%s: Replacing method %s with %s%n", class_name, method_name, origSig, newSig);
 
     // The receiver of the original call, or null if the call has none.
-    @Nullable Type receiverType;
+    Type receiverType;
     switch (origInvocation.getOpcode()) {
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
