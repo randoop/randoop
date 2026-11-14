@@ -69,8 +69,12 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    * Returns the byte stream as a byte array.
    *
    * @return the byte array for the byte stream
+   * @throws IllegalStateException if {@link #openOutputStream()} has not been called
    */
   /*package*/ byte[] getByteCode() {
+    if (byteStream == null) {
+      throw new IllegalStateException("getByteCode() called before openOutputStream()");
+    }
     return byteStream.toByteArray();
   }
 }

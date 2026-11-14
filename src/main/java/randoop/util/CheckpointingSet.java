@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import org.checkerframework.checker.mustcall.qual.MustCallUnknown;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.Signed;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
@@ -76,7 +77,7 @@ public class CheckpointingSet<E extends @Signed Object> extends AbstractSet<E> {
     private final Iterator<E> underlying;
 
     /** The element most recently returned by {@link #next()}, or null if none. */
-    private E current;
+    private @Nullable E current;
 
     /**
      * Creates a {@link CheckpointingSetIterator}.

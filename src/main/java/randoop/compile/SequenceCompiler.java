@@ -102,7 +102,7 @@ import randoop.util.Log;
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String javaSource) {
+      final @Nullable String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     boolean result = compile(classname, javaSource, diagnostics);
 
