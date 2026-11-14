@@ -386,7 +386,9 @@ public class GenTests extends GenInputsAbstract {
             }
           }
           omit_methods.add(
-              matchedSignatures.isEmpty() ? pattern : excludeSignatures(pattern, matchedSignatures));
+              matchedSignatures.isEmpty()
+                  ? pattern
+                  : excludeSignatures(pattern, matchedSignatures));
         }
       } else {
         omit_methods.addAll(defaultOmitMethods);
