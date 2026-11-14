@@ -22,9 +22,9 @@ private val repositoryEnvironmentVariables =
  * configuration file, which all of its worktrees share. The task sets the variables only if none of
  * them is set, so it never overrides a configuration that a developer chose. If it cannot set every
  * variable, it unsets the ones that it set, so that a later run sets them all; if it cannot unset
- * one, it warns, telling the developer to unset it. It does nothing if
- * the directory is not the top level of a working tree (so it never modifies an enclosing
- * repository). It warns, but does not fail, if the [precondition] command or a `git` command fails.
+ * one, it warns, telling the developer to unset it. It does nothing if the directory is not the top
+ * level of a working tree (so it never modifies an enclosing repository). It warns, but does not
+ * fail, if the [precondition] command or a `git` command fails.
  */
 abstract class GitConfigTask @Inject constructor(private val execOperations: ExecOperations) :
   DefaultTask() {
@@ -72,7 +72,7 @@ abstract class GitConfigTask @Inject constructor(private val execOperations: Exe
               logger.warn(
                 "Could not unset git configuration variable $setName; unset it by running" +
                   " `git config --unset $setName` so that a later build configures all of" +
-                  " ${settings.get().keys}"
+                  " ${settings.get().keys}",
               )
             }
           }
