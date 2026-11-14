@@ -44,6 +44,13 @@ import randoop.types.ClassOrInterfaceType;
  *
  * <p>Class {@code p.ComparableInput} implements {@code Comparable<ComparableInput>} and declares
  * {@code compareTo(ComparableInput)} and {@code compareTo(Integer)}.
+ *
+ * <p>Class {@code p.NChild} extends {@code p.NBase} and implements {@code p.NInterface}. {@code
+ * NBase} declares {@code n()} but does not implement {@code NInterface}, which declares {@code
+ * n()}.
+ *
+ * <p>Public class {@code p.SChild} extends non-public class {@code p.SBase}, which declares the
+ * static method {@code s()}.
  */
 public class OmitMethodsTest {
 
@@ -152,6 +159,33 @@ public class OmitMethodsTest {
   }
 
   @Test
+  public void testMethodImplementedViaInheritedMethod() throws Exception {
+    // NChild implements NInterface.n via NBase.n, so a call to NInterface.n might dispatch to
+    // NBase.n.
+    Collection<TypedOperation> operations =
+        createModel(
+                Arrays.asList(
+                    "randoop.reflection.omitinputs.p.NInterface",
+                    "randoop.reflection.omitinputs.p.NBase",
+                    "randoop.reflection.omitinputs.p.NChild"),
+                P + "NBase\\.n\\(\\)")
+            .getOperations();
+    assertDoesNotHaveMethod("NBase.n", operations);
+    assertDoesNotHaveMethod("NInterface.n", operations);
+  }
+
+  @Test
+  public void testStaticMethodOfNonPublicClass() throws Exception {
+    // SChild inherits s from SBase, which is not public.
+    Collection<TypedOperation> operations =
+        createModel(
+                Collections.singletonList("randoop.reflection.omitinputs.p.SChild"),
+                P + "SBase\\.s\\(\\)")
+            .getOperations();
+    assertDoesNotHaveMethod("s", operations);
+  }
+
+  @Test
   public void testOverriddenMethodNotUnderTest() throws Exception {
     // M1Interface is not under test, but the omit predicate omits M1Interface.m1 anyway, because
     // G.m1 overrides it.
@@ -205,9 +239,10 @@ public class OmitMethodsTest {
   }
 
   /**
-   * Asserts that extracting the operations of {@code type} omits exactly {@code G.m1}.
+   * Asserts that extracting the operations of {@code type} omits exactly {@code G.m1}, and that the
+   * omitted operation has {@code type} as its declaring type.
    *
-   * @param type the type whose operations to extract
+   * @param type a type whose operations to extract
    * @param omitpattern the omit pattern, which should match {@code G.m1} and nothing else
    * @throws RandoopSpecificationError if a specification is malformed
    */
@@ -227,7 +262,7 @@ public class OmitMethodsTest {
     assertHasMethod("m2", extractor.getOperations());
     Set<TypedOperation> omitted = new TreeSet<>(extractor.getOmittedOperations());
     assertEquals(1, omitted.size());
-    assertHasMethod("G.m1", omitted);
+    assertHasMethod(type.getRuntimeClass().getSimpleName() + ".m1", omitted);
   }
 
   /**
