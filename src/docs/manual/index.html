@@ -1582,8 +1582,10 @@ double quote, enclose the filename in quotes:  in double quotes if the
 filename contains a single quote, and otherwise in single quotes.
 If the filename contains both a single quote and a double quote, quote
 consecutive parts of it separately, each part in the kind of quote that it
-does not contain.  For example, the filename <code>don't "replace".txt</code>
-can be written as <code>"don't "'"replace".txt'</code>.
+does not contain.  For example, the filename <code>don't"replace".txt</code>
+can be written as <code>"don't"'"replace".txt'</code>.
+The agent cannot use a filename that contains whitespace, a single quote, and
+a double quote.
 These quotes must reach the agent, so they are in addition to the quoting
 that the shell requires.
 For example (the

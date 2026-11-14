@@ -90,8 +90,9 @@ public class ReplaceCallAgentTest {
     assumeFalse(System.getProperty("os.name").startsWith("Windows"));
     // The only special character in the first filename is a double quote.
     Path replacementFile = Paths.get("my\"replacements\".txt");
-    // The second filename contains both kinds of quote.
-    Path dontTransformFile = Paths.get("don't \"transform\".txt");
+    // The second filename contains both kinds of quote.  It contains no whitespace, because
+    // Options.parse() rejects a value that contains whitespace and both kinds of quote.
+    Path dontTransformFile = Paths.get("don't\"transform\".txt");
     ReplaceCallAgent.replacement_file = replacementFile;
     ReplaceCallAgent.dont_transform = dontTransformFile;
     String args = ReplaceCallAgent.createAgentArgs();
