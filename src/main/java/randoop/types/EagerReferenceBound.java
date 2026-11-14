@@ -85,7 +85,16 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      TypeVariable boundVariable = (TypeVariable) thisBoundType;
+      // The bound of `boundVariable` can mention `boundVariable` itself, as in `<T extends
+      // Comparable<? super T>>`.  Check that bound with `argType` as the instantiation of
+      // `boundVariable`, because `argType` is a subtype of `boundVariable` if `argType`
+      // instantiates it.
+      Substitution boundSubst = subst;
+      if (subst.get(boundVariable) == null && argType instanceof ReferenceType) {
+        boundSubst = subst.extend(new Substitution(boundVariable, (ReferenceType) argType));
+      }
+      return boundVariable.getUpperTypeBound().isUpperBound(argType, boundSubst);
     }
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
