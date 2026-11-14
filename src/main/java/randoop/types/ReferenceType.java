@@ -97,7 +97,7 @@ public abstract class ReferenceType extends Type {
    * parameters include {@link ArrayType} (such as {@code E[]}), and subclasses of {@link
    * ParameterizedType}.
    *
-   * @return the type parameters for this type
+   * @return the type parameters for this type; the caller must not modify the result
    */
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>(0);
