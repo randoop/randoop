@@ -175,6 +175,9 @@ public final class RegressionCaptureGenerator extends TestCheckGenerator {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) runtimeValue), var);
             checks.add(oc);
           } else if (runtimeValue.getClass().isArray()
+              // The assertion passes the variable to `assertArrayEquals`, which does not compile
+              // if the variable's declared type is not an array type, such as `Serializable`.
+              && var.getType().isArray()
               && ObserverEqArray.isLiteralType(runtimeValue, isAccessible)) {
 
             if (!statement.isConstructorCall()) {

@@ -303,7 +303,7 @@ public class RandoopSystemTest {
         new CoverageChecker(
             options,
             43,
-            "examples.Buggy.BuggyEqualsTransitive.getTwo() exclude25",
+            "examples.Buggy.BuggyEqualsTransitive.getTwo() exclude",
             "examples.Buggy.throwStackOverflowError() ignore",
             "examples.Buggy.toString() ignore",
 
@@ -1382,8 +1382,7 @@ public class RandoopSystemTest {
             "java7.util7.ArrayList.addAll(java7.util7.Collection) ignore",
             "java7.util7.ArrayList.elementData(int) ignore",
             "java7.util7.ArrayList.ensureCapacity(int) exclude",
-            "java7.util7.ArrayList.fastRemove(int) exclude17+",
-            "java7.util7.ArrayList.fastRemove(int) include25",
+            "java7.util7.ArrayList.fastRemove(int) exclude11-",
             "java7.util7.ArrayList.hugeCapacity(int) exclude",
             "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude",
             "java7.util7.ArrayList.removeRange(int, int) exclude",
