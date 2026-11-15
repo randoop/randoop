@@ -89,16 +89,37 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      // A type variable is a subtype of its upper bound.  The test below does not always recognize
-      // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it
-      // substitutes otherType for this variable within the bound.
       ParameterBound upperBound = getUpperTypeBound();
-      if (upperBound instanceof ReferenceBound
-          && ((ReferenceBound) upperBound).getBoundType().equals(otherType)) {
-        return true;
+      if (upperBound instanceof LazyParameterBound) {
+        Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
+        return upperBound.isLowerBound(otherType, substitution);
       }
-      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
-      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
+      return isSubtypeOfOrEqualTo(upperBound, otherType);
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if the type of the given bound is a subtype of the given type. An intersection
+   * bound is a subtype of the type if any of its members is.
+   *
+   * <p>This method compares the bound type itself, without substituting for the type variables in
+   * it. So, a variable {@code C} whose bound is {@code Enum<C>} is a subtype of {@code Enum<?>}.
+   *
+   * @param bound an upper bound of a type variable, which is not a {@link LazyParameterBound}
+   * @param otherType the possible supertype
+   * @return true if the type of {@code bound} is a subtype of {@code otherType}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ParameterBound bound, Type otherType) {
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType().isSubtypeOfOrEqualTo(otherType);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isSubtypeOfOrEqualTo(member, otherType)) {
+          return true;
+        }
+      }
     }
     return false;
   }
