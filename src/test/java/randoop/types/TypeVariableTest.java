@@ -744,6 +744,49 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSubtypeTestOfTypeParameterAgainstItsBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    // The bound of T is Comparable<T>, which refers to T.  T is a subtype of its bound.
+    ReferenceType bound = GenericClassType.forClass(Comparable.class).instantiate(t);
+    assertTrue(t + " should be a subtype of its bound " + bound, t.isSubtypeOfOrEqualTo(bound));
+  }
+
+  /**
+   * A class whose last type parameter is bounded by a type parameter bounded by another.
+   *
+   * @param <X> the first type parameter
+   * @param <Y> the type parameter bounded by {@code X}
+   * @param <Z> the type parameter bounded by {@code Y}
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class ChainedBound<X, Y extends X, Z extends Y> {
+    /** A type whose last argument is a wildcard, whose capture is bounded by {@code Y}. */
+    ChainedBound<X, Y, ?> lastWildcard;
+  }
+
+  @Test
+  public void testSubstitutionChangesBoundOfVariableInCaptureBound() throws NoSuchFieldException {
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(ChainedBound.class.getDeclaredField("lastWildcard").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture = typeArgument(capturedType, 2);
+    TypeVariable x = typeParameter(ChainedBound.class, 0);
+    // Substituting for X changes the bound of Y, which is the bound of the capture variable.  The
+    // result is a copy of the capture variable whose bound is that copy of Y.
+    ReferenceType substituted = capture.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof TypeVariable);
+    TypeVariable copy = (TypeVariable) substituted;
+    assertFalse(
+        copy + " should differ from " + capture + " in its bounds", copy.isIdenticalTo(capture));
+    // Through the bound of Y, the copy is bounded by String.
+    ReferenceType integerType = ClassOrInterfaceType.forClass(Integer.class);
+    assertTrue(capture.canBeInstantiatedBy(integerType));
+    assertFalse(copy.canBeInstantiatedBy(integerType));
+  }
+
+  @Test
   public void testTypeParametersAfterSubstituteIntoSiblingOfCaptureVariable()
       throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("nestedSiblingLastField");

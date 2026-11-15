@@ -12,8 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves an array bound unresolved if it maps the element type to the null type,
- * because there is no array of the null type.
+ * A substitution leaves a bound unresolved if it maps the element type of an array type in the
+ * bound to the null type, because there is no array of the null type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -45,19 +45,49 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   /**
-   * Returns true if the bound type is an array type whose element type is a type variable that the
-   * given substitution maps to the null type. There is no array of the null type.
+   * Returns true if the bound type contains an array type whose element type is a type variable
+   * that the given substitution maps to the null type. There is no array of the null type. The
+   * array type can be the bound type itself or occur in a type argument of it, as {@code U[]} does
+   * in {@code Map<K, U[]>}. An array type within the bound of a wildcard is not examined, because
+   * substitution into a wildcard bound leaves such a bound unresolved.
    *
    * @param substitution a type substitution
-   * @return true if {@code substitution} maps the element type of this array bound to the null type
+   * @return true if {@code substitution} maps the element type of an array type in this bound to
+   *     the null type
    */
   private boolean mapsArrayElementToNullType(Substitution substitution) {
-    if (!getBoundType().isArray()) {
-      return false;
+    return mapsArrayElementToNullType(getBoundType(), substitution);
+  }
+
+  /**
+   * Returns true if the given type contains an array type whose element type is a type variable
+   * that the given substitution maps to the null type. Does not examine the bounds of wildcards or
+   * of type variables.
+   *
+   * @param type a reference type
+   * @param substitution a type substitution
+   * @return true if {@code substitution} maps the element type of an array type in {@code type} to
+   *     the null type
+   */
+  private static boolean mapsArrayElementToNullType(ReferenceType type, Substitution substitution) {
+    if (type.isArray()) {
+      Type elementType = ((ArrayType) type).getElementType();
+      if (elementType.isVariable()) {
+        return JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
+      }
+      return elementType instanceof ReferenceType
+          && mapsArrayElementToNullType((ReferenceType) elementType, substitution);
     }
-    Type elementType = ((ArrayType) getBoundType()).getElementType();
-    return elementType.isVariable()
-        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
+    if (type instanceof InstantiatedType) {
+      for (TypeArgument argument : ((InstantiatedType) type).getTypeArguments()) {
+        if (argument instanceof ReferenceArgument
+            && mapsArrayElementToNullType(
+                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Override
