@@ -43,6 +43,16 @@ public class ReferenceBoundTest {
   }
 
   /**
+   * Returns {@code List<? super U>}, where the bound of {@code U} is {@code Number & Runnable}.
+   *
+   * @param <U> a type parameter whose bound is {@code Number & Runnable}
+   * @return null
+   */
+  public static <U extends Number & Runnable> List<? super U> listSuperIntersectionVariable() {
+    return null;
+  }
+
+  /**
    * Returns the given method of this class.
    *
    * @param methodName the name of a method of this class that has no parameters
@@ -161,6 +171,26 @@ public class ReferenceBoundTest {
                 NonParameterizedType.forClass(Number.class), captureVariable)
             != null);
     // No supertype of U, where U extends Integer, is String.
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                JavaTypes.STRING_TYPE, captureVariable)
+            == null);
+  }
+
+  @Test
+  public void testCaptureOfSuperIntersectionVariable() throws NoSuchMethodException {
+    // The capture variable of List<? super U> has lower bound U, where U extends Number & Runnable.
+    TypeVariable captureVariable = captureVariable("listSuperIntersectionVariable");
+    // U is a subtype of each member of its bound.
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                NonParameterizedType.forClass(Number.class), captureVariable)
+            != null);
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                NonParameterizedType.forClass(Runnable.class), captureVariable)
+            != null);
+    // No supertype of U is String.
     assertTrue(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
                 JavaTypes.STRING_TYPE, captureVariable)
