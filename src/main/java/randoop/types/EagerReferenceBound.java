@@ -85,6 +85,10 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
+    if (argType.equals(JavaTypes.NULL_TYPE) && thisBoundType.isReferenceType()) {
+      // The null type is a subtype of every reference type.
+      return true;
+    }
     if (thisBoundType.isVariable()) {
       TypeVariable variable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {

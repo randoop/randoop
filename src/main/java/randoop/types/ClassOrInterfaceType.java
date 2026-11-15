@@ -324,8 +324,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
-      substitution = enclosingType.getInstantiatingSubstitution(goalType);
+    // For a member class goal such as Outer<T>.Inner, match the enclosing types, so that this
+    // binds the type arguments of the goal's enclosing type, as T in Outer<T>.
+    ClassOrInterfaceType goalEnclosingType =
+        goalType instanceof ClassOrInterfaceType
+            ? ((ClassOrInterfaceType) goalType).enclosingType
+            : null;
+    if (this.isMemberClass() && goalEnclosingType != null && goalEnclosingType.isGeneric()) {
+      substitution = enclosingType.getInstantiatingSubstitution(goalEnclosingType);
       if (substitution == null) {
         return null;
       }
