@@ -29,10 +29,10 @@ public class TestCoverageInfo {
    */
   private static class BranchCov {
     /** The number of branches covered in the method. */
-    final int covered;
+    /*package*/ final int covered;
 
     /** The total number of branches in the method. */
-    final int inMethod;
+    /*package*/ final int inMethod;
 
     /**
      * Creates a BranchCov.
@@ -40,7 +40,7 @@ public class TestCoverageInfo {
      * @param covered the number of branches covered
      * @param inMethod the total number of branches in the method
      */
-    BranchCov(int covered, int inMethod) {
+    /*package*/ BranchCov(int covered, int inMethod) {
       this.covered = covered;
       this.inMethod = inMethod;
     }

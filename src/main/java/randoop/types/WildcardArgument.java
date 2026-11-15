@@ -15,7 +15,7 @@ public class WildcardArgument extends TypeArgument {
    *
    * @param argumentType the wildcard type
    */
-  WildcardArgument(WildcardType argumentType) {
+  /*package*/ WildcardArgument(WildcardType argumentType) {
     super();
     this.argumentType = argumentType;
   }
@@ -122,7 +122,7 @@ public class WildcardArgument extends TypeArgument {
    *
    * @return true if this wildcard argument has an upper bound, false if it has a lower bound
    */
-  boolean hasUpperBound() {
+  /*package*/ boolean hasUpperBound() {
     return argumentType.hasUpperBound();
   }
 
@@ -141,6 +141,7 @@ public class WildcardArgument extends TypeArgument {
     return argumentType.isGeneric(ignoreWildcards);
   }
 
+  /*package*/
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (this.equals(otherArgument)) {
@@ -194,7 +195,7 @@ public class WildcardArgument extends TypeArgument {
    *
    * @return the wildcard type of this argument
    */
-  WildcardType getWildcardType() {
+  /*package*/ WildcardType getWildcardType() {
     return argumentType;
   }
 }
