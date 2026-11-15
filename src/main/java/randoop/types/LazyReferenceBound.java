@@ -183,24 +183,21 @@ class LazyReferenceBound extends EagerReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself, or its lower bound.  Its bounds are
-      // checked with the mappings of the substitution, because they can mention type variables
-      // that it instantiates.
-      if (unknown.canBeSupertypeOf((ReferenceType) argType, substitution)) {
-        return true;
-      }
-      // The unknown type variable can also be any supertype of argType.
-      if (argType instanceof ClassOrInterfaceType) {
-        for (ClassOrInterfaceType supertype :
-            ((ClassOrInterfaceType) argType).getSupertypesStrict()) {
-          if (unknown.canBeInstantiatedBy(supertype, substitution)) {
-            return true;
-          }
-        }
-      }
-      return false;
+      // The unknown type variable can be argType itself, its lower bound, or a supertype of
+      // argType.  Its bounds are checked with the mappings of the substitution, because they can
+      // mention type variables that it instantiates.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return super.isUpperBound(argType, substitution);
+  }
+
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (hasArrayOfNullType(getBoundType(), substitution)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
+    return super.isUpperBound(bound, substitution);
   }
 
   /**

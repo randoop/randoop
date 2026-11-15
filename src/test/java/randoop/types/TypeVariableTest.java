@@ -1825,6 +1825,15 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testSiblingBoundCanBeStrictSupertype() {
+    // For <S extends Comparable<S>, U extends S>, U can be ComparableSub, with ComparableBase for
+    // S, though S cannot be ComparableSub.
+    TypeVariable u = typeParameter(SelfComparableSiblingBound.class, 1);
+    assertTrue(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableSub.class)));
+    assertFalse(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
+  }
+
+  @Test
   public void testLazyParameterBoundHasUpperBoundOfItsType() {
     TypeVariable t = typeParameter(SelfComparableBound.class, 0);
     ParameterBound lazyBound = t.getUpperTypeBound();

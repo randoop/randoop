@@ -347,8 +347,9 @@ public abstract class TypeVariable extends ParameterType {
     if (getUpperTypeBound().isVariable()) {
       TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
       if (unknown != null) {
-        // The unknown type variable can be `otherType` itself, or its lower bound; see
-        // EagerReferenceBound.isUpperBound(Type, Substitution) and canBeSupertypeOf.
+        // The unknown type variable can be `otherType` itself, its lower bound, or a supertype of
+        // `otherType`; see EagerReferenceBound.isUpperBound(Type, Substitution) and
+        // canBeSupertypeOf.
         if (!unknown.canBeSupertypeOf(otherType, substitution)) {
           return false;
         }
@@ -393,17 +394,32 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, and {@code otherType} itself, as {@link #canBeInstantiatedBy( ReferenceType,
-   * Substitution)} checks. So the result can be false even if some other supertype of {@code
-   * otherType} can instantiate this variable.
+   * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
+   * of its strict supertypes, as {@link #canBeInstantiatedBy(ReferenceType, Substitution)} checks.
+   * For example, for {@code <S extends Comparable<S>, U extends S>}, if class {@code Sub} extends
+   * {@code Base}, which implements {@code Comparable<Base>}, then {@code S} can be a supertype of
+   * {@code Sub}, with {@code Base} for {@code S}. The result can be false if only a supertype of
+   * {@code otherType} that is not a class or interface type, such as an intersection or an array
+   * type, can instantiate this variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
    * @return true if some instantiation of this variable can be a supertype of {@code otherType}
    */
   boolean canBeSupertypeOf(ReferenceType otherType, Substitution context) {
-    return getLowerTypeBound().isUpperBound(otherType, context)
-        || canBeInstantiatedBy(otherType, context);
+    if (getLowerTypeBound().isUpperBound(otherType, context)
+        || canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (otherType instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
+        if (canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
