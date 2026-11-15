@@ -68,14 +68,19 @@ public class ParameterBoundTest {
     assertFalse(intersection.isLowerBound(stringBound, new Substitution()));
   }
 
-  /** A lazy bound that the substitution does not instantiate is not a lower bound of anything. */
+  /**
+   * A lazy bound that the substitution does not instantiate is not a lower bound of anything except
+   * itself.
+   */
   @Test
   public void testUninstantiatedLazyParameterBoundAsLowerBound() {
     Substitution unrelated = new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE);
     for (Substitution substitution : Arrays.asList(new Substitution(), unrelated)) {
       assertFalse(selfComparableBound.isLowerBound(nullBound, substitution));
       assertFalse(selfComparableBound.isLowerBound(integerBound, substitution));
-      assertFalse(selfComparableBound.isLowerBound(selfComparableBound, substitution));
+      // The substitution leaves T unchanged on both sides, so each side is Comparable<T> for the
+      // same T, and a type is a lower bound of itself.
+      assertTrue(selfComparableBound.isLowerBound(selfComparableBound, substitution));
     }
     Substitution noArrayVariable =
         new Substitution(
