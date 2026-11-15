@@ -560,6 +560,30 @@ public class TypeVariableTest {
     assertEquals(bound.hashCode(), copyBound.hashCode());
   }
 
+  /**
+   * Substitutions that map a type variable to copies of a type variable with different bounds are
+   * inconsistent, and cannot be merged.
+   */
+  @Test
+  public void testSubstitutionsToTypeVariableCopiesAreInconsistent() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    Substitution toY = new Substitution(x, y);
+    Substitution toCopy = new Substitution(x, copy);
+    assertFalse(toY.isConsistentWith(toCopy));
+    assertFalse(toCopy.isConsistentWith(toY));
+    try {
+      toY.extend(toCopy);
+      throw new AssertionError("extend should reject a copy with other bounds");
+    } catch (IllegalArgumentException expected) {
+      // expected
+    }
+    Substitution toSameY = new Substitution(x, y);
+    assertTrue(toY.isConsistentWith(toSameY));
+    assertEquals(toY, toY.extend(toSameY));
+  }
+
   @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);

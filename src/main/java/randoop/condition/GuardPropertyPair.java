@@ -11,12 +11,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class GuardPropertyPair {
 
   /** The expression that must hold before the operation is called. */
-  final ExecutableBooleanExpression guard;
+  /*package*/ final ExecutableBooleanExpression guard;
 
   /**
    * The expression that must be true after the operation is called when the {@link #guard} is true.
    */
-  final ExecutableBooleanExpression property;
+  /*package*/ final ExecutableBooleanExpression property;
 
   /**
    * Creates a {@link GuardPropertyPair} object for the guard and property expressions.
@@ -26,7 +26,8 @@ public class GuardPropertyPair {
    * @param property the {@link ExecutableBooleanExpression} to be evaluated after the operation is
    *     called
    */
-  GuardPropertyPair(ExecutableBooleanExpression guard, ExecutableBooleanExpression property) {
+  /*package*/ GuardPropertyPair(
+      ExecutableBooleanExpression guard, ExecutableBooleanExpression property) {
     this.guard = guard;
     this.property = property;
   }
