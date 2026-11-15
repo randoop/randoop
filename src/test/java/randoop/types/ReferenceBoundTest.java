@@ -32,6 +32,26 @@ public class ReferenceBoundTest {
   }
 
   /**
+   * Returns {@code List<? super U>}, where the bound of {@code U} is {@code Comparable<T>}.
+   *
+   * @param <T> a type parameter
+   * @param <U> a type parameter whose bound is {@code Comparable<T>}
+   * @return null
+   */
+  public static <T, U extends Comparable<T>> List<? super U> listSuperComparableVariable() {
+    return null;
+  }
+
+  /**
+   * Returns {@code List<? super String[]>}.
+   *
+   * @return null
+   */
+  public static List<? super String[]> listSuperStringArray() {
+    return null;
+  }
+
+  /**
    * Returns the given method of this class.
    *
    * @param methodName the name of a method of this class that has no parameters
@@ -43,14 +63,16 @@ public class ReferenceBoundTest {
   }
 
   /**
-   * Returns the type parameter of the given method of this class.
+   * Returns the type parameter at the given index of the given method of this class.
    *
-   * @param methodName the name of a method of this class that has one type parameter
-   * @return the type parameter of the method named {@code methodName}
+   * @param methodName the name of a method of this class that has type parameters
+   * @param index the index of the type parameter
+   * @return the type parameter at {@code index} of the method named {@code methodName}
    * @throws NoSuchMethodException if this class has no such method
    */
-  private static TypeVariable typeParameter(String methodName) throws NoSuchMethodException {
-    return TypeVariable.forType(method(methodName).getTypeParameters()[0]);
+  private static TypeVariable typeParameter(String methodName, int index)
+      throws NoSuchMethodException {
+    return TypeVariable.forType(method(methodName).getTypeParameters()[index]);
   }
 
   /**
@@ -101,7 +123,7 @@ public class ReferenceBoundTest {
 
   @Test
   public void testVariableIsLowerBound() throws NoSuchMethodException {
-    TypeVariable u = typeParameter("listSuperIntegerVariable");
+    TypeVariable u = typeParameter("listSuperIntegerVariable", 0);
     TypeVariable captureVariable = captureVariable("listSuperIntegerVariable");
     Substitution substitution = new Substitution();
     ReferenceBound bound = new EagerReferenceBound(u);
@@ -114,8 +136,22 @@ public class ReferenceBoundTest {
   }
 
   @Test
+  public void testVariableIsLowerBoundWithSubstitutedBound() throws NoSuchMethodException {
+    TypeVariable t = typeParameter("listSuperComparableVariable", 0);
+    TypeVariable u = typeParameter("listSuperComparableVariable", 1);
+    ReferenceBound bound = new EagerReferenceBound(u);
+    Substitution substitution = new Substitution(t, JavaTypes.STRING_TYPE);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    // U is a subtype of Comparable<T>, which the substitution makes Comparable<String>.
+    assertTrue(bound.isLowerBound(comparable.instantiate(JavaTypes.STRING_TYPE), substitution));
+    assertFalse(
+        bound.isLowerBound(
+            comparable.instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()), substitution));
+  }
+
+  @Test
   public void testVariableIsUpperBound() throws NoSuchMethodException {
-    TypeVariable u = typeParameter("listExtendsNumberVariable");
+    TypeVariable u = typeParameter("listExtendsNumberVariable", 0);
     Substitution substitution = new Substitution();
     ReferenceBound bound = new EagerReferenceBound(u);
     assertTrue(bound.isUpperBound(u, substitution));
@@ -141,10 +177,19 @@ public class ReferenceBoundTest {
   }
 
   @Test
+  public void testArraySubtypeOfCaptureOfSuperArray() throws NoSuchMethodException {
+    // The capture variable of List<? super String[]> has lower bound String[].
+    TypeVariable captureVariable = captureVariable("listSuperStringArray");
+    assertTrue(ArrayType.forClass(String[].class).isSubtypeOfOrEqualTo(captureVariable));
+    // Object[] is not a subtype of String[].
+    assertFalse(ArrayType.forClass(Object[].class).isSubtypeOfOrEqualTo(captureVariable));
+  }
+
+  @Test
   public void testCaptureOfExtendsVariable() throws NoSuchMethodException {
     // The capture variable of List<? extends U> has upper bound U, where U extends Number.
     TypeVariable captureVariable = captureVariable("listExtendsNumberVariable");
-    TypeVariable u = typeParameter("listExtendsNumberVariable");
+    TypeVariable u = typeParameter("listExtendsNumberVariable", 0);
     assertTrue(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(u, captureVariable) != null);
     // U can be chosen as Number, a supertype of Integer.

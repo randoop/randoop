@@ -200,7 +200,9 @@ public abstract class ReferenceType extends Type {
   /**
    * {@inheritDoc}
    *
-   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
+   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}, or if {@code
+   * otherType} is a type variable and this type is a subtype of the variable's lower bound, as
+   * {@code String} is a subtype of a capture variable of {@code ? super String}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
@@ -212,6 +214,18 @@ public abstract class ReferenceType extends Type {
       return true;
     }
 
-    return otherType.isObject();
+    if (otherType.isObject()) {
+      return true;
+    }
+
+    if (otherType.isVariable()) {
+      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
+      if (lowerBound instanceof ReferenceBound) {
+        ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+        return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+            && this.isSubtypeOfOrEqualTo(lowerBoundType);
+      }
+    }
+    return false;
   }
 }

@@ -54,17 +54,6 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
-    if (argType instanceof CaptureTypeVariable) {
-      WildcardArgument wildcard = ((CaptureTypeVariable) argType).getWildcard();
-      if (wildcard.hasUpperBound()) {
-        return false;
-      }
-      ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof ReferenceBound) {
-        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
-        return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
-      }
-    }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
