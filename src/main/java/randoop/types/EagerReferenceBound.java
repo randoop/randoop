@@ -38,7 +38,7 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
+      return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     if (argType.isParameterized()) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
