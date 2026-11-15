@@ -39,7 +39,7 @@ public final class RunCommand {
    * @return the {@link Status} capturing the outcome of executing the command
    * @throws CommandException if there is an error running the command
    */
-  static Status run(List<String> command, Path workingDirectory, long timeoutMillis) {
+  /*package*/ static Status run(List<String> command, Path workingDirectory, long timeoutMillis) {
 
     String[] args = command.toArray(new String[0]);
     CommandLine cmdLine = new CommandLine(args[0]); // constructor requires executable name
@@ -160,7 +160,7 @@ public final class RunCommand {
      * @param standardOutputLines the lines of process output to standard output
      * @param errorOutputLines the lines of process output to standard error
      */
-    Status(
+    /*package*/ Status(
         List<String> command,
         int exitStatus,
         boolean timedOut,
@@ -224,7 +224,7 @@ public final class RunCommand {
      * @param message the exception message
      * @param cause the causing exception
      */
-    CommandException(String message, Throwable cause) {
+    /*package*/ CommandException(String message, Throwable cause) {
       super(message, cause);
     }
   }

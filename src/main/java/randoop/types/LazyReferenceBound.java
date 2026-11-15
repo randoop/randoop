@@ -23,7 +23,7 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * @param boundType the bound type
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -43,38 +43,6 @@ class LazyReferenceBound extends ReferenceBound {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
-  }
-
-  /**
-   * Returns true if applying the substitution to the given type would create an array of the null
-   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
-   * type is a type variable that the substitution maps to the null type. An example is {@code
-   * List<T[]>} with {@code T} mapped to the null type.
-   *
-   * @param type a type
-   * @param substitution a type substitution
-   * @return true if substituting into {@code type} would create an array of the null type
-   */
-  private static boolean hasArrayOfNullType(Type type, Substitution substitution) {
-    if (type.isArray()) {
-      Type elementType = ((ArrayType) type).getElementType();
-      return (elementType.isVariable()
-              && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType)))
-          || hasArrayOfNullType(elementType, substitution);
-    }
-    if (type instanceof InstantiatedType) {
-      InstantiatedType instantiatedType = (InstantiatedType) type;
-      for (TypeArgument argument : instantiatedType.getTypeArguments()) {
-        if (argument instanceof ReferenceArgument
-            && hasArrayOfNullType(
-                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
-          return true;
-        }
-      }
-      ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
-      return enclosingType != null && hasArrayOfNullType(enclosingType, substitution);
-    }
-    return false;
   }
 
   @Override

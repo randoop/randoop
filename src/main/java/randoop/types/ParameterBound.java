@@ -60,7 +60,7 @@ public abstract class ParameterBound {
    * @param bounds the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  static ParameterBound forTypes(
+  /*package*/ static ParameterBound forTypes(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non-null");
@@ -85,7 +85,7 @@ public abstract class ParameterBound {
    * @param type the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper bound
    */
-  static ParameterBound forType(
+  /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
@@ -101,6 +101,14 @@ public abstract class ParameterBound {
     if (isTypeVariable(type)) {
       TypeVariable eagerBound = TypeVariable.forType(type);
       return new EagerReferenceBound(eagerBound);
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      // A lazy bound is evaluated by substituting for its type variables, which cannot change an
+      // array type, such as `List<String>[]`, in which no type variable occurs.
+      ArrayType arrayType = ArrayType.forType(type);
+      if (arrayType.getTypeParameters().isEmpty()) {
+        return new EagerReferenceBound(arrayType);
+      }
     }
     return new LazyParameterBound(type);
   }
@@ -177,7 +185,7 @@ public abstract class ParameterBound {
    * @param type the type to test
    * @return true if the type is a type variable, false otherwise
    */
-  static boolean isTypeVariable(java.lang.reflect.Type type) {
+  /*package*/ static boolean isTypeVariable(java.lang.reflect.Type type) {
     return type instanceof java.lang.reflect.TypeVariable;
   }
 
@@ -186,14 +194,14 @@ public abstract class ParameterBound {
    *
    * @return true iff this bound has a capture variable
    */
-  abstract boolean hasCaptureVariable();
+  /*package*/ abstract boolean hasCaptureVariable();
 
   /**
    * Returns true if the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
-  final boolean isGeneric() {
+  /*package*/ final boolean isGeneric() {
     return isGeneric(false);
   }
 
@@ -223,7 +231,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution to apply to this bound
    * @return true iff this bound is a lower bound on the type of the given bound
    */
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+  /*package*/ boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     return bound.hasLowerBound(this, substitution);
   }
 
@@ -289,7 +297,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
-  abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
+  /*package*/ abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
 
   /**
    * Returns true if the given type is an upper bound on every type that has this bound as an upper
