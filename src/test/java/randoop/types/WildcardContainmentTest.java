@@ -34,6 +34,13 @@ public class WildcardContainmentTest {
   }
 
   /**
+   * A generic class whose type parameter has an intersection bound.
+   *
+   * @param <T> the type parameter
+   */
+  public static class IntersectionBox<T extends Number & Runnable> {}
+
+  /**
    * A generic class with generic member classes.
    *
    * @param <T> the type parameter
@@ -80,6 +87,52 @@ public class WildcardContainmentTest {
    * @return null
    */
   public <T> Child<? extends T[]> childExtendsArray() {
+    return null;
+  }
+
+  /**
+   * Returns {@code List<? extends U>}, where the bound of {@code U} is an unbounded type variable.
+   *
+   * @param <T> an unbounded type parameter
+   * @param <U> a type parameter whose bound is {@code T}
+   * @return null
+   */
+  public <T, U extends T> List<? extends U> listExtendsUnboundedVariable() {
+    return null;
+  }
+
+  /**
+   * Returns {@code List<U>}, where the bound of {@code U} is an unbounded type variable.
+   *
+   * @param <T> an unbounded type parameter
+   * @param <U> a type parameter whose bound is {@code T}
+   * @return null
+   */
+  public <T, U extends T> List<U> listUnboundedVariable() {
+    return null;
+  }
+
+  /**
+   * Returns {@code List<? extends U>}, where the bound of {@code U} is a type variable whose bound
+   * is {@code Integer}.
+   *
+   * @param <T> a type parameter whose bound is {@code Integer}
+   * @param <U> a type parameter whose bound is {@code T}
+   * @return null
+   */
+  public <T extends Integer, U extends T> List<? extends U> listExtendsIntegerVariable() {
+    return null;
+  }
+
+  /**
+   * Returns {@code List<U>}, where the bound of {@code U} is a type variable whose bound is {@code
+   * Integer}.
+   *
+   * @param <T> a type parameter whose bound is {@code Integer}
+   * @param <U> a type parameter whose bound is {@code T}
+   * @return null
+   */
+  public <T extends Integer, U extends T> List<U> listIntegerVariable() {
     return null;
   }
 
@@ -130,6 +183,33 @@ public class WildcardContainmentTest {
 
   /** A field of type {@code Collection<String>}. */
   public Collection<String> collectionString;
+
+  /** A field of type {@code List<String[]>}. */
+  public List<String[]> listStringArray;
+
+  /** A field of type {@code List<Object[]>}. */
+  public List<Object[]> listObjectArray;
+
+  /** A field of type {@code List<? extends String[]>}. */
+  public List<? extends String[]> listExtendsStringArray;
+
+  /** A field of type {@code List<? extends Object[]>}. */
+  public List<? extends Object[]> listExtendsObjectArray;
+
+  /** A field of type {@code List<? super String[]>}. */
+  public List<? super String[]> listSuperStringArray;
+
+  /** A field of type {@code Enum<?>}. */
+  public Enum<?> enumQ;
+
+  /** A field of type {@code Enum<? extends Enum<?>>}. */
+  public Enum<? extends Enum<?>> enumExtendsEnumQ;
+
+  /** A field of type {@code IntersectionBox<?>}. */
+  public IntersectionBox<?> intersectionBoxQ;
+
+  /** A field of type {@code IntersectionBox<? extends Number>}. */
+  public IntersectionBox<? extends Number> intersectionBoxExtendsNumber;
 
   /** A field of type {@code NumberBox<?>}. */
   public NumberBox<?> numberBoxQ;
@@ -183,6 +263,21 @@ public class WildcardContainmentTest {
    */
   private static boolean contains(String containingField, String containedField) {
     return argument(containingField).contains(argument(containedField));
+  }
+
+  /**
+   * Returns the return type of the method of this class that has the given name.
+   *
+   * @param methodName the name of a method of this class that has no parameters
+   * @return the return type of the method
+   */
+  private static Type returnType(String methodName) {
+    try {
+      return Type.forType(
+          WildcardContainmentTest.class.getMethod(methodName).getGenericReturnType());
+    } catch (NoSuchMethodException e) {
+      throw new Error(e);
+    }
   }
 
   @Test
@@ -336,5 +431,39 @@ public class WildcardContainmentTest {
     // The capture variable of NumberBox<?> has upper bound Number, from the type parameter.
     assertTrue(isSubtype("numberBoxQ", "numberBoxExtendsNumber"));
     assertTrue(isSubtype("numberBoxExtendsNumber", "numberBoxQ"));
+  }
+
+  @Test
+  public void recursiveBoundCaptureTest() {
+    // The capture variable C of Enum<?> has upper bound Enum<C>, which is a subtype of Enum<?>.
+    assertTrue(isSubtype("enumQ", "enumExtendsEnumQ"));
+  }
+
+  @Test
+  public void intersectionBoundCaptureTest() {
+    // The capture variable of IntersectionBox<?> has upper bound Number & Runnable.
+    assertTrue(isSubtype("intersectionBoxQ", "intersectionBoxExtendsNumber"));
+  }
+
+  @Test
+  public void typeVariableBoundTest() {
+    Type listExtendsNumber = type("listExtendsNumber");
+    // U extends T, where T is unbounded:  U is not a subtype of Number.
+    assertFalse(returnType("listExtendsUnboundedVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
+    assertFalse(returnType("listUnboundedVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
+    // U extends T, where T extends Integer:  U is a subtype of Number.
+    assertTrue(returnType("listExtendsIntegerVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
+    assertTrue(returnType("listIntegerVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
+  }
+
+  @Test
+  public void arrayBoundTest() {
+    assertTrue(isSubtype("listStringArray", "listExtendsStringArray"));
+    assertTrue(isSubtype("listStringArray", "listExtendsObjectArray"));
+    assertTrue(isSubtype("listStringArray", "listSuperStringArray"));
+    assertTrue(isSubtype("listObjectArray", "listSuperStringArray"));
+    assertTrue(isSubtype("listExtendsStringArray", "listExtendsObjectArray"));
+    assertFalse(isSubtype("listObjectArray", "listExtendsStringArray"));
+    assertFalse(isSubtype("listExtendsObjectArray", "listExtendsStringArray"));
   }
 }

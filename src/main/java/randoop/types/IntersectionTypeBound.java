@@ -137,7 +137,7 @@ class IntersectionTypeBound extends ParameterBound {
    * {@inheritDoc}
    *
    * <p>Specifically, this method checks that some member bound of this object is a subtype of the
-   * argument type.
+   * argument type, since an intersection type is a subtype of each of its members.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution subst) {
