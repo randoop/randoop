@@ -118,7 +118,7 @@ public final class ArrayType extends ReferenceType {
     Type type = componentType.substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
     boolean unchanged =
-        componentType.isReferenceType() && type.isReferenceType()
+        (componentType.isReferenceType() && type.isReferenceType())
             ? TypeVariable.areIdentical((ReferenceType) type, (ReferenceType) componentType)
             : type.equals(componentType);
     if (unchanged) {
