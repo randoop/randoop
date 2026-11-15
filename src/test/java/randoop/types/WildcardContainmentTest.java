@@ -126,6 +126,48 @@ public class WildcardContainmentTest {
     return null;
   }
 
+  /**
+   * Returns {@code List<T>}, where the bounds of {@code T} and {@code U} refer to each other.
+   *
+   * @param <T> a type parameter whose bound is {@code Comparable<U>}
+   * @param <U> a type parameter whose bound is {@code Comparable<T>}
+   * @return null
+   */
+  public <T extends Comparable<U>, U extends Comparable<T>> List<T> listMutuallyRecursive() {
+    return null;
+  }
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  public interface Left<X> extends Runnable {}
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  public interface Right<X> extends Runnable {}
+
+  /**
+   * Returns {@code List<T>}, where {@code T} has an intersection bound whose members are generic
+   * in {@code T}.
+   *
+   * @param <T> a type parameter whose bound is {@code Left<T> & Right<T>}
+   * @return null
+   */
+  public <T extends Left<T> & Right<T>> List<T> listLazyIntersection() {
+    return null;
+  }
+
+  /** A field of type {@code List<? extends Comparable<?>>}. */
+  public List<? extends Comparable<?>> listExtendsComparableQ;
+
+  /** A field of type {@code List<? extends Runnable>}. */
+  public List<? extends Runnable> listExtendsRunnable;
+
   /** A field of type {@code List<Integer>}. */
   public List<Integer> listInteger;
 
@@ -323,6 +365,23 @@ public class WildcardContainmentTest {
     // U extends T, where T extends Integer:  U is a subtype of Number.
     assertTrue(returnType("listExtendsIntegerVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
     assertTrue(returnType("listIntegerVariable").isSubtypeOfOrEqualTo(listExtendsNumber));
+  }
+
+  @Test
+  public void mutuallyRecursiveBoundTest() {
+    // T extends Comparable<U>, where U extends Comparable<T>:  T is a subtype of Comparable<?>.
+    assertTrue(
+        returnType("listMutuallyRecursive").isSubtypeOfOrEqualTo(type("listExtendsComparableQ")));
+    assertFalse(
+        returnType("listMutuallyRecursive").isSubtypeOfOrEqualTo(type("listExtendsNumber")));
+  }
+
+  @Test
+  public void lazyIntersectionBoundTest() {
+    // T extends Left<T> & Right<T>, both of which extend Runnable:  T is a subtype of Runnable.
+    assertTrue(
+        returnType("listLazyIntersection").isSubtypeOfOrEqualTo(type("listExtendsRunnable")));
+    assertFalse(returnType("listLazyIntersection").isSubtypeOfOrEqualTo(type("listExtendsNumber")));
   }
 
   @Test

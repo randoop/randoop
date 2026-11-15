@@ -89,12 +89,7 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      ParameterBound upperBound = getUpperTypeBound();
-      if (upperBound instanceof LazyParameterBound) {
-        Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
-        return upperBound.isLowerBound(otherType, substitution);
-      }
-      return isSubtypeOfOrEqualTo(upperBound, otherType);
+      return isSubtypeOfOrEqualTo(getUpperTypeBound(), otherType);
     }
     return false;
   }
@@ -106,11 +101,19 @@ public abstract class TypeVariable extends ParameterType {
    * <p>This method compares the bound type itself, without substituting for the type variables in
    * it. So, a variable {@code C} whose bound is {@code Enum<C>} is a subtype of {@code Enum<?>}.
    *
-   * @param bound an upper bound of a type variable, which is not a {@link LazyParameterBound}
+   * <p>A {@link LazyParameterBound}, which may mention type variables other than the bounded one
+   * (as in {@code T extends Comparable<U>}), is converted to the equivalent {@link ReferenceBound},
+   * in which every type variable remains a type variable.
+   *
+   * @param bound an upper bound of a type variable
    * @param otherType the possible supertype
    * @return true if the type of {@code bound} is a subtype of {@code otherType}
    */
   private static boolean isSubtypeOfOrEqualTo(ParameterBound bound, Type otherType) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted != null && isSubtypeOfOrEqualTo(converted, otherType);
+    }
     if (bound instanceof ReferenceBound) {
       return ((ReferenceBound) bound).getBoundType().isSubtypeOfOrEqualTo(otherType);
     }
