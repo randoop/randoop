@@ -99,6 +99,14 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
+   * The size of the component manager's pool when this generator was created or the pool was most
+   * recently cleared. The pool is cleared when it grows by {@link GenInputsAbstract#clear} entries
+   * beyond this size. Seed sequences, which are restored after each clear, are thus not counted
+   * against the limit.
+   */
+  private int poolSizeAfterClear;
+
+  /**
    * Create a forward generator.
    *
    * @param operations list of operations under test
@@ -142,6 +150,7 @@ public class ForwardGenerator extends AbstractGenerator {
     super(operations, limits, componentManager, stopper);
 
     this.sideEffectFreeMethods = sideEffectFreeMethods;
+    this.poolSizeAfterClear = componentManager.numGeneratedSequences();
 
     initializeRuntimePrimitivesSeen();
 
@@ -225,6 +234,15 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  /**
+   * Clears the component manager's generated sequences and records the resulting pool size, which
+   * includes the restored seed sequences.
+   */
+  private void clearGeneratedSequences() {
+    componentManager.clearGeneratedSequences();
+    poolSizeAfterClear = componentManager.numGeneratedSequences();
+  }
+
   @Override
   public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
@@ -235,12 +253,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
     long startTimeNanos = System.nanoTime();
 
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      componentManager.clearGeneratedSequences();
+    // Compare against a threshold rather than testing for an exact count, because adding one
+    // sequence can increase the count by more than 1.
+    if (componentManager.numGeneratedSequences() - poolSizeAfterClear >= GenInputsAbstract.clear) {
+      clearGeneratedSequences();
     }
     if (SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
         && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
-      componentManager.clearGeneratedSequences();
+      clearGeneratedSequences();
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
