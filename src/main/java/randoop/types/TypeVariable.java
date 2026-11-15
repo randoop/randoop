@@ -89,7 +89,7 @@ public abstract class TypeVariable extends ParameterType {
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
-  TypeVariable() {
+  /*package*/ TypeVariable() {
     super();
   }
 
@@ -100,7 +100,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param lowerBound the lower type bound on this variable
    * @param upperBound the upper type bound on this variable
    */
-  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  /*package*/ TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
@@ -289,7 +289,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
+  /*package*/ boolean canBeInstantiatedBy(ReferenceType otherType) {
     return canBeInstantiatedBy(otherType, new Substitution());
   }
 

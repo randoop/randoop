@@ -58,6 +58,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
+  /*package*/
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
@@ -91,7 +92,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @return the wildcard
    */
-  WildcardArgument getWildcard() {
+  /*package*/ WildcardArgument getWildcard() {
     return wildcard;
   }
 

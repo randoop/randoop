@@ -22,7 +22,7 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * @param boundType the bound type
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
