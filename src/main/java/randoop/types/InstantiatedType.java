@@ -112,11 +112,11 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        new Substitution(genericType.getDeclaredTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
     }
 
@@ -137,7 +137,7 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
     return genericType.getInterfaces(substitution);
   }
 
@@ -200,7 +200,7 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
     return this.getGenericClassType().getSuperclass(substitution);
   }
 
@@ -242,7 +242,7 @@ public class InstantiatedType extends ParameterizedType {
     }
     Substitution substitution = null;
     if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
+      substitution = new Substitution(genericType.getDeclaredTypeParameters(), arguments);
     }
     return substitution;
   }
