@@ -102,7 +102,7 @@ import randoop.util.Log;
    * @return true if class source was successfully compiled, false otherwise
    */
   public boolean isCompilable(
-      final String packageName, final String classname, final String javaSource) {
+      final @Nullable String packageName, final String classname, final String javaSource) {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     boolean result = compile(classname, javaSource, diagnostics);
 
@@ -246,7 +246,7 @@ import randoop.util.Log;
    * @param classname the name of the class, without the package
    * @return the fully-qualified class name constructed from the arguments
    */
-  @BinaryName String fullyQualifiedName(
+  /*package*/ @BinaryName String fullyQualifiedName(
       @DotSeparatedIdentifiers String packageName, @Identifier String classname) {
     @SuppressWarnings("signature:assignment") // string concatenation
     @BinaryName String result = (packageName == null ? "" : (packageName + ".")) + classname;
