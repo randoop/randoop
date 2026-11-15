@@ -1588,7 +1588,9 @@ by <code>'"'"'</code>, which ends the single-quoted text, gives a single
 quote within double quotes, and resumes the single-quoted text.
 For example, give the filename <code>a'b"c.txt</code> as
 <code>'a'"'"'b"c.txt'</code>, and the filename
-<code>don't "replace".txt</code> as <code>"don't "'"replace".txt'</code>.
+<code>don't"replace".txt</code> as <code>"don't"'"replace".txt'</code>.
+The agent cannot use a filename that contains whitespace, a single quote, and
+a double quote.
 These quotes must reach the agent, so they are in addition to the quoting
 that the shell requires.
 For example (the
