@@ -421,7 +421,7 @@ public final class OperationModel {
           continue;
         } else {
           throw new RandoopUsageError(
-              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e));
+              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e), e);
         }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
