@@ -263,7 +263,7 @@ public final class ReplaceCallAgent {
         EntryFileReader.forEachEntry(
             fileReader,
             filename,
-            (entry, lineNumber) ->
+            (String entry, int lineNumber) ->
                 addDisabledSignature(result, entry, filename + ":" + lineNumber));
       } catch (IOException e) {
         System.err.printf(
