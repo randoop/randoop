@@ -110,7 +110,39 @@ final class Subtyping {
       }
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
+    if (otherType instanceof NonParameterizedType
+        && otherType.isParameterized()
+        && type instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
+      // not, so compare the enclosing types here.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
+      return supertype != null
+          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+    }
     return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns the given type or the supertype of it whose runtime class is the given class.
+   *
+   * @param type a type
+   * @param runtimeClass a class
+   * @return {@code type} or its supertype whose runtime class is {@code runtimeClass}, or null if
+   *     there is none
+   */
+  private static @Nullable ClassOrInterfaceType findSupertypeOfClass(
+      ClassOrInterfaceType type, Class<?> runtimeClass) {
+    if (type.runtimeClassIs(runtimeClass)) {
+      return type;
+    }
+    for (ClassOrInterfaceType supertype : type.getSupertypesStrict()) {
+      if (supertype.runtimeClassIs(runtimeClass)) {
+        return supertype;
+      }
+    }
+    return null;
   }
 
   /**

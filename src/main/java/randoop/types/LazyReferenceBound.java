@@ -71,38 +71,6 @@ class LazyReferenceBound extends EagerReferenceBound {
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
   }
 
-  /**
-   * Returns true if applying the substitution to the given type would create an array of the null
-   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
-   * type is a type variable that the substitution maps to the null type. An example is {@code
-   * List<T[]>} with {@code T} mapped to the null type.
-   *
-   * @param type a type
-   * @param substitution a type substitution
-   * @return true if substituting into {@code type} would create an array of the null type
-   */
-  private static boolean hasArrayOfNullType(Type type, Substitution substitution) {
-    if (type.isArray()) {
-      Type elementType = ((ArrayType) type).getElementType();
-      return (elementType.isVariable()
-              && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType)))
-          || hasArrayOfNullType(elementType, substitution);
-    }
-    if (type instanceof InstantiatedType) {
-      InstantiatedType instantiatedType = (InstantiatedType) type;
-      for (TypeArgument argument : instantiatedType.getTypeArguments()) {
-        if (argument instanceof ReferenceArgument
-            && hasArrayOfNullType(
-                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
-          return true;
-        }
-      }
-      ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
-      return enclosingType != null && hasArrayOfNullType(enclosingType, substitution);
-    }
-    return false;
-  }
-
   @Override
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> parameters = new LinkedHashSet<>();
@@ -134,14 +102,27 @@ class LazyReferenceBound extends EagerReferenceBound {
         if (argument instanceof ReferenceArgument) {
           addTypeVariables(((ReferenceArgument) argument).getReferenceType(), parameters);
         } else if (argument instanceof WildcardArgument) {
-          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
-          if (bound instanceof ReferenceBound) {
-            addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
-          } else {
-            parameters.addAll(bound.getTypeParameters());
-          }
+          addTypeVariables(((WildcardArgument) argument).getTypeBound(), parameters);
         }
       }
+    } else if (type instanceof WildcardType) {
+      // A substitution can replace a type variable by a wildcard type, such as `? extends T`.
+      addTypeVariables(((WildcardType) type).getTypeBound(), parameters);
+    }
+  }
+
+  /**
+   * Adds the type variables that occur in the given wildcard bound to {@code parameters}. Does not
+   * examine the bounds of those type variables, which might refer back to this bound.
+   *
+   * @param bound the bound of a wildcard
+   * @param parameters the set to which to add the type variables
+   */
+  private static void addTypeVariables(ParameterBound bound, Set<TypeVariable> parameters) {
+    if (bound instanceof ReferenceBound) {
+      addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
+    } else {
+      parameters.addAll(bound.getTypeParameters());
     }
   }
 
@@ -236,13 +217,20 @@ class LazyReferenceBound extends EagerReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type, because the type of this bound contains type variables.
+   * is the null type or the same type as this bound, because the type of this bound contains type
+   * variables.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (getBoundType() instanceof CaptureTypeVariable) {
       return super.hasLowerBound(lowerBound, substitution);
     }
-    return lowerBound.isNullType(substitution);
+    ParameterBound substituted = lowerBound.substitute(substitution);
+    if (!(substituted instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerBoundType = ((ReferenceBound) substituted).getBoundType();
+    // A type is a lower bound of itself.
+    return lowerBoundType.equals(JavaTypes.NULL_TYPE) || isUnchangedBy(lowerBoundType);
   }
 }

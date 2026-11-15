@@ -120,8 +120,44 @@ public abstract class ReferenceBound extends ParameterBound {
     return boundType.isVariable();
   }
 
+  /**
+   * Returns true if applying the substitution to the given type would create an array of the null
+   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
+   * type is a type variable that the substitution maps to the null type. An example is {@code
+   * List<T[]>} with {@code T} mapped to the null type.
+   *
+   * @param type a type
+   * @param substitution a type substitution
+   * @return true if substituting into {@code type} would create an array of the null type
+   */
+  static boolean hasArrayOfNullType(Type type, Substitution substitution) {
+    if (type.isArray()) {
+      Type elementType = ((ArrayType) type).getElementType();
+      return (elementType.isVariable()
+              && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType)))
+          || hasArrayOfNullType(elementType, substitution);
+    }
+    if (type instanceof InstantiatedType) {
+      InstantiatedType instantiatedType = (InstantiatedType) type;
+      for (TypeArgument argument : instantiatedType.getTypeArguments()) {
+        if (argument instanceof ReferenceArgument
+            && hasArrayOfNullType(
+                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
+          return true;
+        }
+      }
+      ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
+      return enclosingType != null && hasArrayOfNullType(enclosingType, substitution);
+    }
+    return false;
+  }
+
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (hasArrayOfNullType(boundType, substitution)) {
+      // There is no array of the null type, so this bound is an upper bound on no type.
+      return false;
+    }
     // Mapping each type variable that the substitution does not replace to itself makes it an
     // unknown.
     Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());

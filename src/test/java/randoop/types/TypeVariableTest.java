@@ -1754,6 +1754,54 @@ public class TypeVariableTest {
   }
 
   /**
+   * A generic class with a member class that declares no type parameters.
+   *
+   * @param <T> the type parameter
+   */
+  static class OuterWithPlainInner<T> {
+    /** A member class that declares no type parameters. */
+    class Inner {}
+  }
+
+  /** Fields whose types are member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class PlainInnerFields {
+    /** A member class of {@code OuterWithPlainInner<String>}. */
+    OuterWithPlainInner<String>.Inner stringInner;
+
+    /** A member class of {@code OuterWithPlainInner<Integer>}. */
+    OuterWithPlainInner<Integer>.Inner integerInner;
+
+    /** A parameterized type that is not related to the member classes. */
+    List<String> stringList;
+  }
+
+  @Test
+  public void testSubtypeOfMemberClassWithoutTypeParameters() throws NoSuchFieldException {
+    ReferenceType stringInner = plainInnerFieldType("stringInner");
+    ReferenceType integerInner = plainInnerFieldType("integerInner");
+    ReferenceType stringList = plainInnerFieldType("stringList");
+    Substitution substitution = new Substitution();
+    assertTrue(stringInner instanceof NonParameterizedType);
+    assertTrue(stringInner.isParameterized());
+    assertTrue(Subtyping.isSubtypeOrEqual(stringInner, stringInner, substitution));
+    assertFalse(Subtyping.isSubtypeOrEqual(integerInner, stringInner, substitution));
+    assertFalse(Subtyping.isSubtypeOrEqual(stringList, stringInner, substitution));
+  }
+
+  /**
+   * Returns the type of the given field of {@link PlainInnerFields}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static ReferenceType plainInnerFieldType(String name) throws NoSuchFieldException {
+    return (ReferenceType)
+        Type.forType(PlainInnerFields.class.getDeclaredField(name).getGenericType());
+  }
+
+  /**
    * Type parameters whose bounds form a cycle through a parameterized type: {@code V}'s bound
    * mentions {@code W} and {@code A}, and {@code A extends W extends V}.
    *
