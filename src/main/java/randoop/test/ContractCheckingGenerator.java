@@ -36,7 +36,7 @@ import randoop.util.TupleSet;
 public final class ContractCheckingGenerator extends TestCheckGenerator {
 
   /** The contracts to check on the values produced by executing a sequence. */
-  private ContractSet contracts;
+  private final ContractSet contracts;
 
   /**
    * Create a new visitor that checks the given contracts after the last statement in a sequence is

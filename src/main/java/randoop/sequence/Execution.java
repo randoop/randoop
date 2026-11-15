@@ -20,7 +20,7 @@ public final class Execution {
   final List<ExecutionOutcome> outcomes;
 
   /** The instrumented classes that were covered by the execution. */
-  private Set<Class<?>> coveredClasses;
+  private final Set<Class<?>> coveredClasses;
 
   /**
    * Create an Execution to store the execution results of the given sequence. The list of outcomes

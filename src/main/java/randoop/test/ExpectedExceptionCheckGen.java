@@ -18,7 +18,7 @@ import randoop.sequence.ExecutableSequence;
 public class ExpectedExceptionCheckGen {
 
   /** A predicate to determine accessibility of exception classes. */
-  private AccessibilityPredicate accessibility;
+  private final AccessibilityPredicate accessibility;
 
   /**
    * Create an object that generates expected exception checks for exceptions that satisfy the given

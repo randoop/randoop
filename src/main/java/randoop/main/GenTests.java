@@ -1569,7 +1569,7 @@ public class GenTests extends GenInputsAbstract {
    * A cache used by {@link #getResourceDirectoryPath}, to prevent {@code
    * FileSystemAlreadyExistsException}.
    */
-  private Map<URI, FileSystem> fileSystemCache = new HashMap<>();
+  private final Map<URI, FileSystem> fileSystemCache = new HashMap<>();
 
   /**
    * Returns the path for the resource directory in the jar file.

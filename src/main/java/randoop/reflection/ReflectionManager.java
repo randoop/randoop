@@ -54,10 +54,10 @@ public class ReflectionManager {
    * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
    * {@code isAccessible()} that are defined in this class.
    */
-  private AccessibilityPredicate predicate;
+  private final AccessibilityPredicate predicate;
 
   /** The visitors to apply. */
-  private ArrayList<ClassVisitor> visitors;
+  private final ArrayList<ClassVisitor> visitors;
 
   /**
    * Creates a manager object that uses the given predicate to determine which classes, methods, and

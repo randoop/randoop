@@ -43,7 +43,7 @@ public class ExecutableSpecification {
    * local specification for method declaration m, the {@code parentList} contains one element for
    * each method that m overrides or implements (and has specifications).
    */
-  private List<ExecutableSpecification> parentList = new ArrayList<>();
+  private final List<ExecutableSpecification> parentList = new ArrayList<>();
 
   /** Creates an empty {@link ExecutableSpecification} object. */
   public ExecutableSpecification() {

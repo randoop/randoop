@@ -25,7 +25,7 @@ public class ArrayCreation extends CallableOperation {
   private final Type componentType;
 
   /** The dimensions of the created array. */
-  private int dimensions;
+  private final int dimensions;
 
   /**
    * Creates an object representing the construction of an array of the given type.

@@ -13,7 +13,7 @@ import randoop.sequence.ExecutableSequence;
 public class CoveredClassVisitor implements ExecutionVisitor {
 
   /** The classes to be polled. */
-  private Set<Class<?>> classes;
+  private final Set<Class<?>> classes;
 
   /**
    * Creates a visitor to poll the given classes for coverage by sequence executions.

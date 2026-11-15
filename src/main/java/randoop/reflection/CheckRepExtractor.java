@@ -16,7 +16,7 @@ import randoop.test.ContractSet;
 class CheckRepExtractor extends DefaultClassVisitor {
 
   /** The set of accumulated {@link randoop.contract.ObjectContract} objects. */
-  private ContractSet contracts;
+  private final ContractSet contracts;
 
   /**
    * Creates a visitor with an empty contracts set.

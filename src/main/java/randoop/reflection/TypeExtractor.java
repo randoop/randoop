@@ -18,7 +18,7 @@ import randoop.util.Log;
 class TypeExtractor extends DefaultClassVisitor {
 
   /** The set of concrete types. */
-  private Set<Type> inputTypes;
+  private final Set<Type> inputTypes;
 
   /** The accessibility predicate for checking whether a type is accessible in generated tests. */
   private final AccessibilityPredicate predicate;
