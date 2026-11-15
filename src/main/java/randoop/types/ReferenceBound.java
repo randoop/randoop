@@ -14,7 +14,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(ReferenceType boundType) {
+  /*package*/ ReferenceBound(ReferenceType boundType) {
     super();
     this.boundType = boundType;
   }
@@ -132,6 +132,7 @@ public abstract class ReferenceBound extends ParameterBound {
     return false;
   }
 
+  /*package*/
   @Override
   public boolean hasCaptureVariable() {
     return boundType.hasCaptureVariable();
@@ -152,6 +153,7 @@ public abstract class ReferenceBound extends ParameterBound {
     return boundType.isVariable();
   }
 
+  /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     if (hasArrayOfNullType(boundType, substitution)) {

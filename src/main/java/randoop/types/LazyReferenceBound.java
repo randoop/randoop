@@ -44,7 +44,7 @@ class LazyReferenceBound extends EagerReferenceBound {
    *
    * @param boundType the type of this bound
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -108,14 +108,27 @@ class LazyReferenceBound extends EagerReferenceBound {
         if (argument instanceof ReferenceArgument) {
           addTypeVariables(((ReferenceArgument) argument).getReferenceType(), parameters);
         } else if (argument instanceof WildcardArgument) {
-          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
-          if (bound instanceof ReferenceBound) {
-            addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
-          } else {
-            parameters.addAll(bound.getTypeParameters());
-          }
+          addTypeVariables(((WildcardArgument) argument).getTypeBound(), parameters);
         }
       }
+    } else if (type instanceof WildcardType) {
+      // A substitution can replace a type variable by a wildcard type, such as `? extends T`.
+      addTypeVariables(((WildcardType) type).getTypeBound(), parameters);
+    }
+  }
+
+  /**
+   * Adds the type variables that occur in the given wildcard bound to {@code parameters}. Does not
+   * examine the bounds of those type variables, which might refer back to this bound.
+   *
+   * @param bound the bound of a wildcard
+   * @param parameters the set to which to add the type variables
+   */
+  private static void addTypeVariables(ParameterBound bound, Set<TypeVariable> parameters) {
+    if (bound instanceof ReferenceBound) {
+      addTypeVariables(((ReferenceBound) bound).getBoundType(), parameters);
+    } else {
+      parameters.addAll(bound.getTypeParameters());
     }
   }
 
@@ -165,6 +178,15 @@ class LazyReferenceBound extends EagerReferenceBound {
     return super.isUpperBound(argType, substitution);
   }
 
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (hasArrayOfNullType(getBoundType(), substitution)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
+    return super.isUpperBound(bound, substitution);
+  }
+
   /**
    * Returns the bound type after the given substitution is applied, if the bound type is a type
    * variable, the substitution maps it to no type or to a type variable, and {@code argType} is a
@@ -197,9 +219,10 @@ class LazyReferenceBound extends EagerReferenceBound {
    * {@inheritDoc}
    *
    * <p>Because the type of this bound contains type variables, returns true only if {@code
-   * lowerBound} is the null type, or if the type of this bound is a capture variable and {@code
-   * lowerBound} is a lower bound on the capture variable's lower bound. A capture variable stands
-   * for a particular type, which is a supertype of its lower bound.
+   * lowerBound} is the null type; or if the type of this bound is not a capture variable and {@code
+   * lowerBound} is the same type as this bound; or if the type of this bound is a capture variable
+   * and {@code lowerBound} is a lower bound on the capture variable's lower bound. A capture
+   * variable stands for a particular type, which is a supertype of its lower bound.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -207,7 +230,12 @@ class LazyReferenceBound extends EagerReferenceBound {
       return true;
     }
     if (!(getBoundType() instanceof CaptureTypeVariable)) {
-      return false;
+      ParameterBound substituted = lowerBound.substitute(substitution);
+      if (!(substituted instanceof ReferenceBound)) {
+        return false;
+      }
+      // A type is a lower bound of itself.
+      return isUnchangedBy(((ReferenceBound) substituted).getBoundType());
     }
     // The lower bound of the capture variable might refer back to this bound.
     Set<LazyReferenceBound> inProgress = beingComparedWithLowerBound.get();
