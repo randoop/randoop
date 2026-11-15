@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -172,6 +173,14 @@ public class TypeInstantiatorTest {
       assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
     }
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
+
+    // Without String among the input types, no type for K satisfies the bound of V.
+    Set<Type> inputTypesWithoutKey = new LinkedHashSet<>();
+    addTypes(listType.instantiate(nodeType), inputTypesWithoutKey);
+    TypeInstantiator instantiatorWithoutKey = new TypeInstantiator(inputTypesWithoutKey);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(instantiatorWithoutKey.instantiate(kOnlyInBound));
+    }
   }
 
   /**
