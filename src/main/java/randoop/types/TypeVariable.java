@@ -263,41 +263,25 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if the upper bound of this variable, as written, is a subtype of or equal to the
    * given type. The upper bound is a supertype of this variable, so then this variable is a subtype
    * of the given type. The bound can mention this variable, as {@code Comparable<Capture0>} does
-   * for {@code Capture0 extends Comparable<Capture0>}.
+   * for {@code Capture0 extends Comparable<Capture0>} and {@code Comparable<T>} does for {@code T
+   * extends Comparable<T>}.
    *
    * <p>If the upper bound is an intersection type, returns true if some member of it is a subtype
    * of or equal to the given type, since this variable is a subtype of each member. For example,
    * the capture of {@code ? extends Number} has the upper bound {@code Object & Number}.
    *
-   * <p>Returns false if no member of the upper bound is a reference type that is a subtype of or
-   * equal to the given type. Assumes that the subtype test fails if this check is already in
-   * progress for this variable and type in the current thread, but recognizes a member that equals
-   * the given type even then.
+   * <p>Returns false if no member of the upper bound, as returned by {@link
+   * #upperBoundMemberTypes()}, is a subtype of or equal to the given type. Assumes that the subtype
+   * test fails if this check is already in progress for this variable and type in the current
+   * thread, but recognizes a member that equals the given type even then.
    *
    * @param otherType a reference type
    * @return true if the upper bound of this variable is a subtype of or equal to {@code otherType}
    */
   private boolean upperBoundIsSubtypeOfOrEqualTo(ReferenceType otherType) {
-    ParameterBound upperBound = getUpperTypeBound();
-    List<ParameterBound> asWritten =
-        upperBound instanceof IntersectionTypeBound
-            ? ((IntersectionTypeBound) upperBound).getBounds()
-            : Collections.singletonList(upperBound);
-    // For a type parameter, a bound that refers to a type variable is a LazyParameterBound, so
-    // convert it to a ReferenceBound to compare it.
-    List<ParameterBound> members = new ArrayList<>(asWritten.size());
-    for (ParameterBound member : asWritten) {
-      if (member instanceof LazyParameterBound) {
-        ReferenceBound converted = ((LazyParameterBound) member).toReferenceBound();
-        if (converted != null) {
-          member = converted;
-        }
-      }
-      members.add(member);
-    }
-    for (ParameterBound member : members) {
-      if (member instanceof ReferenceBound
-          && ((ReferenceBound) member).getBoundType().equals(otherType)) {
+    List<ReferenceType> members = upperBoundMemberTypes();
+    for (ReferenceType member : members) {
+      if (member.equals(otherType)) {
         return true;
       }
     }
@@ -309,9 +293,8 @@ public abstract class TypeVariable extends ParameterType {
       return false;
     }
     try {
-      for (ParameterBound member : members) {
-        if (member instanceof ReferenceBound
-            && ((ReferenceBound) member).getBoundType().isSubtypeOfOrEqualTo(otherType)) {
+      for (ReferenceType member : members) {
+        if (member.isSubtypeOfOrEqualTo(otherType)) {
           return true;
         }
       }
@@ -319,6 +302,34 @@ public abstract class TypeVariable extends ParameterType {
     } finally {
       inProgress.remove(check);
     }
+  }
+
+  /**
+   * Returns the types of the members of the upper bound of this variable, as written. If the upper
+   * bound is an intersection type, the members are its bounds; otherwise, the only member is the
+   * upper bound itself. A {@link LazyParameterBound} member, as for {@code T extends
+   * Comparable<T>}, is converted to the type that it represents. A member that is not a reference
+   * type and cannot be converted to one is omitted.
+   *
+   * @return the types of the members of the upper bound of this variable
+   */
+  private List<ReferenceType> upperBoundMemberTypes() {
+    ParameterBound upperBound = getUpperTypeBound();
+    List<ParameterBound> members =
+        upperBound instanceof IntersectionTypeBound
+            ? ((IntersectionTypeBound) upperBound).getBounds()
+            : Collections.singletonList(upperBound);
+    List<ReferenceType> result = new ArrayList<>(members.size());
+    for (ParameterBound member : members) {
+      ParameterBound converted =
+          member instanceof LazyParameterBound
+              ? ((LazyParameterBound) member).toReferenceBound()
+              : member;
+      if (converted instanceof ReferenceBound) {
+        result.add(((ReferenceBound) converted).getBoundType());
+      }
+    }
+    return result;
   }
 
   /**

@@ -453,9 +453,10 @@ public class TypeInstantiator {
    * of the capture variables of the wildcards against the type chosen for {@code T} ensures that
    * the types chosen for the wildcards are consistent with one another.
    *
-   * <p>If an attempt fails, and step 1 chose among several input types for some parameter type,
-   * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
-   * Otherwise, another attempt would start from the same substitution, so this returns null.
+   * <p>If an attempt fails, and step 1 chose an input type for some parameter type while other
+   * input types that it had not rejected remained, this makes another attempt, up to {@link
+   * #MAX_INSTANTIATION_ATTEMPTS} attempts in all. Otherwise, another attempt would make the same
+   * choices and fail the same way, so this returns null.
    *
    * @param operation an operation
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
@@ -469,7 +470,8 @@ public class TypeInstantiator {
       // answer question: what type instantiation would allow a call to this operation?
       Set<TypeVariable> typeParameters = new LinkedHashSet<>();
       Substitution substitution = new Substitution();
-      // True if an input type was chosen among several for some parameter type.
+      // True if an input type was chosen for some parameter type while other unrejected input types
+      // remained, so that another attempt could choose differently.
       boolean choseAmongSeveral = false;
       // True if each parameterized parameter type matched an input type.  If false, this attempt
       // fails without instantiating the remaining type variables.
@@ -489,7 +491,6 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
-            choseAmongSeveral |= matches.size() > 1;
             Substitution extended =
                 selectSubstitution((ReferenceType) origParamType, matches, substitution);
             if (extended == null) {
@@ -503,6 +504,11 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
+            // selectSubstitution removed from `matches` each match that it rejected.  If others
+            // remain besides the selected one, another attempt can choose differently.  If
+            // selectSubstitution rejected every match, as above, another attempt would reject them
+            // all again, so that case does not set choseAmongSeveral.
+            choseAmongSeveral |= matches.size() > 1;
             substitution = extended;
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
