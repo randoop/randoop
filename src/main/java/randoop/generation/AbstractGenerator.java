@@ -447,7 +447,7 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  void setCurrentSequence(Sequence s) {
+  /*package*/ void setCurrentSequence(Sequence s) {
     currSeq = s;
   }
 
