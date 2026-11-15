@@ -631,5 +631,49 @@ public class InstantiationTest {
     TypedClassOperation instantiated = new TypeInstantiator(inputTypes).instantiate(operation);
     assertNotNull("no instantiation found", instantiated);
     assertEquals(stringInner, instantiated.getInputTypes().get(0));
+
+    // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
+    // method's type parameter `E`, so `Outer<String>.Inner` must not be paired with
+    // `List<Integer>`.
+    Method pairMethod =
+        InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
+    TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);
+    Type innerParameterType = pairOperation.getInputTypes().get(0);
+    Type listParameterType = pairOperation.getInputTypes().get(1);
+    assertEquals(
+        ((ClassOrInterfaceType) innerParameterType).getTypeParameters(),
+        ((ClassOrInterfaceType) listParameterType).getTypeParameters());
+    InstantiatedType integerList =
+        JDKTypes.LIST_TYPE.instantiate(ReferenceType.forClass(Integer.class));
+    InstantiatedType stringList = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+
+    Set<Type> mismatchedInputTypes = new LinkedHashSet<>();
+    mismatchedInputTypes.add(JavaTypes.OBJECT_TYPE);
+    mismatchedInputTypes.add(stringInner);
+    mismatchedInputTypes.add(integerList);
+    assertNull(
+        "incompatible instantiation found",
+        new TypeInstantiator(mismatchedInputTypes).instantiate(pairOperation));
+
+    Set<Type> matchingInputTypes = new LinkedHashSet<>();
+    matchingInputTypes.add(JavaTypes.OBJECT_TYPE);
+    matchingInputTypes.add(stringInner);
+    matchingInputTypes.add(stringList);
+    TypedClassOperation pairInstantiated =
+        new TypeInstantiator(matchingInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", pairInstantiated);
+    assertEquals(stringInner, pairInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, pairInstantiated.getInputTypes().get(1));
   }
+
+  /**
+   * A method whose parameter types share a type parameter, one of them only through an enclosing
+   * type.
+   *
+   * @param <E> the type parameter
+   * @param inner an inner object
+   * @param values a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void pair(Outer<E>.Inner inner, List<E> values) {}
 }
