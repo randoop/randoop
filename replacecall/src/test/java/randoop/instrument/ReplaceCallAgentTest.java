@@ -109,11 +109,49 @@ public class ReplaceCallAgentTest {
     assertEquals(originalSize - 1, map.size());
   }
 
+  /**
+   * Skips the current test if the absolute form of the given path cannot be passed to {@link
+   * Options#parse}, which rejects a value that contains whitespace and both kinds of quote. The
+   * absolute path includes the current directory, which may contain whitespace or quotes.
+   *
+   * @param path a relative or absolute path
+   */
+  private static void assumeParseable(Path path) {
+    String absolute = path.toAbsolutePath().toString();
+    boolean hasWhitespace = absolute.chars().anyMatch(Character::isWhitespace);
+    assumeFalse(
+        "Options.parse() rejects a value with whitespace and both kinds of quote: " + absolute,
+        hasWhitespace && absolute.indexOf('\'') != -1 && absolute.indexOf('"') != -1);
+  }
+
+  /**
+   * Sets the agent's options to the given files, creates an agent argument string from them, and
+   * checks that parsing the string yields the absolute forms of the files. Skips the test if either
+   * absolute path cannot be parsed.
+   *
+   * @param replacementFile the replacement file
+   * @param dontTransformFile the exclusion file
+   * @throws ArgException if the agent argument string cannot be parsed
+   */
+  private static void checkCreateAgentArgs(Path replacementFile, Path dontTransformFile)
+      throws ArgException {
+    assumeParseable(replacementFile);
+    assumeParseable(dontTransformFile);
+    ReplaceCallAgent.replacement_file = replacementFile;
+    ReplaceCallAgent.dont_transform = dontTransformFile;
+    String args = ReplaceCallAgent.createAgentArgs();
+
+    checkParse(args, replacementFile.toAbsolutePath(), dontTransformFile.toAbsolutePath());
+  }
+
   @Test
   public void createAgentArgsTest() throws ArgException {
     Path replacementFile = Paths.get("my replacements.txt");
     Path dontTransformFile = Paths.get("dont-transform.txt");
     Path disabledFile = Paths.get("don't replace.txt");
+    assumeParseable(replacementFile);
+    assumeParseable(dontTransformFile);
+    assumeParseable(disabledFile);
     ReplaceCallAgent.replacement_file = replacementFile;
     ReplaceCallAgent.dont_transform = dontTransformFile;
     ReplaceCallAgent.disable_default_replacement =
@@ -137,16 +175,18 @@ public class ReplaceCallAgentTest {
   public void createAgentArgsDoubleQuoteTest() throws ArgException {
     // Windows does not permit a double quote in a filename.
     assumeFalse(System.getProperty("os.name").startsWith("Windows"));
-    // The only special character in the first filename is a double quote.
-    Path replacementFile = Paths.get("my\"replacements\".txt");
-    // The second filename contains both kinds of quote.  It contains no whitespace, because
-    // Options.parse() rejects a value that contains whitespace and both kinds of quote.
-    Path dontTransformFile = Paths.get("don't\"transform\".txt");
-    ReplaceCallAgent.replacement_file = replacementFile;
-    ReplaceCallAgent.dont_transform = dontTransformFile;
-    String args = ReplaceCallAgent.createAgentArgs();
+    // The only special character in each filename is a double quote.
+    checkCreateAgentArgs(Paths.get("my\"replacements\".txt"), Paths.get("my\"dont\"transform.txt"));
+  }
 
-    checkParse(args, replacementFile.toAbsolutePath(), dontTransformFile.toAbsolutePath());
+  @Test
+  public void createAgentArgsBothQuotesTest() throws ArgException {
+    // Windows does not permit a double quote in a filename.
+    assumeFalse(System.getProperty("os.name").startsWith("Windows"));
+    // The filenames contain both kinds of quote.  They contain no whitespace, because
+    // Options.parse() rejects a value that contains whitespace and both kinds of quote.
+    // checkCreateAgentArgs() skips the test if the current directory contains whitespace.
+    checkCreateAgentArgs(Paths.get("my'replacements\".txt"), Paths.get("don't\"transform\".txt"));
   }
 
   @Test
