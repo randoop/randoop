@@ -78,8 +78,10 @@ public abstract class ParameterBound {
 
   /**
    * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. Tests for
-   * types that are represented by {@code Class} objects, or {@code
-   * java.lang.reflect.ParameterizedType} objects.
+   * types that are represented by {@code Class} objects, {@code
+   * java.lang.reflect.ParameterizedType} objects, or {@code java.lang.reflect.GenericArrayType}
+   * objects. A generic array type in which no type variable occurs, such as {@code List<String>[]},
+   * yields an eager bound.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -92,6 +94,12 @@ public abstract class ParameterBound {
         return new EagerReferenceBound(ParameterizedType.forType(type));
       }
       return new LazyParameterBound(type);
+    }
+    // hasTypeVariable is not used here:  it ignores a type variable that is not in variableSet,
+    // and an eager bound on an array of such a variable cannot be substituted by a type, such as
+    // the null type, that cannot be an array component.
+    if (type instanceof java.lang.reflect.GenericArrayType && !containsAnyTypeVariable(type)) {
+      return new EagerReferenceBound(ArrayType.forType(type));
     }
     if (type instanceof Class<?>) {
       return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
@@ -117,6 +125,53 @@ public abstract class ParameterBound {
    * @return the list of {@code TypeVariable} objects in this bound
    */
   public abstract List<TypeVariable> getTypeParameters();
+
+  /**
+   * Returns true if some type variable occurs in the given (reflection) type, as in {@code List<T>}
+   * or {@code Outer<T>.Inner<String>}. Unlike {@link #hasTypeVariable}, considers every type
+   * variable.
+   *
+   * @param type the reflection type
+   * @return true if some type variable occurs in the type
+   */
+  private static boolean containsAnyTypeVariable(java.lang.reflect.Type type) {
+    if (type instanceof Class<?>) {
+      return false;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && containsAnyTypeVariable(ownerType)) {
+        return true;
+      }
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (containsAnyTypeVariable(argType)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return containsAnyTypeVariable(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (containsAnyTypeVariable(boundType)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (containsAnyTypeVariable(boundType)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    // A type variable, or a kind of type that this method does not know.
+    return true;
+  }
 
   /**
    * Returns true if the given (reflection) type reference represents a type in which a type
