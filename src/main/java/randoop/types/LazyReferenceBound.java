@@ -50,7 +50,7 @@ class LazyReferenceBound extends ReferenceBound {
    * type: that is, if the type has an array type, possibly nested in a type argument, whose element
    * type is a type variable that the substitution maps to the null type. An example is {@code
    * List<T[]>} with {@code T} mapped to the null type. An array type within the bound of a wildcard
-   * is not examined.
+   * is not examined, because substitution into a wildcard bound leaves such a bound unresolved.
    *
    * @param type a type
    * @param substitution a type substitution
