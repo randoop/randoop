@@ -1053,7 +1053,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the set of method call operations in {@code es}
    */
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
-    HashSet<TypedClassOperation> ops = new HashSet<>();
+    Set<TypedClassOperation> ops = new HashSet<>();
 
     SIList<Statement> statements = es.sequence.statements;
     for (Statement s : statements) {
