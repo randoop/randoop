@@ -31,7 +31,7 @@ class LazyParameterBound extends ParameterBound {
    *
    * @param boundType the reflection type for this bound
    */
-  LazyParameterBound(java.lang.reflect.Type boundType) {
+  /*package*/ LazyParameterBound(java.lang.reflect.Type boundType) {
     super();
     this.boundType = boundType;
   }
@@ -438,6 +438,7 @@ class LazyParameterBound extends ParameterBound {
    * <p>A type variable in this bound that the substitution does not replace stands for an unknown
    * type, as in {@link #isUpperBound(Type, Substitution)}.
    */
+  /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     Substitution completeSubstitution = completeSubstitution(substitution);
@@ -535,7 +536,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /** There was an attempt to perform an operation, such as a subtype test, on a lazy bound. */
-  static class LazyBoundException extends RuntimeException {
+  /*package*/ static class LazyBoundException extends RuntimeException {
     /** Creates a new LazyBoundException. */
     public LazyBoundException() {
       super();

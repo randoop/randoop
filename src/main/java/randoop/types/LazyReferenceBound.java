@@ -23,7 +23,7 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * @param boundType the bound type
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -49,7 +49,8 @@ class LazyReferenceBound extends ReferenceBound {
    * Returns true if applying the substitution to the given type would create an array of the null
    * type: that is, if the type has an array type, possibly nested in a type argument, whose element
    * type is a type variable that the substitution maps to the null type. An example is {@code
-   * List<T[]>} with {@code T} mapped to the null type.
+   * List<T[]>} with {@code T} mapped to the null type. An array type within the bound of a wildcard
+   * is not examined.
    *
    * @param type a type
    * @param substitution a type substitution

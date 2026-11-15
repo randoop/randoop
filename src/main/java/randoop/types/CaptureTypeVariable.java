@@ -58,6 +58,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @param wildcard the wildcard argument
    */
+  /*package*/
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
@@ -91,7 +92,7 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @return the wildcard
    */
-  WildcardArgument getWildcard() {
+  /*package*/ WildcardArgument getWildcard() {
     return wildcard;
   }
 
@@ -247,7 +248,7 @@ class CaptureTypeVariable extends TypeVariable {
    * Returns the result of applying the given substitution to this variable. The substitution maps
    * this variable to {@code type}, which can be null. Let the substituted bounds be this variable's
    * bounds with the substitution applied. If the substituted bounds differ from this variable's
-   * bounds, the result is a copy of {@code type} (or of this variable, if {@code type} is null)
+   * bounds, including in the bounds of the type variables in them, the result is a copy of {@code type} (or of this variable, if {@code type} is null)
    * whose bounds are the substituted bounds. Otherwise, the result is {@code type}, or this
    * variable if {@code type} is null.
    *
@@ -263,18 +264,33 @@ class CaptureTypeVariable extends TypeVariable {
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
-      if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+      if (!boundsAreIdentical(lowerBound, upperBound)) {
         WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;
     }
 
-    if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+    if (!boundsAreIdentical(lowerBound, upperBound)) {
       // need a new variable based on type with updated bounds
       return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
     }
     return type;
+  }
+
+  /**
+   * Returns true if the given bounds are identical to the bounds of this variable, as determined by
+   * {@link TypeVariable#areIdentical(ParameterBound, ParameterBound)}. Unlike {@code equals}, this
+   * detects a change to the bounds of a type variable that occurs in a bound of this variable, as
+   * when a substitution for {@code X} changes the bound of {@code Y} for {@code <X, Y extends X>}.
+   *
+   * @param lowerBound a lower bound
+   * @param upperBound an upper bound
+   * @return true if the given bounds are identical to the bounds of this variable
+   */
+  private boolean boundsAreIdentical(ParameterBound lowerBound, ParameterBound upperBound) {
+    return areIdentical(lowerBound, getLowerTypeBound())
+        && areIdentical(upperBound, getUpperTypeBound());
   }
 
   @Override
