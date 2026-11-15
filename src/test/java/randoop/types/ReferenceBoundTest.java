@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import org.junit.Test;
 
@@ -21,17 +22,52 @@ public class ReferenceBoundTest {
   }
 
   /**
-   * Returns the type variable that is the type parameter of {@link #listSuperIntegerVariable}.
+   * Returns {@code List<? extends U>}, where the bound of {@code U} is {@code Number}.
    *
-   * @return {@code U extends Integer}
+   * @param <U> a type parameter whose bound is {@code Number}
+   * @return null
    */
-  private static TypeVariable integerVariable() {
-    try {
-      return TypeVariable.forType(
-          ReferenceBoundTest.class.getMethod("listSuperIntegerVariable").getTypeParameters()[0]);
-    } catch (NoSuchMethodException e) {
-      throw new Error(e);
-    }
+  public static <U extends Number> List<? extends U> listExtendsNumberVariable() {
+    return null;
+  }
+
+  /**
+   * Returns the given method of this class.
+   *
+   * @param methodName the name of a method of this class that has no parameters
+   * @return the method of this class named {@code methodName}
+   * @throws NoSuchMethodException if this class has no such method
+   */
+  private static Method method(String methodName) throws NoSuchMethodException {
+    return ReferenceBoundTest.class.getMethod(methodName);
+  }
+
+  /**
+   * Returns the type parameter of the given method of this class.
+   *
+   * @param methodName the name of a method of this class that has one type parameter
+   * @return the type parameter of the method named {@code methodName}
+   * @throws NoSuchMethodException if this class has no such method
+   */
+  private static TypeVariable typeParameter(String methodName) throws NoSuchMethodException {
+    return TypeVariable.forType(method(methodName).getTypeParameters()[0]);
+  }
+
+  /**
+   * Returns the capture variable of the type argument of the return type of the given method of
+   * this class.
+   *
+   * @param methodName the name of a method of this class whose return type is {@code List<W>} for
+   *     some wildcard {@code W}
+   * @return the capture variable of the wildcard in the return type of the method
+   * @throws NoSuchMethodException if this class has no such method
+   */
+  private static TypeVariable captureVariable(String methodName) throws NoSuchMethodException {
+    InstantiatedType listType =
+        (InstantiatedType) Type.forType(method(methodName).getGenericReturnType());
+    return (TypeVariable)
+        ((ReferenceArgument) listType.applyCaptureConversion().getTypeArguments().get(0))
+            .getReferenceType();
   }
 
   @Test
@@ -64,38 +100,59 @@ public class ReferenceBoundTest {
   }
 
   @Test
-  public void testVariableIsLowerBound() {
-    ReferenceBound bound = new EagerReferenceBound(integerVariable());
+  public void testVariableIsLowerBound() throws NoSuchMethodException {
+    TypeVariable u = typeParameter("listSuperIntegerVariable");
+    TypeVariable captureVariable = captureVariable("listSuperIntegerVariable");
     Substitution substitution = new Substitution();
+    ReferenceBound bound = new EagerReferenceBound(u);
     assertTrue(bound.isLowerBound(JavaTypes.OBJECT_TYPE, substitution));
     assertTrue(bound.isLowerBound(NonParameterizedType.forClass(Number.class), substitution));
     // U is a subtype of Integer, which is not a subtype of String.
     assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, substitution));
+    // U is a subtype of the capture variable of `? super U`.
+    assertTrue(bound.isLowerBound(captureVariable, substitution));
   }
 
   @Test
-  public void testCaptureOfSuperVariable() {
+  public void testVariableIsUpperBound() throws NoSuchMethodException {
+    TypeVariable u = typeParameter("listExtendsNumberVariable");
+    Substitution substitution = new Substitution();
+    ReferenceBound bound = new EagerReferenceBound(u);
+    assertTrue(bound.isUpperBound(u, substitution));
+    // The substitution does not map U, so U can be chosen as Number, a supertype of Integer.
+    assertTrue(bound.isUpperBound(JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution));
+    // U extends Number, so it cannot be a supertype of String.
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+  }
+
+  @Test
+  public void testCaptureOfSuperVariable() throws NoSuchMethodException {
     // The capture variable of List<? super U> has lower bound U, where U extends Integer.
-    InstantiatedType listType;
-    try {
-      listType =
-          (InstantiatedType)
-              Type.forType(
-                  ReferenceBoundTest.class
-                      .getMethod("listSuperIntegerVariable")
-                      .getGenericReturnType());
-    } catch (NoSuchMethodException e) {
-      throw new Error(e);
-    }
-    TypeVariable captureVariable =
-        (TypeVariable)
-            ((ReferenceArgument) listType.applyCaptureConversion().getTypeArguments().get(0))
-                .getReferenceType();
+    TypeVariable captureVariable = captureVariable("listSuperIntegerVariable");
     assertTrue(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
                 NonParameterizedType.forClass(Number.class), captureVariable)
             != null);
     // No supertype of U, where U extends Integer, is String.
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                JavaTypes.STRING_TYPE, captureVariable)
+            == null);
+  }
+
+  @Test
+  public void testCaptureOfExtendsVariable() throws NoSuchMethodException {
+    // The capture variable of List<? extends U> has upper bound U, where U extends Number.
+    TypeVariable captureVariable = captureVariable("listExtendsNumberVariable");
+    TypeVariable u = typeParameter("listExtendsNumberVariable");
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(u, captureVariable) != null);
+    // U can be chosen as Number, a supertype of Integer.
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                JavaTypes.INT_TYPE.toBoxedPrimitive(), captureVariable)
+            != null);
+    // U extends Number, so it cannot be a supertype of String.
     assertTrue(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
                 JavaTypes.STRING_TYPE, captureVariable)

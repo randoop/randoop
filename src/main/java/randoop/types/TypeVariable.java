@@ -88,6 +88,17 @@ public abstract class TypeVariable extends ParameterType {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
+    if (otherType.isVariable()) {
+      // A type is a subtype of a type variable if it is a subtype of the variable's lower bound, as
+      // for a capture variable of `? super V`.
+      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
+      if (lowerBound instanceof ReferenceBound) {
+        ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+        if (!lowerBoundType.equals(JavaTypes.NULL_TYPE) && isSubtypeOfOrEqualTo(lowerBoundType)) {
+          return true;
+        }
+      }
+    }
     if (otherType.isReferenceType()) {
       // A type variable is a subtype of its upper bound.  The test below does not always recognize
       // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it

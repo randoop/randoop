@@ -85,6 +85,8 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      // The substitution does not map the variable, so the variable can still be chosen.  argType
+      // is within this bound if it is within the variable's upper bound, which the variable can be.
       return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (thisBoundType.isParameterized()) {

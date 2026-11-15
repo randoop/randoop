@@ -123,9 +123,8 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
    * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
-   * argType} within this bound. Comparing {@code argType} with the bounds of the type variable
-   * instead would accept any type as within a lower bound, since the lower bound of the type
-   * variable is usually the null type.
+   * argType} within this bound. {@link EagerReferenceBound} instead compares {@code argType} with
+   * the upper bound of the type variable.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
