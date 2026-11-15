@@ -56,6 +56,51 @@ public class TypeBoundTest {
     assertFalse(bound.hasCaptureVariable());
   }
 
+  /**
+   * A class whose method has a type parameter bounded by a type parameter of the class.
+   *
+   * @param <K> the class type parameter
+   */
+  static class EnclosingVariableBound<K> {
+    /**
+     * A method whose type parameter {@code V} is bounded by a type parameter of the class.
+     *
+     * @param <V> the method type parameter
+     */
+    <V extends K> void enclosingBound() {}
+
+    /**
+     * A method whose type parameter {@code U} is bounded by a sibling.
+     *
+     * @param <S> the bound of {@code U}
+     * @param <U> the type parameter
+     */
+    <S, U extends S> void siblingBound() {}
+  }
+
+  @Test
+  public void testBoundIsEnclosingTypeParameter() throws NoSuchMethodException {
+    Method m = EnclosingVariableBound.class.getDeclaredMethod("enclosingBound");
+    TypeVariable v = TypeVariable.forType(m.getTypeParameters()[0]);
+    TypeVariable k = TypeVariable.forType(EnclosingVariableBound.class.getTypeParameters()[0]);
+    // K stands for itself, so String is not a subtype of it.
+    assertFalse(
+        v.getUpperTypeBound()
+            .isUpperBound(JavaTypes.STRING_TYPE, new Substitution(v, JavaTypes.STRING_TYPE)));
+    // K is a subtype of itself.
+    assertTrue(v.getUpperTypeBound().isUpperBound(k, new Substitution(v, k)));
+  }
+
+  @Test
+  public void testBoundIsSiblingTypeParameter() throws NoSuchMethodException {
+    Method m = EnclosingVariableBound.class.getDeclaredMethod("siblingBound");
+    TypeVariable u = TypeVariable.forType(m.getTypeParameters()[1]);
+    // S stands for an unknown type, which can be String.
+    assertTrue(
+        u.getUpperTypeBound()
+            .isUpperBound(JavaTypes.STRING_TYPE, new Substitution(u, JavaTypes.STRING_TYPE)));
+  }
+
   @Test
   public void testWildcardBounds() throws RandoopSpecificationError {
 
