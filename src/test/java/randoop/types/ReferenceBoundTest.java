@@ -43,15 +43,6 @@ public class ReferenceBoundTest {
   }
 
   /**
-   * Returns {@code List<? super String[]>}.
-   *
-   * @return null
-   */
-  public static List<? super String[]> listSuperStringArray() {
-    return null;
-  }
-
-  /**
    * Returns the given method of this class.
    *
    * @param methodName the name of a method of this class that has no parameters
@@ -177,10 +168,14 @@ public class ReferenceBoundTest {
   }
 
   @Test
-  public void testArraySubtypeOfCaptureOfSuperArray() throws NoSuchMethodException {
-    // The capture variable of List<? super String[]> has lower bound String[].
-    TypeVariable captureVariable = captureVariable("listSuperStringArray");
-    assertTrue(ArrayType.forClass(String[].class).isSubtypeOfOrEqualTo(captureVariable));
+  public void testArraySubtypeOfCaptureOfSuperArray() {
+    // A capture variable of `? super String[]` has lower bound String[].  The capture variable is
+    // built directly because reflection represents String[] in a wildcard bound as a class type.
+    ArrayType stringArray = ArrayType.forClass(String[].class);
+    TypeVariable captureVariable =
+        new CaptureTypeVariable(
+            new WildcardArgument(new WildcardType(new EagerReferenceBound(stringArray), false)));
+    assertTrue(stringArray.isSubtypeOfOrEqualTo(captureVariable));
     // Object[] is not a subtype of String[].
     assertFalse(ArrayType.forClass(Object[].class).isSubtypeOfOrEqualTo(captureVariable));
   }
