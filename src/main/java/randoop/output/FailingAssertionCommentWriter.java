@@ -630,10 +630,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private static class Match {
 
     /** The line that matched the pattern. */
-    final String line;
+    /*package*/ final String line;
 
     /** The substring that matched the group. */
-    final String group;
+    /*package*/ final String group;
 
     /**
      * Creates a {@link Match} record with the given line and group.
@@ -641,7 +641,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
      * @param line the matched line
      * @param group the matched group substring
      */
-    Match(String line, String group) {
+    /*package*/ Match(String line, String group) {
       this.line = line;
       this.group = group;
     }
