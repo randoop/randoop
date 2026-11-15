@@ -1336,7 +1336,6 @@ public class GenTests extends GenInputsAbstract {
     return Pattern.compile(patternString);
   }
 
-
   /**
    * Prints information about a {@code SequenceExceptionError} that indicates a flaky test has been
    * found. Prints information to help user identify source of flakiness, including exception,

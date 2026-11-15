@@ -101,8 +101,8 @@ public class OmitMethodsPredicate {
    * Create a new OmitMethodsPredicate.
    *
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
-   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do
-   *     not omit an operation whose signature matches {@code exemptPatterns}. May be empty.
+   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do not
+   *     omit an operation whose signature matches {@code exemptPatterns}. May be empty.
    * @param exemptPatterns a list of regular expressions for the signatures of operations that
    *     {@code exemptibleOmitPatterns} does not omit. May be empty.
    */
@@ -117,8 +117,8 @@ public class OmitMethodsPredicate {
    * Create a new OmitMethodsPredicate.
    *
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
-   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do
-   *     not omit an operation whose signature matches {@code exemptPatterns}. May be empty.
+   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do not
+   *     omit an operation whose signature matches {@code exemptPatterns}. May be empty.
    * @param exemptPatterns a list of regular expressions for the signatures of operations that
    *     {@code exemptibleOmitPatterns} does not omit. May be empty.
    * @param overriddenMethods methods to omit even though no pattern matches them, each mapped to

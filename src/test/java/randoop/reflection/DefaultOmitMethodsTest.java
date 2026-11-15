@@ -363,8 +363,7 @@ public class DefaultOmitMethodsTest {
       }
     }
     String stringHashCode = "java.lang.String.hashCode()";
-    List<Pattern> exempt =
-        Collections.singletonList(GenTests.signatureToPattern(stringHashCode));
+    List<Pattern> exempt = Collections.singletonList(GenTests.signatureToPattern(stringHashCode));
 
     // By default, java.lang.String.hashCode() is omitted.
     assertOmitted(String.class, stringHashCode);
