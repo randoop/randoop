@@ -1344,13 +1344,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
                     "%s was read from %s but was not found on classpath."
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
                     className, jarFile, jarFile, ReflectionPlume.classpathToString()));
-          } catch (UnsatisfiedLinkError e) {
-            // This happens when an old classfile refers to a class that has been removed from the
-            // JDK, such as one in java.awt.*.
-            System.out.printf(
-                "Ignoring %s which was read from %s but could not be loaded: %s%n",
-                className, jarFile, e);
-            continue;
           } catch (ExceptionInInitializerError e) {
             // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
@@ -1384,7 +1377,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
               continue;
             }
           } catch (Error e) {
-            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            // One example is: "java.lang.Error: FileMonitor not implemented for Linux".
+            // Another is an UnsatisfiedLinkError, which happens when an old classfile refers to a
+            // class that has been removed from the JDK, such as one in java.awt.*.
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be loaded: %s%n",
                 className, jarFile, e);
