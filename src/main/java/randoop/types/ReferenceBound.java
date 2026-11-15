@@ -14,7 +14,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @param boundType the {@link ReferenceType} of this bound
    */
-  ReferenceBound(ReferenceType boundType) {
+  /*package*/ ReferenceBound(ReferenceType boundType) {
     super();
     this.boundType = boundType;
   }
@@ -100,26 +100,6 @@ public abstract class ReferenceBound extends ParameterBound {
     return TypeVariable.areIdentical(substitutedType, boundType);
   }
 
-  @Override
-  public boolean hasCaptureVariable() {
-    return boundType.hasCaptureVariable();
-  }
-
-  @Override
-  public boolean isGeneric(boolean ignoreWildcards) {
-    return boundType.isGeneric(ignoreWildcards);
-  }
-
-  @Override
-  public boolean isObject() {
-    return boundType.isObject();
-  }
-
-  @Override
-  public boolean isVariable() {
-    return boundType.isVariable();
-  }
-
   /**
    * Returns true if applying the substitution to the given type would create an array of the null
    * type: that is, if the type has an array type, possibly nested in a type argument, whose element
@@ -152,6 +132,28 @@ public abstract class ReferenceBound extends ParameterBound {
     return false;
   }
 
+  /*package*/
+  @Override
+  public boolean hasCaptureVariable() {
+    return boundType.hasCaptureVariable();
+  }
+
+  @Override
+  public boolean isGeneric(boolean ignoreWildcards) {
+    return boundType.isGeneric(ignoreWildcards);
+  }
+
+  @Override
+  public boolean isObject() {
+    return boundType.isObject();
+  }
+
+  @Override
+  public boolean isVariable() {
+    return boundType.isVariable();
+  }
+
+  /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     if (hasArrayOfNullType(boundType, substitution)) {

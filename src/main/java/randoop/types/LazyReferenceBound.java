@@ -38,7 +38,7 @@ class LazyReferenceBound extends EagerReferenceBound {
    *
    * @param boundType the type of this bound
    */
-  LazyReferenceBound(ReferenceType boundType) {
+  /*package*/ LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 

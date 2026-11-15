@@ -586,7 +586,8 @@ public class TypeInstantiator {
    *       the {@link #inferredTypes(Substitution)} that potentially satisfies the bounds of {@code
    *       X} (such a type need not be an input type: it can be a type argument of one); or it is the
    *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
-   *       X}.
+   *       X}, or a supertype of that type or a type argument of such a supertype; see {@link
+   *       #relatedTypes(ReferenceType)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -620,10 +621,17 @@ public class TypeInstantiator {
         // input types.  For example, an input type can be List<Foo> though Foo is not an input
         // type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a candidate for
         // T.  The bounds of `parameter` itself are checked when the substitution is completed.
+        // The supertypes of such a type, and their type arguments, are also candidates.  For
+        // example, for `<K, V extends Map<K, V>> void consume(List<V>)`, if V is instantiated to
+        // Node, which extends HashMap<Key, Node>, then Key is a candidate for K.
         for (TypeVariable variable : constrained) {
           ReferenceType type = substitution.get(variable);
-          if (type != null && !type.isGeneric() && !candidates.contains(type)) {
-            candidates.add(type);
+          if (type != null && !type.isGeneric()) {
+            for (ReferenceType related : relatedTypes(type)) {
+              if (!candidates.contains(related)) {
+                candidates.add(related);
+              }
+            }
           }
         }
         candidates.removeIf(
@@ -663,6 +671,37 @@ public class TypeInstantiator {
       }
     }
     return new ArrayList<>(result);
+  }
+
+  /**
+   * Returns the given type, followed by its supertypes and the non-generic reference type arguments
+   * of its supertypes, if it is a class or interface type. For example, for a class {@code Node}
+   * that extends {@code HashMap<Key, Node>}, the result contains {@code Node}, {@code HashMap<Key,
+   * Node>}, {@code Map<Key, Node>}, and {@code Key}, among others.
+   *
+   * @param type a non-generic reference type
+   * @return the type, its supertypes, and the type arguments of its supertypes, without duplicates
+   */
+  private static Set<ReferenceType> relatedTypes(ReferenceType type) {
+    Set<ReferenceType> result = new LinkedHashSet<>();
+    result.add(type);
+    if (type instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesInclusive()) {
+        if (supertype.isGeneric()) {
+          continue;
+        }
+        result.add(supertype);
+        for (TypeArgument argument : supertype.getTypeArguments()) {
+          if (argument instanceof ReferenceArgument) {
+            ReferenceType argumentType = ((ReferenceArgument) argument).getReferenceType();
+            if (!argumentType.isGeneric()) {
+              result.add(argumentType);
+            }
+          }
+        }
+      }
+    }
+    return result;
   }
 
   /**

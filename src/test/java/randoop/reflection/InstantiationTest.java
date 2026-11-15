@@ -369,19 +369,105 @@ public class InstantiationTest {
     addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
     addTypes(listOfMaps, inputTypes);
     TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    // <K, V, M extends Map<K, V>> K someKey(Collection<M>)
-    TypedClassOperation someKey =
-        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("someKey", Collection.class));
+    // <K, V, M extends Map<K, V>> Map<K, V> someMap(Collection<M>)
+    TypedClassOperation someMap =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("someMap", Collection.class));
 
     for (int seed = 0; seed < 20; seed++) {
       Randomness.setSeed(seed);
-      TypedClassOperation instance = instantiator.instantiate(someKey);
-      assertNotNull("instantiation failed for " + someKey, instance);
-      // M := HashMap<String, Integer> satisfies M extends Map<K, V> only if K := String.
+      TypedClassOperation instance = instantiator.instantiate(someMap);
+      assertNotNull("instantiation failed for " + someMap, instance);
+      // M := HashMap<String, Integer> satisfies M extends Map<K, V> only if K := String and
+      // V := Integer.
       assertEquals(JDKTypes.COLLECTION_TYPE.instantiate(mapType), instance.getInputTypes().get(0));
-      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+      assertEquals(
+          JDKTypes.MAP_TYPE.instantiate(
+              JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive()),
+          instance.getOutputType());
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable that occurs only in the bound of a type variable
+   * that is instantiated by matching a parameterized parameter type, when the only suitable type is
+   * a type argument of a supertype of the matched type, and is not an input type.
+   */
+  @Test
+  public void testBoundArgumentInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType nodeType = ClassOrInterfaceType.forClass(RelatedBoundsCase.Node.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(nodeType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <K, V extends Map<K, V>> K selfMapKey(List<V>)
+    TypedClassOperation selfMapKey =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("selfMapKey", List.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(selfMapKey);
+      assertNotNull("instantiation failed for " + selfMapKey, instance);
+      // V := Node satisfies V extends Map<K, V> only if K := Key.
+      assertEquals(JDKTypes.LIST_TYPE.instantiate(nodeType), instance.getInputTypes().get(0));
+      assertEquals(
+          ClassOrInterfaceType.forClass(RelatedBoundsCase.Key.class), instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable whose upper bound is a type variable that must be
+   * instantiated by a proper supertype of the type of the first type variable.
+   */
+  @Test
+  public void testSupertypeBoundInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType derivedType =
+        ClassOrInterfaceType.forClass(RelatedBoundsCase.Derived.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(derivedType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <T extends Comparable<T>, V extends T> T comparableSupertype(List<V>)
+    TypedClassOperation comparableSupertype =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("comparableSupertype", List.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(comparableSupertype);
+      assertNotNull("instantiation failed for " + comparableSupertype, instance);
+      // Derived is not Comparable<Derived>, so T := Base.
+      assertEquals(JDKTypes.LIST_TYPE.instantiate(derivedType), instance.getInputTypes().get(0));
+      assertEquals(
+          ClassOrInterfaceType.forClass(RelatedBoundsCase.Base.class), instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /** Tests the instantiation of a parameter type that is a member class of a generic class. */
+  @Test
+  public void testMemberClassInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType outerType = GenericClassType.forClass(RelatedBoundsCase.Outer.class);
+    ClassOrInterfaceType innerType =
+        ClassOrInterfaceType.forClass(RelatedBoundsCase.Outer.Inner.class)
+            .substitute(new Substitution(outerType.getTypeParameters(), JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(innerType, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <E> E enclosed(Outer<E>.Inner)
+    TypedClassOperation enclosed =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("enclosed", RelatedBoundsCase.Outer.Inner.class));
+
+    TypedClassOperation instance = instantiator.instantiate(enclosed);
+    assertNotNull("instantiation failed for " + enclosed, instance);
+    assertEquals(innerType, instance.getInputTypes().get(0));
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /* disabled until fix type parameter management
