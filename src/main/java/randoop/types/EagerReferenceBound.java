@@ -93,15 +93,23 @@ class EagerReferenceBound extends ReferenceBound {
       }
       ReferenceType argReferenceType = (ReferenceType) argType;
       if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
-        // The substitution does not replace the type variable, so it stands for an unknown type,
-        // which can be argType or one of its supertypes.  For `K extends Comparable<K>`, K can be
-        // a class that is comparable to itself, even if argType is a subclass of it that is not.
-        // Checking argType against the upper bound of the type variable instead would leave the
-        // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
-        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
-        // type variable are checked with the mappings of `subst`, because they can mention other
-        // type variables that `subst` instantiates.
-        return canBeSupertype((TypeVariable) thisBoundType, argReferenceType, subst);
+        // The substitution does not replace the type variable.  Mapping it to itself makes it an
+        // unknown if it is a type parameter of a declaration that the substitution instantiates,
+        // such as a sibling of the type parameter whose bound this is.
+        Substitution completeSubstitution = subst.extendWithIdentity(getTypeParameters());
+        if (completeSubstitution.isUnknown(thisBoundType)) {
+          // The type variable stands for an unknown type, which can be argType or one of its
+          // supertypes.  For `K extends Comparable<K>`, K can be a class that is comparable to
+          // itself, even if argType is a subclass of it that is not.
+          // Checking argType against the upper bound of the type variable instead would leave the
+          // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it
+          // would accept Comparable<String>, which no choice of T is a supertype of.  The bounds of
+          // the type variable are checked with the mappings of `subst`, because they can mention
+          // other type variables that `subst` instantiates.
+          return canBeSupertype((TypeVariable) thisBoundType, argReferenceType, subst);
+        }
+        // The type variable stands for itself, such as a type parameter of an enclosing class.
+        return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, completeSubstitution);
       }
       // A type variable that the substitution put in the bound stands for itself.  A type variable
       // argument satisfies this bound if its own upper bound does.
