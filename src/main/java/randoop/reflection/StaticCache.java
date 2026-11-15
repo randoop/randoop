@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.main.RandoopBug;
 
 /** Stores the mutable state of a class, allowing it to be saved, printed and restored. */
@@ -13,7 +14,7 @@ public class StaticCache {
   private final Class<?> declaringClass;
 
   /** The map from static fields to a value. */
-  private final Map<Field, Object> valueMap;
+  private final Map<Field, @Nullable Object> valueMap;
 
   /**
    * Creates the cache object for a particular class. State is not saved until {@link #saveState()}
@@ -28,13 +29,14 @@ public class StaticCache {
 
   /** Prints the fields and their values to standard output. */
   public void printCache() {
-    for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
+    for (Map.Entry<Field, @Nullable Object> entry : valueMap.entrySet()) {
       System.out.println(
           declaringClass.getName() + "." + entry.getKey().getName() + " = " + entry.getValue());
     }
   }
 
   /** Saves the state for the class in this object. Only saves non-final static fields. */
+  @SuppressWarnings("nullness:argument") // a static field's receiver is null
   public void saveState() {
     for (Field field : declaringClass.getDeclaredFields()) {
       field.setAccessible(true);
@@ -52,8 +54,9 @@ public class StaticCache {
   }
 
   /** Restores the saved state of the class in this object to previously saved values. */
+  @SuppressWarnings("nullness:argument") // a static field's receiver is null
   public void restoreState() {
-    for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
+    for (Map.Entry<Field, @Nullable Object> entry : valueMap.entrySet()) {
       try {
         entry.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {

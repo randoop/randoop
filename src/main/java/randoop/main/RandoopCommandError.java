@@ -1,5 +1,7 @@
 package randoop.main;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Indicates a user error in a command supplied to Randoop. Randoop prints the message and also
  * prints how to get help.
@@ -21,10 +23,10 @@ public class RandoopCommandError extends RandoopUsageError {
   /**
    * Creates a {@link RandoopCommandError} with the given message and causing exception.
    *
-   * @param message the exception message
+   * @param message the exception message, or null if none
    * @param cause the causing exception
    */
-  RandoopCommandError(String message, Throwable cause) {
+  RandoopCommandError(@Nullable String message, Throwable cause) {
     super(message, cause);
   }
 }

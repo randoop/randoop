@@ -1513,7 +1513,7 @@ public class GenTests extends GenInputsAbstract {
    * @param format the string format
    * @param args the arguments
    */
-  private static void usage(String format, Object... args) {
+  private static void usage(String format, @Nullable Object... args) {
     System.out.print("ERROR: ");
     System.out.printf(format, args);
     System.out.println();
