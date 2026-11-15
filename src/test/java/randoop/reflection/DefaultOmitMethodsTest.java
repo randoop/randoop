@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
+import randoop.main.GenTests;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 
@@ -345,6 +347,54 @@ public class DefaultOmitMethodsTest {
       }
     }
     return false;
+  }
+
+  /**
+   * An exempt operation, such as a method that the replacecall agent replaces when {@code
+   * --dont-omit-replaced-methods} is set, is not omitted by the default patterns, even if a default
+   * pattern matches its signature in a supertype. Other omit patterns still omit it.
+   */
+  @Test
+  public void testExemptFromDefaults() throws IOException, RandoopSpecificationError {
+    List<Pattern> defaultPatterns = new ArrayList<>();
+    for (String filename : DEFAULT_FILES) {
+      for (String line : readLines(filename)) {
+        defaultPatterns.add(Pattern.compile(line));
+      }
+    }
+    String stringHashCode = "java.lang.String.hashCode()";
+    List<Pattern> exempt =
+        Collections.singletonList(GenTests.signatureToPattern(stringHashCode));
+
+    // By default, java.lang.String.hashCode() is omitted.
+    assertOmitted(String.class, stringHashCode);
+
+    OmitMethodsPredicate exemptingPredicate =
+        new OmitMethodsPredicate(Collections.emptyList(), defaultPatterns, exempt);
+    assertTrue(signatures(String.class, exemptingPredicate).contains(stringHashCode));
+    // Other operations are still omitted.
+    assertFalse(
+        signatures(java.util.Random.class, exemptingPredicate).contains("java.util.Random()"));
+
+    // A default pattern that matches only the signature in a supertype does not omit an exempt
+    // operation.
+    List<Pattern> objectHashCodePattern =
+        Collections.singletonList(GenTests.signatureToPattern("java.lang.Object.hashCode()"));
+    assertFalse(
+        signatures(String.class, new OmitMethodsPredicate(objectHashCodePattern))
+            .contains(stringHashCode));
+    assertTrue(
+        signatures(
+                String.class,
+                new OmitMethodsPredicate(Collections.emptyList(), objectHashCodePattern, exempt))
+            .contains(stringHashCode));
+
+    // A non-default omit pattern still omits an exempt operation, even via a supertype.
+    assertFalse(
+        signatures(
+                String.class,
+                new OmitMethodsPredicate(objectHashCodePattern, defaultPatterns, exempt))
+            .contains(stringHashCode));
   }
 
   /**

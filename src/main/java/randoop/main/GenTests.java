@@ -367,32 +367,23 @@ public class GenTests extends GenInputsAbstract {
       omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
-    List<String> replacedSignatures = MethodReplacements.getSignatureList();
-    if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omit_methods.addAll(createPatternsFromSignatures(replacedSignatures));
+    // Patterns for the default omissions.  They do not omit an operation whose signature matches a
+    // pattern in `exemptFromDefaultOmitMethods`.
+    List<Pattern> defaultOmitMethods = new ArrayList<>();
+    // Patterns for the signatures of operations that `defaultOmitMethods` does not omit.
+    List<Pattern> exemptFromDefaultOmitMethods = new ArrayList<>();
+    List<Pattern> replacedMethodPatterns =
+        createPatternsFromSignatures(MethodReplacements.getSignatureList());
+    if (GenInputsAbstract.dont_omit_replaced_methods) {
+      // A replacement can make a nondeterministic method deterministic.  Stop omitting the
+      // replaced methods, but continue to omit other methods that a default pattern matches.
+      exemptFromDefaultOmitMethods.addAll(replacedMethodPatterns);
+    } else {
+      omit_methods.addAll(replacedMethodPatterns);
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      List<Pattern> defaultOmitMethods = new ArrayList<>();
       defaultOmitMethods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
       defaultOmitMethods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
-      if (GenInputsAbstract.dont_omit_replaced_methods) {
-        // A replacement can make a nondeterministic method deterministic.  Stop omitting the
-        // replaced methods, but continue to omit other methods that a default pattern matches.
-        for (Pattern pattern : defaultOmitMethods) {
-          List<String> matchedSignatures = new ArrayList<>();
-          for (String sig : replacedSignatures) {
-            if (pattern.matcher(sig).find()) {
-              matchedSignatures.add(sig);
-            }
-          }
-          omit_methods.add(
-              matchedSignatures.isEmpty()
-                  ? pattern
-                  : excludeSignatures(pattern, matchedSignatures));
-        }
-      } else {
-        omit_methods.addAll(defaultOmitMethods);
-      }
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
@@ -434,6 +425,8 @@ public class GenTests extends GenInputsAbstract {
                 accessibility,
                 reflectionPredicate,
                 omit_methods,
+                defaultOmitMethods,
+                exemptFromDefaultOmitMethods,
                 classnames,
                 coveredClassnames,
                 classNameErrorHandler,
@@ -471,6 +464,8 @@ public class GenTests extends GenInputsAbstract {
           System.out.println("  accessibility = " + accessibility);
           System.out.println("  reflectionPredicate = " + reflectionPredicate);
           System.out.println("  omit_methods = " + omit_methods);
+          System.out.println("  defaultOmitMethods = " + defaultOmitMethods);
+          System.out.println("  exemptFromDefaultOmitMethods = " + exemptFromDefaultOmitMethods);
           System.out.println("  classnames = " + classnames);
           System.out.println("  coveredClassnames = " + coveredClassnames);
           System.out.println("  classNameErrorHandler = " + classNameErrorHandler);
@@ -1341,27 +1336,6 @@ public class GenTests extends GenInputsAbstract {
     return Pattern.compile(patternString);
   }
 
-  /**
-   * Returns a pattern that finds a match wherever {@code pattern} does, except in the signatures of
-   * the given constructors and methods.
-   *
-   * @param pattern a pattern, used with {@link java.util.regex.Matcher#find()}
-   * @param signatures signature strings, in the format accepted by {@link #signatureToPattern}
-   * @return a pattern like {@code pattern}, but that does not match any of {@code signatures}
-   */
-  public static Pattern excludeSignatures(Pattern pattern, List<String> signatures) {
-    StringBuilder sb = new StringBuilder("\\A");
-    for (String sig : signatures) {
-      sb.append("(?!").append(signatureToPattern(sig).pattern()).append(")");
-    }
-    // The original pattern is in a lookahead so that it can match anywhere in the input,
-    // including at the beginning if it uses "^".  Lookarounds do not shift group numbers, and the
-    // signature patterns contain no capturing groups, so backreferences in `pattern` still work.
-    sb.append("(?=[\\s\\S]*?(?:").append(pattern.pattern()).append("))");
-    @SuppressWarnings("regex:argument") // composed of valid regexes
-    Pattern result = Pattern.compile(sb.toString(), pattern.flags());
-    return result;
-  }
 
   /**
    * Prints information about a {@code SequenceExceptionError} that indicates a flaky test has been

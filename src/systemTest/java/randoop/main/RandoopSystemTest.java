@@ -1362,6 +1362,52 @@ public class RandoopSystemTest {
         tests.contains("new java.util.Random()"));
   }
 
+  /**
+   * Tests that, with {@code --dont-omit-replaced-methods}, Randoop calls a replaced method even
+   * though a default omit pattern matches it, either directly ({@code java.lang.String.hashCode()})
+   * or in a supertype ({@code java.lang.Object.hashCode()}).
+   */
+  @Test
+  public void runDontOmitReplacedMethodsTest() throws IOException {
+    String classpath =
+        systemTestEnvironmentManager.classpath
+            + java.io.File.pathSeparator
+            + systemTestEnvironmentManager.replacecallAgentPath;
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(
+            "dont-omit-replaced-methods-test",
+            classpath,
+            systemTestEnvironmentManager.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironmentManager.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt"
+            + " --replacement-file=resources/systemTest/string-hashcode-replacement.txt");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    options.addTestClass("java.lang.String");
+    // Use the default omit patterns, which match java.lang.String.hashCode() and
+    // java.lang.Object.hashCode().
+    options.setFlag("dont-omit-replaced-methods");
+    options.setFlag("no-error-revealing-tests");
+    options.setOption("generated_limit", "1000");
+
+    generateAndCompile(testEnvironment, options, false);
+
+    String packageString = options.getPackageName();
+    String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
+    Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
+    StringBuilder testsBuilder = new StringBuilder();
+    try (DirectoryStream<Path> testFiles =
+        Files.newDirectoryStream(srcDir, options.getRegressionBasename() + "*.java")) {
+      for (Path path : testFiles) {
+        testsBuilder.append(FileUtils.readFileToString(path.toFile(), (String) null));
+      }
+    }
+    String tests = testsBuilder.toString();
+    assertTrue(
+        "Randoop should call the replaced java.lang.String.hashCode()",
+        tests.contains(".hashCode()"));
+  }
+
   @Test
   public void runJDKSpecificationsTest() {
     SystemTestEnvironment testEnvironment =

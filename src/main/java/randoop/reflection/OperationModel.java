@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -112,6 +113,9 @@ public final class OperationModel {
   /** For debugging only. */
   private List<Pattern> omitMethods;
 
+  /** For debugging only. */
+  private List<Pattern> exemptPatterns;
+
   /**
    * User-supplied predicate for methods that should not be used during test generation. After
    * {@link #omitOverriddenMethods} is called, it also omits the methods that omitted methods
@@ -133,8 +137,15 @@ public final class OperationModel {
    * Create an empty model of test context.
    *
    * @param omitMethods the patterns for operations that should be omitted
+   * @param exemptibleOmitMethods the patterns for operations that should be omitted, unless they
+   *     match {@code exemptPatterns}
+   * @param exemptPatterns the patterns for signatures of operations that {@code
+   *     exemptibleOmitMethods} does not omit
    */
-  private OperationModel(List<Pattern> omitMethods) {
+  private OperationModel(
+      List<Pattern> omitMethods,
+      List<Pattern> exemptibleOmitMethods,
+      List<Pattern> exemptPatterns) {
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance()); // arity=1
     contracts.add(EqualsSymmetric.getInstance()); // arity=2
@@ -149,8 +160,11 @@ public final class OperationModel {
     contracts.add(CompareToTransitive.getInstance()); // arity=3
     contracts.add(SizeToArrayLength.getInstance()); // arity=1
 
-    this.omitMethods = omitMethods;
-    this.omitMethodsPredicate = new OmitMethodsPredicate(omitMethods);
+    this.omitMethods = new ArrayList<>(omitMethods);
+    this.omitMethods.addAll(exemptibleOmitMethods);
+    this.exemptPatterns = exemptPatterns;
+    this.omitMethodsPredicate =
+        new OmitMethodsPredicate(omitMethods, exemptibleOmitMethods, exemptPatterns);
   }
 
   // TODO: Much or all of this should be done in the constructor, rather than having a factory
@@ -188,8 +202,60 @@ public final class OperationModel {
           NoSuchMethodException,
           RandoopClassNameError,
           RandoopSpecificationError {
+    return createModel(
+        accessibility,
+        reflectionPredicate,
+        omitMethods,
+        Collections.emptyList(),
+        Collections.emptyList(),
+        classnames,
+        coveredClassesGoalNames,
+        errorHandler,
+        literalsFileList,
+        operationSpecifications);
+  }
 
-    OperationModel model = new OperationModel(omitMethods);
+  /**
+   * Factory method to construct an operation model for a particular set of classes.
+   *
+   * @param accessibility the {@link AccessibilityPredicate} to test accessibility of classes and
+   *     class members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param omitMethods the patterns for operations that should be omitted
+   * @param exemptibleOmitMethods the patterns for operations that should be omitted, unless they
+   *     match {@code exemptPatterns}; typically, the default omit patterns
+   * @param exemptPatterns the patterns for signatures of operations that {@code
+   *     exemptibleOmitMethods} does not omit
+   * @param classnames the names of classes under test
+   * @param coveredClassesGoalNames the coverage goal: the names of classes to be tested by the
+   *     covered class heuristic
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @param operationSpecifications the collection of operation specifications
+   * @return the {@link OperationModel} constructed with the given arguments
+   * @throws SignatureParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
+   * @throws RandoopSpecificationError if a specification for one of the classes is malformed
+   */
+  public static OperationModel createModel(
+      AccessibilityPredicate accessibility,
+      ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitMethods,
+      List<Pattern> exemptibleOmitMethods,
+      List<Pattern> exemptPatterns,
+      Set<@ClassGetName String> classnames,
+      Set<@ClassGetName String> coveredClassesGoalNames,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList,
+      SpecificationCollection operationSpecifications)
+      throws SignatureParseException,
+          NoSuchMethodException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
+
+    OperationModel model = new OperationModel(omitMethods, exemptibleOmitMethods, exemptPatterns);
 
     model.addClassTypes(
         accessibility, reflectionPredicate, classnames, coveredClassesGoalNames, errorHandler);
@@ -636,6 +702,7 @@ public final class OperationModel {
         out.write(String.format("    %s%n", p));
       }
       out.write(String.format("  ]%n"));
+      out.write(String.format("  exemptPatterns = %s%n", exemptPatterns));
       // Use logOperations instead: out.write(String.format("  operations = %s%n", operations));
       logOperations(out);
     } catch (IOException ioe) {

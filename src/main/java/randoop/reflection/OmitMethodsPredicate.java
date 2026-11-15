@@ -65,6 +65,21 @@ public class OmitMethodsPredicate {
   private final List<Pattern> omitPatterns;
 
   /**
+   * {@code Pattern}s to match operations that should be omitted, unless the operation is exempt:
+   * that is, its signature matches a pattern in {@link #exemptPatterns}. Typically, these are the
+   * default omit patterns. Never side-effected.
+   */
+  private final List<Pattern> exemptibleOmitPatterns;
+
+  /**
+   * {@code Pattern}s to match the signatures of operations that {@link #exemptibleOmitPatterns}
+   * does not omit. An operation is exempt if its own signature matches; the exemption also applies
+   * when an {@link #exemptibleOmitPatterns} pattern matches the signature of the operation in a
+   * supertype. Never side-effected.
+   */
+  private final List<Pattern> exemptPatterns;
+
+  /**
    * Methods that this predicate omits even though no pattern matches them, because a call to them
    * might dispatch to an omitted method. Maps each such method to the classes whose instances
    * dispatch a call to the method to an omitted method. For example, if a pattern matches {@code
@@ -79,19 +94,44 @@ public class OmitMethodsPredicate {
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
    */
   public OmitMethodsPredicate(List<Pattern> omitPatterns) {
-    this(omitPatterns, Collections.emptyMap());
+    this(omitPatterns, Collections.emptyList(), Collections.emptyList());
   }
 
   /**
    * Create a new OmitMethodsPredicate.
    *
    * @param omitPatterns a list of regular expressions for method signatures. May be empty.
+   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do
+   *     not omit an operation whose signature matches {@code exemptPatterns}. May be empty.
+   * @param exemptPatterns a list of regular expressions for the signatures of operations that
+   *     {@code exemptibleOmitPatterns} does not omit. May be empty.
+   */
+  public OmitMethodsPredicate(
+      List<Pattern> omitPatterns,
+      List<Pattern> exemptibleOmitPatterns,
+      List<Pattern> exemptPatterns) {
+    this(omitPatterns, exemptibleOmitPatterns, exemptPatterns, Collections.emptyMap());
+  }
+
+  /**
+   * Create a new OmitMethodsPredicate.
+   *
+   * @param omitPatterns a list of regular expressions for method signatures. May be empty.
+   * @param exemptibleOmitPatterns a list of regular expressions for method signatures, which do
+   *     not omit an operation whose signature matches {@code exemptPatterns}. May be empty.
+   * @param exemptPatterns a list of regular expressions for the signatures of operations that
+   *     {@code exemptibleOmitPatterns} does not omit. May be empty.
    * @param overriddenMethods methods to omit even though no pattern matches them, each mapped to
    *     the classes whose instances dispatch a call to it to an omitted method
    */
   private OmitMethodsPredicate(
-      List<Pattern> omitPatterns, Map<Method, Set<Class<?>>> overriddenMethods) {
+      List<Pattern> omitPatterns,
+      List<Pattern> exemptibleOmitPatterns,
+      List<Pattern> exemptPatterns,
+      Map<Method, Set<Class<?>>> overriddenMethods) {
     this.omitPatterns = new ArrayList<>(omitPatterns);
+    this.exemptibleOmitPatterns = new ArrayList<>(exemptibleOmitPatterns);
+    this.exemptPatterns = new ArrayList<>(exemptPatterns);
     this.overriddenMethods = overriddenMethods;
   }
 
@@ -149,7 +189,8 @@ public class OmitMethodsPredicate {
     if (logOmit) {
       Log.logPrintf("omittingOverriddenMethods: %s%n", newOverriddenMethods);
     }
-    return new OmitMethodsPredicate(omitPatterns, newOverriddenMethods);
+    return new OmitMethodsPredicate(
+        omitPatterns, exemptibleOmitPatterns, exemptPatterns, newOverriddenMethods);
   }
 
   /**
@@ -193,7 +234,7 @@ public class OmitMethodsPredicate {
       return true;
     }
 
-    if (omitPatterns.isEmpty()) {
+    if (omitPatterns.isEmpty() && exemptibleOmitPatterns.isEmpty()) {
       return false;
     }
 
@@ -246,12 +287,36 @@ public class OmitMethodsPredicate {
    */
   // * @throws NoSuchMethodException if Randoop can't find the operation (this is a bug in Randoop)
   private boolean shouldOmitConstructor(TypedClassOperation operation) {
-    return shouldOmitExact(operation);
+    return shouldOmitExact(operation, isExempt(operation));
+  }
+
+  /**
+   * Returns true if {@link #exemptibleOmitPatterns} does not omit the operation, because an {@link
+   * #exemptPatterns} pattern matches its raw signature.
+   *
+   * @param operation the operation for a constructor or method
+   * @return true if the operation is exempt from {@link #exemptibleOmitPatterns}
+   */
+  private boolean isExempt(TypedClassOperation operation) {
+    if (exemptPatterns.isEmpty() || exemptibleOmitPatterns.isEmpty()) {
+      return false;
+    }
+    String signature = operation.getRawSignature().toString();
+    for (Pattern pattern : exemptPatterns) {
+      if (pattern.matcher(signature).find()) {
+        if (logOmit) {
+          Log.logPrintf("isExempt(%s): matches %s%n", operation, pattern);
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
    * Returns true if an omit pattern matches the raw signature of the method in either the declaring
-   * class of the method or a supertype.
+   * class of the method or a supertype. If the method is exempt (see {@link #isExempt}), then
+   * {@link #exemptibleOmitPatterns} is ignored, even for the signatures in supertypes.
    *
    * @param operation the operation for the method
    * @return true if the signature of the method in the current class or a superclass is matched by
@@ -265,6 +330,7 @@ public class OmitMethodsPredicate {
     }
 
     RawSignature signature = operation.getRawSignature();
+    boolean exempt = isExempt(operation);
 
     // Search the type and its supertypes that have the method.
 
@@ -317,7 +383,9 @@ public class OmitMethodsPredicate {
       if (exists) {
         // Create the operation and test whether it is matched by an omit pattern
         TypedClassOperation superTypeOperation = operation.getOperationForType(type);
-        if (shouldOmitExact(superTypeOperation)) {
+        // The exemption depends on the original operation, not on `superTypeOperation`, whose
+        // signature names the supertype.
+        if (shouldOmitExact(superTypeOperation, exempt)) {
           return true;
         }
       }
@@ -334,12 +402,13 @@ public class OmitMethodsPredicate {
    * superclasses.
    *
    * @param operation the operation to be matched against the omit patterns of this predicate
+   * @param exempt if true, ignore {@link #exemptibleOmitPatterns}
    * @return true if the signature matches an omit pattern, and false otherwise
    */
   // TODO: Choose a better name for this helper method, that reflects its semantics.
-  private boolean shouldOmitExact(TypedClassOperation operation) {
+  private boolean shouldOmitExact(TypedClassOperation operation, boolean exempt) {
     if (logOmit) {
-      Log.logPrintf("shouldOmitExact(%s)%n", operation);
+      Log.logPrintf("shouldOmitExact(%s, exempt=%s)%n", operation, exempt);
     }
 
     if (!operation.isConstructorCall() && !operation.isMethodCall()) {
@@ -347,13 +416,25 @@ public class OmitMethodsPredicate {
           String.format("operation = %s [%s]", operation, operation.getClass()));
     }
 
-    if (omitPatterns.isEmpty()) {
-      return false;
-    }
-
     String signature = operation.getRawSignature().toString();
 
-    for (Pattern pattern : omitPatterns) {
+    if (matchesAny(omitPatterns, signature, operation)) {
+      return true;
+    }
+    return !exempt && matchesAny(exemptibleOmitPatterns, signature, operation);
+  }
+
+  /**
+   * Returns true if some pattern in {@code patterns} matches {@code signature}.
+   *
+   * @param patterns the patterns
+   * @param signature the raw signature of {@code operation}
+   * @param operation the operation, used only for logging
+   * @return true if some pattern in {@code patterns} matches {@code signature}
+   */
+  private static boolean matchesAny(
+      List<Pattern> patterns, String signature, TypedClassOperation operation) {
+    for (Pattern pattern : patterns) {
       boolean result = pattern.matcher(signature).find();
       if (logOmit) {
         Log.logPrintf(
