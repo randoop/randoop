@@ -21,6 +21,14 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of the receiver and the argument.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
    * instantiated as by a substitution.
    */
@@ -92,7 +100,7 @@ public abstract class TypeVariable extends ParameterType {
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
-  TypeVariable() {
+  /*package*/ TypeVariable() {
     super();
   }
 
@@ -103,7 +111,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param lowerBound the lower type bound on this variable
    * @param upperBound the upper type bound on this variable
    */
-  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  /*package*/ TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
@@ -280,7 +288,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
+  /*package*/ boolean canBeInstantiatedBy(ReferenceType otherType) {
     return canBeInstantiatedBy(otherType, new Substitution());
   }
 
@@ -395,12 +403,14 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
    * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its strict supertypes, as {@link #canBeInstantiatedBy(ReferenceType, Substitution)} checks.
-   * For example, for {@code <S extends Comparable<S>, U extends S>}, if class {@code Sub} extends
-   * {@code Base}, which implements {@code Comparable<Base>}, then {@code S} can be a supertype of
-   * {@code Sub}, with {@code Base} for {@code S}. The result can be false if only a supertype of
-   * {@code otherType} that is not a class or interface type, such as an intersection or an array
-   * type, can instantiate this variable.
+   * of its strict supertypes that is not generic, as {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)} checks. For example, for {@code <S extends Comparable<S>, U extends S>}, if
+   * class {@code Sub} extends {@code Base}, which implements {@code Comparable<Base>}, then {@code
+   * S} can be a supertype of {@code Sub}, with {@code Base} for {@code S}; and for {@code <T
+   * extends Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because
+   * {@code java.util.Date} can instantiate {@code T}. The result can be false if only a supertype
+   * of {@code otherType} that is not a class or interface type, such as an intersection or an
+   * array type, can instantiate this variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
@@ -414,7 +424,7 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType instanceof ClassOrInterfaceType) {
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        if (canBeInstantiatedBy(supertype, context)) {
+        if (!supertype.isGeneric() && canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
@@ -439,14 +449,22 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself, so comparing
-      // them deeply would not terminate.
-      return getLowerTypeBound().equals(other.getLowerTypeBound())
-          && getUpperTypeBound().equals(other.getUpperTypeBound());
+    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
+    // deeply can reach this comparison again.  As for any recursive comparison, assume that the
+    // inner comparison succeeds.
+    List<TypeVariable[]> inProgress = identityChecks.get();
+    for (TypeVariable[] pair : inProgress) {
+      if (pair[0] == this && pair[1] == other) {
+        return true;
+      }
     }
-    return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-        && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    inProgress.add(new TypeVariable[] {this, other});
+    try {
+      return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+          && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
   }
 
   /**

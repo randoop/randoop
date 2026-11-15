@@ -13,7 +13,7 @@ class EagerReferenceBound extends ReferenceBound {
    *
    * @param boundType the reference boundType
    */
-  EagerReferenceBound(ReferenceType boundType) {
+  /*package*/ EagerReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 

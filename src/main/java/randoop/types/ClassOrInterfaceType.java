@@ -143,7 +143,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added; will be side-effected
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
+  /*package*/ final ClassOrInterfaceType substitute(
+      Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.enclosingType = enclosingType.substitute(substitution);
     }
@@ -160,7 +161,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type this type with capture conversion applied; will be side-effected
    * @return the type with converted enclosing type
    */
-  final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
+  /*package*/ final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.enclosingType = enclosingType.applyCaptureConversion();
     }
@@ -245,7 +246,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package part of a type name, or ""
    */
-  String getPackagePrefix() {
+  /*package*/ String getPackagePrefix() {
     Package pkg = getPackage();
     if (pkg == null) {
       return "";
@@ -321,9 +322,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     Substitution substitution = new Substitution();
     if (this.isMemberClass()) {
-      substitution = enclosingType.getInstantiatingSubstitution(goalType);
-      if (substitution == null) {
-        return null;
+      ClassOrInterfaceType thisEnclosingType = enclosingType;
+      // If the goal type is also a member class, such as Outer<E>.Inner, then match the enclosing
+      // type of this type, such as Outer<String>, with the enclosing type of the goal, Outer<E>.
+      ReferenceType enclosingGoalType = goalType;
+      if (goalType instanceof ClassOrInterfaceType) {
+        ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+        if (goalClassType.isMemberClass()) {
+          enclosingGoalType = goalClassType.enclosingType;
+        }
+      }
+      if (enclosingGoalType.isGeneric()) {
+        substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+        if (substitution == null) {
+          return null;
+        }
       }
     }
 
