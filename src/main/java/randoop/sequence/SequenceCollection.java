@@ -54,7 +54,23 @@ public final class SequenceCollection {
    * A set of all the types that can be created with the sequences in this, and all their
    * supertypes. Thus, this may be larger than {@link #typeSet}.
    */
-  private Set<Type> typesAndSupertypes = new TreeSet<>();
+  private final Set<Type> typesAndSupertypes = new TreeSet<>();
+
+  /**
+   * The number of times that {@link #typesAndSupertypes} has changed. It increases whenever a type
+   * is added to {@link #typesAndSupertypes} or this collection is cleared.
+   *
+   * <p>A client can compare two values of this count to cheaply tell whether the types used by
+   * {@link #typeInstantiator} have changed; for example, {@link
+   * randoop.generation.DemandDrivenInputCreator} retries a type whose generic producers could not
+   * be instantiated only after this count changes. This is a counter rather than the size of {@link
+   * #typesAndSupertypes} because a clear followed by additions can restore the size with different
+   * types.
+   */
+  private int typesModificationCount = 0;
+
+  /** Instantiates generic operations using the types in {@link #typesAndSupertypes}. */
+  private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
@@ -97,12 +113,16 @@ public final class SequenceCollection {
     return sequenceCount;
   }
 
-  /** Removes all sequences from this collection. */
+  /**
+   * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
+   * demand-driven input creator, and the type instantiator.
+   */
   public void clear() {
     Log.logPrintf("Clearing sequence collection.%n");
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
-    this.typesAndSupertypes = new TreeSet<>();
+    this.typesAndSupertypes.clear();
+    this.typesModificationCount++;
     this.sequenceCount = 0;
     checkRep();
   }
@@ -197,11 +217,17 @@ public final class SequenceCollection {
               + " should be assignable from "
               + argument.getType().getBinaryName();
       if (sequence.isActive(argument.getDeclIndex())) {
+        boolean typesChanged;
         if (formalType.isClassOrInterfaceType()) {
           // This adds all the supertypes, not just immediate ones.
-          typesAndSupertypes.addAll(((ClassOrInterfaceType) formalType).getSupertypesInclusive());
+          typesChanged =
+              typesAndSupertypes.addAll(
+                  ((ClassOrInterfaceType) formalType).getSupertypesInclusive());
         } else {
-          typesAndSupertypes.add(formalType);
+          typesChanged = typesAndSupertypes.add(formalType);
+        }
+        if (typesChanged) {
+          typesModificationCount++;
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
@@ -381,13 +407,24 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns a type instantiator that instantiates type parameters using the types of the sequences
-   * in this collection and their supertypes.
+   * Returns the number of times that the types used by {@link #getTypeInstantiator} have changed.
+   * If two calls return the same number, then the type instantiator used the same types between
+   * them.
    *
-   * @return a type instantiator for the types in this collection
+   * @return the number of times that the types used by the type instantiator have changed
+   */
+  public int getTypesModificationCount() {
+    return typesModificationCount;
+  }
+
+  /**
+   * Returns the type instantiator for this collection, which instantiates type parameters using the
+   * types of the sequences in this collection and their supertypes.
+   *
+   * @return the type instantiator for this collection
    */
   public TypeInstantiator getTypeInstantiator() {
-    return new TypeInstantiator(typesAndSupertypes);
+    return typeInstantiator;
   }
 
   /**
@@ -404,7 +441,6 @@ public final class SequenceCollection {
   }
 
   /** Logs the contents of this collection to the log file. */
-  @SuppressWarnings("nullness:flowexpr.parse.error.postcondition") // TEMPORARY, to mask a bug
   public void log() {
     if (!Log.isLoggingOn()) {
       return;

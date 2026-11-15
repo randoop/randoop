@@ -167,9 +167,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> params = super.getTypeParameters();
-    params.addAll(parameters);
-    return params;
+    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
   }
 
   /**
@@ -267,7 +265,9 @@ public class GenericClassType extends ParameterizedType {
       return true;
     }
     if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-      if (otherType.isRawtype()) {
+      if (otherType.isRawtype()
+          || (otherType instanceof ClassOrInterfaceType
+              && ((ClassOrInterfaceType) otherType).isGenericForm())) {
         return true;
       }
       if (otherType instanceof InstantiatedType) {

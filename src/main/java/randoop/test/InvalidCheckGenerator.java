@@ -14,6 +14,6 @@ public class InvalidCheckGenerator extends TestCheckGenerator {
   @Override
   public InvalidChecks generateTestChecks(ExecutableSequence eseq)
       throws RandoopSpecificationError {
-    return new InvalidChecks(new InvalidValueCheck(eseq, eseq.sequence.size() - 1));
+    return new InvalidChecks(new InvalidValueCheck());
   }
 }

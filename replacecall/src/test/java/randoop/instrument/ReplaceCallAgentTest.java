@@ -9,7 +9,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.MalformedInputException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import org.junit.Rule;
@@ -19,6 +22,14 @@ import org.junit.rules.ExpectedException;
 /** Tests for the {@link ReplaceCallAgent}. */
 public class ReplaceCallAgentTest {
   @Rule public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void getJarPathFromURLTest() throws MalformedURLException {
+    URL url = new URL("jar:file:/home/u/my%20tools/replacecall.jar!/randoop/instrument/A.class");
+    assertEquals(
+        Paths.get("/home/u/my tools/replacecall.jar").toString(),
+        ReplaceCallAgent.getJarPathFromURL(url));
+  }
 
   @Test
   public void loadExclusionsTest() throws IOException {

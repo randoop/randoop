@@ -573,20 +573,28 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Compare this {@link Type} to another. Uses the names of the underlying {@code Class<?>}
    * objects. Uses canonical names if both have them, otherwise uses {@code Class<?>.getName()}.
+   * Types with the same underlying class, such as different parameterizations of a generic class,
+   * are ordered by their {@code toString()} representations, so that a sorted collection of types
+   * can contain more than one of them.
    *
    * @param type the type to compare against
-   * @return -1 if this type precedes {@code type}, 1 if this type succeeds {@code type}, and 0 if
-   *     they are equal
+   * @return a negative number if this type precedes {@code type}, a positive number if this type
+   *     succeeds {@code type}, and 0 if they are equal
    */
   @Override
   public int compareTo(Type type) {
     String cname1 = this.getCanonicalName();
     String cname2 = type.getCanonicalName();
+    int result;
     if (cname1 != null && cname2 != null) {
-      return cname1.compareTo(cname2);
+      result = cname1.compareTo(cname2);
     } else {
-      return this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
+      result = this.getRuntimeClass().getName().compareTo(type.getRuntimeClass().getName());
     }
+    if (result != 0) {
+      return result;
+    }
+    return this.toString().compareTo(type.toString());
   }
 
   @Override
