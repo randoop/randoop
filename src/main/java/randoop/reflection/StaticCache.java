@@ -44,7 +44,7 @@ public class StaticCache {
         try {
           value = field.get(null);
         } catch (IllegalAccessException e) {
-          throw new RandoopBug("unable to save value of field " + field.getName());
+          throw new RandoopBug("unable to save value of field " + field.getName(), e);
         }
         valueMap.put(field, value);
       }
@@ -57,7 +57,7 @@ public class StaticCache {
       try {
         entry.getKey().set(null, entry.getValue());
       } catch (IllegalAccessException e) {
-        throw new RandoopBug("unable to save value of field " + entry.getKey());
+        throw new RandoopBug("unable to save value of field " + entry.getKey(), e);
       }
     }
   }

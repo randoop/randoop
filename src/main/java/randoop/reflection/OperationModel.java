@@ -689,7 +689,7 @@ public final class OperationModel {
         // System.out.println(e.getMessage());
         // System.out.println();
         // continue;
-        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage());
+        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage(), e);
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {

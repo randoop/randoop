@@ -209,7 +209,7 @@ public final class ClassFileConstants {
       cp = new ClassParser(is, classname);
       jc = cp.parse();
     } catch (IOException e) {
-      throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
+      throw new Error("IOException while reading '" + classname + "': " + e.getMessage(), e);
     }
     @SuppressWarnings("signature") // BCEL's JavaClass is not annotated for the Signature Checker
     @ClassGetName String resultClassname = jc.getClassName();
@@ -865,7 +865,7 @@ public final class ClassFileConstants {
     try {
       clazz = TypeNames.getTypeForName(cs.classname);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      throw new Error("Class " + cs.classname + " not found on the classpath.");
+      throw new Error("Class " + cs.classname + " not found on the classpath.", e);
     }
     map.addAll(clazz, constantSetToNonreceiverTerms(cs));
   }

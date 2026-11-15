@@ -349,7 +349,7 @@ public final class SpecificationTranslator {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           continue;
         } else {
-          throw new RandoopSpecificationError(msg);
+          throw new RandoopSpecificationError(msg, e);
         }
       }
       try {

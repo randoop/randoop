@@ -285,7 +285,7 @@ public class GenTests extends GenInputsAbstract {
       } catch (ArgException ae) {
         // usage() exits the program by calling System.exit().
         usage("While parsing command-line arguments: %s", ae.getMessage());
-        throw new Error("unreachable");
+        throw new Error("unreachable", ae);
       }
       if (nonargs.length > 0) {
         usage("Unrecognized command-line arguments: %s", Arrays.toString(nonargs));
@@ -1538,7 +1538,7 @@ public class GenTests extends GenInputsAbstract {
     } catch (IOException e) {
       System.err.println("Unable to read " + filename);
       System.exit(1);
-      throw new Error("This can't happen.");
+      throw new Error("This can't happen.", e);
     }
   }
 

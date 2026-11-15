@@ -439,7 +439,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (stderr.equals("Error: Could not find or load main class org.junit.runner.JUnitCore")) {
           throw new RandoopUsageError(
               "Classpath does not contain JUnit.  "
-                  + "Please correct the classpath and re-run Randoop.");
+                  + "Please correct the classpath and re-run Randoop.",
+              e);
         }
       }
       StringBuilder errorMessage = new StringBuilder(256);
@@ -622,7 +623,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           "Unable to create temporary directory for flaky-test filtering, exception: %s%n",
           e.getMessage());
       System.exit(1);
-      throw new Error("unreachable statement");
+      throw new Error("unreachable statement", e);
     }
   }
 

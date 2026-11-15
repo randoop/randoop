@@ -191,7 +191,7 @@ public class Minimize extends CommandHandler {
         throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopCommandError(ae.getMessage());
+      throw new RandoopCommandError(ae.getMessage(), ae);
     }
 
     if (suitepath == null) {

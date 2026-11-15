@@ -46,7 +46,7 @@ final class TypeArguments {
         try {
           argTypes[i] = Type.forFullyQualifiedName(typeName);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-          throw new OperationParseException("Class " + typeName + " is not on classpath");
+          throw new OperationParseException("Class " + typeName + " is not on classpath", e);
         }
       }
     }
