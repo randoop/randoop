@@ -219,9 +219,10 @@ final class Subtyping {
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
    * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound or a member of it, if it is an intersection.
+   * upper bound or a member of it, if it is an intersection. If {@code lowerType} contains
+   * unknowns, as {@code List<B>} does, compares its components with those of {@code type}.
    *
-   * @param lowerType the possible subtype, which may be an unknown
+   * @param lowerType the possible subtype, which may be or contain unknowns
    * @param type the possible supertype
    * @param substitution the type substitution, which determines the unknowns
    * @return true if {@code lowerType} is, or can be chosen to be, a subtype of {@code type}
@@ -229,7 +230,12 @@ final class Subtyping {
   private static boolean canBeSubtype(
       ReferenceType lowerType, ReferenceType type, Substitution substitution) {
     if (!substitution.isUnknown(lowerType)) {
-      return isSubtypeOrEqual(lowerType, type, substitution);
+      if (isSubtypeOrEqual(lowerType, type, substitution)) {
+        return true;
+      }
+      // isSubtypeOrEqual recognizes unknowns only in its second argument.
+      return hasUnknown(lowerType, substitution)
+          && compoundCanBeSubtype(lowerType, type, substitution);
     }
     TypeVariable unknown = (TypeVariable) lowerType;
     if (satisfiesBound(type, unknown, substitution)) {
@@ -260,6 +266,138 @@ final class Subtyping {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given type contains an unknown.
+   *
+   * @param type a type
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code type} contains an unknown
+   */
+  private static boolean hasUnknown(ReferenceType type, Substitution substitution) {
+    for (TypeVariable variable : type.getTypeParameters()) {
+      if (substitution.isUnknown(variable)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if {@code lowerType}, an array or class type that contains unknowns, can be chosen
+   * to be a subtype of, or equal to, {@code type}, by comparing their component types or type
+   * arguments.
+   *
+   * @param lowerType the possible subtype, which contains unknowns but is not an unknown
+   * @param type the possible supertype
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code lowerType} can be chosen to be a subtype of {@code type}
+   */
+  private static boolean compoundCanBeSubtype(
+      ReferenceType lowerType, ReferenceType type, Substitution substitution) {
+    if (lowerType.isArray() && type.isArray()) {
+      Type componentType = ((ArrayType) lowerType).getComponentType();
+      Type otherComponentType = ((ArrayType) type).getComponentType();
+      if (componentType.isReferenceType() && otherComponentType.isReferenceType()) {
+        return canBeSubtype(
+            (ReferenceType) componentType, (ReferenceType) otherComponentType, substitution);
+      }
+      return componentType.equals(otherComponentType);
+    }
+    if (type instanceof InstantiatedType && lowerType instanceof ClassOrInterfaceType) {
+      InstantiatedType supertype =
+          ((ClassOrInterfaceType) lowerType)
+              .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+      return supertype != null
+          && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if each type argument of {@code type} can contain the corresponding type argument
+   * of {@code lowerType}, including the type arguments of the enclosing types of member classes.
+   * This is {@link #argumentsContained}, but with the unknowns in the contained type arguments. The
+   * two types must be instantiations of the same generic class.
+   *
+   * @param lowerType a type, which may contain unknowns
+   * @param type a type
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if the type arguments of {@code type} can contain those of {@code lowerType}
+   */
+  private static boolean argumentsCanBeContained(
+      ClassOrInterfaceType lowerType, ClassOrInterfaceType type, Substitution substitution) {
+    if (type instanceof InstantiatedType) {
+      if (!(lowerType instanceof InstantiatedType)) {
+        return false;
+      }
+      List<TypeArgument> lowerTypeArguments = ((InstantiatedType) lowerType).getTypeArguments();
+      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      if (lowerTypeArguments.size() != typeArguments.size()) {
+        return false;
+      }
+      for (int i = 0; i < typeArguments.size(); i++) {
+        if (!canBeContained(typeArguments.get(i), lowerTypeArguments.get(i), substitution)) {
+          return false;
+        }
+      }
+    }
+    if (lowerType.isMemberClass() && type.isMemberClass()) {
+      return argumentsCanBeContained(lowerType.enclosingType, type.enclosingType, substitution);
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the type argument {@code argument} can contain {@code lowerArgument}, which may
+   * contain unknowns (JLS section 4.5.1).
+   *
+   * @param argument the possibly containing type argument
+   * @param lowerArgument the possibly contained type argument, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code argument} can contain {@code lowerArgument}
+   */
+  private static boolean canBeContained(
+      TypeArgument argument, TypeArgument lowerArgument, Substitution substitution) {
+    if (argument instanceof ReferenceArgument) {
+      // A type argument that is a type contains only the same type.
+      return lowerArgument instanceof ReferenceArgument
+          ? isSameType(
+              ((ReferenceArgument) argument).getReferenceType(),
+              ((ReferenceArgument) lowerArgument).getReferenceType(),
+              substitution)
+          : lowerArgument instanceof WildcardArgument
+              && isSameWildcard(argument, (WildcardArgument) lowerArgument, substitution);
+    }
+    WildcardArgument wildcard = (WildcardArgument) argument;
+    ParameterBound bound = wildcard.getTypeBound();
+    if (!(bound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (wildcard.hasUpperBound() && boundType.isObject()) {
+      return true;
+    }
+    ReferenceType lowerArgumentType;
+    if (lowerArgument instanceof ReferenceArgument) {
+      lowerArgumentType = ((ReferenceArgument) lowerArgument).getReferenceType();
+    } else {
+      // ? extends L is contained by ? extends B if L <: B, and ? super L by ? super B if B <: L.
+      WildcardArgument lowerWildcard = (WildcardArgument) lowerArgument;
+      ParameterBound lowerBound = lowerWildcard.getTypeBound();
+      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound()
+          || !(lowerBound instanceof ReferenceBound)) {
+        return false;
+      }
+      lowerArgumentType = ((ReferenceBound) lowerBound).getBoundType();
+    }
+    if (wildcard.hasUpperBound()) {
+      // ? extends B contains T if T <: B.
+      return canBeSubtype(lowerArgumentType, boundType, substitution);
+    }
+    // ? super B contains T if B <: T.
+    return isSubtypeOrEqual(boundType, lowerArgumentType, substitution);
   }
 
   /**

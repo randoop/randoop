@@ -271,10 +271,9 @@ public abstract class TypeVariable extends ParameterType {
    * the capture of {@code ? extends Number} has the upper bound {@code Object & Number}.
    *
    * <p>Returns false if no member of the upper bound, as returned by {@link
-   * #upperBoundMemberTypes()}, is a subtype of or
-   * equal to the given type. Assumes that the subtype test fails if this check is already in
-   * progress for this variable and type in the current thread, but recognizes a member that equals
-   * the given type even then.
+   * #upperBoundMemberTypes()}, is a subtype of or equal to the given type. Assumes that the subtype
+   * test fails if this check is already in progress for this variable and type in the current
+   * thread, but recognizes a member that equals the given type even then.
    *
    * @param otherType a reference type
    * @return true if the upper bound of this variable is a subtype of or equal to {@code otherType}
@@ -493,8 +492,11 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. Then the given
    * type is within an upper bound that is this variable, if this variable is not otherwise
    * determined. The instantiations that this considers are the lower bound of this variable, which
-   * is a supertype of every subtype of it, and {@code otherType} and its supertypes, as {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)} checks.
+   * is a supertype of every subtype of it, {@code otherType} itself, and, if {@code otherType} is a
+   * class or interface type, each of its supertypes that is not generic. For example, for {@code <T
+   * extends Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because
+   * {@code java.util.Date} can instantiate {@code T}. Each instantiation is checked as by {@link
+   * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * <p>Only the supertypes of a class or interface type are tried. For any other type, such as an
    * array type, only the type itself is tried.
@@ -511,7 +513,7 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType instanceof ClassOrInterfaceType) {
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        if (canBeInstantiatedBy(supertype, context)) {
+        if (!supertype.isGeneric() && canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
