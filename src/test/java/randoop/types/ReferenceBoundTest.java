@@ -22,6 +22,16 @@ public class ReferenceBoundTest {
   }
 
   /**
+   * Returns {@code List<? super T>}, where the bound of {@code T} is {@code Object}.
+   *
+   * @param <T> a type parameter whose bound is {@code Object}
+   * @return null
+   */
+  public static <T> List<? super T> listSuperVariable() {
+    return null;
+  }
+
+  /**
    * Returns {@code List<? extends U>}, where the bound of {@code U} is {@code Number}.
    *
    * @param <U> a type parameter whose bound is {@code Number}
@@ -175,6 +185,18 @@ public class ReferenceBoundTest {
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
                 JavaTypes.STRING_TYPE, captureVariable)
             == null);
+  }
+
+  @Test
+  public void testCaptureOfSuperUnboundedVariable() throws NoSuchMethodException {
+    // The capture variable of List<? super T> has lower bound T, where T extends Object.
+    TypeVariable captureVariable = captureVariable("listSuperVariable");
+    // T is not a subtype of String, but T can be chosen as String, as when Collections.sort(List<T>,
+    // Comparator<? super T>) receives a Comparator<String>.
+    assertTrue(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+                JavaTypes.STRING_TYPE, captureVariable)
+            != null);
   }
 
   @Test
