@@ -197,10 +197,9 @@ public abstract class TypeVariable extends ParameterType {
    * the capture of {@code ? extends Number} has the upper bound {@code Object & Number}.
    *
    * <p>Returns false if no member of the upper bound, as returned by {@link
-   * #upperBoundMemberTypes()}, is a subtype of or
-   * equal to the given type. Assumes that the subtype test fails if this check is already in
-   * progress for this variable and type in the current thread, but recognizes a member that equals
-   * the given type even then.
+   * #upperBoundMemberTypes()}, is a subtype of or equal to the given type. Assumes that the subtype
+   * test fails if this check is already in progress for this variable and type in the current
+   * thread, but recognizes a member that equals the given type even then.
    *
    * @param otherType a reference type
    * @return true if the upper bound of this variable is a subtype of or equal to {@code otherType}
