@@ -152,8 +152,8 @@ public class WildcardContainmentTest {
   public interface Right<X> extends Runnable {}
 
   /**
-   * Returns {@code List<T>}, where {@code T} has an intersection bound whose members are generic
-   * in {@code T}.
+   * Returns {@code List<T>}, where {@code T} has an intersection bound whose members are generic in
+   * {@code T}.
    *
    * @param <T> a type parameter whose bound is {@code Left<T> & Right<T>}
    * @return null
