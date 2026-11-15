@@ -66,6 +66,14 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
+   * The pairs of type variables, other than {@link ExplicitTypeVariable}s, that {@link
+   * #isIdenticalTo(TypeVariable)} is comparing in the current thread, outermost first.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * The type variable that {@link #forType(java.lang.reflect.Type)} returns for each type
    * parameter, with the bounds that the type parameter declares.
    *
@@ -517,10 +525,22 @@ public abstract class TypeVariable extends ParameterType {
       return false;
     }
     if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself, so comparing
-      // them deeply would not terminate.
-      return getLowerTypeBound().equals(other.getLowerTypeBound())
-          && getUpperTypeBound().equals(other.getUpperTypeBound());
+      // The bounds of a capture variable can refer to the capture variable itself.  To terminate,
+      // assume that a comparison of the same pair of objects that is already in progress succeeds.
+      // There are finitely many objects in the bounds, so there are finitely many such pairs.
+      List<TypeVariable[]> inProgress = identityChecks.get();
+      for (TypeVariable[] pair : inProgress) {
+        if (pair[0] == this && pair[1] == other) {
+          return true;
+        }
+      }
+      inProgress.add(new TypeVariable[] {this, other});
+      try {
+        return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+            && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+      } finally {
+        inProgress.remove(inProgress.size() - 1);
+      }
     }
     return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
         && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());

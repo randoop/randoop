@@ -47,9 +47,10 @@ class LazyReferenceBound extends ReferenceBound {
 
   /**
    * Returns true if applying the substitution to the given type would create an array of the null
-   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
-   * type is a type variable that the substitution maps to the null type. An example is {@code
-   * List<T[]>} with {@code T} mapped to the null type.
+   * type: that is, if the type has an array type, possibly nested in a type argument or in the bound
+   * of a wildcard type argument, whose element type is a type variable that the substitution maps
+   * to the null type. Examples are {@code List<T[]>} and {@code List<? extends T[]>} with {@code T}
+   * mapped to the null type.
    *
    * @param type a type
    * @param substitution a type substitution
@@ -69,6 +70,14 @@ class LazyReferenceBound extends ReferenceBound {
             && hasArrayOfNullType(
                 ((ReferenceArgument) argument).getReferenceType(), substitution)) {
           return true;
+        }
+        // The bound of a wildcard, as in `List<? extends T[]>`, can also be such an array type.
+        if (argument instanceof WildcardArgument) {
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound
+              && hasArrayOfNullType(((ReferenceBound) bound).getBoundType(), substitution)) {
+            return true;
+          }
         }
       }
       ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;

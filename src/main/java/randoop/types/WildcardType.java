@@ -139,9 +139,13 @@ class WildcardType extends ParameterType {
   }
 
   @Override
+  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   public WildcardType substitute(Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
-    if (bound.equals(this.getTypeBound())) {
+    // A bound's substitute method returns the same object if the substitution does not change the
+    // bound.  An equals test would discard a changed copy of a type variable in the bound, because
+    // copies of a type variable are equal even if their bounds differ.
+    if (bound == this.getTypeBound()) {
       return this;
     }
     return new WildcardType(bound, hasUpperBound);
@@ -158,7 +162,8 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * <p>A bound that is not a {@link ReferenceBound} (such as a {@link LazyParameterBound} or an
+   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
+   * the same type, if possible. A bound that is not a {@link ReferenceBound} even then (such as an
    * intersection bound) cannot be compared by subtyping. For such a bound, this method checks only
    * the cases that do not require subtyping: {@code ?} contains every wildcard, and every wildcard
    * contains itself. Otherwise it conservatively returns false.
@@ -192,8 +197,9 @@ class WildcardType extends ParameterType {
 
   /**
    * Returns true if the type of the first bound is a subtype of the type of the second bound.
-   * Returns false if the bounds differ and either is not a {@link ReferenceBound}, because
-   * subtyping is not implemented for other bounds.
+   * A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
+   * the same type, if possible. Returns false if the bounds differ and either is not a {@link
+   * ReferenceBound} even then, because subtyping is not implemented for other bounds.
    *
    * @param subBound the possible subtype bound
    * @param superBound the possible supertype bound
@@ -203,6 +209,8 @@ class WildcardType extends ParameterType {
     if (subBound.equals(superBound)) {
       return true;
     }
+    subBound = resolve(subBound);
+    superBound = resolve(superBound);
     if (subBound instanceof ReferenceBound && superBound instanceof ReferenceBound) {
       return subBound.isSubtypeOfOrEqualTo(superBound);
     }
@@ -215,13 +223,15 @@ class WildcardType extends ParameterType {
    * 4.5.1</a>: {@code ? extends T} contains the subtypes of {@code T}, and {@code ? super T}
    * contains the supertypes of {@code T}.
    *
-   * <p>Returns false if the bound of this wildcard is not a single reference type.
+   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
+   * the same type, if possible. Returns false if the bound of this wildcard is not a single
+   * reference type.
    *
    * @param type the type to check for
    * @return true if this wildcard contains the type, false otherwise
    */
   public boolean containsType(ReferenceType type) {
-    ParameterBound bound = getTypeBound();
+    ParameterBound bound = resolve(getTypeBound());
     if (!(bound instanceof ReferenceBound)) {
       return false;
     }
@@ -231,6 +241,25 @@ class WildcardType extends ParameterType {
     } else {
       return boundType.isSubtypeOfOrEqualTo(type);
     }
+  }
+
+  /**
+   * Returns the given bound as a {@link ReferenceBound} that represents the same type, if it is a
+   * {@link LazyParameterBound} that can be converted to one, as for the bound {@code List<T>} of
+   * {@code ? extends List<T>} where {@code T extends Comparable<T>}. Otherwise, returns the given
+   * bound.
+   *
+   * @param bound a wildcard bound
+   * @return a {@link ReferenceBound} equivalent to {@code bound}, or {@code bound} itself
+   */
+  private static ParameterBound resolve(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      if (converted != null) {
+        return converted;
+      }
+    }
+    return bound;
   }
 
   @Override

@@ -81,9 +81,13 @@ public class WildcardArgument extends TypeArgument {
   }
 
   @Override
+  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
-    if (argType.equals(this.argumentType)) {
+    // WildcardType.substitute returns the same object if the substitution does not change it.  An
+    // equals test would discard a changed copy of a capture variable in the bound, because copies of
+    // a type variable are equal even if their bounds differ.
+    if (argType == this.argumentType) {
       return this;
     }
     return new WildcardArgument(argType);

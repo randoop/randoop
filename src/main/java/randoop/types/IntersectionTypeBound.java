@@ -76,13 +76,25 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return this bound with the substitution applied to all member bounds
+   * @return this bound with the substitution applied to all member bounds; this bound itself if
+   *     the substitution does not change any member bound
    */
   @Override
+  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   public IntersectionTypeBound substitute(Substitution substitution) {
     List<ParameterBound> bounds =
         CollectionsPlume.mapList(
             (ParameterBound bound) -> bound.substitute(substitution), this.boundList);
+    boolean unchanged = true;
+    for (int i = 0; i < bounds.size(); i++) {
+      if (bounds.get(i) != boundList.get(i)) {
+        unchanged = false;
+        break;
+      }
+    }
+    if (unchanged) {
+      return this;
+    }
     return new IntersectionTypeBound(bounds);
   }
 
