@@ -32,11 +32,21 @@ class IntersectionTypeBound extends ParameterBound {
    * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
+    super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
 
     this.boundList = boundList;
+  }
+
+  /**
+   * Returns the member bounds of this intersection bound.
+   *
+   * @return the member bounds of this intersection bound
+   */
+  List<ParameterBound> getBounds() {
+    return boundList;
   }
 
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
@@ -79,18 +89,6 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return an intersection bound with capture conversion applied to all member bounds
-   */
-  @Override
-  public ParameterBound applyCaptureConversion() {
-    List<ParameterBound> convertedBoundList =
-        CollectionsPlume.mapList(ParameterBound::applyCaptureConversion, boundList);
-    return new IntersectionTypeBound(convertedBoundList);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * @return the list of type variables occurring in all of the type bounds of this intersection
    *     bound
    */
@@ -101,16 +99,6 @@ class IntersectionTypeBound extends ParameterBound {
       paramList.addAll(b.getTypeParameters());
     }
     return paramList;
-  }
-
-  @Override
-  boolean hasWildcard() {
-    for (ParameterBound b : boundList) {
-      if (b.hasWildcard()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @Override

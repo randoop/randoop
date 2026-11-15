@@ -123,6 +123,7 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @return the execution result
+   * @throws RandoopBug if execution reveals a bug in Randoop
    */
   public static ExecutionOutcome executeReflectionCode(ReflectionCode code) {
     long startTimeNanos = System.nanoTime();
@@ -171,6 +172,10 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    * @throws TimeoutException if execution times out
+   * @throws RandoopBug if execution reveals a bug in Randoop
+   * @throws RuntimeException if execution throws any other unchecked exception, which this method
+   *     rethrows
+   * @throws Error if execution throws an error, which this method rethrows
    */
   @SuppressWarnings({"deprecation", "removal", "DeprecatedThreadMethods"})
   private static void executeReflectionCodeThreaded(ReflectionCode code) throws TimeoutException {
@@ -186,7 +191,12 @@ public final class ReflectionExecutor {
       // If test doesn't finish in time, suspend it.
       runnerThread.join(call_timeout_millis);
 
-      if (!runnerThread.runFinished) {
+      boolean alive = runnerThread.isAlive();
+      // Read `thrown` after `isAlive()`:  if the thread has terminated, then `thrown` is final.
+      Throwable thrown = runnerThread.thrown;
+      // A thread that has set `runFinished` or `thrown` is done running the code and did not time
+      // out, even if it is still alive (for example, running its uncaught exception handler).
+      if (alive && thrown == null && !runnerThread.runFinished) {
         Log.logPrintf("Exceeded timeout: aborting execution of call: %s%n", runnerThread.getCode());
         // TODO: is it possible to log the test being executed?
         // (Maybe not here, but it has been previously logged.)
@@ -196,6 +206,10 @@ public final class ReflectionExecutor {
         runnerThread.stop();
 
         throw new TimeoutException();
+      }
+
+      if (thrown != null) {
+        rethrow(code, thrown);
       }
 
     } catch (InterruptedException e) {
@@ -212,24 +226,39 @@ public final class ReflectionExecutor {
    *
    * @param code the {@link ReflectionCode} to be executed
    */
-  @SuppressWarnings("PMD.AvoidRethrowingException")
   private static void executeReflectionCodeUnThreaded(ReflectionCode code) {
     try {
       code.runReflectionCode();
-      return;
-    } catch (
-        @SuppressWarnings("removal")
-        ThreadDeath e) { // can't stop these guys
-      throw e;
-    } catch (ReflectionCode.ReflectionCodeException e) { // bug in Randoop
-      throw new RandoopBug("code=" + code, e);
-    }
-    /*
-      catch (Throwable e) {
+    } catch (Throwable e) {
       // Debugging -- prints unconditionally, to System.out.
-      printExceptionDetails(e, System.out);
-      throw e;
+      // printExceptionDetails(e, System.out);
+      rethrow(code, e);
     }
-    */
+  }
+
+  /**
+   * Throws an exception that reports that executing {@code code} threw {@code thrown}. A {@link
+   * ReflectionCode.ReflectionCodeException} indicates a bug in Randoop and is wrapped in a {@link
+   * RandoopBug}. Any other unchecked exception or error is rethrown as is. A checked exception,
+   * which {@link ReflectionCode#runReflectionCode} does not declare, is wrapped in a {@link
+   * RandoopBug}.
+   *
+   * @param code the {@link ReflectionCode} that was executed
+   * @param thrown what executing {@code code} threw
+   * @throws RandoopBug if {@code thrown} is a {@link ReflectionCode.ReflectionCodeException} or a
+   *     checked exception
+   * @throws RuntimeException {@code thrown}, if it is any other unchecked exception
+   * @throws Error {@code thrown}, if it is an error
+   */
+  private static void rethrow(ReflectionCode code, Throwable thrown) {
+    if (thrown instanceof ReflectionCode.ReflectionCodeException) { // bug in Randoop
+      throw new RandoopBug("code=" + code, thrown);
+    } else if (thrown instanceof RuntimeException) {
+      throw (RuntimeException) thrown;
+    } else if (thrown instanceof Error) { // includes ThreadDeath, which cannot be stopped
+      throw (Error) thrown;
+    } else {
+      throw new RandoopBug("code=" + code, thrown);
+    }
   }
 }

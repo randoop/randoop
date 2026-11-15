@@ -32,6 +32,7 @@ public final class GrtNumericFuzzer extends GrtFuzzer {
 
   /** Private constructor to enforce singleton. */
   private GrtNumericFuzzer() {
+    super();
     /* no-op */
   }
 

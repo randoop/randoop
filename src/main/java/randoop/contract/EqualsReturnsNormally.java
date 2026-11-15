@@ -10,7 +10,9 @@ public final class EqualsReturnsNormally extends ObjectContract {
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
   /** Private constructor to enforce singleton. */
-  private EqualsReturnsNormally() {}
+  private EqualsReturnsNormally() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
@@ -45,7 +47,7 @@ public final class EqualsReturnsNormally extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
+  private static final TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.OBJECT_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

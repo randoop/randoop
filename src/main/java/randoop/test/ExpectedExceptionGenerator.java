@@ -34,6 +34,7 @@ public class ExpectedExceptionGenerator extends TestCheckGenerator {
    *     expected exceptions must be satisfied.
    */
   public ExpectedExceptionGenerator(List<List<ThrowsClause>> exceptionSets) {
+    super();
     this.exceptionSets = exceptionSets;
   }
 

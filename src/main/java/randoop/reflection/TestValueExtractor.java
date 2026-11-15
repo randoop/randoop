@@ -29,6 +29,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
    * @param valueSequences the set to which sequences are added; is side-effected
    */
   public TestValueExtractor(Set<Sequence> valueSequences) {
+    super();
     this.valueSequences = valueSequences;
   }
 

@@ -35,7 +35,7 @@ public final class CheckRepContract extends ObjectContract {
    * True if {@link #checkRepMethod} returns {@code boolean}, false if it returns {@code void}.
    * Derived from {@link #checkRepMethod}.
    */
-  boolean returnsBoolean;
+  private final boolean returnsBoolean;
 
   /** The class that declares {@link #checkRepMethod}. Derived from {@link #checkRepMethod}. */
   public final Class<?> declaringClass;
@@ -68,6 +68,7 @@ public final class CheckRepContract extends ObjectContract {
    *     not compile
    */
   public CheckRepContract(Method checkRepMethod) throws RandoopSpecificationError {
+    super();
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("check-rep method cannot be null.");
     }

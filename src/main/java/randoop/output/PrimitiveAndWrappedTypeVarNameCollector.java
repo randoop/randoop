@@ -15,7 +15,9 @@ import java.util.Set;
 public class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Set<String>> {
 
   /** Creates a PrimitiveAndWrappedTypeVarNameCollector. */
-  public PrimitiveAndWrappedTypeVarNameCollector() {}
+  public PrimitiveAndWrappedTypeVarNameCollector() {
+    super();
+  }
 
   /**
    * Visit every variable declaration.

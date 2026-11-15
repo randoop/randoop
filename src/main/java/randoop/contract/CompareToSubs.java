@@ -15,7 +15,9 @@ public final class CompareToSubs extends ObjectContract {
   private static final CompareToSubs instance = new CompareToSubs();
 
   /** Private constructor to enforce singleton. */
-  private CompareToSubs() {}
+  private CompareToSubs() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
@@ -55,7 +57,7 @@ public final class CompareToSubs extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(
               JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE, JavaTypes.COMPARABLE_TYPE));

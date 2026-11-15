@@ -29,6 +29,7 @@ public class ValidityCheckingGenerator extends TestCheckGenerator {
    *     exception
    */
   public ValidityCheckingGenerator(boolean throwExceptionOnFlakyTest) {
+    super();
     this.throwExceptionOnFlakyTest = throwExceptionOnFlakyTest;
   }
 

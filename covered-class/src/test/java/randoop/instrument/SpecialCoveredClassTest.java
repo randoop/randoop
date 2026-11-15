@@ -55,7 +55,7 @@ public class SpecialCoveredClassTest {
           SignatureParseException,
           RandoopClassNameError,
           RandoopSpecificationError {
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
+    GenInputsAbstract.ignore_bad_class_names = false;
     GenInputsAbstract.classlist = Paths.get("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
         Paths.get("instrument/testcase/special-coveredclasses.txt");

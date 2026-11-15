@@ -20,6 +20,7 @@ public final class ReferenceArgument extends TypeArgument {
    * @param referenceType the {@link ReferenceType}
    */
   private ReferenceArgument(ReferenceType referenceType) {
+    super();
     this.referenceType = referenceType;
   }
 

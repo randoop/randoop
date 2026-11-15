@@ -11,7 +11,9 @@ public final class SizeToArrayLength extends ObjectContract {
   private static final SizeToArrayLength instance = new SizeToArrayLength();
 
   /** Private constructor to enforce singleton. */
-  private SizeToArrayLength() {}
+  private SizeToArrayLength() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
@@ -40,7 +42,8 @@ public final class SizeToArrayLength extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes = new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
+  private static final TypeTuple inputTypes =
+      new TypeTuple(Arrays.asList(JavaTypes.COLLECTION_TYPE));
 
   @Override
   public TypeTuple getInputTypes() {

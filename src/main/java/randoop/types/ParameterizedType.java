@@ -21,7 +21,9 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
 
   /** Creates a ParameterizedType. */
-  public ParameterizedType() {}
+  public ParameterizedType() {
+    super();
+  }
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.

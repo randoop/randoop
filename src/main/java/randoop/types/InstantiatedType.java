@@ -33,6 +33,7 @@ public class InstantiatedType extends ParameterizedType {
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
+    super();
     if (genericType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -79,33 +80,34 @@ public class InstantiatedType extends ParameterizedType {
    * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
    * 5.1.10, <a
    * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-5.html#jls-5.1.10">Capture
-   * Conversion</a>.
+   * Conversion</a>. A type argument that is not a wildcard is unchanged, even if it contains a
+   * wildcard: for example, the capture conversion of {@code List<List<?>>} is {@code
+   * List<List<?>>}.
    *
    * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
    * href="https://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
    * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
    * Issue: OOPS track at SAC 2004.
    *
-   * <p>If this type has no wildcards, then returns this type.
+   * <p>Converts only the wildcards that are type arguments of this type or of an enclosing type,
+   * not those nested within type arguments or within wildcard bounds. If {@link
+   * #hasWildcardArgument()} is false, then returns this type.
    *
    * @return the capture conversion type for this type
    */
   @Override
   public InstantiatedType applyCaptureConversion() {
 
-    if (!this.hasWildcard()) {
+    if (!this.hasWildcardArgument()) {
       return this;
     }
 
     List<ReferenceType> convertedTypeList = new ArrayList<>(argumentList.size());
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
-        convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
+        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
       } else {
-        ReferenceType convertedArgument =
-            ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
-        convertedTypeList.add(convertedArgument);
+        convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
       }
     }
 
@@ -254,6 +256,19 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean hasWildcardArgument() {
+    if (super.hasWildcardArgument()) {
+      return true;
+    }
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   public boolean hasCaptureVariable() {
     for (TypeArgument argument : argumentList) {
       if (argument.hasCaptureVariable()) {
@@ -276,6 +291,11 @@ public class InstantiatedType extends ParameterizedType {
 
     // unchecked conversion
     return otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass());
+  }
+
+  @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
   }
 
   @Override
@@ -437,9 +457,9 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
-        if (i == thisTypeArguments.size()) {
-          return true;
-        }
+        // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+        // is also a subtype of the generic form of its class.
+        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.
@@ -456,11 +476,13 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // wildcard clause
-    if (this.hasWildcard()) { // JLS 4.10.2
+    if (this.hasWildcardArgument()) { // JLS 4.10.2
       // old note says this has to be tested first
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 

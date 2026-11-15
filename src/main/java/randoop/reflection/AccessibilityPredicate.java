@@ -51,7 +51,9 @@ public abstract class AccessibilityPredicate {
   private static final class AnyAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new AnyAccessibilityPredicate. */
-    private AnyAccessibilityPredicate() {}
+    private AnyAccessibilityPredicate() {
+      super();
+    }
 
     /**
      * {@inheritDoc}
@@ -96,7 +98,9 @@ public abstract class AccessibilityPredicate {
   private static final class PublicAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new PublicAccessibilityPredicate. */
-    private PublicAccessibilityPredicate() {}
+    private PublicAccessibilityPredicate() {
+      super();
+    }
 
     /**
      * {@inheritDoc}
@@ -173,6 +177,7 @@ public abstract class AccessibilityPredicate {
      * @param packageName the package to use for package accessibility test
      */
     public PackageAccessibilityPredicate(String packageName) {
+      super();
       this.packageName = packageName;
     }
 
@@ -239,7 +244,9 @@ public abstract class AccessibilityPredicate {
   private static final class NotPrivateAccessibilityPredicate extends AccessibilityPredicate {
 
     /** Creates a new NotPrivateAccessibilityPredicate. */
-    private NotPrivateAccessibilityPredicate() {}
+    private NotPrivateAccessibilityPredicate() {
+      super();
+    }
 
     /**
      * {@inheritDoc}

@@ -1,0 +1,2 @@
+# See scripts/merge-coverage-goals.py for how to configure this merge driver.
+*.covgoals merge=covgoals

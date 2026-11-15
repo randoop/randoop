@@ -7,8 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,7 +97,7 @@ class CoverageChecker {
    * @param classnames the class name set
    * @param minMethodsToCover the minimum number of methods that must be covered by this test
    */
-  private CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
+  CoverageChecker(Set<@ClassGetName String> classnames, int minMethodsToCover) {
     this.classnames = classnames;
     this.minMethodsToCover = minMethodsToCover;
   }
@@ -120,23 +123,33 @@ class CoverageChecker {
    */
   static CoverageChecker fromFile(
       RandoopOptions options, int minMethodsToCover, String covGoalsFile) {
-    // Load from classpath: src/systemTest/resources/test-covgoals/<file>
     CoverageChecker result = new CoverageChecker(options, minMethodsToCover);
+    List<String> covGoals = readCovGoals(covGoalsFile);
+    ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
+    result.covGoalsFile = cloader.getResource("test-covgoals/" + covGoalsFile).getPath();
+    result.methods(covGoals);
+    return result;
+  }
+
+  /**
+   * Reads a coverage-goals file from the classpath.
+   *
+   * @param covGoalsFile the name of a file in {@code src/systemTest/resources/test-covgoals/}
+   * @return the lines of the file
+   */
+  static List<String> readCovGoals(String covGoalsFile) {
     ClassLoader cloader = MethodHandles.lookup().lookupClass().getClassLoader();
     String resourceName = "test-covgoals/" + covGoalsFile;
-    result.covGoalsFile = cloader.getResource(resourceName).getPath();
-    List<String> covGoals;
     try (InputStream in = cloader.getResourceAsStream(resourceName)) {
       if (in == null) {
         throw new Error("Resource not found on classpath: " + resourceName);
       }
-      covGoals =
-          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(Collectors.toList());
+      return new BufferedReader(new InputStreamReader(in, UTF_8))
+          .lines()
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new Error("Problem reading resource " + resourceName, e);
     }
-    result.methods(covGoals.toArray(new String[0]));
-    return result;
   }
 
   /**
@@ -217,18 +230,36 @@ class CoverageChecker {
    * Add method names to be excluded, ignored, or included (included has no effect, except to
    * override/remove a previous exclusion or ignoring).
    *
-   * <p>Each string consists of a signature, a space, and one of the words "exclude", "ignore", or
-   * "include". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude"
-   * "exclude{17,21,22+}" and "ignore{17,21,22+}" are similar, but only active if Java version = 17,
-   * 21, or &ge; 22.
+   * <p>Each string consists of a signature, a space, and an action: one of the words "exclude",
+   * "ignore", or "include", optionally followed by a JDK version number, optionally followed by "+"
+   * or "-". For example: "java7.util7.ArrayList.readObject(java.io.ObjectInputStream) exclude". A
+   * JDK version number restricts the goal to that JDK version; "+" extends it to later versions,
+   * and "-" extends it to earlier versions. For example, "exclude17" applies only on JDK 17,
+   * "exclude17+" applies on JDK 17 and later, and "exclude17-" applies on JDK 17 and earlier. Text
+   * from "#" to the end of the string is a comment.
    *
    * <p>This format is intended to make it easy to sort the arguments.
    *
-   * <p>When multiple lines apply to a single method, the most specific one takes precedence.
+   * <p>When multiple goals apply to a single method, the most specific one takes precedence: a goal
+   * with a version number and no "+" or "-" is more specific than one with "+" or "-", which is
+   * more specific than one with no version number. It is an error for two equally specific goals to
+   * apply to a method, or for a goal to specify the action that a less specific goal (or the
+   * default, "include") already specifies.
    *
    * @param covGoals method coverage goals
    */
   void methods(List<String> covGoals) {
+    methods(covGoals, javaVersion);
+  }
+
+  /**
+   * Add method names to be excluded, ignored, or included, using the goals that are active for the
+   * given Java version. For documentation of the format, see {@link #methods(List)}.
+   *
+   * @param covGoals method coverage goals
+   * @param jdkVersion the major Java version whose goals to apply
+   */
+  void methods(List<String> covGoals, int jdkVersion) {
     // Each method in `covGoals` is either:
     // * individually specified by "include", "exclude", or "ignore"
     // * not individually specified
@@ -291,9 +322,9 @@ class CoverageChecker {
       Map<String, String> thisCovGoals = covGoalsMaps.get(scope);
 
       if (actionJdk == 0
-          || (javaVersion == actionJdk)
-          || (orGreater && javaVersion > actionJdk)
-          || (orLess && javaVersion < actionJdk)) {
+          || (jdkVersion == actionJdk)
+          || (orGreater && jdkVersion > actionJdk)
+          || (orLess && jdkVersion < actionJdk)) {
 
         String oldAction = thisCovGoals.get(methodName);
         if (oldAction != null) {
@@ -343,6 +374,11 @@ class CoverageChecker {
    * in the excluded methods, then it must not be covered by any test. Otherwise, the method must be
    * covered by some test.
    *
+   * <p>If the system property {@code randoop.method.coverage.file} is set, this also writes to that
+   * file a line "covered METHOD" or "uncovered METHOD" for each declared method of each class
+   * (except methods that satisfy {@link #isIgnoredMethod(String)}), regardless of the coverage
+   * goals.
+   *
    * @param regressionStatus the {@link TestRunStatus} from the regression tests
    * @param errorStatus the {@link TestRunStatus} from the error tests
    */
@@ -351,6 +387,8 @@ class CoverageChecker {
     int numCoveredMethods = 0;
     Set<String> missingMethods = new TreeSet<>();
     Set<String> shouldBeMissingMethods = new TreeSet<>();
+    // Each element is "covered METHOD" or "uncovered METHOD".
+    Set<String> methodCoverage = new TreeSet<>();
 
     for (String classname : classnames) {
       String canonicalClassname = classname.replace('$', '.');
@@ -372,7 +410,12 @@ class CoverageChecker {
       // Deterministic order is needed because of println within the loop.
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         String methodname = methodName(m);
-        if (!isIgnoredMethod(methodname) && !ignoredMethodsGoal.contains(methodname)) {
+        boolean isIgnored = isIgnoredMethod(methodname);
+        if (!isIgnored) {
+          methodCoverage.add(
+              (coveredMethods.contains(methodname) ? "covered " : "uncovered ") + methodname);
+        }
+        if (!isIgnored && !ignoredMethodsGoal.contains(methodname)) {
           if (excludedMethodsGoal.contains(methodname)) {
             if (coveredMethods.contains(methodname)) {
               shouldBeMissingMethods.add(methodname);
@@ -389,6 +432,15 @@ class CoverageChecker {
           }
           System.out.println("Ignoring " + methodname + " in coverage checks");
         }
+      }
+    }
+
+    String methodCoverageFile = System.getProperty("randoop.method.coverage.file");
+    if (methodCoverageFile != null && !methodCoverageFile.isEmpty()) {
+      try {
+        Files.write(Paths.get(methodCoverageFile), methodCoverage, UTF_8);
+      } catch (IOException e) {
+        throw new UncheckedIOException("Problem writing " + methodCoverageFile, e);
       }
     }
 

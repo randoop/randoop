@@ -28,6 +28,7 @@ public final class GrtStringFuzzer extends GrtFuzzer {
 
   /** Private constructor to enforce singleton. */
   private GrtStringFuzzer() {
+    super();
     /* no-op */
   }
 

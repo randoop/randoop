@@ -22,8 +22,7 @@ public final class Log {
    *
    * @return true if logging is enabled
    */
-  @SuppressWarnings("nullness:flowexpr.parse.error") // TEMPORARY, to mask a bug
-  @EnsuresNonNullIf(expression = "GenInputsAbstract.log", result = true)
+  @EnsuresNonNullIf(expression = "randoop.main.GenInputsAbstract.log", result = true)
   public static boolean isLoggingOn() {
     return GenInputsAbstract.log != null;
   }

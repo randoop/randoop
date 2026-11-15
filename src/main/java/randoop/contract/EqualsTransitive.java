@@ -14,7 +14,9 @@ public final class EqualsTransitive extends ObjectContract {
   private static final EqualsTransitive instance = new EqualsTransitive();
 
   /** Private constructor to enforce singleton. */
-  private EqualsTransitive() {}
+  private EqualsTransitive() {
+    super();
+  }
 
   /**
    * Returns the singleton instance of this class.
@@ -43,7 +45,7 @@ public final class EqualsTransitive extends ObjectContract {
   }
 
   /** The arguments to which this contract can be applied. */
-  static TypeTuple inputTypes =
+  private static final TypeTuple inputTypes =
       new TypeTuple(
           Arrays.asList(JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE, JavaTypes.OBJECT_TYPE));
 

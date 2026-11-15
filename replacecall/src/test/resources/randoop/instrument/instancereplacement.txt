@@ -1,0 +1,2 @@
+// bad replacement file for testing
+java.util.Random.<init>() java.lang.Object.hashCode()

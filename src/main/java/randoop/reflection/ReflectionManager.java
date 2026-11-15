@@ -49,12 +49,6 @@ import randoop.util.Log;
 public class ReflectionManager {
 
   /**
-   * If true, output diagnostics to stdout rather than to a log. Useful when running unit tests,
-   * which don't do logging.
-   */
-  boolean logToStdout = false;
-
-  /**
    * The accessibility predicate for classes and class members.
    *
    * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
@@ -111,12 +105,12 @@ public class ReflectionManager {
    * @throws RandoopSpecificationError if a specification for a member is malformed
    */
   public void apply(ClassVisitor visitor, Class<?> c) throws RandoopSpecificationError {
-    logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
+    Log.logPrintf("Applying visitor %s to class %s%n", visitor, c.getName());
 
     boolean classIsAccessible = predicate.isAccessible(c);
     // Continue even if the class is not accessible; it might contain public static methods.
     if (!classIsAccessible) {
-      logPrintf("Continuing even though class is not accessible: %s%n", c);
+      Log.logPrintf("Continuing even though class is not accessible: %s%n", c);
     }
 
     visitBefore(visitor, c); // perform any previsit steps
@@ -126,7 +120,7 @@ public class ReflectionManager {
     } else {
 
       try {
-        logPrintf(
+        Log.logPrintf(
             "ReflectionManager.apply%n"
                 + "  %s%n"
                 + "  getMethods = %d%n"
@@ -156,13 +150,13 @@ public class ReflectionManager {
             Log.logPrintf("ReflectionManager applying %s to method %s%n", visitor, m);
             applyTo(visitor, m);
           } else {
-            logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
+            Log.logPrintln("ReflectionManager.apply: method " + m + " is in an inaccessible class");
           }
         } else {
-          logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
+          Log.logPrintln("ReflectionManager.apply: method " + m + " is not accessible");
         }
       }
-      logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
+      Log.logPrintf("ReflectionManager.apply done with getMethods for class %s%n", c);
 
       for (Method m : ClassDeterministic.getDeclaredMethods(c)) {
         // if not duplicate and satisfies predicate
@@ -170,11 +164,11 @@ public class ReflectionManager {
           if (isAccessible(m)) {
             applyTo(visitor, m);
           } else {
-            logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
+            Log.logPrintln("ReflectionManager.apply: declared method " + m + " is not accessible");
           }
         }
       }
-      logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
+      Log.logPrintf("ReflectionManager.apply done with getDeclaredMethods for class %s%n", c);
 
       // Constructors
       if (classIsAccessible) {
@@ -275,7 +269,7 @@ public class ReflectionManager {
    * @param f the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
-    logPrintf("Visiting field %s%n", f.toGenericString());
+    Log.logPrintf("Visiting field %s%n", f.toGenericString());
     v.visit(f);
   }
 
@@ -291,7 +285,7 @@ public class ReflectionManager {
    * @throws RandoopSpecificationError if a specification for a member is malformed
    */
   private void applyTo(ClassVisitor v, Class<?> c) throws RandoopSpecificationError {
-    logPrintf("Visiting member class %s%n", c.toString());
+    Log.logPrintf("Visiting member class %s%n", c.toString());
     v.visit(c, this);
   }
 
@@ -303,7 +297,7 @@ public class ReflectionManager {
    * @throws RandoopSpecificationError if a specification for the constructor is malformed
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) throws RandoopSpecificationError {
-    logPrintf("Visiting constructor %s%n", co.toGenericString());
+    Log.logPrintf("Visiting constructor %s%n", co.toGenericString());
     v.visit(co);
   }
 
@@ -315,7 +309,7 @@ public class ReflectionManager {
    * @throws RandoopSpecificationError if a specification for the method is malformed
    */
   private void applyTo(ClassVisitor v, Method m) throws RandoopSpecificationError {
-    logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
+    Log.logPrintf("ReflectionManager visiting method %s, visitor=%s%n", m.toGenericString(), v);
     v.visit(m);
   }
 
@@ -326,7 +320,7 @@ public class ReflectionManager {
    * @param e the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
-    logPrintf("Visiting enum %s%n", e);
+    Log.logPrintf("Visiting enum %s%n", e);
     v.visit(e);
   }
 
@@ -359,16 +353,17 @@ public class ReflectionManager {
    */
   private boolean isAccessible(Method m) {
     if (!predicate.isAccessible(m)) {
-      logPrintf("Will not use non-accessible method: %s%n", m.toGenericString());
+      Log.logPrintf("Will not use non-accessible method: %s%n", m.toGenericString());
       return false;
     }
     if (!isAccessible(m.getGenericReturnType())) {
-      logPrintf("Will not use method with non-accessible return type: %s%n", m.toGenericString());
+      Log.logPrintf(
+          "Will not use method with non-accessible return type: %s%n", m.toGenericString());
       return false;
     }
     for (Type p : m.getGenericParameterTypes()) {
       if (!isAccessible(p)) {
-        logPrintf(
+        Log.logPrintf(
             "Will not use method with non-accessible parameter %s: %s%n", p, m.toGenericString());
         return false;
       }
@@ -384,12 +379,12 @@ public class ReflectionManager {
    */
   private boolean isAccessible(Constructor<?> c) {
     if (!predicate.isAccessible(c)) {
-      logPrintf("Will not use non-accessible constructor: %s%n", c.toGenericString());
+      Log.logPrintf("Will not use non-accessible constructor: %s%n", c.toGenericString());
       return false;
     }
     for (Type p : c.getGenericParameterTypes()) {
       if (!isAccessible(p)) {
-        logPrintf(
+        Log.logPrintf(
             "Will not use constructor with non-accessible parameter %s: %s%n",
             p, c.toGenericString());
         return false;
@@ -425,32 +420,5 @@ public class ReflectionManager {
     // if type is none of the types above then must be Class<?>, which predicate can handle
     Class<?> rawType = (Class<?>) type;
     return predicate.isAccessible(rawType);
-  }
-
-  /**
-   * Log a diagnostic message with formatting.
-   *
-   * @param fmt the format string
-   * @param args the arguments to the format string
-   */
-  private void logPrintf(String fmt, Object... args) {
-    if (logToStdout) {
-      System.out.printf(fmt, args);
-    } else {
-      Log.logPrintf(fmt, args);
-    }
-  }
-
-  /**
-   * Log a one-line literal diagnostic message.
-   *
-   * @param s the message, a complete line without line terminator
-   */
-  private void logPrintln(String s) {
-    if (logToStdout) {
-      System.out.println(s);
-    } else {
-      Log.logPrintln(s);
-    }
   }
 }
