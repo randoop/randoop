@@ -13,7 +13,7 @@ public abstract class TypeVariable extends ParameterType {
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
-  TypeVariable() {
+  /*package*/ TypeVariable() {
     super();
   }
 
@@ -24,7 +24,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param lowerBound the lower type bound on this variable
    * @param upperBound the upper type bound on this variable
    */
-  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  /*package*/ TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
@@ -89,6 +89,14 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
+      // A type variable is a subtype of its upper bound.  The test below does not always recognize
+      // that:  if the bound refers to this variable, as in `T extends Comparable<T>`, it
+      // substitutes otherType for this variable within the bound.
+      ParameterBound upperBound = getUpperTypeBound();
+      if (upperBound instanceof ReferenceBound
+          && ((ReferenceBound) upperBound).getBoundType().equals(otherType)) {
+        return true;
+      }
       Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
@@ -118,7 +126,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
+  /*package*/ boolean canBeInstantiatedBy(ReferenceType otherType) {
     Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
