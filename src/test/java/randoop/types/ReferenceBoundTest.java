@@ -191,8 +191,8 @@ public class ReferenceBoundTest {
   public void testCaptureOfSuperUnboundedVariable() throws NoSuchMethodException {
     // The capture variable of List<? super T> has lower bound T, where T extends Object.
     TypeVariable captureVariable = captureVariable("listSuperVariable");
-    // T is not a subtype of String, but T can be chosen as String, as when Collections.sort(List<T>,
-    // Comparator<? super T>) receives a Comparator<String>.
+    // T is not a subtype of String, but T can be chosen as String, as when
+    // Collections.sort(List<T>, Comparator<? super T>) receives a Comparator<String>.
     assertTrue(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
                 JavaTypes.STRING_TYPE, captureVariable)

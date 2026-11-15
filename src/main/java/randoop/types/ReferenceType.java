@@ -193,8 +193,8 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Returns true if the given lower bound is a subtype of the given type, or if the lower bound is a
-   * type variable that the substitution does not map and that can be instantiated by the given
+   * Returns true if the given lower bound is a subtype of the given type, or if the lower bound is
+   * a type variable that the substitution does not map and that can be instantiated by the given
    * type. For example, consider the capture variable of {@code ? super T} in {@code
    * Collections.sort(List<T>, Comparator<? super T>)}, before {@code T} is chosen. Its lower bound
    * {@code T} is not a subtype of {@code String}, but {@code T} can be chosen as {@code String}, so
