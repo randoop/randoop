@@ -29,7 +29,7 @@ class ArrayElementSet extends CallableOperation {
    *
    * @param elementType the type of the array's elements
    */
-  ArrayElementSet(Type elementType) {
+  /*package*/ ArrayElementSet(Type elementType) {
     super();
     this.elementType = elementType;
   }
