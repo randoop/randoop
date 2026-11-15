@@ -172,8 +172,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
    * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
    * signature names the class that declares M, not a class that inherits M. Randoop considers only
-   * the omitted methods of the classes under test, so a call can still dispatch to an omitted
-   * method of a class that is not under test.
+   * the omitted methods of the classes under test and the omitted methods listed in the {@code
+   * --methodlist} file, so a call can still dispatch to an omitted method of any other class.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
