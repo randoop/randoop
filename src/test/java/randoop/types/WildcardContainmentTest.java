@@ -49,6 +49,13 @@ public class WildcardContainmentTest {
      * @param <U> the type parameter
      */
     public class Inner2<U> {}
+
+    /**
+     * A generic member class whose type parameter has a bound.
+     *
+     * @param <U> the type parameter
+     */
+    public class NumberInner<U extends Number> {}
   }
 
   /**
@@ -66,6 +73,12 @@ public class WildcardContainmentTest {
 
   /** A field of type {@code Outer<String>.Inner2<Integer>}. */
   public Outer<String>.Inner2<Integer> inner2;
+
+  /** A field of type {@code Outer<String>.NumberInner<?>}. */
+  public Outer<String>.NumberInner<?> numberInnerQ;
+
+  /** A field of type {@code Outer<String>.NumberInner<? extends Number>}. */
+  public Outer<String>.NumberInner<? extends Number> numberInnerExtendsNumber;
 
   /** A field of type {@code ArrayList<?>}. */
   public ArrayList<?> arrayListQ;
@@ -342,6 +355,14 @@ public class WildcardContainmentTest {
     // The capture variable of NumberBox<?> has upper bound Number, from the type parameter.
     assertTrue(isSubtype("numberBoxQ", "numberBoxExtendsNumber"));
     assertTrue(isSubtype("numberBoxExtendsNumber", "numberBoxQ"));
+  }
+
+  @Test
+  public void memberClassCaptureConversionTest() {
+    // The generic form of a member class has the type parameters of its enclosing class, too.
+    ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+    assertTrue(isSubtype("numberInnerQ", "numberInnerExtendsNumber"));
+    assertTrue(isSubtype("numberInnerExtendsNumber", "numberInnerQ"));
   }
 
   @Test
