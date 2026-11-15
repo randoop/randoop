@@ -608,6 +608,33 @@ public class TypeVariableTest {
         ((ReferenceArgument) type.getTypeArguments().get(index)).getReferenceType();
   }
 
+  /**
+   * Returns {@code List<? super U>}, where the bound of {@code U} is {@code Integer}.
+   *
+   * @param <U> a type parameter whose bound is {@code Integer}
+   * @return null
+   */
+  public static <U extends Integer> List<? super U> listSuperIntegerVariable() {
+    return null;
+  }
+
+  @Test
+  public void testInstantiationOfCaptureOfSuperVariable() throws NoSuchMethodException {
+    InstantiatedType listType =
+        (InstantiatedType)
+            Type.forType(
+                TypeVariableTest.class
+                    .getMethod("listSuperIntegerVariable")
+                    .getGenericReturnType());
+    // The lower bound of the capture variable is U, which is not instantiated.
+    TypeVariable capture = typeArgument(listType.applyCaptureConversion(), 0);
+    // U can be Integer, a subtype of Number.
+    assertTrue(NonParameterizedType.forClass(Number.class).isInstantiationOf(capture));
+    assertTrue(JavaTypes.OBJECT_TYPE.isInstantiationOf(capture));
+    // No subtype of Integer is a subtype of String.
+    assertFalse(JavaTypes.STRING_TYPE.isInstantiationOf(capture));
+  }
+
   @Test
   public void testCaptureConversionOfSelfBoundInsideTypeArgument() throws NoSuchFieldException {
     TypeVariable v = typeParameter(Unbounded.class, 0);

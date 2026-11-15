@@ -279,9 +279,9 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
    * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * an unknown type. For a lower bound, the result is true if it can be a subtype of {@code
+   * otherType}, as determined by {@link #canBeSubtypeOf}; for an upper bound, the result is true if
+   * it can be a supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -309,8 +309,34 @@ public abstract class TypeVariable extends ParameterType {
       return false;
     }
     return isLower
-        ? variable.canBeInstantiatedBy(otherType, substitution)
+        ? variable.canBeSubtypeOf(otherType, substitution)
         : variable.canBeSupertypeOf(otherType, substitution);
+  }
+
+  /**
+   * Returns true if some instantiation of this type variable can be a subtype of the given type,
+   * when the other type variables are instantiated as by the given substitution. The instantiations
+   * that this considers are {@code otherType} itself, as {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)} checks, and the upper bound of this variable, which is a subtype of every
+   * supertype of it. It considers the upper bound only if the upper bound does not contain this
+   * variable, as in {@code T extends Comparable<T>}, because the upper bound is then not a type
+   * that this variable can be. So the result can be false even if some other subtype of {@code
+   * otherType} can instantiate this variable.
+   *
+   * <p>For example, for {@code U extends Integer}, the result is true for {@code Number}, because
+   * {@code U} can be {@code Integer}.
+   *
+   * @param otherType a type, not a variable
+   * @param context a substitution for other type variables
+   * @return true if some instantiation of this variable can be a subtype of {@code otherType}
+   */
+  boolean canBeSubtypeOf(ReferenceType otherType, Substitution context) {
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    ParameterBound upperBound = getUpperTypeBound();
+    return !upperBound.getTypeParameters().contains(this)
+        && upperBound.isLowerBound(otherType, context);
   }
 
   /**

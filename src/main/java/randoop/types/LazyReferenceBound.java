@@ -80,8 +80,8 @@ class LazyReferenceBound extends ReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
+      // The unknown type variable can be argType itself, or its upper bound.
+      return unknown.canBeSubtypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -126,7 +126,9 @@ class LazyReferenceBound extends ReferenceBound {
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
    * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
-   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}.
+   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For
+   * a lower bound, it also treats {@code argType} as within this bound if the upper bound of the
+   * type variable is a subtype of {@code argType}; see {@link TypeVariable#canBeSubtypeOf}.
    * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
    * within a lower bound, since the lower bound of the type variable is usually the null type.
    *
