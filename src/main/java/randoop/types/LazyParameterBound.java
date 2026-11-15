@@ -24,7 +24,8 @@ class LazyParameterBound extends ParameterBound {
    * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
    * instead of reading this field.
    */
-  private @Nullable List<TypeVariable> typeParameters = null;
+  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
+  private volatile @Nullable List<TypeVariable> typeParameters = null;
 
   /**
    * The result of {@link #toReferenceBound()}, if {@link #referenceBoundComputed} is true. Use

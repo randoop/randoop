@@ -23,6 +23,14 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of the receiver and the argument.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
    * instantiated as by a substitution.
    */
@@ -64,14 +72,6 @@ public abstract class TypeVariable extends ParameterType {
           && this.variable.isIdenticalTo(variable);
     }
   }
-
-  /**
-   * The pairs of type variables, other than {@link ExplicitTypeVariable}s, that {@link
-   * #isIdenticalTo(TypeVariable)} is comparing in the current thread, outermost first.
-   */
-  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
-  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
-      ThreadLocal.withInitial(ArrayList::new);
 
   /**
    * The type variable that {@link #forType(java.lang.reflect.Type)} returns for each type
@@ -481,8 +481,11 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. Then the given
    * type is within an upper bound that is this variable, if this variable is not otherwise
    * determined. The instantiations that this considers are the lower bound of this variable, which
-   * is a supertype of every subtype of it, and {@code otherType} and its supertypes, as {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)} checks.
+   * is a supertype of every subtype of it, {@code otherType} itself, and, if {@code otherType} is a
+   * class or interface type, each of its supertypes. For example, for {@code <T extends
+   * Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code
+   * java.util.Date} can instantiate {@code T}. Each instantiation is checked as by {@link
+   * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * <p>Only the supertypes of a class or interface type are tried. For any other type, such as an
    * array type, only the type itself is tried.
@@ -499,7 +502,7 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType instanceof ClassOrInterfaceType) {
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        if (canBeInstantiatedBy(supertype, context)) {
+        if (!supertype.isGeneric() && canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
@@ -524,26 +527,24 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself.  To terminate,
-      // assume that a comparison of the same pair of objects that is already in progress succeeds.
-      // There are finitely many objects in the bounds, so there are finitely many such pairs.
-      List<TypeVariable[]> inProgress = identityChecks.get();
-      for (TypeVariable[] pair : inProgress) {
-        if (pair[0] == this && pair[1] == other) {
-          return true;
-        }
-      }
-      inProgress.add(new TypeVariable[] {this, other});
-      try {
-        return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-            && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
-      } finally {
-        inProgress.remove(inProgress.size() - 1);
+    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
+    // deeply can reach this comparison again.  To terminate, assume, as for any recursive
+    // comparison, that a comparison of the same pair of objects that is already in progress
+    // succeeds.  There are finitely many objects in the bounds, so there are finitely many such
+    // pairs.
+    List<TypeVariable[]> inProgress = identityChecks.get();
+    for (TypeVariable[] pair : inProgress) {
+      if (pair[0] == this && pair[1] == other) {
+        return true;
       }
     }
-    return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-        && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    inProgress.add(new TypeVariable[] {this, other});
+    try {
+      return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+          && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
   }
 
   /**

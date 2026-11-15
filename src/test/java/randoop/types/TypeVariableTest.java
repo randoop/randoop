@@ -383,6 +383,46 @@ public class TypeVariableTest {
     assertEquals(capture.hashCode(), copy.hashCode());
   }
 
+  /**
+   * A class with a field whose type has a wildcard whose lower bound is a type parameter whose
+   * bound mentions another type parameter.
+   *
+   * @param <X> the element type in the bound of {@code Y}
+   * @param <Y> a type parameter bounded by {@code List<X>}
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperBoundedVariableField<X, Y extends List<X>> {
+    /** A wildcard type whose lower bound is a type parameter with a generic bound. */
+    Comparable<? super Y> superY;
+
+    /** The bound of {@code Y}, with {@code X := String}. */
+    List<String> listOfString;
+  }
+
+  @Test
+  public void testSubstitutionChangesBoundOfCaptureLowerBound() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType)
+                Type.forType(
+                    SuperBoundedVariableField.class.getDeclaredField("superY").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // The substitution changes only the bound of Y, which is the lower bound of the capture.  The
+    // substituted lower bound equals the original one, but the copy must keep it.
+    ReferenceType copy =
+        capture.substitute(
+            new Substitution(
+                typeParameter(SuperBoundedVariableField.class, 0), JavaTypes.STRING_TYPE));
+    assertTrue(copy instanceof CaptureTypeVariable);
+    ParameterBound lowerBound = ((TypeVariable) copy).getLowerTypeBound();
+    TypeVariable y = (TypeVariable) ((ReferenceBound) lowerBound).getBoundType();
+    assertEquals(
+        Type.forType(
+            SuperBoundedVariableField.class.getDeclaredField("listOfString").getGenericType()),
+        ((ReferenceBound) y.getUpperTypeBound()).getBoundType());
+  }
+
   @Test
   public void testSubstitutionOfCaptureVariableCopy() {
     TypeVariable capture = captureVariable("selfComparableWildcard");
@@ -532,6 +572,30 @@ public class TypeVariableTest {
     ParameterBound copyBound = new LazyReferenceBound(copy);
     assertEquals(bound, copyBound);
     assertEquals(bound.hashCode(), copyBound.hashCode());
+  }
+
+  /**
+   * Substitutions that map a type variable to copies of a type variable with different bounds are
+   * inconsistent, and cannot be merged.
+   */
+  @Test
+  public void testSubstitutionsToTypeVariableCopiesAreInconsistent() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    Substitution toY = new Substitution(x, y);
+    Substitution toCopy = new Substitution(x, copy);
+    assertFalse(toY.isConsistentWith(toCopy));
+    assertFalse(toCopy.isConsistentWith(toY));
+    try {
+      toY.extend(toCopy);
+      throw new AssertionError("extend should reject a copy with other bounds");
+    } catch (IllegalArgumentException expected) {
+      // expected
+    }
+    Substitution toSameY = new Substitution(x, y);
+    assertTrue(toY.isConsistentWith(toSameY));
+    assertEquals(toY, toY.extend(toSameY));
   }
 
   @Test
@@ -1153,6 +1217,61 @@ public class TypeVariableTest {
     assertTrue(t.isInstantiationOf(typeParameter(OtherSelfInWildcardBound.class)));
     assertTrue(t.isInstantiationOf(typeParameter(CollectionWildcardBound.class)));
     assertFalse(t.isInstantiationOf(typeParameter(ListWildcardBound.class)));
+  }
+
+  /**
+   * A type parameter bounded by a list whose elements are lists of strings.
+   *
+   * @param <S> the type parameter
+   */
+  static class ListOfStringListsBound<S extends List<List<String>>> {}
+
+  /**
+   * A type parameter whose bound has a lower-bounded wildcard whose bound contains another type
+   * parameter.
+   *
+   * @param <B> the element type in the wildcard bound
+   * @param <T> the type parameter
+   */
+  static class SuperListBound<B, T extends List<? super List<B>>> {}
+
+  /**
+   * A type parameter whose bound has a lower-bounded wildcard whose bound contains another type
+   * parameter, which is bounded by {@code Number}.
+   *
+   * @param <B> the element type in the wildcard bound
+   * @param <T> the type parameter
+   */
+  static class SuperListNumberBound<B extends Number, T extends List<? super List<B>>> {}
+
+  /**
+   * A type parameter whose bound has a lower-bounded wildcard whose bound is an array of another
+   * type parameter.
+   *
+   * @param <B> the component type in the wildcard bound
+   * @param <T> the type parameter
+   */
+  static class SuperArrayBound<B, T extends List<? super B[]>> {}
+
+  /**
+   * A type parameter bounded by a list whose elements are arrays of strings.
+   *
+   * @param <S> the type parameter
+   */
+  static class ListOfStringArraysBound<S extends List<String[]>> {}
+
+  @Test
+  public void testUnknownInLowerWildcardBound() {
+    TypeVariable s = typeParameter(ListOfStringListsBound.class);
+    // B := String
+    assertTrue(s.isInstantiationOf(typeParameter(SuperListBound.class, 1)));
+    // String is not a subtype of Number.
+    assertFalse(s.isInstantiationOf(typeParameter(SuperListNumberBound.class, 1)));
+    // B := String
+    assertTrue(
+        typeParameter(ListOfStringArraysBound.class)
+            .isInstantiationOf(typeParameter(SuperArrayBound.class, 1)));
+    assertFalse(s.isInstantiationOf(typeParameter(SuperArrayBound.class, 1)));
   }
 
   @Test

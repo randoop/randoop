@@ -257,15 +257,16 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */
-  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   private ReferenceType substituteIntoBounds(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
-    // A bound's substitute method returns the same object if the substitution does not change the
-    // bound.  An equals test would discard a changed copy of a type variable in a bound, because
-    // copies of a type variable are equal even if their bounds differ.
-    boolean boundsChanged = lowerBound != getLowerTypeBound() || upperBound != getUpperTypeBound();
+    // Copies of a type variable are equal even if their bounds differ, so a substitution can change
+    // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.  An
+    // equals test would discard that changed copy; comparing with areIdentical detects the change.
+    boolean boundsChanged =
+        !areIdentical(lowerBound, getLowerTypeBound())
+            || !areIdentical(upperBound, getUpperTypeBound());
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
