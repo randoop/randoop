@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,10 +85,20 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // non-generic member classes of a generic class show up as ParameterizedType
-      // treat these as Class<?>
+      // Non-generic member classes of a generic class, such as Outer<U>.Inner, show up as
+      // ParameterizedType.  Treat these as a NonParameterizedType, but preserve the type arguments
+      // of the owner type: they may be type variables (such as a method type parameter U) other
+      // than the type parameters of the enclosing class.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
+        java.lang.reflect.Type ownerType = t.getOwnerType();
+        if (ownerType instanceof java.lang.reflect.ParameterizedType
+            && !Modifier.isStatic(rawType.getModifiers())) {
+          // Do not side-effect the cached result of forClass.
+          NonParameterizedType result = new NonParameterizedType(rawType);
+          result.enclosingType = forType(ownerType);
+          return result;
+        }
         return forClass(rawType);
       }
       return ParameterizedType.forType(t);
