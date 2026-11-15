@@ -90,7 +90,7 @@ public final class EnumValue extends ObjectContract {
     b.append("x0");
     b.append(".equals(");
     b.append(valueName);
-    b.append(")");
+    b.append(')');
     b.append(");");
     return b.toString();
   }
