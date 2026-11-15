@@ -227,7 +227,7 @@ public final class MethodCall extends CallableOperation {
     sb.append(method.getName());
     sb.append("(");
     Class<?>[] params = method.getParameterTypes();
-    TypeArguments.getTypeArgumentString(sb, params);
+    TypeArguments.appendTypeArgumentString(sb, params);
     sb.append(')');
     return sb.toString();
   }
