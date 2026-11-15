@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -301,8 +302,8 @@ public class InstantiationTest {
   /**
    * Tests that the instantiation of {@code <K, V> Map<K, V> unmodifiableMap(Map<? extends K, ?
    * extends V>)} respects the bounds of the capture variables that it instantiates from an input
-   * type: the key type of the argument is a subtype of the key type of the result, even though
-   * many candidate types for {@code K} are incompatible with it.
+   * type: the key type of the argument is a subtype of the key type of the result, even though many
+   * candidate types for {@code K} are incompatible with it.
    */
   @Test
   public void testCaptureBoundsInstantiation()
@@ -335,6 +336,26 @@ public class InstantiationTest {
       }
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
+   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
+   * variable whose bound mentions that type variable.
+   */
+  @Test
+  public void testRecursivelyBoundedCaptureInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation max =
+        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
+
+    TypedClassOperation instance = instantiator.instantiate(max);
+    assertNotNull("instantiation failed for " + max, instance);
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /**

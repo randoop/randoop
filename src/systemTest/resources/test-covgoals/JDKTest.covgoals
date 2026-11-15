@@ -68,6 +68,7 @@ java7.util7.BitSet.writeObject(java.io.ObjectOutputStream) exclude
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) ignore
 java7.util7.Collections.addAll(java7.util7.Collection, java.lang.Object[]) include11
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude21
+java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude25
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude27
 java7.util7.Collections.checkedCollection(java7.util7.Collection, java.lang.Class) exclude8
 java7.util7.Collections.checkedList(java7.util7.List, java.lang.Class) ignore # inconsistent Java 8 vs 9, so ignore
@@ -77,6 +78,7 @@ java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude27
 java7.util7.Collections.checkedSet(java7.util7.Set, java.lang.Class) exclude8
 java7.util7.Collections.checkedSortedMap(java7.util7.SortedMap, java.lang.Class, java.lang.Class) exclude
 java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) exclude
+java7.util7.Collections.checkedSortedSet(java7.util7.SortedSet, java.lang.Class) include25
 java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
@@ -84,6 +86,7 @@ java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object)
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.min(java7.util7.Collection) exclude
 java7.util7.Collections.min(java7.util7.Collection) include11
+java7.util7.Collections.min(java7.util7.Collection) include25
 java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude17
 java7.util7.Collections.min(java7.util7.Collection, java7.util7.Comparator) exclude21
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
@@ -119,7 +122,6 @@ java7.util7.Observable.clearChanged() exclude
 java7.util7.Observable.hasChanged() exclude11
 java7.util7.Observable.setChanged() exclude
 java7.util7.Stack.empty() exclude17
-java7.util7.Stack.empty() exclude25
 java7.util7.Stack.peek() ignore
 java7.util7.Stack.pop() ignore
 java7.util7.Stack.push(java.lang.Object) ignore
@@ -133,10 +135,13 @@ java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.get(java.lang.Object) ignore
 java7.util7.TreeMap.get(java.lang.Object) include11
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude17+
+java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) include25
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) include11
+java7.util7.TreeMap.headMap(java.lang.Object) include25
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) include25
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude11
 java7.util7.TreeMap.parentOf(java7.util7.TreeMap.Entry) exclude11
@@ -153,6 +158,7 @@ java7.util7.TreeMap.subMap(java.lang.Object, boolean, java.lang.Object, boolean)
 java7.util7.TreeMap.subMap(java.lang.Object, java.lang.Object) ignore
 java7.util7.TreeMap.tailMap(java.lang.Object) exclude
 java7.util7.TreeMap.tailMap(java.lang.Object) include11
+java7.util7.TreeMap.tailMap(java.lang.Object) include25
 java7.util7.TreeMap.tailMap(java.lang.Object, boolean) exclude8
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) exclude17+
 java7.util7.TreeMap.valEquals(java.lang.Object, java.lang.Object) include25
