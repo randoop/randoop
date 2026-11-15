@@ -96,7 +96,7 @@ public final class SpecificationTranslator {
    * @param compiler the sequence compiler to use to create expression methods
    * @return the translator object to convert the specifications for {@code executable}
    */
-  static SpecificationTranslator createTranslator(
+  /*package*/ static SpecificationTranslator createTranslator(
       Executable executable, OperationSpecification specification, SequenceCompiler compiler) {
     Identifiers identifiers = specification.getIdentifiers();
 
@@ -418,7 +418,7 @@ public final class SpecificationTranslator {
    *
    * @return the prestate expression method parameter declaration string
    */
-  String getPrestateExpressionDeclaration() {
+  /*package*/ String getPrestateExpressionDeclaration() {
     return prestateExpressionDeclaration;
   }
 
@@ -429,7 +429,7 @@ public final class SpecificationTranslator {
    *
    * @return the poststate expression method parameter declaration string
    */
-  String getPoststateExpressionDeclarations() {
+  /*package*/ String getPoststateExpressionDeclarations() {
     return poststateExpressionDeclarations;
   }
 
@@ -441,7 +441,7 @@ public final class SpecificationTranslator {
    *
    * @return the poststate expression method signature for this object
    */
-  RawSignature getPoststateExpressionSignature() {
+  /*package*/ RawSignature getPoststateExpressionSignature() {
     return poststateExpressionSignature;
   }
 
@@ -452,7 +452,7 @@ public final class SpecificationTranslator {
    *
    * @return the compiler for this object
    */
-  SequenceCompiler getCompiler() {
+  /*package*/ SequenceCompiler getCompiler() {
     return compiler;
   }
 
@@ -462,7 +462,7 @@ public final class SpecificationTranslator {
    *
    * @return the replacement map for the identifiers in the expression
    */
-  Map<String, String> getReplacementMap() {
+  /*package*/ Map<String, String> getReplacementMap() {
     return replacementMap;
   }
 }
