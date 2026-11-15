@@ -963,15 +963,6 @@ public class TypeVariableTest {
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 
-  /**
-   * A chain of type parameters, each bounded by the previous one.
-   *
-   * @param <K> a type parameter
-   * @param <V> a type parameter bounded by {@code K}
-   * @param <W> a type parameter bounded by {@code V}
-   */
-  static class ChainedBound<K, V extends K, W extends V> {}
-
   @Test
   public void testChainedBoundWithInstantiatedEnd() {
     List<TypeVariable> parameters =
@@ -981,6 +972,7 @@ public class TypeVariableTest {
     TypeVariable w = parameters.get(2);
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);
+    // The parameters are K, V extends K, and W extends V.
     // With K := Number, W and V can both be Integer.
     assertTrue(w.canBeInstantiatedBy(integerType, new Substitution(k, numberType)));
     assertFalse(w.canBeInstantiatedBy(integerType, new Substitution(k, JavaTypes.STRING_TYPE)));
