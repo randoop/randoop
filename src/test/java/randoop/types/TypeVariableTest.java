@@ -1860,6 +1860,38 @@ public class TypeVariableTest {
     assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
   }
 
+  /**
+   * A class whose type parameter T is bounded by its sibling S.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code S}
+   */
+  static class SiblingBound<S, T extends S> {}
+
+  @Test
+  public void testSubtypeOfVariableBoundedBySibling() {
+    TypeVariable s = typeParameter(SiblingBound.class, 0);
+    TypeVariable t = typeParameter(SiblingBound.class, 1);
+    assertTrue(t.isSubtypeOfOrEqualTo(s));
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    // S need not be a subtype of String.
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  /** A field whose type has wildcard arguments for a type parameter and its sibling bound. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SiblingBound<?, ?> siblingBoundField;
+
+  @Test
+  public void testSubtypeOfCaptureVariableBoundedBySibling() throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("siblingBoundField");
+    TypeVariable captureS = typeArgument(capturedType, 0);
+    TypeVariable captureT = typeArgument(capturedType, 1);
+    assertTrue(captureT.isSubtypeOfOrEqualTo(captureS));
+    // The capture variable of S need not be a subtype of String.
+    assertFalse(captureT.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
   /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
   @SuppressWarnings("serial") // never instantiated
   abstract static class RunnableNumber extends Number implements Runnable {}
