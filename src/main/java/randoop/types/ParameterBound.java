@@ -122,8 +122,7 @@ public abstract class ParameterBound {
       return ArrayType.ofComponentType(
           eagerBoundType(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
     }
-    // A class can be an array class, as in `? extends String[]`.  ReferenceType.forType represents
-    // it as an ArrayType, as LazyParameterBound does for a fixed array type in a type argument.
+    // A class can be an array class, as in `? extends String[]`.
     return ReferenceType.forType(type);
   }
 

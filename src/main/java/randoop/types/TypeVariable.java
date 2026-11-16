@@ -236,11 +236,9 @@ public abstract class TypeVariable extends ParameterType {
    * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
    * checked separately. So the result can be true even if no single type for that type variable
    * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
-   * instantiated by a class that implements {@code Map<A, B>}. A lower bound of this variable that
-   * is an uninstantiated type variable does not restrict the given type at all, since determining
-   * whether some instantiation of that type variable is a subtype of the given type requires a
-   * search. A client that instantiates all the type variables should check the bounds again with
-   * all of them instantiated, as {@link randoop.reflection.TypeInstantiator} does.
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
+   * randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
@@ -293,15 +291,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution substitution) {
     if (getLowerTypeBound().isVariable()) {
-      // The lower bound is a type variable.  If the substitution does not instantiate it, then it
-      // stands for an unknown type, and `otherType` is within the lower bound if it is a supertype
-      // of some type that can instantiate the unknown type variable.  For example, for
-      // `<T extends Number> void consume(List<? super T>)`, Object is within the lower bound of
-      // the capture variable, because T can be Number.  Finding such a type is a search, so defer
-      // the check to the client, which checks the bounds again once it instantiates the unknown
-      // type variable.
-      if (unknownVariable(getLowerTypeBound(), substitution) == null
-          && !getLowerTypeBound().isLowerBound(otherType, substitution)) {
+      if (!variableBoundAllows(getLowerTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -310,16 +300,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
-      if (unknown != null) {
-        // The unknown type variable can be `otherType` itself, or its lower bound; see
-        // EagerReferenceBound.isUpperBound(Type, Substitution) and canBeSupertypeOf.
-        if (!unknown.canBeSupertypeOf(otherType, substitution)) {
-          return false;
-        }
-      } else if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
-        // The substitution maps the type variable to a type that is not a variable, as for `V
-        // extends K` with K := Number, and otherType is not within that type.
+      if (!variableBoundAllows(getUpperTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -331,27 +312,41 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the type variable that the given bound of this variable is, if the substitution does
-   * not instantiate it. Otherwise, returns null; then the substituted bound is a type that can be
-   * compared with a candidate type.
+   * Returns true if {@code otherType} is within the given bound of this variable, which is a type
+   * variable. If the substitution instantiates that type variable with a type that is not a
+   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
+   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
+   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
+   * determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
-   * @param substitution the substitution of a candidate type for this variable
-   * @return the uninstantiated type variable that {@code bound} is, or null if {@code substitution}
-   *     instantiates it
+   * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
+   *     upper bound
+   * @param substitution the substitution of {@code otherType} for this variable
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if {@code otherType} is within {@code bound}
    */
-  private static @Nullable TypeVariable unknownVariable(
-      ParameterBound bound, Substitution substitution) {
+  private boolean variableBoundAllows(
+      ParameterBound bound, boolean isLower, Substitution substitution, ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
+    TypeVariable variable;
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
-      return (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
-      return substituted.getTypeParameters().get(0);
+      variable = substituted.getTypeParameters().get(0);
+    } else if (substituted instanceof ReferenceBound) {
+      // The substitution instantiates the type variable with a type that is not a variable.
+      return isLower
+          ? substituted.isLowerBound(otherType, substitution)
+          : substituted.isUpperBound(otherType, substitution);
     } else {
-      return null;
+      return false;
     }
+    return isLower
+        ? variable.canBeInstantiatedBy(otherType, substitution)
+        : variable.canBeSupertypeOf(otherType, substitution);
   }
 
   /**

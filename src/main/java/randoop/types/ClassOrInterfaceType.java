@@ -85,23 +85,27 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // A non-generic member class of a generic class, such as Outer<E>.Inner, shows up as a
-      // ParameterizedType with no type arguments.
+      // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
+      // ParameterizedType whose owner type supplies the type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // The type arguments of the owner type, such as the type parameter E of a method in
-        // Outer<E>, can differ from the type parameters of the declaration of the enclosing class.
-        // If they do not, the result is the generic form of the member class.
+        // If the owner type's type arguments are the type parameters of the declaration of the
+        // enclosing class, the result is the generic form of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
+            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
             && !Arrays.equals(
                 ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
                 ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
                     .getTypeParameters())) {
-          // forClass returns a shared object, so its enclosing type must not be changed.
-          NonParameterizedType memberType = new NonParameterizedType(rawType);
-          memberType.enclosingType = forType(ownerType);
-          return memberType;
+          // Use the owner type rather than the enclosing class, because the owner type's type
+          // arguments may differ from the enclosing class's type parameters.  For example, in
+          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+          // method's type parameter, not the type parameter declared by `Outer`.
+          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+          NonParameterizedType result = new NonParameterizedType(rawType);
+          result.enclosingType = forType(ownerType);
+          return result;
         }
         return forClass(rawType);
       }
@@ -374,21 +378,25 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
+    // For a member class such as Outer<String>.Inner and a member class goal type such as
+    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
+    // type.  The enclosing type of this type is not matched against a goal type that is not a
+    // member class, such as a type variable.
+    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType thisEnclosingType = enclosingType;
-      // If the goal type is also a member class, such as Outer<E>.Inner, then match the enclosing
-      // type of this type, such as Outer<String>, with the enclosing type of the goal, Outer<E>.
-      ReferenceType enclosingGoalType = goalType;
-      if (goalType instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
-        if (goalClassType.isMemberClass()) {
-          enclosingGoalType = goalClassType.enclosingType;
-        }
-      }
-      if (enclosingGoalType.isGeneric()) {
-        substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-        if (substitution == null) {
+      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (goalClassType.isMemberClass()) {
+        // Matching enclosing types do not make unrelated member classes, such as
+        // Outer<String>.Inner and Outer<E>.Other, unify.
+        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
+        }
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+        if (enclosingGoalType.isGeneric()) {
+          substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+          if (substitution == null) {
+            return null;
+          }
         }
       }
     }
