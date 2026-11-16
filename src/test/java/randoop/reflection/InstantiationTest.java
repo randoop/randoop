@@ -3,9 +3,11 @@ package randoop.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -25,9 +27,11 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
 /** Tests instantiation of type parameters by OperationModel. */
@@ -412,4 +416,90 @@ public class InstantiationTest {
       }
     }
   }
+
+  /**
+   * A generic class with a member class.
+   *
+   * @param <E> the type parameter
+   */
+  private static class Outer<E> {
+    /** A member class with no type parameters of its own. */
+    class Inner {}
+  }
+
+  /**
+   * A method whose parameter type is generic only through its enclosing type.
+   *
+   * @param <E> the type parameter of the enclosing type
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void innerParameter(Outer<E>.Inner inner) {}
+
+  /**
+   * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
+   * with no type parameters of its own, which is generic only through its enclosing type.
+   */
+  @Test
+  public void testNonParameterizedMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("innerParameter", Outer.Inner.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    assertTrue(genericInner.isGeneric());
+    assertFalse(genericInner instanceof ParameterizedType);
+    // Outer<String>.Inner.
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
+    inputTypes.add(stringInner);
+    TypedClassOperation instantiated = new TypeInstantiator(inputTypes).instantiate(operation);
+    assertNotNull("no instantiation found", instantiated);
+    assertEquals(stringInner, instantiated.getInputTypes().get(0));
+
+    // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
+    // method's type parameter `E`, so `Outer<String>.Inner` must not be paired with
+    // `List<Integer>`.
+    Method pairMethod =
+        InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
+    TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);
+    Type innerParameterType = pairOperation.getInputTypes().get(0);
+    Type listParameterType = pairOperation.getInputTypes().get(1);
+    assertEquals(
+        ((ClassOrInterfaceType) innerParameterType).getTypeParameters(),
+        ((ClassOrInterfaceType) listParameterType).getTypeParameters());
+    InstantiatedType integerList =
+        JDKTypes.LIST_TYPE.instantiate(ReferenceType.forClass(Integer.class));
+    InstantiatedType stringList = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+
+    Set<Type> mismatchedInputTypes = new LinkedHashSet<>();
+    mismatchedInputTypes.add(JavaTypes.OBJECT_TYPE);
+    mismatchedInputTypes.add(stringInner);
+    mismatchedInputTypes.add(integerList);
+    assertNull(
+        "incompatible instantiation found",
+        new TypeInstantiator(mismatchedInputTypes).instantiate(pairOperation));
+
+    Set<Type> matchingInputTypes = new LinkedHashSet<>();
+    matchingInputTypes.add(JavaTypes.OBJECT_TYPE);
+    matchingInputTypes.add(stringInner);
+    matchingInputTypes.add(stringList);
+    TypedClassOperation pairInstantiated =
+        new TypeInstantiator(matchingInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", pairInstantiated);
+    assertEquals(stringInner, pairInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, pairInstantiated.getInputTypes().get(1));
+  }
+
+  /**
+   * A method whose parameter types share a type parameter, one of them only through an enclosing
+   * type.
+   *
+   * @param <E> the type parameter
+   * @param inner an inner object
+   * @param values a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void pair(Outer<E>.Inner inner, List<E> values) {}
 }
