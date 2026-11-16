@@ -959,6 +959,113 @@ public class TypeVariableTest {
     assertFalse(captureT.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
   }
 
+  @Test
+  public void testSubtypeOfMemberOfIntersectionBound() {
+    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    // The bound of T is Number & Runnable.
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A class whose type parameter is bounded by a sibling that is bounded by {@code Integer}.
+   *
+   * @param <S> a type parameter bounded by {@code Integer}
+   * @param <T> a type parameter bounded by {@code S}
+   */
+  static class IntegerSiblingBound<S extends Integer, T extends S> {}
+
+  @Test
+  public void testSubtypeOfBoundOfSibling() {
+    TypeVariable t = typeParameter(IntegerSiblingBound.class, 1);
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSubtypeOfSelfReferentialBound() {
+    TypeVariable t = typeParameter(SelfComparable.class, 0);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    // The bound of T is Comparable<T>.
+    assertTrue(t.isSubtypeOfOrEqualTo(comparable.instantiate(t)));
+    assertFalse(t.isSubtypeOfOrEqualTo(comparable.instantiate(JavaTypes.STRING_TYPE)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  /**
+   * A class whose type parameter is bounded like that of {@link Enum}.
+   *
+   * @param <E> a type parameter bounded by {@code Enum<E>}
+   */
+  static class EnumBound<E extends Enum<E>> {}
+
+  @Test
+  public void testSubtypeOfSupertypeOfEnumBound() {
+    TypeVariable e = typeParameter(EnumBound.class, 0);
+    // The bound of E is Enum<E>, which implements Serializable.
+    ReferenceType enumOfE =
+        ((LazyParameterBound) e.getUpperTypeBound()).toReferenceBound().getBoundType();
+    assertTrue(e.isSubtypeOfOrEqualTo(enumOfE));
+    assertTrue(e.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(java.io.Serializable.class)));
+    assertFalse(
+        e.isSubtypeOfOrEqualTo(
+            GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A class whose type parameters have bounds that refer to each other.
+   *
+   * @param <T> a type parameter bounded by {@code Comparable<U>}
+   * @param <U> a type parameter bounded by {@code Comparable<T>}
+   */
+  static class MutuallyRecursiveBounds<T extends Comparable<U>, U extends Comparable<T>> {}
+
+  @Test
+  public void testSubtypeOfBoundThatMentionsSibling() {
+    TypeVariable t = typeParameter(MutuallyRecursiveBounds.class, 0);
+    TypeVariable u = typeParameter(MutuallyRecursiveBounds.class, 1);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    // The bound of T is Comparable<U>.
+    assertTrue(t.isSubtypeOfOrEqualTo(comparable.instantiate(u)));
+    assertFalse(t.isSubtypeOfOrEqualTo(comparable.instantiate(t)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  interface RunnableLeft<X> extends Runnable {}
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  interface RunnableRight<X> extends Runnable {}
+
+  /**
+   * A class whose type parameter has an intersection bound whose members refer to the type
+   * parameter.
+   *
+   * @param <T> a type parameter bounded by {@code RunnableLeft<T> & RunnableRight<T>}
+   */
+  static class SelfReferentialIntersectionBound<T extends RunnableLeft<T> & RunnableRight<T>> {}
+
+  @Test
+  public void testSubtypeOfMemberOfSelfReferentialIntersectionBound() {
+    TypeVariable t = typeParameter(SelfReferentialIntersectionBound.class, 0);
+    assertTrue(
+        t.isSubtypeOfOrEqualTo(GenericClassType.forClass(RunnableLeft.class).instantiate(t)));
+    assertTrue(
+        t.isSubtypeOfOrEqualTo(GenericClassType.forClass(RunnableRight.class).instantiate(t)));
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
   /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
   @SuppressWarnings("serial") // never instantiated
   abstract static class RunnableNumber extends Number implements Runnable {}
