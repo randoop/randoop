@@ -439,10 +439,11 @@ public class GenTests extends GenInputsAbstract {
               System.out.println("  " + classFileName + " in " + classPathElt);
             } else {
               String classFileName = e.className.replace(".", File.separator) + ".class";
-              if (!classPathElt.endsWith(File.separator)) {
-                classPathElt += File.separator;
-              }
-              System.out.println("  " + classPathElt + classFileName);
+              String classPathDir =
+                  classPathElt.endsWith(File.separator)
+                      ? classPathElt
+                      : classPathElt + File.separator;
+              System.out.println("  " + classPathDir + classFileName);
             }
           }
           System.out.println("Correct your classpath or the class name and re-run Randoop.");

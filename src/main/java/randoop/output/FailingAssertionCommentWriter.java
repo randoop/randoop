@@ -258,18 +258,16 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       List<Diagnostic<? extends JavaFileObject>> diagnostics,
       FileCompiler.FileCompilerException e) {
 
+    String sourceMessage =
+        GenInputsAbstract.print_non_compiling_file
+            ? String.format("Source file:%n%s%n", classSource)
+            : String.format(
+                "Use --print-non-compiling-file to print the file with the compilation error.%n");
     String message =
         String.format(
-            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
-            "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_non_compiling_file) {
-      message += String.format("Source file:%n%s%n", classSource);
-    } else {
-      message +=
-          String.format(
-              "Use --print-non-compiling-file to print the file with the compilation error.%n");
-    }
-    message += String.format("Diagnostics:%n%s%n", diagnostics);
+            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n"
+                + "%sDiagnostics:%n%s%n",
+            "sourceFile", destinationDir, sourceMessage, diagnostics);
     throw new RandoopBug(message, e);
   }
 
