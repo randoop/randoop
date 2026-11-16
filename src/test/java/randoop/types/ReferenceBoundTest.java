@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -166,6 +168,33 @@ public class ReferenceBoundTest {
     assertNull(
         ReferenceType.getInstantiatingSubstitutionforTypeVariable(
             ArrayType.forClass(Object[].class), captureVariable));
+  }
+
+  @Test
+  public void testArrayClassBound() {
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), String[].class);
+    Type argType = ArrayType.forClass(String[].class);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
+  }
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array class.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayClassList extends ArrayList<String[]> {}
+
+  @Test
+  public void testWildcardArrayClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
   }
 
   @Test
