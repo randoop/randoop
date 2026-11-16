@@ -380,7 +380,7 @@ public final class NonreceiverTerm extends CallableOperation {
               + " but the <type> given (\""
               + typeString
               + "\") was unrecognized.";
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e1);
     }
 
     Object value;
@@ -396,7 +396,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.BYTE_TYPE)) {
       try {
@@ -410,7 +410,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.SHORT_TYPE)) {
       try {
@@ -424,7 +424,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.INT_TYPE)) {
       try {
@@ -438,7 +438,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.LONG_TYPE)) {
       try {
@@ -452,7 +452,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.FLOAT_TYPE)) {
       try {
@@ -466,7 +466,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.DOUBLE_TYPE)) {
       try {
@@ -480,7 +480,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + " but the <value> given (\""
                 + valString
                 + "\") was not parsable.";
-        throw new OperationParseException(msg);
+        throw new OperationParseException(msg, e);
       }
     } else if (type.equals(JavaTypes.BOOLEAN_TYPE)) {
       if (valString.equals("true") || valString.equals("false")) {
