@@ -93,9 +93,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return result;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Does not side-effect this type, which can be shared: for example, {@link #forClass} caches
+   * it, and {@link #substitute} can return it. If capture conversion changes the enclosing type of
+   * this member class, then the result is a new type.
+   */
+  @SuppressWarnings("ReferenceEquality") // detects any change made by capture conversion
   @Override
   public NonParameterizedType applyCaptureConversion() {
-    return (NonParameterizedType) applyCaptureConversion(this);
+    if (!isMemberClass()) {
+      return this;
+    }
+    ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
+    if (convertedEnclosingType == enclosingType) {
+      return this;
+    }
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    result.enclosingType = convertedEnclosingType;
+    return result;
   }
 
   @Override
