@@ -211,9 +211,6 @@ public class ComponentManager {
 
   /**
    * Removes any component sequences added so far, except for seed sequences, which are preserved.
-   * Also removes the demand-driven input creator's secondary sequences and lets it reconsider types
-   * it found uninstantiable, but retains its diagnostic information (visited and uninstantiable
-   * types).
    */
   /*package*/ void clearGeneratedSequences() {
     gralComponents.clear();
@@ -222,7 +219,7 @@ public class ComponentManager {
       // Reuse the existing creator rather than replacing it, so that no stale creator can copy
       // pre-clear sequences into the pool, and so that its visited types (reported at the end of
       // the run) cover the whole run.
-      gralComponents.getDemandDrivenInputCreator().clearSecondarySequences();
+      gralComponents.getDemandDrivenInputCreator().clear();
     }
   }
 
