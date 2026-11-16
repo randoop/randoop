@@ -192,8 +192,14 @@ public final class Value {
     return s.length() <= GenInputsAbstract.string_maxlen;
   }
 
-  /** Used to increase performance of stringLengthOk method. */
+  /**
+   * Used to increase performance of stringLengthOk method. Valid only for the value of {@link
+   * GenInputsAbstract#string_maxlen} stored in {@link #escapedStringLengthOkCachedMaxlen}.
+   */
   private static Map<String, Boolean> escapedStringLengthOkCached = new WeakHashMap<>();
+
+  /** The value of {@link GenInputsAbstract#string_maxlen} for which the cache is valid. */
+  private static int escapedStringLengthOkCachedMaxlen = GenInputsAbstract.string_maxlen;
 
   /**
    * Returns true if the given string, when quoted for inclusion in a Java program, is no longer
@@ -211,18 +217,24 @@ public final class Value {
       throw new IllegalArgumentException();
     }
 
-    // Optimization: return cached value if available.
-    // String caches its hash code, so this is a cheap operation.
-    Boolean b = escapedStringLengthOkCached.get(s);
-    if (b != null) {
-      return b;
-    }
-
     int length = s.length();
 
     // Optimization: if length greater than maxlen, return false right away.
     if (length > GenInputsAbstract.string_maxlen) {
       return false;
+    }
+
+    // Cached results are stale if string_maxlen has changed since they were computed.
+    if (escapedStringLengthOkCachedMaxlen != GenInputsAbstract.string_maxlen) {
+      escapedStringLengthOkCached.clear();
+      escapedStringLengthOkCachedMaxlen = GenInputsAbstract.string_maxlen;
+    }
+
+    // Optimization: return cached value if available.
+    // String caches its hash code, so this is a cheap operation.
+    Boolean b = escapedStringLengthOkCached.get(s);
+    if (b != null) {
+      return b;
     }
 
     // Optimization: if the string is definitely short enough, return true right away.
