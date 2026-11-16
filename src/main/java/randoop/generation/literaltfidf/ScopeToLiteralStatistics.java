@@ -74,7 +74,7 @@ public class ScopeToLiteralStatistics {
   }
 
   /** A cache to speed up {@link #createStatisticsWithSuperclasses}. */
-  private HashMap<ClassOrInterfaceType, LiteralStatistics> createStatisticsWithSuperclassesCache =
+  private Map<ClassOrInterfaceType, LiteralStatistics> createStatisticsWithSuperclassesCache =
       new HashMap<>();
 
   /**

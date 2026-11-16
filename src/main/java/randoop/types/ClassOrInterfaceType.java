@@ -166,6 +166,44 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return type;
   }
 
+  /**
+   * Returns the result of applying the given substitution to the enclosing type of this type, if
+   * this type is a member class. Otherwise, returns the enclosing type of this type, which is null
+   * if this type is not nested. The result is the enclosing type itself if the substitution changes
+   * nothing in it.
+   *
+   * @param substitution a substitution
+   * @return the enclosing type of this type, with {@code substitution} applied if this type is a
+   *     member class
+   */
+  /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
+      Substitution substitution) {
+    return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
+  }
+
+  /**
+   * Returns true if the given lists have the same length and their corresponding elements are the
+   * same objects. Comparing the results of {@code substitute} methods this way detects any change,
+   * including a change to only the bounds of a type variable, which {@code equals} ignores.
+   *
+   * @param <T> the type of the list elements
+   * @param list1 a list
+   * @param list2 a list
+   * @return true if the corresponding elements of the lists are the same objects
+   */
+  @SuppressWarnings("ReferenceEquality") // detects any change, as documented
+  /*package*/ static <T> boolean sameElements(List<T> list1, List<T> list2) {
+    if (list1.size() != list2.size()) {
+      return false;
+    }
+    for (int i = 0; i < list1.size(); i++) {
+      if (list1.get(i) != list2.get(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
@@ -551,24 +589,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           this, otherType, this.getClass(), otherType.getClass());
     }
 
-    if (otherType.isObject()) {
+    // This handles Object, this type itself, and a type variable whose lower bound is a supertype
+    // of this type.
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
-    }
-
-    if (this.equals(otherType)) {
-      return true;
-    }
-
-    if (otherType.isVariable()) {
-      // A class or interface type is a subtype of a type variable only if it is a subtype of the
-      // variable's lower bound, as for a capture variable of `? super String`.
-      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
-      if (!(lowerBound instanceof ReferenceBound)) {
-        return false;
-      }
-      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
-      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
-          && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
 
     if (!(otherType instanceof ClassOrInterfaceType)) {
