@@ -79,10 +79,18 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return Objects.hashCode(runtimeType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
-    return (NonParameterizedType)
-        substitute(substitution, new NonParameterizedType(this.runtimeType));
+    ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
+    if (enclosing == enclosingType) {
+      return this;
+    }
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    if (isMemberClass()) {
+      result.enclosingType = enclosing;
+    }
+    return result;
   }
 
   @Override

@@ -210,12 +210,13 @@ public class Substitution {
 
   /**
    * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
-   * that is, to the type variable that is the key of the entry, with the same bounds. A copy of a
-   * type variable with other bounds is equal to it, but is not the same.
+   * that is, to the object that is the key of the entry. A copy of a type variable with other
+   * bounds is equal to it, but is not the same object.
    *
    * @param variable a type variable
    * @return true if this substitution maps {@code variable} to itself
    */
+  @SuppressWarnings("ReferenceEquality") // a copy with other bounds is equal, but not the same
   boolean mapsToItself(TypeVariable variable) {
     ReferenceType value = map.get(variable);
     if (!(value instanceof TypeVariable) || !value.equals(variable)) {
@@ -223,7 +224,7 @@ public class Substitution {
     }
     for (TypeVariable key : map.keySet()) {
       if (key.equals(variable)) {
-        return key.isIdenticalTo((TypeVariable) value);
+        return key == value;
       }
     }
     return false;
