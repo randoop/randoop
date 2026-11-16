@@ -68,6 +68,12 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public ParameterBound substitute(Substitution substitution) {
     if (boundType instanceof GenericArrayType) {
+      if (isNonGenericMemberClass(elementType(boundType))) {
+        // An array of a non-generic member class of a generic class, as in
+        // `Outer<String>.Inner[]`, is not converted, like such a member class itself (see
+        // substituteWithUnknowns).
+        return this;
+      }
       // A generic array type, such as `List<String>[]`, need not contain a type variable.  Such a
       // bound is materialized even by an empty substitution, so that it can be compared with types.
       if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
@@ -159,6 +165,13 @@ class LazyParameterBound extends ParameterBound {
         return TypeArgument.forType(referenceType);
       }
       return TypeArgument.forType(TypeVariable.forType(type).substitute(substitution));
+    }
+
+    if (isNonGenericMemberClass(type)) {
+      // A non-generic member class of a generic class, as in `Outer<String>.Inner`, has no type
+      // arguments of its own, and GenericClassType.forClass rejects its class.  Its type arguments
+      // are those of its owner type, which ClassOrInterfaceType.forType preserves.
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
     }
 
     if (type instanceof ParameterizedType) {

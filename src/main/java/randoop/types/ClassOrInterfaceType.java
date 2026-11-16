@@ -90,14 +90,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the owner type's type arguments are the type parameters of the declaration of the
-        // enclosing class, the result is the generic form of the member class.
+        // If the owner type is the generic form of the enclosing class, the result is the generic
+        // form of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
             && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !Arrays.equals(
-                ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
-                ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
-                    .getTypeParameters())) {
+            && !isGenericFormOwner(ownerType)) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -123,6 +120,34 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns true if the given (reflection) owner type is the generic form of its class: its type
+   * arguments are the type parameters of its class declaration, and, if it is a member class, its
+   * owner type is also a generic form. The whole owner chain is examined, because a member class
+   * that declares no type parameters, such as {@code Middle} in {@code Outer<String>.Middle.Inner},
+   * has no type arguments of its own, though its owner type does.
+   *
+   * @param ownerType the owner type of a member class
+   * @return true if {@code ownerType} is the generic form of its class
+   */
+  private static boolean isGenericFormOwner(java.lang.reflect.Type ownerType) {
+    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
+      // A class with no parameterized owner type is its own generic form.
+      return true;
+    }
+    java.lang.reflect.ParameterizedType parameterizedOwner =
+        (java.lang.reflect.ParameterizedType) ownerType;
+    Class<?> ownerClass = (Class<?>) parameterizedOwner.getRawType();
+    if (!Arrays.equals(
+        parameterizedOwner.getActualTypeArguments(), ownerClass.getTypeParameters())) {
+      return false;
+    }
+    java.lang.reflect.Type enclosingOwner = parameterizedOwner.getOwnerType();
+    return java.lang.reflect.Modifier.isStatic(ownerClass.getModifiers())
+        || enclosingOwner == null
+        || isGenericFormOwner(enclosingOwner);
   }
 
   // This implementation is for an abstract class; subclasses do the real work.

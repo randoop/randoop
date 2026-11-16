@@ -219,7 +219,9 @@ final class Subtyping {
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
    * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound or a member of it, if it is an intersection. If {@code lowerType} contains
+   * upper bound or a member of it, if it is an intersection. The result is also true if the
+   * unknown's upper bound is an intersection that has a member that is a subtype of {@code type},
+   * since every choice for the unknown is a subtype of that member. If {@code lowerType} contains
    * unknowns, as {@code List<B>} does, compares its components with those of {@code type}.
    *
    * @param lowerType the possible subtype, which may be or contain unknowns
@@ -256,6 +258,12 @@ final class Subtyping {
       return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
     if (unknownBound instanceof IntersectionTypeBound) {
+      // Every choice for the unknown is a subtype of every member of the intersection, so it is a
+      // subtype of each supertype of a member.  For `B extends Number & Runnable`, B is a subtype
+      // of Runnable, though Runnable, which is not a Number, cannot be B.
+      if (unknownBound.hasUpperBound(type, substitution)) {
+        return true;
+      }
       // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
       // B can be Number, which is a subtype of Serializable.
       for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
@@ -309,6 +317,17 @@ final class Subtyping {
       InstantiatedType supertype =
           ((ClassOrInterfaceType) lowerType)
               .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+      return supertype != null
+          && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
+    }
+    if (type instanceof NonParameterizedType
+        && type.isParameterized()
+        && lowerType instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<U>.Inner.  Its type arguments are those of its enclosing types; see the same case in
+      // isSubtypeOrEqual.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }

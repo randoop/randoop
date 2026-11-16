@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -85,6 +86,14 @@ public abstract class TypeVariable extends ParameterType {
       new ConcurrentHashMap<>();
 
   /**
+   * The type variables that {@link #forType(java.lang.reflect.Type)} is creating in the current
+   * thread, whose bounds are not yet computed.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Map<java.lang.reflect.TypeVariable<?>, TypeVariable>>
+      typeVariablesInConstruction = ThreadLocal.withInitial(HashMap::new);
+
+  /**
    * The upper bound of this variable, with references to type variables resolved; null if not yet
    * computed. Use {@link #getResolvedUpperTypeBound()} instead of reading this field.
    */
@@ -131,11 +140,28 @@ public abstract class TypeVariable extends ParameterType {
     if (result != null) {
       return result;
     }
+    // Computing the bound can call this method for the same type variable, through an eager bound
+    // that is an instantiation of the class that declares it, as in `class Node<T extends
+    // Node<?>>`:  converting `Node<?>` creates the GenericClassType for Node, which needs T.  Such a
+    // call returns the type variable whose bound is being computed.
+    Map<java.lang.reflect.TypeVariable<?>, TypeVariable> inProgress =
+        typeVariablesInConstruction.get();
+    result = inProgress.get(v);
+    if (result != null) {
+      return result;
+    }
     Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
     variableSet.add(v);
-    // Computing the bound can call this method for other type variables, so this method does not
-    // use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
-    result = new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    // The bound is set after it is computed.  Until then, the bound is Object.
+    result = new ExplicitTypeVariable(v, new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    inProgress.put(v, result);
+    try {
+      // Computing the bound can call this method for other type variables, so this method does
+      // not use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
+      result.setUpperBound(ParameterBound.forTypes(variableSet, v.getBounds()));
+    } finally {
+      inProgress.remove(v);
+    }
     TypeVariable previous = declaredTypeVariables.putIfAbsent(v, result);
     return previous != null ? previous : result;
   }
@@ -507,15 +533,75 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if the given types are equal and the type variables in them are identical, as
    * determined by {@link #isIdenticalTo(TypeVariable)}.
    *
+   * <p>Corresponding occurrences of type variables are compared, so that {@code Map<X, X>} is not
+   * identical to a {@code Map<X, X>} whose second {@code X} is a copy with other bounds. {@link
+   * ReferenceType#getTypeParameters()} would contain only one of the occurrences.
+   *
    * @param type1 a type
    * @param type2 a type
    * @return true if the types are equal and the type variables in them are identical
    */
   @SuppressWarnings("ReferenceEquality") // fast path for the same object
   static boolean areIdentical(ReferenceType type1, ReferenceType type2) {
-    return type1 == type2
-        || (type1.equals(type2)
-            && areIdentical(type1.getTypeParameters(), type2.getTypeParameters()));
+    if (type1 == type2) {
+      return true;
+    }
+    if (!type1.equals(type2)) {
+      return false;
+    }
+    if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
+      return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
+    }
+    if (type1 instanceof ArrayType && type2 instanceof ArrayType) {
+      Type componentType1 = ((ArrayType) type1).getComponentType();
+      Type componentType2 = ((ArrayType) type2).getComponentType();
+      return !(componentType1.isReferenceType() && componentType2.isReferenceType())
+          || areIdentical((ReferenceType) componentType1, (ReferenceType) componentType2);
+    }
+    if (type1 instanceof InstantiatedType && type2 instanceof InstantiatedType) {
+      InstantiatedType instantiatedType1 = (InstantiatedType) type1;
+      InstantiatedType instantiatedType2 = (InstantiatedType) type2;
+      // InstantiatedType.equals does not compare enclosing types.
+      if (instantiatedType1.isMemberClass() && instantiatedType2.isMemberClass()) {
+        if (!areIdentical(instantiatedType1.enclosingType, instantiatedType2.enclosingType)) {
+          return false;
+        }
+      } else if (instantiatedType1.isMemberClass() || instantiatedType2.isMemberClass()) {
+        return false;
+      }
+      List<TypeArgument> arguments1 = instantiatedType1.getTypeArguments();
+      List<TypeArgument> arguments2 = instantiatedType2.getTypeArguments();
+      for (int i = 0; i < arguments1.size(); i++) {
+        if (!areIdentical(arguments1.get(i), arguments2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns true if the given type arguments are equal and the type variables in them are
+   * identical, as determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * @param argument1 a type argument
+   * @param argument2 a type argument
+   * @return true if the type arguments are equal and the type variables in them are identical
+   */
+  private static boolean areIdentical(TypeArgument argument1, TypeArgument argument2) {
+    if (argument1 instanceof ReferenceArgument && argument2 instanceof ReferenceArgument) {
+      return areIdentical(
+          ((ReferenceArgument) argument1).getReferenceType(),
+          ((ReferenceArgument) argument2).getReferenceType());
+    }
+    if (argument1 instanceof WildcardArgument && argument2 instanceof WildcardArgument) {
+      return argument1.equals(argument2)
+          && areIdentical(
+              ((WildcardArgument) argument1).getTypeBound(),
+              ((WildcardArgument) argument2).getTypeBound());
+    }
+    return argument1.equals(argument2);
   }
 
   /**
@@ -542,6 +628,11 @@ public abstract class TypeVariable extends ParameterType {
     if (bound2 instanceof LazyParameterBound) {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
+    }
+    if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
+      // Compare corresponding occurrences of type variables, as for types.
+      return areIdentical(
+          ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
     }
     return bound1.equals(bound2)
         && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
