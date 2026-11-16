@@ -497,6 +497,49 @@ public class TypeVariableTest {
     assertEquals(toY, toY.extend(toSameY));
   }
 
+  /**
+   * Substitutions that map a type variable to equal types that contain a type variable and, at
+   * another occurrence, either it or a copy of it with different bounds are inconsistent.
+   */
+  @Test
+  public void testSubstitutionsToTypesWithRepeatedTypeVariableCopiesAreInconsistent() {
+    TypeVariable k = typeParameter(VariableBound.class, 0);
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    GenericClassType map = GenericClassType.forClass(Map.class);
+    InstantiatedType mapYY = map.instantiate(y, y);
+    InstantiatedType mapYCopy = map.instantiate(y, copy);
+    assertEquals(mapYY, mapYCopy);
+    assertTrue(TypeVariable.areIdentical(mapYY, map.instantiate(y, y)));
+    assertFalse(TypeVariable.areIdentical(mapYY, mapYCopy));
+    assertFalse(new Substitution(k, mapYY).isConsistentWith(new Substitution(k, mapYCopy)));
+  }
+
+  /**
+   * The capture variable of {@code ? super Number} can be a supertype of an array type, by being
+   * instantiated to {@code Object}.
+   */
+  @Test
+  public void testCaptureVariableCanBeSupertypeOfArray() {
+    CaptureTypeVariable superNumber =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(
+                    new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class)), false)));
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    assertTrue(superNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    assertTrue(superNumber.canBeSupertypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+
+    // An upper bound of Number leaves no supertype of String[] to instantiate the capture variable.
+    CaptureTypeVariable extendsNumber =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(
+                    new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class)), true)));
+    assertFalse(extendsNumber.canBeSupertypeOf(stringArray, new Substitution()));
+  }
+
   @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
