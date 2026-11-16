@@ -89,7 +89,8 @@ public class ExplicitTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = getSubstitutedType(substitution);
-    if (type != null && !type.isVariable()) {
+    // A copy of this variable with other bounds has the bounds that the substitution intends.
+    if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
     // A type variable can occur in its own bound, directly as in `T extends Comparable<T>` or

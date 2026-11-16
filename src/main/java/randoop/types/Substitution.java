@@ -218,13 +218,9 @@ public class Substitution {
    */
   @SuppressWarnings("ReferenceEquality") // a copy with other bounds is equal, but not the same
   boolean mapsToItself(TypeVariable variable) {
-    ReferenceType value = map.get(variable);
-    if (!(value instanceof TypeVariable) || !value.equals(variable)) {
-      return false;
-    }
-    for (TypeVariable key : map.keySet()) {
-      if (key.equals(variable)) {
-        return key == value;
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (entry.getKey().equals(variable)) {
+        return entry.getKey() == entry.getValue();
       }
     }
     return false;
@@ -448,6 +444,10 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
+    // Copies of a type variable are equal, so `map.put` alone would keep an existing key that is a
+    // copy of `typeParameter`, and pair it with `type`.  Removing the entry first makes the new
+    // entry pair `typeParameter` with `type`, as given.
+    map.remove(typeParameter);
     map.put(typeParameter, type);
     replacementVariables = null;
     instantiatedDeclarations = null;

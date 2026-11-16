@@ -797,6 +797,44 @@ public class TypeVariableTest {
     assertEquals(copy.getUpperTypeBound(), result.getUpperTypeBound());
   }
 
+  /** Substituting a copy with other bounds for a variable whose bound changes yields that copy. */
+  @Test
+  public void testSubstituteCopyForVariableWithChangedBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable copy =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertSame(copy, t.substitute(new Substitution(t, copy)));
+  }
+
+  /** Substituting a copy with other bounds for a capture variable yields that copy. */
+  @Test
+  public void testSubstituteCopyForCaptureVariableWithChangedBound() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(new WildcardType(new EagerReferenceBound(y), true)));
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    // The substitution changes the bound of the capture variable, because it maps X.
+    Substitution substitution =
+        new Substitution(Arrays.asList(capture, x), copy, JavaTypes.STRING_TYPE);
+    assertSame(copy, capture.substitute(substitution));
+  }
+
+  /** A substitution that maps two copies of a type variable to themselves maps it to itself. */
+  @Test
+  public void testIdentitySubstitutionOfTwoCopies() {
+    java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
+    TypeVariable t1 = TypeVariable.forType(reflectionVariable);
+    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
+    assertTrue(substitution.mapsToItself(t1));
+    assertTrue(substitution.mapsToItself(t2));
+  }
+
   @Test
   public void testLazyTypeParametersOfNestedSibling() {
     for (Class<?> c : Arrays.asList(NestedSiblingFirst.class, NestedSiblingLast.class)) {
