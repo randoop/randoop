@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,10 +30,12 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
 /** Tests instantiation of type parameters by OperationModel. */
@@ -359,101 +362,6 @@ public class InstantiationTest {
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
-  /**
-   * Tests the instantiation of a method whose parameter type is a member type, {@code
-   * MemberTypeOuter<U>.Inner}, that has no type parameters of its own.
-   */
-  @Test
-  public void testMemberTypeInstantiation()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    ClassOrInterfaceType innerType =
-        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
-            .substitute(
-                new Substitution(
-                    GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
-                    JavaTypes.STRING_TYPE));
-    assertFalse(innerType + " should not be generic", innerType.isGeneric());
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
-    inputTypes.addAll(innerType.getSupertypesInclusive());
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    TypedClassOperation use =
-        TypedOperation.forMethod(
-            MemberTypeCase.class.getMethod("use", MemberTypeOuter.Inner.class));
-
-    TypedClassOperation instance = instantiator.instantiate(use);
-    assertNotNull("instantiation failed for " + use, instance);
-    assertEquals(innerType, instance.getInputTypes().get(0));
-  }
-
-  /**
-   * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
-   *
-   * @param typeArgument the type argument of the enclosing type
-   * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
-   */
-  private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
-    return ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
-        .substitute(
-            new Substitution(
-                GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
-                typeArgument));
-  }
-
-  /**
-   * Tests that the instantiation of {@code <U extends Number> void
-   * useBounded(MemberTypeOuter<U>.Inner)} respects the bound of {@code U}: it rejects {@code
-   * MemberTypeOuter<String>.Inner} and accepts {@code MemberTypeOuter<Integer>.Inner}.
-   */
-  @Test
-  public void testBoundedMemberTypeInstantiation()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    TypedClassOperation useBounded =
-        TypedOperation.forMethod(
-            MemberTypeCase.class.getMethod("useBounded", MemberTypeOuter.Inner.class));
-
-    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
-    inputTypes.addAll(stringInner.getSupertypesInclusive());
-    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
-    assertNull("instantiation should fail for " + useBounded, instance);
-
-    ClassOrInterfaceType integerInner =
-        memberInnerType((ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive());
-    inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
-    inputTypes.addAll(integerInner.getSupertypesInclusive());
-    instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
-    assertNotNull("instantiation failed for " + useBounded, instance);
-    assertEquals(integerInner, instance.getInputTypes().get(0));
-  }
-
-  /**
-   * Tests that the instantiation of {@code <U> U get(MemberTypeOuter<U>.Inner)} instantiates the
-   * return type consistently with the parameter type.
-   */
-  @Test
-  public void testMemberTypeReturnInstantiation()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
-    inputTypes.addAll(stringInner.getSupertypesInclusive());
-    TypedClassOperation get =
-        TypedOperation.forMethod(
-            MemberTypeCase.class.getMethod("get", MemberTypeOuter.Inner.class));
-
-    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(get);
-    assertNotNull("instantiation failed for " + get, instance);
-    assertEquals(stringInner, instance.getInputTypes().get(0));
-    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
-  }
-
   /* disabled until fix type parameter management
   @Test
   public void testLazyConversionInstantiation() {
@@ -570,5 +478,226 @@ public class InstantiationTest {
         typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
+  }
+
+  /**
+   * A generic class with a member class.
+   *
+   * @param <E> the type parameter
+   */
+  private static class Outer<E> {
+    /** A member class with no type parameters of its own. */
+    class Inner {}
+
+    /** Another member class with no type parameters of its own, unrelated to {@link Inner}. */
+    class Other {}
+
+    /**
+     * A method whose parameter type is the generic form of a member class.
+     *
+     * @param inner an inner object
+     */
+    @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+    void take(Inner inner) {}
+  }
+
+  /**
+   * A method whose parameter type is generic only through its enclosing type.
+   *
+   * @param <E> the type parameter of the enclosing type
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void innerParameter(Outer<E>.Inner inner) {}
+
+  /**
+   * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
+   * with no type parameters of its own, which is generic only through its enclosing type.
+   */
+  @Test
+  public void testNonParameterizedMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("innerParameter", Outer.Inner.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    assertTrue(genericInner.isGeneric());
+    assertFalse(genericInner instanceof ParameterizedType);
+    // Outer<String>.Inner.
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
+    inputTypes.add(stringInner);
+    TypedClassOperation instantiated = new TypeInstantiator(inputTypes).instantiate(operation);
+    assertNotNull("no instantiation found", instantiated);
+    assertEquals(stringInner, instantiated.getInputTypes().get(0));
+
+    // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
+    // method's type parameter `E`, so `Outer<String>.Inner` must not be paired with
+    // `List<Integer>`.
+    Method pairMethod =
+        InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
+    TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);
+    Type innerParameterType = pairOperation.getInputTypes().get(0);
+    Type listParameterType = pairOperation.getInputTypes().get(1);
+    assertEquals(
+        ((ClassOrInterfaceType) innerParameterType).getTypeParameters(),
+        ((ClassOrInterfaceType) listParameterType).getTypeParameters());
+    InstantiatedType integerList =
+        JDKTypes.LIST_TYPE.instantiate(ReferenceType.forClass(Integer.class));
+    InstantiatedType stringList = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+
+    Set<Type> mismatchedInputTypes = new LinkedHashSet<>();
+    mismatchedInputTypes.add(JavaTypes.OBJECT_TYPE);
+    mismatchedInputTypes.add(stringInner);
+    mismatchedInputTypes.add(integerList);
+    assertNull(
+        "incompatible instantiation found",
+        new TypeInstantiator(mismatchedInputTypes).instantiate(pairOperation));
+
+    Set<Type> matchingInputTypes = new LinkedHashSet<>();
+    matchingInputTypes.add(JavaTypes.OBJECT_TYPE);
+    matchingInputTypes.add(stringInner);
+    matchingInputTypes.add(stringList);
+    TypedClassOperation pairInstantiated =
+        new TypeInstantiator(matchingInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", pairInstantiated);
+    assertEquals(stringInner, pairInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, pairInstantiated.getInputTypes().get(1));
+  }
+
+  /**
+   * A method whose parameter types share a type parameter, one of them only through an enclosing
+   * type.
+   *
+   * @param <E> the type parameter
+   * @param inner an inner object
+   * @param values a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void pair(Outer<E>.Inner inner, List<E> values) {}
+
+  /**
+   * The parameter type of {@code void take(Inner inner)} in {@code Outer<E>} is {@code
+   * Outer<E>.Inner}, where {@code E} is the type parameter of {@code Outer}, which is the generic
+   * form of {@code Outer.Inner}.
+   */
+  @Test
+  public void testGenericFormMemberClassParameter() throws Exception {
+    Method take = Outer.class.getDeclaredMethod("take", Outer.Inner.class);
+    java.lang.reflect.Type parameterType = take.getGenericParameterTypes()[0];
+    assertTrue(parameterType instanceof java.lang.reflect.ParameterizedType);
+    ClassOrInterfaceType takeParameterType = ClassOrInterfaceType.forType(parameterType);
+    assertEquals(ClassOrInterfaceType.forClass(Outer.Inner.class), takeParameterType);
+    assertTrue(takeParameterType.isGenericForm());
+  }
+
+  /**
+   * Matching enclosing types does not make {@code Outer<String>.Inner} an instantiation of the
+   * unrelated member class {@code Outer<E>.Other}.
+   */
+  @Test
+  public void testUnrelatedMemberClassSubstitution() {
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    ClassOrInterfaceType genericOther = ClassOrInterfaceType.forClass(Outer.Other.class);
+    assertNotNull(stringInner.getInstantiatingSubstitution(genericInner));
+    assertNull(stringInner.getInstantiatingSubstitution(genericOther));
+  }
+
+  /**
+   * A method whose type parameter is bounded by an instantiation of a generic class.
+   *
+   * @param <T> the type parameter
+   * @param outer an outer object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Outer<String>> void boundedByOuter(T outer) {}
+
+  /**
+   * {@code Outer<String>.Inner} does not instantiate {@code T extends Outer<String>}, even though
+   * its enclosing type does.
+   */
+  @Test
+  public void testMemberClassDoesNotInstantiateTypeVariableOfEnclosingType() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("boundedByOuter", Outer.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(m).getInputTypes().get(0);
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        ClassOrInterfaceType.forClass(Outer.Inner.class)
+            .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    Substitution substitution = stringInner.getInstantiatingSubstitution(t);
+    assertTrue(
+        "unexpected substitution " + substitution,
+        substitution == null || substitution.get(t) == null);
+  }
+
+  /**
+   * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
+    return ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
+        .substitute(
+            new Substitution(
+                GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
+                typeArgument));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U extends Number> void
+   * useBounded(MemberTypeOuter<U>.Inner)} respects the bound of {@code U}: it rejects {@code
+   * MemberTypeOuter<String>.Inner} and accepts {@code MemberTypeOuter<Integer>.Inner}.
+   */
+  @Test
+  public void testBoundedMemberTypeInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation useBounded =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("useBounded", MemberTypeOuter.Inner.class));
+
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNull("instantiation should fail for " + useBounded, instance);
+
+    ClassOrInterfaceType integerInner =
+        memberInnerType((ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive());
+    inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(integerInner.getSupertypesInclusive());
+    instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNotNull("instantiation failed for " + useBounded, instance);
+    assertEquals(integerInner, instance.getInputTypes().get(0));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U get(MemberTypeOuter<U>.Inner)} instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testMemberTypeReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation get =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("get", MemberTypeOuter.Inner.class));
+
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(get);
+    assertNotNull("instantiation failed for " + get, instance);
+    assertEquals(stringInner, instance.getInputTypes().get(0));
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 }

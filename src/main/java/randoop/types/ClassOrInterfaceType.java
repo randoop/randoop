@@ -1,8 +1,8 @@
 package randoop.types;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -85,16 +85,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // Non-generic member classes of a generic class, such as Outer<U>.Inner, show up as
-      // ParameterizedType.  Treat these as a NonParameterizedType, but preserve the type arguments
-      // of the owner type: they may be type variables (such as a method type parameter U) other
-      // than the type parameters of the enclosing class.
+      // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
+      // ParameterizedType whose owner type supplies the type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
+        // If the owner type's type arguments are the type parameters of the declaration of the
+        // enclosing class, the result is the generic form of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
-            && !Modifier.isStatic(rawType.getModifiers())) {
-          // Do not side-effect the cached result of forClass.
+            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+            && !Arrays.equals(
+                ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
+                ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
+                    .getTypeParameters())) {
+          // Use the owner type rather than the enclosing class, because the owner type's type
+          // arguments may differ from the enclosing class's type parameters.  For example, in
+          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+          // method's type parameter, not the type parameter declared by `Outer`.
+          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
           NonParameterizedType result = new NonParameterizedType(rawType);
           result.enclosingType = forType(ownerType);
           return result;
@@ -332,20 +340,26 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
-      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
-      // If the goal type is a member type, such as Outer<T>.Inner, unify the enclosing types, such
-      // as Outer<String> and Outer<T>.
-      ReferenceType enclosingGoalType = goalType;
-      if (goalType instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType goalEnclosingType = ((ClassOrInterfaceType) goalType).enclosingType;
-        if (goalEnclosingType != null && goalEnclosingType.isGeneric()) {
-          enclosingGoalType = goalEnclosingType;
+    // For a member class such as Outer<String>.Inner and a member class goal type such as
+    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
+    // type.  The enclosing type of this type is not matched against a goal type that is not a
+    // member class, such as a type variable.
+    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType thisEnclosingType = enclosingType;
+      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (goalClassType.isMemberClass()) {
+        // Matching enclosing types do not make unrelated member classes, such as
+        // Outer<String>.Inner and Outer<E>.Other, unify.
+        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+          return null;
         }
-      }
-      substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-      if (substitution == null) {
-        return null;
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+        if (enclosingGoalType.isGeneric()) {
+          substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+          if (substitution == null) {
+            return null;
+          }
+        }
       }
     }
 
