@@ -1178,4 +1178,72 @@ public class TypeVariableTest {
     assertTrue(second.canBeInstantiatedBy(integer));
   }
 
+  /**
+   * A type parameter bounded by a sibling with a self-referential bound.
+   *
+   * @param <K> a type parameter with a self-referential bound
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class BoundedBySelfComparable<K extends Comparable<K>, V extends K> {}
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableBase implements Comparable<ComparableBase> {}
+
+  /**
+   * A subclass of {@link ComparableBase}. It is comparable to {@link ComparableBase}, not to
+   * itself.
+   */
+  abstract static class ComparableSub extends ComparableBase {}
+
+  /**
+   * A bound that is a type variable admits a type if a strict supertype of the type can instantiate
+   * the type variable.
+   */
+  @Test
+  public void testVariableBoundIsSupertype() {
+    TypeVariable k = typeParameter(BoundedBySelfComparable.class, 0);
+    TypeVariable v = typeParameter(BoundedBySelfComparable.class, 1);
+    ReferenceType sub = ClassOrInterfaceType.forClass(ComparableSub.class);
+    // K cannot be ComparableSub, but it can be ComparableBase, a supertype of ComparableSub.
+    assertFalse(k.canBeInstantiatedBy(sub));
+    assertTrue(v.canBeInstantiatedBy(sub));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(sub, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(sub, new Substitution()));
+    // No supertype of ComparableToOther is comparable to itself.
+    ReferenceType other = ClassOrInterfaceType.forClass(ComparableToOther.class);
+    assertFalse(v.canBeInstantiatedBy(other));
+    assertFalse(new EagerReferenceBound(k).isUpperBound(other, new Substitution()));
+    assertFalse(new LazyReferenceBound(k).isUpperBound(other, new Substitution()));
+  }
+
+  /**
+   * A generic class that is comparable to itself.
+   *
+   * @param <X> a type parameter
+   */
+  abstract static class GenericComparableBase<X> implements Comparable<GenericComparableBase<X>> {}
+
+  /**
+   * A subclass of {@link GenericComparableBase}, which is not comparable to itself.
+   *
+   * @param <X> a type parameter
+   */
+  abstract static class GenericComparableSub<X> extends GenericComparableBase<X> {}
+
+  /**
+   * A strict supertype that mentions the type variables of a generic type can instantiate a type
+   * variable that is a bound.
+   */
+  @Test
+  public void testVariableBoundIsGenericSupertype() {
+    TypeVariable k = typeParameter(BoundedBySelfComparable.class, 0);
+    TypeVariable v = typeParameter(BoundedBySelfComparable.class, 1);
+    TypeVariable x = typeParameter(Unbounded.class, 0);
+    // K can be GenericComparableBase<X>, a supertype of GenericComparableSub<X>.
+    InstantiatedType subOfX = GenericClassType.forClass(GenericComparableSub.class).instantiate(x);
+    assertFalse(k.canBeInstantiatedBy(subOfX));
+    assertTrue(v.canBeInstantiatedBy(subOfX));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
 }
