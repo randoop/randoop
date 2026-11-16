@@ -111,12 +111,6 @@ public abstract class AbstractGenerator {
   private final @Nullable IStopper stopper;
 
   /**
-   * Displays progress messages, and exits Randoop if the generator stops taking steps. Its mode is
-   * {@link ProgressDisplay.Mode#NO_DISPLAY} if no progress messages should be displayed.
-   */
-  private ProgressDisplay progressDisplay;
-
-  /**
    * This field is set by Randoop to point to the sequence currently being executed. In the event
    * that Randoop appears to hang, this sequence is printed out to console to help the user debug
    * the cause of the hanging behavior.
@@ -311,7 +305,8 @@ public abstract class AbstractGenerator {
                     || GenInputsAbstract.progressintervalsteps > 0))
             ? ProgressDisplay.Mode.MULTILINE
             : ProgressDisplay.Mode.NO_DISPLAY;
-    progressDisplay = new ProgressDisplay(this, progressDisplayMode);
+    // Displays progress messages, and exits Randoop if the generator stops taking steps.
+    ProgressDisplay progressDisplay = new ProgressDisplay(this, progressDisplayMode);
     progressDisplay.start();
 
     try {
