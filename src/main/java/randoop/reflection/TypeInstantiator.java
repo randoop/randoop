@@ -339,7 +339,7 @@ public class TypeInstantiator {
    *     existing types; null if no such substitution exists
    */
   private static @Nullable Substitution selectSubstitution(
-      ClassOrInterfaceType type, List<ReferenceType> matches, Substitution substitution) {
+      ReferenceType type, List<ReferenceType> matches, Substitution substitution) {
     // Try the matches in random order.
     while (!matches.isEmpty()) {
       ReferenceType selectedType = Randomness.randomSetMember(matches);
@@ -490,7 +490,7 @@ public class TypeInstantiator {
               break;
             }
             Substitution extended =
-                selectSubstitution((ParameterizedType) origParamType, matches, substitution);
+                selectSubstitution((ReferenceType) origParamType, matches, substitution);
             if (extended == null) {
               if (Log.isLoggingOn()) {
                 failure =
