@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -84,10 +85,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // non-generic member classes of a generic class show up as ParameterizedType
-      // treat these as Class<?>
+      // A non-generic member class of a generic class, such as Outer<E>.Inner, shows up as a
+      // ParameterizedType with no type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
+        java.lang.reflect.Type ownerType = t.getOwnerType();
+        // The type arguments of the owner type, such as the type parameter E of a method in
+        // Outer<E>, can differ from the type parameters of the declaration of the enclosing class.
+        // If they do not, the result is the generic form of the member class.
+        if (ownerType instanceof java.lang.reflect.ParameterizedType
+            && !Arrays.equals(
+                ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
+                ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
+                    .getTypeParameters())) {
+          // forClass returns a shared object, so its enclosing type must not be changed.
+          NonParameterizedType memberType = new NonParameterizedType(rawType);
+          memberType.enclosingType = forType(ownerType);
+          return memberType;
+        }
         return forClass(rawType);
       }
       return ParameterizedType.forType(t);
