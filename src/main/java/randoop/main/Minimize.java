@@ -561,7 +561,7 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
+            if (binaryExp.getOperator() == BinaryExpr.Operator.EQUALS) {
               primitiveVarEquality(
                   binaryExp.getLeft(),
                   binaryExp.getRight(),
