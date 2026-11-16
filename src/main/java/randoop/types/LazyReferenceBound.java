@@ -12,9 +12,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves a bound unresolved if it maps the element type of an array in the bound,
- * such as {@code T[]} or {@code List<T[]>}, to the null type, because there is no array of the null
- * type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -27,19 +24,16 @@ class LazyReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ReferenceBound substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
-    // There is no array of the null type, so leave the bound unresolved.
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
-      return this;
-    }
-
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    if (isUnchangedBy(referenceType)) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
@@ -59,10 +53,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
@@ -91,28 +81,12 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself, or its lower bound.  Its bounds are
-      // checked with the mappings of the substitution, because they can mention type variables
-      // that it instantiates.
-      if (unknown.canBeSupertypeOf((ReferenceType) argType, substitution)) {
-        return true;
-      }
-      // The unknown type variable can also be any supertype of argType.
-      if (argType instanceof ClassOrInterfaceType) {
-        for (ClassOrInterfaceType supertype :
-            ((ClassOrInterfaceType) argType).getSupertypesStrict()) {
-          if (unknown.canBeInstantiatedBy(supertype, substitution)) {
-            return true;
-          }
-        }
-      }
-      return false;
+      // The unknown type variable can be argType itself, one of its supertypes, or its lower
+      // bound.  Its bounds are checked with the mappings of the substitution, because they can
+      // mention type variables that it instantiates.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -126,10 +100,14 @@ class LazyReferenceBound extends ReferenceBound {
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
    * {@code argType}, with the other type variables instantiated as by the substitution, because
    * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
-   * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
-   * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}.
-   * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
-   * within a lower bound, since the lower bound of the type variable is usually the null type.
+   * For an upper bound, it also treats {@code argType} as within this bound if a supertype of
+   * {@code argType} can instantiate the type variable, or if {@code argType} is a subtype of the
+   * lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For a lower bound,
+   * {@link EagerReferenceBound} instead compares {@code argType} with the upper bound of the type
+   * variable, so the two classes can differ. For example, for a type variable {@code U extends
+   * Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code Number}, because {@code
+   * Integer} is a subtype of {@code Number}, but this class does not, because {@code U} cannot be
+   * {@code Number}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

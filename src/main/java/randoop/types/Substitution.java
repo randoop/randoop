@@ -138,19 +138,16 @@ public class Substitution {
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
-  @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      TypeVariable key = entry.getKey();
-      if (this.map.containsKey(key)
-          && !TypeVariable.areIdentical(this.get(key), entry.getValue())) {
+      ReferenceType value = this.get(entry.getKey());
+      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
         return false;
       }
     }
     for (Map.Entry<Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      Type key = entry.getKey();
-      if (this.rawMap.containsKey(key)
-          && !TypeVariable.areIdentical(this.get(key), entry.getValue())) {
+      ReferenceType value = this.get(entry.getKey());
+      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
         return false;
       }
     }
@@ -192,7 +189,9 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type.
+   * substitutions contain the same type variable, they must map to the same type. Types that are
+   * equal but contain copies of a type variable with different bounds are not the same; see {@link
+   * #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
@@ -210,20 +209,17 @@ public class Substitution {
 
   /**
    * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
-   * that is, to the type variable that is the key of the entry, with the same bounds. A copy of a
-   * type variable with other bounds is equal to it, but is not the same.
+   * that is, to the object that is the key of the entry. A copy of a type variable with other
+   * bounds is equal to it, but is not the same object.
    *
    * @param variable a type variable
    * @return true if this substitution maps {@code variable} to itself
    */
+  @SuppressWarnings("ReferenceEquality") // a copy with other bounds is equal, but not the same
   boolean mapsToItself(TypeVariable variable) {
-    ReferenceType value = map.get(variable);
-    if (!(value instanceof TypeVariable) || !value.equals(variable)) {
-      return false;
-    }
-    for (TypeVariable key : map.keySet()) {
-      if (key.equals(variable)) {
-        return key.isIdenticalTo((TypeVariable) value);
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (entry.getKey().equals(variable)) {
+        return entry.getKey() == entry.getValue();
       }
     }
     return false;
@@ -448,6 +444,10 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
+    // Copies of a type variable are equal, so `map.put` alone would keep an existing key that is a
+    // copy of `typeParameter`, and pair it with `type`.  Removing the entry first makes the new
+    // entry pair `typeParameter` with `type`, as given.
+    map.remove(typeParameter);
     map.put(typeParameter, type);
     replacementVariables = null;
     instantiatedDeclarations = null;

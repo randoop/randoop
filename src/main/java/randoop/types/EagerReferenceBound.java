@@ -19,11 +19,13 @@ class EagerReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    if (isUnchangedBy(referenceType)) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
@@ -41,7 +43,7 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
+      return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     if (argType.isParameterized()) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
@@ -56,17 +58,6 @@ class EagerReferenceBound extends ReferenceBound {
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
-    }
-    if (argType instanceof CaptureTypeVariable) {
-      WildcardArgument wildcard = ((CaptureTypeVariable) argType).getWildcard();
-      if (wildcard.hasUpperBound()) {
-        return false;
-      }
-      ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof ReferenceBound) {
-        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
-        return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
-      }
     }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
@@ -151,9 +142,12 @@ class EagerReferenceBound extends ReferenceBound {
       if (type instanceof ClassOrInterfaceType) {
         // The type variable can be a strict supertype of the type.  For `<S extends
         // Comparable<S>, U extends S>`, a class Sub that extends Base, where Base implements
-        // Comparable<Base>, satisfies the bound of U, with Base for S.
+        // Comparable<Base>, satisfies the bound of U, with Base for S.  A supertype that mentions a
+        // type variable that the type does not is skipped; see TypeVariable.canBeSupertypeOf.
+        List<TypeVariable> typeParameters = type.getTypeParameters();
         for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
-          if (variable.canBeInstantiatedBy(supertype, substitution)) {
+          if (typeParameters.containsAll(supertype.getTypeParameters())
+              && variable.canBeInstantiatedBy(supertype, substitution)) {
             return true;
           }
         }
