@@ -204,9 +204,9 @@ class CaptureTypeVariable extends TypeVariable {
   public List<TypeVariable> getTypeParameters() {
     Set<Integer> getTypeParametersIsExecutingSet = getTypeParametersIsExecuting.get();
     if (!getTypeParametersIsExecutingSet.add(varID)) {
-      // This variable occurs in its own bound.  The enclosing call for this variable adds it to the
-      // result.  The occurrence can be a different copy of this variable (see substitute), so
-      // adding the occurrence too would add the same variable twice.
+      // This variable occurs in its own bound, whose type parameters the enclosing call for this
+      // variable is already computing.  Computing them again would not terminate.  The enclosing
+      // call adds this variable to the result.
       return Collections.emptyList();
     }
     try {
@@ -218,23 +218,18 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
-    if (type != null && substitution.mapsToItself(this)) {
-      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
-      // rather than the substitution's copy.  If the substitution maps this capture variable to a
-      // copy of it with other bounds, that copy is the result.
-      type = null;
-    }
-    // if this variable replaced by non-variable, return non-variable
-    if (type != null && !type.isVariable()) {
+    ReferenceType type = getSubstitutedType(substitution);
+    // If this variable is replaced by a non-variable, return the non-variable.  A copy of this
+    // variable with other bounds has the bounds that the substitution intends.
+    if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
     Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(varID)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
-      // If the enclosing call creates a copy with new bounds, this occurrence in the copy's bound
-      // is still the original variable, not the copy.  Returning the copy would make the copy's
-      // bound refer to the copy, and then `equals` on two such copies would not terminate.
+      // Applying the substitution to the bound again would not terminate.  If the enclosing call
+      // creates a copy with new bounds, this occurrence in the copy's bound is this variable, not
+      // the copy.
       return type != null ? type : this;
     }
     try {
@@ -252,21 +247,22 @@ class CaptureTypeVariable extends TypeVariable {
    * type} (or of this variable, if {@code type} is null) whose bounds are the substituted bounds.
    * Otherwise, the result is {@code type}, or this variable if {@code type} is null.
    *
-   * @param type the type variable that {@code substitution} maps this variable to, or null if
-   *     {@code substitution} does not map this variable
+   * @param type the type variable, other than a copy of this variable, that {@code substitution}
+   *     maps this variable to, or null if {@code substitution} does not map this variable
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   private ReferenceType substituteIntoBounds(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so a substitution can change
     // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.
-    // Comparing with areIdentical detects that change.
+    // Comparing by reference detects that change, because substitute returns its receiver if the
+    // substitution changes nothing in it.
     boolean boundsUnchanged =
-        areIdentical(lowerBound, getLowerTypeBound())
-            && areIdentical(upperBound, getUpperTypeBound());
+        lowerBound == getLowerTypeBound() && upperBound == getUpperTypeBound();
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds

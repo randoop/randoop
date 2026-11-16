@@ -82,56 +82,6 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
 
-  /**
-   * Returns true if the given result of applying a substitution to the type of this bound is the
-   * same as the type of this bound, so that the substitution can return this bound.
-   *
-   * <p>A copy of a type variable equals the original even if its bounds differ. So if the type of
-   * this bound is a type variable, as {@code Y} in {@code Y extends List<X>}, then a substitution
-   * for {@code X} yields a copy that equals {@code Y} but whose bound is the substituted one. That
-   * copy is kept, rather than the original. Likewise for a type variable within the type of this
-   * bound, as {@code Y} in {@code List<Y>}. So this compares the bounds of the type variables too,
-   * as {@link TypeVariable#areIdentical(ReferenceType, ReferenceType)} does.
-   *
-   * @param substitutedType the type of this bound, with a substitution applied
-   * @return true if {@code substitutedType} is the same as the type of this bound
-   */
-  boolean isUnchangedBy(ReferenceType substitutedType) {
-    return TypeVariable.areIdentical(substitutedType, boundType);
-  }
-
-  /**
-   * Returns true if applying the substitution to the given type would create an array of the null
-   * type: that is, if the type has an array type, possibly nested in a type argument, whose element
-   * type is a type variable that the substitution maps to the null type. An example is {@code
-   * List<T[]>} with {@code T} mapped to the null type.
-   *
-   * @param type a type
-   * @param substitution a type substitution
-   * @return true if substituting into {@code type} would create an array of the null type
-   */
-  static boolean hasArrayOfNullType(Type type, Substitution substitution) {
-    if (type.isArray()) {
-      Type elementType = ((ArrayType) type).getElementType();
-      return (elementType.isVariable()
-              && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType)))
-          || hasArrayOfNullType(elementType, substitution);
-    }
-    if (type instanceof InstantiatedType) {
-      InstantiatedType instantiatedType = (InstantiatedType) type;
-      for (TypeArgument argument : instantiatedType.getTypeArguments()) {
-        if (argument instanceof ReferenceArgument
-            && hasArrayOfNullType(
-                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
-          return true;
-        }
-      }
-      ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
-      return enclosingType != null && hasArrayOfNullType(enclosingType, substitution);
-    }
-    return false;
-  }
-
   /*package*/
   @Override
   public boolean hasCaptureVariable() {
@@ -156,11 +106,6 @@ public abstract class ReferenceBound extends ParameterBound {
   /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (hasArrayOfNullType(boundType, substitution)) {
-      // There is no array of the null type, so this bound cannot be instantiated.  (Substituting
-      // would also throw, because the null type has no runtime class.)
-      return false;
-    }
     // Mapping each type variable that the substitution does not replace to itself makes it an
     // unknown.
     Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());

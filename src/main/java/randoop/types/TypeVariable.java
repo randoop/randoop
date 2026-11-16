@@ -409,8 +409,9 @@ public abstract class TypeVariable extends ParameterType {
    * type is within an upper bound that is this variable, if this variable is not otherwise
    * determined. The instantiations that this considers are the lower bound of this variable, which
    * is a supertype of every subtype of it, {@code otherType} itself, and, if {@code otherType} is a
-   * class or interface type, each of its strict supertypes that is not generic, as {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)} checks. For example, for {@code <S extends
+   * class or interface type, each of its strict supertypes that mentions only the type variables of
+   * {@code otherType}. Each instantiation other than the lower bound is checked as by {@link
+   * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
    * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
    * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
    * for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date}
@@ -431,9 +432,16 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType instanceof ClassOrInterfaceType) {
+      List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        if (!supertype.isGeneric() && canBeInstantiatedBy(supertype, context)) {
+        // A supertype that mentions a type variable that otherType does not is not a supertype of
+        // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
+        // its raw class and do not preserve the relationship between their type parameters.  A
+        // supertype that mentions only the type variables of otherType, such as List<E> for
+        // ArrayList<E>, is a supertype of otherType.
+        if (otherTypeParameters.containsAll(supertype.getTypeParameters())
+            && canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
@@ -539,6 +547,28 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     return true;
+  }
+
+  /**
+   * Returns the type that the given substitution maps this type variable to, or null if the
+   * substitution does not map this type variable or maps it to itself, as determined by {@link
+   * Substitution#mapsToItself(TypeVariable)}.
+   *
+   * <p>When the substitution maps this type variable to itself, the substitution's key can be a
+   * copy of this type variable with other bounds. Returning null keeps this copy and its bounds,
+   * rather than the substitution's copy. When the substitution maps this type variable to a copy of
+   * it with other bounds, the result is that copy.
+   *
+   * @param substitution a substitution
+   * @return the type that {@code substitution} maps this type variable to, or null if {@code
+   *     substitution} does not map this type variable or maps it to itself
+   */
+  /*package*/ @Nullable ReferenceType getSubstitutedType(Substitution substitution) {
+    ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      return null;
+    }
+    return type;
   }
 
   /**
