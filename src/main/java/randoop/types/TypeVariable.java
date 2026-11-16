@@ -403,14 +403,15 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
    * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its strict supertypes that is not generic, as {@link #canBeInstantiatedBy(ReferenceType,
-   * Substitution)} checks. For example, for {@code <S extends Comparable<S>, U extends S>}, if
-   * class {@code Sub} extends {@code Base}, which implements {@code Comparable<Base>}, then {@code
-   * S} can be a supertype of {@code Sub}, with {@code Base} for {@code S}; and for {@code <T
-   * extends Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because
-   * {@code java.util.Date} can instantiate {@code T}. The result can be false if only a supertype
-   * of {@code otherType} that is not a class or interface type, such as an intersection or an
-   * array type, can instantiate this variable.
+   * of its strict supertypes that mentions only the type variables of {@code otherType}. Each
+   * instantiation other than the lower bound is checked as by {@link
+   * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
+   * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
+   * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
+   * for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date}
+   * can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code T}. The result
+   * can be false if only a supertype of {@code otherType} that is not a class or interface type,
+   * such as an intersection or an array type, can instantiate this variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
@@ -422,9 +423,16 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType instanceof ClassOrInterfaceType) {
+      List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        if (!supertype.isGeneric() && canBeInstantiatedBy(supertype, context)) {
+        // A supertype that mentions a type variable that otherType does not is not a supertype of
+        // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
+        // its raw class and do not preserve the relationship between their type parameters.  A
+        // supertype that mentions only the type variables of otherType, such as List<E> for
+        // ArrayList<E>, is a supertype of otherType.
+        if (otherTypeParameters.containsAll(supertype.getTypeParameters())
+            && canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
