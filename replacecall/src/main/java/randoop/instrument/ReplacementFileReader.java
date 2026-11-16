@@ -120,7 +120,7 @@ public final class ReplacementFileReader {
   @SuppressWarnings("nullness:argument") // https://tinyurl.com/cfissue/4006
   static Map<MethodSignature, MethodSignature> readReplacements(@Owning Reader in, String filename)
       throws ReplacementFileException, IOException {
-    HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
+    Map<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
     EntryFileReader.<ReplacementFileException>forEachEntry(
         in,

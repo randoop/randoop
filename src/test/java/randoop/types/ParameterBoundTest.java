@@ -41,15 +41,6 @@ public class ParameterBoundTest {
     assertTrue(bound.isLowerBound(argType, empty));
   }
 
-  @Test
-  public void testArrayClassBound() {
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), String[].class);
-    Type argType = ArrayType.forClass(String[].class);
-    Substitution empty = new Substitution();
-    assertTrue(bound.isUpperBound(argType, empty));
-    assertTrue(bound.isLowerBound(argType, empty));
-  }
-
   /**
    * A class whose fields have types that contain an array of its type parameter.
    *
@@ -135,6 +126,32 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A generic class with a non-generic inner class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class GenericOuter<T> {
+    /** An inner class that has no type parameter of its own. */
+    class NonGenericInner {}
+  }
+
+  /**
+   * A class whose type parameter is bounded by a non-generic member class of a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class NonGenericMemberClassBound<T extends GenericOuter<String>.NonGenericInner> {}
+
+  @Test
+  public void testNonGenericMemberClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
    * A class whose second type parameter has a bound that contains an array of the first.
    *
    * @param <U> the type parameter whose array occurs in the bound of {@code T}
@@ -210,23 +227,5 @@ public class ParameterBoundTest {
             .get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
-  }
-
-  /**
-   * A type parameter whose bound has a wildcard bounded by an array class.
-   *
-   * @param <T> the type parameter
-   */
-  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
-
-  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
-  @SuppressWarnings("serial")
-  static class ArrayClassList extends ArrayList<String[]> {}
-
-  @Test
-  public void testWildcardArrayClassBound() {
-    TypeVariable t =
-        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
-    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
   }
 }

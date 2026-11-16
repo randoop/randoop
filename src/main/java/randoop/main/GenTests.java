@@ -439,10 +439,11 @@ public class GenTests extends GenInputsAbstract {
               System.out.println("  " + classFileName + " in " + classPathElt);
             } else {
               String classFileName = e.className.replace(".", File.separator) + ".class";
-              if (!classPathElt.endsWith(File.separator)) {
-                classPathElt += File.separator;
-              }
-              System.out.println("  " + classPathElt + classFileName);
+              String classPathDir =
+                  classPathElt.endsWith(File.separator)
+                      ? classPathElt
+                      : classPathElt + File.separator;
+              System.out.println("  " + classPathDir + classFileName);
             }
           }
           System.out.println("Correct your classpath or the class name and re-run Randoop.");
@@ -1053,7 +1054,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the set of method call operations in {@code es}
    */
   private Set<TypedClassOperation> getOperationsInSequence(ExecutableSequence es) {
-    HashSet<TypedClassOperation> ops = new HashSet<>();
+    Set<TypedClassOperation> ops = new HashSet<>();
 
     SIList<Statement> statements = es.sequence.statements;
     for (Statement s : statements) {

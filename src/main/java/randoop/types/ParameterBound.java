@@ -80,8 +80,8 @@ public abstract class ParameterBound {
    * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
    * result is an eager bound if the type is a type variable, or if it is a class, parameterized
    * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
-   * The exception is a generic array type whose element type is a non-generic member class of a
-   * generic class, as in {@code Outer<String>.Inner[]}, which {@link #eagerBoundType} cannot
+   * The exception is a non-generic member class of a generic class, as in {@code
+   * Outer<String>.Inner}, or a generic array type of one, which {@link #eagerBoundType} cannot
    * convert. Otherwise, the result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
@@ -93,8 +93,8 @@ public abstract class ParameterBound {
     if (isTypeVariable(type)
         || ((type instanceof Class<?>
                 || type instanceof java.lang.reflect.ParameterizedType
-                || (type instanceof java.lang.reflect.GenericArrayType
-                    && !isNonGenericMemberClass(elementType(type))))
+                || type instanceof java.lang.reflect.GenericArrayType)
+            && !isNonGenericMemberClass(elementType(type))
             && !hasTypeVariable(type, variableSet))) {
       return new EagerReferenceBound(eagerBoundType(type));
     }
@@ -108,6 +108,9 @@ public abstract class ParameterBound {
    * non-generic member class, as in {@code Outer<String>.Inner}, the owner type from the class
    * declaration, as in {@code Outer<T>.Inner}; it throws an exception instead.
    *
+   * <p>{@code type} must not be a non-generic member class of a generic class, nor a generic array
+   * type of one.
+   *
    * @param type a class, parameterized type, generic array type, or type variable
    * @return the type that {@code type} represents
    */
@@ -119,6 +122,7 @@ public abstract class ParameterBound {
       return ArrayType.ofComponentType(
           eagerBoundType(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
     }
+    // A class can be an array class, as in `? extends String[]`.
     return ReferenceType.forType(type);
   }
 
