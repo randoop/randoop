@@ -176,7 +176,7 @@ class LazyReferenceBound extends EagerReferenceBound {
 
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
