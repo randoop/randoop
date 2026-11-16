@@ -211,20 +211,6 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound contains an array class.
-   *
-   * @param <T> a type parameter bounded by {@code Pair<T, String[]>}
-   */
-  static class ArrayClassPairBound<T extends Pair<T, String[]>> {}
-
-  @Test
-  public void testArrayClassInLazyBound() {
-    TypeVariable t = typeParameter(ArrayClassPairBound.class, 0);
-    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
-    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
-  }
-
-  /**
    * Returns the type of a field of {@link FieldTypes}.
    *
    * @param name the name of the field

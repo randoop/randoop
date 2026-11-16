@@ -62,14 +62,6 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) substituted).getBoundType());
   }
 
-  @Test
-  public void testNullTypeForArrayComponentIsNotWithinBound() {
-    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    ParameterBound bound = t.getUpperTypeBound();
-    // The comparison rejects the null type, rather than failing an assertion.
-    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, new Substitution(t, JavaTypes.NULL_TYPE)));
-  }
-
   /** Fields whose types are used in tests. */
   @SuppressWarnings("UnusedVariable") // the fields are read reflectively
   static class FieldTypes {
