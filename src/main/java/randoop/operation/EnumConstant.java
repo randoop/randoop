@@ -172,7 +172,7 @@ public class EnumConstant extends CallableOperation {
       declaringType = Type.forName(typeName);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e);
     }
     if (!declaringType.isEnum()) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
