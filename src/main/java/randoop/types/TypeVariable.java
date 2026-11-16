@@ -89,6 +89,7 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
+      // A type variable is a subtype of every supertype of its upper bound.
       return isSubtypeOfOrEqualTo(getUpperTypeBound(), otherType);
     }
     return false;
@@ -98,10 +99,12 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if the type of the given bound is a subtype of the given type. An intersection
    * bound is a subtype of the type if any of its members is.
    *
-   * <p>This method compares the bound type itself, without substituting for the type variables in
-   * it. So, a variable {@code C} whose bound is {@code Enum<C>} is a subtype of {@code Enum<?>}.
+   * <p>This method compares the bound type as written, without substituting for the type variables
+   * in it. So, a variable {@code E} whose bound is {@code Enum<E>} is a subtype of {@code Enum<E>}.
+   * Substituting {@code otherType} for {@code E} would instead compare {@code Enum<Enum<E>>} with
+   * {@code Enum<E>}.
    *
-   * <p>A {@link LazyParameterBound}, which may mention type variables other than the bounded one
+   * <p>A {@link LazyParameterBound}, which can mention type variables other than the bounded one
    * (as in {@code T extends Comparable<U>}), is converted to the equivalent {@link ReferenceBound},
    * in which every type variable remains a type variable.
    *
