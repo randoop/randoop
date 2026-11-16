@@ -1779,9 +1779,8 @@ public class TypeVariableTest {
   public void testSubtypeTestOfCaptureVariableAgainstItsBound() throws NoSuchFieldException {
     InstantiatedType capturedType = capturedFieldType("selfComparableField");
     TypeVariable capture = typeArgument(capturedType, 0);
-    // The bound of the capture variable is Comparable<capture>.  The general subtype test
-    // substitutes Comparable<capture> for capture, so each substitution into the bound nests it
-    // more deeply; the test must terminate, and must recognize the bound itself.
+    // The bound of the capture variable is Comparable<capture>, which refers to the capture
+    // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
     assertTrue(
         capture + " should be a subtype of its bound " + bound,

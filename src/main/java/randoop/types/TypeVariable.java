@@ -405,13 +405,13 @@ public abstract class TypeVariable extends ParameterType {
    * of it, {@code otherType} itself, and, if this variable is a type parameter and {@code
    * otherType} is a class or interface type, each of its strict supertypes that mentions only the
    * type variables of {@code otherType}. Each instantiation other than the lower bound is checked
-   * as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
-   * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
-   * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
-   * for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date}
-   * can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code T}. The result
-   * can be false if only a supertype of {@code otherType} that is not a class or interface type,
-   * such as an intersection or an array type, can instantiate this variable.
+   * as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S
+   * extends Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which
+   * implements {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with
+   * {@code Base} for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
+   * T}. The result can be false if only a supertype of {@code otherType} that is not a class or
+   * interface type, such as an intersection or an array type, can instantiate this variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
