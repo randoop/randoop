@@ -163,11 +163,11 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
-   * the same type, if possible. A bound that is not a {@link ReferenceBound} even then (such as an
-   * intersection bound) cannot be compared by subtyping. For such a bound, this method checks only
-   * the cases that do not require subtyping: {@code ?} contains every wildcard, and every wildcard
-   * contains itself. Otherwise it conservatively returns false.
+   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that
+   * represents the same type, if possible. A bound that is not a {@link ReferenceBound} even then
+   * (such as an intersection bound) cannot be compared by subtyping. For such a bound, this method
+   * checks only the cases that do not require subtyping: {@code ?} contains every wildcard, and
+   * every wildcard contains itself. Otherwise it conservatively returns false.
    *
    * @param otherType the wildcard to check for
    * @return true if this wildcard contains the other wildcard, false otherwise
@@ -197,9 +197,9 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Returns true if the type of the first bound is a subtype of the type of the second bound.
-   * A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
-   * the same type, if possible. Returns false if the bounds differ and either is not a {@link
+   * Returns true if the type of the first bound is a subtype of the type of the second bound. A
+   * {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents the
+   * same type, if possible. Returns false if the bounds differ and either is not a {@link
    * ReferenceBound} even then, because subtyping is not implemented for other bounds.
    *
    * @param subBound the possible subtype bound
@@ -224,9 +224,9 @@ class WildcardType extends ParameterType {
    * 4.5.1</a>: {@code ? extends T} contains the subtypes of {@code T}, and {@code ? super T}
    * contains the supertypes of {@code T}.
    *
-   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents
-   * the same type, if possible. Returns false if the bound of this wildcard is not a single
-   * reference type.
+   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that
+   * represents the same type, if possible. Returns false if the bound of this wildcard is not a
+   * single reference type.
    *
    * @param type the type to check for
    * @return true if this wildcard contains the type, false otherwise
