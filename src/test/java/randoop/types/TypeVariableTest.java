@@ -333,6 +333,16 @@ public class TypeVariableTest {
         v.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE, new Substitution(k, JavaTypes.STRING_TYPE)));
   }
 
+  /** Mapping a capture variable to itself keeps a copy of it and the copy's bounds. */
+  @Test
+  public void testIdentitySubstitutionKeepsCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertSame(copy, copy.substitute(new Substitution(capture, capture)));
+  }
+
   @Test
   public void testSubstitutionOfTypeParameterCopy() {
     TypeVariable x = typeParameter(ListBound.class, 0);
@@ -347,6 +357,55 @@ public class TypeVariableTest {
     Substitution substitution = new Substitution(y, listOfString);
     assertEquals(listOfString, substitution.get(copy));
     assertEquals(listOfString, copy.substitute(substitution));
+  }
+
+  /**
+   * Returns the type that is the upper bound of the given type variable.
+   *
+   * @param variable a type variable whose upper bound is a {@link ReferenceBound}
+   * @return the type of the upper bound of {@code variable}
+   */
+  private static ReferenceType upperBoundType(ReferenceType variable) {
+    return ((ReferenceBound) ((TypeVariable) variable).getUpperTypeBound()).getBoundType();
+  }
+
+  /** Substitution into an array type changes the bound of its component type variable. */
+  @Test
+  public void testSubstitutionChangesBoundOfArrayComponent() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    ArrayType result =
+        ArrayType.ofComponentType(y).substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(listOfString, upperBoundType((ReferenceType) result.getComponentType()));
+  }
+
+  /** Substitution into a wildcard type changes the bound of the type variable in its bound. */
+  @Test
+  public void testSubstitutionChangesBoundOfWildcardBound() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    WildcardType wildcard = new WildcardType(new EagerReferenceBound(y), true);
+    WildcardType result = wildcard.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(
+        listOfString, upperBoundType(((ReferenceBound) result.getTypeBound()).getBoundType()));
+  }
+
+  /** Substitution into a capture variable changes the bound of the type variable in its bound. */
+  @Test
+  public void testSubstitutionChangesBoundOfCaptureVariableBound() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(new WildcardType(new EagerReferenceBound(y), true)));
+    ReferenceType result = capture.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(listOfString, upperBoundType(upperBoundType(result)));
   }
 
   /** Bounds whose types are copies of a type variable are equal and have equal hash codes. */

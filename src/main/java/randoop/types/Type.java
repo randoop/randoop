@@ -479,6 +479,12 @@ public abstract class Type implements Comparable<Type> {
    * because {@link ArrayType} can hold arbitrary types, including type variables and parameterized
    * types.
    *
+   * <p>If the substitution changes nothing in this type, the result should be this type itself, so
+   * that a caller can detect a change by comparing the result to this type with {@code ==}.
+   * Comparing with {@code equals} would not detect a change to only the bounds of a type variable,
+   * because copies of a type variable are equal even if their bounds differ. A result that is a new
+   * object for the same type is correct, but makes callers create needless copies.
+   *
    * @param substitution the type substitution
    * @return the {@link Type} constructed by substituting for type parameters in this type, or this
    *     type if this is not a generic class type
