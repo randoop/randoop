@@ -47,7 +47,7 @@ public class PostConditionCheckGenerator extends TestCheckGenerator {
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + eseq);
     } else if (result instanceof NormalExecution) {
-      ArrayList<Variable> inputs = new ArrayList<>(eseq.sequence.getInputs(finalIndex));
+      List<Variable> inputs = new ArrayList<>(eseq.sequence.getInputs(finalIndex));
       inputs.add(eseq.sequence.getVariable(finalIndex));
       @Nullable Object[] inputValues = eseq.getRuntimeInputs(inputs);
       if (eseq.sequence.getStatement(finalIndex).getOperation().isStatic()) {
