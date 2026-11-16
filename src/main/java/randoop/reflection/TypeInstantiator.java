@@ -437,9 +437,9 @@ public class TypeInstantiator {
    *         <li>If no type variables remain, return the substitution if it satisfies the bounds;
    *             otherwise, the attempt fails.
    *         <li>For each remaining type variable, compute its candidate types: the input types, and
-   *             the types that the substitution maps type variables to, that are within its bounds,
-   *             ignoring any bound that mentions another type variable, and that are consistent
-   *             with the substitution; see {@link #consistentCandidatesByVariable(List,
+   *             the types that the substitution gives to type variables, that are within its
+   *             bounds, ignoring any bound that mentions another type variable, and that are
+   *             consistent with the substitution; see {@link #consistentCandidatesByVariable(List,
    *             Substitution)}. If some type variable has no candidate types, the attempt fails.
    *         <li>Because the candidate types are computed for each type variable separately, a
    *             combination of them can violate the bounds. Return a randomly selected combination
@@ -616,12 +616,12 @@ public class TypeInstantiator {
    * satisfies both of these conditions:
    *
    * <ul>
-   *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, is one of the
-   *       {@link #inferredTypes(Substitution)} that potentially satisfies the bounds of {@code X}
-   *       (such a type need not be an input type: it can be a type argument of one), or is the
-   *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
-   *       X}, or a supertype of that type or a type argument of such a supertype; see {@link
-   *       #relatedTypes(ReferenceType)}.
+   *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}; or it is one
+   *       of the {@link #inferredTypes(Substitution)} that potentially satisfies the bounds of
+   *       {@code X} (such a type need not be an input type: it can be a type argument of one); or
+   *       it is the non-generic type that {@code substitution} gives to a type variable constrained
+   *       by {@code X}, or a supertype of that type or a type argument of such a supertype; see
+   *       {@link #relatedTypes(ReferenceType)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -684,14 +684,15 @@ public class TypeInstantiator {
 
   /**
    * Returns the types that the given substitution maps type variables to and that are not {@link
-   * #inputTypes input types}. Such a type, which may be a type argument of an input type, can
+   * #inputTypes input types}. Such a type, which can be a type argument of an input type, can
    * instantiate another type variable. For example, for {@code <T> void copy(List<? super T>,
    * List<? extends T>)}, if {@code substitution} maps both capture variables to {@code Integer}
    * because the input types contain {@code List<Integer>}, then {@code T} can be {@code Integer}
    * even if {@code Integer} is not an input type.
    *
    * @param substitution a substitution
-   * @return the non-generic types in the range of {@code substitution} that are not input types
+   * @return the non-generic types in the range of {@code substitution}, other than the null type,
+   *     that are not input types
    */
   private List<ReferenceType> inferredTypes(Substitution substitution) {
     Set<ReferenceType> result = new LinkedHashSet<>();
@@ -1247,35 +1248,17 @@ public class TypeInstantiator {
     ParameterBound upperBound = getUpperBound(argument);
 
     List<ReferenceType> typeList = new ArrayList<>(types.size());
-    for (Type inputType : types) {
-      if (inputType.isReferenceType()) {
-        ReferenceType inputRefType = (ReferenceType) inputType;
-        if (isWithinBounds(argument, inputRefType, lowerBound, upperBound)) {
-          typeList.add(inputRefType);
+    for (Type type : types) {
+      if (type.isReferenceType()) {
+        ReferenceType refType = (ReferenceType) type;
+        Substitution substitution = new Substitution(argument, refType);
+        if (lowerBound.isLowerBound(refType, substitution)
+            && upperBound.isUpperBound(refType, substitution)) {
+          typeList.add(refType);
         }
       }
     }
     return typeList;
-  }
-
-  /**
-   * Returns true if the given type is within the given bounds, when it instantiates the given type
-   * variable.
-   *
-   * @param argument the type variable
-   * @param type a type
-   * @param lowerBound the lower bound to test, from {@link #getLowerBound(TypeVariable)}
-   * @param upperBound the upper bound to test, from {@link #getUpperBound(TypeVariable)}
-   * @return true if {@code type} is within {@code lowerBound} and {@code upperBound}
-   */
-  private static boolean isWithinBounds(
-      TypeVariable argument,
-      ReferenceType type,
-      ParameterBound lowerBound,
-      ParameterBound upperBound) {
-    Substitution substitution = new Substitution(argument, type);
-    return lowerBound.isLowerBound(type, substitution)
-        && upperBound.isUpperBound(type, substitution);
   }
 
   /**

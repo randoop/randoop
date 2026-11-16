@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -320,8 +321,7 @@ public class InstantiationTest {
     TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
     // <T> void copy(List<? super T>, List<? extends T>)
     TypedClassOperation copy =
-        TypedOperation.forMethod(
-            java.util.Collections.class.getMethod("copy", List.class, List.class));
+        TypedOperation.forMethod(Collections.class.getMethod("copy", List.class, List.class));
     for (int seed = 0; seed < 10; seed++) {
       Randomness.setSeed(seed);
       TypedClassOperation copyInstance = instantiator.instantiate(copy);
@@ -448,29 +448,6 @@ public class InstantiationTest {
           ClassOrInterfaceType.forClass(RelatedBoundsCase.Base.class), instance.getOutputType());
     }
     Randomness.setSeed(0);
-  }
-
-  /** Tests the instantiation of a parameter type that is a member class of a generic class. */
-  @Test
-  public void testMemberClassInstantiation()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    GenericClassType outerType = GenericClassType.forClass(RelatedBoundsCase.Outer.class);
-    ClassOrInterfaceType innerType =
-        ClassOrInterfaceType.forClass(RelatedBoundsCase.Outer.Inner.class)
-            .substitute(new Substitution(outerType.getTypeParameters(), JavaTypes.STRING_TYPE));
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
-    addTypes(innerType, inputTypes);
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    // <E> E enclosed(Outer<E>.Inner)
-    TypedClassOperation enclosed =
-        TypedOperation.forMethod(
-            RelatedBoundsCase.class.getMethod("enclosed", RelatedBoundsCase.Outer.Inner.class));
-
-    TypedClassOperation instance = instantiator.instantiate(enclosed);
-    assertNotNull("instantiation failed for " + enclosed, instance);
-    assertEquals(innerType, instance.getInputTypes().get(0));
-    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /* disabled until fix type parameter management

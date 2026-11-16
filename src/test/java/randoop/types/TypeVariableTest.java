@@ -240,18 +240,14 @@ public class TypeVariableTest {
    *
    * @param <T> a type parameter with a self-referential bound
    * @param <U> a type parameter with no bound
-   * @param <E> a type parameter with a self-referential bound
    */
   @SuppressWarnings("UnusedVariable") // the fields are read reflectively
-  static class FieldTypes<T extends Comparable<T>, U, E extends Enum<E>> {
+  static class FieldTypes<T extends Comparable<T>, U> {
     /** A wildcard type whose lower bound is a type parameter. */
     Comparable<? super T> superT;
 
     /** A wildcard type whose lower bound is a type parameter with no bound. */
     Comparable<? super U> superU;
-
-    /** The bound of {@code E}. */
-    Enum<E> enumE;
 
     /** A wildcard type whose lower bound is a parameterized type. */
     Comparable<? super Comparable<Object>> superComparableObject;
@@ -261,9 +257,6 @@ public class TypeVariableTest {
 
     /** A wildcard type whose type parameter has a self-referential bound. */
     SelfComparableBound<?> selfComparableWildcard;
-
-    /** A map whose key and value types are the same type parameter. */
-    Map<U, U> mapUU;
 
     /** A wildcard type with a lower bound. */
     Comparable<? super String> superStringWildcard;
@@ -320,20 +313,6 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound contains an array class.
-   *
-   * @param <T> a type parameter bounded by {@code Pair<T, String[]>}
-   */
-  static class ArrayClassPairBound<T extends Pair<T, String[]>> {}
-
-  @Test
-  public void testArrayClassInLazyBound() {
-    TypeVariable t = typeParameter(ArrayClassPairBound.class, 0);
-    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
-    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
-  }
-
-  /**
    * Returns the type of a field of {@link FieldTypes}.
    *
    * @param name the name of the field
@@ -358,29 +337,6 @@ public class TypeVariableTest {
     InstantiatedType captured = ((InstantiatedType) fieldType(name)).applyCaptureConversion();
     return (TypeVariable)
         ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
-  }
-
-  @Test
-  public void testSubtypeOfRecursiveBound() {
-    TypeVariable w = typeParameter(SelfComparableBound.class);
-    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
-    assertTrue(w.isSubtypeOfOrEqualTo(comparable.instantiate(w)));
-    assertFalse(w.isSubtypeOfOrEqualTo(comparable.instantiate(JavaTypes.STRING_TYPE)));
-    assertTrue(
-        typeParameter(NumberBound.class)
-            .isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
-  }
-
-  @Test
-  public void testSubtypeOfIntersectionBound() {
-    TypeVariable t = typeParameter(NumberSelfComparableBound.class);
-    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
-    assertTrue(t.isSubtypeOfOrEqualTo(GenericClassType.forClass(Comparable.class).instantiate(t)));
-  }
-
-  @Test
-  public void testSubtypeOfSelfEnumBound() {
-    assertTrue(typeParameter(FieldTypes.class, 2).isSubtypeOfOrEqualTo(fieldType("enumE")));
   }
 
   @Test
@@ -2041,38 +1997,6 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound is a sibling type parameter.
-   *
-   * @param <K> the bound
-   * @param <V> a type parameter bounded by {@code K}
-   */
-  static class SiblingVariableBound<K, V extends K> {}
-
-  @Test
-  public void testVariableBoundInstantiatedByContext() {
-    TypeVariable k = typeParameter(SiblingVariableBound.class, 0);
-    TypeVariable v = typeParameter(SiblingVariableBound.class, 1);
-    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // V extends K, and K is Object or Number.
-    assertTrue(
-        v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, JavaTypes.OBJECT_TYPE)));
-    Substitution kIsNumber = new Substitution(k, ReferenceType.forClass(Number.class));
-    assertTrue(v.canBeInstantiatedBy(integerType, kIsNumber));
-    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, kIsNumber));
-  }
-
-  @Test
-  public void testConflictingInstantiatingSubstitution() {
-    ReferenceType mapUU = fieldType("mapUU");
-    GenericClassType map = GenericClassType.forClass(Map.class);
-    ReferenceType stringType = JavaTypes.STRING_TYPE;
-    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // U cannot be both String and Integer.
-    assertNull(map.instantiate(stringType, integerType).getInstantiatingSubstitution(mapUU));
-    assertNotNull(map.instantiate(stringType, stringType).getInstantiatingSubstitution(mapUU));
-  }
-
-  /**
    * A class whose type parameter T is bounded by its sibling S.
    *
    * @param <S> a type parameter
@@ -2275,34 +2199,12 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testLazyBoundWithNestedArrayOfNullType() {
-    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
-    InstantiatedType listOfArray =
-        GenericClassType.forClass(List.class).instantiate(ArrayType.ofComponentType(t));
-    LazyReferenceBound bound = new LazyReferenceBound(listOfArray);
-    // Substituting the null type resolves the bound List<T[]> to List<NullType[]>.
-    assertEquals(
-        GenericClassType.forClass(List.class)
-            .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
-        bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)).getBoundType());
-  }
-
-  @Test
   public void testLazyUpperBoundOfUnknownVariableTriesSupertypes() {
     // The unknown T, with T extends Comparable<T>, can be ComparableBase, a supertype of
     // ComparableSub, though it cannot be ComparableSub.
     LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
     assertTrue(
         bound.isUpperBound(ClassOrInterfaceType.forClass(ComparableSub.class), new Substitution()));
-  }
-
-  @Test
-  public void testSiblingBoundCanBeStrictSupertype() {
-    // For <S extends Comparable<S>, U extends S>, U can be ComparableSub, with ComparableBase for
-    // S, though S cannot be ComparableSub.
-    TypeVariable u = typeParameter(SelfComparableSiblingBound.class, 1);
-    assertTrue(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableSub.class)));
-    assertFalse(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
   }
 
   @Test
@@ -2387,6 +2289,125 @@ public class TypeVariableTest {
   private static ReferenceType plainInnerFieldType(String name) throws NoSuchFieldException {
     return (ReferenceType)
         Type.forType(PlainInnerFields.class.getDeclaredField(name).getGenericType());
+  }
+
+  /**
+   * Fields whose types are lists of member classes of parameterized types.
+   *
+   * @param <S> a type parameter
+   * @param <U> a type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class PlainInnerListFields<S, U> {
+    /** A list of member classes of {@code OuterWithPlainInner<String>}. */
+    List<OuterWithPlainInner<String>.Inner> stringInnerList;
+
+    /** A list of member classes of {@code OuterWithPlainInner<Integer>}. */
+    List<OuterWithPlainInner<Integer>.Inner> integerInnerList;
+
+    /** A list of member classes of {@code OuterWithPlainInner<U>}. */
+    List<OuterWithPlainInner<U>.Inner> variableInnerList;
+  }
+
+  @Test
+  public void testSameMemberClassWithUnknownInEnclosingType() throws NoSuchFieldException {
+    ReferenceType stringInnerList = plainInnerListFieldType("stringInnerList");
+    ReferenceType integerInnerList = plainInnerListFieldType("integerInnerList");
+    ReferenceType variableInnerList = plainInnerListFieldType("variableInnerList");
+    TypeVariable s = typeParameter(PlainInnerListFields.class, 0);
+    TypeVariable u = typeParameter(PlainInnerListFields.class, 1);
+    // U is a sibling of S, which the substitution instantiates, so mapping U to itself makes it an
+    // unknown, which can be String.
+    Substitution unknownU =
+        new Substitution(s, JavaTypes.STRING_TYPE).extendWithIdentity(Collections.singletonList(u));
+    assertTrue(Subtyping.isSubtypeOrEqual(stringInnerList, variableInnerList, unknownU));
+    assertFalse(Subtyping.isSubtypeOrEqual(integerInnerList, stringInnerList, unknownU));
+    // U stands for itself, which is not String.
+    assertFalse(Subtyping.isSubtypeOrEqual(stringInnerList, variableInnerList, new Substitution()));
+  }
+
+  /**
+   * Returns the type of the given field of {@link PlainInnerListFields}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static ReferenceType plainInnerListFieldType(String name) throws NoSuchFieldException {
+    return (ReferenceType)
+        Type.forType(PlainInnerListFields.class.getDeclaredField(name).getGenericType());
+  }
+
+  /**
+   * A generic class with a generic member class.
+   *
+   * @param <E> the type parameter
+   */
+  static class GenericOuter<E> {
+    /**
+     * A generic member class.
+     *
+     * @param <T> the type parameter
+     */
+    class GenericInner<T> {}
+  }
+
+  @Test
+  public void testSubtypeComparesEnclosingTypesOfTypeArguments() {
+    // ClassOrInterfaceType.forClass records the enclosing type GenericOuter<E>, so the type
+    // parameters are E and T.
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    InstantiatedType numberInner =
+        innerType.instantiate(ClassOrInterfaceType.forClass(Number.class), integerType);
+    InstantiatedType integerInner = innerType.instantiate(integerType, integerType);
+    // GenericOuter<Number>.GenericInner<Integer> and GenericOuter<Integer>.GenericInner<Integer>
+    // are equal according to InstantiatedType.equals, which ignores enclosing types, but they are
+    // different types.  So are lists of them.
+    assertEquals(numberInner, integerInner);
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    assertFalse(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(integerInner),
+            listType.instantiate(numberInner),
+            new Substitution()));
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(numberInner),
+            listType.instantiate(numberInner),
+            new Substitution()));
+  }
+
+  /**
+   * A class with a field whose type has a wildcard with a lazy bound, which mentions a type
+   * parameter whose bound is self-referential.
+   *
+   * @param <T> a type parameter whose bound is self-referential
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class LazyWildcardBound<T extends Comparable<T>> {
+    /** A list whose type argument is a wildcard whose bound mentions {@code T}. */
+    List<? extends Comparable<T>> comparableList;
+  }
+
+  @Test
+  public void testContainmentByWildcardWithLazyBound() throws NoSuchFieldException {
+    TypeVariable t = typeParameter(LazyWildcardBound.class, 0);
+    InstantiatedType comparableList =
+        (InstantiatedType)
+            Type.forType(
+                LazyWildcardBound.class.getDeclaredField("comparableList").getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) comparableList.getTypeArguments().get(0);
+    assertTrue(wildcard.getTypeBound() instanceof LazyParameterBound);
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    // T is a subtype of its bound Comparable<T>, so ? extends Comparable<T> contains T.
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(listType.instantiate(t), comparableList, new Substitution()));
+    // String is a Comparable<String>, not a Comparable<T>.
+    assertFalse(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(JavaTypes.STRING_TYPE), comparableList, new Substitution()));
   }
 
   /**

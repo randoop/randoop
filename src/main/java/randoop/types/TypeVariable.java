@@ -284,11 +284,9 @@ public abstract class TypeVariable extends ParameterType {
    * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
    * checked separately. So the result can be true even if no single type for that type variable
    * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
-   * instantiated by a class that implements {@code Map<A, B>}. A lower bound of this variable that
-   * is an uninstantiated type variable does not restrict the given type at all, since determining
-   * whether some instantiation of that type variable is a subtype of the given type requires a
-   * search. A client that instantiates all the type variables should check the bounds again with
-   * all of them instantiated, as {@link randoop.reflection.TypeInstantiator} does.
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
+   * randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
@@ -341,15 +339,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution substitution) {
     if (getLowerTypeBound().isVariable()) {
-      // The lower bound is a type variable.  If the substitution does not instantiate it, then it
-      // stands for an unknown type, and `otherType` is within the lower bound if it is a supertype
-      // of some type that can instantiate the unknown type variable.  For example, for
-      // `<T extends Number> void consume(List<? super T>)`, Object is within the lower bound of
-      // the capture variable, because T can be Number.  Finding such a type is a search, so defer
-      // the check to the client, which checks the bounds again once it instantiates the unknown
-      // type variable.
-      if (unknownVariable(getLowerTypeBound(), substitution) == null
-          && !getLowerTypeBound().isLowerBound(otherType, substitution)) {
+      if (!variableBoundAllows(getLowerTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -358,17 +348,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
-      if (unknown != null) {
-        // The unknown type variable can be `otherType` itself, its lower bound, or one of
-        // `otherType`'s supertypes; see EagerReferenceBound.isUpperBound(Type, Substitution) and
-        // canBeSupertypeOf.
-        if (!unknown.canBeSupertypeOf(otherType, substitution)) {
-          return false;
-        }
-      } else if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
-        // The substitution maps the type variable to a type that is not a variable, as for `V
-        // extends K` with K := Number, and otherType is not within that type.
+      if (!variableBoundAllows(getUpperTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -380,47 +360,58 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the type variable that the given bound of this variable is, if the substitution does
-   * not instantiate it. Otherwise, returns null; then the substituted bound is a type that can be
-   * compared with a candidate type.
+   * Returns true if the given type is within the given bound of this variable, where the bound is a
+   * type variable. If the substitution instantiates that type variable, the instantiated bound is
+   * compared with the given type. Otherwise, that type variable stands for an unknown type: for an
+   * upper bound, the given type is within it if that type variable can be a supertype of the given
+   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if the given type can
+   * instantiate that type variable.
    *
    * @param bound a bound of this variable that is a type variable
-   * @param substitution the substitution of a candidate type for this variable
-   * @return the uninstantiated type variable that {@code bound} is, or null if {@code substitution}
-   *     instantiates it
+   * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
+   *     the lower bound
+   * @param substitution the substitution of {@code otherType} for this variable
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if {@code otherType} is within {@code bound}
    */
-  private static @Nullable TypeVariable unknownVariable(
-      ParameterBound bound, Substitution substitution) {
+  private boolean variableBoundAllows(
+      ParameterBound bound,
+      boolean isUpperBound,
+      Substitution substitution,
+      ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
+    TypeVariable variable;
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
-      return (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
-      return substituted.getTypeParameters().get(0);
+      variable = substituted.getTypeParameters().get(0);
     } else {
-      return null;
+      // The substitution instantiates the type variable, so the bound is a known type.
+      return isUpperBound
+          ? substituted.isUpperBound(otherType, substitution)
+          : substituted.isLowerBound(otherType, substitution);
     }
+    return isUpperBound
+        ? variable.canBeSupertypeOf(otherType, substitution)
+        : variable.canBeInstantiatedBy(otherType, substitution);
   }
 
   /**
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
-   * when the other type variables are instantiated as by the given substitution. Then the given
-   * type is within an upper bound that is this variable, if this variable is not otherwise
-   * determined. The instantiations that this considers are the lower bound of this variable, which
-   * is a supertype of every subtype of it, {@code otherType} itself, and, if {@code otherType} is a
-   * class or interface type, each of its strict supertypes that mentions only the type variables of
-   * {@code otherType}. Each instantiation other than the lower bound is checked as by {@link
+   * when the other type variables are instantiated as by the given substitution. The instantiations
+   * that this considers are the lower bound of this variable, which is a supertype of every subtype
+   * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
+   * of its strict supertypes that mentions only the type variables of {@code otherType}. Each
+   * instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
    * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
    * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
    * for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date}
-   * can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code T}.
-   *
-   * <p>Only the supertypes of a class or interface type are tried. For any other type, such as an
-   * array type, only the type itself and the lower bound are tried. So the result can be false if
-   * only a supertype of {@code otherType} that is not a class or interface type, such as an
-   * intersection or an array type, can instantiate this variable.
+   * can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code T}. The result
+   * can be false if only a supertype of {@code otherType} that is not a class or interface type,
+   * such as an intersection or an array type, can instantiate this variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables

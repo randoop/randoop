@@ -14,8 +14,7 @@ import randoop.types.LazyParameterBound.LazyBoundException;
  * raw type as a subtype of every parameterized type that contains a type variable.
  *
  * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
- * which, unless the bound or the argument is a type variable, treats every type variable in the
- * bound as an unknown.
+ * which treats every type variable in the bound as an unknown.
  *
  * <p>These relations are approximate: they do not require two occurrences of an unknown to stand
  * for the same type.
@@ -52,11 +51,11 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isIdentical(type, otherType)) {
+    if (isIdentical(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
-    if (otherType.isObject() || type.equals(JavaTypes.NULL_TYPE)) {
+    if (type.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -78,16 +77,20 @@ final class Subtyping {
       }
       // Try the supertypes of the type variable, below.
     }
-    if (type.isVariable()
-        && ((TypeVariable) type)
-            .getResolvedUpperTypeBound()
-            .hasUpperBound(otherType, substitution)) {
+    if (type.isVariable()) {
       // An upper bound of a type variable's upper bound is an upper bound of the type variable.
-      return true;
+      ParameterBound upperBound = ((TypeVariable) type).getResolvedUpperTypeBound();
+      if (upperBound.hasUpperBound(otherType, substitution)) {
+        return true;
+      }
+      // Otherwise, a type variable is a subtype only of a type variable whose lower bound it is a
+      // subtype of, as for T and a capture of `? super T`.
+      if (!otherType.isVariable()) {
+        return false;
+      }
     }
     if (otherType.isVariable()) {
-      // A type variable that stands for itself is a supertype of its lower bound.  For example, if
-      // CAP is the capture of `? super T`, then T <: CAP, even though T's upper bound is not.
+      // A type variable that stands for itself is a supertype of its lower bound.
       ParameterBound lowerBound = ((TypeVariable) otherType).getResolvedLowerTypeBound();
       if (!(lowerBound instanceof ReferenceBound)) {
         return false;
@@ -95,11 +98,6 @@ final class Subtyping {
       ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
       return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
           && isSubtypeOrEqual(type, lowerBoundType, substitution);
-    }
-    if (type.isVariable()) {
-      // Every supertype of a type variable, other than a type variable, is a supertype of its
-      // upper bound.
-      return false;
     }
     if (type.isArray() && otherType.isArray()) {
       Type componentType = ((ArrayType) type).getComponentType();
@@ -219,11 +217,10 @@ final class Subtyping {
       return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    ParameterBound bound = resolve(wildcard.getTypeBound());
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (wildcard.hasUpperBound()) {
       // ? extends B contains T if T <: B.
       return isSubtypeOrEqual(type, boundType, substitution);
@@ -389,11 +386,10 @@ final class Subtyping {
               && isSameWildcard(argument, (WildcardArgument) lowerArgument, substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) argument;
-    ParameterBound bound = wildcard.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (wildcard.hasUpperBound() && boundType.isObject()) {
       return true;
     }
@@ -403,12 +399,11 @@ final class Subtyping {
     } else {
       // ? extends L is contained by ? extends B if L <: B, and ? super L by ? super B if B <: L.
       WildcardArgument lowerWildcard = (WildcardArgument) lowerArgument;
-      ParameterBound lowerBound = lowerWildcard.getTypeBound();
-      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound()
-          || !(lowerBound instanceof ReferenceBound)) {
+      ReferenceType lowerBoundType = getBoundType(lowerWildcard);
+      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound() || lowerBoundType == null) {
         return false;
       }
-      lowerArgumentType = ((ReferenceBound) lowerBound).getBoundType();
+      lowerArgumentType = lowerBoundType;
     }
     if (wildcard.hasUpperBound()) {
       // ? extends B contains T if T <: B.
@@ -446,7 +441,6 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    // InstantiatedType.equals ignores enclosing types, so isIdentical compares them too.
     if (isIdentical(type, otherType)) {
       return true;
     }
@@ -507,26 +501,6 @@ final class Subtyping {
   }
 
   /**
-   * Returns the given wildcard bound, with a {@link LazyParameterBound} resolved to a {@link
-   * ReferenceBound} whose type contains the type variables of the lazy bound. Whether those type
-   * variables stand for unknowns is determined by the substitution with which the result is
-   * compared, as for any other bound.
-   *
-   * @param bound a wildcard bound
-   * @return {@code bound} with a lazy bound resolved, or {@code bound} itself if it cannot be
-   */
-  private static ParameterBound resolve(ParameterBound bound) {
-    if (bound instanceof LazyParameterBound) {
-      ParameterBound resolved =
-          ((LazyParameterBound) bound).substituteWithUnknowns(new Substitution());
-      if (resolved != null) {
-        return resolved;
-      }
-    }
-    return bound;
-  }
-
-  /**
    * Returns true if {@code argument} is the same wildcard as {@code otherWildcard}: that is, both
    * are upper-bounded or both are lower-bounded, and their bounds are the same type.
    *
@@ -547,14 +521,28 @@ final class Subtyping {
     if (wildcard.hasUpperBound() != otherWildcard.hasUpperBound()) {
       return false;
     }
-    ParameterBound bound = resolve(wildcard.getTypeBound());
-    ParameterBound otherBound = resolve(otherWildcard.getTypeBound());
-    return bound instanceof ReferenceBound
-        && otherBound instanceof ReferenceBound
-        && isSameType(
-            ((ReferenceBound) bound).getBoundType(),
-            ((ReferenceBound) otherBound).getBoundType(),
-            substitution);
+    ReferenceType boundType = getBoundType(wildcard);
+    ReferenceType otherBoundType = getBoundType(otherWildcard);
+    return boundType != null
+        && otherBoundType != null
+        && isSameType(boundType, otherBoundType, substitution);
+  }
+
+  /**
+   * Returns the type of the bound of the given wildcard, or null if the bound is neither a {@link
+   * ReferenceBound} nor a {@link LazyParameterBound} that can be converted to one. A lazy bound,
+   * such as {@code Comparable<T>} in {@code ? extends Comparable<T>}, is converted so that it can
+   * be compared with types.
+   *
+   * @param wildcard a wildcard type argument
+   * @return the type of the bound of {@code wildcard}, or null
+   */
+  private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
+    ParameterBound bound = wildcard.getTypeBound();
+    if (bound instanceof LazyParameterBound) {
+      bound = ((LazyParameterBound) bound).toReferenceBound();
+    }
+    return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
   }
 
   /**

@@ -105,14 +105,19 @@ public class ParameterBoundTest {
     assertTrue(numberAndRunnable.isLowerBound(runnableBound, new Substitution()));
   }
 
-  /** A lazy bound that the substitution does not instantiate is not a lower bound of anything. */
+  /**
+   * A lazy bound that the substitution does not instantiate is not a lower bound of anything except
+   * itself.
+   */
   @Test
   public void testUninstantiatedLazyParameterBoundAsLowerBound() {
     Substitution unrelated = new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE);
     for (Substitution substitution : Arrays.asList(new Substitution(), unrelated)) {
       assertFalse(selfComparableBound.isLowerBound(nullBound, substitution));
       assertFalse(selfComparableBound.isLowerBound(integerBound, substitution));
-      assertFalse(selfComparableBound.isLowerBound(selfComparableBound, substitution));
+      // The substitution leaves T unchanged on both sides, so each side is Comparable<T> for the
+      // same T, and a type is a lower bound of itself.
+      assertTrue(selfComparableBound.isLowerBound(selfComparableBound, substitution));
     }
     Substitution noArrayVariable =
         new Substitution(
@@ -169,6 +174,20 @@ public class ParameterBoundTest {
     assertFalse(
         ParameterBound.forType(JavaTypes.OBJECT_TYPE)
             .isLowerBound(lazyCaptureBound, new Substitution()));
+  }
+
+  /** A {@link LazyReferenceBound} is a lower bound of itself, but not of another type variable. */
+  @Test
+  public void testLazyReferenceBoundIsLowerBoundOfItself() {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    TypeVariable selfComparableVariable =
+        GenericClassType.forClass(SelfComparable.class).getTypeParameters().get(0);
+    ParameterBound lazyListBound =
+        new LazyReferenceBound(listType.instantiate(arrayHolderVariable));
+    ParameterBound otherLazyListBound =
+        new LazyReferenceBound(listType.instantiate(selfComparableVariable));
+    assertTrue(lazyListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(otherLazyListBound.isLowerBound(lazyListBound, new Substitution()));
   }
 
   /** The substitution is applied to the lower bound when the other bound is lazy. */

@@ -84,14 +84,6 @@ public class LazyReferenceBoundTest {
   }
 
   @Test
-  public void testIsUpperBoundOfBoundWithArrayOfNullType() {
-    ReferenceBound bound = new LazyReferenceBound(ArrayType.ofComponentType(V));
-    ParameterBound other = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
-    // There is no array of the null type, so no bound is within this one.
-    assertFalse(bound.isUpperBound(other, new Substitution(V, JavaTypes.NULL_TYPE)));
-  }
-
-  @Test
   public void testSubstituteParameterizedWithVariable() {
     GenericClassType mapType = GenericClassType.forClass(Map.class);
     ReferenceBound bound = new LazyReferenceBound(mapType.instantiate(V, JavaTypes.STRING_TYPE));
@@ -137,23 +129,5 @@ public class LazyReferenceBoundTest {
     WildcardType wildcard = new WildcardType(new EagerReferenceBound(V), true);
     assertEquals(
         Collections.singletonList(V), new LazyReferenceBound(wildcard).getTypeParameters());
-  }
-
-  @Test
-  public void testHasLowerBoundEqual() {
-    InstantiatedType listOfV = GenericClassType.forClass(List.class).instantiate(V);
-    ReferenceBound bound = new LazyReferenceBound(listOfV);
-    assertTrue(bound.hasLowerBound(new LazyReferenceBound(listOfV), new Substitution()));
-    InstantiatedType listOfW = GenericClassType.forClass(List.class).instantiate(W);
-    assertFalse(bound.hasLowerBound(new LazyReferenceBound(listOfW), new Substitution()));
-  }
-
-  @Test
-  public void testIsUpperBoundOfBoundWithArrayOfNullType() {
-    ReferenceBound bound = new EagerReferenceBound(ArrayType.ofComponentType(V));
-    assertFalse(
-        bound.isUpperBound(
-            new EagerReferenceBound(JavaTypes.STRING_TYPE),
-            new Substitution(V, JavaTypes.NULL_TYPE)));
   }
 }

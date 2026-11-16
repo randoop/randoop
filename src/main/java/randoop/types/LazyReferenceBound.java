@@ -11,15 +11,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
- * {@code java.lang.reflect.Type}.
+ * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
+ * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
+ * substitution maps to no type or to a type variable.
  *
  * <p>The bounds of a type variable in the bound type might refer back to this bound. This class
  * behaves like {@link EagerReferenceBound}, except that {@link #getTypeParameters()} does not
  * examine the bounds of those type variables, and {@link #substitute(Substitution)} does not
  * substitute into this bound again when it reaches this bound through those type variables. Either
- * would otherwise result in nonterminating calls. Also, its methods that test bounds treat
- * specially a bound type that is a type variable that the substitution maps to no type or to a type
- * variable.
+ * would otherwise result in nonterminating calls.
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
@@ -198,11 +198,18 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Because the type of this bound contains type variables, returns true only if {@code
-   * lowerBound} is the null type; or if the type of this bound is not a capture variable and {@code
-   * lowerBound} is the same type as this bound; or if the type of this bound is a capture variable
-   * and {@code lowerBound} is a lower bound on the capture variable's lower bound. A capture
-   * variable stands for a particular type, which is a supertype of its lower bound.
+   * <p>Returns true only if {@code lowerBound} is the null type, or if one of the following holds:
+   *
+   * <ul>
+   *   <li>The type of this bound is a capture variable, and {@code lowerBound} is a lower bound on
+   *       the lower bound of the capture variable. A capture variable stands for a particular type,
+   *       which is a supertype of its lower bound.
+   *   <li>The type of this bound is not a capture variable, and {@code lowerBound}, after the
+   *       substitution is applied to it, is the type of this bound. The type of this bound contains
+   *       type variables, so it stands for every instantiation of them; a type such as {@code
+   *       List<String>} is not a subtype of each instantiation of {@code List<T>}, but {@code
+   *       List<T>} itself is.
+   * </ul>
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -210,13 +217,11 @@ class LazyReferenceBound extends EagerReferenceBound {
       return true;
     }
     if (!(getBoundType() instanceof CaptureTypeVariable)) {
-      ParameterBound substituted = lowerBound.substitute(substitution);
-      if (!(substituted instanceof ReferenceBound)) {
-        return false;
-      }
-      // A type is a lower bound of itself.
-      return TypeVariable.areIdentical(
-          ((ReferenceBound) substituted).getBoundType(), getBoundType());
+      return lowerBound instanceof ReferenceBound
+          && ((ReferenceBound) lowerBound)
+              .getBoundType()
+              .substitute(substitution)
+              .equals(getBoundType());
     }
     // The lower bound of the capture variable might refer back to this bound.
     Set<LazyReferenceBound> inProgress = beingComparedWithLowerBound.get();
