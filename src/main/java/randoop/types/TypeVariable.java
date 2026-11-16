@@ -344,17 +344,37 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, and {@code otherType} itself, as {@link #canBeInstantiatedBy( ReferenceType,
-   * Substitution)} checks. So the result can be false even if some other supertype of {@code
-   * otherType} can instantiate this variable.
+   * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
+   * of its supertypes. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
+   * T}. Each instantiation other than the lower bound is checked as by {@link
+   * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
    * @return true if some instantiation of this variable can be a supertype of {@code otherType}
    */
   boolean canBeSupertypeOf(ReferenceType otherType, Substitution context) {
-    return getLowerTypeBound().isUpperBound(otherType, context)
-        || canBeInstantiatedBy(otherType, context);
+    if (getLowerTypeBound().isUpperBound(otherType, context)
+        || canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (otherType instanceof ClassOrInterfaceType) {
+      List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
+        // A supertype that mentions a type variable that otherType does not is not a supertype of
+        // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
+        // its raw class and do not preserve the relationship between their type parameters.  A
+        // supertype that mentions only the type variables of otherType, such as List<E> for
+        // ArrayList<E>, is a supertype of otherType.
+        if (otherTypeParameters.containsAll(supertype.getTypeParameters())
+            && canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
