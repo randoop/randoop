@@ -84,9 +84,12 @@ class EagerReferenceBound extends ReferenceBound {
       if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
         // The substitution does not replace the type variable.  Mapping it to itself makes it an
         // unknown if it is a type parameter of a declaration that the substitution instantiates,
-        // such as a sibling of the type parameter whose bound this is.
+        // such as a sibling of the type parameter whose bound this is.  A substitution that
+        // instantiates no type parameter, such as an empty one or one that maps only a capture
+        // variable, does not say which type variables are fixed, so the type variable is an
+        // unknown then too.
         Substitution completeSubstitution = subst.extendWithIdentity(getTypeParameters());
-        if (completeSubstitution.isUnknown(thisBoundType)) {
+        if (!subst.instantiatesTypeParameters() || completeSubstitution.isUnknown(thisBoundType)) {
           // Checking argType against the upper bound of the type variable instead would leave the
           // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it
           // would accept Comparable<String>, which no choice of T is a supertype of.  The bounds of
