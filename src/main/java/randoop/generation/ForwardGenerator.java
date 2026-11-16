@@ -86,6 +86,13 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private int numComponentsAfterClear = -1;
 
+  /**
+   * When Randoop uses more memory than this, it clears the component set. This is {@link
+   * GenInputsAbstract#clear_memory}, or more if the last clear did not reduce memory use below
+   * that. See {@link #computeClearMemoryThreshold}.
+   */
+  private long clearMemoryThreshold = GenInputsAbstract.clear_memory;
+
   /** The side-effect-free methods. */
   private final Set<TypedOperation> sideEffectFreeMethods;
 
@@ -238,6 +245,27 @@ public class ForwardGenerator extends AbstractGenerator {
     return inputSequenceSelector;
   }
 
+  /**
+   * Returns the memory use above which Randoop clears the component set, given the memory use just
+   * after a clear.
+   *
+   * <p>If the clear reduced memory use to at most {@link GenInputsAbstract#clear_memory}, the
+   * result is {@link GenInputsAbstract#clear_memory}. Otherwise, clearing again before the
+   * component set regrows would free little memory, so the result is halfway between the memory use
+   * after the clear and the maximum memory. Thus, Randoop clears again before it runs out of
+   * memory.
+   *
+   * @param usedMemoryAfterClear the memory use, in bytes, just after the component set was cleared
+   * @param maxMemory the maximum memory, in bytes, that the JVM will attempt to use
+   * @return the memory use above which Randoop clears the component set
+   */
+  static long computeClearMemoryThreshold(long usedMemoryAfterClear, long maxMemory) {
+    if (usedMemoryAfterClear <= GenInputsAbstract.clear_memory) {
+      return GenInputsAbstract.clear_memory;
+    }
+    return usedMemoryAfterClear + (maxMemory - usedMemoryAfterClear) / 2;
+  }
+
   @Override
   public @Nullable ExecutableSequence step() throws RandoopSpecificationError {
 
@@ -261,10 +289,24 @@ public class ForwardGenerator extends AbstractGenerator {
     boolean secondaryPoolChanged = componentManager.numSecondarySequences() != 0;
     if (componentsChanged && numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
       clearComponents();
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+        clearMemoryThreshold =
+            computeClearMemoryThreshold(
+                SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
+      }
     } else if ((componentsChanged || secondaryPoolChanged || !sequencesSinceClear.isEmpty())
-        && SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory
-        && SystemPlume.usedMemory(true) > GenInputsAbstract.clear_memory) {
+        && SystemPlume.usedMemory(false) > clearMemoryThreshold
+        && SystemPlume.usedMemory(true) > clearMemoryThreshold) {
       clearComponents();
+      clearMemoryThreshold =
+          computeClearMemoryThreshold(
+              SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+        System.out.printf(
+            "%nClearing the component set did not reduce memory use below --clear-memory=%d."
+                + "%nRandoop will next clear the component set when memory use exceeds %d.%n",
+            GenInputsAbstract.clear_memory, clearMemoryThreshold);
+      }
     }
 
     ExecutableSequence eSeq = createNewUniqueSequence();

@@ -238,8 +238,8 @@ public class ClearComponentsTest {
   public void stepClearsAtCountThreshold() throws Exception {
     Set<Sequence> seeds = SeedSequences.defaultSeeds();
     ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
-    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
     GenInputsAbstract.clear_memory = Long.MAX_VALUE;
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
     int numSeeds = componentMgr.numGeneratedSequences();
     GenInputsAbstract.clear = numSeeds + 3;
 
@@ -262,23 +262,28 @@ public class ClearComponentsTest {
   /** {@link ForwardGenerator#step} clears the component set when memory is low. */
   @Test
   public void stepClearsAtMemoryThreshold() throws Exception {
+    // The generator reads --clear-memory when it is constructed.
+    GenInputsAbstract.clear_memory = 0;
     Set<Sequence> seeds = SeedSequences.defaultSeeds();
     ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
     ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    // After a clear, a step does not clear until a sequence has been created.  A clear for memory
+    // raises the memory threshold (because memory use stays above 0), so this test observes only
+    // one clear for memory.
+    gen.clearComponents();
     int numSeeds = componentMgr.numGeneratedSequences();
-    GenInputsAbstract.clear_memory = 0;
 
-    boolean poolGrew = false;
-    // Each step garbage-collects, so do few steps.
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100 && gen.getAllSequences().isEmpty(); i++) {
       gen.step();
-      // Every step clears the sequences that the previous step created.
-      int numComponents = componentMgr.numGeneratedSequences();
-      assertTrue(numComponents <= numSeeds + 1);
-      assertTrue(gen.getAllSequences().size() <= 1);
-      poolGrew |= numComponents > numSeeds;
     }
-    assertTrue(poolGrew);
+    assertFalse(gen.getAllSequences().isEmpty());
+    assertTrue(componentMgr.numGeneratedSequences() > numSeeds);
+
+    // With no operations, a step creates no sequence, so the step's only effect is the clear.
+    gen.operations.clear();
+    assertNull(gen.step());
+    assertEquals(numSeeds, componentMgr.numGeneratedSequences());
+    assertTrue(gen.getAllSequences().isEmpty());
   }
 
   /**
@@ -289,14 +294,14 @@ public class ClearComponentsTest {
   @Test
   public void stepAvoidsRedundantMemoryClears() throws Exception {
     GenInputsAbstract.input_selection = GenInputsAbstract.InputSelectionMode.ORIENTEERING;
+    // The generator reads --clear-memory when it is constructed.  A clear for memory raises the
+    // memory threshold (because memory use stays above 0), so this test does no step before the
+    // first clear for memory.
+    GenInputsAbstract.clear_memory = 0;
     Set<Sequence> seeds = SeedSequences.defaultSeeds();
     ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
     ForwardGenerator gen = createGenerator(Box.class, componentMgr);
     OrienteeringSelection selector = (OrienteeringSelection) gen.getInputSequenceSelector();
-    GenInputsAbstract.clear_memory = Long.MAX_VALUE;
-    for (int i = 0; i < 100; i++) {
-      gen.step();
-    }
 
     gen.clearComponents();
     // With no operations, a step creates no sequence.
@@ -308,7 +313,6 @@ public class ClearComponentsTest {
     assertTrue(selector.hasDetails(notRetained));
     int numComponents = componentMgr.numGeneratedSequences();
 
-    GenInputsAbstract.clear_memory = 0;
     assertNull(gen.step());
     assertEquals(numComponents, componentMgr.numGeneratedSequences());
     assertTrue(gen.getAllSequences().isEmpty());
@@ -414,6 +418,41 @@ public class ClearComponentsTest {
     } else {
       throw new IllegalArgumentException("Not a weighted selector: " + selector);
     }
+  }
+
+  /**
+   * When a clear does not reduce memory use below {@code --clear-memory}, Randoop does not clear
+   * the component set again on the next steps.
+   */
+  @Test
+  public void clearForMemoryRaisesThreshold() throws Exception {
+    // Every clear leaves more memory in use than this.
+    GenInputsAbstract.clear_memory = 1;
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Adder.class, componentMgr);
+
+    for (int i = 0; i < 100; i++) {
+      gen.step();
+    }
+    // If Randoop cleared the component set on every step, it would hold at most 2 generated
+    // sequences: the last one and the primitive value that it created.
+    assertTrue(componentMgr.getAllGeneratedSequences().size() > seeds.size() + 10);
+  }
+
+  /** Tests {@link ForwardGenerator#computeClearMemoryThreshold}. */
+  @Test
+  public void computeClearMemoryThreshold() {
+    GenInputsAbstract.clear_memory = 1000;
+    // The clear reduced memory use to at most --clear-memory.
+    assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(400, 5000));
+    assertEquals(1000, ForwardGenerator.computeClearMemoryThreshold(1000, 5000));
+    // The clear did not reduce memory use to --clear-memory.
+    assertEquals(3000, ForwardGenerator.computeClearMemoryThreshold(2000, 4000));
+    assertEquals(4500, ForwardGenerator.computeClearMemoryThreshold(4000, 5000));
+    assertEquals(
+        Long.MAX_VALUE / 2 + 1000,
+        ForwardGenerator.computeClearMemoryThreshold(2000, Long.MAX_VALUE));
   }
 
   /**
