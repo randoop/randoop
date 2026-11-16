@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -350,5 +351,10 @@ public class ParameterizedTypeTest {
                 ParameterizedTypeTest.class.getDeclaredField("stringToInteger").getGenericType());
     // T cannot be both String and Integer.
     assertNull(stringToIntegerType.getInstantiatingSubstitution(sameKeyAndValue));
+    // T can be String.
+    InstantiatedType stringToString =
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertNotNull(stringToString.getInstantiatingSubstitution(sameKeyAndValue));
   }
 }

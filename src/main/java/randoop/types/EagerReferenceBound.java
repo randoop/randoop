@@ -89,8 +89,6 @@ class EagerReferenceBound extends ReferenceBound {
         // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
         // T is a supertype of.  The bounds of the type variable are checked with the mappings of
         // `subst`, because they can mention other type variables that `subst` instantiates.
-        // For `<S extends Comparable<S>, U extends S>`, a class Sub that extends Base, where Base
-        // implements Comparable<Base>, satisfies the bound of U, with Base for S.
         return variable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       // The substitution does not map the variable, so the variable can still be chosen.  argType

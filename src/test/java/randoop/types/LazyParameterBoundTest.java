@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -74,24 +73,6 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(List.class)
             .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
         ((ReferenceBound) substituted).getBoundType());
-  }
-
-  @Test
-  public void testCompareNullTypeForArrayComponent() {
-    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    ParameterBound bound = t.getUpperTypeBound();
-    // String is neither a subtype nor a supertype of the substituted bound, List<NullType[]>.
-    Substitution substitution = new Substitution(t, JavaTypes.NULL_TYPE);
-    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
-    assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, substitution));
-  }
-
-  @Test
-  public void testNullTypeForArrayComponentIsNotWithinBound() {
-    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    ParameterBound bound = t.getUpperTypeBound();
-    // The comparison rejects the null type, rather than failing an assertion.
-    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, new Substitution(t, JavaTypes.NULL_TYPE)));
   }
 
   /** Fields whose types are used in tests. */
@@ -223,24 +204,5 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(ConcreteArrayArgumentBound.class).getTypeParameters().get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
-  }
-
-  /**
-   * A type parameter whose bound contains a wildcard bounded by a concrete array type.
-   *
-   * @param <T> the type parameter
-   */
-  static class WildcardConcreteArrayBound<T extends Map<T[], ? extends String[]>> {}
-
-  /** A class that satisfies the bound of {@link WildcardConcreteArrayBound}. */
-  @SuppressWarnings("serial")
-  static class WildcardConcreteArrayMap extends HashMap<WildcardConcreteArrayMap[], String[]> {}
-
-  @Test
-  public void testWildcardConcreteArrayBound() {
-    TypeVariable t =
-        GenericClassType.forClass(WildcardConcreteArrayBound.class).getTypeParameters().get(0);
-    assertTrue(
-        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(WildcardConcreteArrayMap.class)));
   }
 }

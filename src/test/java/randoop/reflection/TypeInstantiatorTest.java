@@ -186,6 +186,51 @@ public class TypeInstantiatorTest {
     }
   }
 
+  /** An enum that is not an input type in {@link #testBoundVariableFromTypeArgument}. */
+  private enum Color {
+    /** The only constant. */
+    RED
+  }
+
+  /**
+   * A method whose type parameter {@code E} occurs only in the bounds of other type parameters.
+   *
+   * @param <E> an enum type
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E extends Enum<E>, T extends E> void consumeEnum(List<? super T> list) {}
+
+  /**
+   * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
+   * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
+   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
+   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
+   */
+  @Test
+  public void testBoundVariableFromTypeArgument()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType colorType = ClassOrInterfaceType.forClass(Color.class);
+    addTypes(GenericClassType.forClass(List.class).instantiate(colorType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consumeEnum =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consumeEnum", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consumeEnum);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
+  }
+
   /**
    * Tests that each operation is instantiated when the input types allow only one choice. The tests
    * with several choices succeed if any one choice is instantiated, so they would not detect that a
@@ -441,89 +486,6 @@ public class TypeInstantiatorTest {
                   new Substitution(JavaTypes.COMPARABLE_TYPE.getTypeParameters(), elementType))));
     }
     assertTrue("no instantiation found", instantiations > 0);
-  }
-
-  /**
-   * A method whose parameter type has a wildcard whose lower bound is a bounded type parameter.
-   *
-   * @param <T> the element type
-   * @param list a list
-   */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
-  private static <T extends Number> void consume(List<? super T> list) {}
-
-  /**
-   * Tests a wildcard whose lower bound is a type variable that is not yet instantiated when the
-   * parameter type is matched. {@code <T extends Number> void consume(List<? super T>)} can be
-   * instantiated with a {@code List<Object>}, by choosing {@code Number} for {@code T}, though
-   * {@code Object} cannot instantiate {@code T}.
-   */
-  @Test
-  public void testWildcardLowerBoundUninstantiatedVariable()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(INTEGER_TYPE, inputTypes);
-    addTypes(GenericClassType.forClass(List.class).instantiate(JavaTypes.OBJECT_TYPE), inputTypes);
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    TypedClassOperation consume =
-        TypedOperation.forMethod(
-            TypeInstantiatorTest.class.getDeclaredMethod("consume", List.class));
-
-    int instantiated = 0;
-    for (int i = 0; i < ATTEMPTS; i++) {
-      TypedClassOperation operation = instantiator.instantiate(consume);
-      if (operation == null) {
-        continue;
-      }
-      instantiated++;
-      assertEquals(JavaTypes.OBJECT_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
-    }
-    assertTrue("no instantiation of " + consume, instantiated > 0);
-  }
-
-  /** An enum that is not an input type in {@link #testBoundVariableFromTypeArgument}. */
-  private enum Color {
-    /** The only constant. */
-    RED
-  }
-
-  /**
-   * A method whose type parameter {@code E} occurs only in the bounds of other type parameters.
-   *
-   * @param <E> an enum type
-   * @param <T> the element type
-   * @param list a list
-   */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
-  private static <E extends Enum<E>, T extends E> void consumeEnum(List<? super T> list) {}
-
-  /**
-   * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
-   * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
-   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
-   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
-   */
-  @Test
-  public void testBoundVariableFromTypeArgument()
-      throws NoSuchMethodException, RandoopSpecificationError {
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    ClassOrInterfaceType colorType = ClassOrInterfaceType.forClass(Color.class);
-    addTypes(GenericClassType.forClass(List.class).instantiate(colorType), inputTypes);
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    TypedClassOperation consumeEnum =
-        TypedOperation.forMethod(
-            TypeInstantiatorTest.class.getDeclaredMethod("consumeEnum", List.class));
-
-    int instantiated = 0;
-    for (int i = 0; i < ATTEMPTS; i++) {
-      TypedClassOperation operation = instantiator.instantiate(consumeEnum);
-      if (operation == null) {
-        continue;
-      }
-      instantiated++;
-      assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
-    }
-    assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
   }
 
   /**

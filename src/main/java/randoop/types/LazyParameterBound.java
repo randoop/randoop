@@ -179,9 +179,9 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      // ReferenceType.forType converts an array class such as String[] to an ArrayType.  By
-      // contrast, ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
-      return TypeArgument.forType(ReferenceType.forType(type));
+      // This call converts an array class such as String[] to an ArrayType.  By contrast,
+      // ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
+      return TypeArgument.forType(type);
     }
 
     if (type instanceof GenericArrayType) {

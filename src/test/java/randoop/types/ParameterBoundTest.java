@@ -148,6 +148,20 @@ public class ParameterBoundTest {
     assertTrue(nullBound.isLowerBound(lazyListBound, new Substitution()));
   }
 
+  /** A {@link LazyReferenceBound} is a lower bound of itself, but not of another type variable. */
+  @Test
+  public void testLazyReferenceBoundIsLowerBoundOfItself() {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    TypeVariable selfComparableVariable =
+        GenericClassType.forClass(SelfComparable.class).getTypeParameters().get(0);
+    ParameterBound lazyListBound =
+        new LazyReferenceBound(listType.instantiate(arrayHolderVariable));
+    ParameterBound otherLazyListBound =
+        new LazyReferenceBound(listType.instantiate(selfComparableVariable));
+    assertTrue(lazyListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(otherLazyListBound.isLowerBound(lazyListBound, new Substitution()));
+  }
+
   /** The substitution is applied to the lower bound when the other bound is lazy. */
   @Test
   public void testSubstitutionAppliedToLowerBoundOfLazyBound() {

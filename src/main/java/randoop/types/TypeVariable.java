@@ -21,8 +21,8 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
-   * The pairs of type variables that {@link #isIdenticalTo(TypeVariable)} is comparing in the
-   * current thread, outermost first. Each pair is the receiver and the argument.
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of the receiver and the argument.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
@@ -315,11 +315,9 @@ public abstract class TypeVariable extends ParameterType {
    * {@link LazyParameterBound#isUpperBound(Type, Substitution)}, and each occurrence of it is
    * checked separately. So the result can be true even if no single type for that type variable
    * satisfies every occurrence. For example, for {@code <S extends Map<T, T>, T>}, {@code S} can be
-   * instantiated by a class that implements {@code Map<A, B>}. A lower bound of this variable that
-   * is an uninstantiated type variable does not restrict the given type at all, since determining
-   * whether some instantiation of that type variable is a subtype of the given type requires a
-   * search. A client that instantiates all the type variables should check the bounds again with
-   * all of them instantiated, as {@link randoop.reflection.TypeInstantiator} does.
+   * instantiated by a class that implements {@code Map<A, B>}. A client that instantiates all the
+   * type variables should check the bounds again with all of them instantiated, as {@link
+   * randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
@@ -372,15 +370,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution substitution) {
     if (getLowerTypeBound().isVariable()) {
-      // The lower bound is a type variable.  If the substitution does not instantiate it, then it
-      // stands for an unknown type, and `otherType` is within the lower bound if it is a supertype
-      // of some type that can instantiate the unknown type variable.  For example, for
-      // `<T extends Number> void consume(List<? super T>)`, Object is within the lower bound of
-      // the capture variable, because T can be Number.  Finding such a type is a search, so defer
-      // the check to the client, which checks the bounds again once it instantiates the unknown
-      // type variable.
-      if (unknownVariable(getLowerTypeBound(), substitution) == null
-          && !getLowerTypeBound().isLowerBound(otherType, substitution)) {
+      if (!variableBoundAllows(getLowerTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -389,16 +379,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      TypeVariable unknown = unknownVariable(getUpperTypeBound(), substitution);
-      if (unknown != null) {
-        // The unknown type variable can be `otherType` itself, one of its supertypes, or its lower
-        // bound; see EagerReferenceBound.isUpperBound(Type, Substitution) and canBeSupertypeOf.
-        if (!unknown.canBeSupertypeOf(otherType, substitution)) {
-          return false;
-        }
-      } else if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
-        // The substitution maps the type variable to a type that is not a variable, as for `V
-        // extends K` with K := Number, and otherType is not within that type.
+      if (!variableBoundAllows(getUpperTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -410,27 +391,42 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the type variable that the given bound of this variable is, if the substitution does
-   * not instantiate it. Otherwise, returns null; then the substituted bound is a type that can be
-   * compared with a candidate type.
+   * Returns true if the given type is within the given bound of this variable, where the bound is a
+   * type variable. If the substitution instantiates that type variable, the instantiated bound is
+   * compared with the given type. Otherwise, that type variable stands for an unknown type: for an
+   * upper bound, the given type is within it if that type variable can be a supertype of the given
+   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if the given type can
+   * instantiate that type variable.
    *
    * @param bound a bound of this variable that is a type variable
-   * @param substitution the substitution of a candidate type for this variable
-   * @return the uninstantiated type variable that {@code bound} is, or null if {@code substitution}
-   *     instantiates it
+   * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
+   *     the lower bound
+   * @param substitution the substitution of {@code otherType} for this variable
+   * @param otherType the possibly instantiating type, not a variable
+   * @return true if {@code otherType} is within {@code bound}
    */
-  private static @Nullable TypeVariable unknownVariable(
-      ParameterBound bound, Substitution substitution) {
+  private boolean variableBoundAllows(
+      ParameterBound bound,
+      boolean isUpperBound,
+      Substitution substitution,
+      ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
+    TypeVariable variable;
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
-      return (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
-      return substituted.getTypeParameters().get(0);
+      variable = substituted.getTypeParameters().get(0);
     } else {
-      return null;
+      // The substitution instantiates the type variable, so the bound is a known type.
+      return isUpperBound
+          ? substituted.isUpperBound(otherType, substitution)
+          : substituted.isLowerBound(otherType, substitution);
     }
+    return isUpperBound
+        ? variable.canBeSupertypeOf(otherType, substitution)
+        : variable.canBeInstantiatedBy(otherType, substitution);
   }
 
   /**
@@ -474,8 +470,7 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if this type variable and the given one are the same type variable with identical
    * bounds. Unlike {@link #equals(Object)}, which treats copies of a type variable as equal even if
    * their bounds differ, this compares the bounds, including the bounds of the type variables in
-   * them. This applies to capture variables too, whose bounds can refer to the capture variable
-   * itself; a comparison that recurs to the same pair of type variables is assumed to succeed.
+   * them.
    *
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
@@ -488,9 +483,9 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    // The bounds of a type variable can refer to the type variable itself, as for a capture
-    // variable, or to another type variable whose bounds refer back to it.  Assume that a
-    // comparison of the same pair of objects that is already in progress succeeds.
+    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
+    // deeply can reach this comparison again.  As for any recursive comparison, assume that the
+    // inner comparison succeeds.
     List<TypeVariable[]> inProgress = identityChecks.get();
     for (TypeVariable[] pair : inProgress) {
       if (pair[0] == this && pair[1] == other) {

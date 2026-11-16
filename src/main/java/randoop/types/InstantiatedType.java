@@ -385,6 +385,9 @@ public class InstantiatedType extends ParameterizedType {
 
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
+    if (substitution == null) {
+      return null;
+    }
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
@@ -392,8 +395,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // Bindings conflict if a type variable occurs twice, as in Map<T, T>, and the type
-          // arguments differ, as in Map<String, Integer>.
+          // The arguments can map a type variable to different types, as for Map<X, X> and
+          // Map<String, Integer>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
