@@ -1363,9 +1363,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Tests that, with {@code --dont-omit-replaced-methods}, Randoop calls a replaced method even
-   * though a default omit pattern matches it, either directly ({@code java.lang.String.hashCode()})
-   * or in a supertype ({@code java.lang.Object.hashCode()}).
+   * Tests that, with {@code --dont-omit-replaced-methods}, Randoop calls a replaced method ({@code
+   * java.lang.String.hashCode()}) even though a default omit pattern matches it.
    */
   @Test
   public void runDontOmitReplacedMethodsTest() throws IOException {
@@ -1384,8 +1383,7 @@ public class RandoopSystemTest {
             + " --replacement-file=resources/systemTest/string-hashcode-replacement.txt");
     RandoopOptions options = createRandoopOptions(testEnvironment);
     options.addTestClass("java.lang.String");
-    // Use the default omit patterns, which match java.lang.String.hashCode() and
-    // java.lang.Object.hashCode().
+    // Use the default omit patterns, which match java.lang.String.hashCode().
     options.setFlag("dont-omit-replaced-methods");
     options.setFlag("no-error-revealing-tests");
     options.setOption("generated_limit", "1000");

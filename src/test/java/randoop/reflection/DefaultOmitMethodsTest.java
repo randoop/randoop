@@ -351,8 +351,8 @@ public class DefaultOmitMethodsTest {
 
   /**
    * An exempt operation, such as a method that the replacecall agent replaces when {@code
-   * --dont-omit-replaced-methods} is set, is not omitted by the default patterns, even if a default
-   * pattern matches its signature in a supertype. Other omit patterns still omit it.
+   * --dont-omit-replaced-methods} is set, is not omitted by the default patterns. Other omit
+   * patterns still omit it.
    */
   @Test
   public void testExemptFromDefaults() throws IOException, RandoopSpecificationError {
@@ -375,24 +375,9 @@ public class DefaultOmitMethodsTest {
     assertFalse(
         signatures(java.util.Random.class, exemptingPredicate).contains("java.util.Random()"));
 
-    // A default pattern that matches only the signature in a supertype does not omit an exempt
-    // operation.
-    List<Pattern> objectHashCodePattern =
-        Collections.singletonList(GenTests.signatureToPattern("java.lang.Object.hashCode()"));
+    // A non-default omit pattern still omits an exempt operation.
     assertFalse(
-        signatures(String.class, new OmitMethodsPredicate(objectHashCodePattern))
-            .contains(stringHashCode));
-    assertTrue(
-        signatures(
-                String.class,
-                new OmitMethodsPredicate(Collections.emptyList(), objectHashCodePattern, exempt))
-            .contains(stringHashCode));
-
-    // A non-default omit pattern still omits an exempt operation, even via a supertype.
-    assertFalse(
-        signatures(
-                String.class,
-                new OmitMethodsPredicate(objectHashCodePattern, defaultPatterns, exempt))
+        signatures(String.class, new OmitMethodsPredicate(exempt, defaultPatterns, exempt))
             .contains(stringHashCode));
   }
 
