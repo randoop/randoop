@@ -11,7 +11,7 @@ import randoop.util.Log;
 public class ObjectCache {
 
   /** Records the values seen so far, and determines whether a value is new. */
-  private StateMatcher sm;
+  private final StateMatcher sm;
 
   /**
    * Creates a new ObjectCache.

@@ -20,7 +20,7 @@ import randoop.sequence.SequenceExceptionError;
 public class ValidityCheckingGenerator extends TestCheckGenerator {
 
   /** If true, report flaky tests by throwing an exception. */
-  private boolean throwExceptionOnFlakyTest;
+  private final boolean throwExceptionOnFlakyTest;
 
   /**
    * Creates an object that looks for invalid exceptions.
