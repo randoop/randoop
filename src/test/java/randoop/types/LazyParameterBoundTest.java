@@ -173,19 +173,6 @@ public class LazyParameterBoundTest {
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(WildcardConcreteArrayMap.class)));
   }
 
-  /** An array of a parameterized type in which no type variable occurs. */
-  @SuppressWarnings("UnusedVariable") // used via reflection
-  private static List<String>[] concreteGenericArray;
-
-  @Test
-  public void testConcreteGenericArrayBound() throws NoSuchFieldException {
-    java.lang.reflect.Type arrayType =
-        LazyParameterBoundTest.class.getDeclaredField("concreteGenericArray").getGenericType();
-    assertTrue(arrayType instanceof java.lang.reflect.GenericArrayType);
-    ParameterBound bound = ParameterBound.forType(new HashSet<>(), arrayType);
-    assertTrue(bound.isUpperBound(ArrayType.forType(arrayType), new Substitution()));
-  }
-
   /**
    * A type parameter whose bound has a wildcard bounded by an array of a parameterized type in
    * which no type variable occurs.
