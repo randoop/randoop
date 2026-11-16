@@ -12,9 +12,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves a bound unresolved if it maps the element type of an array in the bound,
- * such as {@code T[]} or {@code List<T[]>}, to the null type, because there is no array of the null
- * type.
+ * A substitution leaves the bound unresolved if applying it would create an array of the null type,
+ * as for a bound such as {@code T[]} or {@code List<T[]>} when the substitution maps {@code T} to
+ * the null type, because there is no such array.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -27,19 +27,21 @@ class LazyReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ReferenceBound substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
     // There is no array of the null type, so leave the bound unresolved.
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       return this;
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    if (isUnchangedBy(referenceType)) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
@@ -59,7 +61,7 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
@@ -91,7 +93,7 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (hasArrayOfNullType(getBoundType(), substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }

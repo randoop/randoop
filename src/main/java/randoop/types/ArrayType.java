@@ -113,18 +113,15 @@ public final class ArrayType extends ReferenceType {
     return Objects.hash(componentType, runtimeClass);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ArrayType substitute(Substitution substitution) {
     Type type = componentType.substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    boolean unchanged =
-        (componentType.isReferenceType() && type.isReferenceType())
-            ? TypeVariable.areIdentical((ReferenceType) type, (ReferenceType) componentType)
-            : type.equals(componentType);
-    if (unchanged) {
+    if (type != componentType) {
+      return ofComponentType(type);
+    } else {
       return this;
     }
-    return ofComponentType(type);
   }
 
   /**

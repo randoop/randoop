@@ -218,13 +218,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
-    if (type != null && substitution.mapsToItself(this)) {
-      // The substitution maps this capture variable to itself.  Keep this copy and its bounds,
-      // rather than the substitution's copy.  If the substitution maps this capture variable to a
-      // copy of it with other bounds, that copy is the result.
-      type = null;
-    }
+    ReferenceType type = getSubstitutedType(substitution);
     // if this variable replaced by non-variable, return non-variable
     if (type != null && !type.isVariable()) {
       return type;
@@ -257,16 +251,15 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   private ReferenceType substituteIntoBounds(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so a substitution can change
     // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.  An
-    // equals test would discard that changed copy; comparing with areIdentical detects the change.
-    boolean boundsChanged =
-        !areIdentical(lowerBound, getLowerTypeBound())
-            || !areIdentical(upperBound, getUpperTypeBound());
+    // equals test would discard that changed copy; comparing with == detects the change.
+    boolean boundsChanged = lowerBound != getLowerTypeBound() || upperBound != getUpperTypeBound();
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds

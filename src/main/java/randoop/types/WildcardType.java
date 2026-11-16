@@ -139,8 +139,8 @@ class WildcardType extends ParameterType {
     return getLowerTypeBound();
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
-  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   public WildcardType substitute(Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
     // A bound's substitute method returns the same object if the substitution does not change the

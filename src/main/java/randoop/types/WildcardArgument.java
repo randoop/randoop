@@ -80,8 +80,8 @@ public class WildcardArgument extends TypeArgument {
     return argumentType.toString();
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
-  @SuppressWarnings("ReferenceEquality") // substitute returns the same object if it changes nothing
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
     // WildcardType.substitute returns the same object if the substitution does not change it.  An
