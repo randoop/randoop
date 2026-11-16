@@ -74,6 +74,17 @@ public class TypeVariableTest {
   }
 
   /**
+   * Returns the type parameter at the given index of the given generic class.
+   *
+   * @param c a generic class
+   * @param index the index of the type parameter
+   * @return the type parameter of {@code c} at {@code index}
+   */
+  private static TypeVariable typeParameter(Class<?> c, int index) {
+    return GenericClassType.forClass(c).getTypeParameters().get(index);
+  }
+
+  /**
    * Mutually recursive type parameters that {@code String} does not satisfy.
    *
    * @param <S> a type parameter whose bound refers to {@code T}
@@ -138,17 +149,6 @@ public class TypeVariableTest {
 
   /** A concrete instantiation of {@link AbstractAssert}. */
   static class ConcreteAssert extends AbstractAssert<ConcreteAssert, String> {}
-
-  /**
-   * Returns a type parameter of the given generic class.
-   *
-   * @param c a generic class
-   * @param index the index of the type parameter
-   * @return the type parameter of {@code c} at {@code index}
-   */
-  private static TypeVariable typeParameter(Class<?> c, int index) {
-    return GenericClassType.forClass(c).getTypeParameters().get(index);
-  }
 
   /** Fields whose types are used in tests. */
   @SuppressWarnings("UnusedVariable") // the fields are read reflectively
@@ -614,24 +614,6 @@ public class TypeVariableTest {
     class Inner<T extends E> {}
   }
 
-  /**
-   * A type parameter whose lazy bound has a sibling in a nested type argument, before the type
-   * parameter.
-   *
-   * @param <S> a type parameter
-   * @param <T> a type parameter bounded by {@code Map<List<S>, T>}
-   */
-  static class NestedSiblingFirst<S, T extends Map<List<S>, T>> {}
-
-  /**
-   * A type parameter whose lazy bound has a sibling in a nested type argument, after the type
-   * parameter.
-   *
-   * @param <S> a type parameter
-   * @param <T> a type parameter bounded by {@code Map<T, List<S>>}
-   */
-  static class NestedSiblingLast<S, T extends Map<T, List<S>>> {}
-
   @Test
   public void testSubstituteCopyForOriginal() {
     TypeVariable e = typeParameter(Outer.class, 0);
@@ -682,6 +664,22 @@ public class TypeVariableTest {
     assertTrue(substitution.mapsToItself(t2));
   }
 
+  /**
+   * A class whose type parameter T has a bound with a sibling in a nested type argument, before T.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<List<S>, T>}
+   */
+  static class NestedSiblingFirst<S, T extends Map<List<S>, T>> {}
+
+  /**
+   * A class whose type parameter T has a bound with a sibling in a nested type argument, after T.
+   *
+   * @param <S> a type parameter
+   * @param <T> a type parameter bounded by {@code Map<T, List<S>>}
+   */
+  static class NestedSiblingLast<S, T extends Map<T, List<S>>> {}
+
   @Test
   public void testLazyTypeParametersOfNestedSibling() {
     for (Class<?> c : Arrays.asList(NestedSiblingFirst.class, NestedSiblingLast.class)) {
@@ -715,7 +713,8 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound contains the type parameter, but not as the last type argument.
+   * A class whose type parameter's bound contains the type parameter, but not as the last type
+   * argument.
    *
    * @param <T> the type parameter
    */
@@ -731,33 +730,6 @@ public class TypeVariableTest {
   /** A field whose type has a wildcard argument for a type parameter with a recursive bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   SelfFirstArgumentBound<?> selfFirstArgumentWildcardField;
-
-  @Test
-  public void testSubstituteVariableIntoFirstArgument() {
-    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
-    TypeVariable v = typeParameter(Unbounded.class, 0);
-    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
-    assertTrue(
-        "bound " + bound + " should be lazy since it contains a type variable",
-        bound instanceof LazyReferenceBound);
-    assertEquals(
-        GenericClassType.forClass(Map.class).instantiate(v, JavaTypes.STRING_TYPE),
-        ((ReferenceBound) bound).getBoundType());
-  }
-
-  @Test
-  public void testSubstituteConcreteTypeIntoFirstArgument() {
-    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
-    ParameterBound bound =
-        t.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE));
-    assertFalse(
-        "bound " + bound + " should be eager since it contains no type variable",
-        bound instanceof LazyReferenceBound);
-    assertEquals(
-        GenericClassType.forClass(Map.class)
-            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE),
-        ((ReferenceBound) bound).getBoundType());
-  }
 
   @Test
   public void testCaptureOfMethodTypeParameter()
@@ -937,15 +909,27 @@ public class TypeVariableTest {
   }
 
   /**
+   * A class whose type parameter's bound is the type parameter's own interface.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfComparable<T extends Comparable<T>> {}
+
+  /**
    * A generic class that is comparable to itself.
    *
    * @param <U> the type parameter
    */
-  abstract static class Version<U> implements Comparable<Version<U>> {}
+  static class Version<U> implements Comparable<Version<U>> {
+    @Override
+    public int compareTo(Version<U> other) {
+      return 0;
+    }
+  }
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SelfComparableBound<?> selfComparableField;
+  SelfComparable<?> selfComparableField;
 
   @Test
   public void testInstantiateSelfBoundWithGenericType() {
@@ -953,7 +937,7 @@ public class TypeVariableTest {
     // Version<v> is within the bound Comparable<Version<v>>, which contains a type variable.
     InstantiatedType versionOfV = GenericClassType.forClass(Version.class).instantiate(v);
     InstantiatedType instantiated =
-        GenericClassType.forClass(SelfComparableBound.class).instantiate(versionOfV);
+        GenericClassType.forClass(SelfComparable.class).instantiate(versionOfV);
     assertEquals(Collections.singletonList(v), instantiated.getTypeParameters());
   }
 
@@ -991,6 +975,40 @@ public class TypeVariableTest {
         captureT.substitute(new Substitution(captureS, JavaTypes.STRING_TYPE));
     assertEquals(Collections.singletonList(substituted), substituted.getTypeParameters());
   }
+
+  @Test
+  public void testSubstituteVariableIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    TypeVariable v = typeParameter(Unbounded.class, 0);
+    ParameterBound bound = t.getUpperTypeBound().substitute(new Substitution(t, v));
+    assertTrue(
+        "bound " + bound + " should be lazy since it contains a type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(v, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  @Test
+  public void testSubstituteConcreteTypeIntoFirstArgument() {
+    TypeVariable t = typeParameter(SelfFirstArgumentBound.class, 0);
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertFalse(
+        "bound " + bound + " should be eager since it contains no type variable",
+        bound instanceof LazyReferenceBound);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE),
+        ((ReferenceBound) bound).getBoundType());
+  }
+
+  /**
+   * A class whose type parameter's bound contains the type parameter nested in a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   @Test
   public void testSubstituteVariableIntoNestedArgument() {
@@ -1033,13 +1051,6 @@ public class TypeVariableTest {
         ((ReferenceBound) bound).getBoundType());
     assertEquals(Collections.singletonList(v), bound.getTypeParameters());
   }
-
-  /**
-   * A class whose type parameter's bound contains the type parameter nested in a type argument.
-   *
-   * @param <T> the type parameter
-   */
-  static class SelfNestedArgumentBound<T extends Map<List<T>, String>> {}
 
   @Test
   public void testCaptureConversionOfFirstArgumentBound() throws NoSuchFieldException {
@@ -1086,6 +1097,113 @@ public class TypeVariableTest {
     assertTrue(captureT.isSubtypeOfOrEqualTo(captureS));
     // The capture variable of S need not be a subtype of String.
     assertFalse(captureT.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSubtypeOfMemberOfIntersectionBound() {
+    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    // The bound of T is Number & Runnable.
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A class whose type parameter is bounded by a sibling that is bounded by {@code Integer}.
+   *
+   * @param <S> a type parameter bounded by {@code Integer}
+   * @param <T> a type parameter bounded by {@code S}
+   */
+  static class IntegerSiblingBound<S extends Integer, T extends S> {}
+
+  @Test
+  public void testSubtypeOfBoundOfSibling() {
+    TypeVariable t = typeParameter(IntegerSiblingBound.class, 1);
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSubtypeOfSelfReferentialBound() {
+    TypeVariable t = typeParameter(SelfComparable.class, 0);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    // The bound of T is Comparable<T>.
+    assertTrue(t.isSubtypeOfOrEqualTo(comparable.instantiate(t)));
+    assertFalse(t.isSubtypeOfOrEqualTo(comparable.instantiate(JavaTypes.STRING_TYPE)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  /**
+   * A class whose type parameter is bounded like that of {@link Enum}.
+   *
+   * @param <E> a type parameter bounded by {@code Enum<E>}
+   */
+  static class EnumBound<E extends Enum<E>> {}
+
+  @Test
+  public void testSubtypeOfSupertypeOfEnumBound() {
+    TypeVariable e = typeParameter(EnumBound.class, 0);
+    // The bound of E is Enum<E>, which implements Serializable.
+    ReferenceType enumOfE =
+        ((LazyParameterBound) e.getUpperTypeBound()).toReferenceBound().getBoundType();
+    assertTrue(e.isSubtypeOfOrEqualTo(enumOfE));
+    assertTrue(e.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(java.io.Serializable.class)));
+    assertFalse(
+        e.isSubtypeOfOrEqualTo(
+            GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A class whose type parameters have bounds that refer to each other.
+   *
+   * @param <T> a type parameter bounded by {@code Comparable<U>}
+   * @param <U> a type parameter bounded by {@code Comparable<T>}
+   */
+  static class MutuallyRecursiveBounds<T extends Comparable<U>, U extends Comparable<T>> {}
+
+  @Test
+  public void testSubtypeOfBoundThatMentionsSibling() {
+    TypeVariable t = typeParameter(MutuallyRecursiveBounds.class, 0);
+    TypeVariable u = typeParameter(MutuallyRecursiveBounds.class, 1);
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    // The bound of T is Comparable<U>.
+    assertTrue(t.isSubtypeOfOrEqualTo(comparable.instantiate(u)));
+    assertFalse(t.isSubtypeOfOrEqualTo(comparable.instantiate(t)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
+  }
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  interface RunnableLeft<X> extends Runnable {}
+
+  /**
+   * A generic interface that extends {@code Runnable}.
+   *
+   * @param <X> the type parameter
+   */
+  interface RunnableRight<X> extends Runnable {}
+
+  /**
+   * A class whose type parameter has an intersection bound whose members refer to the type
+   * parameter.
+   *
+   * @param <T> a type parameter bounded by {@code RunnableLeft<T> & RunnableRight<T>}
+   */
+  static class SelfReferentialIntersectionBound<T extends RunnableLeft<T> & RunnableRight<T>> {}
+
+  @Test
+  public void testSubtypeOfMemberOfSelfReferentialIntersectionBound() {
+    TypeVariable t = typeParameter(SelfReferentialIntersectionBound.class, 0);
+    assertTrue(
+        t.isSubtypeOfOrEqualTo(GenericClassType.forClass(RunnableLeft.class).instantiate(t)));
+    assertTrue(
+        t.isSubtypeOfOrEqualTo(GenericClassType.forClass(RunnableRight.class).instantiate(t)));
+    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
+    assertFalse(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
   }
 
   /** A class that is a subtype of both {@code Number} and {@code Runnable}. */
@@ -1305,5 +1423,74 @@ public class TypeVariableTest {
     // Integer <: Number <: the capture variable for the first argument.
     TypeVariable second = typeArgument(capturedFieldType("superNumberField"), 1);
     assertTrue(second.canBeInstantiatedBy(integer));
+  }
+
+  /**
+   * A type parameter bounded by a sibling with a self-referential bound.
+   *
+   * @param <K> a type parameter with a self-referential bound
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class BoundedBySelfComparable<K extends Comparable<K>, V extends K> {}
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableBase implements Comparable<ComparableBase> {}
+
+  /**
+   * A subclass of {@link ComparableBase}. It is comparable to {@link ComparableBase}, not to
+   * itself.
+   */
+  abstract static class ComparableSub extends ComparableBase {}
+
+  /**
+   * A bound that is a type variable admits a type if a strict supertype of the type can instantiate
+   * the type variable.
+   */
+  @Test
+  public void testVariableBoundIsSupertype() {
+    TypeVariable k = typeParameter(BoundedBySelfComparable.class, 0);
+    TypeVariable v = typeParameter(BoundedBySelfComparable.class, 1);
+    ReferenceType sub = ClassOrInterfaceType.forClass(ComparableSub.class);
+    // K cannot be ComparableSub, but it can be ComparableBase, a supertype of ComparableSub.
+    assertFalse(k.canBeInstantiatedBy(sub));
+    assertTrue(v.canBeInstantiatedBy(sub));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(sub, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(sub, new Substitution()));
+    // No supertype of ComparableToOther is comparable to itself.
+    ReferenceType other = ClassOrInterfaceType.forClass(ComparableToOther.class);
+    assertFalse(v.canBeInstantiatedBy(other));
+    assertFalse(new EagerReferenceBound(k).isUpperBound(other, new Substitution()));
+    assertFalse(new LazyReferenceBound(k).isUpperBound(other, new Substitution()));
+  }
+
+  /**
+   * A generic class that is comparable to itself.
+   *
+   * @param <X> a type parameter
+   */
+  abstract static class GenericComparableBase<X> implements Comparable<GenericComparableBase<X>> {}
+
+  /**
+   * A subclass of {@link GenericComparableBase}, which is not comparable to itself.
+   *
+   * @param <X> a type parameter
+   */
+  abstract static class GenericComparableSub<X> extends GenericComparableBase<X> {}
+
+  /**
+   * A strict supertype that mentions the type variables of a generic type can instantiate a type
+   * variable that is a bound.
+   */
+  @Test
+  public void testVariableBoundIsGenericSupertype() {
+    TypeVariable k = typeParameter(BoundedBySelfComparable.class, 0);
+    TypeVariable v = typeParameter(BoundedBySelfComparable.class, 1);
+    TypeVariable x = typeParameter(Unbounded.class, 0);
+    // K can be GenericComparableBase<X>, a supertype of GenericComparableSub<X>.
+    InstantiatedType subOfX = GenericClassType.forClass(GenericComparableSub.class).instantiate(x);
+    assertFalse(k.canBeInstantiatedBy(subOfX));
+    assertTrue(v.canBeInstantiatedBy(subOfX));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
   }
 }

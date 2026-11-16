@@ -114,42 +114,6 @@ public abstract class ReferenceBound extends ParameterBound {
     return false;
   }
 
-  /**
-   * Returns true if applying the given substitution to the given type would create an array of the
-   * null type, which does not exist. That happens if the substitution maps the component type of an
-   * array type to the null type, as in {@code T[]} or {@code List<T[]>} where the substitution maps
-   * {@code T} to the null type. The bounds of wildcards are not examined, because a bound remains
-   * unresolved when the substitution would create such an array in it.
-   *
-   * @param type a type
-   * @param substitution a substitution to apply to {@code type}
-   * @return true if applying {@code substitution} to {@code type} would create an array of the null
-   *     type
-   */
-  /*package*/ static boolean createsNullTypeArray(Type type, Substitution substitution) {
-    if (type.isArray()) {
-      Type componentType = ((ArrayType) type).getComponentType();
-      if (componentType.isVariable()
-          && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) componentType))) {
-        return true;
-      }
-      return createsNullTypeArray(componentType, substitution);
-    }
-    if (type instanceof ClassOrInterfaceType) {
-      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
-      for (TypeArgument argument : classType.getTypeArguments()) {
-        if (argument instanceof ReferenceArgument
-            && createsNullTypeArray(
-                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
-          return true;
-        }
-      }
-      return classType.isMemberClass()
-          && createsNullTypeArray(classType.enclosingType, substitution);
-    }
-    return false;
-  }
-
   /*package*/
   @Override
   public boolean hasCaptureVariable() {
