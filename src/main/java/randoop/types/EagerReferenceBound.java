@@ -13,7 +13,7 @@ class EagerReferenceBound extends ReferenceBound {
    *
    * @param boundType the reference boundType
    */
-  EagerReferenceBound(ReferenceType boundType) {
+  /*package*/ EagerReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
@@ -38,7 +38,7 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
+      return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     if (argType.isParameterized()) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
@@ -53,17 +53,6 @@ class EagerReferenceBound extends ReferenceBound {
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
-    }
-    if (argType instanceof CaptureTypeVariable) {
-      WildcardArgument wildcard = ((CaptureTypeVariable) argType).getWildcard();
-      if (wildcard.hasUpperBound()) {
-        return false;
-      }
-      ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof ReferenceBound) {
-        Type argLowerBoundType = ((ReferenceBound) argLowerBound).getBoundType();
-        return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
-      }
     }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
@@ -85,6 +74,8 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      // The substitution does not map the variable, so the variable can still be chosen.  argType
+      // is within this bound if it is within the variable's upper bound, which the variable can be.
       TypeVariable boundVariable = (TypeVariable) thisBoundType;
       // The bound of `boundVariable` can mention `boundVariable` itself, as in `<T extends
       // Comparable<? super T>>`.  Check that bound with `argType` as the instantiation of
