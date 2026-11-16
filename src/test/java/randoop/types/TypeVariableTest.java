@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.*;
@@ -79,6 +80,189 @@ public class TypeVariableTest {
    */
   private static TypeVariable typeParameter(Class<?> c, int index) {
     return GenericClassType.forClass(c).getTypeParameters().get(index);
+  }
+
+  /** A class that is comparable to a different class. */
+  abstract static class ComparableToOther implements Comparable<String> {}
+
+  /**
+   * A type parameter with a self-referential bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfComparableBound<T extends Comparable<T>> {}
+
+  /**
+   * A type parameter {@code Y} bounded by a list of a sibling.
+   *
+   * @param <X> the element type
+   * @param <Y> a type parameter bounded by {@code List<X>}
+   */
+  static class ListBound<X, Y extends List<X>> {}
+
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard type whose type parameter has a self-referential bound. */
+    SelfComparableBound<?> selfComparableWildcard;
+  }
+
+  /**
+   * Returns the type of a field of {@link FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static ReferenceType fieldType(String name) {
+    try {
+      return (ReferenceType) Type.forType(FieldTypes.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  /**
+   * Returns the capture variable for the single wildcard argument of the type of a field of {@link
+   * FieldTypes}.
+   *
+   * @param name the name of the field
+   * @return the capture variable for the wildcard argument of the field's type
+   */
+  private static TypeVariable captureVariable(String name) {
+    InstantiatedType captured = ((InstantiatedType) fieldType(name)).applyCaptureConversion();
+    return (TypeVariable)
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+  }
+
+  @Test
+  public void testCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
+  }
+
+  /**
+   * A class with a field whose type has a wildcard with a type parameter as its lower bound.
+   *
+   * @param <U> a type parameter with no bound
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SuperWildcardField<U> {
+    /** A wildcard type whose lower bound is a type parameter with no bound. */
+    Comparable<? super U> superU;
+  }
+
+  @Test
+  public void testSubstitutedCaptureVariableCopy() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType)
+                Type.forType(SuperWildcardField.class.getDeclaredField("superU").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // Substitution changes the lower bound of the capture of `? super U`, and its wildcard.
+    ReferenceType copy =
+        capture.substitute(
+            new Substitution(typeParameter(SuperWildcardField.class, 0), JavaTypes.STRING_TYPE));
+    assertTrue(copy instanceof CaptureTypeVariable);
+    assertEquals(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE), ((TypeVariable) copy).getLowerTypeBound());
+    assertEquals(capture, copy);
+    assertEquals(capture.hashCode(), copy.hashCode());
+  }
+
+  @Test
+  public void testSubstitutionOfCaptureVariableCopy() {
+    TypeVariable capture = captureVariable("selfComparableWildcard");
+    TypeVariable copy =
+        capture.createCopyWithBounds(
+            capture.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution substitution = new Substitution(capture, JavaTypes.STRING_TYPE);
+    // A substitution for a capture variable applies to a copy of it with different bounds.
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(copy));
+    assertEquals(JavaTypes.STRING_TYPE, copy.substitute(substitution));
+  }
+
+  @Test
+  public void testSubstitutionOfTypeParameterCopy() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    // Substituting into the bound of Y creates a copy of Y whose bound is List<String>.
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    assertEquals(y, copy);
+    assertEquals(y.hashCode(), copy.hashCode());
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    // A substitution for a type parameter applies to a copy of it with different bounds.
+    Substitution substitution = new Substitution(y, listOfString);
+    assertEquals(listOfString, substitution.get(copy));
+    assertEquals(listOfString, copy.substitute(substitution));
+  }
+
+  /** Bounds whose types are copies of a type variable are equal and have equal hash codes. */
+  @Test
+  public void testBoundsOfTypeVariableCopiesAreEqual() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    ParameterBound bound = new EagerReferenceBound(y);
+    ParameterBound copyBound = new LazyReferenceBound(copy);
+    assertEquals(bound, copyBound);
+    assertEquals(bound.hashCode(), copyBound.hashCode());
+  }
+
+  @Test
+  public void testCopyWithResolvedBound() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(t, t));
+    assertEquals(t, copy);
+    assertTrue(copy.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertFalse(copy.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    // The copy's bound refers to the copy itself, not to an unknown.
+    assertFalse(copy.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
+  }
+
+  @Test
+  public void testIdentitySubstitutionKeepsCopy() {
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(listOfString, ((ReferenceBound) copy.getUpperTypeBound()).getBoundType());
+    // A copy is the same type variable as the original.
+    assertEquals(y, copy);
+    assertEquals(y.hashCode(), copy.hashCode());
+    // Mapping the type variable to itself keeps the copy's bound.
+    TypeVariable result = (TypeVariable) copy.substitute(new Substitution(y, y));
+    assertEquals(listOfString, ((ReferenceBound) result.getUpperTypeBound()).getBoundType());
+  }
+
+  /**
+   * A class with a generic inner class whose type parameter is bounded by the outer class's.
+   *
+   * @param <E> the outer class's type parameter
+   */
+  static class Outer<E> {
+    /**
+     * A generic inner class.
+     *
+     * @param <T> a type parameter bounded by {@code E}
+     */
+    class Inner<T extends E> {}
+  }
+
+  @Test
+  public void testSubstituteCopyForOriginal() {
+    TypeVariable e = typeParameter(Outer.class, 0);
+    TypeVariable t = typeParameter(Outer.Inner.class, 0);
+    TypeVariable copy = (TypeVariable) t.substitute(new Substitution(e, JavaTypes.STRING_TYPE));
+    // Substituting a copy with other bounds yields that copy.
+    TypeVariable result = (TypeVariable) t.substitute(new Substitution(t, copy));
+    assertEquals(copy.getUpperTypeBound(), result.getUpperTypeBound());
   }
 
   /**
@@ -550,5 +734,33 @@ public class TypeVariableTest {
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
+  }
+
+  /**
+   * Type parameters, two of which are bounded by a type that contains {@code V}, whose bound
+   * contains {@code K}.
+   *
+   * @param <K> the key type
+   * @param <V> a type parameter whose bound refers to {@code K} and to itself
+   * @param <W> a type parameter bounded by {@code V}
+   * @param <Y> a type parameter bounded by a list of {@code V}
+   */
+  static class BoundsContainingKeyedMap<
+      K, V extends Map<K, List<V>>, W extends V, Y extends List<V>> {}
+
+  /**
+   * The type parameters of a copy of a type variable, whose bound contains the original type
+   * variable, start with the copy.
+   */
+  @Test
+  public void testTypeParametersOfCopyStartWithCopy() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable copy =
+        (TypeVariable)
+            parameters
+                .get(1)
+                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertSame(copy, copy.getTypeParameters().get(0));
   }
 }

@@ -20,7 +20,8 @@ class EagerReferenceBound extends ReferenceBound {
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
+    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
