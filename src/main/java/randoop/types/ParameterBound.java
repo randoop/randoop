@@ -133,7 +133,7 @@ public abstract class ParameterBound {
    * @return the element type of {@code type}, or {@code type} itself if it is not a generic array
    *     type
    */
-  private static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
+  /*package*/ static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
     while (type instanceof java.lang.reflect.GenericArrayType) {
       type = ((java.lang.reflect.GenericArrayType) type).getGenericComponentType();
     }
@@ -148,7 +148,7 @@ public abstract class ParameterBound {
    * @param type a reflection type
    * @return true if {@code type} is a non-generic member class of a generic class
    */
-  private static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
+  /*package*/ static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
     return type instanceof java.lang.reflect.ParameterizedType
         && ((Class<?>) ((java.lang.reflect.ParameterizedType) type).getRawType())
                 .getTypeParameters()
