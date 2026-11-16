@@ -193,7 +193,7 @@ public final class ConstructorCall extends CallableOperation {
     sb.append(constructor.getName());
     sb.append('.');
     sb.append("<init>");
-    sb.append("(");
+    sb.append('(');
     Class<?>[] params = constructor.getParameterTypes();
     TypeArguments.appendTypeArgumentString(sb, params);
     sb.append(')');
