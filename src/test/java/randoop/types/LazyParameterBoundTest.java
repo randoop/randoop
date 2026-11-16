@@ -66,8 +66,7 @@ public class LazyParameterBoundTest {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
     ParameterBound bound = t.getUpperTypeBound();
     // The comparison rejects the null type, rather than failing an assertion.
-    assertFalse(
-        bound.isUpperBound(JavaTypes.NULL_TYPE, new Substitution(t, JavaTypes.NULL_TYPE)));
+    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, new Substitution(t, JavaTypes.NULL_TYPE)));
   }
 
   /** Fields whose types are used in tests. */

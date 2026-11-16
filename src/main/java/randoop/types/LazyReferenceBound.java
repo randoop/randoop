@@ -111,9 +111,9 @@ class LazyReferenceBound extends ReferenceBound {
     }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself, or its lower bound.  Its bounds are checked
-      // with the mappings of the substitution, because they can mention type variables that it
-      // instantiates.
+      // The unknown type variable can be argType itself, or its lower bound.  Its bounds are
+      // checked with the mappings of the substitution, because they can mention type variables
+      // that it instantiates.
       return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);

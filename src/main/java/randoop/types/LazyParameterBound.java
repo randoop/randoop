@@ -488,8 +488,7 @@ class LazyParameterBound extends ParameterBound {
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     ParameterBound converted = substituteWithUnknowns(substitution);
-    return converted instanceof ReferenceBound
-        && converted.hasLowerBound(lowerBound, substitution);
+    return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
   }
 
   @Override

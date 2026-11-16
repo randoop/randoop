@@ -251,9 +251,8 @@ public abstract class TypeVariable extends ParameterType {
    * instantiated by a class that implements {@code Map<A, B>}. A lower bound of this variable that
    * is an uninstantiated type variable does not restrict the given type at all, since determining
    * whether some instantiation of that type variable is a subtype of the given type requires a
-   * search. A client that instantiates all the
-   * type variables should check the bounds again with all of them instantiated, as {@link
-   * randoop.reflection.TypeInstantiator} does.
+   * search. A client that instantiates all the type variables should check the bounds again with
+   * all of them instantiated, as {@link randoop.reflection.TypeInstantiator} does.
    *
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
