@@ -47,6 +47,11 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
+      if (argType instanceof NonParameterizedType) {
+        // A member class that declares no type parameters, of a parameterized type, such as
+        // Outer<String>.Inner.  Its capture conversion is not an InstantiatedType.
+        return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, subst);
+      }
       InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
@@ -94,6 +99,11 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
+      }
+      if (thisBoundType instanceof NonParameterizedType) {
+        // A member class that declares no type parameters, of a parameterized type, such as
+        // Outer<String>.Inner.  Its capture conversion is not an InstantiatedType.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
       }
       InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
       InstantiatedType argSuperType =

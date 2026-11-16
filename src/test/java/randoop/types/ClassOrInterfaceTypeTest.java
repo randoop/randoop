@@ -136,6 +136,45 @@ public class ClassOrInterfaceTypeTest {
   static class Outer<T> {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
+
+    /** An inner class whose enclosing type is generic and that has an inner class. */
+    class Middle {
+      /** An inner class whose enclosing type is non-generic, but is a member of a generic class. */
+      class Innermost {}
+    }
+  }
+
+  /** Fields whose types are member classes of member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class NestedMemberFields {
+    /** A member class of a member class of {@code Outer<String>}. */
+    Outer<String>.Middle.Innermost stringInnermost;
+
+    /** A member class of a member class of {@code Outer<Integer>}. */
+    Outer<Integer>.Middle.Innermost integerInnermost;
+  }
+
+  @Test
+  public void testTwoNonGenericMemberLevels() throws NoSuchFieldException {
+    ClassOrInterfaceType stringInnermost =
+        ClassOrInterfaceType.forType(
+            NestedMemberFields.class.getDeclaredField("stringInnermost").getGenericType());
+    ClassOrInterfaceType integerInnermost =
+        ClassOrInterfaceType.forType(
+            NestedMemberFields.class.getDeclaredField("integerInnermost").getGenericType());
+    // The type argument String of the outermost type is preserved.
+    assertFalse(stringInnermost.isGenericForm());
+    assertFalse(stringInnermost.isGeneric());
+    assertTrue(stringInnermost.isParameterized());
+    assertEquals(
+        JavaTypes.STRING_TYPE,
+        ((ReferenceArgument) stringInnermost.enclosingType.enclosingType.getTypeArguments().get(0))
+            .getReferenceType());
+    assertFalse(stringInnermost.equals(integerInnermost));
+    // The generic form is still the generic form.
+    ClassOrInterfaceType genericInnermost =
+        ClassOrInterfaceType.forClass(Outer.Middle.Innermost.class);
+    assertTrue(genericInnermost.isGenericForm());
   }
 
   /**

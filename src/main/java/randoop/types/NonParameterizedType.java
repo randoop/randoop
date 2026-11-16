@@ -95,7 +95,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType applyCaptureConversion() {
-    return (NonParameterizedType) applyCaptureConversion(this);
+    if (!isMemberClass()) {
+      return this;
+    }
+    // applyCaptureConversion(ClassOrInterfaceType) side-effects its argument, which must not be
+    // this type:  it can be shared, as by the cache of forClass or by substitute.
+    NonParameterizedType result = new NonParameterizedType(runtimeType);
+    return (NonParameterizedType) applyCaptureConversion(result);
   }
 
   @Override

@@ -322,11 +322,103 @@ public class ParameterBoundTest {
   @SuppressWarnings("unused")
   private static class NonGenericMemberClassBound<T extends GenericOuter<String>.NonGenericInner> {}
 
+  /** Fields whose types are non-generic member classes of generic classes. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  private static class NonGenericInnerFields {
+    /** A member class of {@code GenericOuter<String>}. */
+    GenericOuter<String>.NonGenericInner stringInner;
+
+    /** A member class of {@code GenericOuter<Integer>}. */
+    GenericOuter<Integer>.NonGenericInner integerInner;
+
+    /** An array of member classes of {@code GenericOuter<String>}. */
+    GenericOuter<String>.NonGenericInner[] stringInnerArray;
+
+    /** An array of member classes of {@code GenericOuter<Integer>}. */
+    GenericOuter<Integer>.NonGenericInner[] integerInnerArray;
+  }
+
+  /**
+   * Returns the type of the given field of {@link NonGenericInnerFields}.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static ReferenceType nonGenericInnerFieldType(String name) throws NoSuchFieldException {
+    return (ReferenceType)
+        Type.forType(NonGenericInnerFields.class.getDeclaredField(name).getGenericType());
+  }
+
   @Test
-  public void testNonGenericMemberClassBound() {
+  public void testNonGenericMemberClassBound() throws NoSuchFieldException {
     TypeVariable t =
         GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertTrue(t.canBeInstantiatedBy(nonGenericInnerFieldType("stringInner")));
+    assertFalse(t.canBeInstantiatedBy(nonGenericInnerFieldType("integerInner")));
+  }
+
+  /**
+   * A class whose type parameter is bounded by an array of a non-generic member class of a generic
+   * class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class NonGenericMemberClassArrayBound<
+      T extends GenericOuter<String>.NonGenericInner[]> {}
+
+  @Test
+  public void testNonGenericMemberClassArrayBound() throws NoSuchFieldException {
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(nonGenericInnerFieldType("stringInnerArray")));
+    assertFalse(t.canBeInstantiatedBy(nonGenericInnerFieldType("integerInnerArray")));
+  }
+
+  @Test
+  public void testLowerBoundOfNonGenericMemberClass() throws NoSuchFieldException {
+    ReferenceType stringInner = nonGenericInnerFieldType("stringInner");
+    Substitution empty = new Substitution();
+    // Outer<String>.Inner is a member class that declares no type parameters, so its capture
+    // conversion is not an InstantiatedType.
+    assertTrue(new EagerReferenceBound(stringInner).isLowerBound(stringInner, empty));
+    assertFalse(new EagerReferenceBound(JavaTypes.STRING_TYPE).isLowerBound(stringInner, empty));
+    assertFalse(
+        new EagerReferenceBound(nonGenericInnerFieldType("integerInner"))
+            .isLowerBound(stringInner, empty));
+  }
+
+  /**
+   * A class whose type parameter {@code T} has a bound with a lower-bounded wildcard, whose bound
+   * {@code V} has a bound {@code U}.
+   *
+   * @param <U> a type parameter
+   * @param <V> a type parameter bounded by {@code U}
+   * @param <T> a type parameter bounded by {@code Map<T, ? super V>}
+   */
+  @SuppressWarnings("unused")
+  private static class LowerWildcardOfBoundedVariable<
+      U, V extends U, T extends java.util.Map<T, ? super V>> {}
+
+  @Test
+  public void testSubstituteIntoLowerWildcardOfBoundedVariable() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(LowerWildcardOfBoundedVariable.class).getTypeParameters();
+    TypeVariable u = parameters.get(0);
+    TypeVariable t = parameters.get(2);
+    ParameterBound bound =
+        t.getUpperTypeBound().substitute(new Substitution(u, JavaTypes.STRING_TYPE));
+    InstantiatedType mapType = (InstantiatedType) ((ReferenceBound) bound).getBoundType();
+    WildcardArgument wildcard = (WildcardArgument) mapType.getTypeArguments().get(1);
+    // The substitution changes the bound of V from U to String, so the wildcard bound is no longer
+    // the lazy bound V.
+    assertTrue(wildcard.getTypeBound() instanceof ReferenceBound);
+    TypeVariable v = (TypeVariable) ((ReferenceBound) wildcard.getTypeBound()).getBoundType();
+    ParameterBound vBound = v.getUpperTypeBound();
+    assertTrue(vBound instanceof ReferenceBound);
+    assertTrue(((ReferenceBound) vBound).getBoundType().equals(JavaTypes.STRING_TYPE));
   }
 
   /**

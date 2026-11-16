@@ -502,7 +502,10 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns true if the given types are equal and the type variables in them are identical, as
-   * determined by {@link #isIdenticalTo(TypeVariable)}.
+   * determined by {@link #isIdenticalTo(TypeVariable)}. The types are compared structurally, so
+   * that the type variables at corresponding positions are compared: for {@code Pair<Y, Y>} and
+   * {@code Pair<Y, Y'>}, where {@code Y'} is a copy of {@code Y} with another bound, the result is
+   * false. The enclosing types of member classes are compared too.
    *
    * @param type1 a type
    * @param type2 a type
@@ -510,9 +513,75 @@ public abstract class TypeVariable extends ParameterType {
    */
   @SuppressWarnings("ReferenceEquality") // fast path for the same object
   static boolean areIdentical(ReferenceType type1, ReferenceType type2) {
-    return type1 == type2
-        || (type1.equals(type2)
-            && areIdentical(type1.getTypeParameters(), type2.getTypeParameters()));
+    if (type1 == type2) {
+      return true;
+    }
+    if (!type1.equals(type2)) {
+      return false;
+    }
+    if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
+      return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
+    }
+    if (type1.isArray() && type2.isArray()) {
+      Type componentType1 = ((ArrayType) type1).getComponentType();
+      Type componentType2 = ((ArrayType) type2).getComponentType();
+      // Equal component types that are not reference types, such as int, are identical.
+      return !(componentType1.isReferenceType() && componentType2.isReferenceType())
+          || areIdentical((ReferenceType) componentType1, (ReferenceType) componentType2);
+    }
+    if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
+      ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
+      if (classType1.isMemberClass() != classType2.isMemberClass()) {
+        return false;
+      }
+      if (classType1.isMemberClass()
+          && classType2.isMemberClass()
+          && !areIdentical(classType1.enclosingType, classType2.enclosingType)) {
+        return false;
+      }
+      List<TypeArgument> arguments1 = classType1.getTypeArguments();
+      List<TypeArgument> arguments2 = classType2.getTypeArguments();
+      if (arguments1.size() != arguments2.size()) {
+        return false;
+      }
+      for (int i = 0; i < arguments1.size(); i++) {
+        if (!areIdentical(arguments1.get(i), arguments2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (type1 instanceof WildcardType && type2 instanceof WildcardType) {
+      WildcardType wildcard1 = (WildcardType) type1;
+      WildcardType wildcard2 = (WildcardType) type2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getTypeBound(), wildcard2.getTypeBound());
+    }
+    return areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns true if the given type arguments are equal and the type variables in them are
+   * identical, as determined by {@link #areIdentical(ReferenceType, ReferenceType)}.
+   *
+   * @param argument1 a type argument
+   * @param argument2 a type argument
+   * @return true if the type arguments are equal and the type variables in them are identical
+   */
+  private static boolean areIdentical(TypeArgument argument1, TypeArgument argument2) {
+    if (argument1 instanceof ReferenceArgument && argument2 instanceof ReferenceArgument) {
+      return areIdentical(
+          ((ReferenceArgument) argument1).getReferenceType(),
+          ((ReferenceArgument) argument2).getReferenceType());
+    }
+    if (argument1 instanceof WildcardArgument && argument2 instanceof WildcardArgument) {
+      WildcardArgument wildcard1 = (WildcardArgument) argument1;
+      WildcardArgument wildcard2 = (WildcardArgument) argument2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getTypeBound(), wildcard2.getTypeBound());
+    }
+    return argument1.equals(argument2);
   }
 
   /**
@@ -539,6 +608,24 @@ public abstract class TypeVariable extends ParameterType {
     if (bound2 instanceof LazyParameterBound) {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
+    }
+    // Compare the types structurally rather than by their deduplicated type parameters.
+    if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
+      return areIdentical(
+          ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
+    }
+    if (bound1 instanceof IntersectionTypeBound && bound2 instanceof IntersectionTypeBound) {
+      List<ParameterBound> members1 = ((IntersectionTypeBound) bound1).getBounds();
+      List<ParameterBound> members2 = ((IntersectionTypeBound) bound2).getBounds();
+      if (members1.size() != members2.size()) {
+        return false;
+      }
+      for (int i = 0; i < members1.size(); i++) {
+        if (!areIdentical(members1.get(i), members2.get(i))) {
+          return false;
+        }
+      }
+      return true;
     }
     return bound1.equals(bound2)
         && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
