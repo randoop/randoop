@@ -36,6 +36,17 @@ public class RelatedBoundsCase {
   }
 
   /**
+   * Returns the size of the given map.
+   *
+   * @param <X> the key and value type
+   * @param map a map whose keys and values have the same type
+   * @return the size of {@code map}
+   */
+  public static <X> int sameKeyAndValue(java.util.Map<X, X> map) {
+    return map.size();
+  }
+
+  /**
    * Returns null. The parameter type is parameterized, so {@code M} is instantiated by matching an
    * input type, and the bound of {@code M} mentions {@code K} and {@code V}, which remain to be
    * instantiated.
