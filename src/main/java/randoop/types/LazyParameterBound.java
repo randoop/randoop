@@ -437,9 +437,12 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>Returns null if the result is still this bound, which happens if the substitution maps the
    * component type of an array type to the null type, for which there is no array type, so that no
-   * type satisfies this bound. Otherwise, the result is still this bound only for a kind of type
-   * that {@link #substitute(Substitution)} does not handle; then this method also fails an
-   * assertion. Comparing the unchanged bound would recurse forever.
+   * type satisfies this bound. It also happens if this bound is a non-generic member class of a
+   * generic class, as in {@code Outer<String>.Inner}, or an array of one, which {@link
+   * #substitute(Substitution)} cannot convert; no type satisfies such a bound. Otherwise, the
+   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
+   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
+   * recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null
@@ -449,6 +452,7 @@ class LazyParameterBound extends ParameterBound {
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
       assert mapsSomeTypeParameterToNullType(completeSubstitution)
+              || isNonGenericMemberClass(elementType(boundType))
           : "substitution " + completeSubstitution + " does not instantiate " + this;
       return null;
     }
