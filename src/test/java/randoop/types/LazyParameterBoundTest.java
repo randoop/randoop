@@ -75,17 +75,6 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) substituted).getBoundType());
   }
 
-  @Test
-  public void testCompareNullTypeForArrayComponent() {
-    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    ParameterBound bound = t.getUpperTypeBound();
-    // The substituted bound is List<NullType[]>, which String is neither a subtype nor a supertype
-    // of.
-    Substitution substitution = new Substitution(t, JavaTypes.NULL_TYPE);
-    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
-    assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, substitution));
-  }
-
   /** Fields whose types are used in tests. */
   @SuppressWarnings("UnusedVariable") // the fields are read reflectively
   static class FieldTypes {

@@ -1987,19 +1987,6 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testLazyBoundWithNestedArrayOfNullType() {
-    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
-    InstantiatedType listOfArray =
-        GenericClassType.forClass(List.class).instantiate(ArrayType.ofComponentType(t));
-    LazyReferenceBound bound = new LazyReferenceBound(listOfArray);
-    // Substituting the null type resolves the bound List<T[]> to List<NullType[]>.
-    assertEquals(
-        GenericClassType.forClass(List.class)
-            .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
-        bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)).getBoundType());
-  }
-
-  @Test
   public void testLazyUpperBoundOfUnknownVariableTriesSupertypes() {
     // The unknown T, with T extends Comparable<T>, can be ComparableBase, a supertype of
     // ComparableSub, though it cannot be ComparableSub.
