@@ -2,7 +2,6 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -55,14 +54,18 @@ public class LazyParameterBoundTest {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
     ParameterBound bound = t.getUpperTypeBound();
     assertTrue(bound instanceof LazyParameterBound);
-    // There is no array of the null type, so the substitution does not instantiate the bound.
-    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE));
+    assertEquals(
+        GenericClassType.forClass(List.class)
+            .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
+        ((ReferenceBound) substituted).getBoundType());
   }
 
   @Test
   public void testNullTypeCannotInstantiateArrayComponentBound() {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    // There is no array of the null type, so the null type does not satisfy the bound.
+    // The null type is not a subtype of the parameterized type List<NullType[]>, just as it is not
+    // a subtype of List<NullType> for a bound such as T extends List<T>.
     assertFalse(t.canBeInstantiatedBy(JavaTypes.NULL_TYPE));
   }
 
@@ -89,10 +92,10 @@ public class LazyParameterBoundTest {
     TypeVariable u = parameters.get(1);
     TypeVariable v = GenericClassType.forClass(OneParameter.class).getTypeParameters().get(0);
     ParameterBound bound = u.getUpperTypeBound().substitute(new Substitution(t, v));
-    // There is no array of the null type, so the array bound remains unresolved.
+    // Substituting the null type resolves the array bound, as substituting String does.
     ParameterBound nullBound = bound.substitute(new Substitution(v, JavaTypes.NULL_TYPE));
-    assertEquals(bound, nullBound);
-    // Substituting a type that can be an array component resolves the array bound.
+    assertEquals(
+        u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.NULL_TYPE)), nullBound);
     ParameterBound stringBound = bound.substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     assertEquals(
         u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE)), stringBound);
