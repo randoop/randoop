@@ -46,7 +46,7 @@ public final class JarReader {
    */
   public static List<String> getClassNamesInPackage(String jarName, String packageName)
       throws IOException {
-    ArrayList<String> classes = new ArrayList<>();
+    List<String> classes = new ArrayList<>();
 
     // The trailing "/" prevents matching a sibling package whose name has the same prefix.
     String packagePath = packageName.replace('.', '/');
