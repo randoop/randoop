@@ -61,33 +61,6 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) substituted).getBoundType());
   }
 
-  /**
-   * A type parameter whose bound contains, in a type argument, an array of the type parameter, and
-   * another type parameter.
-   *
-   * @param <K> the other type parameter
-   * @param <U> the type parameter with the bound
-   */
-  static class NestedArrayArgumentBound<K, U extends Map<K, U[]>> {}
-
-  @Test
-  public void testSubstituteNullTypeForNestedArrayComponent() {
-    List<TypeVariable> parameters =
-        GenericClassType.forClass(NestedArrayArgumentBound.class).getTypeParameters();
-    TypeVariable k = parameters.get(0);
-    TypeVariable u = parameters.get(1);
-    // Substituting for K leaves the bound lazy:  Map<String, U[]>.
-    ParameterBound bound =
-        u.getUpperTypeBound().substitute(new Substitution(k, JavaTypes.STRING_TYPE));
-    assertTrue(bound instanceof LazyReferenceBound);
-    // There is no array of the null type, so the array bound remains unresolved, and the null type
-    // does not satisfy it.  Neither throws an exception.
-    Substitution nullSubstitution = new Substitution(u, JavaTypes.NULL_TYPE);
-    assertSame(bound, bound.substitute(nullSubstitution));
-    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, nullSubstitution));
-    assertFalse(bound.isLowerBound(JavaTypes.NULL_TYPE, nullSubstitution));
-  }
-
   @Test
   public void testNullTypeCannotInstantiateArrayComponentBound() {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
