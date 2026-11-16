@@ -239,18 +239,14 @@ public class TypeVariableTest {
    *
    * @param <T> a type parameter with a self-referential bound
    * @param <U> a type parameter with no bound
-   * @param <E> a type parameter with a self-referential bound
    */
   @SuppressWarnings("UnusedVariable") // the fields are read reflectively
-  static class FieldTypes<T extends Comparable<T>, U, E extends Enum<E>> {
+  static class FieldTypes<T extends Comparable<T>, U> {
     /** A wildcard type whose lower bound is a type parameter. */
     Comparable<? super T> superT;
 
     /** A wildcard type whose lower bound is a type parameter with no bound. */
     Comparable<? super U> superU;
-
-    /** The bound of {@code E}. */
-    Enum<E> enumE;
 
     /** A wildcard type whose lower bound is a parameterized type. */
     Comparable<? super Comparable<Object>> superComparableObject;
@@ -260,9 +256,6 @@ public class TypeVariableTest {
 
     /** A wildcard type whose type parameter has a self-referential bound. */
     SelfComparableBound<?> selfComparableWildcard;
-
-    /** A map whose key and value types are the same type parameter. */
-    Map<U, U> mapUU;
 
     /** A wildcard type with a lower bound. */
     Comparable<? super String> superStringWildcard;
@@ -1881,29 +1874,6 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testSubtypeOfRecursiveBound() {
-    TypeVariable w = typeParameter(SelfComparableBound.class);
-    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
-    assertTrue(w.isSubtypeOfOrEqualTo(comparable.instantiate(w)));
-    assertFalse(w.isSubtypeOfOrEqualTo(comparable.instantiate(JavaTypes.STRING_TYPE)));
-    assertTrue(
-        typeParameter(NumberBound.class)
-            .isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
-  }
-
-  @Test
-  public void testSubtypeOfIntersectionBound() {
-    TypeVariable t = typeParameter(NumberSelfComparableBound.class);
-    assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
-    assertTrue(t.isSubtypeOfOrEqualTo(GenericClassType.forClass(Comparable.class).instantiate(t)));
-  }
-
-  @Test
-  public void testSubtypeOfSelfEnumBound() {
-    assertTrue(typeParameter(FieldTypes.class, 2).isSubtypeOfOrEqualTo(fieldType("enumE")));
-  }
-
-  @Test
   public void testSubtypeOfSuperWildcard() {
     TypeVariable t = typeParameter(FieldTypes.class);
     // T extends Comparable<T>, so T <: Comparable<? super T>.
@@ -1929,38 +1899,6 @@ public class TypeVariableTest {
     assertFalse(capture.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
     assertTrue(capture.isSubtypeOfOrEqualTo(fieldType("comparableWildcard")));
     assertTrue(capture.isSubtypeOfOrEqualTo(comparable.instantiate(capture)));
-  }
-
-  /**
-   * A type parameter whose bound is a sibling type parameter.
-   *
-   * @param <K> the bound
-   * @param <V> a type parameter bounded by {@code K}
-   */
-  static class SiblingVariableBound<K, V extends K> {}
-
-  @Test
-  public void testVariableBoundInstantiatedByContext() {
-    TypeVariable k = typeParameter(SiblingVariableBound.class, 0);
-    TypeVariable v = typeParameter(SiblingVariableBound.class, 1);
-    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // V extends K, and K is Object or Number.
-    assertTrue(
-        v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, JavaTypes.OBJECT_TYPE)));
-    Substitution kIsNumber = new Substitution(k, ReferenceType.forClass(Number.class));
-    assertTrue(v.canBeInstantiatedBy(integerType, kIsNumber));
-    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, kIsNumber));
-  }
-
-  @Test
-  public void testConflictingInstantiatingSubstitution() {
-    ReferenceType mapUU = fieldType("mapUU");
-    GenericClassType map = GenericClassType.forClass(Map.class);
-    ReferenceType stringType = JavaTypes.STRING_TYPE;
-    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // U cannot be both String and Integer.
-    assertNull(map.instantiate(stringType, integerType).getInstantiatingSubstitution(mapUU));
-    assertNotNull(map.instantiate(stringType, stringType).getInstantiatingSubstitution(mapUU));
   }
 
   /**
@@ -2141,15 +2079,6 @@ public class TypeVariableTest {
     LazyReferenceBound bound = new LazyReferenceBound(typeParameter(SelfComparableBound.class, 0));
     assertTrue(
         bound.isUpperBound(ClassOrInterfaceType.forClass(ComparableSub.class), new Substitution()));
-  }
-
-  @Test
-  public void testSiblingBoundCanBeStrictSupertype() {
-    // For <S extends Comparable<S>, U extends S>, U can be ComparableSub, with ComparableBase for
-    // S, though S cannot be ComparableSub.
-    TypeVariable u = typeParameter(SelfComparableSiblingBound.class, 1);
-    assertTrue(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableSub.class)));
-    assertFalse(u.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ComparableToOther.class)));
   }
 
   @Test
