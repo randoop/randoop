@@ -75,52 +75,24 @@ public class ExplicitTypeVariable extends TypeVariable {
     return true;
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
-    if (type != null && substitution.mapsToItself(this)) {
-      // The substitution maps this type variable to itself.  Keep this copy and its bounds, rather
-      // than the substitution's copy.  If the substitution maps this type variable to a copy of it
-      // with other bounds, that copy is the result.
-      type = null;
-    }
+    ReferenceType type = getSubstitutedType(substitution);
     if (type != null && !type.isVariable()) {
       return type;
     }
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     if (type == null) {
-      if (!isSameAsUpperBound(upperBound)) {
+      if (upperBound != getUpperTypeBound()) {
         return new ExplicitTypeVariable(this.variable, upperBound);
       }
       return this;
     }
-    if (!isSameAsUpperBound(upperBound)) {
+    if (upperBound != getUpperTypeBound()) {
       return ((TypeVariable) type).createCopyWithBounds(getLowerTypeBound(), upperBound);
     }
     return type;
-  }
-
-  /**
-   * Returns true if the given bound represents the same type as the upper bound of this variable,
-   * with identical type variables, as determined by {@link
-   * TypeVariable#areIdentical(ParameterBound, ParameterBound)}. The two can differ in
-   * representation: {@link LazyParameterBound#substitute}, given a substitution that maps each type
-   * variable in the bound to itself, returns a {@link ReferenceBound} for the same type.
-   *
-   * <p>Comparing the bounds with {@link ParameterBound#equals(Object)} instead would discard a
-   * substitution that changes only the bounds of a type variable in the bound, because copies of a
-   * type variable are equal even if their bounds differ.
-   *
-   * <p>Treating such bounds as different would make {@link #substitute(Substitution)} create a copy
-   * of this variable that is not equal to it. Then {@link TypeVariable#isInstantiationOf} on a
-   * variable that occurs in its own bound, such as {@code T extends Map<T, String>}, would compare
-   * the variable to such a copy, which creates another copy, and would not terminate.
-   *
-   * @param bound a bound
-   * @return true if {@code bound} represents the same type as the upper bound of this variable
-   */
-  private boolean isSameAsUpperBound(ParameterBound bound) {
-    return areIdentical(bound, getUpperTypeBound());
   }
 
   @Override
