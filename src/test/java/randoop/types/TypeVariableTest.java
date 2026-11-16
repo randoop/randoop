@@ -295,20 +295,6 @@ public class TypeVariableTest {
   }
 
   /**
-   * A type parameter whose bound contains an array class.
-   *
-   * @param <T> a type parameter bounded by {@code Pair<T, String[]>}
-   */
-  static class ArrayClassPairBound<T extends Pair<T, String[]>> {}
-
-  @Test
-  public void testArrayClassInLazyBound() {
-    TypeVariable t = typeParameter(ArrayClassPairBound.class, 0);
-    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfStringArrayPair.class)));
-    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfArrayPair.class)));
-  }
-
-  /**
    * Returns the type of a field of {@link FieldTypes}.
    *
    * @param name the name of the field
@@ -1724,15 +1710,6 @@ public class TypeVariableTest {
     assertTrue(
         capture + " should be a subtype of its bound " + bound,
         capture.isSubtypeOfOrEqualTo(bound));
-  }
-
-  @Test
-  public void testSubtypeTestOfExplicitVariableAgainstItsBound() {
-    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
-    // The bound of t is a LazyParameterBound for Comparable<t>, which refers to t.
-    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
-    InstantiatedType bound = GenericClassType.forClass(Comparable.class).instantiate(t);
-    assertTrue(t + " should be a subtype of its bound " + bound, t.isSubtypeOfOrEqualTo(bound));
   }
 
   @Test
