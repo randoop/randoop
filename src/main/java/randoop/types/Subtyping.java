@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
@@ -36,11 +37,11 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isIdentical(type, otherType)) {
+    if (isIdentical(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
-    if (otherType.isObject() || type.equals(JavaTypes.NULL_TYPE)) {
+    if (type.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -110,7 +111,39 @@ final class Subtyping {
       }
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
+    if (otherType instanceof NonParameterizedType
+        && otherType.isParameterized()
+        && type instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
+      // not, so compare the enclosing types here.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
+      return supertype != null
+          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+    }
     return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns the given type or the supertype of it whose runtime class is the given class.
+   *
+   * @param type a type
+   * @param runtimeClass a class
+   * @return {@code type} or its supertype whose runtime class is {@code runtimeClass}, or null if
+   *     there is none
+   */
+  private static @Nullable ClassOrInterfaceType findSupertypeOfClass(
+      ClassOrInterfaceType type, Class<?> runtimeClass) {
+    if (type.runtimeClassIs(runtimeClass)) {
+      return type;
+    }
+    for (ClassOrInterfaceType supertype : type.getSupertypesStrict()) {
+      if (supertype.runtimeClassIs(runtimeClass)) {
+        return supertype;
+      }
+    }
+    return null;
   }
 
   /**
@@ -170,11 +203,10 @@ final class Subtyping {
       return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    ParameterBound bound = wildcard.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (wildcard.hasUpperBound()) {
       // ? extends B contains T if T <: B.
       return isSubtypeOrEqual(type, boundType, substitution);
@@ -339,11 +371,10 @@ final class Subtyping {
               && isSameWildcard(argument, (WildcardArgument) lowerArgument, substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) argument;
-    ParameterBound bound = wildcard.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (wildcard.hasUpperBound() && boundType.isObject()) {
       return true;
     }
@@ -353,12 +384,11 @@ final class Subtyping {
     } else {
       // ? extends L is contained by ? extends B if L <: B, and ? super L by ? super B if B <: L.
       WildcardArgument lowerWildcard = (WildcardArgument) lowerArgument;
-      ParameterBound lowerBound = lowerWildcard.getTypeBound();
-      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound()
-          || !(lowerBound instanceof ReferenceBound)) {
+      ReferenceType lowerBoundType = getBoundType(lowerWildcard);
+      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound() || lowerBoundType == null) {
         return false;
       }
-      lowerArgumentType = ((ReferenceBound) lowerBound).getBoundType();
+      lowerArgumentType = lowerBoundType;
     }
     if (wildcard.hasUpperBound()) {
       // ? extends B contains T if T <: B.
@@ -476,20 +506,34 @@ final class Subtyping {
     if (wildcard.hasUpperBound() != otherWildcard.hasUpperBound()) {
       return false;
     }
-    ParameterBound bound = wildcard.getTypeBound();
-    ParameterBound otherBound = otherWildcard.getTypeBound();
-    return bound instanceof ReferenceBound
-        && otherBound instanceof ReferenceBound
-        && isSameType(
-            ((ReferenceBound) bound).getBoundType(),
-            ((ReferenceBound) otherBound).getBoundType(),
-            substitution);
+    ReferenceType boundType = getBoundType(wildcard);
+    ReferenceType otherBoundType = getBoundType(otherWildcard);
+    return boundType != null
+        && otherBoundType != null
+        && isSameType(boundType, otherBoundType, substitution);
   }
 
   /**
-   * Returns true if the two types are equal, including the enclosing types of member classes at
-   * any depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it
-   * treats {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
+   * Returns the type of the bound of the given wildcard, or null if the bound is neither a {@link
+   * ReferenceBound} nor a {@link LazyParameterBound} that can be converted to one. A lazy bound,
+   * such as {@code Comparable<T>} in {@code ? extends Comparable<T>}, is converted so that it can
+   * be compared with types.
+   *
+   * @param wildcard a wildcard type argument
+   * @return the type of the bound of {@code wildcard}, or null
+   */
+  private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
+    ParameterBound bound = wildcard.getTypeBound();
+    if (bound instanceof LazyParameterBound) {
+      bound = ((LazyParameterBound) bound).toReferenceBound();
+    }
+    return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
+  }
+
+  /**
+   * Returns true if the two types are equal, including the enclosing types of member classes at any
+   * depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it treats
+   * {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
    *
    * @param type a type
    * @param otherType another type
