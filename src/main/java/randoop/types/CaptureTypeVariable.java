@@ -259,7 +259,8 @@ class CaptureTypeVariable extends TypeVariable {
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so a substitution can change
     // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.  An
-    // equals test would discard that changed copy; comparing with == detects the change.
+    // equals test would discard that changed copy.  Comparing by reference detects the change,
+    // because substitute returns its receiver if the substitution changes nothing in it.
     boolean boundsChanged = lowerBound != getLowerTypeBound() || upperBound != getUpperTypeBound();
 
     if (type == null) {
