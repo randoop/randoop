@@ -12,8 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves an array bound unresolved if it maps the element type to the null type,
- * because there is no array of the null type.
+ * A substitution leaves the bound unresolved if applying it would create an array of the null type,
+ * because there is no such array.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -26,38 +26,24 @@ class LazyReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ReferenceBound substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
       return this;
     }
     // There is no array of the null type, so leave the bound unresolved.
-    if (mapsArrayElementToNullType(substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       return this;
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return ReferenceBound.forTypeLazyIfGeneric(referenceType);
-  }
-
-  /**
-   * Returns true if the bound type is an array type whose element type is a type variable that the
-   * given substitution maps to the null type. There is no array of the null type.
-   *
-   * @param substitution a type substitution
-   * @return true if {@code substitution} maps the element type of this array bound to the null type
-   */
-  private boolean mapsArrayElementToNullType(Substitution substitution) {
-    if (!getBoundType().isArray()) {
-      return false;
-    }
-    Type elementType = ((ArrayType) getBoundType()).getElementType();
-    return elementType.isVariable()
-        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
   }
 
   @Override
@@ -74,7 +60,7 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
@@ -104,7 +90,7 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       // There is no array of the null type, so no type satisfies this bound.
       return false;
     }
@@ -128,9 +114,12 @@ class LazyReferenceBound extends ReferenceBound {
    * For an upper bound, it also treats {@code argType} as within this bound if {@code argType} is a
    * subtype of the lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For
    * a lower bound, it also treats {@code argType} as within this bound if the upper bound of the
-   * type variable is a subtype of {@code argType}; see {@link TypeVariable#canBeSubtypeOf}.
-   * Comparing {@code argType} with the bounds of the type variable instead would accept any type as
-   * within a lower bound, since the lower bound of the type variable is usually the null type.
+   * type variable is a subtype of {@code argType}; see {@link TypeVariable#canBeSubtypeOf}. For a
+   * lower bound, {@link EagerReferenceBound} instead compares {@code argType} only with the upper
+   * bound of the type variable, so the two classes can differ. For example, for a type variable
+   * {@code U extends Number} as a lower bound, {@link EagerReferenceBound} does not accept {@code
+   * Integer}, because {@code Number} is not a subtype of {@code Integer}, but this class does,
+   * because {@code U} can be {@code Integer}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

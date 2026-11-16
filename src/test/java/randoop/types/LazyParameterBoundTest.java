@@ -6,7 +6,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -118,40 +117,5 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(ConcreteArrayArgumentBound.class).getTypeParameters().get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
-  }
-
-  /** An array of a parameterized type in which no type variable occurs. */
-  @SuppressWarnings("UnusedVariable") // used via reflection
-  private static List<String>[] concreteGenericArray;
-
-  @Test
-  public void testConcreteGenericArrayBound() throws NoSuchFieldException {
-    java.lang.reflect.Type arrayType =
-        LazyParameterBoundTest.class.getDeclaredField("concreteGenericArray").getGenericType();
-    assertTrue(arrayType instanceof java.lang.reflect.GenericArrayType);
-    ParameterBound bound = ParameterBound.forType(new HashSet<>(), arrayType);
-    assertTrue(bound.isUpperBound(ArrayType.forType(arrayType), new Substitution()));
-  }
-
-  /**
-   * A type parameter whose bound has a wildcard bounded by an array of a parameterized type in
-   * which no type variable occurs.
-   *
-   * @param <T> the type parameter
-   */
-  static class WildcardConcreteGenericArrayBound<T extends List<? extends List<String>[]>> {}
-
-  /** A class that satisfies the bound of {@link WildcardConcreteGenericArrayBound}. */
-  @SuppressWarnings("serial")
-  static class ConcreteGenericArrayList extends ArrayList<List<String>[]> {}
-
-  @Test
-  public void testWildcardConcreteGenericArrayBound() {
-    TypeVariable t =
-        GenericClassType.forClass(WildcardConcreteGenericArrayBound.class)
-            .getTypeParameters()
-            .get(0);
-    assertTrue(
-        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
   }
 }

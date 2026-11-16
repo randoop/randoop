@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.signature.qual.BinaryName;
@@ -135,10 +136,10 @@ public class CoverageTracker {
     // For each method under test, copy its branch coverage information from the coverageBuilder to
     // branchCoverageMap.
     // Sorting is to make diagnostic output deterministic.
-    ArrayList<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
+    List<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
     classes.sort(Comparator.comparing(IClassCoverage::toString));
     for (final IClassCoverage cc : classes) {
-      ArrayList<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
+      List<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
       methods.sort(Comparator.comparing(IMethodCoverage::toString));
       for (final IMethodCoverage cm : methods) {
         // cc is in internal form because Jacoco uses class names in internal form.
