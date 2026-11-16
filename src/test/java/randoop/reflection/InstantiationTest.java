@@ -533,7 +533,8 @@ public class InstantiationTest {
     assertEquals(stringInner, instantiated.getInputTypes().get(0));
 
     // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
-    // method's type parameter `E`, so `Outer<String>.Inner` must not be paired with
+    // method's type parameter `E`, so `Outer<String>.Inner` is paired with `List<String>`, never
+    // with
     // `List<Integer>`.
     Method pairMethod =
         InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
@@ -547,13 +548,17 @@ public class InstantiationTest {
         JDKTypes.LIST_TYPE.instantiate(ReferenceType.forClass(Integer.class));
     InstantiatedType stringList = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
 
-    Set<Type> mismatchedInputTypes = new LinkedHashSet<>();
-    mismatchedInputTypes.add(JavaTypes.OBJECT_TYPE);
-    mismatchedInputTypes.add(stringInner);
-    mismatchedInputTypes.add(integerList);
-    assertNull(
-        "incompatible instantiation found",
-        new TypeInstantiator(mismatchedInputTypes).instantiate(pairOperation));
+    // The input type `Outer<String>.Inner` of the first parameter determines `E`.  TypeInstantiator
+    // does not require an input type for the resulting non-generic parameter type `List<String>`.
+    Set<Type> integerListInputTypes = new LinkedHashSet<>();
+    integerListInputTypes.add(JavaTypes.OBJECT_TYPE);
+    integerListInputTypes.add(stringInner);
+    integerListInputTypes.add(integerList);
+    TypedClassOperation integerListInstantiated =
+        new TypeInstantiator(integerListInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", integerListInstantiated);
+    assertEquals(stringInner, integerListInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, integerListInstantiated.getInputTypes().get(1));
 
     Set<Type> matchingInputTypes = new LinkedHashSet<>();
     matchingInputTypes.add(JavaTypes.OBJECT_TYPE);
