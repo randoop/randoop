@@ -378,26 +378,25 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
-      // For a member class such as Outer<String>.Inner and a goal type such as Outer<E>.Inner, the
-      // enclosing type of this type instantiates the enclosing type of the goal type.
+    // For a member class such as Outer<String>.Inner and a member class goal type such as
+    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
+    // type.  The enclosing type of this type is not matched against a goal type that is not a
+    // member class, such as a type variable.
+    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType thisEnclosingType = enclosingType;
-      ReferenceType enclosingGoalType = goalType;
-      if (goalType instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
-        if (goalClassType.isMemberClass()) {
-          // Matching enclosing types do not make unrelated member classes, such as
-          // Outer<String>.Inner and Outer<E>.Other, unify.
-          if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (goalClassType.isMemberClass()) {
+        // Matching enclosing types do not make unrelated member classes, such as
+        // Outer<String>.Inner and Outer<E>.Other, unify.
+        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+          return null;
+        }
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+        if (enclosingGoalType.isGeneric()) {
+          substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+          if (substitution == null) {
             return null;
           }
-          enclosingGoalType = goalClassType.enclosingType;
-        }
-      }
-      if (enclosingGoalType.isGeneric()) {
-        substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-        if (substitution == null) {
-          return null;
         }
       }
     }
