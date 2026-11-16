@@ -77,11 +77,12 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. Tests for
-   * types that are represented by {@code Class} objects, {@code
-   * java.lang.reflect.ParameterizedType} objects, or {@code java.lang.reflect.GenericArrayType}
-   * objects. A generic array type in which no type variable occurs, such as {@code List<String>[]},
-   * yields an eager bound.
+   * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
+   * result is an eager bound if the type is a type variable, or if it is a class, parameterized
+   * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
+   * The exception is a generic array type whose element type is a non-generic member class of a
+   * generic class, as in {@code Outer<String>.Inner[]}, which {@link #eagerBoundType} cannot
+   * convert. Otherwise, the result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -89,30 +90,77 @@ public abstract class ParameterBound {
    */
   /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
-      }
-      return new LazyParameterBound(type);
-    }
-    // hasTypeVariable is not used here:  it ignores a type variable that is not in variableSet,
-    // and an eager bound on an array of such a variable cannot be substituted by a type, such as
-    // the null type, that cannot be an array component.
-    if (type instanceof java.lang.reflect.GenericArrayType && !containsAnyTypeVariable(type)) {
-      return new EagerReferenceBound(ArrayType.forType(type));
-    }
-    if (type instanceof Class<?>) {
-      return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
-    }
-    if (isTypeVariable(type)) {
-      TypeVariable eagerBound = TypeVariable.forType(type);
-      return new EagerReferenceBound(eagerBound);
+    if (isTypeVariable(type)
+        || ((type instanceof Class<?>
+                || type instanceof java.lang.reflect.ParameterizedType
+                || (type instanceof java.lang.reflect.GenericArrayType
+                    && !isNonGenericMemberClass(elementType(type))))
+            && !hasTypeVariable(type, variableSet))) {
+      return new EagerReferenceBound(eagerBoundType(type));
     }
     return new LazyParameterBound(type);
   }
 
   /**
+   * Returns the type of an eager bound for the given (reflection) type. A parameterized type,
+   * including one that is the element type of a generic array type, is converted by {@link
+   * ParameterizedType#forType}. Unlike {@link ClassOrInterfaceType#forType}, it does not give a
+   * non-generic member class, as in {@code Outer<String>.Inner}, the owner type from the class
+   * declaration, as in {@code Outer<T>.Inner}; it throws an exception instead.
+   *
+   * @param type a class, parameterized type, generic array type, or type variable
+   * @return the type that {@code type} represents
+   */
+  private static ReferenceType eagerBoundType(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      return ParameterizedType.forType(type);
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return ArrayType.ofComponentType(
+          eagerBoundType(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
+    }
+    return ReferenceType.forType(type);
+  }
+
+  /**
+   * Returns the element type of the given (reflection) type: the type that remains after all array
+   * dimensions are removed, as in {@code List<String>} for {@code List<String>[][]}.
+   *
+   * @param type a reflection type
+   * @return the element type of {@code type}, or {@code type} itself if it is not a generic array
+   *     type
+   */
+  private static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
+    while (type instanceof java.lang.reflect.GenericArrayType) {
+      type = ((java.lang.reflect.GenericArrayType) type).getGenericComponentType();
+    }
+    return type;
+  }
+
+  /**
+   * Returns true if the given (reflection) type is a non-generic member class of a generic class,
+   * as in {@code Outer<String>.Inner}. Reflection represents such a type as a parameterized type
+   * whose raw type has no type parameters.
+   *
+   * @param type a reflection type
+   * @return true if {@code type} is a non-generic member class of a generic class
+   */
+  private static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
+    return type instanceof java.lang.reflect.ParameterizedType
+        && ((Class<?>) ((java.lang.reflect.ParameterizedType) type).getRawType())
+                .getTypeParameters()
+                .length
+            == 0;
+  }
+
+  /**
    * Applies the given substitution to this type bound by replacing type variables.
+   *
+   * <p>If the substitution changes nothing in this bound, the result should be this bound itself,
+   * so that a caller can detect a change by comparing the result to this bound with {@code ==}.
+   * Comparing with {@code equals} would not detect a change to only the bounds of a type variable,
+   * because copies of a type variable are equal even if their bounds differ. A result that is a new
+   * object for the same bound is correct, but makes callers create needless copies.
    *
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
@@ -127,59 +175,16 @@ public abstract class ParameterBound {
   public abstract List<TypeVariable> getTypeParameters();
 
   /**
-   * Returns true if some type variable occurs in the given (reflection) type, as in {@code List<T>}
-   * or {@code Outer<T>.Inner<String>}. Unlike {@link #hasTypeVariable}, considers every type
-   * variable.
+   * Returns true if the given (reflection) type has a type variable that requires a lazy bound.
+   * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
+   * such a type variable. Either would make an eager bound recursive.
    *
-   * @param type the reflection type
-   * @return true if some type variable occurs in the type
-   */
-  private static boolean containsAnyTypeVariable(java.lang.reflect.Type type) {
-    if (type instanceof Class<?>) {
-      return false;
-    }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      java.lang.reflect.Type ownerType = pt.getOwnerType();
-      if (ownerType != null && containsAnyTypeVariable(ownerType)) {
-        return true;
-      }
-      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (containsAnyTypeVariable(argType)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    if (type instanceof java.lang.reflect.GenericArrayType) {
-      return containsAnyTypeVariable(
-          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
-    }
-    if (type instanceof java.lang.reflect.WildcardType) {
-      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
-        if (containsAnyTypeVariable(boundType)) {
-          return true;
-        }
-      }
-      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
-        if (containsAnyTypeVariable(boundType)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    // A type variable, or a kind of type that this method does not know.
-    return true;
-  }
-
-  /**
-   * Returns true if the given (reflection) type reference represents a type in which a type
-   * variable occurs.
+   * <p>Owner types are not examined, because {@link #eagerBoundType} converts each parameterized
+   * type by {@link ParameterizedType#forType}, which ignores owner types.
    *
-   * @param type the reflection type
-   * @param variableSet the set of variables
-   * @return true if the type has a type variable, and false otherwise
+   * @param type a reflection type
+   * @param variableSet the type variables bound by the type
+   * @return true if the type has a type variable that requires a lazy bound
    */
   private static boolean hasTypeVariable(
       java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {

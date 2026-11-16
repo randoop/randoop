@@ -117,6 +117,10 @@ public class Substitution {
    * same type variable, they map it to the same type. This is the test for whether this
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so two substitutions that
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies, map it to the same type.
+   *
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
@@ -170,6 +174,10 @@ public class Substitution {
    * Creates a new substitution that contains the entries of two substitutions. If both
    * substitutions contain the same type variable, they must map to the same type.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so both substitutions can
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies. Then the result maps it to the type that this substitution maps it to.
+   *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
@@ -186,12 +194,13 @@ public class Substitution {
 
   /**
    * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
-   * that is, to the type variable that is the key of the entry, with the same bounds. A copy of a
-   * type variable with other bounds is equal to it, but is not the same.
+   * that is, to the object that is the key of the entry. A copy of a type variable with other
+   * bounds is equal to it, but is not the same object.
    *
    * @param variable a type variable
    * @return true if this substitution maps {@code variable} to itself
    */
+  @SuppressWarnings("ReferenceEquality") // a copy with other bounds is equal, but not the same
   boolean mapsToItself(TypeVariable variable) {
     ReferenceType value = map.get(variable);
     if (!(value instanceof TypeVariable) || !value.equals(variable)) {
@@ -199,7 +208,7 @@ public class Substitution {
     }
     for (TypeVariable key : map.keySet()) {
       if (key.equals(variable)) {
-        return key.isIdenticalTo((TypeVariable) value);
+        return key == value;
       }
     }
     return false;
