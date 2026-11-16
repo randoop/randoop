@@ -89,12 +89,11 @@ public final class ReferenceArgument extends TypeArgument {
   /**
    * {@inheritDoc}
    *
-   * <p>A type argument that is not a wildcard contains only itself.
+   * <p>A type argument that is not a wildcard contains only the same type.
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
-    return !otherArgument.isWildcard()
-        && referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
+    return Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**

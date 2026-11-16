@@ -76,8 +76,7 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return this bound with the substitution applied to all member bounds; this bound itself if the
-   *     substitution does not change any member bound
+   * @return this bound with the substitution applied to all member bounds
    */
   @Override
   public IntersectionTypeBound substitute(Substitution substitution) {

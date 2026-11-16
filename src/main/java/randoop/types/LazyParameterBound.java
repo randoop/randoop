@@ -28,19 +28,6 @@ class LazyParameterBound extends ParameterBound {
   private volatile @Nullable List<TypeVariable> typeParameters = null;
 
   /**
-   * The result of {@link #toReferenceBound()}, if {@link #referenceBoundComputed} is true. Use
-   * {@link #toReferenceBound()} instead of reading this field.
-   */
-  private @Nullable ReferenceBound referenceBound = null;
-
-  /**
-   * True if {@link #referenceBound} has been computed. It may be null even when computed. This is
-   * volatile, and is set after {@link #referenceBound}, so that a thread that reads it as true also
-   * sees the computed {@link #referenceBound}.
-   */
-  private volatile boolean referenceBoundComputed = false;
-
-  /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
    * @param boundType the reflection type for this bound
@@ -142,17 +129,12 @@ class LazyParameterBound extends ParameterBound {
    *     type that {@link #substitute(Substitution)} does not handle
    */
   @Nullable ReferenceBound toReferenceBound() {
-    if (referenceBoundComputed) {
-      return referenceBound;
-    }
     List<TypeVariable> parameters = getTypeParameters();
     // Map each type variable to itself, so that substitute() converts this bound without changing
     // the type that it represents.
     ParameterBound result =
         substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
-    referenceBound = result instanceof ReferenceBound ? (ReferenceBound) result : null;
-    referenceBoundComputed = true;
-    return referenceBound;
+    return result instanceof ReferenceBound ? (ReferenceBound) result : null;
   }
 
   /**
@@ -197,9 +179,9 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof Class) {
-      // ReferenceType.forType represents an array class, such as String[], as an ArrayType.  By
-      // contrast, ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
-      return TypeArgument.forType(ReferenceType.forType(type));
+      // This call converts an array class such as String[] to an ArrayType.  By contrast,
+      // ClassOrInterfaceType.forType would convert it to a NonParameterizedType.
+      return TypeArgument.forType(type);
     }
 
     if (type instanceof GenericArrayType) {
@@ -224,7 +206,8 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            bound = new LazyParameterBound(lowerBound);
+            // The substitution can instantiate a type variable in the bounds of `lowerBound`.
+            bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
           bound = forType(new HashSet<>(0), lowerBound).substitute(substitution);
@@ -476,19 +459,18 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true if {@code upperBound} is {@code Object}, which is an upper bound of every
-   * reference type. Otherwise, each type variable in this bound stands for itself, so {@code
-   * upperBound} is compared with the {@link ReferenceBound} that {@link #toReferenceBound()}
-   * converts this bound to. Returns false if this bound cannot be converted, because the type of
-   * this bound cannot be determined without a substitution for its type variables.
+   * <p>Compares {@code upperBound} with the {@link ReferenceBound} that {@link #toReferenceBound()}
+   * converts this bound to. If this bound cannot be converted, returns true only if {@code
+   * upperBound} is {@code Object}, which is an upper bound of every reference type, because the
+   * type of this bound cannot be determined without a substitution for its type variables.
    */
   @Override
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
-    if (upperBound.isObject()) {
-      return true;
-    }
     ReferenceBound converted = toReferenceBound();
-    return converted != null && converted.hasUpperBound(upperBound, substitution);
+    if (converted != null) {
+      return converted.hasUpperBound(upperBound, substitution);
+    }
+    return upperBound.isObject();
   }
 
   /**

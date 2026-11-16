@@ -84,9 +84,8 @@ public class WildcardArgument extends TypeArgument {
   @Override
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
-    // WildcardType.substitute returns the same object if the substitution does not change it.  An
-    // equals test would discard a changed copy of a capture variable in the bound, because copies
-    // of a type variable are equal even if their bounds differ.
+    // Copies of a type variable are equal even if their bounds differ, so an equality test would
+    // discard a change to the bounds of a type variable in the wildcard's bound.
     if (argType == this.argumentType) {
       return this;
     }
@@ -95,11 +94,7 @@ public class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean contains(TypeArgument argument) {
-    if (argument.isWildcard()) {
-      return argumentType.contains(((WildcardArgument) argument).argumentType);
-    } else {
-      return argumentType.containsType(((ReferenceArgument) argument).getReferenceType());
-    }
+    return Subtyping.contains(this, argument, new Substitution());
   }
 
   /**

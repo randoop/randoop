@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
@@ -36,7 +37,7 @@ final class Subtyping {
    */
   static boolean isSubtypeOrEqual(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isEqual(type, otherType) || otherType.isObject()) {
+    if (isIdentical(type, otherType) || otherType.isObject()) {
       return true;
     }
     // The null type is a subtype of every reference type (JLS section 4.10.2).
@@ -69,8 +70,7 @@ final class Subtyping {
         return true;
       }
       // Otherwise, a type variable is a subtype only of a type variable whose lower bound it is a
-      // subtype of, below, as for T and a capture of `? super T`.  For `U extends T`, U is a
-      // subtype of the capture of `? super T`.
+      // subtype of, as for T and a capture of `? super T`.
       if (!otherType.isVariable()) {
         return false;
       }
@@ -117,7 +117,39 @@ final class Subtyping {
       }
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
+    if (otherType instanceof NonParameterizedType
+        && otherType.isParameterized()
+        && type instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
+      // not, so compare the enclosing types here.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
+      return supertype != null
+          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+    }
     return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns the given type or the supertype of it whose runtime class is the given class.
+   *
+   * @param type a type
+   * @param runtimeClass a class
+   * @return {@code type} or its supertype whose runtime class is {@code runtimeClass}, or null if
+   *     there is none
+   */
+  private static @Nullable ClassOrInterfaceType findSupertypeOfClass(
+      ClassOrInterfaceType type, Class<?> runtimeClass) {
+    if (type.runtimeClassIs(runtimeClass)) {
+      return type;
+    }
+    for (ClassOrInterfaceType supertype : type.getSupertypesStrict()) {
+      if (supertype.runtimeClassIs(runtimeClass)) {
+        return supertype;
+      }
+    }
+    return null;
   }
 
   /**
@@ -166,36 +198,49 @@ final class Subtyping {
    */
   static boolean contains(
       TypeArgument otherArgument, TypeArgument argument, Substitution substitution) {
-    if (!(argument instanceof ReferenceArgument)) {
-      // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
-      // wildcard is contained only by an identical wildcard.
-      return otherArgument instanceof WildcardArgument
-          && isSameWildcard(argument, (WildcardArgument) otherArgument, substitution);
-    }
-    ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
     if (otherArgument instanceof ReferenceArgument) {
-      return isSameType(type, ((ReferenceArgument) otherArgument).getReferenceType(), substitution);
+      // A type argument that is not a wildcard contains only the same type.
+      return argument instanceof ReferenceArgument
+          && isSameType(
+              ((ReferenceArgument) argument).getReferenceType(),
+              ((ReferenceArgument) otherArgument).getReferenceType(),
+              substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) otherArgument;
-    ParameterBound bound = wildcard.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
-      return false;
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
+      return otherArgument.equals(argument);
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (argument instanceof ReferenceArgument) {
+      ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
+      if (wildcard.hasUpperBound()) {
+        // ? extends B contains T if T <: B.
+        return isSubtypeOrEqual(type, boundType, substitution);
+      }
+      // ? super B contains T if B <: T.
+      return canBeSubtype(boundType, type, substitution);
+    }
+    WildcardArgument argumentWildcard = (WildcardArgument) argument;
+    ReferenceType argumentBoundType = getBoundType(argumentWildcard);
+    if (argumentBoundType == null) {
+      return otherArgument.equals(argument);
+    }
     if (wildcard.hasUpperBound()) {
-      // ? extends B contains T if T <: B.
-      return isSubtypeOrEqual(type, boundType, substitution);
+      // ? extends B contains ? extends S if S <: B, and contains ? super S if B is Object.
+      ReferenceType argumentUpperBound =
+          argumentWildcard.hasUpperBound() ? argumentBoundType : JavaTypes.OBJECT_TYPE;
+      return isSubtypeOrEqual(argumentUpperBound, boundType, substitution);
     }
-    // ? super B contains T if B <: T.
-    return canBeSubtype(boundType, type, substitution);
+    // ? super B contains ? super S if B <: S, and does not contain ? extends S.
+    return !argumentWildcard.hasUpperBound()
+        && canBeSubtype(boundType, argumentBoundType, substitution);
   }
 
   /**
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
-   * {@code type} itself, or the lower bound of {@code type} if it is a type variable. Also returns
-   * true if the unknown's upper bound, or a member of it if it is an intersection, is a subtype of
-   * {@code type}, because then every choice for the unknown is. If {@code lowerType} contains
+   * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
+   * upper bound or a member of it, if it is an intersection. If {@code lowerType} contains
    * unknowns, as {@code List<B>} does, compares its components with those of {@code type}.
    *
    * @param lowerType the possible subtype, which may be or contain unknowns
@@ -227,19 +272,16 @@ final class Subtyping {
         }
       }
     }
-    // Every choice for the unknown is a subtype of its upper bound, and of each member of an
-    // intersection upper bound.  So if the bound or a member is a subtype of `type`, then so is
-    // every choice, whether or not the bound or member itself satisfies the complete bound.  For
-    // `B extends Number & Comparable<B>`, B is a subtype of Serializable:  Number is not
-    // Comparable<Number>, but every choice for B, such as Integer, is a subtype of Number.
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
     if (unknownBound instanceof ReferenceBound) {
-      return boundIsSubtype((ReferenceBound) unknownBound, type, substitution);
+      return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
     if (unknownBound instanceof IntersectionTypeBound) {
+      // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
+      // B can be Number, which is a subtype of Serializable.
       for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
         if (member instanceof ReferenceBound
-            && boundIsSubtype((ReferenceBound) member, type, substitution)) {
+            && boundCanBeSubtype((ReferenceBound) member, type, unknown, substitution)) {
           return true;
         }
       }
@@ -350,11 +392,10 @@ final class Subtyping {
               && isSameWildcard(argument, (WildcardArgument) lowerArgument, substitution);
     }
     WildcardArgument wildcard = (WildcardArgument) argument;
-    ParameterBound bound = wildcard.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType boundType = getBoundType(wildcard);
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (wildcard.hasUpperBound() && boundType.isObject()) {
       return true;
     }
@@ -364,12 +405,11 @@ final class Subtyping {
     } else {
       // ? extends L is contained by ? extends B if L <: B, and ? super L by ? super B if B <: L.
       WildcardArgument lowerWildcard = (WildcardArgument) lowerArgument;
-      ParameterBound lowerBound = lowerWildcard.getTypeBound();
-      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound()
-          || !(lowerBound instanceof ReferenceBound)) {
+      ReferenceType lowerBoundType = getBoundType(lowerWildcard);
+      if (lowerWildcard.hasUpperBound() != wildcard.hasUpperBound() || lowerBoundType == null) {
         return false;
       }
-      lowerArgumentType = ((ReferenceBound) lowerBound).getBoundType();
+      lowerArgumentType = lowerBoundType;
     }
     if (wildcard.hasUpperBound()) {
       // ? extends B contains T if T <: B.
@@ -381,17 +421,20 @@ final class Subtyping {
 
   /**
    * Returns true if the type of the given bound of an unknown is a subtype of, or equal to, {@code
-   * type}. Then every choice for the unknown is a subtype of {@code type}.
+   * type}, and the unknown can be that type.
    *
-   * @param bound an upper bound, or a member of an intersection upper bound, of an unknown
+   * @param bound an upper bound, or a member of an intersection upper bound, of {@code unknown}
    * @param type the possible supertype
+   * @param unknown a type variable that stands for an unknown type
    * @param substitution the type substitution, which determines the unknowns
-   * @return true if the type of {@code bound} is a subtype of, or equal to, {@code type}
+   * @return true if {@code unknown} can be the type of {@code bound}, which is a subtype of {@code
+   *     type}
    */
-  private static boolean boundIsSubtype(
-      ReferenceBound bound, ReferenceType type, Substitution substitution) {
+  private static boolean boundCanBeSubtype(
+      ReferenceBound bound, ReferenceType type, TypeVariable unknown, Substitution substitution) {
     ReferenceType boundType = bound.getBoundType().substitute(substitution);
-    return isSubtypeOrEqual(boundType, type, substitution);
+    return isSubtypeOrEqual(boundType, type, substitution)
+        && satisfiesBound(boundType, unknown, substitution);
   }
 
   /**
@@ -404,7 +447,7 @@ final class Subtyping {
    */
   private static boolean isSameType(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
-    if (isEqual(type, otherType)) {
+    if (isIdentical(type, otherType)) {
       return true;
     }
     if (substitution.isUnknown(otherType)) {
@@ -419,8 +462,26 @@ final class Subtyping {
       }
       return componentType.equals(otherComponentType);
     }
-    if (!(type instanceof InstantiatedType && otherType instanceof InstantiatedType)) {
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
       return false;
+    }
+    ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the enclosing
+    // types must also be the same.
+    if (classType.isMemberClass() != otherClassType.isMemberClass()) {
+      return false;
+    }
+    if (classType.isMemberClass()
+        && otherClassType.isMemberClass()
+        && !isSameType(classType.enclosingType, otherClassType.enclosingType, substitution)) {
+      return false;
+    }
+    if (type instanceof InstantiatedType != otherType instanceof InstantiatedType) {
+      return false;
+    }
+    if (!(type instanceof InstantiatedType)) {
+      return classType.getRuntimeClass().equals(otherClassType.getRuntimeClass());
     }
     InstantiatedType instantiatedType = (InstantiatedType) type;
     InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
@@ -442,40 +503,7 @@ final class Subtyping {
         return false;
       }
     }
-    // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the type
-    // arguments of the enclosing types must also be the same, if both are recorded.
-    ClassOrInterfaceType enclosingType = instantiatedType.enclosingType;
-    ClassOrInterfaceType otherEnclosingType = otherInstantiatedType.enclosingType;
-    if (enclosingType instanceof InstantiatedType
-        && otherEnclosingType instanceof InstantiatedType) {
-      return isSameType(enclosingType, otherEnclosingType, substitution);
-    }
     return true;
-  }
-
-  /**
-   * Returns true if {@code type} equals {@code otherType}, including the type arguments of their
-   * enclosing types, if both are recorded. {@link InstantiatedType#equals(Object)} ignores the
-   * enclosing type, so it considers {@code Outer<String>.Inner<Integer>} and {@code
-   * Outer<Number>.Inner<Integer>} equal.
-   *
-   * @param type a type
-   * @param otherType a type
-   * @return true if {@code type} equals {@code otherType}, including their enclosing types
-   */
-  private static boolean isEqual(ReferenceType type, ReferenceType otherType) {
-    if (!type.equals(otherType)) {
-      return false;
-    }
-    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
-      return true;
-    }
-    ClassOrInterfaceType enclosingType = ((ClassOrInterfaceType) type).enclosingType;
-    ClassOrInterfaceType otherEnclosingType = ((ClassOrInterfaceType) otherType).enclosingType;
-    if (enclosingType == null || otherEnclosingType == null) {
-      return true;
-    }
-    return isEqual(enclosingType, otherEnclosingType);
   }
 
   /**
@@ -489,7 +517,7 @@ final class Subtyping {
    */
   private static boolean isSameWildcard(
       TypeArgument argument, WildcardArgument otherWildcard, Substitution substitution) {
-    if (otherWildcard.equals(argument)) {
+    if (isIdentical(argument, otherWildcard)) {
       return true;
     }
     if (!(argument instanceof WildcardArgument)) {
@@ -499,14 +527,100 @@ final class Subtyping {
     if (wildcard.hasUpperBound() != otherWildcard.hasUpperBound()) {
       return false;
     }
+    ReferenceType boundType = getBoundType(wildcard);
+    ReferenceType otherBoundType = getBoundType(otherWildcard);
+    return boundType != null
+        && otherBoundType != null
+        && isSameType(boundType, otherBoundType, substitution);
+  }
+
+  /**
+   * Returns the type of the bound of the given wildcard, or null if the bound is neither a {@link
+   * ReferenceBound} nor a {@link LazyParameterBound} that can be converted to one. A lazy bound,
+   * such as {@code Comparable<T>} in {@code ? extends Comparable<T>}, is converted so that it can
+   * be compared with types.
+   *
+   * @param wildcard a wildcard type argument
+   * @return the type of the bound of {@code wildcard}, or null
+   */
+  private static @Nullable ReferenceType getBoundType(WildcardArgument wildcard) {
     ParameterBound bound = wildcard.getTypeBound();
-    ParameterBound otherBound = otherWildcard.getTypeBound();
-    return bound instanceof ReferenceBound
-        && otherBound instanceof ReferenceBound
-        && isSameType(
-            ((ReferenceBound) bound).getBoundType(),
-            ((ReferenceBound) otherBound).getBoundType(),
-            substitution);
+    if (bound instanceof LazyParameterBound) {
+      bound = ((LazyParameterBound) bound).toReferenceBound();
+    }
+    return bound instanceof ReferenceBound ? ((ReferenceBound) bound).getBoundType() : null;
+  }
+
+  /**
+   * Returns true if the two types are equal, including the enclosing types of member classes at any
+   * depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it treats
+   * {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
+   *
+   * @param type a type
+   * @param otherType another type
+   * @return true if the types are equal, including their enclosing types
+   */
+  private static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
+    if (!type.equals(otherType)) {
+      return false;
+    }
+    if (type.isArray() && otherType.isArray()) {
+      Type componentType = ((ArrayType) type).getComponentType();
+      Type otherComponentType = ((ArrayType) otherType).getComponentType();
+      return !(componentType.isReferenceType() && otherComponentType.isReferenceType())
+          || isIdentical((ReferenceType) componentType, (ReferenceType) otherComponentType);
+    }
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
+      return true;
+    }
+    ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    if (classType.isMemberClass() != otherClassType.isMemberClass()) {
+      return false;
+    }
+    if (classType.isMemberClass()
+        && otherClassType.isMemberClass()
+        && !isIdentical(classType.enclosingType, otherClassType.enclosingType)) {
+      return false;
+    }
+    if (type instanceof InstantiatedType && otherType instanceof InstantiatedType) {
+      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
+      for (int i = 0; i < typeArguments.size(); i++) {
+        if (!isIdentical(typeArguments.get(i), otherTypeArguments.get(i))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the two type arguments are equal, including the enclosing types of member
+   * classes at any depth; see {@link #isIdentical(ReferenceType, ReferenceType)}.
+   *
+   * @param argument a type argument
+   * @param otherArgument another type argument
+   * @return true if the type arguments are equal, including their enclosing types
+   */
+  private static boolean isIdentical(TypeArgument argument, TypeArgument otherArgument) {
+    if (!argument.equals(otherArgument)) {
+      return false;
+    }
+    if (argument instanceof ReferenceArgument && otherArgument instanceof ReferenceArgument) {
+      return isIdentical(
+          ((ReferenceArgument) argument).getReferenceType(),
+          ((ReferenceArgument) otherArgument).getReferenceType());
+    }
+    if (argument instanceof WildcardArgument && otherArgument instanceof WildcardArgument) {
+      ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+      ParameterBound otherBound = ((WildcardArgument) otherArgument).getTypeBound();
+      if (bound instanceof ReferenceBound && otherBound instanceof ReferenceBound) {
+        return isIdentical(
+            ((ReferenceBound) bound).getBoundType(), ((ReferenceBound) otherBound).getBoundType());
+      }
+    }
+    return true;
   }
 
   /**

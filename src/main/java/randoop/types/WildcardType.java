@@ -143,124 +143,12 @@ class WildcardType extends ParameterType {
   @Override
   public WildcardType substitute(Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
-    // A bound's substitute method returns the same object if the substitution does not change the
-    // bound.  An equals test would discard a changed copy of a type variable in the bound, because
-    // copies of a type variable are equal even if their bounds differ.
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
     if (bound == this.getTypeBound()) {
       return this;
     }
     return new WildcardType(bound, hasUpperBound);
-  }
-
-  /**
-   * Returns true if this wildcard contains the given wildcard, as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
-   * 4.5.1</a>:
-   *
-   * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S} is a subtype of {@code T}
-   *   <li>{@code ? extends Object}, which is {@code ?}, contains {@code ? super S}
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
-   * </ul>
-   *
-   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that
-   * represents the same type, if possible. A bound that is not a {@link ReferenceBound} even then
-   * (such as an intersection bound) cannot be compared by subtyping. For such a bound, this method
-   * checks only the cases that do not require subtyping: {@code ?} contains every wildcard, and
-   * every wildcard contains itself. Otherwise it conservatively returns false.
-   *
-   * @param otherType the wildcard to check for
-   * @return true if this wildcard contains the other wildcard, false otherwise
-   */
-  public boolean contains(WildcardType otherType) {
-    // Containment is reflexive.  Checking it for a bound that refers to a type variable with a
-    // recursive bound, as in `? extends List<T>` for `T extends Comparable<T>`, can fail.
-    if (this.equals(otherType)) {
-      return true;
-    }
-    if (this.hasUpperBound) {
-      if (this.getUpperTypeBound().isObject()) {
-        return true;
-      }
-      if (otherType.hasUpperBound) {
-        return isSubtypeOfOrEqualTo(otherType.getUpperTypeBound(), this.getUpperTypeBound());
-      } else {
-        return false;
-      }
-    } else {
-      if (otherType.hasUpperBound) {
-        return false;
-      } else {
-        return isSubtypeOfOrEqualTo(this.getLowerTypeBound(), otherType.getLowerTypeBound());
-      }
-    }
-  }
-
-  /**
-   * Returns true if the type of the first bound is a subtype of the type of the second bound. A
-   * {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that represents the
-   * same type, if possible. Returns false if the bounds differ and either is not a {@link
-   * ReferenceBound} even then, because subtyping is not implemented for other bounds.
-   *
-   * @param subBound the possible subtype bound
-   * @param superBound the possible supertype bound
-   * @return true if {@code subBound} is known to be a subtype of {@code superBound}
-   */
-  private static boolean isSubtypeOfOrEqualTo(ParameterBound subBound, ParameterBound superBound) {
-    if (subBound.equals(superBound)) {
-      return true;
-    }
-    subBound = resolve(subBound);
-    superBound = resolve(superBound);
-    if (subBound instanceof ReferenceBound && superBound instanceof ReferenceBound) {
-      return subBound.isSubtypeOfOrEqualTo(superBound);
-    }
-    return false;
-  }
-
-  /**
-   * Returns true if this wildcard contains the given type, as defined in <a
-   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
-   * 4.5.1</a>: {@code ? extends T} contains the subtypes of {@code T}, and {@code ? super T}
-   * contains the supertypes of {@code T}.
-   *
-   * <p>A {@link LazyParameterBound} is first converted to the {@link ReferenceBound} that
-   * represents the same type, if possible. Returns false if the bound of this wildcard is not a
-   * single reference type.
-   *
-   * @param type the type to check for
-   * @return true if this wildcard contains the type, false otherwise
-   */
-  public boolean containsType(ReferenceType type) {
-    ParameterBound bound = resolve(getTypeBound());
-    if (!(bound instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
-    if (hasUpperBound) {
-      return type.isSubtypeOfOrEqualTo(boundType);
-    } else {
-      return boundType.isSubtypeOfOrEqualTo(type);
-    }
-  }
-
-  /**
-   * Returns the given bound as a {@link ReferenceBound} that represents the same type, if it is a
-   * {@link LazyParameterBound} that can be converted to one, as for the bound {@code List<T>} of
-   * {@code ? extends List<T>} where {@code T extends Comparable<T>}. Otherwise, returns the given
-   * bound.
-   *
-   * @param bound a wildcard bound
-   * @return a {@link ReferenceBound} equivalent to {@code bound}, or {@code bound} itself
-   */
-  private static ParameterBound resolve(ParameterBound bound) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
-      if (converted != null) {
-        return converted;
-      }
-    }
-    return bound;
   }
 
   @Override
