@@ -123,6 +123,32 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A generic class with a non-generic inner class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class GenericOuter<T> {
+    /** An inner class that has no type parameter of its own. */
+    class NonGenericInner {}
+  }
+
+  /**
+   * A class whose type parameter is bounded by a non-generic member class of a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class NonGenericMemberClassBound<T extends GenericOuter<String>.NonGenericInner> {}
+
+  @Test
+  public void testNonGenericMemberClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
    * A class whose second type parameter has a bound that contains an array of the first.
    *
    * @param <U> the type parameter whose array occurs in the bound of {@code T}
