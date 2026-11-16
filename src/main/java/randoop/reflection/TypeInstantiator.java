@@ -407,9 +407,8 @@ public class TypeInstantiator {
    *         <li>For each remaining type variable, compute its candidate types: the input types, and
    *             the types that the substitution gives to type variables, that are within its
    *             bounds, ignoring any bound that mentions another type variable, and that are
-   *             consistent with the substitution; see {@link
-   *             #consistentCandidatesByVariable(List, Substitution)}. If some type variable has no
-   *             candidate types, the attempt fails.
+   *             consistent with the substitution; see {@link #consistentCandidatesByVariable(List,
+   *             Substitution)}. If some type variable has no candidate types, the attempt fails.
    *         <li>Because the candidate types are computed for each type variable separately, a
    *             combination of them can violate the bounds. Return a randomly selected combination
    *             of candidate types that, when added to the substitution, satisfies the bounds; see
