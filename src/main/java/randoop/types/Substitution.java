@@ -192,7 +192,9 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type.
+   * substitutions contain the same type variable, they must map to the same type. Types that are
+   * equal but contain copies of a type variable with different bounds are not the same; see {@link
+   * #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
