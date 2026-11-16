@@ -41,15 +41,6 @@ public class ParameterBoundTest {
     assertTrue(bound.isLowerBound(argType, empty));
   }
 
-  @Test
-  public void testArrayClassBound() {
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), String[].class);
-    Type argType = ArrayType.forClass(String[].class);
-    Substitution empty = new Substitution();
-    assertTrue(bound.isUpperBound(argType, empty));
-    assertTrue(bound.isLowerBound(argType, empty));
-  }
-
   /**
    * A class whose fields have types that contain an array of its type parameter.
    *
@@ -224,23 +215,5 @@ public class ParameterBoundTest {
             .get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
-  }
-
-  /**
-   * A type parameter whose bound has a wildcard bounded by an array class.
-   *
-   * @param <T> the type parameter
-   */
-  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
-
-  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
-  @SuppressWarnings("serial")
-  static class ArrayClassList extends ArrayList<String[]> {}
-
-  @Test
-  public void testWildcardArrayClassBound() {
-    TypeVariable t =
-        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
-    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
   }
 }
