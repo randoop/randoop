@@ -52,6 +52,35 @@ public class ParameterBoundTest {
     }
   }
 
+  /** A field whose type is a generic array type that contains no type variable. */
+  @SuppressWarnings("unused")
+  private static List<String>[] concreteGenericArray;
+
+  /**
+   * Returns the generic type of the given field of the given class.
+   *
+   * @param c a class
+   * @param fieldName the name of a field declared in {@code c}
+   * @return the generic type of the field
+   */
+  private static java.lang.reflect.Type fieldType(Class<?> c, String fieldName) {
+    try {
+      return c.getDeclaredField(fieldName).getGenericType();
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  @Test
+  public void testConcreteGenericArrayBoundWithEmptySubstitution() {
+    java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "concreteGenericArray");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
+    Type argType = Type.forType(arrayType);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
+  }
+
   @Test
   public void testLowerBoundOfOtherBounds() {
     ParameterBound intersection =
@@ -148,35 +177,6 @@ public class ParameterBoundTest {
             ReferenceType.forClass(Number.class), new Substitution()));
     assertFalse(integerAndComparable.isLowerBound(stringBound, new Substitution()));
     assertFalse(integerAndComparable.isLowerBound(selfComparableBound, new Substitution()));
-  }
-
-  /** A field whose type is a generic array type that contains no type variable. */
-  @SuppressWarnings("unused")
-  private static List<String>[] concreteGenericArray;
-
-  /**
-   * Returns the generic type of the given field of the given class.
-   *
-   * @param c a class
-   * @param fieldName the name of a field declared in {@code c}
-   * @return the generic type of the field
-   */
-  private static java.lang.reflect.Type fieldType(Class<?> c, String fieldName) {
-    try {
-      return c.getDeclaredField(fieldName).getGenericType();
-    } catch (NoSuchFieldException e) {
-      throw new Error(e);
-    }
-  }
-
-  @Test
-  public void testConcreteGenericArrayBoundWithEmptySubstitution() {
-    java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "concreteGenericArray");
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
-    Type argType = Type.forType(arrayType);
-    Substitution empty = new Substitution();
-    assertTrue(bound.isUpperBound(argType, empty));
-    assertTrue(bound.isLowerBound(argType, empty));
   }
 
   /**
