@@ -88,7 +88,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /** Method names for flaky tests (e.g., "test005"). */
-  private final HashSet<String> flakyTestNames = new HashSet<>();
+  private final Set<String> flakyTestNames = new HashSet<>();
 
   /**
    * Create a {@link FailingAssertionCommentWriter}.
@@ -258,18 +258,16 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       List<Diagnostic<? extends JavaFileObject>> diagnostics,
       FileCompiler.FileCompilerException e) {
 
+    String sourceMessage =
+        GenInputsAbstract.print_non_compiling_file
+            ? String.format("Source file:%n%s%n", classSource)
+            : String.format(
+                "Use --print-non-compiling-file to print the file with the compilation error.%n");
     String message =
         String.format(
-            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
-            "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_non_compiling_file) {
-      message += String.format("Source file:%n%s%n", classSource);
-    } else {
-      message +=
-          String.format(
-              "Use --print-non-compiling-file to print the file with the compilation error.%n");
-    }
-    message += String.format("Diagnostics:%n%s%n", diagnostics);
+            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n"
+                + "%sDiagnostics:%n%s%n",
+            "sourceFile", destinationDir, sourceMessage, diagnostics);
     throw new RandoopBug(message, e);
   }
 
@@ -630,10 +628,10 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private static class Match {
 
     /** The line that matched the pattern. */
-    final String line;
+    /*package*/ final String line;
 
     /** The substring that matched the group. */
-    final String group;
+    /*package*/ final String group;
 
     /**
      * Creates a {@link Match} record with the given line and group.
@@ -641,7 +639,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
      * @param line the matched line
      * @param group the matched group substring
      */
-    Match(String line, String group) {
+    /*package*/ Match(String line, String group) {
       this.line = line;
       this.group = group;
     }

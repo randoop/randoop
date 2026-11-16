@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,10 +85,20 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // non-generic member classes of a generic class show up as ParameterizedType
-      // treat these as Class<?>
+      // Non-generic member classes of a generic class, such as Outer<U>.Inner, show up as
+      // ParameterizedType.  Treat these as a NonParameterizedType, but preserve the type arguments
+      // of the owner type: they may be type variables (such as a method type parameter U) other
+      // than the type parameters of the enclosing class.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
+        java.lang.reflect.Type ownerType = t.getOwnerType();
+        if (ownerType instanceof java.lang.reflect.ParameterizedType
+            && !Modifier.isStatic(rawType.getModifiers())) {
+          // Do not side-effect the cached result of forClass.
+          NonParameterizedType result = new NonParameterizedType(rawType);
+          result.enclosingType = forType(ownerType);
+          return result;
+        }
         return forClass(rawType);
       }
       return ParameterizedType.forType(t);
@@ -143,7 +154,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type the type to which resulting enclosing type is to be added; will be side-effected
    * @return the type with enclosing type added if needed
    */
-  final ClassOrInterfaceType substitute(Substitution substitution, ClassOrInterfaceType type) {
+  /*package*/ final ClassOrInterfaceType substitute(
+      Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.enclosingType = enclosingType.substitute(substitution);
     }
@@ -160,7 +172,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type this type with capture conversion applied; will be side-effected
    * @return the type with converted enclosing type
    */
-  final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
+  /*package*/ final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
       type.enclosingType = enclosingType.applyCaptureConversion();
     }
@@ -245,7 +257,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the package part of a type name, or ""
    */
-  String getPackagePrefix() {
+  /*package*/ String getPackagePrefix() {
     Package pkg = getPackage();
     if (pkg == null) {
       return "";
@@ -533,24 +545,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           this, otherType, this.getClass(), otherType.getClass());
     }
 
-    if (otherType.isObject()) {
+    // This handles Object, this type itself, and a type variable whose lower bound is a supertype
+    // of this type.
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
-    }
-
-    if (this.equals(otherType)) {
-      return true;
-    }
-
-    if (otherType.isVariable()) {
-      // A class or interface type is a subtype of a type variable only if it is a subtype of the
-      // variable's lower bound, as for a capture variable of `? super String`.
-      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
-      if (!(lowerBound instanceof ReferenceBound)) {
-        return false;
-      }
-      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
-      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
-          && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
 
     if (!(otherType instanceof ClassOrInterfaceType)) {

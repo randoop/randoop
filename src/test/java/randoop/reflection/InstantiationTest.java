@@ -3,6 +3,7 @@ package randoop.reflection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -384,6 +385,73 @@ public class InstantiationTest {
     TypedClassOperation instance = instantiator.instantiate(use);
     assertNotNull("instantiation failed for " + use, instance);
     assertEquals(innerType, instance.getInputTypes().get(0));
+  }
+
+  /**
+   * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
+    return ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
+        .substitute(
+            new Substitution(
+                GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
+                typeArgument));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U extends Number> void
+   * useBounded(MemberTypeOuter<U>.Inner)} respects the bound of {@code U}: it rejects {@code
+   * MemberTypeOuter<String>.Inner} and accepts {@code MemberTypeOuter<Integer>.Inner}.
+   */
+  @Test
+  public void testBoundedMemberTypeInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation useBounded =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("useBounded", MemberTypeOuter.Inner.class));
+
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNull("instantiation should fail for " + useBounded, instance);
+
+    ClassOrInterfaceType integerInner =
+        memberInnerType((ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive());
+    inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(integerInner.getSupertypesInclusive());
+    instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNotNull("instantiation failed for " + useBounded, instance);
+    assertEquals(integerInner, instance.getInputTypes().get(0));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U get(MemberTypeOuter<U>.Inner)} instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testMemberTypeReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation get =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("get", MemberTypeOuter.Inner.class));
+
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(get);
+    assertNotNull("instantiation failed for " + get, instance);
+    assertEquals(stringInner, instance.getInputTypes().get(0));
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /* disabled until fix type parameter management
