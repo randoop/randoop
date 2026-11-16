@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -1863,12 +1864,32 @@ public class TypeVariableTest {
   }
 
   @Test
-  public void testSubtypeTestOfExplicitVariableAgainstItsBound() {
-    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
-    // The bound of t is a LazyParameterBound for Comparable<t>, which refers to t.
-    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
-    InstantiatedType bound = GenericClassType.forClass(Comparable.class).instantiate(t);
-    assertTrue(t + " should be a subtype of its bound " + bound, t.isSubtypeOfOrEqualTo(bound));
+  public void testSubtypeTestOfCaptureVariableAgainstWildcardSelfBound()
+      throws NoSuchFieldException {
+    TypeVariable capture = typeArgument(capturedFieldType("wildcardSelfBoundField"), 0);
+    TypeVariable otherCapture = typeArgument(capturedFieldType("wildcardSelfBoundField"), 0);
+    assertNotEquals(capture, otherCapture);
+    // The bound of each capture variable is Comparable<? super capture>, which refers to the
+    // capture variable within a wildcard.  A subtype test of the bound against a type whose type
+    // argument is a wildcard that mentions a capture variable tests that capture variable again.
+    // Each subtype test terminates.
+    ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
+    ReferenceType otherBound = ((ReferenceBound) otherCapture.getUpperTypeBound()).getBoundType();
+    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
+    assertTrue(otherCapture.isSubtypeOfOrEqualTo(otherBound));
+    assertFalse(capture.isSubtypeOfOrEqualTo(otherBound));
+    assertFalse(otherCapture.isSubtypeOfOrEqualTo(bound));
+    assertFalse(capture.isSubtypeOfOrEqualTo(otherCapture));
+    // Comparable<? super Comparable<? super capture>>
+    ReferenceType comparableToBound =
+        new InstantiatedType(
+            JavaTypes.COMPARABLE_TYPE,
+            Collections.singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(bound), false))));
+    assertFalse(capture.isSubtypeOfOrEqualTo(comparableToBound));
+    assertFalse(
+        capture.isSubtypeOfOrEqualTo(JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE)));
+    assertTrue(capture.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
   }
 
   /**
@@ -2085,7 +2106,7 @@ public class TypeVariableTest {
 
   @Test
   public void testSubtypeOfMemberOfIntersectionBound() {
-    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
     // The bound of T is Number & Runnable.
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
