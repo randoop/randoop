@@ -3,6 +3,8 @@ package randoop.types;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
@@ -118,5 +120,101 @@ public class ParameterBoundTest {
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
     assertTrue(bound.isLowerBound(argType, empty));
+  }
+
+  /**
+   * A class whose second type parameter has a bound that contains an array of the first.
+   *
+   * @param <U> the type parameter whose array occurs in the bound of {@code T}
+   * @param <T> the type parameter whose bound contains an array of {@code U}
+   */
+  @SuppressWarnings("unused")
+  private static class ArrayOfOtherVariableBound<U, T extends List<U[]>> {}
+
+  @Test
+  public void testBoundWithArrayOfOtherVariable() {
+    TypeVariable t =
+        GenericClassType.forClass(ArrayOfOtherVariableBound.class).getTypeParameters().get(1);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A class whose third type parameter has a bound that mentions the second, whose bound contains
+   * an array of the first.
+   *
+   * @param <V> the type parameter whose array occurs in the bound of {@code U}
+   * @param <U> the type parameter whose bound contains an array of {@code V}
+   * @param <T> the type parameter whose bound mentions {@code U}
+   */
+  @SuppressWarnings("unused")
+  private static class BoundMentioningArrayBound<V, U extends List<V[]>, T extends Collection<U>> {}
+
+  @Test
+  public void testBoundMentioningVariableWithArrayBound() {
+    TypeVariable t =
+        GenericClassType.forClass(BoundMentioningArrayBound.class).getTypeParameters().get(2);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A class whose fields have the same type: a list of a wildcard bounded by a parameterized type
+   * that contains an array of the type parameter.
+   *
+   * @param <U> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class WildcardWithArrayOfVariable<U> {
+    /** A field whose type is a list of a wildcard bounded by a list of arrays of {@code U}. */
+    List<? extends List<U[]>> first;
+
+    /** A field whose type is the same as that of {@link #first}. */
+    List<? extends List<U[]>> second;
+  }
+
+  @Test
+  public void testWildcardBoundWithArrayOfVariable() {
+    Type firstType = Type.forType(fieldType(WildcardWithArrayOfVariable.class, "first"));
+    Type secondType = Type.forType(fieldType(WildcardWithArrayOfVariable.class, "second"));
+    assertTrue(firstType.isSubtypeOfOrEqualTo(secondType));
+  }
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array of a parameterized type in
+   * which no type variable occurs.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardConcreteGenericArrayBound<T extends List<? extends List<String>[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardConcreteGenericArrayBound}. */
+  @SuppressWarnings("serial")
+  static class ConcreteGenericArrayList extends ArrayList<List<String>[]> {}
+
+  @Test
+  public void testWildcardConcreteGenericArrayBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardConcreteGenericArrayBound.class)
+            .getTypeParameters()
+            .get(0);
+    assertTrue(
+        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
+  }
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array class.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayClassList extends ArrayList<String[]> {}
+
+  @Test
+  public void testWildcardArrayClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
   }
 }
