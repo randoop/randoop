@@ -20,7 +20,7 @@ import randoop.util.ClassFileConstants;
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /** The storage for constant information. */
-  private ScopeToLiteralStatistics scopeToLiteralStatistics;
+  private final ScopeToLiteralStatistics scopeToLiteralStatistics;
 
   /**
    * Creates a visitor that records constant statistics.

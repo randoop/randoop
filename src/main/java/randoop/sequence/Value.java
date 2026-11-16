@@ -92,9 +92,7 @@ public final class Value {
       } else if (d.equals(Double.NEGATIVE_INFINITY)) {
         return "Double.NEGATIVE_INFINITY";
       }
-      rep = d.toString();
-      assert rep != null;
-      rep = rep + "d";
+      rep = d.toString() + "d";
     } else if (valueType.equals(JavaTypes.FLOAT_TYPE)) {
       Float f = (Float) value;
       if (f.isNaN()) {
@@ -104,9 +102,7 @@ public final class Value {
       } else if (f == Float.NEGATIVE_INFINITY) {
         return "Float.NEGATIVE_INFINITY";
       }
-      rep = f.toString();
-      assert rep != null;
-      rep = rep + "f";
+      rep = f.toString() + "f";
     } else if (valueType.equals(JavaTypes.LONG_TYPE)) {
       rep = value.toString() + "L";
     } else if (valueType.equals(JavaTypes.BYTE_TYPE)) {
@@ -121,7 +117,7 @@ public final class Value {
 
     // if a negative number parenthesize to avoid problems in casts
     if (rep.charAt(0) == '-') {
-      rep = "(" + rep + ")";
+      return "(" + rep + ")";
     }
 
     return rep;
