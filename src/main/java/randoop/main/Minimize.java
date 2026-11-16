@@ -472,7 +472,7 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
       List<Comment> orphanComments = new ArrayList<>(1);
-      getOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
+      addOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
       Node parent = currStmt.getParentNode().get();
 
       // Remove the current statement. We will re-insert simplifications of it.
@@ -1487,7 +1487,7 @@ public class Minimize extends CommandHandler {
     "JdkObsolete", // for LinkedList
     "ReferenceEquality"
   })
-  private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
+  private static void addOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
     if (node instanceof Comment) {
       return;
     }
