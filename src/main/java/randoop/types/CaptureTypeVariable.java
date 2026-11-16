@@ -204,9 +204,9 @@ class CaptureTypeVariable extends TypeVariable {
   public List<TypeVariable> getTypeParameters() {
     Set<Integer> getTypeParametersIsExecutingSet = getTypeParametersIsExecuting.get();
     if (!getTypeParametersIsExecutingSet.add(varID)) {
-      // This variable occurs in its own bound.  The enclosing call for this variable adds it to the
-      // result.  The occurrence can be a different copy of this variable (see substitute), so
-      // adding the occurrence too would add the same variable twice.
+      // This variable occurs in its own bound, whose type parameters the enclosing call for this
+      // variable is already computing.  Computing them again would not terminate.  The enclosing
+      // call adds this variable to the result.
       return Collections.emptyList();
     }
     try {
@@ -219,16 +219,17 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = getSubstitutedType(substitution);
-    // if this variable replaced by non-variable, return non-variable
-    if (type != null && !type.isVariable()) {
+    // If this variable is replaced by a non-variable, return the non-variable.  A copy of this
+    // variable with other bounds has the bounds that the substitution intends.
+    if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
     Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(varID)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
-      // If the enclosing call creates a copy with new bounds, this occurrence in the copy's bound
-      // is still the original variable, not the copy.  Returning the copy would make the copy's
-      // bound refer to the copy, and then `equals` on two such copies would not terminate.
+      // Applying the substitution to the bound again would not terminate.  If the enclosing call
+      // creates a copy with new bounds, this occurrence in the copy's bound is this variable, not
+      // the copy.
       return type != null ? type : this;
     }
     try {
@@ -246,8 +247,8 @@ class CaptureTypeVariable extends TypeVariable {
    * whose bounds are the substituted bounds. Otherwise, the result is {@code type}, or this
    * variable if {@code type} is null.
    *
-   * @param type the type variable that {@code substitution} maps this variable to, or null if
-   *     {@code substitution} does not map this variable
+   * @param type the type variable, other than a copy of this variable, that {@code substitution}
+   *     maps this variable to, or null if {@code substitution} does not map this variable
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */

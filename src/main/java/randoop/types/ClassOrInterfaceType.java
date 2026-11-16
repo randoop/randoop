@@ -562,24 +562,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           this, otherType, this.getClass(), otherType.getClass());
     }
 
-    if (otherType.isObject()) {
+    // This handles Object, this type itself, and a type variable whose lower bound is a supertype
+    // of this type.
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
-    }
-
-    if (this.equals(otherType)) {
-      return true;
-    }
-
-    if (otherType.isVariable()) {
-      // A class or interface type is a subtype of a type variable only if it is a subtype of the
-      // variable's lower bound, as for a capture variable of `? super String`.
-      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
-      if (!(lowerBound instanceof ReferenceBound)) {
-        return false;
-      }
-      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
-      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
-          && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
 
     if (!(otherType instanceof ClassOrInterfaceType)) {
