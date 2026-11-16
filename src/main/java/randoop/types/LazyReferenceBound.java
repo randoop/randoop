@@ -12,8 +12,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves the bound unresolved if applying it would create an array of the null type,
- * because there is no such array.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -32,11 +30,6 @@ class LazyReferenceBound extends ReferenceBound {
     if (substitution.isEmpty()) {
       return this;
     }
-    // There is no array of the null type, so leave the bound unresolved.
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      return this;
-    }
-
     ReferenceType referenceType = getBoundType().substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so `equals` would not
     // detect a substitution that changes only the bounds of a type variable.
@@ -60,10 +53,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
@@ -90,10 +79,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself, one of its supertypes, or its lower bound.
