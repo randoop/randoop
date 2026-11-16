@@ -82,7 +82,8 @@ public abstract class ParameterBound {
    * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
    * The exception is a non-generic member class of a generic class, as in {@code
    * Outer<String>.Inner}, or a generic array type of one, which {@link #eagerBoundType} cannot
-   * convert. Otherwise, the result is a {@link LazyParameterBound}.
+   * convert. Otherwise, the result is a {@link LazyParameterBound}, which converts such a member
+   * class together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -134,7 +135,7 @@ public abstract class ParameterBound {
    * @return the element type of {@code type}, or {@code type} itself if it is not a generic array
    *     type
    */
-  /*package*/ static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
+  private static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
     while (type instanceof java.lang.reflect.GenericArrayType) {
       type = ((java.lang.reflect.GenericArrayType) type).getGenericComponentType();
     }

@@ -754,6 +754,45 @@ public class TypeVariableTest {
     assertSame(copy, t.substitute(new Substitution(t, copy)));
   }
 
+  /** Every occurrence of a type variable is compared, not only the first. */
+  @Test
+  public void testAreIdenticalComparesRepeatedOccurrences() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable copy =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType mapTT = mapType.instantiate(t, t);
+    InstantiatedType mapTCopy = mapType.instantiate(t, copy);
+    // Copies of a type variable are equal, even though their bounds differ.
+    assertEquals(mapTT, mapTCopy);
+    assertTrue(TypeVariable.areIdentical(mapTT, mapType.instantiate(t, t)));
+    assertFalse(TypeVariable.areIdentical(mapTT, mapTCopy));
+    assertFalse(TypeVariable.areIdentical(mapTCopy, mapTT));
+    assertFalse(
+        TypeVariable.areIdentical(
+            ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
+
+    // The same holds within an array type and within a wildcard bound.
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType listOfMapTT = listType.instantiate(ArrayType.ofComponentType(mapTT));
+    InstantiatedType listOfMapTCopy = listType.instantiate(ArrayType.ofComponentType(mapTCopy));
+    assertEquals(listOfMapTT, listOfMapTCopy);
+    assertFalse(TypeVariable.areIdentical(listOfMapTT, listOfMapTCopy));
+    InstantiatedType extendsTT =
+        new InstantiatedType(
+            listType,
+            Collections.<TypeArgument>singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(mapTT), true))));
+    InstantiatedType extendsTCopy =
+        new InstantiatedType(
+            listType,
+            Collections.<TypeArgument>singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(mapTCopy), true))));
+    assertEquals(extendsTT, extendsTCopy);
+    assertFalse(TypeVariable.areIdentical(extendsTT, extendsTCopy));
+  }
+
   /** Substituting a copy with other bounds for a capture variable yields that copy. */
   @Test
   public void testSubstituteCopyForCaptureVariableWithChangedBound() {
