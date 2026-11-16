@@ -217,4 +217,76 @@ public class ParameterBoundTest {
         GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
     assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
   }
+
+  /**
+   * A generic class whose inner class has no type parameters of its own.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class MemberOwner<T> {
+    /** An inner class whose type has type arguments only through its owner type. */
+    class Member {}
+  }
+
+  /** A class whose fields have types that contain {@link MemberOwner.Member}. */
+  @SuppressWarnings("unused")
+  private static class MemberFields {
+    /** A field whose type is a member class whose owner type has the type argument String. */
+    MemberOwner<String>.Member stringMember;
+
+    /** A field whose type is a member class whose owner type has the type argument Integer. */
+    MemberOwner<Integer>.Member integerMember;
+
+    /** A field whose type is an array of {@link #stringMember}'s type. */
+    MemberOwner<String>.Member[] stringMemberArray;
+  }
+
+  @Test
+  public void testArrayOfMemberClassBound() {
+    java.lang.reflect.Type arrayType = fieldType(MemberFields.class, "stringMemberArray");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
+    Type argType = Type.forType(arrayType);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
+  }
+
+  /**
+   * A class whose type parameter is bounded by a member class whose owner type has a type argument.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class MemberClassBound<T extends MemberOwner<String>.Member> {}
+
+  @Test
+  public void testMemberClassBound() {
+    TypeVariable t = GenericClassType.forClass(MemberClassBound.class).getTypeParameters().get(0);
+    ReferenceType stringMember =
+        (ReferenceType) Type.forType(fieldType(MemberFields.class, "stringMember"));
+    ReferenceType integerMember =
+        (ReferenceType) Type.forType(fieldType(MemberFields.class, "integerMember"));
+    assertTrue(t.canBeInstantiatedBy(stringMember));
+    assertFalse(t.canBeInstantiatedBy(integerMember));
+  }
+
+  /**
+   * A class whose type parameter is bounded by a member class of the class, whose owner type has
+   * the type parameter as its type argument.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class SelfMemberClassBound<T extends SelfMemberClassBound<T>.Member> {
+    /** An inner class whose type has type arguments only through its owner type. */
+    class Member {}
+  }
+
+  @Test
+  public void testSelfMemberClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(SelfMemberClassBound.class).getTypeParameters().get(0);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
 }

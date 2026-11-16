@@ -48,7 +48,9 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
     }
-    if (argType.isParameterized()) {
+    // A member class such as Outer<String>.Inner is parameterized only through its enclosing
+    // type.  It is not a ParameterizedType, and it is compared by subtyping below.
+    if (argType instanceof ParameterizedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -99,7 +101,9 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (thisBoundType.isParameterized()) {
+    // A member class such as Outer<String>.Inner is parameterized only through its enclosing
+    // type.  It is not a ParameterizedType, and it is compared by subtyping below.
+    if (thisBoundType instanceof ParameterizedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

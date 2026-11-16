@@ -80,9 +80,7 @@ public abstract class ParameterBound {
    * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
    * result is an eager bound if the type is a type variable, or if it is a class, parameterized
    * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
-   * The exception is a generic array type whose element type is a non-generic member class of a
-   * generic class, as in {@code Outer<String>.Inner[]}, which {@link #eagerBoundType} cannot
-   * convert. Otherwise, the result is a {@link LazyParameterBound}.
+   * Otherwise, the result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -93,64 +91,11 @@ public abstract class ParameterBound {
     if (isTypeVariable(type)
         || ((type instanceof Class<?>
                 || type instanceof java.lang.reflect.ParameterizedType
-                || (type instanceof java.lang.reflect.GenericArrayType
-                    && !isNonGenericMemberClass(elementType(type))))
+                || type instanceof java.lang.reflect.GenericArrayType)
             && !hasTypeVariable(type, variableSet))) {
-      return new EagerReferenceBound(eagerBoundType(type));
+      return new EagerReferenceBound(ReferenceType.forType(type));
     }
     return new LazyParameterBound(type);
-  }
-
-  /**
-   * Returns the type of an eager bound for the given (reflection) type. A parameterized type,
-   * including one that is the element type of a generic array type, is converted by {@link
-   * ParameterizedType#forType}. Unlike {@link ClassOrInterfaceType#forType}, it does not give a
-   * non-generic member class, as in {@code Outer<String>.Inner}, the owner type from the class
-   * declaration, as in {@code Outer<T>.Inner}; it throws an exception instead.
-   *
-   * @param type a class, parameterized type, generic array type, or type variable
-   * @return the type that {@code type} represents
-   */
-  private static ReferenceType eagerBoundType(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      return ParameterizedType.forType(type);
-    }
-    if (type instanceof java.lang.reflect.GenericArrayType) {
-      return ArrayType.ofComponentType(
-          eagerBoundType(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
-    }
-    return ReferenceType.forType(type);
-  }
-
-  /**
-   * Returns the element type of the given (reflection) type: the type that remains after all array
-   * dimensions are removed, as in {@code List<String>} for {@code List<String>[][]}.
-   *
-   * @param type a reflection type
-   * @return the element type of {@code type}, or {@code type} itself if it is not a generic array
-   *     type
-   */
-  private static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
-    while (type instanceof java.lang.reflect.GenericArrayType) {
-      type = ((java.lang.reflect.GenericArrayType) type).getGenericComponentType();
-    }
-    return type;
-  }
-
-  /**
-   * Returns true if the given (reflection) type is a non-generic member class of a generic class,
-   * as in {@code Outer<String>.Inner}. Reflection represents such a type as a parameterized type
-   * whose raw type has no type parameters.
-   *
-   * @param type a reflection type
-   * @return true if {@code type} is a non-generic member class of a generic class
-   */
-  private static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
-    return type instanceof java.lang.reflect.ParameterizedType
-        && ((Class<?>) ((java.lang.reflect.ParameterizedType) type).getRawType())
-                .getTypeParameters()
-                .length
-            == 0;
   }
 
   /**
@@ -173,8 +118,9 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are not examined, because {@link #eagerBoundType} converts each parameterized
-   * type by {@link ParameterizedType#forType}, which ignores owner types.
+   * <p>The owner type of a member class that has no type parameters of its own, as in {@code
+   * Outer<T>.Inner}, is examined, because the conversion to a {@link ClassOrInterfaceType} uses it.
+   * Other owner types are not examined, because the conversion does not use them.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -197,6 +143,10 @@ public abstract class ParameterBound {
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      java.lang.reflect.ParameterizedType ownerType = ClassOrInterfaceType.memberClassOwnerType(pt);
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
+      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
