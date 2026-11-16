@@ -132,7 +132,8 @@ public final class SequenceCollection {
   /**
    * Returns the number of calls to {@link #add} that changed this collection since it was created
    * or last cleared, including calls by {@code addAll}. A call changes this collection if its
-   * sequence has at least one active output.
+   * sequence has at least one active output whose (type, sequence) entry is not already in this
+   * collection.
    *
    * @return the number of calls to {@link #add} that changed this collection since it was created
    *     or last cleared
@@ -234,7 +235,7 @@ public final class SequenceCollection {
    *
    * @param sequence the sequence to add to this collection
    * @return true if this collection changed; that is, if {@code sequence} has at least one active
-   *     output
+   *     output whose (type, sequence) entry was not already in this collection
    */
   @RequiresNonNull("this.sequenceMap")
   public boolean add(Sequence sequence) {
@@ -272,8 +273,9 @@ public final class SequenceCollection {
           typesModificationCount++;
         }
         typeSet.add(formalType);
-        updateCompatibleMap(sequence, formalType);
-        changed = true;
+        if (updateCompatibleMap(sequence, formalType)) {
+          changed = true;
+        }
       }
     }
     if (changed) {
@@ -355,9 +357,10 @@ public final class SequenceCollection {
    *
    * @param sequence the sequence
    * @param type the {@link Type}
+   * @return true if the entry was added; false if it was already present
    */
   @RequiresNonNull("this.sequenceMap")
-  private void updateCompatibleMap(Sequence sequence, Type type) {
+  private boolean updateCompatibleMap(Sequence sequence, Type type) {
     Set<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
     boolean added = sequences.add(sequence);
     if (added) {
@@ -369,6 +372,7 @@ public final class SequenceCollection {
           "Didn't add duplicate sequence of type %s of length %d (collection has %d sequences)%n",
           type, sequence.size(), sequences.size());
     }
+    return added;
   }
 
   /**

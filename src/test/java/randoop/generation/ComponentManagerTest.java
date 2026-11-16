@@ -63,6 +63,17 @@ public class ComponentManagerTest {
   }
 
   @Test
+  public void testDuplicateIsNotCounted() {
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
+    Sequence s = Sequence.createSequenceForPrimitive(67890);
+    mgr.addGeneratedSequence(s);
+    assertEquals(1, mgr.numGeneratedSequences());
+    // Adding the same sequence again does not change the component set.
+    mgr.addGeneratedSequence(s);
+    assertEquals(1, mgr.numGeneratedSequences());
+  }
+
+  @Test
   public void testSequenceWithNoActiveOutputsIsNotCounted() {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
     Sequence inactive = Sequence.createSequenceForPrimitive(54321);
