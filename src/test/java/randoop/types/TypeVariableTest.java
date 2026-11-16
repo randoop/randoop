@@ -1849,7 +1849,7 @@ public class TypeVariableTest {
 
   @Test
   public void testSubtypeOfMemberOfIntersectionBound() {
-    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
     // The bound of T is Number & Runnable.
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
