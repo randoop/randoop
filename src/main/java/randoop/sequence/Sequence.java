@@ -1100,7 +1100,7 @@ public final class Sequence {
         try {
           operation = OperationParser.parse(opStr);
         } catch (OperationParseException e) {
-          throw new SequenceParseException(e.getMessage(), statements, statementCount);
+          throw new SequenceParseException(e.getMessage(), statements, statementCount, e);
         }
         assert operation != null;
 
@@ -1156,11 +1156,7 @@ public final class Sequence {
       }
       b.append("").append(Globals.lineSep).append(Globals.lineSep);
       b.append("Error: ").append(e.toString()).append(Globals.lineSep);
-      b.append("Stack trace:").append(Globals.lineSep);
-      for (StackTraceElement s : e.getStackTrace()) {
-        b.append(s.toString());
-      }
-      throw new Error(b.toString());
+      throw new Error(b.toString(), e);
     }
     return sequence;
   }

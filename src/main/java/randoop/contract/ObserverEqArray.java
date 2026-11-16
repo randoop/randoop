@@ -23,7 +23,7 @@ import randoop.types.TypeTuple;
 public final class ObserverEqArray extends ObjectContract {
 
   /** The run-time result of calling the observer: an array of literals. */
-  private Object value;
+  private final Object value;
 
   /** The maximum difference for which doubles are considered equal. */
   private static final double DOUBLE_DELTA = 1e-15;

@@ -51,9 +51,9 @@ public final class Globals {
    */
   public static String getRandoopVersion() {
     Properties prop = new Properties();
-    try (InputStream isReleaseStream =
+    try (InputStream releaseMarkerStream =
         Globals.class.getResourceAsStream("/this-is-a-randoop-release")) {
-      if (isReleaseStream != null) {
+      if (releaseMarkerStream != null) {
         return RANDOOP_VERSION;
       }
     } catch (IOException e) {

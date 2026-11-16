@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -84,7 +85,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * scope, used to select literals from the component manager's literal statistics. A scope is a
    * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
    */
-  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
+  private @MonotonicNonNull Map<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * Create a forward generator.
