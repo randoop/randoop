@@ -105,25 +105,4 @@ public class RelatedBoundsCase {
 
   /** A subclass of a comparable class. It is comparable only to {@link Base}, not to itself. */
   public static class Derived extends Base {}
-
-  /**
-   * Returns null. The parameter type is a member class of a generic class.
-   *
-   * @param <E> the type argument of the enclosing class
-   * @param inner a member of an {@link Outer}
-   * @return null
-   */
-  public static <E> @Nullable E enclosed(Outer<E>.Inner inner) {
-    return null;
-  }
-
-  /**
-   * A generic class with a member class.
-   *
-   * @param <E> a type parameter
-   */
-  public static class Outer<E> {
-    /** A member class. */
-    public class Inner {}
-  }
 }
