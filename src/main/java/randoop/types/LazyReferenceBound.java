@@ -195,21 +195,23 @@ class LazyReferenceBound extends EagerReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type or the same type as this bound, because the type of this bound contains type
-   * variables.
+   * is the null type or, after the substitution is applied to it, is the type of this bound. The
+   * type of this bound contains type variables, so it stands for every instantiation of them; a
+   * type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
+   * but {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (getBoundType() instanceof CaptureTypeVariable) {
       return super.hasLowerBound(lowerBound, substitution);
     }
-    ParameterBound substituted = lowerBound.substitute(substitution);
-    if (!(substituted instanceof ReferenceBound)) {
-      return false;
+    if (lowerBound.isNullType(substitution)) {
+      return true;
     }
-    ReferenceType lowerBoundType = ((ReferenceBound) substituted).getBoundType();
-    // A type is a lower bound of itself.
-    return lowerBoundType.equals(JavaTypes.NULL_TYPE)
-        || TypeVariable.areIdentical(lowerBoundType, getBoundType());
+    return lowerBound instanceof ReferenceBound
+        && ((ReferenceBound) lowerBound)
+            .getBoundType()
+            .substitute(substitution)
+            .equals(getBoundType());
   }
 }
