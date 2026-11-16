@@ -84,8 +84,7 @@ final class Subtyping {
         return true;
       }
       // Otherwise, a type variable is a subtype only of a type variable whose lower bound it is a
-      // subtype of, as for T and a capture of `? super T`.  Every supertype of a type variable,
-      // other than a type variable, is a supertype of its upper bound.
+      // subtype of, as for T and a capture of `? super T`.
       if (!otherType.isVariable()) {
         return false;
       }
