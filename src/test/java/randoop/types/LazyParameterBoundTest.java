@@ -140,4 +140,22 @@ public class LazyParameterBoundTest {
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
   }
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array class.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayClassList extends ArrayList<String[]> {}
+
+  @Test
+  public void testWildcardArrayClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
+  }
 }
