@@ -20,10 +20,6 @@ class EagerReferenceBound extends ReferenceBound {
   @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
-    // There is no array of the null type, so leave the bound unresolved.
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      return this;
-    }
     ReferenceType referenceType = getBoundType().substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so `equals` would not
     // detect a substitution that changes only the bounds of a type variable.
@@ -40,10 +36,6 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution subst) {
-    if (createsNullTypeArray(getBoundType(), subst)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
@@ -80,10 +72,6 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
-    if (createsNullTypeArray(getBoundType(), subst)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
@@ -91,12 +79,12 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       TypeVariable variable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
-        // The type variable can be argType itself, as in LazyReferenceBound.isUpperBound.  Checking
-        // argType against the upper bound of the type variable instead would leave the type
-        // variable unknown within that bound:  for `T extends Comparable<? super T>`, it would
-        // accept Comparable<String>, which no choice of T is a supertype of.  The bounds of the
-        // type variable are checked with the mappings of `subst`, because they can mention other
-        // type variables that `subst` instantiates.
+        // The type variable can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of the type
+        // variable instead would leave the type variable unknown within that bound:  for
+        // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
+        // T is a supertype of.  The bounds of the type variable are checked with the mappings of
+        // `subst`, because they can mention other type variables that `subst` instantiates.
         return variable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       // The substitution does not map the variable, so the variable can still be chosen.  argType
