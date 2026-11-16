@@ -673,7 +673,8 @@ public class TypeInstantiator {
     Set<ReferenceType> result = new LinkedHashSet<>();
     result.add(type);
     if (type instanceof ClassOrInterfaceType) {
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesInclusive()) {
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) type).getSupertypesInclusive()) {
         if (supertype.isGeneric()) {
           continue;
         }
