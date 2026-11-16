@@ -184,12 +184,41 @@ public abstract class ReferenceType extends Type {
     if (goalType.isVariable()) {
       TypeVariable variable = (TypeVariable) goalType;
       Substitution substitution = new Substitution(variable, instantiatedType);
-      if (variable.getLowerTypeBound().isLowerBound(instantiatedType, substitution)
+      if (isOrCanBeLowerBound(variable.getLowerTypeBound(), instantiatedType, substitution)
           && variable.getUpperTypeBound().isUpperBound(instantiatedType, substitution)) {
         return substitution;
       }
     }
     return null;
+  }
+
+  /**
+   * Returns true if the given lower bound is a subtype of the given type, or if the lower bound is
+   * a type variable that the substitution does not map and that can be instantiated by the given
+   * type. For example, consider the capture variable of {@code ? super T} in {@code
+   * Collections.sort(List<T>, Comparator<? super T>)}, before {@code T} is chosen. Its lower bound
+   * {@code T} is not a subtype of {@code String}, but {@code T} can be chosen as {@code String}, so
+   * {@code Comparator<String>} instantiates {@code Comparator<? super T>}.
+   *
+   * @param lowerBound a lower bound of a type variable
+   * @param type the type that would instantiate the type variable
+   * @param substitution the substitution that maps the type variable to {@code type}
+   * @return true if {@code lowerBound} is, or can be chosen to be, a subtype of {@code type}
+   */
+  private static boolean isOrCanBeLowerBound(
+      ParameterBound lowerBound, ReferenceType type, Substitution substitution) {
+    if (lowerBound.isLowerBound(type, substitution)) {
+      return true;
+    }
+    if (type.isVariable()) {
+      return false;
+    }
+    ParameterBound substitutedBound = lowerBound.substitute(substitution);
+    if (!(substitutedBound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType boundType = ((ReferenceBound) substitutedBound).getBoundType();
+    return boundType.isVariable() && ((TypeVariable) boundType).canBeInstantiatedBy(type);
   }
 
   @Override
@@ -200,7 +229,9 @@ public abstract class ReferenceType extends Type {
   /**
    * {@inheritDoc}
    *
-   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
+   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}, or if {@code
+   * otherType} is a type variable and this type is a subtype of the variable's lower bound, as
+   * {@code String} is a subtype of a capture variable of {@code ? super String}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
@@ -212,6 +243,18 @@ public abstract class ReferenceType extends Type {
       return true;
     }
 
-    return otherType.isObject();
+    if (otherType.isObject()) {
+      return true;
+    }
+
+    if (otherType.isVariable()) {
+      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
+      if (lowerBound instanceof ReferenceBound) {
+        ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+        return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+            && this.isSubtypeOfOrEqualTo(lowerBoundType);
+      }
+    }
+    return false;
   }
 }
