@@ -69,6 +69,51 @@ public class LazyParameterBoundTest {
     assertFalse(t.canBeInstantiatedBy(JavaTypes.NULL_TYPE));
   }
 
+  @Test
+  public void testReferenceBoundWithNullTypeForArrayComponent() {
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ReferenceBound bound = ReferenceBound.forTypeLazyIfGeneric(ArrayType.ofComponentType(t));
+    assertTrue(bound instanceof LazyReferenceBound);
+    Substitution nullSubstitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    // The substituted bound is NullType[], which is a subtype of String[].  String[] is not a
+    // subtype of NullType[].
+    assertTrue(bound.isLowerBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(new EagerReferenceBound(stringArray), nullSubstitution));
+  }
+
+  /**
+   * A type parameter whose bound contains, in a type argument, an array of the type parameter, and
+   * another type parameter.
+   *
+   * @param <K> the other type parameter
+   * @param <U> the type parameter with the bound
+   */
+  static class NestedArrayArgumentBound<K, U extends Map<K, U[]>> {}
+
+  @Test
+  public void testSubstituteNullTypeForNestedArrayComponent() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NestedArrayArgumentBound.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    // Substituting for K leaves the bound lazy:  Map<String, U[]>.
+    ParameterBound bound =
+        u.getUpperTypeBound().substitute(new Substitution(k, JavaTypes.STRING_TYPE));
+    assertTrue(bound instanceof LazyReferenceBound);
+    // Substituting the null type for U resolves the bound to Map<String, NullType[]>.
+    Substitution nullSubstitution = new Substitution(u, JavaTypes.NULL_TYPE);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
+        ((ReferenceBound) bound.substitute(nullSubstitution)).getBoundType());
+    // As in testNullTypeCannotInstantiateArrayComponentBound, the null type is not within the
+    // parameterized bound.  Neither comparison throws an exception.
+    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, nullSubstitution));
+    assertFalse(bound.isLowerBound(JavaTypes.NULL_TYPE, nullSubstitution));
+  }
+
   /**
    * A type parameter whose bound has a wildcard bounded by an array of another type parameter.
    *
