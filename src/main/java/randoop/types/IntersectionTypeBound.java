@@ -83,6 +83,9 @@ class IntersectionTypeBound extends ParameterBound {
     List<ParameterBound> bounds =
         CollectionsPlume.mapList(
             (ParameterBound bound) -> bound.substitute(substitution), this.boundList);
+    if (ClassOrInterfaceType.sameElements(bounds, this.boundList)) {
+      return this;
+    }
     return new IntersectionTypeBound(bounds);
   }
 

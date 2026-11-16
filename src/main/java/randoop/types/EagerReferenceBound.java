@@ -17,6 +17,7 @@ class EagerReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     // There is no array of the null type, so leave the bound unresolved.
@@ -24,8 +25,9 @@ class EagerReferenceBound extends ReferenceBound {
       return this;
     }
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    // Copies of a type variable are equal even if their bounds differ, so compare the bounds too.
-    if (TypeVariable.areIdentical(referenceType, getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
