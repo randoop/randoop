@@ -1,7 +1,7 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -172,12 +172,15 @@ public class TypeInstantiatorTest {
     }
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
 
-    // Without String among the input types, no type for K satisfies the bound of V.
+    // Without String among the input types, K can still be String, which is a type argument of
+    // HashMap<String, Node>, a supertype of Node.
     Set<Type> inputTypesWithoutKey = new LinkedHashSet<>();
     addTypes(listType.instantiate(nodeType), inputTypesWithoutKey);
     TypeInstantiator instantiatorWithoutKey = new TypeInstantiator(inputTypesWithoutKey);
     for (int i = 0; i < ATTEMPTS; i++) {
-      assertNull(instantiatorWithoutKey.instantiate(kOnlyInBound));
+      TypedClassOperation operation = instantiatorWithoutKey.instantiate(kOnlyInBound);
+      assertNotNull("no instantiation of " + kOnlyInBound, operation);
+      assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
     }
   }
 
