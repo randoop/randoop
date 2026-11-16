@@ -268,14 +268,6 @@ public class TypeVariableTest {
             new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive()), new Substitution()));
   }
 
-  /**
-   * A type parameter bounded by a sibling.
-   *
-   * @param <K> a type parameter
-   * @param <V> a type parameter bounded by {@code K}
-   */
-  static class SiblingBound<K, V extends K> {}
-
   @Test
   public void testVariableBoundResolvedToConcreteType() {
     TypeVariable k = typeParameter(SiblingBound.class, 0);
@@ -2019,8 +2011,11 @@ public class TypeVariableTest {
     InstantiatedType listOfArray =
         GenericClassType.forClass(List.class).instantiate(ArrayType.ofComponentType(t));
     LazyReferenceBound bound = new LazyReferenceBound(listOfArray);
-    // There is no array of the null type, so the bound List<T[]> is left unresolved.
-    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+    // Substituting the null type for T resolves the bound List<T[]> to List<NullType[]>.
+    assertEquals(
+        GenericClassType.forClass(List.class)
+            .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
+        bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)).getBoundType());
   }
 
   /** A class that is comparable to itself. */

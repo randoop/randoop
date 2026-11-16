@@ -82,50 +82,6 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
 
-  /**
-   * Returns true if applying the given substitution to the given type would create an array of the
-   * null type, which does not exist. That happens if the substitution maps the component type of an
-   * array type to the null type, as in {@code T[]}, {@code List<T[]>}, or {@code List<? extends
-   * T[]>} where the substitution maps {@code T} to the null type. An array type can occur in a type
-   * argument, in the bound of a wildcard type argument, or in an enclosing type.
-   *
-   * @param type a type
-   * @param substitution a substitution to apply to {@code type}
-   * @return true if applying {@code substitution} to {@code type} would create an array of the null
-   *     type
-   */
-  /*package*/ static boolean createsNullTypeArray(Type type, Substitution substitution) {
-    if (type.isArray()) {
-      Type componentType = ((ArrayType) type).getComponentType();
-      if (componentType.isVariable()
-          && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) componentType))) {
-        return true;
-      }
-      return createsNullTypeArray(componentType, substitution);
-    }
-    if (type instanceof ClassOrInterfaceType) {
-      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
-      for (TypeArgument argument : classType.getTypeArguments()) {
-        if (argument instanceof ReferenceArgument
-            && createsNullTypeArray(
-                ((ReferenceArgument) argument).getReferenceType(), substitution)) {
-          return true;
-        }
-        // The bound of a wildcard, as in `List<? extends T[]>`, can also be such an array type.
-        if (argument instanceof WildcardArgument) {
-          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
-          if (bound instanceof ReferenceBound
-              && createsNullTypeArray(((ReferenceBound) bound).getBoundType(), substitution)) {
-            return true;
-          }
-        }
-      }
-      return classType.isMemberClass()
-          && createsNullTypeArray(classType.enclosingType, substitution);
-    }
-    return false;
-  }
-
   /*package*/
   @Override
   public boolean hasCaptureVariable() {
@@ -150,10 +106,6 @@ public abstract class ReferenceBound extends ParameterBound {
   /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (createsNullTypeArray(boundType, substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     // Mapping each type variable that the substitution does not replace to itself makes it an
     // unknown.
     Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
