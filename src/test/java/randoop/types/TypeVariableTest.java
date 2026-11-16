@@ -184,14 +184,6 @@ public class TypeVariableTest {
             new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive()), new Substitution()));
   }
 
-  /**
-   * A type parameter bounded by a sibling.
-   *
-   * @param <K> a type parameter
-   * @param <V> a type parameter bounded by {@code K}
-   */
-  static class SiblingBound<K, V extends K> {}
-
   @Test
   public void testVariableBoundResolvedToConcreteType() {
     TypeVariable k = typeParameter(SiblingBound.class, 0);
