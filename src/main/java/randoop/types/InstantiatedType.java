@@ -393,8 +393,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // Two arguments can instantiate the same type variable, such as copies of a capture
-          // variable, differently, as for Map<X, X> and Map<String, Integer>.
+          // The arguments can map a type variable to different types, as for Map<X, X> and
+          // Map<String, Integer>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }

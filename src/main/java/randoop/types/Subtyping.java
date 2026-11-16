@@ -14,7 +14,8 @@ import randoop.types.LazyParameterBound.LazyBoundException;
  * raw type as a subtype of every parameterized type that contains a type variable.
  *
  * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
- * which treats every type variable in the bound as an unknown.
+ * which, unless the bound or the argument is a type variable, treats every type variable in the
+ * bound as an unknown.
  *
  * <p>These relations are approximate: they do not require two occurrences of an unknown to stand
  * for the same type.

@@ -1,7 +1,5 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -86,18 +84,18 @@ class EagerReferenceBound extends ReferenceBound {
       if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
         // The substitution does not replace the type variable.  Mapping it to itself makes it an
         // unknown if it is a type parameter of a declaration that the substitution instantiates,
-        // such as a sibling of the type parameter whose bound this is.
+        // such as a sibling of the type parameter whose bound this is.  A substitution that
+        // instantiates no type parameter, such as an empty one or one that maps only a capture
+        // variable, does not say which type variables are fixed, so the type variable is an
+        // unknown then too.
         Substitution completeSubstitution = subst.extendWithIdentity(getTypeParameters());
-        if (completeSubstitution.isUnknown(thisBoundType)) {
-          // The type variable stands for an unknown type, which can be argType or one of its
-          // supertypes.  For `K extends Comparable<K>`, K can be a class that is comparable to
-          // itself, even if argType is a subclass of it that is not.
+        if (!subst.instantiatesTypeParameters() || completeSubstitution.isUnknown(thisBoundType)) {
           // Checking argType against the upper bound of the type variable instead would leave the
           // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it
           // would accept Comparable<String>, which no choice of T is a supertype of.  The bounds of
           // the type variable are checked with the mappings of `subst`, because they can mention
           // other type variables that `subst` instantiates.
-          return canBeSupertype((TypeVariable) thisBoundType, argReferenceType, subst);
+          return ((TypeVariable) thisBoundType).canBeSupertypeOf(argReferenceType, subst);
         }
         // The type variable stands for itself, such as a type parameter of an enclosing class.
         return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, completeSubstitution);
@@ -121,82 +119,5 @@ class EagerReferenceBound extends ReferenceBound {
       return argSuperType.isInstantiationOf(boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
-  }
-
-  /**
-   * Returns true if the unknown type that the given type variable stands for can be a supertype of,
-   * or equal to, the given type: that is, if the type variable can be instantiated by the type, by
-   * its lower bound, if the type is a subtype of it, or, for a type parameter, by one of the type's
-   * supertypes. A capture variable stands for a particular type, which only its lower bound is
-   * known to be a supertype of.
-   *
-   * @param variable a type variable that stands for an unknown type
-   * @param type a type
-   * @param substitution a substitution for the other type variables in the bounds of {@code
-   *     variable}
-   * @return true if {@code variable} can be instantiated by a supertype of {@code type}
-   */
-  private static boolean canBeSupertype(
-      TypeVariable variable, ReferenceType type, Substitution substitution) {
-    if (type.equals(variable) || variable.canBeInstantiatedBy(type, substitution)) {
-      return true;
-    }
-    if (variable instanceof ExplicitTypeVariable) {
-      if (type instanceof ClassOrInterfaceType) {
-        // The type variable can be a strict supertype of the type.  For `<S extends
-        // Comparable<S>, U extends S>`, a class Sub that extends Base, where Base implements
-        // Comparable<Base>, satisfies the bound of U, with Base for S.  A supertype that mentions a
-        // type variable that the type does not is skipped; see TypeVariable.canBeSupertypeOf.
-        List<TypeVariable> typeParameters = type.getTypeParameters();
-        for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
-          if (typeParameters.containsAll(supertype.getTypeParameters())
-              && variable.canBeInstantiatedBy(supertype, substitution)) {
-            return true;
-          }
-        }
-      } else if (type.isVariable()) {
-        // A supertype of a type variable's upper bound is a supertype of the type variable.  For
-        // `X extends Comparable<X>` and `V extends Integer`, X can be Integer.  This recursion
-        // terminates, because the bounds of type variables cannot form a cycle of type variables.
-        for (ReferenceType boundType : upperBoundTypes((TypeVariable) type)) {
-          if (canBeSupertype(variable, boundType, substitution)) {
-            return true;
-          }
-        }
-      }
-    }
-    ParameterBound lowerBound = variable.getLowerTypeBound();
-    if (lowerBound instanceof ReferenceBound) {
-      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
-      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
-          && type.isSubtypeOfOrEqualTo(lowerBoundType)
-          && variable.canBeInstantiatedBy(lowerBoundType, substitution);
-    }
-    return false;
-  }
-
-  /**
-   * Returns the types in the resolved upper bound of the given type variable: the bound type, or
-   * each member type of an intersection bound.
-   *
-   * @param variable a type variable
-   * @return the types in the upper bound of {@code variable}
-   */
-  private static List<ReferenceType> upperBoundTypes(TypeVariable variable) {
-    ParameterBound bound = variable.getResolvedUpperTypeBound();
-    List<ParameterBound> bounds =
-        bound instanceof IntersectionTypeBound
-            ? ((IntersectionTypeBound) bound).getBounds()
-            : Collections.singletonList(bound);
-    List<ReferenceType> result = new ArrayList<>(bounds.size());
-    for (ParameterBound b : bounds) {
-      if (b instanceof ReferenceBound) {
-        ReferenceType boundType = ((ReferenceBound) b).getBoundType();
-        if (!boundType.isObject()) {
-          result.add(boundType);
-        }
-      }
-    }
-    return result;
   }
 }

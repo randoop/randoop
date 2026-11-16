@@ -402,10 +402,10 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its strict supertypes that mentions only the type variables of {@code otherType}. Each
-   * instantiation other than the lower bound is checked as by {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
+   * of it, {@code otherType} itself, and, if this variable is a type parameter and {@code
+   * otherType} is a class or interface type, each of its strict supertypes that mentions only the
+   * type variables of {@code otherType}. Each instantiation other than the lower bound is checked
+   * as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
    * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
    * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
    * for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date}
@@ -422,7 +422,10 @@ public abstract class TypeVariable extends ParameterType {
         || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
-    if (otherType instanceof ClassOrInterfaceType) {
+    // A capture variable stands for a particular type, so it is not searched for among the strict
+    // supertypes of otherType.  For example, the capture of `? super Number` can be Object, a
+    // supertype of String, but String is not known to be a subtype of it.
+    if (this instanceof ExplicitTypeVariable && otherType instanceof ClassOrInterfaceType) {
       List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {

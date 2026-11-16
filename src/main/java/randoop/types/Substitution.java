@@ -311,6 +311,17 @@ public class Substitution {
   }
 
   /**
+   * Returns true if this substitution maps some type parameter to a different type. A type
+   * parameter is a type variable declared by a class or method, such as {@code T} in {@code
+   * List<T>}, as opposed to a capture variable.
+   *
+   * @return true if this substitution instantiates some type parameter
+   */
+  boolean instantiatesTypeParameters() {
+    return !getInstantiatedDeclarations().isEmpty();
+  }
+
+  /**
    * Returns the declaration of the given type variable, if it is a type parameter.
    *
    * @param variable a type variable
