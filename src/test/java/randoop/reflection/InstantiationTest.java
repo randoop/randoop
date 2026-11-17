@@ -767,4 +767,73 @@ public class InstantiationTest {
     assertEquals(stringInner, instance.getInputTypes().get(0));
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
+
+  /**
+   * Tests that the instantiation of {@code <U> U getLeaf(MemberTypeOuter<U>.Middle.Leaf)}, whose
+   * parameter type has an owner type {@code MemberTypeOuter<U>.Middle} with no type arguments of
+   * its own, instantiates the return type consistently with the parameter type.
+   */
+  @Test
+  public void testTwoLevelMemberTypeReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation getLeaf =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("getLeaf", MemberTypeOuter.Middle.Leaf.class));
+    // The parameter type mentions the method's type parameter U, not the declaration's T.
+    ClassOrInterfaceType parameterType = (ClassOrInterfaceType) getLeaf.getInputTypes().get(0);
+    assertFalse(parameterType.isGenericForm());
+    assertEquals(getLeaf.getOutputType(), parameterType.getTypeParameters().get(0));
+
+    ClassOrInterfaceType stringLeaf =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Middle.Leaf.class)
+            .substitute(
+                new Substitution(
+                    GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
+                    JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringLeaf.getSupertypesInclusive());
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(getLeaf);
+      assertNotNull("instantiation failed for " + getLeaf, instance);
+      assertEquals(stringLeaf, instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests that a member type instantiates a goal member type whose enclosing type is not generic
+   * only if the enclosing types are the same: {@code MemberTypeOuter<String>.Inner2<Integer>}
+   * instantiates {@code MemberTypeOuter<String>.Inner2<V>}, but {@code
+   * MemberTypeOuter<Integer>.Inner2<Long>} does not.
+   */
+  @Test
+  public void testMemberTypeWithNonGenericEnclosingGoalType() {
+    // The type parameters of MemberTypeOuter<T>.Inner2<V> are T and V, in that order.
+    ClassOrInterfaceType genericInner2 =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner2.class);
+    List<TypeVariable> parameters = genericInner2.getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    ReferenceType integerType = (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = (ReferenceType) JavaTypes.LONG_TYPE.toBoxedPrimitive();
+
+    // MemberTypeOuter<String>.Inner2<V>, whose enclosing type is not generic.
+    ClassOrInterfaceType goalType =
+        genericInner2.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(goalType.isGeneric());
+
+    ClassOrInterfaceType stringInteger =
+        genericInner2.substitute(new Substitution(parameters, JavaTypes.STRING_TYPE, integerType));
+    Substitution substitution = stringInteger.getInstantiatingSubstitution(goalType);
+    assertNotNull(stringInteger + " should instantiate " + goalType, substitution);
+    assertEquals(integerType, substitution.get(v));
+
+    ClassOrInterfaceType integerLong =
+        genericInner2.substitute(new Substitution(parameters, integerType, longType));
+    assertNull(integerLong.getInstantiatingSubstitution(goalType));
+  }
 }

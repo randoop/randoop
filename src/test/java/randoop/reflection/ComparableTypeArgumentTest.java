@@ -15,6 +15,7 @@ import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
@@ -88,5 +89,47 @@ public class ComparableTypeArgumentTest {
     assertFalse(
         TypeInstantiator.isComparable(
             JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A subclass of a member class whose enclosing type is parameterized, comparable to instances of
+   * that member class.
+   *
+   * @param <U> a type parameter
+   */
+  @SuppressWarnings("ComparableType") // tests a comparable supertype
+  public static class ComparableInner<U> extends MemberTypeOuter<String>.Inner
+      implements Comparable<MemberTypeOuter<String>.Inner> {
+
+    /**
+     * Creates a ComparableInner.
+     *
+     * @param outer the enclosing instance of the superclass
+     */
+    public ComparableInner(MemberTypeOuter<String> outer) {
+      outer.super();
+    }
+
+    @Override
+    public int compareTo(MemberTypeOuter<String>.Inner other) {
+      return 0;
+    }
+  }
+
+  /**
+   * Tests {@link TypeInstantiator#isComparable} on a type that is comparable to a member class
+   * whose enclosing type is parameterized, and that it does not prevent selecting other types.
+   */
+  @Test
+  public void testIsComparableMemberType() throws NoSuchMethodException {
+    InstantiatedType comparableInner =
+        GenericClassType.forClass(ComparableInner.class).instantiate(JavaTypes.STRING_TYPE);
+    assertTrue(TypeInstantiator.isComparable(comparableInner));
+
+    Randomness.setSeed(0);
+    Set<Type> inputTypes = new LinkedHashSet<>(comparableInner.getSupertypesInclusive());
+    inputTypes.addAll(JavaTypes.STRING_TYPE.getSupertypesInclusive());
+    TypedClassOperation operation = TypedOperation.forConstructor(ArrayList.class.getConstructor());
+    assertNotNull(new TypeInstantiator(inputTypes).instantiate(operation));
   }
 }

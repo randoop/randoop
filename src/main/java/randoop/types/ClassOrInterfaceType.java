@@ -360,8 +360,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
             return null;
           }
         } else if (!thisEnclosingType.equals(enclosingGoalType)) {
-          // The goal's enclosing type is fixed, as in Outer<Long>.Inner<V>, and differs from this
-          // type's enclosing type, as in Outer<String>.Inner<Integer>.
+          // A non-generic enclosing goal type has no type variables to bind, so the enclosing
+          // types must be identical.  For example, Outer<Integer>.Inner2<Long> does not
+          // instantiate Outer<String>.Inner2<U>.
           return null;
         }
       }

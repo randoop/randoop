@@ -29,4 +29,15 @@ public class MemberTypeCase {
   public static <U> U get(MemberTypeOuter<U>.Inner inner) {
     throw new UnsupportedOperationException();
   }
+
+  /**
+   * Throws an exception; only the signature is of interest.
+   *
+   * @param <U> the type argument of the outermost enclosing type of the parameter type
+   * @param leaf a {@code MemberTypeOuter<U>.Middle.Leaf}
+   * @return never returns normally
+   */
+  public static <U> U getLeaf(MemberTypeOuter<U>.Middle.Leaf leaf) {
+    throw new UnsupportedOperationException();
+  }
 }

@@ -1207,12 +1207,18 @@ public class TypeInstantiator {
     }
 
     // Can always select captured wildcards independently.  Augment each existing candidate.
+    // Omit a candidate for which some capture variable has no candidate types.
     if (!captureParameters.isEmpty()) {
-      if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+      List<Substitution> bases =
+          result.isEmpty() ? Collections.singletonList(substitution) : result;
+      List<Substitution> extended = new ArrayList<>(bases.size());
+      for (Substitution base : bases) {
+        Substitution s = selectSubstitutionIndependently(captureParameters, base);
+        if (s != null) {
+          extended.add(s);
+        }
       }
+      result = extended;
     }
 
     return result;
