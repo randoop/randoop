@@ -377,6 +377,61 @@ public class ParameterBoundTest {
   @SuppressWarnings("unused")
   private static class NonGenericMemberClassBound<T extends GenericOuter<String>.NonGenericInner> {}
 
+  /**
+   * A class whose type parameter's bound contains a non-generic member class whose owner type
+   * mentions the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableBound<T extends List<GenericOuter<T>.NonGenericInner>> {}
+
+  /** A field whose type is a list of a non-generic member class of a parameterized type. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<GenericOuter<String>.NonGenericInner> stringInnerList;
+
+  @Test
+  public void testBoundWithVariableInOwnerTypeIsLazy() {
+    // Converting the bound eagerly would convert T, whose bound is being converted, without end.
+    TypeVariable t = GenericClassType.forClass(OwnerVariableBound.class).getTypeParameters().get(0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+  }
+
+  @Test
+  public void testBoundWithConcreteOwnerTypeIsEager() {
+    java.lang.reflect.Type type = fieldType(ParameterBoundTest.class, "stringInnerList");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), type);
+    assertTrue(bound instanceof EagerReferenceBound);
+    assertTrue(bound.isUpperBound(Type.forType(type), new Substitution()));
+  }
+
+  /**
+   * A class with a field whose type mentions the first of its type parameters.
+   *
+   * @param <T> a type parameter that occurs in the field type
+   * @param <U> a type parameter that does not occur in the field type
+   */
+  @SuppressWarnings({"unused", "UnusedVariable"}) // the field is read reflectively
+  private static class ListOfFirstVariable<T, U> {
+    /** A field whose type mentions {@code T}. */
+    List<T> list;
+  }
+
+  @Test
+  public void testLazyLowerBoundAppliesSubstitutionOnce() {
+    ParameterBound lazy = new LazyParameterBound(fieldType(ListOfFirstVariable.class, "list"));
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ListOfFirstVariable.class).getTypeParameters();
+    TypeVariable u = parameters.get(1);
+    // The substitution makes the bound List<U>.  Applying it again would make it List<String>.
+    Substitution substitution = new Substitution(parameters, u, JavaTypes.STRING_TYPE);
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    InstantiatedType listOfU = GenericClassType.forClass(List.class).instantiate(u);
+    assertFalse(lazy.isLowerBound(new EagerReferenceBound(listOfString), substitution));
+    assertTrue(lazy.isLowerBound(new EagerReferenceBound(listOfU), substitution));
+  }
+
   @Test
   public void testNonGenericMemberClassBound() {
     TypeVariable t =

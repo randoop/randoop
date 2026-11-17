@@ -395,8 +395,8 @@ public abstract class TypeVariable extends ParameterType {
    * type variable. If the substitution instantiates that type variable, the instantiated bound is
    * compared with the given type. Otherwise, that type variable stands for an unknown type: for an
    * upper bound, the given type is within it if that type variable can be a supertype of the given
-   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if the given type can
-   * instantiate that type variable.
+   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if that type variable can
+   * be a subtype of the given type, as determined by {@link #canBeSubtypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
@@ -426,7 +426,42 @@ public abstract class TypeVariable extends ParameterType {
     }
     return isUpperBound
         ? variable.canBeSupertypeOf(otherType, substitution)
-        : variable.canBeInstantiatedBy(otherType, substitution);
+        : variable.canBeSubtypeOf(otherType, substitution);
+  }
+
+  /**
+   * Returns true if some instantiation of this type variable can be a subtype of the given type,
+   * when the other type variables are instantiated as by the given substitution. That is the case
+   * if {@code otherType} can instantiate this variable, if the upper bound of this variable (or, if
+   * it is an intersection, some member of it) is a subtype of {@code otherType}, since every
+   * instantiation of this variable is a subtype of its upper bound, or if the lower bound of this
+   * variable is a subtype of {@code otherType} and can instantiate this variable. For example, for
+   * {@code U extends Integer}, {@code U} can be a subtype of {@code Number}, though {@code Number}
+   * cannot instantiate {@code U}; and for {@code B extends Number & Runnable}, {@code B} can be a
+   * subtype of {@code Runnable}. Like {@link Subtyping}, this does not check that some type is
+   * within an intersection bound.
+   *
+   * @param otherType a type, not a variable
+   * @param context a substitution for other type variables
+   * @return true if some instantiation of this variable can be a subtype of {@code otherType}
+   */
+  boolean canBeSubtypeOf(ReferenceType otherType, Substitution context) {
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (isSubtypeOfOrEqualTo(getUpperTypeBound().substitute(context), otherType)) {
+      return true;
+    }
+    ParameterBound lowerBound = getLowerTypeBound().substitute(context);
+    if (!(lowerBound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+    // A generic type, such as Comparable<T>, or the null type cannot instantiate this variable.
+    return !lowerBoundType.isGeneric()
+        && !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+        && lowerBoundType.isSubtypeOfOrEqualTo(otherType)
+        && canBeInstantiatedBy(lowerBoundType, context);
   }
 
   /**

@@ -148,10 +148,10 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are not examined, because the conversion of a reflection type to a {@link
-   * ReferenceType} does not use them. It gives each member class the owner type from its class
-   * declaration, as in {@code Outer<T>} for {@code Outer<String>.Inner<Integer>}, not the owner
-   * type as written.
+   * <p>Owner types are also examined. The conversion of a member class that declares no type
+   * parameters, such as {@code Outer<T>.Inner}, to a {@link ReferenceType} converts its owner type
+   * as written, so an eager bound such as {@code List<Outer<T>.Inner>}, in the bound of {@code T},
+   * would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -178,6 +178,10 @@ public abstract class ParameterBound {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
+      }
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {

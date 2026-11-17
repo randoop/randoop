@@ -356,7 +356,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          // A member interface that declares no type parameters, of a parameterized type, is
+          // parameterized but is not an InstantiatedType.
+          if (interfaceType instanceof InstantiatedType) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.runtimeClassIs(goalType.getRuntimeClass())
                 && type.isInstantiationOf(goalType)) {
@@ -380,9 +382,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
       // The runtime class check is needed because `isInstantiationOf` returns true for distinct
       // member classes whose enclosing types match.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
-          && superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType) superclass;
+      if (superclass.runtimeClassIs(goalType.getRuntimeClass())) {
+        // A raw superclass, such as Box for `class RawChild extends Box`, is not an
+        // InstantiatedType and does not instantiate the goal type.  Neither do its supertypes,
+        // which are erased.
+        return superclass instanceof InstantiatedType && superclass.isInstantiationOf(goalType)
+            ? (InstantiatedType) superclass
+            : null;
       }
 
       return superclass.getMatchingSupertype(goalType);

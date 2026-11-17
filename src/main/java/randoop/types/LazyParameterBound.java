@@ -512,7 +512,33 @@ class LazyParameterBound extends ParameterBound {
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(bound, substitution);
+    // As in isUpperBound(ParameterBound, Substitution), compare the instantiated bound without
+    // applying the substitution to it again.  A type variable in b that the substitution maps to
+    // another type came from a replacement, such as U in Map<U, String> for the bound
+    // Map<T, String> and the substitution [T := U, U := String]; it stands for itself in b.
+    return b != null && b.isLowerBound(bound, identityFor(b.getTypeParameters(), substitution));
+  }
+
+  /**
+   * Returns the given substitution, modified so that it does not map any of the given type
+   * variables to a different type: each one that it maps to a different type is mapped to itself
+   * instead. Applying the result to a bound in which only those type variables occur does not
+   * replace any of them.
+   *
+   * @param variables type variables
+   * @param substitution a type substitution
+   * @return {@code substitution}, modified to map none of {@code variables} to a different type
+   */
+  private static Substitution identityFor(
+      List<TypeVariable> variables, Substitution substitution) {
+    Substitution result = substitution;
+    for (TypeVariable variable : variables) {
+      ReferenceType type = result.get(variable);
+      if (type != null && !type.equals(variable)) {
+        result = result.replace(variable, variable);
+      }
+    }
+    return result;
   }
 
   /**

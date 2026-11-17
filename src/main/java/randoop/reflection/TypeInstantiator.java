@@ -379,8 +379,11 @@ public class TypeInstantiator {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.
+      // not be parameterized.  The runtime class check is needed because `isInstantiationOf`
+      // returns true for distinct nested classes whose enclosing types match, such as a class
+      // Holder.RawChild that extends the raw type of Holder.Box<T>.
       if (inputType.isClassOrInterfaceType()
+          && inputType.runtimeClassIs(patternType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }

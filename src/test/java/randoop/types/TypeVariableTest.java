@@ -2590,4 +2590,96 @@ public class TypeVariableTest {
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
   }
+
+  /**
+   * A class whose second type parameter's bound is a list with a wildcard bounded below by the
+   * first type parameter, whose bound is an intersection.
+   *
+   * @param <B> a type parameter bounded by {@code Number & Runnable}
+   * @param <T> a type parameter bounded by {@code List<? super B>}
+   */
+  static class ListSuperIntersectionBound<B extends Number & Runnable, T extends List<? super B>> {}
+
+  @Test
+  public void testSuperWildcardOfIntersectionBoundedVariable() {
+    TypeVariable t = typeParameter(ListSuperIntersectionBound.class, 1);
+    GenericClassType list = GenericClassType.forClass(List.class);
+    // B can be RunnableNumber, which is a subtype of Runnable, though Runnable itself is not within
+    // the bound Number & Runnable.
+    assertTrue(
+        t.canBeInstantiatedBy(list.instantiate(ClassOrInterfaceType.forClass(Runnable.class))));
+    assertTrue(
+        t.canBeInstantiatedBy(list.instantiate(NonParameterizedType.forClass(Number.class))));
+    // No subtype of Number is a subtype of String.
+    assertFalse(t.canBeInstantiatedBy(list.instantiate(JavaTypes.STRING_TYPE)));
+
+    // The same comparisons, made directly with B as an unknown.
+    TypeVariable b = typeParameter(ListSuperIntersectionBound.class, 0);
+    ReferenceBound listSuperB = ((LazyParameterBound) t.getUpperTypeBound()).toReferenceBound();
+    assertNotNull(listSuperB);
+    ReferenceType listSuperBType = listSuperB.getBoundType();
+    Substitution unknownB =
+        new Substitution(t, list.instantiate(ClassOrInterfaceType.forClass(Runnable.class)))
+            .extendWithIdentity(Collections.singletonList(b));
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(
+            list.instantiate(ClassOrInterfaceType.forClass(Runnable.class)),
+            listSuperBType,
+            unknownB));
+    assertFalse(
+        Subtyping.isSubtypeOrEqual(
+            list.instantiate(JavaTypes.STRING_TYPE), listSuperBType, unknownB));
+  }
+
+  /**
+   * A generic class whose generic member class extends a class instantiated by the type parameters
+   * of both.
+   *
+   * @param <T> the type parameter of the enclosing class
+   */
+  static class OuterOfMap<T> {
+    /**
+     * A member class whose superclass mentions the type parameter of the enclosing class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    @SuppressWarnings({"serial", "ClassCanBeStatic"}) // never serialized; must be a member class
+    class InnerMap<U> extends HashMap<T, U> {}
+  }
+
+  @Test
+  public void testSuperclassOfMemberClassUsesEnclosingTypeArguments() {
+    GenericClassType innerMap = GenericClassType.forClass(OuterOfMap.InnerMap.class);
+    InstantiatedType stringIntegerInner =
+        innerMap.instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    InstantiatedType expected =
+        GenericClassType.forClass(HashMap.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    assertEquals(expected, stringIntegerInner.getSuperclass());
+    assertTrue(
+        stringIntegerInner.isSubtypeOfOrEqualTo(
+            GenericClassType.forClass(Map.class)
+                .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive())));
+  }
+
+  /** A class with nested classes, one of which extends the raw type of the other. */
+  static class RawHolder {
+    /**
+     * A generic nested class.
+     *
+     * @param <X> the type parameter
+     */
+    static class Box<X> {}
+
+    /** A nested class that extends the raw type of {@link Box}. */
+    @SuppressWarnings("rawtypes") // tests a raw supertype
+    static class RawChild extends Box {}
+  }
+
+  @Test
+  public void testRawNestedSubclassDoesNotInstantiateGenericNestedClass() {
+    ClassOrInterfaceType rawChild = ClassOrInterfaceType.forClass(RawHolder.RawChild.class);
+    GenericClassType box = GenericClassType.forClass(RawHolder.Box.class);
+    assertNull(rawChild.getMatchingSupertype(box));
+  }
 }

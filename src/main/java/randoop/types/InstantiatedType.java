@@ -120,7 +120,8 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     Substitution substitution =
-        new Substitution(genericType.getDeclaredTypeParameters(), convertedTypeList);
+        withEnclosingBindings(
+            new Substitution(genericType.getDeclaredTypeParameters(), convertedTypeList));
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
@@ -145,8 +146,37 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     Substitution substitution =
-        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+        withEnclosingBindings(
+            new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
     return genericType.getInterfaces(substitution);
+  }
+
+  /**
+   * Returns the given substitution, extended to map the type parameters of the enclosing classes of
+   * this type to the type arguments of its enclosing types. For example, for {@code
+   * Outer<String>.Inner<Integer>}, the result also maps the type parameter {@code T} of {@code
+   * Outer<T>} to {@code String}. A supertype of a member class, or a bound of one of its type
+   * parameters, can mention the type parameters of the enclosing classes, as in {@code class
+   * Inner<U> extends HashMap<T, U>}.
+   *
+   * @param substitution a substitution for the type parameters that the generic class of this type
+   *     declares
+   * @return {@code substitution} extended by the type arguments of the enclosing types of this type
+   */
+  private Substitution withEnclosingBindings(Substitution substitution) {
+    Substitution result = substitution;
+    ClassOrInterfaceType current = this;
+    while (current.isMemberClass()) {
+      current = current.enclosingType;
+      if (current instanceof InstantiatedType) {
+        InstantiatedType enclosing = (InstantiatedType) current;
+        result =
+            result.extend(
+                enclosing.genericType.getDeclaredTypeParameters(),
+                enclosing.getReferenceArguments());
+      }
+    }
+    return result;
   }
 
   @Override
@@ -208,7 +238,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Substitution substitution =
-        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+        withEnclosingBindings(
+            new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
     return this.getGenericClassType().getSuperclass(substitution);
   }
 
