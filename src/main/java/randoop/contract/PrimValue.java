@@ -110,7 +110,7 @@ public final class PrimValue extends ObjectContract {
       return "org.junit.Assert.assertTrue(Float.isNaN(x0));";
     }
 
-    if (equalityMode.equals(EqualityMode.EQUALSMETHOD)) {
+    if (equalityMode == EqualityMode.EQUALSMETHOD) {
       StringBuilder b = new StringBuilder(128);
       // First add a message
       b.append("org.junit.Assert.assertEquals(\"'\" + " + "x0" + " + \"' != '\" + ")
@@ -120,7 +120,7 @@ public final class PrimValue extends ObjectContract {
       // Close assert.
       b.append(");");
       return b.toString();
-    } else if (equalityMode.equals(EqualityMode.EQUALSEQUALS)) {
+    } else if (equalityMode == EqualityMode.EQUALSEQUALS) {
       StringBuilder b = new StringBuilder(128);
       b.append("org.junit.Assert.assertTrue(\"'\" + " + "x0" + " + \"' != '\" + ")
           .append(Value.toCodeString(value))
