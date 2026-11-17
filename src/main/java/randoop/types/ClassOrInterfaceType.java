@@ -127,8 +127,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Returns true if the given parameterized type is the type that its class declaration denotes:
    * its type arguments are the type parameters of its class, and, if it is a member class, the same
    * holds for its owner type. For example, this returns false for {@code Outer<String>.Middle},
-   * where {@code Middle} declares no type parameters, though its own type arguments are the
-   * (empty) type parameters of {@code Middle}.
+   * where {@code Middle} declares no type parameters, though its own type arguments are the (empty)
+   * type parameters of {@code Middle}.
    *
    * @param type a parameterized type
    * @return true if {@code type} is the type that its class declaration denotes
