@@ -96,6 +96,7 @@ public class RelatedBoundsCase {
   }
 
   /** A class that is comparable to itself. */
+  @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // only its type is used
   public static class Base implements Comparable<Base> {
     @Override
     public int compareTo(Base other) {
