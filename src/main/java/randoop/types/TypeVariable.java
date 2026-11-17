@@ -354,11 +354,10 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its supertypes, or, if {@code otherType} is an array type, the supertypes returned by {@link
-   * #arraySupertypes}. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
-   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
-   * T}. Each instantiation other than the lower bound is checked as by {@link
+   * of it, {@code otherType} itself, and each of its strict supertypes, as determined by {@link
+   * #strictSupertypes(ReferenceType)}. For example, for {@code <T extends Comparable<T>, V extends
+   * T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can
+   * instantiate {@code T}. Each instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
@@ -370,46 +369,64 @@ public abstract class TypeVariable extends ParameterType {
         || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
-    if (otherType instanceof ClassOrInterfaceType) {
-      List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
-      for (ClassOrInterfaceType supertype :
-          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        // A supertype that mentions a type variable that otherType does not is not a supertype of
-        // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
-        // its raw class and do not preserve the relationship between their type parameters.  A
-        // supertype that mentions only the type variables of otherType, such as List<E> for
-        // ArrayList<E>, is a supertype of otherType.
-        if (otherTypeParameters.containsAll(supertype.getTypeParameters())
-            && canBeInstantiatedBy(supertype, context)) {
-          return true;
-        }
-      }
-    } else if (otherType.isArray()) {
-      for (ReferenceType supertype : arraySupertypes((ArrayType) otherType)) {
-        if (canBeInstantiatedBy(supertype, context)) {
-          return true;
-        }
+    for (ReferenceType supertype : strictSupertypes(otherType)) {
+      if (canBeInstantiatedBy(supertype, context)) {
+        return true;
       }
     }
     return false;
   }
 
   /**
-   * Returns some strict supertypes of the given array type: {@code Object}, {@code Cloneable},
-   * {@code Serializable}, and, if the component type is a reference type other than {@code Object},
-   * {@code Object[]}.
+   * Returns strict supertypes of the given type, for {@link #canBeSupertypeOf(ReferenceType,
+   * Substitution)}.
    *
-   * @param arrayType an array type
-   * @return some strict supertypes of {@code arrayType}
+   * <ul>
+   *   <li>For a class or interface type, the result is its strict supertypes that mention only its
+   *       type variables.
+   *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
+   *       if the component type is a reference type other than {@code Object}, {@code Object[]};
+   *       and the arrays whose component types are the strict supertypes of the array's component
+   *       type, as determined by this method. For example, the result for {@code String[]} includes
+   *       {@code Object[]} and {@code CharSequence[]}.
+   *   <li>For any other type, the result is empty.
+   * </ul>
+   *
+   * @param type a type, not a variable
+   * @return strict supertypes of {@code type}
    */
-  private static List<ReferenceType> arraySupertypes(ArrayType arrayType) {
-    List<ReferenceType> result = new ArrayList<>(4);
-    result.add(JavaTypes.OBJECT_TYPE);
-    result.add(JavaTypes.CLONEABLE_TYPE);
-    result.add(JavaTypes.SERIALIZABLE_TYPE);
-    Type componentType = arrayType.getComponentType();
-    if (componentType.isReferenceType() && !componentType.isObject()) {
-      result.add(ArrayType.ofComponentType(JavaTypes.OBJECT_TYPE));
+  private static List<ReferenceType> strictSupertypes(ReferenceType type) {
+    List<ReferenceType> result = new ArrayList<>();
+    if (type instanceof ClassOrInterfaceType) {
+      List<TypeVariable> typeParameters = type.getTypeParameters();
+      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+        // A supertype that mentions a type variable that `type` does not is not a supertype of
+        // `type`.  It arises when `type` is a GenericClassType, whose supertypes are those of its
+        // raw class and do not preserve the relationship between their type parameters.  A
+        // supertype that mentions only the type variables of `type`, such as List<E> for
+        // ArrayList<E>, is a supertype of `type`.
+        if (typeParameters.containsAll(supertype.getTypeParameters())) {
+          result.add(supertype);
+        }
+      }
+    } else if (type instanceof ArrayType) {
+      result.add(JavaTypes.OBJECT_TYPE);
+      result.add(JavaTypes.CLONEABLE_TYPE);
+      result.add(JavaTypes.SERIALIZABLE_TYPE);
+      Type componentType = ((ArrayType) type).getComponentType();
+      if (componentType.isReferenceType() && !componentType.isObject()) {
+        // Object[] is a supertype even if the component type is a type variable or an interface.
+        ArrayType objectArray = ArrayType.ofComponentType(JavaTypes.OBJECT_TYPE);
+        result.add(objectArray);
+        if (!componentType.isVariable()) {
+          for (ReferenceType componentSupertype : strictSupertypes((ReferenceType) componentType)) {
+            ArrayType arraySupertype = ArrayType.ofComponentType(componentSupertype);
+            if (!arraySupertype.equals(objectArray)) {
+              result.add(arraySupertype);
+            }
+          }
+        }
+      }
     }
     return result;
   }
