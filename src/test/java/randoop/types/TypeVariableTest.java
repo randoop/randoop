@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -544,7 +545,9 @@ public class TypeVariableTest {
   public void testIdentitySubstitutionOfTwoCopies() {
     java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
     TypeVariable t1 = TypeVariable.forType(reflectionVariable);
-    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    TypeVariable t2 = t1.createCopyWithBounds(t1.getLowerTypeBound(), t1.getUpperTypeBound());
+    assertNotSame(t1, t2);
+    assertEquals(t1, t2);
     Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
     assertTrue(substitution.mapsToItself(t1));
     assertTrue(substitution.mapsToItself(t2));
@@ -1376,6 +1379,26 @@ public class TypeVariableTest {
   /** A field whose type has a wildcard bounded below. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   Comparable<? super Number> comparableSuperNumberField;
+
+  /** A field whose type has a wildcard bounded below, and an unbounded wildcard bounded by it. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super Number, ?> superNumberUnboundedField;
+
+  /**
+   * An array type can be a subtype of a capture variable through a supertype of the array, even
+   * though the array type cannot instantiate the capture variable.
+   */
+  @Test
+  public void testArraySupertypeIsWithinVariableBound() throws NoSuchFieldException {
+    ReferenceType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    TypeVariable captureOfSuperNumber =
+        typeArgument(capturedFieldType("superNumberUnboundedField"), 0);
+    assertFalse(captureOfSuperNumber.canBeInstantiatedBy(stringArray));
+    // Object can instantiate the capture variable, and it is a supertype of String[].
+    assertTrue(captureOfSuperNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    TypeVariable second = typeArgument(capturedFieldType("superNumberUnboundedField"), 1);
+    assertTrue(second.canBeInstantiatedBy(stringArray));
+  }
 
   /**
    * A subtype of the lower bound of a capture variable is within a bound that is the capture
