@@ -31,12 +31,6 @@ class LazyReferenceBound extends EagerReferenceBound {
       ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
 
   /**
-   * The bounds that {@link #hasLowerBound(ParameterBound, Substitution)} is currently examining.
-   */
-  private static final ThreadLocal<Set<LazyReferenceBound>> beingComparedWithLowerBound =
-      ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
-
-  /**
    * Creates a lazy bound with the given type.
    *
    * @param boundType the type of this bound
@@ -198,47 +192,31 @@ class LazyReferenceBound extends EagerReferenceBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns true only if {@code lowerBound} is the null type, or if one of the following holds:
-   *
-   * <ul>
-   *   <li>The type of this bound is a capture variable, and {@code lowerBound} is a lower bound on
-   *       the lower bound of the capture variable. A capture variable stands for a particular type,
-   *       which is a supertype of its lower bound.
-   *   <li>The type of this bound is not a capture variable, and {@code lowerBound}, after the
-   *       substitution is applied to it, is a subtype of or equal to the type of this bound when
-   *       every type variable stands for itself, comparing the enclosing types of member classes
-   *       too. The type of this bound contains type variables, so it stands for every
-   *       instantiation of them; a type such as {@code List<String>} is not a subtype of each
-   *       instantiation of {@code List<T>}, but {@code List<T>} and {@code ArrayList<T>}, for the
-   *       same {@code T}, are.
-   * </ul>
+   * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
+   * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
+   * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
+   * is the null type or, after the substitution is applied to it, is a subtype of or equal to the
+   * type of this bound when every type variable stands for itself, comparing the enclosing types of
+   * member classes too. The type of this bound contains type variables, so it stands for every
+   * instantiation of them; a type such as {@code List<String>} is not a subtype of each
+   * instantiation of {@code List<T>}, but {@code List<T>} and {@code ArrayList<T>}, for the same
+   * {@code T}, are.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (getBoundType() instanceof CaptureTypeVariable) {
+      return super.hasLowerBound(lowerBound, substitution);
+    }
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    if (!(getBoundType() instanceof CaptureTypeVariable)) {
-      // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
-      // types too, which InstantiatedType.equals ignores:
-      // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
-      return lowerBound instanceof ReferenceBound
-          && Subtyping.isSubtypeOrEqual(
-              ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
-              getBoundType(),
-              new Substitution());
-    }
-    // The lower bound of the capture variable might refer back to this bound.
-    Set<LazyReferenceBound> inProgress = beingComparedWithLowerBound.get();
-    if (!inProgress.add(this)) {
-      return false;
-    }
-    try {
-      return ((CaptureTypeVariable) getBoundType())
-          .getLowerTypeBound()
-          .hasLowerBound(lowerBound, substitution);
-    } finally {
-      inProgress.remove(this);
-    }
+    // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
+    // types too, which InstantiatedType.equals ignores:
+    // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
+    return lowerBound instanceof ReferenceBound
+        && Subtyping.isSubtypeOrEqual(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            getBoundType(),
+            new Substitution());
   }
 }
