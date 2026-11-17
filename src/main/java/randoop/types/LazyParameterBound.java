@@ -403,10 +403,10 @@ class LazyParameterBound extends ParameterBound {
    * stands for an unknown type in the result.
    *
    * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
-   * member class of a generic class, as in {@code Outer<String>.Inner}, or an array of one, which
-   * {@link #substitute(Substitution)} cannot convert; no type satisfies such a bound. Otherwise,
-   * the result is still this bound only for a kind of type that {@link #substitute(Substitution)}
-   * does not handle; then this method also fails an assertion. Comparing the unchanged bound would
+   * member class of a generic class, as in {@code Outer<String>.Inner}, which {@link
+   * #substitute(Substitution)} cannot convert; no type satisfies such a bound. Otherwise, the
+   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
+   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
    * recurse forever.
    *
    * @param substitution a type substitution
@@ -416,7 +416,7 @@ class LazyParameterBound extends ParameterBound {
     Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameterList());
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
-      assert isNonGenericMemberClass(elementType(boundType))
+      assert isNonGenericMemberClass(boundType)
           : "substitution " + completeSubstitution + " does not instantiate " + this;
       return null;
     }
