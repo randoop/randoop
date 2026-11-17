@@ -89,7 +89,7 @@ public final class JUnitCreator {
    * generate lists of method names for a class. Each test method is named TEST_METHOD_NAME_PREFIX+i
    * for some integer i.
    */
-  private Map<String, Integer> classMethodCounts;
+  private final Map<String, Integer> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
   private @Nullable BlockStmt beforeAllBody = null;
