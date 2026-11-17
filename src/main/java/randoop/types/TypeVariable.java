@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -419,10 +420,12 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * variable, compares {@code otherType} with that type. Likewise if that type variable, or the
+   * type variable that the substitution replaces it with, is fixed rather than unknown, as
+   * determined by {@link Substitution#isUnknown(ReferenceType)}. Otherwise, that type variable
+   * stands for an unknown type. For a lower bound, the result is true if {@code otherType} can
+   * instantiate it; for an upper bound, the result is true if it can be a supertype of {@code
+   * otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -448,6 +451,18 @@ public abstract class TypeVariable extends ParameterType {
           : substituted.isUpperBound(otherType, substitution);
     } else {
       return false;
+    }
+    // As in EagerReferenceBound.isUpperBound, a type variable stands for an unknown type only if it
+    // is not fixed.  A fixed type variable, such as one that the substitution put in the bound or a
+    // type parameter of an enclosing class, stands for itself:  for `<K, V extends K>` with `K`
+    // mapped to a type variable `U`, `String` is not known to be a subtype of `U`.
+    Substitution completeSubstitution =
+        substitution.extendWithIdentity(Collections.singletonList(variable));
+    if (substitution.instantiatesTypeParameters() && !completeSubstitution.isUnknown(variable)) {
+      ParameterBound fixedBound = new EagerReferenceBound(variable);
+      return isLower
+          ? fixedBound.isLowerBound(otherType, substitution)
+          : fixedBound.isUpperBound(otherType, substitution);
     }
     return isLower
         ? variable.canBeInstantiatedBy(otherType, substitution)

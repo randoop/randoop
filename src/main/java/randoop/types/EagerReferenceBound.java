@@ -123,6 +123,18 @@ class EagerReferenceBound extends ReferenceBound {
       argSuperType = argSuperType.applyCaptureConversion();
       return argSuperType.isInstantiationOf(boundClassType);
     }
+    if (thisBoundType instanceof NonParameterizedType
+        && thisBoundType.isParameterized()
+        && argType instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<U>.Inner.  A type variable in its enclosing type can be an unknown, such as a sibling
+      // of the type parameter whose bound this is, so compare the enclosing types as Subtyping
+      // does.  ReferenceType.isSubtypeOfOrEqualTo would compare them with equals.
+      Substitution completeSubstitution =
+          subst.extendWithIdentity(thisBoundType.getTypeParameters());
+      return Subtyping.isSubtypeOrEqual(
+          (ReferenceType) argType, thisBoundType, completeSubstitution);
+    }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
 }

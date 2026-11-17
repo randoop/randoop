@@ -524,6 +524,21 @@ public class TypeVariableTest {
         v.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE, new Substitution(k, JavaTypes.STRING_TYPE)));
   }
 
+  /**
+   * A type variable that the substitution puts in a variable bound stands for itself, not for an
+   * unknown type.
+   */
+  @Test
+  public void testVariableBoundReplacedByFixedVariable() {
+    TypeVariable k = typeParameter(UnboundedVariableBound.class, 0);
+    TypeVariable v = typeParameter(UnboundedVariableBound.class, 1);
+    TypeVariable e = typeParameter(List.class, 0);
+    // K is E, which stands for itself.  String is not known to be a subtype of E.
+    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, e)));
+    // K is unknown, so it can be String or a supertype of String.
+    assertTrue(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
   /** Mapping a capture variable to itself keeps a copy of it and the copy's bounds. */
   @Test
   public void testIdentitySubstitutionKeepsCaptureVariableCopy() {
@@ -2194,6 +2209,26 @@ public class TypeVariableTest {
     assertTrue(Subtyping.isSubtypeOrEqual(stringInner, stringInner, substitution));
     assertFalse(Subtyping.isSubtypeOrEqual(integerInner, stringInner, substitution));
     assertFalse(Subtyping.isSubtypeOrEqual(stringList, stringInner, substitution));
+  }
+
+  /**
+   * A class whose type parameter's bound is a member class of a type that mentions a sibling type
+   * parameter.
+   *
+   * @param <U> a type parameter
+   * @param <T> a type parameter whose bound mentions {@code U}
+   */
+  static class PlainInnerSiblingBound<U extends Number, T extends OuterWithPlainInner<U>.Inner> {}
+
+  @Test
+  public void testMemberClassBoundWithUnmappedSibling() throws NoSuchFieldException {
+    TypeVariable t = typeParameter(PlainInnerSiblingBound.class, 1);
+    ReferenceType integerInner = plainInnerFieldType("integerInner");
+    ReferenceType stringInner = plainInnerFieldType("stringInner");
+    // U can be Integer.
+    assertTrue(t.canBeInstantiatedBy(integerInner));
+    // U cannot be String, which is not a Number.
+    assertFalse(t.canBeInstantiatedBy(stringInner));
   }
 
   /**
