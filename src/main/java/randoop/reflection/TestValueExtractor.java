@@ -90,7 +90,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
                 + " in class "
                 + f.getDeclaringClass()
                 + ". (Is the class declaring this field publicly-accessible?)";
-        throw new RuntimeException(msg);
+        throw new RuntimeException(msg, e);
       }
 
       if (!fieldType.isArray()) {

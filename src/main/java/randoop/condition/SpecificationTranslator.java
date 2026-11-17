@@ -35,7 +35,7 @@ public final class SpecificationTranslator {
   private static final String DUMMY_VARIABLE_BASE_NAME = "x";
 
   /** The {@link RawSignature} for a prestate (guard) expression method. */
-  private RawSignature prestateExpressionSignature;
+  private final RawSignature prestateExpressionSignature;
 
   /**
    * The parameter part of a method declaration string, with parentheses, for a prestate (guard)
@@ -44,7 +44,7 @@ public final class SpecificationTranslator {
   private final String prestateExpressionDeclaration;
 
   /** The {@link RawSignature} for a poststate (property) expression method. */
-  private RawSignature poststateExpressionSignature;
+  private final RawSignature poststateExpressionSignature;
 
   /**
    * The parameter declaration string, with parentheses, for a poststate (property) expression
@@ -349,7 +349,7 @@ public final class SpecificationTranslator {
         if (GenInputsAbstract.ignore_condition_compilation_error) {
           continue;
         } else {
-          throw new RandoopSpecificationError(msg);
+          throw new RandoopSpecificationError(msg, e);
         }
       }
       try {
