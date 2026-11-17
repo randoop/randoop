@@ -395,7 +395,8 @@ public final class Randomness {
             "Error writing to selection-log "
                 + GenInputsAbstract.selection_log
                 + ": "
-                + e.getMessage());
+                + e.getMessage(),
+            e);
       }
     }
   }

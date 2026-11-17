@@ -9,7 +9,7 @@ import randoop.sequence.Sequence;
 public class ExcludeTestPredicate implements Predicate<ExecutableSequence> {
 
   /** The sequences to forbid. */
-  private Set<Sequence> excludeSet;
+  private final Set<Sequence> excludeSet;
 
   /**
    * Creates a predicate that forbids the given sequences.
