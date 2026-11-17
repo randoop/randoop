@@ -44,7 +44,8 @@ class EagerReferenceBound extends ReferenceBound {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     // A member class that declares no type parameters, of a parameterized type, such as
-    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.
+    // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
+    // capture conversion.  It is compared by the subtype test below.
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
@@ -106,7 +107,8 @@ class EagerReferenceBound extends ReferenceBound {
       // argument satisfies this bound if its own upper bound does.
       return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
-    // As in isLowerBound, a parameterized type need not be an InstantiatedType.
+    // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
+    // Outer<String>.Inner, is compared by the subtype test below.
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;

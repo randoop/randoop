@@ -14,7 +14,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class IdentityMultiMap<K, V> {
 
   /** The underlying map. */
-  private IdentityHashMap<K, Set<V>> map;
+  private final IdentityHashMap<K, Set<V>> map;
 
   /** Creates an empty multi-map. */
   public IdentityMultiMap() {

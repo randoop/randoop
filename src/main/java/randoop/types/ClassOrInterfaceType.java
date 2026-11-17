@@ -90,11 +90,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the owner type is the generic form of the enclosing class, the result is the generic
-        // form of the member class.
+        // If the type arguments of the owner type, and of its own owner types, are the type
+        // parameters of the declarations of the enclosing classes, the result is the generic form
+        // of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
             && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !isGenericFormOwner(ownerType)) {
+            && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -123,31 +124,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if the given (reflection) owner type is the generic form of its class: its type
-   * arguments are the type parameters of its class declaration, and, if it is a member class, its
-   * owner type is also a generic form. The whole owner chain is examined, because a member class
-   * that declares no type parameters, such as {@code Middle} in {@code Outer<String>.Middle.Inner},
-   * has no type arguments of its own, though its owner type does.
+   * Returns true if the given parameterized type is the type that its class declaration denotes:
+   * its type arguments are the type parameters of its class, and, if it is a member class, the same
+   * holds for its owner type. For example, this returns false for {@code Outer<String>.Middle},
+   * where {@code Middle} declares no type parameters, though its own type arguments are the (empty)
+   * type parameters of {@code Middle}.
    *
-   * @param ownerType the owner type of a member class
-   * @return true if {@code ownerType} is the generic form of its class
+   * @param type a parameterized type
+   * @return true if {@code type} is the type that its class declaration denotes
    */
-  private static boolean isGenericFormOwner(java.lang.reflect.Type ownerType) {
-    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
-      // A class with no parameterized owner type is its own generic form.
-      return true;
-    }
-    java.lang.reflect.ParameterizedType parameterizedOwner =
-        (java.lang.reflect.ParameterizedType) ownerType;
-    Class<?> ownerClass = (Class<?>) parameterizedOwner.getRawType();
-    if (!Arrays.equals(
-        parameterizedOwner.getActualTypeArguments(), ownerClass.getTypeParameters())) {
+  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+    Class<?> rawType = (Class<?>) type.getRawType();
+    if (!Arrays.equals(type.getActualTypeArguments(), rawType.getTypeParameters())) {
       return false;
     }
-    java.lang.reflect.Type enclosingOwner = parameterizedOwner.getOwnerType();
-    return java.lang.reflect.Modifier.isStatic(ownerClass.getModifiers())
-        || enclosingOwner == null
-        || isGenericFormOwner(enclosingOwner);
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    return !(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -422,6 +416,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
+        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+          // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
+          // different type, such as Outer<String>.
+          return null;
         }
       }
     }
