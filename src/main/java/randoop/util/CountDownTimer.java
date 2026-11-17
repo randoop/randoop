@@ -4,10 +4,10 @@ package randoop.util;
 public final class CountDownTimer {
 
   /** The total time spent. */
-  private long totalTime;
+  private final long totalTime;
 
   /** The start time. */
-  private long startTime;
+  private final long startTime;
 
   /**
    * Creates a new countdown timer that lasts the given number of milliseconds.
