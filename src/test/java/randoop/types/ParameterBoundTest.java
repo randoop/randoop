@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -160,6 +161,46 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A class whose second type parameter is bounded by a non-generic member class whose owner type
+   * has the first type parameter as its type argument.
+   *
+   * @param <U> the type parameter that is the type argument of the owner type in the bound of
+   *     {@code T}
+   * @param <T> the type parameter whose bound is a non-generic member class
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableMemberClassBound<
+      U, T extends GenericOuter<U>.NonGenericInner> {}
+
+  @Test
+  public void testSubstituteIntoOwnerTypeOfMemberClassBound() {
+    List<TypeVariable> typeParameters =
+        GenericClassType.forClass(OwnerVariableMemberClassBound.class).getTypeParameters();
+    ParameterBound bound =
+        typeParameters
+            .get(1)
+            .getUpperTypeBound()
+            .substitute(new Substitution(typeParameters.get(0), JavaTypes.STRING_TYPE));
+    ReferenceType stringInner =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "stringNonGenericInner"));
+    assertEquals(ParameterBound.forType(stringInner), bound);
+  }
+
+  @Test
+  public void testEagerMemberClassBound() {
+    ReferenceType stringInner =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "stringNonGenericInner"));
+    ReferenceType integerInner =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "integerNonGenericInner"));
+    ParameterBound bound = ParameterBound.forType(stringInner);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(stringInner, empty));
+    assertFalse(bound.isUpperBound(integerInner, empty));
+    assertTrue(bound.isLowerBound(stringInner, empty));
+    assertFalse(ParameterBound.forType(JavaTypes.STRING_TYPE).isLowerBound(stringInner, empty));
+  }
+
+  /**
    * A field whose type is a generic array type of a non-generic member class of a generic class.
    */
   @SuppressWarnings("unused")
@@ -268,10 +309,25 @@ public class ParameterBoundTest {
     class Member {}
   }
 
+  /** A class that satisfies the bound of {@link SelfMemberClassBound}. */
+  private static class SelfMemberClassBoundMember
+      extends SelfMemberClassBound<SelfMemberClassBoundMember>.Member {
+    /**
+     * Creates a {@code SelfMemberClassBoundMember}.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    SelfMemberClassBoundMember(SelfMemberClassBound<SelfMemberClassBoundMember> owner) {
+      owner.super();
+    }
+  }
+
   @Test
   public void testSelfMemberClassBound() {
     TypeVariable t =
         GenericClassType.forClass(SelfMemberClassBound.class).getTypeParameters().get(0);
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertTrue(
+        t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfMemberClassBoundMember.class)));
   }
 }
