@@ -14,7 +14,7 @@ public class DeclarationExtractor extends DefaultClassVisitor {
   private final Set<ClassOrInterfaceType> classDeclarationTypes;
 
   /** Determines which classes are collected; a class that does not satisfy it is ignored. */
-  private ReflectionPredicate reflectionPredicate;
+  private final ReflectionPredicate reflectionPredicate;
 
   /**
    * Creates a visitor that adds the type of each visited class to {@code classDeclarationTypes}.
