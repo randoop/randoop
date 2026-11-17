@@ -253,8 +253,8 @@ class LazyParameterBound extends ParameterBound {
    * Applies a substitution to a non-generic member class of a generic class, as in {@code
    * Outer<T>.Inner}, by applying it to the owner type, which supplies the type arguments.
    *
-   * @param type a reflection type that is a non-generic member class of a generic class; see
-   *     {@link ParameterBound#isNonGenericMemberClass}
+   * @param type a reflection type that is a non-generic member class of a generic class; see {@link
+   *     ParameterBound#isNonGenericMemberClass}
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
    *     null if {@link #substitute(java.lang.reflect.Type, Substitution)} cannot convert the owner
@@ -504,8 +504,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>Returns null if the result is still this bound, which happens only for a kind of type that
    * {@link #substitute(Substitution)} does not handle; then this method also fails an assertion.
-   * Comparing the unchanged bound would recurse forever. A bound that has no type variable, such
-   * as the non-generic member class {@code Outer<String>.Inner}, is not lazy: {@link
+   * Comparing the unchanged bound would recurse forever. A bound that has no type variable, such as
+   * the non-generic member class {@code Outer<String>.Inner}, is not lazy: {@link
    * ParameterBound#forType(Set, java.lang.reflect.Type)} converts it to an eager bound.
    *
    * @param substitution a type substitution
