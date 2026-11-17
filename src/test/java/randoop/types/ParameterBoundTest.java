@@ -394,6 +394,12 @@ public class ParameterBoundTest {
 
     /** An array of member classes of {@code GenericOuter<Integer>}. */
     GenericOuter<Integer>.NonGenericInner[] integerInnerArray;
+
+    /** A list of arrays of member classes of {@code GenericOuter<String>}. */
+    List<GenericOuter<String>.NonGenericInner[]> stringInnerArrayList;
+
+    /** A list of arrays of member classes of {@code GenericOuter<Integer>}. */
+    List<GenericOuter<Integer>.NonGenericInner[]> integerInnerArrayList;
   }
 
   /**
@@ -418,21 +424,21 @@ public class ParameterBoundTest {
   }
 
   /**
-   * A class whose type parameter is bounded by an array of a non-generic member class of a generic
-   * class.
+   * A class whose type parameter is bounded by a list of arrays of a non-generic member class of a
+   * generic class. A type parameter cannot be bounded by an array type itself.
    *
    * @param <T> the type parameter
    */
   @SuppressWarnings("unused")
   private static class NonGenericMemberClassArrayBound<
-      T extends GenericOuter<String>.NonGenericInner[]> {}
+      T extends List<GenericOuter<String>.NonGenericInner[]>> {}
 
   @Test
   public void testNonGenericMemberClassArrayBound() throws NoSuchFieldException {
     TypeVariable t =
         GenericClassType.forClass(NonGenericMemberClassArrayBound.class).getTypeParameters().get(0);
-    assertTrue(t.canBeInstantiatedBy(nonGenericInnerFieldType("stringInnerArray")));
-    assertFalse(t.canBeInstantiatedBy(nonGenericInnerFieldType("integerInnerArray")));
+    assertTrue(t.canBeInstantiatedBy(nonGenericInnerFieldType("stringInnerArrayList")));
+    assertFalse(t.canBeInstantiatedBy(nonGenericInnerFieldType("integerInnerArrayList")));
   }
 
   @Test
