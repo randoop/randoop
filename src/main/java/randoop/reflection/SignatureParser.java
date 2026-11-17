@@ -126,12 +126,15 @@ public final class SignatureParser {
         clazz = Type.forFullyQualifiedName(qualifiedName);
         isConstructor = true;
       } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        throw new SignatureParseException(
-            "Class not found for method or constructor "
-                + qualifiedName
-                + " in signature "
-                + signature,
-            e);
+        SignatureParseException spe =
+            new SignatureParseException(
+                "Class not found for method or constructor "
+                    + qualifiedName
+                    + " in signature "
+                    + signature,
+                e);
+        spe.addSuppressed(first);
+        throw spe;
       }
     }
 

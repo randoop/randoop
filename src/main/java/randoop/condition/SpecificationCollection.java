@@ -88,7 +88,7 @@ import randoop.util.Util;
    * @param overridden the map from a method to methods that it overrides and that have a
    *     specification
    */
-  SpecificationCollection(
+  /*package*/ SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
       MultiMap<OperationSignature, Method> signatureToMethods,
       Map<AccessibleObject, Set<Method>> overridden) {
@@ -376,7 +376,7 @@ import randoop.util.Util;
   }
 
   /** Cache for {@link #getExecutableSpecification}. */
-  private Map<AccessibleObject, ExecutableSpecification> getExecutableSpecificationCache;
+  private final Map<AccessibleObject, ExecutableSpecification> getExecutableSpecificationCache;
 
   /**
    * Creates an {@link ExecutableSpecification} object for the given constructor or method, from its

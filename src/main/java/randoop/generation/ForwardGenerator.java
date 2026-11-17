@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
@@ -89,7 +90,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * scope, used to select literals from the component manager's literal statistics. A scope is a
    * type, package, or {@code ScopeToLiteralStatistics#ALL_SCOPE}.
    */
-  private @MonotonicNonNull HashMap<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
+  private @MonotonicNonNull Map<@Nullable Object, TfIdfSelector> scopeToTfIdfSelectors;
 
   /**
    * The set of all primitive values seen during generation and execution of sequences. This set is
@@ -97,7 +98,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * <p>Each value in the collection is a primitive wrapper or a String.
    */
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
+  private final Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   /**
    * Create a forward generator.
@@ -931,7 +932,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param isReceiver true if the value will be used as a receiver
    * @return a random variable of the given type, chosen from the candidates
    */
-  VarAndSeq randomVariable(SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
+  /*package*/ VarAndSeq randomVariable(
+      SIList<Sequence> candidates, Type inputType, boolean isReceiver) {
     // Log.logPrintf("entering randomVariable(%s)%n", inputType);
     for (int i = 0; i < 10; i++) { // can return null.  Try several times to get a non-null value.
 
