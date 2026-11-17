@@ -406,18 +406,17 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, {@code otherType} itself, and, if this variable is a type parameter, the strict
-   * supertypes of {@code otherType}: if {@code otherType} is a class or interface type, each of its
-   * strict supertypes that mentions only the type variables of {@code otherType}, and if {@code
-   * otherType} is an array type, {@code Object}, {@code Cloneable}, and {@code Serializable}, but
-   * not array types other than {@code otherType}. Each instantiation other than the lower bound is
-   * checked as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for
-   * {@code <S extends Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base},
-   * which implements {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub},
-   * with {@code Base} for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code
-   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
-   * T}. The result can be false if only a supertype of {@code otherType} that is not a class or
-   * interface type, such as an intersection or an array type, can instantiate this variable.
+   * of it, {@code otherType} itself, and, if this variable is a type parameter and {@code
+   * otherType} is a class, interface, or array type, each of the strict supertypes of {@code
+   * otherType} that mentions only the type variables of {@code otherType}. Each instantiation other
+   * than the lower bound is checked as by {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)}. For example, for {@code <S extends Comparable<S>, U extends S>}, if class
+   * {@code Sub} extends {@code Base}, which implements {@code Comparable<Base>}, then {@code S} can
+   * be a supertype of {@code Sub}, with {@code Base} for {@code S}; and for {@code <T extends
+   * Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code
+   * java.util.Date} can instantiate {@code T}. The result can be false if only a supertype of
+   * {@code otherType} that is not among these, such as an intersection type, can instantiate this
+   * variable.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
@@ -450,32 +449,47 @@ public abstract class TypeVariable extends ParameterType {
     if (!(this instanceof ExplicitTypeVariable)) {
       return false;
     }
-    if (otherType instanceof ClassOrInterfaceType) {
-      List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
-      for (ClassOrInterfaceType supertype :
-          ((ClassOrInterfaceType) otherType).getSupertypesStrict()) {
-        // A supertype that mentions a type variable that otherType does not is not a supertype of
-        // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
-        // its raw class and do not preserve the relationship between their type parameters.  A
-        // supertype that mentions only the type variables of otherType, such as List<E> for
-        // ArrayList<E>, is a supertype of otherType.
-        if (otherTypeParameters.containsAll(supertype.getTypeParameters())
-            && canBeInstantiatedBy(supertype, context)) {
-          return true;
-        }
-      }
-    } else if (otherType.isArray()) {
-      // The supertypes of an array type that are not array types (JLS 4.10.3).
-      for (ReferenceType supertype :
-          new ReferenceType[] {
-            JavaTypes.OBJECT_TYPE, JavaTypes.CLONEABLE_TYPE, JavaTypes.SERIALIZABLE_TYPE
-          }) {
-        if (canBeInstantiatedBy(supertype, context)) {
-          return true;
-        }
+    List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
+    for (ReferenceType supertype : getStrictSupertypes(otherType)) {
+      // A supertype that mentions a type variable that otherType does not is not a supertype of
+      // otherType.  It arises when otherType is a GenericClassType, whose supertypes are those of
+      // its raw class and do not preserve the relationship between their type parameters.  A
+      // supertype that mentions only the type variables of otherType, such as List<E> for
+      // ArrayList<E>, is a supertype of otherType.
+      if (otherTypeParameters.containsAll(supertype.getTypeParameters())
+          && canBeInstantiatedBy(supertype, context)) {
+        return true;
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the strict supertypes of the given type, if it is a class, interface, or array type.
+   * The supertypes of an array type {@code C[]} are {@code Object}, {@code Cloneable}, {@code
+   * Serializable}, and, if {@code C} is a class, interface, or array type, {@code S[]} for each
+   * strict supertype {@code S} of {@code C}. For any other type, returns an empty list.
+   *
+   * @param type a type
+   * @return the strict supertypes of {@code type}
+   */
+  private static List<ReferenceType> getStrictSupertypes(ReferenceType type) {
+    List<ReferenceType> result = new ArrayList<>();
+    if (type instanceof ClassOrInterfaceType) {
+      result.addAll(((ClassOrInterfaceType) type).getSupertypesStrict());
+    } else if (type instanceof ArrayType) {
+      result.add(JavaTypes.OBJECT_TYPE);
+      result.add(JavaTypes.CLONEABLE_TYPE);
+      result.add(JavaTypes.SERIALIZABLE_TYPE);
+      Type componentType = ((ArrayType) type).getComponentType();
+      if (componentType instanceof ReferenceType) {
+        for (ReferenceType componentSupertype :
+            getStrictSupertypes((ReferenceType) componentType)) {
+          result.add(ArrayType.ofComponentType(componentSupertype));
+        }
+      }
+    }
+    return result;
   }
 
   /**

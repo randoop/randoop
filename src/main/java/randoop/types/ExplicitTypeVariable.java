@@ -11,8 +11,10 @@ public class ExplicitTypeVariable extends TypeVariable {
   private final java.lang.reflect.TypeVariable<?> variable;
 
   /**
-   * The type parameters for which {@link #substitute(Substitution)} is in progress, in the current
-   * thread.
+   * The type parameters for which {@link #substitute(Substitution)} is executing on the current
+   * thread. A type parameter can occur in its own bound, as {@code T} does in {@code T extends
+   * Comparable<? extends T>}. When the substitution reaches such an occurrence, it does not apply
+   * the substitution to the variable's bound again.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<java.lang.reflect.TypeVariable<?>>> substituteIsExecuting =
@@ -106,6 +108,10 @@ public class ExplicitTypeVariable extends TypeVariable {
     // through the bounds of other type variables.  Such an occurrence remains as it is.
     Set<java.lang.reflect.TypeVariable<?>> inProgress = substituteIsExecuting.get();
     if (!inProgress.add(variable)) {
+      // This variable occurs in its own bound, which the substitution is already being applied to.
+      // Applying the substitution to the bound again would not terminate.  If the enclosing call
+      // creates a copy with new bounds, this occurrence in the copy's bound is this variable, not
+      // the copy.
       return type == null ? this : type;
     }
     ParameterBound upperBound;

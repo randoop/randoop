@@ -132,8 +132,17 @@ final class Subtyping {
       // not, so compare the enclosing types here.
       ClassOrInterfaceType supertype =
           findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
-      return supertype != null
-          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+      if (supertype == null) {
+        return false;
+      }
+      // As above, capture the wildcard arguments of the enclosing types, as in
+      // Outer<? extends Integer>.Inner.
+      try {
+        supertype = supertype.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        return false;
+      }
+      return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
   }
@@ -362,7 +371,7 @@ final class Subtyping {
         && type.isParameterized()
         && lowerType instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
-      // Outer<String>.Inner, as in isSubtypeOrEqual.  Compare the enclosing types.
+      // Outer<String>.Inner; compare the enclosing types, as in isSubtypeOrEqual.
       ClassOrInterfaceType supertype =
           findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
       return supertype != null
@@ -595,7 +604,7 @@ final class Subtyping {
    * @param otherType another type
    * @return true if the types are equal, including their enclosing types
    */
-  static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
+  /*package*/ static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
     if (!type.equals(otherType)) {
       return false;
     }

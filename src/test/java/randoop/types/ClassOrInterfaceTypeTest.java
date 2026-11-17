@@ -180,6 +180,50 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(integerType, substitution.get(x));
   }
 
+  /**
+   * A generic class with a generic member class that has a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class ThreeLevelOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Middle<U> {
+      /**
+       * A generic member class of a generic member class.
+       *
+       * @param <V> the type parameter
+       */
+      class Inner<V> {}
+    }
+  }
+
+  @Test
+  public void instantiatingSubstitutionChecksOwnerOfGenericEnclosingType() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(ThreeLevelOuter.Middle.Inner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    ReferenceType booleanType = JavaTypes.BOOLEAN_TYPE.toBoxedPrimitive();
+    TypeVariable x = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    // ThreeLevelOuter<String>.Middle<Integer>.Inner<Long>
+    InstantiatedType stringIntegerLong =
+        innerType.instantiate(JavaTypes.STRING_TYPE, integerType, longType);
+    // ThreeLevelOuter<Boolean>.Middle<Integer>.Inner<X>.  The enclosing types differ only in the
+    // type argument of the outermost type.
+    InstantiatedType booleanIntegerX = innerType.instantiate(booleanType, integerType, x);
+    assertNull(stringIntegerLong.getInstantiatingSubstitution(booleanIntegerX));
+    // ThreeLevelOuter<String>.Middle<Integer>.Inner<X>
+    InstantiatedType stringIntegerX = innerType.instantiate(JavaTypes.STRING_TYPE, integerType, x);
+    Substitution substitution = stringIntegerLong.getInstantiatingSubstitution(stringIntegerX);
+    assertNotNull(substitution);
+    assertEquals(longType, substitution.get(x));
+  }
+
   @Test
   public void boundOfMemberOfParameterizedType() {
     GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);

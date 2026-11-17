@@ -89,14 +89,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // ParameterizedType whose owner type supplies the type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the type arguments of the owner type, and of its own owner types, are the type
-        // parameters of the declarations of the enclosing classes, the result is the generic form
-        // of the member class.  Comparing only the type arguments of the immediate owner would not
-        // suffice:  in Outer<String>.Middle.Inner, the owner Middle has no type arguments.
-        if (ownerType instanceof java.lang.reflect.ParameterizedType
-            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
+        java.lang.reflect.Type ownerType = getPreservedOwnerType(t);
+        if (ownerType != null) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -122,6 +116,32 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns the owner type of the given parameterized type, if the conversion of the type to a
+   * {@link ClassOrInterfaceType} uses that owner type as the enclosing type. This is so if the type
+   * is a member class (not a static nested class) and the owner type is a parameterized type that
+   * is not the type that the declaration of the enclosing class denotes. For example, the result
+   * for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise, returns null, and the
+   * conversion uses the enclosing type of the class declaration.
+   *
+   * @param type a parameterized type
+   * @return the owner type to use as the enclosing type, or null
+   */
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    // If the type arguments of the owner type, and of its own owner types, are the type parameters
+    // of the declarations of the enclosing classes, the class declaration gives the enclosing type.
+    // Comparing only the type arguments of the immediate owner would not suffice:  in
+    // Outer<String>.Middle.Inner, the owner Middle has no type arguments.
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
+        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())
+        && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
+      return (java.lang.reflect.ParameterizedType) ownerType;
+    }
+    return null;
   }
 
   /**
@@ -394,6 +414,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (superResult != null) {
       return superResult;
     }
+    if (goalType.isVariable()) {
+      // This type cannot instantiate the type variable.
+      return null;
+    }
 
     assert goalType.isGeneric() : "goal type must be generic";
 
@@ -417,9 +441,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+        } else if (!Subtyping.isIdentical(thisEnclosingType, enclosingGoalType)) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
-          // different type, such as Outer<String>.
+          // different type, such as Outer<String>.  InstantiatedType.equals ignores enclosing
+          // types, so it would treat Outer<String>.Middle<Integer> and
+          // Outer<Boolean>.Middle<Integer> as equal.
           return null;
         }
       }
