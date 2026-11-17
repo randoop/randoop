@@ -1,3 +1,0 @@
-// A replacecall agent replacement file, used by RandoopSystemTest.runDontOmitReplacedMethodsTest.
-
-java.lang.String.hashCode() input.StringHashCodeReplacement.hashCode(java.lang.String)

@@ -1364,7 +1364,7 @@ public class RandoopSystemTest {
 
   /**
    * Tests that, with {@code --dont-omit-replaced-methods}, Randoop calls a replaced method ({@code
-   * java.lang.String.hashCode()}) even though a default omit pattern matches it.
+   * java.util.Random()}) even though a default omit pattern matches it.
    */
   @Test
   public void runDontOmitReplacedMethodsTest() throws IOException {
@@ -1379,14 +1379,14 @@ public class RandoopSystemTest {
             systemTestEnvironmentManager.replacecallAgentPath.toString());
     testEnvironment.addJavaAgent(
         systemTestEnvironmentManager.replacecallAgentPath,
-        "--dont-transform=resources/systemTest/replacecall-exclusions.txt"
-            + " --replacement-file=resources/systemTest/string-hashcode-replacement.txt");
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
     RandoopOptions options = createRandoopOptions(testEnvironment);
-    options.addTestClass("java.lang.String");
-    // Use the default omit patterns, which match java.lang.String.hashCode().
+    // The agent's default replacements include the java.util.Random() constructor.
+    options.addTestClass("java.util.Random");
+    // Use the default omit patterns, which match java.util.Random().
     options.setFlag("dont-omit-replaced-methods");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("generated_limit", "1000");
+    options.setOption("generated_limit", "100");
 
     generateAndCompile(testEnvironment, options, false);
 
@@ -1402,8 +1402,8 @@ public class RandoopSystemTest {
     }
     String tests = testsBuilder.toString();
     assertTrue(
-        "Randoop should call the replaced java.lang.String.hashCode()",
-        tests.contains(".hashCode()"));
+        "Randoop should call the replaced java.util.Random()",
+        tests.contains("new java.util.Random()"));
   }
 
   @Test
