@@ -209,7 +209,8 @@ public class Substitution {
         // Replace the entry, so that the result does not depend on the order of the merge.
         ReferenceType existing = result.map.get(key);
         if (existing != null) {
-          requireSameEntry.apply(existing, value);
+          // Called only for its check, which throws if the two values differ.
+          ReferenceType unused = requireSameEntry.apply(existing, value);
         }
         result.map.remove(key);
         result.map.put(key, value);
