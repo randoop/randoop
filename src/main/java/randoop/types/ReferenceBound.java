@@ -96,7 +96,9 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     if (bound instanceof ReferenceBound) {
-      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
+      // An eager bound can also contain type variables, as in T[], where T is not recursive.
+      return isUpperBound(
+          ((ReferenceBound) bound).getBoundType().substitute(substitution), substitution);
     }
     if (bound instanceof IntersectionTypeBound) {
       for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
@@ -137,6 +139,7 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    return lowerBound.isLowerBound(boundType, substitution);
+    // An eager bound can also contain type variables, as in T[], where T is not recursive.
+    return lowerBound.isLowerBound(boundType.substitute(substitution), substitution);
   }
 }
