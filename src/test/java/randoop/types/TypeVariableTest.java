@@ -649,6 +649,21 @@ public class TypeVariableTest {
   static class WildcardSelfBound<T extends Comparable<? super T>> {}
 
   /**
+   * A class whose type parameter's bound contains the type parameter as an upper wildcard bound.
+   *
+   * @param <T> the type parameter
+   */
+  static class ExtendsWildcardSelfBound<T extends Comparable<? extends T>> {}
+
+  /** Mapping a type parameter that occurs in an upper wildcard bound of its bound terminates. */
+  @Test
+  public void testIdentitySubstitutionOfExtendsWildcardSelfBound() {
+    TypeVariable t = typeParameter(ExtendsWildcardSelfBound.class, 0);
+    ReferenceType result = t.substitute(new Substitution(t, t));
+    assertEquals(t, result);
+  }
+
+  /**
    * A class whose type parameter's bound contains the type parameter in a nested type argument.
    *
    * @param <T> the type parameter
