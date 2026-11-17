@@ -151,6 +151,29 @@ public class ParameterBoundTest {
     assertTrue(nullBound.isLowerBound(lazyListBound, new Substitution()));
   }
 
+  /**
+   * A capture variable is a supertype of its lower bound, so a {@link LazyReferenceBound} whose
+   * type is a capture variable has that lower bound, and its subtypes, as lower bounds.
+   */
+  @Test
+  public void testLazyCaptureBoundHasCaptureLowerBound() throws Exception {
+    java.lang.reflect.Type superNumber =
+        ((java.lang.reflect.ParameterizedType)
+                ArrayHolder.class.getDeclaredMethod("superNumbers", List.class)
+                    .getGenericParameterTypes()[0])
+            .getActualTypeArguments()[0];
+    CaptureTypeVariable capture = new CaptureTypeVariable(WildcardArgument.forType(superNumber));
+    ParameterBound lazyCaptureBound = new LazyReferenceBound(capture);
+
+    assertTrue(nullBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertTrue(numberBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertTrue(integerBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertFalse(stringBound.isLowerBound(lazyCaptureBound, new Substitution()));
+    assertFalse(
+        ParameterBound.forType(JavaTypes.OBJECT_TYPE)
+            .isLowerBound(lazyCaptureBound, new Substitution()));
+  }
+
   /** A {@link LazyReferenceBound} is a lower bound of itself, but not of another type variable. */
   @Test
   public void testLazyReferenceBoundIsLowerBoundOfItself() {
@@ -215,6 +238,13 @@ public class ParameterBoundTest {
      * @return an array
      */
     abstract T[] array();
+
+    /**
+     * Has a parameter whose type argument is a wildcard with a lower bound.
+     *
+     * @param list a list
+     */
+    abstract void superNumbers(List<? super Number> list);
   }
 
   /**
