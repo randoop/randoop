@@ -417,9 +417,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+        } else if (!Subtyping.isIdentical(thisEnclosingType, enclosingGoalType)) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
-          // different type, such as Outer<String>.
+          // different type, such as Outer<String>.  InstantiatedType.equals does not compare
+          // enclosing types, so it would not distinguish Outer<Long>.Middle<Integer> from
+          // Outer<String>.Middle<Integer>.
           return null;
         }
       }

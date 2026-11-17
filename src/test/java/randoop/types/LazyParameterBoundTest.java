@@ -80,6 +80,43 @@ public class LazyParameterBoundTest {
   static class FieldTypes {
     /** A wildcard whose upper bound is a generic array type that contains no type variable. */
     List<? extends List<String>[]> arrayOfListWildcard;
+
+    /** A wildcard whose upper bound is an array of a member class of a parameterized type. */
+    List<? extends Outer<String>.Inner[]> arrayOfMemberWildcard;
+  }
+
+  /**
+   * A generic class with an inner class.
+   *
+   * @param <T> the type parameter
+   */
+  static class Outer<T> {
+    /** An inner class that declares no type parameters. */
+    class Inner {}
+  }
+
+  @Test
+  public void testMemberClassArrayBoundWithEmptySubstitution() throws NoSuchFieldException {
+    java.lang.reflect.ParameterizedType fieldType =
+        (java.lang.reflect.ParameterizedType)
+            FieldTypes.class.getDeclaredField("arrayOfMemberWildcard").getGenericType();
+    java.lang.reflect.WildcardType wildcard =
+        (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
+    ParameterBound bound = new LazyParameterBound(wildcard.getUpperBounds()[0]);
+    // Converting Outer<String>.Inner does not create a GenericClassType for Inner, which declares
+    // no type parameters and for which GenericClassType.forClass would throw.
+    ParameterBound substituted = bound.substitute(new Substitution());
+    assertTrue(substituted instanceof ReferenceBound);
+    ReferenceType boundType = ((ReferenceBound) substituted).getBoundType();
+    assertTrue(boundType.isArray());
+    ClassOrInterfaceType elementType =
+        (ClassOrInterfaceType) ((ArrayType) boundType).getComponentType();
+    assertTrue(elementType.isParameterized());
+    assertEquals(
+        TypeArgument.forType(JavaTypes.STRING_TYPE),
+        elementType.enclosingType.getTypeArguments().get(0));
+    assertTrue(bound.isUpperBound(boundType, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
   @Test

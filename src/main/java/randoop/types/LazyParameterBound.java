@@ -34,7 +34,9 @@ class LazyParameterBound extends ParameterBound {
   private @Nullable ReferenceBound referenceBound = null;
 
   /** True if {@link #referenceBound} has been computed. */
-  private boolean referenceBoundComputed = false;
+  // Volatile so that a thread that reads true also sees the value of referenceBound, which is
+  // written before this field.
+  private volatile boolean referenceBoundComputed = false;
 
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.

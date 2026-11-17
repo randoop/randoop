@@ -343,7 +343,8 @@ public class TypeInstantiator {
       ReferenceType type, List<ReferenceType> matches, Substitution substitution) {
     // Try the matches in random order.
     while (!matches.isEmpty()) {
-      ReferenceType selectedType = Randomness.randomSetMember(matches);
+      int selectedIndex = Randomness.nextRandomInt(matches.size());
+      ReferenceType selectedType = matches.get(selectedIndex);
       Substitution selected = selectedType.getInstantiatingSubstitution(type);
       // A match can conflict with the substitution, for example if it binds a capture variable
       // that the substitution already maps to a different type.
@@ -353,7 +354,10 @@ public class TypeInstantiator {
           return result;
         }
       }
-      matches.remove(selectedType);
+      // Remove by index, not by object:  InstantiatedType.equals ignores enclosing types, so
+      // removing an equal object could remove a different match, such as one whose enclosing type
+      // has other type arguments.
+      matches.remove(selectedIndex);
     }
     return null;
   }

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -419,5 +420,82 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(ofU.isGenericForm());
     assertEquals(1, ofU.getTypeParameters().size());
     assertEquals("U", ofU.getTypeParameters().get(0).getSimpleName());
+  }
+
+  /** Fields whose types are member classes of parameterized types with wildcard arguments. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class WildcardOwnerFields {
+    /** A member class of {@code Outer<? extends Integer>}. */
+    Outer<? extends Integer>.Inner integerInner;
+
+    /** A member class of {@code Outer<? extends Number>}. */
+    Outer<? extends Number>.Inner numberInner;
+  }
+
+  @Test
+  public void subtypeOfMemberOfWildcardOwner() throws NoSuchFieldException {
+    ClassOrInterfaceType integerInner =
+        ClassOrInterfaceType.forType(
+            WildcardOwnerFields.class.getDeclaredField("integerInner").getGenericType());
+    ClassOrInterfaceType numberInner =
+        ClassOrInterfaceType.forType(
+            WildcardOwnerFields.class.getDeclaredField("numberInner").getGenericType());
+    assertTrue(Subtyping.isSubtypeOrEqual(integerInner, numberInner));
+    assertFalse(Subtyping.isSubtypeOrEqual(numberInner, integerInner));
+  }
+
+  /**
+   * A generic class with a generic member class that has a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  static class ThreeLevelOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Middle<U> {
+      /**
+       * A generic member class of a generic member class.
+       *
+       * @param <V> the type parameter
+       */
+      class Leaf<V> {}
+    }
+  }
+
+  @Test
+  public void instantiatingSubstitutionComparesWholeEnclosingChain() {
+    TypeVariable t = GenericClassType.forClass(ThreeLevelOuter.class).getTypeParameters().get(0);
+    TypeVariable u =
+        GenericClassType.forClass(ThreeLevelOuter.Middle.class).getTypeParameters().get(0);
+    TypeVariable v =
+        GenericClassType.forClass(ThreeLevelOuter.Middle.Leaf.class).getTypeParameters().get(0);
+    ClassOrInterfaceType leaf = ClassOrInterfaceType.forClass(ThreeLevelOuter.Middle.Leaf.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);
+    // ThreeLevelOuter<String>.Middle<Integer>.Leaf<Long>
+    ClassOrInterfaceType stringLeaf =
+        leaf.substitute(
+            new Substitution(
+                Arrays.asList(t, u, v),
+                Arrays.<ReferenceType>asList(JavaTypes.STRING_TYPE, integerType, longType)));
+    // ThreeLevelOuter<Number>.Middle<Integer>.Leaf<V>
+    ClassOrInterfaceType numberGoal =
+        leaf.substitute(
+            new Substitution(
+                Arrays.asList(t, u), Arrays.<ReferenceType>asList(numberType, integerType)));
+    assertNull(stringLeaf.getInstantiatingSubstitution(numberGoal));
+    // ThreeLevelOuter<String>.Middle<Integer>.Leaf<V>
+    ClassOrInterfaceType stringGoal =
+        leaf.substitute(
+            new Substitution(
+                Arrays.asList(t, u),
+                Arrays.<ReferenceType>asList(JavaTypes.STRING_TYPE, integerType)));
+    Substitution substitution = stringLeaf.getInstantiatingSubstitution(stringGoal);
+    assertNotNull(substitution);
+    assertEquals(longType, substitution.get(v));
   }
 }
