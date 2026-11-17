@@ -67,9 +67,11 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound substitute(Substitution substitution) {
-    if (boundType instanceof GenericArrayType) {
+    if (boundType instanceof GenericArrayType || isNonGenericMemberClass(boundType)) {
       // A generic array type, such as `List<String>[]`, need not contain a type variable.  Such a
       // bound is materialized even by an empty substitution, so that it can be compared with types.
+      // A non-generic member class, such as `Outer<T>.Inner`, gets its type arguments from its
+      // owner type.
       if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
         return this;
       }
@@ -77,8 +79,8 @@ class LazyParameterBound extends ParameterBound {
       if (typeArgument == null) {
         return this;
       }
-      ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
-      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
     }
     if (substitution.isEmpty()) {
       return this;
@@ -99,16 +101,6 @@ class LazyParameterBound extends ParameterBound {
     if (boundType instanceof ParameterizedType) {
       if (!instantiatesAny(boundType, substitution)) {
         return this;
-      }
-      if (isNonGenericMemberClass(boundType)) {
-        // A non-generic member class, as in `Outer<T>.Inner`, whose owner type supplies the type
-        // arguments.
-        TypeArgument typeArgument = substitute(boundType, substitution);
-        if (!(typeArgument instanceof ReferenceArgument)) {
-          return this;
-        }
-        return ReferenceBound.forTypeLazyIfGeneric(
-            ((ReferenceArgument) typeArgument).getReferenceType());
       }
       // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
@@ -159,7 +151,7 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
    *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard
+   *     or wildcard, or is a non-generic member class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -172,6 +164,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (isNonGenericMemberClass(type)) {
+      // A member class that declares no type parameters, as in Outer<T>.Inner, gets its type
+      // arguments from its owner type, which GenericClassType.forClass would not accept.
       return substituteNonGenericMemberClass((ParameterizedType) type, substitution);
     }
 
@@ -317,15 +311,17 @@ class LazyParameterBound extends ParameterBound {
       }
       return false;
     }
+    if (isNonGenericMemberClass(type)) {
+      java.lang.reflect.Type owner = ((ParameterizedType) type).getOwnerType();
+      return owner != null && instantiatesAny(owner, substitution, visited);
+    }
     if (type instanceof ParameterizedType) {
       for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution, visited)) {
           return true;
         }
       }
-      // The owner type of a non-generic member class supplies its type arguments.
-      return isNonGenericMemberClass(type)
-          && instantiatesAny(((ParameterizedType) type).getOwnerType(), substitution, visited);
+      return false;
     }
     if (type instanceof GenericArrayType) {
       return instantiatesAny(
@@ -377,14 +373,17 @@ class LazyParameterBound extends ParameterBound {
     List<TypeVariable> variableList = new ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {
       variableList.add(TypeVariable.forType(type));
+    } else if (isNonGenericMemberClass(type)) {
+      // The type arguments of a member class that declares no type parameters are those of its
+      // owner type.
+      java.lang.reflect.Type owner = ((ParameterizedType) type).getOwnerType();
+      if (owner != null) {
+        variableList.addAll(getTypeParameters(owner));
+      }
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
-      }
-      // The owner type of a non-generic member class supplies its type arguments.
-      if (isNonGenericMemberClass(pt)) {
-        variableList.addAll(getTypeParameters(pt.getOwnerType()));
       }
     } else if (type instanceof GenericArrayType) {
       variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));

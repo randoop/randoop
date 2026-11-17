@@ -38,7 +38,7 @@ public final class EnumValue extends ObjectContract {
       return false;
     }
     EnumValue enumValue = (EnumValue) obj;
-    return value.equals(enumValue.value);
+    return value == enumValue.value;
   }
 
   @Override
@@ -64,7 +64,7 @@ public final class EnumValue extends ObjectContract {
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
-    return value.equals(objects[0]);
+    return value == objects[0];
   }
 
   @Override
@@ -90,7 +90,7 @@ public final class EnumValue extends ObjectContract {
     b.append("x0");
     b.append(".equals(");
     b.append(valueName);
-    b.append(")");
+    b.append(')');
     b.append(");");
     return b.toString();
   }

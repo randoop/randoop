@@ -433,7 +433,9 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
    * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its supertypes. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * of its supertypes. If {@code otherType} is an array type, they also include {@code Object},
+   * {@code Cloneable}, and {@code Serializable}, but not array types other than {@code otherType}.
+   * For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
    * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
    * T}. Each instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}.
@@ -458,6 +460,16 @@ public abstract class TypeVariable extends ParameterType {
         // ArrayList<E>, is a supertype of otherType.
         if (otherTypeParameters.containsAll(supertype.getTypeParameters())
             && canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
+    } else if (otherType.isArray()) {
+      // The supertypes of an array type that are not array types (JLS 4.10.3).
+      for (ReferenceType supertype :
+          new ReferenceType[] {
+            JavaTypes.OBJECT_TYPE, JavaTypes.CLONEABLE_TYPE, JavaTypes.SERIALIZABLE_TYPE
+          }) {
+        if (canBeInstantiatedBy(supertype, context)) {
           return true;
         }
       }
@@ -507,6 +519,12 @@ public abstract class TypeVariable extends ParameterType {
    * {@code Pair<Y, Y'>}, where {@code Y'} is a copy of {@code Y} with another bound, the result is
    * false. The enclosing types of member classes are compared too.
    *
+   * <p>This compares the types structurally, occurrence by occurrence. Comparing the lists returned
+   * by {@link ReferenceType#getTypeParameters()} would not suffice: those lists contain only one of
+   * several copies of a type variable, because the copies are equal. So, for copies {@code XS} and
+   * {@code XI} of a type variable {@code X} with other bounds, they would not distinguish {@code
+   * Map<X, XS>} from {@code Map<X, XI>}.
+   *
    * @param type1 a type
    * @param type2 a type
    * @return true if the types are equal and the type variables in them are identical
@@ -552,11 +570,12 @@ public abstract class TypeVariable extends ParameterType {
       }
       return true;
     }
-    if (type1 instanceof WildcardType && type2 instanceof WildcardType) {
-      WildcardType wildcard1 = (WildcardType) type1;
-      WildcardType wildcard2 = (WildcardType) type2;
-      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
-          && areIdentical(wildcard1.getTypeBound(), wildcard2.getTypeBound());
+    if (type1 instanceof ParameterType && type2 instanceof ParameterType) {
+      // For example, a wildcard type.
+      ParameterType parameterType1 = (ParameterType) type1;
+      ParameterType parameterType2 = (ParameterType) type2;
+      return areIdentical(parameterType1.getLowerTypeBound(), parameterType2.getLowerTypeBound())
+          && areIdentical(parameterType1.getUpperTypeBound(), parameterType2.getUpperTypeBound());
     }
     return areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
   }
@@ -609,7 +628,10 @@ public abstract class TypeVariable extends ParameterType {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
     }
-    // Compare the types structurally rather than by their deduplicated type parameters.
+    // As in areIdentical(ReferenceType, ReferenceType), compare the bounds structurally, rather
+    // than comparing their getTypeParameters(), which contain only one of several copies of a type
+    // variable.  The members of intersection bounds are compared by this method, so that a lazy
+    // member can be identical to an eager one.
     if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
       return areIdentical(
           ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());

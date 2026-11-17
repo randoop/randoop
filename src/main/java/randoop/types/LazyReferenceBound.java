@@ -62,7 +62,7 @@ class LazyReferenceBound extends EagerReferenceBound {
     if (referenceType == getBoundType()) {
       return this;
     }
-    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
+    return forTypeLazyIfGeneric(referenceType);
   }
 
   @Override

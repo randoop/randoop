@@ -47,7 +47,7 @@ final class TypeArguments {
         try {
           argTypes[i] = Type.forFullyQualifiedName(typeName);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-          throw new OperationParseException("Class " + typeName + " is not on classpath");
+          throw new OperationParseException("Class " + typeName + " is not on classpath", e);
         }
       }
     }
@@ -60,7 +60,7 @@ final class TypeArguments {
    * @param sb the {@link StringBuilder} to which type names are added
    * @param params the array of {@link Class} objects representing the types of signature arguments
    */
-  /*package*/ static void getTypeArgumentString(StringBuilder sb, Class<?>[] params) {
+  /*package*/ static void appendTypeArgumentString(StringBuilder sb, Class<?>[] params) {
     StringJoiner sj = new StringJoiner(",");
     for (Class<?> param : params) {
       sj.add(param.getName());

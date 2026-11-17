@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,23 +90,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
+        // If the type arguments of the owner type, and of its own owner types, are the type
+        // parameters of the declarations of the enclosing classes, the result is the generic form
+        // of the member class.  Comparing only the type arguments of the immediate owner would not
+        // suffice:  in Outer<String>.Middle.Inner, the owner Middle has no type arguments.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
-            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-          ClassOrInterfaceType owner = forType(ownerType);
-          // If the owner type, including its own enclosing types, is the generic form of its
-          // class, the result is the generic form of the member class.  Comparing only the type
-          // arguments of the immediate owner would not suffice:  in Outer<String>.Middle.Inner,
-          // the owner Middle has no type arguments.
-          if (!owner.isGenericForm()) {
-            // Use the owner type rather than the enclosing class, because the owner type's type
-            // arguments may differ from the enclosing class's type parameters.  For example, in
-            // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
-            // method's type parameter, not the type parameter declared by `Outer`.
-            // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-            NonParameterizedType result = new NonParameterizedType(rawType);
-            result.enclosingType = owner;
-            return result;
-          }
+            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+            && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
+          // Use the owner type rather than the enclosing class, because the owner type's type
+          // arguments may differ from the enclosing class's type parameters.  For example, in
+          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+          // method's type parameter, not the type parameter declared by `Outer`.
+          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+          NonParameterizedType result = new NonParameterizedType(rawType);
+          result.enclosingType = forType(ownerType);
+          return result;
         }
         return forClass(rawType);
       }
@@ -123,6 +122,27 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns true if the given parameterized type is the type that its class declaration denotes:
+   * its type arguments are the type parameters of its class, and, if it is a member class, the same
+   * holds for its owner type. For example, this returns false for {@code Outer<String>.Middle},
+   * where {@code Middle} declares no type parameters, though its own type arguments are the
+   * (empty) type parameters of {@code Middle}.
+   *
+   * @param type a parameterized type
+   * @return true if {@code type} is the type that its class declaration denotes
+   */
+  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+    Class<?> rawType = (Class<?>) type.getRawType();
+    if (!Arrays.equals(type.getActualTypeArguments(), rawType.getTypeParameters())) {
+      return false;
+    }
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    return !(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -397,6 +417,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
+        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+          // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
+          // different type, such as Outer<String>.
+          return null;
         }
       }
     }

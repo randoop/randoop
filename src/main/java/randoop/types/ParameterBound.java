@@ -80,7 +80,8 @@ public abstract class ParameterBound {
    * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
    * result is an eager bound if the type is a type variable, or if it is a class, parameterized
    * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
-   * Otherwise, the result is a {@link LazyParameterBound}.
+   * Otherwise, the result is a {@link LazyParameterBound}, which converts a non-generic member
+   * class of a generic class, as in {@code Outer<T>.Inner}, together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
