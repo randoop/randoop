@@ -324,8 +324,8 @@ final class Subtyping {
         && type.isParameterized()
         && lowerType instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
-      // Outer<U>.Inner.  Its type arguments are those of its enclosing types; see the same case in
-      // isSubtypeOrEqual.
+      // Outer<U>.Inner.  Its type arguments are those of its enclosing types; compare the enclosing
+      // types, as in the same case in isSubtypeOrEqual.
       ClassOrInterfaceType supertype =
           findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
       return supertype != null
@@ -558,7 +558,7 @@ final class Subtyping {
    * @param otherType another type
    * @return true if the types are equal, including their enclosing types
    */
-  private static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
+  /*package*/ static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
     if (!type.equals(otherType)) {
       return false;
     }

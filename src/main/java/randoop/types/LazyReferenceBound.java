@@ -132,7 +132,7 @@ class LazyReferenceBound extends ReferenceBound {
    * type of this bound when every type variable stands for itself. The type of this bound contains
    * type variables, so it stands for every instantiation of them; a type such as {@code
    * List<String>} is not a subtype of each instantiation of {@code List<T>}, but {@code List<T>}
-   * and {@code ArrayList<T>}, for the same {@code T}, are.
+   * and {@code ArrayList<T>}, for the same {@code T}, are, as is {@code NullType[]} of {@code T[]}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -142,7 +142,10 @@ class LazyReferenceBound extends ReferenceBound {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    // With an empty substitution, no type variable is an unknown.
+    // With an empty substitution, no type variable is an unknown.  Subtyping.isSubtypeOrEqual
+    // compares enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
+    // is not Outer<Number>.Inner<X>.  The null type is a subtype of every reference type, including
+    // a type variable, so array covariance makes, for example, `NullType[]` a subtype of `T[]`.
     return lowerBound instanceof ReferenceBound
         && Subtyping.isSubtypeOrEqual(
             ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
