@@ -246,7 +246,34 @@ public class ClassOrInterfaceTypeTest {
       /** An inner class of an inner class whose enclosing type is generic. */
       class Deepest {}
     }
+
+    /**
+     * A generic inner class whose supertypes mention its type parameter.
+     *
+     * @param <U> the type parameter
+     */
+    abstract class GenericInner<U> extends Holder<U> implements Comparable<U> {}
+
+    /**
+     * A generic inner class whose type parameter has a bound.
+     *
+     * @param <U> the type parameter
+     */
+    class NumberInner<U extends Number> {}
   }
+
+  /**
+   * A generic class.
+   *
+   * @param <V> the type parameter
+   */
+  static class Holder<V> {}
+
+  /** A field of type {@code Outer<String>.GenericInner<Integer>}. */
+  public Outer<String>.GenericInner<Integer> genericInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<?>}. */
+  public Outer<String>.NumberInner<?> numberInnerOfWildcard;
 
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
@@ -383,5 +410,50 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(ofU.isGenericForm());
     assertEquals(1, ofU.getTypeParameters().size());
     assertEquals("U", ofU.getTypeParameters().get(0).getSimpleName());
+  }
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static InstantiatedType fieldType(String name) {
+    try {
+      return (InstantiatedType)
+          Type.forType(ClassOrInterfaceTypeTest.class.getField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  @Test
+  public void genericMemberOfGenericClassTest() {
+    // ClassOrInterfaceType.forClass gives the generic form of a member class of a generic class
+    // an enclosing type, so the generic form has the type parameters of the enclosing class as
+    // well as its own, such as [T, U] for Outer<T>.GenericInner<U>.  A type argument, such as
+    // Integer in Outer<String>.GenericInner<Integer>, corresponds to a type parameter that the
+    // member class declares, such as U.
+    ClassOrInterfaceType.forClass(Outer.GenericInner.class);
+    ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+
+    InstantiatedType genericInnerOfInteger = fieldType("genericInnerOfInteger");
+    assertEquals(
+        ((GenericClassType) ClassOrInterfaceType.forClass(Holder.class)).instantiate(integerType),
+        genericInnerOfInteger.getSuperclass());
+    assertEquals(
+        Collections.singletonList(JavaTypes.COMPARABLE_TYPE.instantiate(integerType)),
+        genericInnerOfInteger.getInterfaces());
+
+    // The capture variable has the bound of the type parameter of NumberInner, not of Outer.
+    InstantiatedType captured = fieldType("numberInnerOfWildcard").applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(capture.isCaptureVariable());
+    ParameterBound upperBound = ((CaptureTypeVariable) capture).getUpperTypeBound();
+    Substitution substitution = new Substitution();
+    assertTrue(upperBound.isUpperBound(integerType, substitution));
+    assertFalse(upperBound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
   }
 }
