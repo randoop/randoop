@@ -862,8 +862,7 @@ public class TypeVariableTest {
     assertFalse(TypeVariable.areIdentical(mapTT, mapTCopy));
     assertFalse(TypeVariable.areIdentical(mapTCopy, mapTT));
     assertFalse(
-        TypeVariable.areIdentical(
-            ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
+        TypeVariable.areIdentical(ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
 
     // The same holds within an array type and within a wildcard bound.
     GenericClassType listType = GenericClassType.forClass(List.class);
@@ -2758,5 +2757,166 @@ public class TypeVariableTest {
     assertTrue(v.canBeInstantiatedBy(subOfX));
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
+
+  /**
+   * A class whose type parameter's bound is an instantiation of the class, with no type variable.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfInstantiationBound<T extends SelfInstantiationBound<?>> {}
+
+  @Test
+  public void testBoundThatInstantiatesDeclaringClass() {
+    // Converting the bound needs the generic class, which needs T, whose bound is being converted.
+    TypeVariable t = typeParameter(SelfInstantiationBound.class, 0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof EagerReferenceBound);
+    ReferenceType boundType = ((EagerReferenceBound) bound).getBoundType();
+    assertTrue(boundType.runtimeClassIs(SelfInstantiationBound.class));
+    assertSame(t, TypeVariable.forType(SelfInstantiationBound.class.getTypeParameters()[0]));
+  }
+
+  @Test
+  public void testIdenticalComparesEachOccurrence() {
+    TypeVariable t = typeParameter(NumberBound.class, 0);
+    TypeVariable tCopy =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType mapOfT = mapType.instantiate(t, t);
+    InstantiatedType mapOfTAndCopy = mapType.instantiate(t, tCopy);
+    assertEquals(mapOfT, mapOfTAndCopy);
+    assertTrue(TypeVariable.areIdentical(mapOfT, mapType.instantiate(t, t)));
+    // The second occurrence of T has another bound.
+    assertFalse(TypeVariable.areIdentical(mapOfT, mapOfTAndCopy));
+  }
+
+  @Test
+  public void testLazyBoundHasLowerBoundOfSubtypeWithSameVariables() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    InstantiatedType listOfT = GenericClassType.forClass(List.class).instantiate(t);
+    InstantiatedType collectionOfT = GenericClassType.forClass(Collection.class).instantiate(t);
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    Substitution substitution = new Substitution();
+    LazyReferenceBound collectionBound = new LazyReferenceBound(collectionOfT);
+    assertTrue(new LazyReferenceBound(listOfT).isLowerBound(collectionBound, substitution));
+    assertTrue(collectionBound.isLowerBound(collectionBound, substitution));
+    // List<String> is not a subtype of every instantiation of List<T>.
+    assertFalse(
+        new EagerReferenceBound(listOfString)
+            .isLowerBound(new LazyReferenceBound(listOfT), substitution));
+  }
+
+  /** Fields whose types are member classes, nested two deep, of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class DeepMemberFields {
+    /** A member class of a member class of {@code OuterWithMiddle<String>}. */
+    OuterWithMiddle<String>.Middle.Inner stringInner;
+
+    /** A member class of a member class of {@code OuterWithMiddle<Integer>}. */
+    OuterWithMiddle<Integer>.Middle.Inner integerInner;
+  }
+
+  /**
+   * A generic class with a member class, which declares no type parameters, that has a member
+   * class.
+   *
+   * @param <T> the type parameter
+   */
+  static class OuterWithMiddle<T> {
+    /** A member class that declares no type parameters. */
+    class Middle {
+      /** A member class that declares no type parameters. */
+      class Inner {}
+    }
+  }
+
+  @Test
+  public void testMemberClassPreservesTypeArgumentsOfOuterOwner() throws NoSuchFieldException {
+    ReferenceType stringInner =
+        (ReferenceType)
+            Type.forType(DeepMemberFields.class.getDeclaredField("stringInner").getGenericType());
+    ReferenceType integerInner =
+        (ReferenceType)
+            Type.forType(DeepMemberFields.class.getDeclaredField("integerInner").getGenericType());
+    // Middle has no type arguments of its own, but its owner OuterWithMiddle<String> does.
+    assertTrue(stringInner.isParameterized());
+    assertFalse(stringInner.isGeneric());
+    assertFalse(Subtyping.isSubtypeOrEqual(stringInner, integerInner, new Substitution()));
+  }
+
+  @Test
+  public void testParameterizedTypeIsNotSubtypeOfPlainMemberClass() throws NoSuchFieldException {
+    ReferenceType stringInner = plainInnerFieldType("stringInner");
+    ReferenceType stringList = plainInnerFieldType("stringList");
+    Substitution substitution = new Substitution();
+    assertFalse(stringList.isSubtypeOfOrEqualTo(stringInner));
+    assertFalse(new EagerReferenceBound(stringInner).isUpperBound(stringList, substitution));
+    assertFalse(new EagerReferenceBound(stringList).isLowerBound(stringInner, substitution));
+  }
+
+  @Test
+  public void testUnknownInPlainMemberClassInLowerBoundedWildcard() throws NoSuchFieldException {
+    ReferenceType stringInnerList = plainInnerListFieldType("stringInnerList");
+    InstantiatedType variableInnerList =
+        (InstantiatedType) plainInnerListFieldType("variableInnerList");
+    ReferenceType variableInner =
+        ((ReferenceArgument) variableInnerList.getTypeArguments().get(0)).getReferenceType();
+    // List<? super OuterWithPlainInner<U>.Inner>
+    InstantiatedType superVariableInnerList =
+        new InstantiatedType(
+            GenericClassType.forClass(List.class),
+            Collections.singletonList(
+                new WildcardArgument(
+                    new WildcardType(new EagerReferenceBound(variableInner), false))));
+    TypeVariable s = typeParameter(PlainInnerListFields.class, 0);
+    TypeVariable u = typeParameter(PlainInnerListFields.class, 1);
+    Substitution unknownU =
+        new Substitution(s, JavaTypes.STRING_TYPE).extendWithIdentity(Collections.singletonList(u));
+    // U can be String.
+    assertTrue(Subtyping.isSubtypeOrEqual(stringInnerList, superVariableInnerList, unknownU));
+    // U stands for itself, which is not String.
+    assertFalse(
+        Subtyping.isSubtypeOrEqual(stringInnerList, superVariableInnerList, new Substitution()));
+  }
+
+  /**
+   * A class with a type parameter that has an intersection bound, and a sibling type parameter.
+   *
+   * @param <S> a type parameter
+   * @param <B> a type parameter whose bound is an intersection
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class IntersectionBoundWithSibling<S, B extends Number & Runnable> {
+    /** A list whose type argument is a wildcard bounded below by {@code B}. */
+    List<? super B> superB;
+  }
+
+  @Test
+  public void testLowerBoundedWildcardOfUnknownWithIntersectionBound() throws NoSuchFieldException {
+    TypeVariable s = typeParameter(IntersectionBoundWithSibling.class, 0);
+    TypeVariable b = typeParameter(IntersectionBoundWithSibling.class, 1);
+    ReferenceType superB =
+        (ReferenceType)
+            Type.forType(
+                IntersectionBoundWithSibling.class.getDeclaredField("superB").getGenericType());
+    Substitution unknownB =
+        new Substitution(s, JavaTypes.STRING_TYPE).extendWithIdentity(Collections.singletonList(b));
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    // Every B is a Runnable, though Runnable, which is not a Number, cannot be B.
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(ClassOrInterfaceType.forClass(Runnable.class)), superB, unknownB));
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(ClassOrInterfaceType.forClass(RunnableNumber.class)),
+            superB,
+            unknownB));
+    // B need not be an Integer.
+    assertFalse(
+        Subtyping.isSubtypeOrEqual(
+            listType.instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()), superB, unknownB));
   }
 }

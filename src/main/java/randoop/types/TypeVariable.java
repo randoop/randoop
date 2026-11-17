@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -85,6 +86,14 @@ public abstract class TypeVariable extends ParameterType {
       new ConcurrentHashMap<>();
 
   /**
+   * The type variables that {@link #forType(java.lang.reflect.Type)} is creating in the current
+   * thread, whose bounds are not yet computed.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Map<java.lang.reflect.TypeVariable<?>, TypeVariable>>
+      typeVariablesInConstruction = ThreadLocal.withInitial(HashMap::new);
+
+  /**
    * The upper bound of this variable, with references to type variables resolved; null if not yet
    * computed. Use {@link #getResolvedUpperTypeBound()} instead of reading this field.
    */
@@ -131,11 +140,28 @@ public abstract class TypeVariable extends ParameterType {
     if (result != null) {
       return result;
     }
+    // Computing the bound can call this method for the same type variable, through an eager bound
+    // that is an instantiation of the class that declares it, as in `class Node<T extends
+    // Node<?>>`:  converting `Node<?>` creates the GenericClassType for Node, which needs T.
+    // Such a call returns the type variable whose bound is being computed.
+    Map<java.lang.reflect.TypeVariable<?>, TypeVariable> inProgress =
+        typeVariablesInConstruction.get();
+    result = inProgress.get(v);
+    if (result != null) {
+      return result;
+    }
     Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
     variableSet.add(v);
-    // Computing the bound can call this method for other type variables, so this method does not
-    // use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
-    result = new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    // The bound is set after it is computed.  Until then, the bound is Object.
+    result = new ExplicitTypeVariable(v, new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    inProgress.put(v, result);
+    try {
+      // Computing the bound can call this method for other type variables, so this method does
+      // not use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
+      result.setUpperBound(ParameterBound.forTypes(variableSet, v.getBounds()));
+    } finally {
+      inProgress.remove(v);
+    }
     TypeVariable previous = declaredTypeVariables.putIfAbsent(v, result);
     return previous != null ? previous : result;
   }
@@ -528,6 +554,7 @@ public abstract class TypeVariable extends ParameterType {
     if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
       ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
+      // InstantiatedType.equals does not compare enclosing types.
       if (classType1.isMemberClass() != classType2.isMemberClass()) {
         return false;
       }

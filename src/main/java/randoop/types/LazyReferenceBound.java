@@ -205,11 +205,12 @@ class LazyReferenceBound extends EagerReferenceBound {
    *       the lower bound of the capture variable. A capture variable stands for a particular type,
    *       which is a supertype of its lower bound.
    *   <li>The type of this bound is not a capture variable, and {@code lowerBound}, after the
-   *       substitution is applied to it, is the type of this bound, including the enclosing types
-   *       of member classes (see {@link Subtyping#isIdentical(ReferenceType, ReferenceType)}). The
-   *       type of this bound contains type variables, so it stands for every instantiation of them;
-   *       a type such as {@code List<String>} is not a subtype of each instantiation of {@code
-   *       List<T>}, but {@code List<T>} itself is.
+   *       substitution is applied to it, is a subtype of or equal to the type of this bound when
+   *       every type variable stands for itself, comparing the enclosing types of member classes
+   *       too. The type of this bound contains type variables, so it stands for every
+   *       instantiation of them; a type such as {@code List<String>} is not a subtype of each
+   *       instantiation of {@code List<T>}, but {@code List<T>} and {@code ArrayList<T>}, for the
+   *       same {@code T}, are.
    * </ul>
    */
   @Override
@@ -218,12 +219,14 @@ class LazyReferenceBound extends EagerReferenceBound {
       return true;
     }
     if (!(getBoundType() instanceof CaptureTypeVariable)) {
-      // Compare enclosing types too, which InstantiatedType.equals ignores:
+      // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
+      // types too, which InstantiatedType.equals ignores:
       // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
       return lowerBound instanceof ReferenceBound
-          && Subtyping.isIdentical(
+          && Subtyping.isSubtypeOrEqual(
               ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
-              getBoundType());
+              getBoundType(),
+              new Substitution());
     }
     // The lower bound of the capture variable might refer back to this bound.
     Set<LazyReferenceBound> inProgress = beingComparedWithLowerBound.get();
