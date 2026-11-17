@@ -150,8 +150,11 @@ public class ParameterBoundTest {
   public void testArrayOfNonGenericMemberClassBound() {
     java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "nonGenericInnerArray");
     ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
-    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    Type argType = Type.forType(arrayType);
     Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
     assertFalse(bound.isUpperBound(stringArray, empty));
     assertFalse(bound.isLowerBound(stringArray, empty));
   }

@@ -81,10 +81,10 @@ public abstract class ParameterBound {
    * Returns a {@code ParameterBound} for a single {@code java.lang.reflect.Type}. The result is an
    * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
-   * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}, or a generic
-   * array type of one. The conversion to a {@link ReferenceType} gives such a class the owner type
-   * from its class declaration, as in {@code Outer<T>.Inner}, so an eager bound would compare it
-   * incorrectly. Otherwise, the result is a {@link LazyParameterBound}.
+   * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}: its
+   * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
+   * type, which an eager bound cannot compare with a parameterized type. Otherwise, the result is a
+   * {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -100,26 +100,10 @@ public abstract class ParameterBound {
         || type instanceof java.lang.reflect.GenericArrayType)) {
       return new LazyParameterBound(type);
     }
-    if (isNonGenericMemberClass(elementType(type)) || hasTypeVariable(type, variableSet)) {
+    if (isNonGenericMemberClass(type) || hasTypeVariable(type, variableSet)) {
       return new LazyParameterBound(type);
     }
     return new EagerReferenceBound(ReferenceType.forType(type));
-  }
-
-  /**
-   * Returns the element type of the given (reflection) type: the type that remains after all array
-   * dimensions are removed, as in {@code List<String>} for {@code List<String>[][]}.
-   *
-   * @param type a reflection type
-   * @return the element type of {@code type}, or {@code type} itself if it is not a generic array
-   *     type
-   */
-  private static java.lang.reflect.Type elementType(java.lang.reflect.Type type) {
-    java.lang.reflect.Type result = type;
-    while (result instanceof java.lang.reflect.GenericArrayType) {
-      result = ((java.lang.reflect.GenericArrayType) result).getGenericComponentType();
-    }
-    return result;
   }
 
   /**
