@@ -303,7 +303,7 @@ final class Subtyping {
   /**
    * Returns true if {@code lowerType}, an array or class type that contains unknowns, can be chosen
    * to be a subtype of, or equal to, {@code type}, by comparing their component types or type
-   * arguments.
+   * arguments, including the type arguments of the enclosing types of member classes.
    *
    * @param lowerType the possible subtype, which contains unknowns but is not an unknown
    * @param type the possible supertype
@@ -325,6 +325,16 @@ final class Subtyping {
       InstantiatedType supertype =
           ((ClassOrInterfaceType) lowerType)
               .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+      return supertype != null
+          && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
+    }
+    if (type instanceof NonParameterizedType
+        && type.isParameterized()
+        && lowerType instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner, as in isSubtypeOrEqual.  Compare the enclosing types.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }
@@ -555,7 +565,7 @@ final class Subtyping {
    * @param otherType another type
    * @return true if the types are equal, including their enclosing types
    */
-  private static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
+  static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
     if (!type.equals(otherType)) {
       return false;
     }

@@ -43,7 +43,16 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    if (argType.isParameterized()) {
+    // A member class that declares no type parameters, of a parameterized type, such as
+    // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
+    // capture conversion.  It is compared by a subtype test.
+    if (argType instanceof NonParameterizedType && argType.isParameterized()) {
+      if (!(thisBoundType instanceof ClassOrInterfaceType)) {
+        return false;
+      }
+      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, subst);
+    }
+    if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -104,7 +113,15 @@ class EagerReferenceBound extends ReferenceBound {
       // argument satisfies this bound if its own upper bound does.
       return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
-    if (thisBoundType.isParameterized()) {
+    // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
+    // Outer<String>.Inner, is compared by a subtype test.
+    if (thisBoundType instanceof NonParameterizedType && thisBoundType.isParameterized()) {
+      if (!(argType instanceof ClassOrInterfaceType)) {
+        return false;
+      }
+      return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+    }
+    if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

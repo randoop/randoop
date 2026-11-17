@@ -1,5 +1,7 @@
 package randoop.main;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Indicates a user error in invoking Randoop.
  *
@@ -23,10 +25,10 @@ public class RandoopUsageError extends RuntimeException {
   /**
    * Creates a {@link RandoopUsageError} with the given message and causing exception.
    *
-   * @param message the exception message
+   * @param message the exception message, or null if none
    * @param cause the causing exception
    */
-  public RandoopUsageError(String message, Throwable cause) {
+  public RandoopUsageError(@Nullable String message, Throwable cause) {
     super(message, cause);
   }
 }

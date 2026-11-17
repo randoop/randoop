@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -667,6 +668,49 @@ public class TypeVariableTest {
     assertEquals(toY, toY.extend(toSameY));
   }
 
+  /**
+   * Substitutions that map a type variable to equal types that contain a type variable and, at
+   * another occurrence, either it or a copy of it with different bounds are inconsistent.
+   */
+  @Test
+  public void testSubstitutionsToTypesWithRepeatedTypeVariableCopiesAreInconsistent() {
+    TypeVariable k = typeParameter(VariableBound.class, 0);
+    TypeVariable x = typeParameter(ListBound.class, 0);
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copy = (TypeVariable) y.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    GenericClassType map = GenericClassType.forClass(Map.class);
+    InstantiatedType mapYY = map.instantiate(y, y);
+    InstantiatedType mapYCopy = map.instantiate(y, copy);
+    assertEquals(mapYY, mapYCopy);
+    assertTrue(TypeVariable.areIdentical(mapYY, map.instantiate(y, y)));
+    assertFalse(TypeVariable.areIdentical(mapYY, mapYCopy));
+    assertFalse(new Substitution(k, mapYY).isConsistentWith(new Substitution(k, mapYCopy)));
+  }
+
+  /**
+   * The capture variable of {@code ? super Number} stands for a particular type, so it is not known
+   * to be a supertype of an array type, even though {@code Object} could be that type.
+   */
+  @Test
+  public void testCaptureVariableIsNotKnownSupertypeOfArray() {
+    CaptureTypeVariable superNumber =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(
+                    new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class)), false)));
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    assertFalse(superNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    assertFalse(superNumber.canBeSupertypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+
+    // An upper bound of Number leaves no supertype of String[] to instantiate the capture variable.
+    CaptureTypeVariable extendsNumber =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(
+                    new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class)), true)));
+    assertFalse(extendsNumber.canBeSupertypeOf(stringArray, new Substitution()));
+  }
+
   @Test
   public void testMutuallyRecursiveBound() {
     TypeVariable s = typeParameter(MutualBound.class, 0);
@@ -800,6 +844,45 @@ public class TypeVariableTest {
     assertSame(copy, t.substitute(new Substitution(t, copy)));
   }
 
+  /** Every occurrence of a type variable is compared, not only the first. */
+  @Test
+  public void testAreIdenticalComparesRepeatedOccurrences() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable copy =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType mapTT = mapType.instantiate(t, t);
+    InstantiatedType mapTCopy = mapType.instantiate(t, copy);
+    // Copies of a type variable are equal, even though their bounds differ.
+    assertEquals(mapTT, mapTCopy);
+    assertTrue(TypeVariable.areIdentical(mapTT, mapType.instantiate(t, t)));
+    assertFalse(TypeVariable.areIdentical(mapTT, mapTCopy));
+    assertFalse(TypeVariable.areIdentical(mapTCopy, mapTT));
+    assertFalse(
+        TypeVariable.areIdentical(
+            ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
+
+    // The same holds within an array type and within a wildcard bound.
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType listOfMapTT = listType.instantiate(ArrayType.ofComponentType(mapTT));
+    InstantiatedType listOfMapTCopy = listType.instantiate(ArrayType.ofComponentType(mapTCopy));
+    assertEquals(listOfMapTT, listOfMapTCopy);
+    assertFalse(TypeVariable.areIdentical(listOfMapTT, listOfMapTCopy));
+    InstantiatedType extendsTT =
+        new InstantiatedType(
+            listType,
+            Collections.<TypeArgument>singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(mapTT), true))));
+    InstantiatedType extendsTCopy =
+        new InstantiatedType(
+            listType,
+            Collections.<TypeArgument>singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(mapTCopy), true))));
+    assertEquals(extendsTT, extendsTCopy);
+    assertFalse(TypeVariable.areIdentical(extendsTT, extendsTCopy));
+  }
+
   /** Substituting a copy with other bounds for a capture variable yields that copy. */
   @Test
   public void testSubstituteCopyForCaptureVariableWithChangedBound() {
@@ -822,7 +905,10 @@ public class TypeVariableTest {
   public void testIdentitySubstitutionOfTwoCopies() {
     java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
     TypeVariable t1 = TypeVariable.forType(reflectionVariable);
-    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    // TypeVariable.forType returns the same object for each call, so create a distinct copy.
+    TypeVariable t2 = t1.createCopyWithBounds(t1.getLowerTypeBound(), t1.getUpperTypeBound());
+    assertNotSame(t1, t2);
+    assertEquals(t1, t2);
     Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
     assertTrue(substitution.mapsToItself(t1));
     assertTrue(substitution.mapsToItself(t2));
@@ -2376,6 +2462,82 @@ public class TypeVariableTest {
             listType.instantiate(numberInner),
             listType.instantiate(numberInner),
             new Substitution()));
+  }
+
+  @Test
+  public void testLazyLowerBoundComparesEnclosingTypes() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    TypeVariable u = typeParameter(PlainInnerListFields.class, 1);
+    ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    InstantiatedType numberInner = innerType.instantiate(numberType, u);
+    InstantiatedType integerInner = innerType.instantiate(integerType, u);
+    // InstantiatedType.equals ignores enclosing types.
+    assertEquals(numberInner, integerInner);
+    LazyReferenceBound bound = new LazyReferenceBound(numberInner);
+    Substitution empty = new Substitution();
+    assertTrue(bound.hasLowerBound(new EagerReferenceBound(numberInner), empty));
+    assertFalse(bound.hasLowerBound(new EagerReferenceBound(integerInner), empty));
+  }
+
+  @Test
+  public void testAreIdenticalComparesEachTypeArgument() {
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable copyY =
+        y.createCopyWithBounds(
+            y.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.STRING_TYPE));
+    assertEquals(y, copyY);
+    assertFalse(y.isIdenticalTo(copyY));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType yy = mapType.instantiate(y, y);
+    InstantiatedType yCopyY = mapType.instantiate(y, copyY);
+    assertEquals(yy, yCopyY);
+    assertTrue(TypeVariable.areIdentical(yy, mapType.instantiate(y, y)));
+    // The second type argument differs in its bound, though getTypeParameters() of each type,
+    // which removes duplicates, is the same.
+    assertFalse(TypeVariable.areIdentical(yy, yCopyY));
+  }
+
+  /** Fields whose types have wildcards with member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class WildcardInnerFields {
+    /** A member class of {@code OuterWithPlainInner<?>}. */
+    OuterWithPlainInner<?>.Inner wildcardInner;
+  }
+
+  @Test
+  public void testCaptureConversionOfMemberClassDoesNotChangeType() throws NoSuchFieldException {
+    java.lang.reflect.Type fieldType =
+        WildcardInnerFields.class.getDeclaredField("wildcardInner").getGenericType();
+    NonParameterizedType wildcardInner = (NonParameterizedType) Type.forType(fieldType);
+    assertTrue(wildcardInner.hasWildcardArgument());
+    NonParameterizedType captured = wildcardInner.applyCaptureConversion();
+    assertFalse(captured.hasWildcardArgument());
+    // Capture conversion does not change the type that it converts.
+    assertTrue(wildcardInner.hasWildcardArgument());
+  }
+
+  @Test
+  public void testSuperWildcardOfMemberClassWithUnknownInEnclosingType()
+      throws NoSuchFieldException {
+    ReferenceType stringInner = plainInnerFieldType("stringInner");
+    ReferenceType stringList = plainInnerFieldType("stringList");
+    InstantiatedType variableInnerList =
+        (InstantiatedType) plainInnerListFieldType("variableInnerList");
+    // OuterWithPlainInner<U>.Inner
+    ReferenceType variableInner =
+        ((ReferenceArgument) variableInnerList.getTypeArguments().get(0)).getReferenceType();
+    TypeVariable s = typeParameter(PlainInnerListFields.class, 0);
+    TypeVariable u = typeParameter(PlainInnerListFields.class, 1);
+    Substitution unknownU =
+        new Substitution(s, JavaTypes.STRING_TYPE).extendWithIdentity(Collections.singletonList(u));
+    // ? super OuterWithPlainInner<U>.Inner
+    WildcardArgument superVariableInner =
+        new WildcardArgument(new WildcardType(new EagerReferenceBound(variableInner), false));
+    // U can be String.
+    assertTrue(Subtyping.contains(superVariableInner, TypeArgument.forType(stringInner), unknownU));
+    assertFalse(Subtyping.contains(superVariableInner, TypeArgument.forType(stringList), unknownU));
   }
 
   /**

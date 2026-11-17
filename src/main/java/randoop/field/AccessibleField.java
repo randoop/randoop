@@ -20,16 +20,16 @@ import randoop.types.Type;
 public class AccessibleField {
 
   /** The reflective field, which has been made accessible. */
-  private Field field;
+  private final Field field;
 
   /** The type of the class that declares the field. */
   private final ClassOrInterfaceType declaringType;
 
   /** True if the field is final. */
-  private boolean isFinal;
+  private final boolean isFinal;
 
   /** True if the field is static. */
-  private boolean isStatic;
+  private final boolean isStatic;
 
   /**
    * Create the public field object for the given {@code Field}.

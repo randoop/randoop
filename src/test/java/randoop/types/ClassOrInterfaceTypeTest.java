@@ -2,10 +2,13 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
@@ -103,6 +106,97 @@ public class ClassOrInterfaceTypeTest {
 
   class D extends C {}
 
+  /**
+   * A generic class with two levels of non-static member classes that declare no type parameters.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class TwoLevelOuter<T> {
+    /** A member class that declares no type parameters. */
+    class Middle {
+      /** A member class of a member class; neither declares type parameters. */
+      class Inner {}
+    }
+
+    /** A field whose type is the generic form of {@link Middle.Inner}. */
+    @SuppressWarnings("UnusedVariable") // the field is read reflectively
+    Middle.Inner genericFormField;
+  }
+
+  /** A field whose type is {@code TwoLevelOuter<String>.Middle.Inner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  TwoLevelOuter<String>.Middle.Inner twoLevelField;
+
+  @Test
+  public void forTypePreservesParameterizedOwnerOfTwoMemberLevels() throws NoSuchFieldException {
+    ClassOrInterfaceType ofString =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class.getDeclaredField("twoLevelField").getGenericType());
+    // The outermost enclosing type is TwoLevelOuter<String>, not the declaration TwoLevelOuter<T>.
+    assertFalse(ofString.isGenericForm());
+    assertFalse(ofString.isGeneric());
+    ClassOrInterfaceType outermost = ofString.enclosingType.enclosingType;
+    assertEquals(
+        Collections.singletonList(TypeArgument.forType(JavaTypes.STRING_TYPE)),
+        outermost.getTypeArguments());
+
+    ClassOrInterfaceType genericForm =
+        ClassOrInterfaceType.forType(
+            TwoLevelOuter.class.getDeclaredField("genericFormField").getGenericType());
+    assertTrue(genericForm.isGenericForm());
+  }
+
+  /**
+   * A generic class with a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class GenericOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class GenericInner<U> {}
+  }
+
+  @Test
+  public void instantiatingSubstitutionChecksNonGenericEnclosingType() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    TypeVariable x = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    InstantiatedType stringInteger = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    // GenericOuter<Long>.GenericInner<X>.  No substitution for X unifies the enclosing types.
+    InstantiatedType longX = innerType.instantiate(longType, x);
+    assertNull(stringInteger.getInstantiatingSubstitution(longX));
+    // GenericOuter<String>.GenericInner<X>
+    InstantiatedType stringX = innerType.instantiate(JavaTypes.STRING_TYPE, x);
+    Substitution substitution = stringInteger.getInstantiatingSubstitution(stringX);
+    assertNotNull(substitution);
+    assertEquals(integerType, substitution.get(x));
+  }
+
+  @Test
+  public void boundOfMemberOfParameterizedType() {
+    GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    ClassOrInterfaceType innerOfString =
+        ClassOrInterfaceType.forClass(Outer.Inner.class)
+            .substitute(
+                new Substitution(
+                    outerType.getTypeParameters(), ClassOrInterfaceType.forClass(String.class)));
+    // Outer<String>.Inner is parameterized, but is not an InstantiatedType.
+    assertTrue(innerOfString.isParameterized());
+    ParameterBound bound = new EagerReferenceBound(innerOfString);
+    assertTrue(bound.isUpperBound(innerOfString, new Substitution()));
+    assertTrue(bound.isLowerBound(innerOfString, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+    assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, new Substitution()));
+  }
+
   /** Declares methods whose parameter types are used in tests. */
   static class TypeVariableHolder {
     /**
@@ -126,6 +220,16 @@ public class ClassOrInterfaceTypeTest {
         Collection<Comparable<String>> comparables,
         List<? super String> superStrings,
         Collection<? extends Iterable<Comparable<String>>> iterables) {}
+
+    /**
+     * A method whose parameter types are member classes of non-generic member classes of
+     * parameterized types.
+     *
+     * @param <U> a type parameter
+     * @param ofString an {@code Outer<String>.Middle.Deepest}
+     * @param ofU an {@code Outer<U>.Middle.Deepest}
+     */
+    static <U> void deep(Outer<String>.Middle.Deepest ofString, Outer<U>.Middle.Deepest ofU) {}
   }
 
   /**
@@ -136,6 +240,48 @@ public class ClassOrInterfaceTypeTest {
   static class Outer<T> {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
+
+    /** An inner class whose enclosing type is generic, and that has inner classes. */
+    class Middle {
+      /** An inner class of an inner class whose enclosing type is generic. */
+      class Deepest {}
+
+      /** An inner class whose enclosing type is non-generic, but is a member of a generic class. */
+      class Innermost {}
+    }
+  }
+
+  /** Fields whose types are member classes of member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class NestedMemberFields {
+    /** A member class of a member class of {@code Outer<String>}. */
+    Outer<String>.Middle.Innermost stringInnermost;
+
+    /** A member class of a member class of {@code Outer<Integer>}. */
+    Outer<Integer>.Middle.Innermost integerInnermost;
+  }
+
+  @Test
+  public void testTwoNonGenericMemberLevels() throws NoSuchFieldException {
+    ClassOrInterfaceType stringInnermost =
+        ClassOrInterfaceType.forType(
+            NestedMemberFields.class.getDeclaredField("stringInnermost").getGenericType());
+    ClassOrInterfaceType integerInnermost =
+        ClassOrInterfaceType.forType(
+            NestedMemberFields.class.getDeclaredField("integerInnermost").getGenericType());
+    // The type argument String of the outermost type is preserved.
+    assertFalse(stringInnermost.isGenericForm());
+    assertFalse(stringInnermost.isGeneric());
+    assertTrue(stringInnermost.isParameterized());
+    assertEquals(
+        JavaTypes.STRING_TYPE,
+        ((ReferenceArgument) stringInnermost.enclosingType.enclosingType.getTypeArguments().get(0))
+            .getReferenceType());
+    assertFalse(stringInnermost.equals(integerInnermost));
+    // The generic form is still the generic form.
+    ClassOrInterfaceType genericInnermost =
+        ClassOrInterfaceType.forClass(Outer.Middle.Innermost.class);
+    assertTrue(genericInnermost.isGenericForm());
   }
 
   /**
@@ -246,5 +392,32 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerGenericForm));
     assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
     assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  /**
+   * A member class of a non-generic member class of a parameterized type keeps the type arguments
+   * of the outermost owner type.
+   */
+  @Test
+  public void twoLevelMemberOfParameterizedTypeTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        TypeVariableHolder.class
+            .getDeclaredMethod("deep", Outer.Middle.Deepest.class, Outer.Middle.Deepest.class)
+            .getGenericParameterTypes();
+    ClassOrInterfaceType ofString = ClassOrInterfaceType.forType(parameterTypes[0]);
+    assertFalse(ofString.isGeneric());
+    assertTrue(ofString.getTypeParameters().isEmpty());
+    assertEquals(Outer.Middle.class, ofString.enclosingType.getRuntimeClass());
+    ClassOrInterfaceType outerOfString = ofString.enclosingType.enclosingType;
+    assertEquals(Outer.class, outerOfString.getRuntimeClass());
+    assertEquals(
+        java.util.Collections.singletonList(TypeArgument.forType(JavaTypes.STRING_TYPE)),
+        outerOfString.getTypeArguments());
+
+    ClassOrInterfaceType ofU = ClassOrInterfaceType.forType(parameterTypes[1]);
+    assertTrue(ofU.isGeneric());
+    assertFalse(ofU.isGenericForm());
+    assertEquals(1, ofU.getTypeParameters().size());
+    assertEquals("U", ofU.getTypeParameters().get(0).getSimpleName());
   }
 }

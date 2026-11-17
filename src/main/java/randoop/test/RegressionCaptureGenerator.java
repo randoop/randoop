@@ -58,22 +58,22 @@ import randoop.util.MultiMap;
 public final class RegressionCaptureGenerator extends TestCheckGenerator {
 
   /** The generator for expected exceptions. */
-  private ExpectedExceptionCheckGen exceptionExpectation;
+  private final ExpectedExceptionCheckGen exceptionExpectation;
 
   /** The map from a type to the set of side-effect-free operations for the type. */
-  private MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
+  private final MultiMap<Type, TypedClassOperation> sideEffectFreeMethodsByType;
 
   /** The accessibility predicate. */
   private final AccessibilityPredicate isAccessible;
 
   /** The user-supplied predicate for methods that should not be called. */
-  private OmitMethodsPredicate omitMethodsPredicate;
+  private final OmitMethodsPredicate omitMethodsPredicate;
 
   /**
    * If true, include regression assertions. If false, no assertions are added for sequences whose
    * execution is NormalExecution.
    */
-  private boolean includeAssertions;
+  private final boolean includeAssertions;
 
   /** The maximum length (inclusive) of arrays in generated tests. */
   private static final int MAX_ARRAY_LENGTH = 25;

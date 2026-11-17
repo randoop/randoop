@@ -25,7 +25,7 @@ import org.plumelib.util.StringsPlume;
 class IntersectionTypeBound extends ParameterBound {
 
   /** The list of type bounds for the intersection bound. */
-  private List<ParameterBound> boundList;
+  private final List<ParameterBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
