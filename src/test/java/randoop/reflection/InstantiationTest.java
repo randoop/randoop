@@ -450,6 +450,26 @@ public class InstantiationTest {
     Randomness.setSeed(0);
   }
 
+  /**
+   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
+   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
+   * variable whose bound mentions that type variable.
+   */
+  @Test
+  public void testRecursivelyBoundedCaptureInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation max =
+        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
+
+    TypedClassOperation instance = instantiator.instantiate(max);
+    assertNotNull("instantiation failed for " + max, instance);
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+  }
+
   /* disabled until fix type parameter management
   @Test
   public void testLazyConversionInstantiation() {
@@ -622,8 +642,7 @@ public class InstantiationTest {
 
     // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
     // method's type parameter `E`, so `Outer<String>.Inner` is paired with `List<String>`, never
-    // with
-    // `List<Integer>`.
+    // with `List<Integer>`.
     Method pairMethod =
         InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
     TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);

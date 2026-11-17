@@ -98,7 +98,14 @@ class EagerReferenceBound extends ReferenceBound {
       }
       // The substitution does not map the variable, so the variable can still be chosen.  argType
       // is within this bound if it is within the variable's upper bound, which the variable can be.
-      return variable.getUpperTypeBound().isUpperBound(argType, subst);
+      // That bound can mention `variable` itself, as in `<T extends Comparable<? super T>>`.  Check
+      // that bound with `argType` as the instantiation of `variable`, because `argType` is a
+      // subtype of `variable` if `argType` instantiates it.
+      Substitution boundSubst = subst;
+      if (subst.get(variable) == null && argType instanceof ReferenceType) {
+        boundSubst = subst.extend(new Substitution(variable, (ReferenceType) argType));
+      }
+      return variable.getUpperTypeBound().isUpperBound(argType, boundSubst);
     }
     // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
     // Outer<String>.Inner, is compared by a subtype test.
