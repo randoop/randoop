@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 /** Tests {@link ParameterBound}. */
@@ -534,6 +535,100 @@ public class ParameterBoundTest {
     ParameterBound vBound = v.getUpperTypeBound();
     assertTrue(vBound instanceof ReferenceBound);
     assertTrue(((ReferenceBound) vBound).getBoundType().equals(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A class whose type parameter has a self-referential bound that contains, as a type argument, a
+   * non-generic member class of a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class MemberClassArgument<
+      T extends Map<T, GenericOuter<String>.NonGenericInner>> {}
+
+  /**
+   * A class whose type parameter has a self-referential bound that contains, as a type argument, an
+   * array of a non-generic member class of a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class MemberClassArrayArgument<
+      T extends Map<T, GenericOuter<String>.NonGenericInner[]>> {}
+
+  /** A lazy bound converts a non-generic member class that occurs in a type argument. */
+  @Test
+  public void testNonGenericMemberClassInTypeArgument() {
+    for (Class<?> c : Arrays.asList(MemberClassArgument.class, MemberClassArrayArgument.class)) {
+      TypeVariable t = GenericClassType.forClass(c).getTypeParameters().get(0);
+      ParameterBound bound = t.getUpperTypeBound();
+      assertTrue(bound instanceof LazyParameterBound);
+      ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+      assertTrue(substituted instanceof ReferenceBound);
+      assertNotNull(((LazyParameterBound) bound).toReferenceBound());
+    }
+  }
+
+  /**
+   * A class in which a wildcard lower bound in the bound of {@code V} is a type variable whose
+   * bound contains another type variable.
+   *
+   * @param <K> the type parameter that occurs in the bound of {@code U}
+   * @param <U> the type parameter that is the wildcard lower bound
+   * @param <V> the type parameter whose bound contains the wildcard
+   */
+  @SuppressWarnings("unused")
+  private static class WildcardLower<K, U extends Map<K, List<U>>, V extends List<? super U>> {}
+
+  /** A substitution is applied to the bounds of an unmapped wildcard lower bound. */
+  @Test
+  public void testSubstitutionAppliedToWildcardLowerBoundVariable() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(WildcardLower.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    ParameterBound bound = parameters.get(2).getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ParameterBound substituted = bound.substitute(new Substitution(k, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    WildcardType wildcard =
+        ((WildcardArgument) listType.getTypeArguments().get(0)).getWildcardType();
+    TypeVariable lowerBoundVariable =
+        (TypeVariable) ((ReferenceBound) wildcard.getTypeBound()).getBoundType();
+    ParameterBound uBound = lowerBoundVariable.getUpperTypeBound();
+    assertTrue(uBound.toString(), uBound.toString().contains("java.lang.String"));
+  }
+
+  /**
+   * A non-generic member class of a generic class, as a bound, has the null type as a lower bound.
+   */
+  @Test
+  public void testNullLowerBoundOfNonGenericMemberClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(nullBound.isLowerBound(bound, new Substitution()));
+    assertFalse(stringBound.isLowerBound(bound, new Substitution()));
+  }
+
+  /** An array of the null type is a lower bound of an array of a type variable. */
+  @Test
+  public void testNullArrayLowerBoundOfLazyArrayBound() {
+    ParameterBound lazyArrayBound =
+        new LazyReferenceBound(ArrayType.ofComponentType(arrayHolderVariable));
+    ParameterBound nullArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.NULL_TYPE));
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    assertTrue(nullArrayBound.isLowerBound(lazyArrayBound, new Substitution()));
+    assertFalse(stringArrayBound.isLowerBound(lazyArrayBound, new Substitution()));
+    // NullType[][] is not a subtype of T[] for every T, because NullType[] is not a subtype of T
+    // if T is String.
+    ParameterBound nullArray2Bound =
+        new EagerReferenceBound(
+            ArrayType.ofComponentType(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)));
+    assertFalse(nullArray2Bound.isLowerBound(lazyArrayBound, new Substitution()));
   }
 
   /**

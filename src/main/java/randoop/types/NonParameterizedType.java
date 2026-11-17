@@ -129,8 +129,50 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    Substitution substitution = getEnclosingTypeSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type t) -> substituteIfNonNull(forType(t), substitution),
+        runtimeType.getGenericInterfaces());
+  }
+
+  /**
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of the enclosing classes. For example, for {@code Outer<String>.Inner}, the
+   * result maps the type parameter of {@code Outer} to {@code String}. Applying it to a supertype in
+   * the declaration of this class, such as {@code ArrayList<T>}, yields the supertype of this type,
+   * such as {@code ArrayList<String>}.
+   *
+   * @return the substitution for the type parameters of the enclosing classes, or null if there is
+   *     none or if a type argument of an enclosing type is a wildcard
+   */
+  private @Nullable Substitution getEnclosingTypeSubstitution() {
+    Substitution result = null;
+    ClassOrInterfaceType type = this;
+    while (type.isMemberClass()) {
+      ClassOrInterfaceType enclosing = type.enclosingType;
+      if (enclosing instanceof InstantiatedType) {
+        Substitution substitution = ((InstantiatedType) enclosing).getTypeSubstitution();
+        if (substitution == null) {
+          return null;
+        }
+        result = result == null ? substitution : result.extend(substitution);
+      }
+      type = enclosing;
+    }
+    return result;
+  }
+
+  /**
+   * Returns the given type with the given substitution applied, or the type itself if the
+   * substitution is null.
+   *
+   * @param type a type
+   * @param substitution a substitution, or null
+   * @return {@code type} with {@code substitution} applied, if it is non-null
+   */
+  private static ClassOrInterfaceType substituteIfNonNull(
+      ClassOrInterfaceType type, @Nullable Substitution substitution) {
+    return substitution == null ? type : type.substitute(substitution);
   }
 
   @Override
@@ -170,7 +212,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      return supertype == null
+          ? null
+          : substituteIfNonNull(forType(supertype), getEnclosingTypeSubstitution());
     }
   }
 
