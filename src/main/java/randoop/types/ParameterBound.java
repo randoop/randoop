@@ -22,8 +22,9 @@ import org.plumelib.util.CollectionsPlume;
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
  * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
  * bounds. Intersection types (which include the greatest lower bound construction used in capture
- * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
- * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
+ * conversion) are explicitly represented. And, recursive type bounds are avoided by holding as a
+ * {@link LazyParameterBound} any {@code java.lang.reflect.Type} that has a type variable that would
+ * make the bound recursive.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
@@ -77,11 +78,11 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
-   * result is an eager bound if the type is a type variable, or if it is a class, parameterized
-   * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
-   * Otherwise, the result is a {@link LazyParameterBound}, which converts a non-generic member
-   * class of a generic class, as in {@code Outer<T>.Inner}, together with its owner type.
+   * Returns a {@code ParameterBound} for a single {@code java.lang.reflect.Type}. The result is an
+   * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
+   * array type that has no type variable in the sense of {@link #hasTypeVariable}. Otherwise, the
+   * result is a {@link LazyParameterBound}, which converts a non-generic member class of a generic
+   * class, as in {@code Outer<T>.Inner}, together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -89,39 +90,18 @@ public abstract class ParameterBound {
    */
   /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
-    if (isTypeVariable(type)
-        || ((type instanceof Class<?>
-                || type instanceof java.lang.reflect.ParameterizedType
-                || type instanceof java.lang.reflect.GenericArrayType)
-            && !hasTypeVariable(type, variableSet))) {
-      return new EagerReferenceBound(eagerBoundType(type));
+    if (isTypeVariable(type)) {
+      return new EagerReferenceBound(TypeVariable.forType(type));
     }
-    return new LazyParameterBound(type);
-  }
-
-  /**
-   * Returns the type of an eager bound for the given (reflection) type. A parameterized type,
-   * including one that is the element type of a generic array type, is converted by {@link
-   * ParameterizedType#forType}, except that a non-generic member class of a generic class, as in
-   * {@code Outer<String>.Inner}, is converted by {@link ClassOrInterfaceType#forType}, which
-   * preserves its owner type. {@link ParameterizedType#forType} ignores owner types.
-   *
-   * @param type a class, parameterized type, generic array type, or type variable
-   * @return the type that {@code type} represents
-   */
-  private static ReferenceType eagerBoundType(java.lang.reflect.Type type) {
-    if (isNonGenericMemberClass(type)) {
-      return ClassOrInterfaceType.forType(type);
+    if (!(type instanceof Class<?>
+        || type instanceof java.lang.reflect.ParameterizedType
+        || type instanceof java.lang.reflect.GenericArrayType)) {
+      return new LazyParameterBound(type);
     }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      return ParameterizedType.forType(type);
+    if (hasTypeVariable(type, variableSet)) {
+      return new LazyParameterBound(type);
     }
-    if (type instanceof java.lang.reflect.GenericArrayType) {
-      return ArrayType.ofComponentType(
-          eagerBoundType(((java.lang.reflect.GenericArrayType) type).getGenericComponentType()));
-    }
-    // A class can be an array class, as in `? extends String[]`.
-    return ReferenceType.forType(type);
+    return new EagerReferenceBound(ReferenceType.forType(type));
   }
 
   /**
@@ -167,8 +147,10 @@ public abstract class ParameterBound {
    * such a type variable. Either would make an eager bound recursive.
    *
    * <p>Owner types are examined only for a non-generic member class of a generic class, as in
-   * {@code Outer<T>.Inner}, which {@link #eagerBoundType} converts with its owner type. It converts
-   * each other parameterized type by {@link ParameterizedType#forType}, which ignores owner types.
+   * {@code Outer<T>.Inner}, which the conversion of a reflection type to a {@link ReferenceType}
+   * gives the owner type as written. The conversion gives each other member class the owner type
+   * from its class declaration, as in {@code Outer<T>} for {@code Outer<String>.Inner<Integer>},
+   * not the owner type as written.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
