@@ -488,8 +488,7 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if this type variable and the given one are the same type variable with identical
    * bounds. Unlike {@link #equals(Object)}, which treats copies of a type variable as equal even if
    * their bounds differ, this compares the bounds, including the bounds of the type variables in
-   * them. This applies to capture variables too, whose bounds can refer to the capture variable
-   * itself; a comparison that recurs to the same pair of type variables is assumed to succeed.
+   * them.
    *
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
@@ -502,9 +501,9 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    // The bounds of a type variable can refer to the type variable itself, as for a capture
-    // variable, or to another type variable whose bounds refer back to it.  Assume that a
-    // comparison of the same pair of objects that is already in progress succeeds.
+    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
+    // deeply can reach this comparison again.  As for any recursive comparison, assume that the
+    // inner comparison succeeds.
     List<TypeVariable[]> inProgress = identityChecks.get();
     for (TypeVariable[] pair : inProgress) {
       if (pair[0] == this && pair[1] == other) {
