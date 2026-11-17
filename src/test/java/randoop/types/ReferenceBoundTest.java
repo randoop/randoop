@@ -2,9 +2,13 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -132,6 +136,67 @@ public class ReferenceBoundTest {
     assertFalse(new LazyReferenceBound(otherBoundType).equals(new EagerReferenceBound(boundType)));
   }
 
+  /**
+   * Returns {@code List<? extends String[]>}.
+   *
+   * @return null
+   */
+  public static List<? extends String[]> listExtendsStringArray() {
+    return null;
+  }
+
+  @Test
+  public void testArrayClassWildcardBound() throws NoSuchMethodException {
+    InstantiatedType listType =
+        (InstantiatedType)
+            Type.forType(
+                ReferenceBoundTest.class
+                    .getMethod("listExtendsStringArray")
+                    .getGenericReturnType());
+    ArrayType stringArray = ArrayType.forClass(String[].class);
+    // Reflection represents String[] in the wildcard bound as a Class, which is an array type.
+    WildcardArgument wildcard = (WildcardArgument) listType.getTypeArguments().get(0);
+    assertEquals(stringArray, ((ReferenceBound) wildcard.getTypeBound()).getBoundType());
+
+    TypeVariable captureVariable =
+        (TypeVariable)
+            ((ReferenceArgument) listType.applyCaptureConversion().getTypeArguments().get(0))
+                .getReferenceType();
+    assertNotNull(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(stringArray, captureVariable));
+    // Object[] is not a subtype of String[].
+    assertNull(
+        ReferenceType.getInstantiatingSubstitutionforTypeVariable(
+            ArrayType.forClass(Object[].class), captureVariable));
+  }
+
+  @Test
+  public void testArrayClassBound() {
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), String[].class);
+    Type argType = ArrayType.forClass(String[].class);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
+  }
+
+  /**
+   * A type parameter whose bound has a wildcard bounded by an array class.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardArrayClassBound<T extends List<? extends String[]>> {}
+
+  /** A class that satisfies the bound of {@link WildcardArrayClassBound}. */
+  @SuppressWarnings("serial")
+  static class ArrayClassList extends ArrayList<String[]> {}
+
+  @Test
+  public void testWildcardArrayClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(WildcardArrayClassBound.class).getTypeParameters().get(0);
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ArrayClassList.class)));
+  }
+
   @Test
   public void testVariableIsLowerBound() throws NoSuchMethodException {
     TypeVariable u = typeParameter("listSuperIntegerVariable", 0);
@@ -221,8 +286,7 @@ public class ReferenceBoundTest {
 
   @Test
   public void testArraySubtypeOfCaptureOfSuperArray() {
-    // A capture variable of `? super String[]` has lower bound String[].  The capture variable is
-    // built directly because reflection represents String[] in a wildcard bound as a class type.
+    // A capture variable of `? super String[]` has lower bound String[].
     ArrayType stringArray = ArrayType.forClass(String[].class);
     TypeVariable captureVariable =
         new CaptureTypeVariable(
