@@ -614,8 +614,7 @@ public class InstantiationTest {
 
     // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
     // method's type parameter `E`, so `Outer<String>.Inner` is paired with `List<String>`, never
-    // with
-    // `List<Integer>`.
+    // with `List<Integer>`.
     Method pairMethod =
         InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
     TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);
