@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -646,7 +647,10 @@ public class TypeVariableTest {
   public void testIdentitySubstitutionOfTwoCopies() {
     java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
     TypeVariable t1 = TypeVariable.forType(reflectionVariable);
-    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    // `TypeVariable.forType` caches its result, so create a distinct copy with the same bounds.
+    TypeVariable t2 = t1.createCopyWithBounds(t1.getLowerTypeBound(), t1.getUpperTypeBound());
+    assertNotSame(t1, t2);
+    assertEquals(t1, t2);
     Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
     assertTrue(substitution.mapsToItself(t1));
     assertTrue(substitution.mapsToItself(t2));
