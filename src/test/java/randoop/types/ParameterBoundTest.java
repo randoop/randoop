@@ -241,7 +241,8 @@ public class ParameterBoundTest {
    * an upper bound of {@code Object} after the type parameter of {@link ArraysOfVariable} is
    * replaced by the null type.
    *
-   * @param fieldName the name of a field declared in {@link ArraysOfVariable}
+   * @param fieldName a simple name, such as {@code array}, of a field declared in {@link
+   *     ArraysOfVariable}
    * @return true if the substituted bound is an upper bound of {@code Object}
    */
   private static boolean isUpperBoundWithNullComponent(String fieldName) {
@@ -346,7 +347,11 @@ public class ParameterBoundTest {
     Type argType = Type.forType(type);
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
+    assertTrue(bound.isLowerBound(argType, empty));
     assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    assertFalse(bound.isUpperBound(stringArray, empty));
+    assertFalse(bound.isLowerBound(stringArray, empty));
   }
 
   @Test

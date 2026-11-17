@@ -831,8 +831,7 @@ public class TypeVariableTest {
     assertFalse(TypeVariable.areIdentical(mapTT, mapTCopy));
     assertFalse(TypeVariable.areIdentical(mapTCopy, mapTT));
     assertFalse(
-        TypeVariable.areIdentical(
-            ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
+        TypeVariable.areIdentical(ParameterBound.forType(mapTT), ParameterBound.forType(mapTCopy)));
 
     // The same holds within an array type and within a wildcard bound.
     GenericClassType listType = GenericClassType.forClass(List.class);
