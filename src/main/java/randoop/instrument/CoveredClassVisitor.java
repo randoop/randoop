@@ -13,7 +13,7 @@ import randoop.sequence.ExecutableSequence;
 public class CoveredClassVisitor implements ExecutionVisitor {
 
   /** The classes to be polled. */
-  private Set<Class<?>> classes;
+  private final Set<Class<?>> classes;
 
   /**
    * Creates a visitor to poll the given classes for coverage by sequence executions.
@@ -52,15 +52,15 @@ public class CoveredClassVisitor implements ExecutionVisitor {
       boolean result = (boolean) m.invoke(null);
       return result;
     } catch (NoSuchMethodException e) {
-      throw new Error("Cannot find instrumentation method: " + e);
+      throw new Error("Cannot find instrumentation method: " + e, e);
     } catch (SecurityException e) {
-      throw new Error("Security error when accessing instrumentation method: " + e);
+      throw new Error("Security error when accessing instrumentation method: " + e, e);
     } catch (IllegalAccessException e) {
-      throw new Error("Cannot access instrumentation method: " + e);
+      throw new Error("Cannot access instrumentation method: " + e, e);
     } catch (IllegalArgumentException e) {
-      throw new Error("Bad argument to instrumentation method: " + e);
+      throw new Error("Bad argument to instrumentation method: " + e, e);
     } catch (InvocationTargetException e) {
-      throw new Error("Bad invocation of instrumentation method: " + e);
+      throw new Error("Bad invocation of instrumentation method: " + e, e);
     }
   }
 

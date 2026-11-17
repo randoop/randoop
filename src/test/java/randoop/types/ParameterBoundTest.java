@@ -60,7 +60,8 @@ public class ParameterBoundTest {
    * an upper bound of {@code Object} after the type parameter of {@link ArraysOfVariable} is
    * replaced by the null type.
    *
-   * @param fieldName the name of a field declared in {@link ArraysOfVariable}
+   * @param fieldName a simple name, such as {@code array}, of a field declared in {@link
+   *     ArraysOfVariable}
    * @return true if the substituted bound is an upper bound of {@code Object}
    */
   private static boolean isUpperBoundWithNullComponent(String fieldName) {
@@ -149,6 +150,22 @@ public class ParameterBoundTest {
     TypeVariable t =
         GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
+   * A field whose type is a generic array type of a non-generic member class of a generic class.
+   */
+  @SuppressWarnings("unused")
+  private static GenericOuter<String>.NonGenericInner[] nonGenericInnerArray;
+
+  @Test
+  public void testArrayOfNonGenericMemberClassBound() {
+    java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "nonGenericInnerArray");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    Substitution empty = new Substitution();
+    assertFalse(bound.isUpperBound(stringArray, empty));
+    assertFalse(bound.isLowerBound(stringArray, empty));
   }
 
   /**

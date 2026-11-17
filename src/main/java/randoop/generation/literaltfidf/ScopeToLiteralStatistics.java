@@ -26,7 +26,8 @@ public class ScopeToLiteralStatistics {
    * A map from a specific scope to its literal statistics. The constant {@link UNNAMED_PACKAGE}
    * represents the unnamed package.
    */
-  private LinkedHashMap<Object, LiteralStatistics> scopeToStatisticsMap = new LinkedHashMap<>();
+  private final LinkedHashMap<Object, LiteralStatistics> scopeToStatisticsMap =
+      new LinkedHashMap<>();
 
   /** Creates a ScopeToLiteralStatistics. */
   public ScopeToLiteralStatistics() {}
@@ -74,7 +75,7 @@ public class ScopeToLiteralStatistics {
   }
 
   /** A cache to speed up {@link #createStatisticsWithSuperclasses}. */
-  private Map<ClassOrInterfaceType, LiteralStatistics> createStatisticsWithSuperclassesCache =
+  private final Map<ClassOrInterfaceType, LiteralStatistics> createStatisticsWithSuperclassesCache =
       new HashMap<>();
 
   /**
