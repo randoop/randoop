@@ -96,7 +96,9 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     if (bound instanceof ReferenceBound) {
-      return isUpperBound(((ReferenceBound) bound).getBoundType(), substitution);
+      // An eager bound can also contain type variables, as in T[], where T is not recursive.
+      return isUpperBound(
+          ((ReferenceBound) bound).getBoundType().substitute(substitution), substitution);
     }
     if (bound instanceof IntersectionTypeBound) {
       for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
@@ -160,9 +162,10 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
-   * Returns the type of the given bound, if it is a {@link ReferenceBound}. If it is a {@link
-   * LazyParameterBound}, returns its type with the given substitution applied, in which a type
-   * variable that the substitution does not instantiate stands for an unknown type. Otherwise, or
+   * Returns the type of the given bound, with the given substitution applied, if it is a {@link
+   * ReferenceBound}. If it is a {@link LazyParameterBound}, returns its type with the given
+   * substitution applied, in which a type variable that the substitution does not instantiate
+   * stands for an unknown type. Otherwise, or
    * if the {@link LazyParameterBound} cannot be converted to a {@link ReferenceBound}, returns
    * null.
    *
@@ -179,7 +182,8 @@ public abstract class ReferenceBound extends ParameterBound {
           : null;
     }
     if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType();
+      // An eager bound can also contain type variables, as in T[], where T is not recursive.
+      return ((ReferenceBound) bound).getBoundType().substitute(substitution);
     }
     return null;
   }

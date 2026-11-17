@@ -159,6 +159,13 @@ class LazyParameterBound extends ParameterBound {
       return TypeArgument.forType(TypeVariable.forType(type).substitute(substitution));
     }
 
+    if (isNonGenericMemberClass(type)) {
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, which
+      // GenericClassType.forClass rejects.  Convert it as ClassOrInterfaceType.forType does.
+      return TypeArgument.forType(
+          ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) type).getRawType()));
+    }
+
     if (type instanceof ParameterizedType) {
       java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
@@ -204,7 +211,8 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            bound = new LazyParameterBound(lowerBound);
+            // The substitution can still change the bounds of the type variable.
+            bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
           bound = forType(new HashSet<>(0), lowerBound).substitute(substitution);
