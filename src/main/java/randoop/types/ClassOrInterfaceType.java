@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,22 +89,23 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the owner type's type arguments are the type parameters of the declaration of the
-        // enclosing class, the result is the generic form of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
-            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !Arrays.equals(
-                ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
-                ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
-                    .getTypeParameters())) {
-          // Use the owner type rather than the enclosing class, because the owner type's type
-          // arguments may differ from the enclosing class's type parameters.  For example, in
-          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
-          // method's type parameter, not the type parameter declared by `Outer`.
-          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-          NonParameterizedType result = new NonParameterizedType(rawType);
-          result.enclosingType = forType(ownerType);
-          return result;
+            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+          // Convert the complete owner chain, because the type arguments can be on an owner that
+          // is several levels out, as in Outer<String>.Mid.Inner.
+          ClassOrInterfaceType owner = forType(ownerType);
+          // If the owner type is the generic form of the enclosing class, the result is the generic
+          // form of the member class, which forClass returns.
+          if (!owner.isGenericForm()) {
+            // Use the owner type rather than the enclosing class, because the owner type's type
+            // arguments may differ from the enclosing class's type parameters.  For example, in
+            // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+            // method's type parameter, not the type parameter declared by `Outer`.
+            // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+            NonParameterizedType result = new NonParameterizedType(rawType);
+            result.enclosingType = owner;
+            return result;
+          }
         }
         return forClass(rawType);
       }
@@ -359,6 +359,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
+        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+          // The goal's enclosing type is fixed, as in Outer<Long>.Inner<V>, and differs from this
+          // type's enclosing type, as in Outer<String>.Inner<Integer>.
+          return null;
         }
       }
     }

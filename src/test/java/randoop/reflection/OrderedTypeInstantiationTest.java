@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.BitSet;
 import java.util.LinkedHashSet;
@@ -12,10 +13,13 @@ import org.junit.Test;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
+import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 
 /**
  * Tests that {@link TypeInstantiator} instantiates the ordered type parameter of a class such as
@@ -66,6 +70,31 @@ public class OrderedTypeInstantiationTest {
     public ThreadStringMap() {
       super((MyComparator<? super String>) null);
     }
+  }
+
+  /** A comparator for threads, which are not comparable. */
+  public static class MyThreadComparator implements MyComparator<Thread> {
+    @Override
+    public int compare(Thread o1, Thread o2) {
+      return Long.compare(o1.getId(), o2.getId());
+    }
+  }
+
+  /**
+   * An ordered class with a constructor whose comparator orders the unordered type parameter, not
+   * the ordered one.
+   */
+  public static class MismatchedComparatorSet<K, V> extends TreeSet<K> {
+    private static final long serialVersionUID = 20261117L;
+
+    public MismatchedComparatorSet(MyComparator<? super V> comparator, int n) {}
+  }
+
+  /** An ordered class whose ordered type parameter is bounded by its other type parameter. */
+  public static class BoundedTreeSet<K extends V, V> extends TreeSet<K> {
+    private static final long serialVersionUID = 20261117L;
+
+    public BoundedTreeSet() {}
   }
 
   /** How many times to instantiate each constructor, since instantiation is random. */
@@ -143,5 +172,68 @@ public class OrderedTypeInstantiationTest {
         TypedOperation.forConstructor(MySortedMap.class.getConstructor(MySortedMap.class)),
         1,
         JavaTypes.STRING_TYPE);
+  }
+
+  /**
+   * A comparator argument that orders a type parameter other than the ordered one does not
+   * determine the ordered type argument, so the ordered type argument is comparable.
+   */
+  @Test
+  public void testComparatorForOtherTypeParameter() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(MyThreadComparator.class).getSupertypesInclusive());
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(
+            MismatchedComparatorSet.class.getConstructor(MyComparator.class, int.class));
+    // Instantiation can fail, as when there is no comparator input type for the type chosen for V.
+    boolean someInstantiation = false;
+    for (int i = 0; i < TRIALS; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(constructor);
+      if (instantiated == null) {
+        continue;
+      }
+      someInstantiation = true;
+      InstantiatedType outputType = (InstantiatedType) instantiated.getOutputType();
+      ReferenceArgument typeArgument = (ReferenceArgument) outputType.getTypeArguments().get(0);
+      assertEquals(outputType.toString(), JavaTypes.STRING_TYPE, typeArgument.getReferenceType());
+    }
+    assertTrue("no instantiation of " + constructor, someInstantiation);
+  }
+
+  /**
+   * The instantiation of an ordered class satisfies the bound of its ordered type parameter that
+   * mentions another type parameter.
+   */
+  @Test
+  public void testOrderedParameterBoundedByOtherParameter() throws NoSuchMethodException {
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(BoundedTreeSet.class.getConstructor());
+    boolean someInstantiation = false;
+    for (int i = 0; i < TRIALS; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(constructor);
+      if (instantiated == null) {
+        continue;
+      }
+      someInstantiation = true;
+      InstantiatedType outputType = (InstantiatedType) instantiated.getOutputType();
+      Type k = ((ReferenceArgument) outputType.getTypeArguments().get(0)).getReferenceType();
+      Type v = ((ReferenceArgument) outputType.getTypeArguments().get(1)).getReferenceType();
+      assertTrue(outputType.toString(), k.isSubtypeOfOrEqualTo(v));
+    }
+    assertTrue("no instantiation of " + constructor, someInstantiation);
+  }
+
+  /** A constructor whose unordered type parameter is already instantiated can be instantiated. */
+  @Test
+  public void testPartiallyInstantiatedConstructor() throws NoSuchMethodException {
+    TypeVariable valueParameter =
+        GenericClassType.forClass(TreeMap.class).getTypeParameters().get(1);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(TreeMap.class.getConstructor())
+            .substitute(new Substitution(valueParameter, JavaTypes.STRING_TYPE));
+    checkOrderedTypeArgument(constructor, 0, JavaTypes.STRING_TYPE);
   }
 }

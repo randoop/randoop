@@ -387,16 +387,24 @@ public class TypeInstantiator {
     assert operation.isConstructorCall() : "only call with constructors: " + operation;
 
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
-    // For a member class of a generic class, typeParameters starts with the type parameters of the
-    // enclosing classes, and ends with those of the member class, which orderedIndex indexes.
+    // The type parameters that remain to be instantiated.  For a member class of a generic class,
+    // they include those of the enclosing classes.
     List<TypeVariable> typeParameters = declaringType.getTypeParameters();
-    int ownParameterCount = declaringType.getRuntimeClass().getTypeParameters().length;
+    // orderedIndex indexes the type arguments of the class itself, not those of enclosing classes.
+    // The ordered type argument may already be instantiated, if the constructor was partially
+    // instantiated; then there is no ordered type parameter to choose.
+    TypeArgument orderedArgument = declaringType.getTypeArguments().get(orderedIndex);
+    if (!(orderedArgument instanceof ReferenceArgument
+        && ((ReferenceArgument) orderedArgument).getReferenceType() instanceof TypeVariable)) {
+      return instantiateClass(declaringType);
+    }
     TypeVariable orderedParameter =
-        typeParameters.get(typeParameters.size() - ownParameterCount + orderedIndex);
+        (TypeVariable) ((ReferenceArgument) orderedArgument).getReferenceType();
 
     // If this constructor has an argument that orders T, such as a Comparator<T> or a
     // SortedSet<T>, then orderingType is the generic class of that argument, and orderingIndex is
-    // the index of its type parameter that corresponds to T.
+    // the index of its type parameter that corresponds to T.  An argument that orders some other
+    // type, such as a Comparator<V> for another type parameter V, is not an ordering argument.
     GenericClassType orderingType = null;
     int orderingIndex = -1;
     for (Type inputType : operation.getInputTypes()) {
@@ -407,7 +415,9 @@ public class TypeInstantiator {
           isComparatorInterface(inputType.getRuntimeClass())
               ? 0
               : sortedTypeParameterIndex(inputType);
-      if (index != -1) {
+      if (index != -1
+          && comparesTypeVariable(
+              ((ParameterizedType) inputType).getTypeArguments().get(index), orderedParameter)) {
         orderingType = ((ParameterizedType) inputType).getGenericClassType();
         orderingIndex = index;
         break;
@@ -436,10 +446,33 @@ public class TypeInstantiator {
     }
     List<TypeVariable> otherParameters = new ArrayList<>(typeParameters);
     otherParameters.remove(orderedParameter);
-    if (otherParameters.isEmpty()) {
-      return substitution;
+    if (!otherParameters.isEmpty()) {
+      substitution = selectSubstitution(otherParameters, substitution);
     }
-    return selectSubstitution(otherParameters, substitution);
+    // The choice for the ordered type parameter ignored any bound that mentions another type
+    // parameter, as in `<K extends V, V>`, so check all the bounds now.
+    if (substitution == null || !satisfiesBounds(substitution)) {
+      return null;
+    }
+    return substitution;
+  }
+
+  /**
+   * Returns true if the given type argument, which is the type argument that a comparator or sorted
+   * collection orders, is the given type variable or a wildcard bounded by it, such as {@code ?
+   * super T}.
+   *
+   * @param argument a type argument
+   * @param variable a type variable
+   * @return true if {@code argument} is {@code variable} or a wildcard whose bound is {@code
+   *     variable}
+   */
+  private static boolean comparesTypeVariable(TypeArgument argument, TypeVariable variable) {
+    if (argument instanceof ReferenceArgument) {
+      return ((ReferenceArgument) argument).getReferenceType().equals(variable);
+    }
+    return argument.isWildcard()
+        && argument.getTypeParameters().equals(Collections.singletonList(variable));
   }
 
   /**

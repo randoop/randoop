@@ -492,6 +492,19 @@ public class InstantiationTest {
     /** Another member class with no type parameters of its own, unrelated to {@link Inner}. */
     class Other {}
 
+    /** A member class with no type parameters of its own, which has a member class. */
+    class Mid {
+      /** A member class two levels in, with no type parameters of its own. */
+      class Deep {}
+    }
+
+    /**
+     * A member class with a type parameter of its own.
+     *
+     * @param <U> a type parameter
+     */
+    class Holder<U> {}
+
     /**
      * A method whose parameter type is the generic form of a member class.
      *
@@ -609,6 +622,56 @@ public class InstantiationTest {
     ClassOrInterfaceType genericOther = ClassOrInterfaceType.forClass(Outer.Other.class);
     assertNotNull(stringInner.getInstantiatingSubstitution(genericInner));
     assertNull(stringInner.getInstantiatingSubstitution(genericOther));
+  }
+
+  /**
+   * A method whose parameter type has type arguments only on an owner two levels out.
+   *
+   * @param deep a deep object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static void deepParameter(Outer<String>.Mid.Deep deep) {}
+
+  /**
+   * The conversion of {@code Outer<String>.Mid.Deep}, where neither {@code Mid} nor {@code Deep}
+   * declares type parameters, retains the type argument {@code String}.
+   */
+  @Test
+  public void testTwoLevelMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("deepParameter", Outer.Mid.Deep.class);
+    ClassOrInterfaceType deepType = ClassOrInterfaceType.forType(m.getGenericParameterTypes()[0]);
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType expected =
+        ClassOrInterfaceType.forClass(Outer.Mid.Deep.class)
+            .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    assertEquals(expected, deepType);
+    assertFalse(deepType.isGeneric());
+    assertFalse(deepType.isGenericForm());
+  }
+
+  /**
+   * {@code Outer<String>.Holder<Integer>} does not instantiate {@code Outer<Long>.Holder<V>},
+   * because the enclosing types differ.
+   */
+  @Test
+  public void testMemberClassWithFixedEnclosingTypeSubstitution() {
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType genericHolder = ClassOrInterfaceType.forClass(Outer.Holder.class);
+    List<TypeVariable> holderParameters = new ArrayList<>(genericHolder.getTypeParameters());
+    holderParameters.remove(outerParameter);
+    assertEquals(1, holderParameters.size());
+    TypeVariable holderParameter = holderParameters.get(0);
+    ClassOrInterfaceType stringIntegerHolder =
+        genericHolder.substitute(
+            new Substitution(outerParameter, JavaTypes.STRING_TYPE)
+                .extend(
+                    new Substitution(
+                        holderParameter, ClassOrInterfaceType.forClass(Integer.class))));
+    ClassOrInterfaceType longHolder =
+        genericHolder.substitute(
+            new Substitution(outerParameter, ClassOrInterfaceType.forClass(Long.class)));
+    assertTrue(longHolder.isGeneric());
+    assertNull(stringIntegerHolder.getInstantiatingSubstitution(longHolder));
   }
 
   /**
