@@ -129,8 +129,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    Substitution substitution = getEnclosingTypeSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forSupertype(type, substitution),
+        runtimeType.getGenericInterfaces());
+  }
+
+  /**
+   * Returns the type for a reflected supertype of this type's class, instantiated by the given
+   * substitution for the type parameters of the enclosing classes. For example, if {@code
+   * Outer<T>.Inner extends ArrayList<T>}, then the superclass of {@code Outer<String>.Inner} is
+   * {@code ArrayList<String>}.
+   *
+   * @param supertype a reflected supertype of this type's class
+   * @param substitution the result of {@link #getEnclosingTypeSubstitution()}
+   * @return the supertype, instantiated by {@code substitution}
+   */
+  private static ClassOrInterfaceType forSupertype(
+      java.lang.reflect.Type supertype, Substitution substitution) {
+    ClassOrInterfaceType result = forType(supertype);
+    return substitution.isEmpty() ? result : result.substitute(substitution);
   }
 
   @Override
@@ -170,7 +188,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      return supertype == null ? null : forSupertype(supertype, getEnclosingTypeSubstitution());
     }
   }
 

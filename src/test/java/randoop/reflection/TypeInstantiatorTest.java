@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -183,6 +184,14 @@ public class TypeInstantiatorTest {
       TypedClassOperation operation = instantiatorWithoutKey.instantiate(kOnlyInBound);
       assertNotNull("no instantiation of " + kOnlyInBound, operation);
       assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+
+    // String is not a Map<K, String> for any K, so List<String> cannot instantiate List<V>.
+    Set<Type> incompatibleInputTypes = new LinkedHashSet<>();
+    addTypes(listType.instantiate(JavaTypes.STRING_TYPE), incompatibleInputTypes);
+    TypeInstantiator incompatibleInstantiator = new TypeInstantiator(incompatibleInputTypes);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull("ill-typed instantiation", incompatibleInstantiator.instantiate(kOnlyInBound));
     }
   }
 

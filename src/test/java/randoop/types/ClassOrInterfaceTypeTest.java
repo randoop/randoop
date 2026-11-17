@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -260,6 +261,20 @@ public class ClassOrInterfaceTypeTest {
      * @param <U> the type parameter
      */
     class NumberInner<U extends Number> {}
+
+    /** An inner class whose supertypes mention the type parameter of its enclosing class. */
+    abstract class ListInner extends ArrayList<T> implements Comparable<T> {
+      /** ID for serializing this class. */
+      private static final long serialVersionUID = 20261117;
+    }
+
+    /**
+     * A generic inner class whose supertypes mention the type parameters of both it and its
+     * enclosing class.
+     *
+     * @param <U> the type parameter
+     */
+    abstract class PairInner<U> extends Holder<T> implements BiConsumer<T, U> {}
   }
 
   /**
@@ -455,5 +470,37 @@ public class ClassOrInterfaceTypeTest {
     Substitution substitution = new Substitution();
     assertTrue(upperBound.isUpperBound(integerType, substitution));
     assertFalse(upperBound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+  }
+
+  /**
+   * The supertypes of a member class whose enclosing type is parameterized are instantiated by the
+   * type arguments of the enclosing type.
+   */
+  @Test
+  public void supertypesOfMemberClassUseEnclosingTypeArguments() {
+    GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ClassOrInterfaceType listInnerOfString =
+        ClassOrInterfaceType.forClass(Outer.ListInner.class)
+            .substitute(new Substitution(outerType.getTypeParameters(), JavaTypes.STRING_TYPE));
+    assertEquals(
+        GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
+        listInnerOfString.getSuperclass());
+    assertEquals(
+        Collections.singletonList(
+            GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)),
+        listInnerOfString.getInterfaces());
+
+    InstantiatedType pairInner =
+        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.PairInner.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(
+        GenericClassType.forClass(Holder.class).instantiate(JavaTypes.STRING_TYPE),
+        pairInner.getSuperclass());
+    assertEquals(
+        Collections.singletonList(
+            GenericClassType.forClass(BiConsumer.class)
+                .instantiate(JavaTypes.STRING_TYPE, integerType)),
+        pairInner.getInterfaces());
   }
 }

@@ -211,6 +211,10 @@ final class Subtyping {
     if (boundType == null) {
       return otherArgument.equals(argument);
     }
+    if (wildcard.hasUpperBound() && boundType.isObject()) {
+      // ? contains every type argument, even one whose bound cannot be determined.
+      return true;
+    }
     if (argument instanceof ReferenceArgument) {
       ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
       if (wildcard.hasUpperBound()) {

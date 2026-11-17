@@ -193,13 +193,28 @@ public class Substitution {
    * equal but contain copies of a type variable with different bounds are not the same; see {@link
    * #isConsistentWith(Substitution)}.
    *
+   * <p>If both substitutions map a type variable, the key of the result's entry is the key of the
+   * entry in {@code other}, unless that entry maps its key to itself. Otherwise, an entry that maps
+   * a copy {@code c} of a type variable to itself could replace an entry that maps the type
+   * variable to {@code c}, and {@link #mapsToItself(TypeVariable)} would depend on the order in
+   * which the substitutions were combined.
+   *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
+  @SuppressWarnings("ReferenceEquality") // whether an entry maps its key object to itself
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
-      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+      TypeVariable key = entry.getKey();
+      ReferenceType value = entry.getValue();
+      ReferenceType existing = result.map.get(key);
+      ReferenceType merged = requireSameEntry.apply(existing, value);
+      if (existing == null || value != key) {
+        // Remove any existing entry first, so that the entry's key is `key`; see `put`.
+        result.map.remove(key);
+        result.map.put(key, merged);
+      }
     }
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);

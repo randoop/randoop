@@ -144,9 +144,19 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution to apply to the reflected supertypes of this type's class: it maps the
+   * type parameters that the class declares to the type arguments of this type, and the type
+   * parameters of enclosing classes to the type arguments of the enclosing types.
+   *
+   * @return the substitution that instantiates the supertypes of this type's class
+   */
+  private Substitution getSupertypeSubstitution() {
+    return new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments())
+        .extend(getEnclosingTypeSubstitution());
   }
 
   @Override
@@ -207,9 +217,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**

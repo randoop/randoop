@@ -895,6 +895,26 @@ public class TypeVariableTest {
   }
 
   /**
+   * Extending a substitution that maps a copy {@code c} of a type variable {@code t} to itself by
+   * one that maps {@code t} to {@code c}, in either order, yields a substitution that replaces
+   * {@code t} by {@code c}.
+   */
+  @Test
+  public void testExtendKeepsNonIdentityEntry() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable c =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution identity = new Substitution(c, c);
+    Substitution replacement = new Substitution(t, c);
+    for (Substitution substitution :
+        Arrays.asList(identity.extend(replacement), replacement.extend(identity))) {
+      assertFalse(substitution.mapsToItself(t));
+      assertSame(c, t.substitute(substitution));
+    }
+  }
+
+  /**
    * A class whose type parameter T has a bound with a sibling in a nested type argument, before T.
    *
    * @param <S> a type parameter
