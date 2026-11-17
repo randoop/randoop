@@ -348,9 +348,9 @@ public abstract class TypeVariable extends ParameterType {
    * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
    * of its supertypes. If {@code otherType} is an array type, they also include {@code Object},
    * {@code Cloneable}, and {@code Serializable}, but not array types other than {@code otherType}.
-   * For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
-   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
-   * T}. Each instantiation other than the lower bound is checked as by {@link
+   * For example, for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date} can
+   * instantiate {@code V}, because {@code java.util.Date} can instantiate {@code T}. Each
+   * instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
