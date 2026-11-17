@@ -101,9 +101,10 @@ class EagerReferenceBound extends ReferenceBound {
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
-    // Outer<String>.Inner, is compared by a subtype test.
+    // Outer<String>.Inner, is compared by a subtype test.  The subtype test also handles an argType
+    // that is a type variable, through its upper bound.
     if (thisBoundType instanceof NonParameterizedType && thisBoundType.isParameterized()) {
-      if (!(argType instanceof ClassOrInterfaceType)) {
+      if (!argType.isReferenceType()) {
         return false;
       }
       return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);

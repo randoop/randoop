@@ -405,6 +405,52 @@ public class ParameterBoundTest {
 
     /** A list of arrays of member classes of {@code GenericOuter<Integer>}. */
     List<GenericOuter<Integer>.NonGenericInner[]> integerInnerArrayList;
+
+    /** A member class of {@code GenericOuter<? extends Integer>}. */
+    GenericOuter<? extends Integer>.NonGenericInner extendsIntegerInner;
+
+    /** A member class of {@code GenericOuter<? extends Number>}. */
+    GenericOuter<? extends Number>.NonGenericInner extendsNumberInner;
+  }
+
+  @Test
+  public void testNonGenericMemberClassWithWildcardOwner() throws NoSuchFieldException {
+    ReferenceType extendsIntegerInner = nonGenericInnerFieldType("extendsIntegerInner");
+    ReferenceType extendsNumberInner = nonGenericInnerFieldType("extendsNumberInner");
+    Substitution empty = new Substitution();
+    // GenericOuter<? extends Integer>.NonGenericInner is a subtype of
+    // GenericOuter<? extends Number>.NonGenericInner, but not the reverse.
+    assertTrue(
+        new EagerReferenceBound(extendsIntegerInner).isLowerBound(extendsNumberInner, empty));
+    assertFalse(
+        new EagerReferenceBound(extendsNumberInner).isLowerBound(extendsIntegerInner, empty));
+    assertTrue(
+        new EagerReferenceBound(extendsNumberInner).isUpperBound(extendsIntegerInner, empty));
+    assertFalse(
+        new EagerReferenceBound(extendsIntegerInner).isUpperBound(extendsNumberInner, empty));
+  }
+
+  @Test
+  public void testIdentityInstantiationWithNonGenericMemberClassBound() {
+    GenericClassType boundedType = GenericClassType.forClass(NonGenericMemberClassBound.class);
+    TypeVariable t = boundedType.getTypeParameters().get(0);
+    // T is within its own bound, GenericOuter<String>.NonGenericInner.
+    assertTrue(t.getUpperTypeBound().isUpperBound(t, new Substitution(t, t)));
+    assertNotNull(boundedType.instantiate(t));
+  }
+
+  /**
+   * The substitution is applied only to the lower bound, not to a lazy bound whose lower bound is
+   * being tested.
+   */
+  @Test
+  public void testLazyBoundNotSubstitutedForLowerBound() {
+    TypeVariable t = GenericClassType.forClass(SelfComparable.class).getTypeParameters().get(0);
+    Substitution substitution = new Substitution(t, ReferenceType.forClass(Integer.class));
+    // Comparable<T> stands for every instantiation of T, so Integer is not a lower bound of it,
+    // though Integer is a lower bound of Comparable<Integer>.
+    assertFalse(integerBound.isLowerBound(selfComparableBound, substitution));
+    assertTrue(nullBound.isLowerBound(selfComparableBound, substitution));
   }
 
   /**
