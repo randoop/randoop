@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,7 +90,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.ParameterizedType ownerType = memberClassOwnerType(t);
-        if (ownerType != null) {
+        // If the owner type's type arguments are the type parameters of the declaration of the
+        // enclosing class, the result is the generic form of the member class.
+        if (ownerType != null
+            && !Arrays.equals(
+                ownerType.getActualTypeArguments(),
+                ((Class<?>) ownerType.getRawType()).getTypeParameters())) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -368,21 +374,25 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
-      // For a member class such as Outer<String>.Inner and a goal type such as Outer<E>.Inner, the
-      // enclosing type of this type instantiates the enclosing type of the goal type.
+    // For a member class such as Outer<String>.Inner and a member class goal type such as
+    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
+    // type.  The enclosing type of this type is not matched against a goal type that is not a
+    // member class, such as a type variable.
+    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType thisEnclosingType = enclosingType;
-      ReferenceType enclosingGoalType = goalType;
-      if (goalType instanceof ClassOrInterfaceType) {
-        ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
-        if (goalClassType.isMemberClass()) {
-          enclosingGoalType = goalClassType.enclosingType;
-        }
-      }
-      if (enclosingGoalType.isGeneric()) {
-        substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-        if (substitution == null) {
+      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (goalClassType.isMemberClass()) {
+        // Matching enclosing types do not make unrelated member classes, such as
+        // Outer<String>.Inner and Outer<E>.Other, unify.
+        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
+        }
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+        if (enclosingGoalType.isGeneric()) {
+          substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+          if (substitution == null) {
+            return null;
+          }
         }
       }
     }
@@ -583,24 +593,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           this, otherType, this.getClass(), otherType.getClass());
     }
 
-    if (otherType.isObject()) {
+    // This handles Object, this type itself, and a type variable whose lower bound is a supertype
+    // of this type.
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
-    }
-
-    if (this.equals(otherType)) {
-      return true;
-    }
-
-    if (otherType.isVariable()) {
-      // A class or interface type is a subtype of a type variable only if it is a subtype of the
-      // variable's lower bound, as for a capture variable of `? super String`.
-      ParameterBound lowerBound = ((TypeVariable) otherType).getLowerTypeBound();
-      if (!(lowerBound instanceof ReferenceBound)) {
-        return false;
-      }
-      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
-      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
-          && this.isSubtypeOfOrEqualTo(lowerBoundType);
     }
 
     if (!(otherType instanceof ClassOrInterfaceType)) {
