@@ -225,6 +225,111 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(longType, substitution.get(x));
   }
 
+  /** A non-generic class with a generic member class. */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class BaseOuter {
+    /**
+     * A generic member class.
+     *
+     * @param <T> the type parameter
+     */
+    class Base<T> {}
+  }
+
+  /** Another non-generic class, whose member class extends a member class of {@link BaseOuter}. */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class DerivedOuter {
+    /**
+     * A member class that extends a member class of another class.
+     *
+     * @param <U> the type parameter
+     */
+    class Derived<U> extends BaseOuter.Base<U> {
+      /**
+       * Creates a Derived.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      Derived(BaseOuter outer) {
+        outer.super();
+      }
+    }
+  }
+
+  /**
+   * {@code DerivedOuter.Derived<String>} instantiates {@code BaseOuter.Base<T>}, though their
+   * enclosing classes differ.
+   */
+  @Test
+  public void instantiatingSubstitutionForMemberClassInheritedFromOtherClass() {
+    GenericClassType baseType =
+        (GenericClassType) ClassOrInterfaceType.forClass(BaseOuter.Base.class);
+    GenericClassType derivedType =
+        (GenericClassType) ClassOrInterfaceType.forClass(DerivedOuter.Derived.class);
+    InstantiatedType derivedString = derivedType.instantiate(JavaTypes.STRING_TYPE);
+    assertTrue(derivedString.isMemberClass());
+    Substitution substitution = derivedString.getInstantiatingSubstitution(baseType);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(baseType.getTypeParameters().get(0)));
+  }
+
+  /**
+   * A generic class with member classes, one of which extends the other.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class InheritingOuter<T> {
+    /** A member class that declares no type parameters. */
+    class Inner {}
+
+    /** A member class that extends the member class of another instantiation of this class. */
+    class StringChild extends InheritingOuter<String>.Inner {
+      /**
+       * Creates a StringChild.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      StringChild(InheritingOuter<String> outer) {
+        outer.super();
+      }
+    }
+
+    /** A member class that extends the member class of the same instantiation of this class. */
+    class SameChild extends Inner {}
+  }
+
+  /**
+   * The enclosing type that instantiates the goal's enclosing type is that of the receiver's
+   * supertype whose class is the goal's class, not that of the receiver.
+   */
+  @Test
+  public void instantiatingSubstitutionForInheritedMemberClass() {
+    TypeVariable outerParameter =
+        GenericClassType.forClass(InheritingOuter.class).getTypeParameters().get(0);
+    TypeVariable x = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    Substitution toInteger = new Substitution(outerParameter, integerType);
+    // InheritingOuter<X>.Inner
+    ClassOrInterfaceType xInner =
+        ClassOrInterfaceType.forClass(InheritingOuter.Inner.class)
+            .substitute(new Substitution(outerParameter, x));
+
+    // InheritingOuter<Integer>.StringChild extends InheritingOuter<String>.Inner.
+    ClassOrInterfaceType integerStringChild =
+        ClassOrInterfaceType.forClass(InheritingOuter.StringChild.class).substitute(toInteger);
+    Substitution substitution = integerStringChild.getInstantiatingSubstitution(xInner);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(x));
+
+    // InheritingOuter<Integer>.SameChild extends InheritingOuter<Integer>.Inner.
+    ClassOrInterfaceType integerSameChild =
+        ClassOrInterfaceType.forClass(InheritingOuter.SameChild.class).substitute(toInteger);
+    substitution = integerSameChild.getInstantiatingSubstitution(xInner);
+    assertNotNull(substitution);
+    assertEquals(integerType, substitution.get(x));
+  }
+
   @Test
   public void boundOfMemberOfParameterizedType() {
     GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
