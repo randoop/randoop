@@ -127,13 +127,27 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type, because the type of this bound contains type variables.
+   * is the null type, or an array type whose element type is the null type and that is a subtype
+   * of the type of this bound, as {@code NullType[]} is of {@code T[]}. The type of this bound
+   * contains type variables, so no other type is known to be a subtype of it.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (getBoundType() instanceof CaptureTypeVariable) {
       return super.hasLowerBound(lowerBound, substitution);
     }
-    return lowerBound.isNullType(substitution);
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    ParameterBound b = lowerBound.substitute(substitution);
+    if (!(b instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
+    // The null type is a subtype of every reference type, including a type variable, so array
+    // covariance makes, for example, `NullType[]` a subtype of `T[]`.
+    return lowerType.isArray()
+        && ((ArrayType) lowerType).getElementType().equals(JavaTypes.NULL_TYPE)
+        && lowerType.isSubtypeOfOrEqualTo(getBoundType());
   }
 }
