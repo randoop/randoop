@@ -2,6 +2,8 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -344,6 +346,9 @@ public class CaptureConversionTest {
      * @param <U> the type parameter of the member class
      */
     public class Inner<U> {}
+
+    /** A non-generic member class. */
+    public class Plain {}
   }
 
   /**
@@ -371,6 +376,28 @@ public class CaptureConversionTest {
     InstantiatedType capturedType = memberType.applyCaptureConversion();
     assertFalse(capturedType.hasWildcardArgument());
     assertTrue(((InstantiatedType) capturedType.enclosingType).hasCaptureVariable());
+  }
+
+  /**
+   * Tests that capture conversion of a non-generic member class whose enclosing type has a wildcard
+   * does not side-effect the member type, which substitution can return unchanged.
+   */
+  @Test
+  public void wildcardInEnclosingTypeOfNonGenericMemberTest() throws NoSuchFieldException {
+    ClassOrInterfaceType wildcardOuter =
+        (ClassOrInterfaceType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardOuterField").getGenericType());
+    NonParameterizedType memberType = new NonParameterizedType(Outer.Plain.class);
+    memberType.enclosingType = wildcardOuter;
+
+    NonParameterizedType substituted = memberType.substitute(new Substitution());
+    NonParameterizedType capturedType = substituted.applyCaptureConversion();
+
+    assertNotSame(memberType, capturedType);
+    assertSame(wildcardOuter, memberType.enclosingType);
+    assertTrue(((InstantiatedType) capturedType.enclosingType).hasCaptureVariable());
+    assertFalse(((InstantiatedType) memberType.enclosingType).hasCaptureVariable());
   }
 
   /**

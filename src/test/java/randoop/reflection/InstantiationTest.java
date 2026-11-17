@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -293,6 +295,26 @@ public class InstantiationTest {
       assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
+   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
+   * variable whose bound mentions that type variable.
+   */
+  @Test
+  public void testRecursivelyBoundedCaptureInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation max =
+        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
+
+    TypedClassOperation instance = instantiator.instantiate(max);
+    assertNotNull("instantiation failed for " + max, instance);
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /* disabled until fix type parameter management

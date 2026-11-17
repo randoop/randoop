@@ -25,7 +25,7 @@ import randoop.types.TypeTuple;
 public class FieldGet extends CallableOperation {
 
   /** The field whose value this operation gets. */
-  private AccessibleField field;
+  private final AccessibleField field;
 
   /**
    * FieldGetter sets the public field for the getter statement.
