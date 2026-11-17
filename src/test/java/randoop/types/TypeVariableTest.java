@@ -701,6 +701,8 @@ public class TypeVariableTest {
     ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
     assertFalse(superNumber.canBeSupertypeOf(stringArray, new Substitution()));
     assertFalse(superNumber.canBeSupertypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+    assertTrue(
+        superNumber.canBeSupertypeOf(JavaTypes.INT_TYPE.toBoxedPrimitive(), new Substitution()));
 
     // An upper bound of Number leaves no supertype of String[] to instantiate the capture variable.
     CaptureTypeVariable extendsNumber =
