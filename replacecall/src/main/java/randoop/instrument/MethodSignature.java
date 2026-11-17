@@ -238,6 +238,15 @@ public final class MethodSignature implements Comparable<MethodSignature> {
   }
 
   /**
+   * Returns true if this {@link MethodSignature} represents a constructor.
+   *
+   * @return true if this {@link MethodSignature} represents a constructor
+   */
+  boolean isConstructor() {
+    return name.equals("<init>");
+  }
+
+  /**
    * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodSignature}.
    *
    * @return the parameter types for this {@link MethodSignature}
@@ -255,7 +264,8 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * argument types match {@code this.paramTypes}. If it finds a matching method it returns the
    * corresponding {@code org.apache.bcel.classfile.Method} object for this {@link MethodSignature}.
    * If the class exists, but the method is not found, it checks to see if there is a superclass and
-   * repeats the search process.
+   * repeats the search process. Constructors are not inherited, so it does not search superclasses
+   * for a constructor.
    *
    * @return the Method object for this {@link MethodSignature}
    * @throws ClassNotFoundException if the containing class of this {@link MethodSignature} is not
@@ -293,6 +303,10 @@ public final class MethodSignature implements Comparable<MethodSignature> {
           this.method = m;
           return m;
         }
+      }
+
+      if (isConstructor()) {
+        throw new NoSuchMethodException("Constructor " + this + " not found");
       }
 
       // Method not found; perhaps inherited from superclass.

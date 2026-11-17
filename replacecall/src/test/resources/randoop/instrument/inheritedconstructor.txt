@@ -1,0 +1,2 @@
+// bad replacement file for testing: Integer.<init>() does not exist, even though Object.<init>() does
+java.lang.Integer.<init>() randoop.mock.java.util.RandomReplace.randomWithSeedZero()
