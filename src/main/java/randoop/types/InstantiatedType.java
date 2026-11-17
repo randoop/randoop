@@ -460,6 +460,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // first and second clauses
+    // A member class that declares no type parameters, of a parameterized type, such as
+    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       if (Subtyping.isSubtypeOrEqual(this, otherInstantiatedType, new Substitution())) {

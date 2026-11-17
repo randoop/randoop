@@ -11,7 +11,7 @@ import randoop.sequence.ExecutableSequence;
 public class IncludeIfCoversPredicate implements Predicate<ExecutableSequence> {
 
   /** The set of classes to be covered. */
-  private Set<Class<?>> coveredClasses;
+  private final Set<Class<?>> coveredClasses;
 
   /**
    * Creates a predicate to test whether a sequence covers any of the given classes.
