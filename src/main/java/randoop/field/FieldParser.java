@@ -37,7 +37,7 @@ public final class FieldParser {
       classType = (ClassOrInterfaceType) Type.forName(classname);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e);
     }
 
     String whitespacePattern = ".*\\s+.*";

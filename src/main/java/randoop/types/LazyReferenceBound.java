@@ -40,7 +40,7 @@ class LazyReferenceBound extends ReferenceBound {
     if (referenceType.equals(getBoundType())) {
       return this;
     }
-    return ReferenceBound.forTypeLazyIfGeneric(referenceType);
+    return forTypeLazyIfGeneric(referenceType);
   }
 
   @Override
@@ -57,10 +57,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
@@ -87,10 +83,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (createsNullTypeArray(getBoundType(), substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.

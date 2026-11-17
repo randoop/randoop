@@ -22,8 +22,9 @@ import org.plumelib.util.CollectionsPlume;
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
  * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
  * bounds. Intersection types (which include the greatest lower bound construction used in capture
- * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
- * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
+ * conversion) are explicitly represented. And, recursive type bounds are avoided by holding as a
+ * {@link LazyParameterBound} any {@code java.lang.reflect.Type} that has a type variable that would
+ * make the bound recursive.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
@@ -77,10 +78,10 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. The
-   * result is an eager bound if the type is a type variable, or if it is a class, parameterized
-   * type, or generic array type that has no type variable in the sense of {@link #hasTypeVariable}.
-   * Otherwise, the result is a {@link LazyParameterBound}.
+   * Returns a {@code ParameterBound} for a single {@code java.lang.reflect.Type}. The result is an
+   * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
+   * array type that has no type variable in the sense of {@link #hasTypeVariable}. Otherwise, the
+   * result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -88,14 +89,18 @@ public abstract class ParameterBound {
    */
   /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
-    if (isTypeVariable(type)
-        || ((type instanceof Class<?>
-                || type instanceof java.lang.reflect.ParameterizedType
-                || type instanceof java.lang.reflect.GenericArrayType)
-            && !hasTypeVariable(type, variableSet))) {
-      return new EagerReferenceBound(ReferenceType.forType(type));
+    if (isTypeVariable(type)) {
+      return new EagerReferenceBound(TypeVariable.forType(type));
     }
-    return new LazyParameterBound(type);
+    if (!(type instanceof Class<?>
+        || type instanceof java.lang.reflect.ParameterizedType
+        || type instanceof java.lang.reflect.GenericArrayType)) {
+      return new LazyParameterBound(type);
+    }
+    if (hasTypeVariable(type, variableSet)) {
+      return new LazyParameterBound(type);
+    }
+    return new EagerReferenceBound(ReferenceType.forType(type));
   }
 
   /**
@@ -120,7 +125,9 @@ public abstract class ParameterBound {
    *
    * <p>The owner type of a member class that has no type parameters of its own, as in {@code
    * Outer<T>.Inner}, is examined, because the conversion to a {@link ClassOrInterfaceType} uses it.
-   * Other owner types are not examined, because the conversion does not use them.
+   * Other owner types are not examined, because the conversion does not use them. It gives a
+   * generic member class the owner type from its class declaration, as in {@code Outer<T>} for
+   * {@code Outer<String>.Inner<Integer>}, not the owner type as written.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
