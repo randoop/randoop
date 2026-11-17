@@ -402,9 +402,9 @@ public abstract class TypeVariable extends ParameterType {
    * otherType} is an array type, {@code Object}, {@code Cloneable}, and {@code Serializable}, but
    * not array types other than {@code otherType}. Each instantiation other than the lower bound is
    * checked as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for
-   * {@code <S extends Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which
-   * implements {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with
-   * {@code Base} for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * {@code <S extends Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base},
+   * which implements {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub},
+   * with {@code Base} for {@code S}; and for {@code <T extends Comparable<T>, V extends T>}, {@code
    * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
    * T}. The result can be false if only a supertype of {@code otherType} that is not a class or
    * interface type, such as an intersection or an array type, can instantiate this variable.
