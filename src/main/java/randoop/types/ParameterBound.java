@@ -82,8 +82,9 @@ public abstract class ParameterBound {
    * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
    * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}, or a generic
-   * array type of one, whose owner type the conversion to a {@link ReferenceType} does not
-   * preserve. Otherwise, the result is a {@link LazyParameterBound}.
+   * array type of one. The conversion to a {@link ReferenceType} gives such a class the owner type
+   * from its class declaration, as in {@code Outer<T>.Inner}, so an eager bound would compare it
+   * incorrectly. Otherwise, the result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
