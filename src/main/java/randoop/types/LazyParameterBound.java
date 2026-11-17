@@ -237,7 +237,8 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            bound = new LazyParameterBound(lowerBound);
+            // The substitution can instantiate type variables in the bounds of `lowerBound`.
+            bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
           bound = forType(new HashSet<>(0), lowerBound).substitute(substitution);
@@ -535,10 +536,14 @@ class LazyParameterBound extends ParameterBound {
    * <p>Unlike for other bounds, the substitution is also applied to this bound before {@code
    * lowerBound} is compared with it; a type variable in this bound that the substitution does not
    * instantiate stands for an unknown type, as in {@link #isUpperBound(Type, Substitution)}.
-   * Returns false if the result is not a {@link ReferenceBound}.
+   * Returns true if {@code lowerBound} is the null type, which is a lower bound of every reference
+   * type. Otherwise, returns false if the result is not a {@link ReferenceBound}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
     ParameterBound converted = substituteWithUnknowns(substitution);
     return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
   }
