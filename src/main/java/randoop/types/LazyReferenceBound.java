@@ -141,10 +141,10 @@ class LazyReferenceBound extends ReferenceBound {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
+    // Compare enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
+    // is not Outer<Number>.Inner<X>.
     return lowerBound instanceof ReferenceBound
-        && ((ReferenceBound) lowerBound)
-            .getBoundType()
-            .substitute(substitution)
-            .equals(getBoundType());
+        && Subtyping.isIdentical(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution), getBoundType());
   }
 }
