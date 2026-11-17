@@ -90,11 +90,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the owner type is the generic form of the enclosing class, the result is the generic
-        // form of the member class.
+        // If the type arguments of the owner type, and of its own owner types, are the type
+        // parameters of the declarations of the enclosing classes, the result is the generic form
+        // of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
             && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !isGenericForm((java.lang.reflect.ParameterizedType) ownerType)) {
+            && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -123,16 +124,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if the given (reflection) parameterized type is the generic form of its class:
-   * its type arguments are the type parameters of its class, and, if its class is a non-static
-   * member class, its owner type is also the generic form of its class. For example, for {@code
-   * Outer<String>.Middle}, where {@code Middle} declares no type parameters, the result is false,
-   * because the owner type {@code Outer<String>} is not the generic form of {@code Outer}.
+   * Returns true if the given parameterized type is the type that its class declaration denotes:
+   * its type arguments are the type parameters of its class, and, if it is a member class, the same
+   * holds for its owner type. For example, this returns false for {@code Outer<String>.Middle},
+   * where {@code Middle} declares no type parameters, though its own type arguments are the
+   * (empty) type parameters of {@code Middle}.
    *
-   * @param type a reflection parameterized type
-   * @return true if {@code type} is the generic form of its class
+   * @param type a parameterized type
+   * @return true if {@code type} is the type that its class declaration denotes
    */
-  private static boolean isGenericForm(java.lang.reflect.ParameterizedType type) {
+  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
     Class<?> rawType = (Class<?>) type.getRawType();
     if (!Arrays.equals(type.getActualTypeArguments(), rawType.getTypeParameters())) {
       return false;
@@ -140,7 +141,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     return !(ownerType instanceof java.lang.reflect.ParameterizedType)
         || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-        || isGenericForm((java.lang.reflect.ParameterizedType) ownerType);
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
   }
 
   // This implementation is for an abstract class; subclasses do the real work.

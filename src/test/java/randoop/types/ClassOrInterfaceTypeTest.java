@@ -197,17 +197,6 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(bound.isLowerBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
-  /**
-   * A generic class with an inner class.
-   *
-   * @param <T> the type parameter
-   */
-  @SuppressWarnings("ClassCanBeStatic")
-  static class Outer<T> {
-    /** An inner class whose enclosing type is generic. */
-    class Inner {}
-  }
-
   /** Declares methods whose parameter types are used in tests. */
   static class TypeVariableHolder {
     /**
@@ -231,6 +220,16 @@ public class ClassOrInterfaceTypeTest {
         Collection<Comparable<String>> comparables,
         List<? super String> superStrings,
         Collection<? extends Iterable<Comparable<String>>> iterables) {}
+
+    /**
+     * A method whose parameter types are member classes of non-generic member classes of
+     * parameterized types.
+     *
+     * @param <U> a type parameter
+     * @param ofString an {@code Outer<String>.Middle.Deepest}
+     * @param ofU an {@code Outer<U>.Middle.Deepest}
+     */
+    static <U> void deep(Outer<String>.Middle.Deepest ofString, Outer<U>.Middle.Deepest ofU) {}
   }
 
   /**
@@ -241,6 +240,12 @@ public class ClassOrInterfaceTypeTest {
   static class Outer<T> {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
+
+    /** An inner class whose enclosing type is generic, and that has an inner class. */
+    class Middle {
+      /** An inner class of an inner class whose enclosing type is generic. */
+      class Deepest {}
+    }
   }
 
   /**
@@ -351,5 +356,32 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerGenericForm));
     assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
     assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  /**
+   * A member class of a non-generic member class of a parameterized type keeps the type arguments
+   * of the outermost owner type.
+   */
+  @Test
+  public void twoLevelMemberOfParameterizedTypeTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        TypeVariableHolder.class
+            .getDeclaredMethod("deep", Outer.Middle.Deepest.class, Outer.Middle.Deepest.class)
+            .getGenericParameterTypes();
+    ClassOrInterfaceType ofString = ClassOrInterfaceType.forType(parameterTypes[0]);
+    assertFalse(ofString.isGeneric());
+    assertTrue(ofString.getTypeParameters().isEmpty());
+    assertEquals(Outer.Middle.class, ofString.enclosingType.getRuntimeClass());
+    ClassOrInterfaceType outerOfString = ofString.enclosingType.enclosingType;
+    assertEquals(Outer.class, outerOfString.getRuntimeClass());
+    assertEquals(
+        java.util.Collections.singletonList(TypeArgument.forType(JavaTypes.STRING_TYPE)),
+        outerOfString.getTypeArguments());
+
+    ClassOrInterfaceType ofU = ClassOrInterfaceType.forType(parameterTypes[1]);
+    assertTrue(ofU.isGeneric());
+    assertFalse(ofU.isGenericForm());
+    assertEquals(1, ofU.getTypeParameters().size());
+    assertEquals("U", ofU.getTypeParameters().get(0).getSimpleName());
   }
 }
