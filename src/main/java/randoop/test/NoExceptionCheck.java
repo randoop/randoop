@@ -22,7 +22,7 @@ public class NoExceptionCheck implements Check {
    * generated code -- the contract of NoExceptionCheck is that no exception should be thrown,
    * whether or not it's the same as what was observed during generation.
    */
-  private String exceptionName;
+  private final String exceptionName;
 
   /**
    * Creates a NoExceptionCheck.
