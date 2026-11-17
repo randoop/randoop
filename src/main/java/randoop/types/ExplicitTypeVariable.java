@@ -93,6 +93,15 @@ public class ExplicitTypeVariable extends TypeVariable {
     if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
+    // A capture variable already has the bounds that this variable's declaration implies, with the
+    // substitution applied:  capture conversion makes its upper bound the greatest lower bound of
+    // the wildcard's bound and this variable's substituted bound (JLS 5.1.10).  Copying it with
+    // only this variable's substituted bound would drop the wildcard's bound.  For example, for
+    // `C<B extends Comparable<B>, A extends B>` and `C<? extends Number, ?>`, the capture of A
+    // would be bounded by a capture of B that is not bounded by Number.
+    if (type instanceof CaptureTypeVariable) {
+      return type;
+    }
     // A type variable can occur in its own bound, directly as in `T extends Comparable<T>` or
     // through the bounds of other type variables.  Such an occurrence remains as it is.
     Set<java.lang.reflect.TypeVariable<?>> inProgress = substituteIsExecuting.get();

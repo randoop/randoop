@@ -21,6 +21,15 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The lower-bound checks by {@link #canBeSupertypeOf(ReferenceType, Substitution)} that are in
+   * progress in the current thread, outermost first. The substitution of each is the context of
+   * the call.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<InstantiationCheck>> supertypeChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
    * thread, outermost first. Each element is a pair of the receiver and the argument.
    */
@@ -30,7 +39,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
-   * instantiated as by a substitution.
+   * instantiated as by a substitution. Also used for a check of whether a type variable can be a
+   * supertype of a type; then the substitution is the context of the check.
    */
   private static final class InstantiationCheck {
     /** The type variable. */
@@ -414,8 +424,24 @@ public abstract class TypeVariable extends ParameterType {
    * @return true if some instantiation of this variable can be a supertype of {@code otherType}
    */
   boolean canBeSupertypeOf(ReferenceType otherType, Substitution context) {
-    if (getLowerTypeBound().isUpperBound(otherType, context)
-        || canBeInstantiatedBy(otherType, context)) {
+    // Checking the lower bound can check the same question again, if the lower bound is a type
+    // variable that leads back to this one.  Such an inner check gives no evidence that this
+    // variable can be a supertype of otherType, so it is false; the outer check tries the other
+    // possibilities.
+    List<InstantiationCheck> inProgress = supertypeChecks.get();
+    for (InstantiationCheck check : inProgress) {
+      if (check.isSameCheck(this, otherType, context)) {
+        return false;
+      }
+    }
+    inProgress.add(new InstantiationCheck(this, otherType, context));
+    boolean lowerBoundAllows;
+    try {
+      lowerBoundAllows = getLowerTypeBound().isUpperBound(otherType, context);
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
+    if (lowerBoundAllows || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
     // A capture variable stands for a particular type, so it is not searched for among the strict

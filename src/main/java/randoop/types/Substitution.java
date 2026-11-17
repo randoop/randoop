@@ -196,10 +196,26 @@ public class Substitution {
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
+  @SuppressWarnings("ReferenceEquality") // an identity mapping maps a key to the key object itself
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
-      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+      TypeVariable key = entry.getKey();
+      ReferenceType value = entry.getValue();
+      if (key != value && result.mapsToItself(key)) {
+        // The existing entry maps a copy of `key` to itself, and `other` maps `key` to the same
+        // type, which is not `key` itself:  for example, {T -> T} and {Tcopy -> T}.  Keeping the
+        // existing key would make the result an identity mapping, which leaves Tcopy unchanged.
+        // Replace the entry, so that the result does not depend on the order of the merge.
+        ReferenceType existing = result.map.get(key);
+        if (existing != null) {
+          requireSameEntry.apply(existing, value);
+        }
+        result.map.remove(key);
+        result.map.put(key, value);
+      } else {
+        result.map.merge(key, value, requireSameEntry);
+      }
     }
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);

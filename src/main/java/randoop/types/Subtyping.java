@@ -111,8 +111,7 @@ final class Subtyping {
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       InstantiatedType supertype =
-          ((ClassOrInterfaceType) type)
-              .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+          findMatchingSupertype((ClassOrInterfaceType) type, otherInstantiatedType);
       if (supertype == null) {
         return false;
       }
@@ -137,6 +136,39 @@ final class Subtyping {
           && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns the given type or the supertype of it that is an instantiation of the generic class of
+   * {@code goalType}, or null if there is none.
+   *
+   * <p>Unlike {@link ClassOrInterfaceType#getMatchingSupertype(GenericClassType)}, this handles a
+   * {@link GenericClassType} receiver, such as {@code Comparable<E>}, whose own generic class is
+   * the goal: the result is its identity instantiation. Also, the result has the runtime class of
+   * {@code goalType}. {@code getMatchingSupertype} can return a member class of another class, such
+   * as {@code Outer<String>.A<Integer>} for {@code Outer<T>.B<X>}, because it compares only the
+   * enclosing types of member classes.
+   *
+   * @param type a type
+   * @param goalType a parameterized type
+   * @return the supertype of {@code type}, or {@code type} itself, that instantiates the generic
+   *     class of {@code goalType}, or null
+   */
+  private static @Nullable InstantiatedType findMatchingSupertype(
+      ClassOrInterfaceType type, InstantiatedType goalType) {
+    GenericClassType goalClass = goalType.getGenericClassType();
+    InstantiatedType result;
+    if (type instanceof GenericClassType && type.equals(goalClass)) {
+      GenericClassType genericType = (GenericClassType) type;
+      result = new InstantiatedType(genericType, genericType.getTypeArguments());
+      result.enclosingType = genericType.enclosingType;
+    } else {
+      result = type.getMatchingSupertype(goalClass);
+    }
+    if (result == null || !result.getRuntimeClass().equals(goalType.getRuntimeClass())) {
+      return null;
+    }
+    return result;
   }
 
   /**
@@ -322,8 +354,7 @@ final class Subtyping {
     }
     if (type instanceof InstantiatedType && lowerType instanceof ClassOrInterfaceType) {
       InstantiatedType supertype =
-          ((ClassOrInterfaceType) lowerType)
-              .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+          findMatchingSupertype((ClassOrInterfaceType) lowerType, (InstantiatedType) type);
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }
