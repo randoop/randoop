@@ -488,6 +488,96 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A method in which a wildcard's bound is a type variable with a bound of its own.
+   *
+   * @param <T> the element type
+   * @param list a list
+   * @param comparator a comparator
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Number> void numberListAndComparator(
+      List<T> list, Comparator<? super T> comparator) {}
+
+  /**
+   * In {@code <T extends Number> void numberListAndComparator(List<T>, Comparator<? super T>)},
+   * {@code List<Integer>} and {@code Comparator<Comparable<Integer>>} are valid arguments, since
+   * {@code Integer} implements {@code Comparable<Integer>}. Matching the comparator must use the
+   * type chosen for {@code T} by the list.
+   */
+  @Test
+  public void testWildcardMatchUsesEarlierChoice() throws NoSuchMethodException {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(GenericClassType.forClass(List.class).instantiate(INTEGER_TYPE), inputTypes);
+    addTypes(
+        GenericClassType.forClass(Comparator.class)
+            .instantiate(GenericClassType.forClass(Comparable.class).instantiate(INTEGER_TYPE)),
+        inputTypes);
+    assertSomeInstantiation(
+        new TypeInstantiator(inputTypes),
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod(
+                "numberListAndComparator", List.class, Comparator.class)));
+  }
+
+  /**
+   * A generic class.
+   *
+   * @param <E> the element type
+   */
+  private static class Box<E> {}
+
+  /**
+   * A method whose return type mentions a type variable whose bound mentions another type variable.
+   *
+   * @param <T> the element type of the result
+   * @param <U> the element type of {@code list}
+   * @param list a list
+   * @return a box
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<U>, U> Box<T> makeBox(List<U> list) {
+    return null;
+  }
+
+  /**
+   * Instantiating {@code <T extends Comparable<U>, U> Box<T> makeBox(List<U>)} for the goal type
+   * {@code Box<String>} must choose {@code String} for {@code U}, though the goal type does not
+   * mention {@code U}.
+   */
+  @Test
+  public void testGoalTypeBoundMentionsOtherVariable() throws NoSuchMethodException {
+    TypedClassOperation makeBox =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("makeBox", List.class));
+    InstantiatedType boxOfString =
+        GenericClassType.forClass(Box.class).instantiate(JavaTypes.STRING_TYPE);
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType listOfString = listType.instantiate(JavaTypes.STRING_TYPE);
+
+    // String is not Comparable<Integer>.
+    Set<Type> integerInputTypes = new LinkedHashSet<>();
+    addTypes(listType.instantiate(INTEGER_TYPE), integerInputTypes);
+    TypeInstantiator integerInstantiator = new TypeInstantiator(integerInputTypes);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(integerInstantiator.instantiate(makeBox, boxOfString));
+    }
+
+    Set<Type> inputTypes = new LinkedHashSet<>(integerInputTypes);
+    addTypes(listOfString, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(makeBox, boxOfString);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(listOfString, operation.getInputTypes().get(0));
+    }
+    assertTrue("no instantiation of " + makeBox, instantiated > 0);
+  }
+
+  /**
    * Returns the given type argument of the given parameterized type.
    *
    * @param type a parameterized type, such as {@code List<String>}

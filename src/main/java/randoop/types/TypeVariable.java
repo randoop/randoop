@@ -355,7 +355,8 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
    * of it, {@code otherType} itself, and, if {@code otherType} is a class or interface type, each
-   * of its supertypes. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * of its supertypes, or, if {@code otherType} is an array type, the supertypes returned by {@link
+   * #arraySupertypes}. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
    * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
    * T}. Each instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}.
@@ -383,8 +384,34 @@ public abstract class TypeVariable extends ParameterType {
           return true;
         }
       }
+    } else if (otherType.isArray()) {
+      for (ReferenceType supertype : arraySupertypes((ArrayType) otherType)) {
+        if (canBeInstantiatedBy(supertype, context)) {
+          return true;
+        }
+      }
     }
     return false;
+  }
+
+  /**
+   * Returns some strict supertypes of the given array type: {@code Object}, {@code Cloneable},
+   * {@code Serializable}, and, if the component type is a reference type other than {@code Object},
+   * {@code Object[]}.
+   *
+   * @param arrayType an array type
+   * @return some strict supertypes of {@code arrayType}
+   */
+  private static List<ReferenceType> arraySupertypes(ArrayType arrayType) {
+    List<ReferenceType> result = new ArrayList<>(4);
+    result.add(JavaTypes.OBJECT_TYPE);
+    result.add(JavaTypes.CLONEABLE_TYPE);
+    result.add(JavaTypes.SERIALIZABLE_TYPE);
+    Type componentType = arrayType.getComponentType();
+    if (componentType.isReferenceType() && !componentType.isObject()) {
+      result.add(ArrayType.ofComponentType(JavaTypes.OBJECT_TYPE));
+    }
+    return result;
   }
 
   /**

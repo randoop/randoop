@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -544,7 +545,9 @@ public class TypeVariableTest {
   public void testIdentitySubstitutionOfTwoCopies() {
     java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
     TypeVariable t1 = TypeVariable.forType(reflectionVariable);
-    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    TypeVariable t2 = t1.createCopyWithBounds(t1.getLowerTypeBound(), t1.getUpperTypeBound());
+    assertNotSame(t1, t2);
+    assertEquals(t1, t2);
     Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
     assertTrue(substitution.mapsToItself(t1));
     assertTrue(substitution.mapsToItself(t2));
@@ -1392,6 +1395,20 @@ public class TypeVariableTest {
     // Integer <: Number <: the capture variable for the first argument.
     TypeVariable second = typeArgument(capturedFieldType("superNumberField"), 1);
     assertTrue(second.canBeInstantiatedBy(integer));
+  }
+
+  /**
+   * An array type is within a bound that is a capture variable bounded below if a supertype of the
+   * array type, such as {@code Object}, can instantiate the capture variable.
+   */
+  @Test
+  public void testArrayIsWithinVariableBoundThroughSupertype() throws NoSuchFieldException {
+    ReferenceType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    TypeVariable captureOfSuperNumber =
+        typeArgument(capturedFieldType("comparableSuperNumberField"), 0);
+    assertFalse(captureOfSuperNumber.canBeInstantiatedBy(stringArray));
+    // Object can instantiate the capture of `? super Number`, and String[] <: Object.
+    assertTrue(captureOfSuperNumber.canBeSupertypeOf(stringArray, new Substitution()));
   }
 
   /**

@@ -42,7 +42,8 @@ public class TypeInstantiator {
 
   /**
    * The maximum number of random choices of input types for an operation's parameterized parameter
-   * types that {@link #selectOperationSubstitution(TypedClassOperation)} tries before it gives up.
+   * types that {@link #selectOperationSubstitution(TypedClassOperation, List, Substitution)} tries
+   * before it gives up.
    */
   private static final int MAX_INSTANTIATION_ATTEMPTS = 10;
 
@@ -78,8 +79,32 @@ public class TypeInstantiator {
    * @return an instantiated version of the operation, or null
    */
   public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
+    return instantiateWithin(operation, new Substitution());
+  }
+
+  /**
+   * Instantiate the given operation by choosing type arguments for its type parameters, so that the
+   * types chosen for the type variables of the given substitution are within their bounds.
+   *
+   * <p>{@code fixed} has already been applied to {@code operation}, so {@code operation} does not
+   * mention its type variables. But their bounds can mention type variables of {@code operation}.
+   * For example, if {@code operation} was {@code <T extends Comparable<U>, U> Box<T> make(List<U>)}
+   * and {@code fixed} maps {@code T} to {@code String}, then the type chosen for {@code U} must be
+   * {@code String}.
+   *
+   * @param operation the generic operation to instantiate
+   * @param fixed a substitution that has been applied to {@code operation}; this method checks the
+   *     bounds of its type variables against the types that it chooses for the type variables in
+   *     those bounds
+   * @return an instantiated version of the operation, or null
+   */
+  private @Nullable TypedClassOperation instantiateWithin(
+      TypedClassOperation operation, Substitution fixed) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
+
+    // The type variables whose bounds this method checks at the end.
+    List<TypeVariable> fixedVariables = new ArrayList<>(fixed.keySet());
 
     // if declaring type of operation is generic, select instantiation
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
@@ -110,6 +135,13 @@ public class TypeInstantiator {
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
+      // The bounds of the fixed type variables can mention type parameters of the declaring type.
+      if (!fixedVariables.isEmpty()) {
+        if (!fixed.isConsistentWith(substitution)) {
+          return null;
+        }
+        fixed = fixed.extend(substitution);
+      }
       // instantiate type parameters of declaring type
       operation = operation.substitute(substitution);
     }
@@ -124,7 +156,7 @@ public class TypeInstantiator {
           "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
-      operation = instantiateOperationTypes(operation);
+      operation = instantiateOperationTypes(operation, fixedVariables, fixed);
     }
 
     // if operation == null failed to build instantiation
@@ -172,13 +204,17 @@ public class TypeInstantiator {
         Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
+      // This check treats the type variables that the substitution does not instantiate, but
+      // that occur in the bounds of the ones it does, as unknown types.  It prunes substitutions
+      // that no choice of those type variables could make valid.  instantiateWithin checks the
+      // bounds again once it has chosen types for those type variables.
       if (substitution == null || !satisfiesBounds(substitution)) {
         return null;
       }
       TypedClassOperation substituted = operation.substitute(substitution);
       result =
           substituted.isGeneric() || substituted.hasWildcardTypes()
-              ? instantiate(substituted)
+              ? instantiateWithin(substituted, substitution)
               : substituted;
     } else if (goalType.isAssignableFrom(outputType)) {
       result = instantiate(operation);
@@ -390,10 +426,14 @@ public class TypeInstantiator {
    * the types instantiated.
    *
    * @param operation an operation
+   * @param fixedVariables type variables that {@code fixed} instantiates and that {@code operation}
+   *     does not mention, whose bounds the instantiation must satisfy
+   * @param fixed a substitution that instantiates {@code fixedVariables}
    * @return the operation with generic types instantiated, or null if no instantiation was found
    */
-  private @Nullable TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
-    Substitution substitution = selectOperationSubstitution(operation);
+  private @Nullable TypedClassOperation instantiateOperationTypes(
+      TypedClassOperation operation, List<TypeVariable> fixedVariables, Substitution fixed) {
+    Substitution substitution = selectOperationSubstitution(operation, fixedVariables, fixed);
     if (substitution == null) {
       return null;
     }
@@ -458,11 +498,18 @@ public class TypeInstantiator {
    * #MAX_INSTANTIATION_ATTEMPTS} attempts in all. Otherwise, another attempt would make the same
    * choices and fail the same way, so this returns null.
    *
+   * <p>The substitution must also satisfy the bounds of {@code fixedVariables}: when {@code fixed}
+   * is extended by it, each of {@code fixedVariables} must be within its bounds.
+   *
    * @param operation an operation
+   * @param fixedVariables type variables that {@code fixed} instantiates and that {@code operation}
+   *     does not mention, whose bounds the result must satisfy
+   * @param fixed a substitution that instantiates {@code fixedVariables}
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
-   *     the bounds of its type variables, or null if none was found
+   *     the bounds of its type variables and of {@code fixedVariables}, or null if none was found
    */
-  private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
+  private @Nullable Substitution selectOperationSubstitution(
+      TypedClassOperation operation, List<TypeVariable> fixedVariables, Substitution fixed) {
     // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
     // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
@@ -489,13 +536,17 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
+            // Unify with paramType, not origParamType, so that the bounds of the type variables in
+            // it reflect the types that the substitution has already chosen.  For example, in
+            // `<T extends Number> void m(List<T>, Comparator<? super T>)`, once T is Integer,
+            // Comparator<Comparable<Integer>> matches Comparator<? super T>.
             Substitution extended =
-                selectSubstitution((ReferenceType) origParamType, matches, substitution);
+                selectSubstitution((ReferenceType) paramType, matches, substitution);
             if (extended == null) {
               if (Log.isLoggingOn()) {
                 failure =
                     "no input type instantiates "
-                        + origParamType
+                        + paramType
                         + " within the bounds, given "
                         + substitution;
               }
@@ -528,7 +579,8 @@ public class TypeInstantiator {
 
         if (typeParameters.isEmpty()) {
           // The substitution instantiates every type variable in the parameter and return types.
-          if (satisfiesBounds(substitution)) {
+          if (satisfiesBounds(substitution)
+              && satisfiesFixedBounds(fixedVariables, fixed, substitution)) {
             return substitution;
           }
           if (Log.isLoggingOn()) {
@@ -547,7 +599,9 @@ public class TypeInstantiator {
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
             // The search checks each bound once its variables are instantiated; check the complete
             // result too, in case the search scheduled some bound check too early.
-            if (result != null && satisfiesBounds(result)) {
+            if (result != null
+                && satisfiesBounds(result)
+                && satisfiesFixedBounds(fixedVariables, fixed, result)) {
               return result;
             }
             if (Log.isLoggingOn()) {
@@ -875,6 +929,25 @@ public class TypeInstantiator {
    */
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
     return new BoundsCheck(parameters).test(substitution);
+  }
+
+  /**
+   * Returns true if, when the first substitution is extended by the second, the type of each of the
+   * given type variables is within its bounds.
+   *
+   * @param fixedVariables type variables that {@code fixed} instantiates
+   * @param fixed a substitution
+   * @param substitution a substitution that extends {@code fixed}
+   * @return true if {@code fixed} and {@code substitution} are consistent and, together, instantiate
+   *     each of {@code fixedVariables} within its bounds
+   */
+  private static boolean satisfiesFixedBounds(
+      List<TypeVariable> fixedVariables, Substitution fixed, Substitution substitution) {
+    if (fixedVariables.isEmpty()) {
+      return true;
+    }
+    return fixed.isConsistentWith(substitution)
+        && satisfiesBounds(fixedVariables, fixed.extend(substitution));
   }
 
   /**
