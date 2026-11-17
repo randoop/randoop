@@ -12,14 +12,14 @@ public class SequenceExceptionError extends RuntimeException {
   private static final long serialVersionUID = 4778297090156993454L;
 
   /** The exception thrown by the sequence. */
-  private Throwable e;
+  private final Throwable e;
 
   /** The test sequence. */
   @SuppressWarnings("serial")
-  private ExecutableSequence testSequence;
+  private final ExecutableSequence testSequence;
 
   /** The position of the statement that threw the exception. */
-  private int position;
+  private final int position;
 
   /**
    * Create an exception for the exception thrown by the statement at the given position in the test

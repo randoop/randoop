@@ -13,10 +13,10 @@ import org.plumelib.util.CollectionsPlume;
 public class GenericClassType extends ParameterizedType {
 
   /** The rawtype of the generic class. */
-  private Class<?> rawType;
+  private final Class<?> rawType;
 
   /** The type parameters of the generic class. */
-  private List<TypeVariable> parameters;
+  private final List<TypeVariable> parameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
