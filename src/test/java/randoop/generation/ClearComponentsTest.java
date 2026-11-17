@@ -33,7 +33,10 @@ import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Randomness;
 
-/** Tests of {@link ForwardGenerator#clearComponents} and the state that it resets. */
+/**
+ * Tests of {@link ForwardGenerator#clearComponents}, of the state that it resets, and of the {@code
+ * --clear} option.
+ */
 public class ClearComponentsTest {
 
   /** A class under test whose method creates new primitive values. */
@@ -243,17 +246,20 @@ public class ClearComponentsTest {
     int numSeeds = componentMgr.numGeneratedSequences();
     GenInputsAbstract.clear = numSeeds + 3;
 
+    List<TypedOperation> operations = new ArrayList<>(gen.operations);
     int numClears = 0;
     for (int i = 0; i < 1000; i++) {
-      int numComponentsBefore = componentMgr.numGeneratedSequences();
-      gen.step();
-      if (numComponentsBefore == GenInputsAbstract.clear) {
-        // The step cleared the component set before creating at most one new sequence.
+      // One step can add several sequences, so the count can pass the threshold in one step.
+      if (componentMgr.numGeneratedSequences() >= GenInputsAbstract.clear) {
+        // With no operations, a step creates no sequence, so the step's only effect is the clear.
+        gen.operations.clear();
+        assertNull(gen.step());
+        assertEquals(numSeeds, componentMgr.numGeneratedSequences());
+        assertTrue(gen.getAllSequences().isEmpty());
+        gen.operations.addAll(operations);
         numClears++;
-        assertTrue(componentMgr.numGeneratedSequences() <= numSeeds + 1);
-        assertTrue(gen.getAllSequences().size() <= 1);
       } else {
-        assertTrue(componentMgr.numGeneratedSequences() <= GenInputsAbstract.clear);
+        gen.step();
       }
     }
     assertTrue(numClears > 0);
@@ -453,6 +459,33 @@ public class ClearComponentsTest {
     assertEquals(
         Long.MAX_VALUE / 2 + 1000,
         ForwardGenerator.computeClearMemoryThreshold(2000, Long.MAX_VALUE));
+  }
+
+  /**
+   * {@link ForwardGenerator#step} clears the component set when the number of generated sequences
+   * reaches {@code --clear}, and generation continues afterward.
+   */
+  @Test
+  public void stepClearsAtThreshold() throws Exception {
+    ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    GenInputsAbstract.clear = 10;
+
+    int numClears = 0;
+    int numCreatedAfterClear = 0;
+    for (int i = 0; i < 300; i++) {
+      boolean willClear = componentMgr.numGeneratedSequences() >= GenInputsAbstract.clear;
+      ExecutableSequence eSeq = gen.step();
+      if (willClear) {
+        numClears++;
+        assertTrue(componentMgr.numGeneratedSequences() < GenInputsAbstract.clear);
+      }
+      if (numClears > 0 && eSeq != null) {
+        numCreatedAfterClear++;
+      }
+    }
+    assertTrue(numClears > 1);
+    assertTrue(numCreatedAfterClear > 0);
   }
 
   /**

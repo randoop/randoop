@@ -288,7 +288,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // The secondary pool of demand-driven input creation is empty immediately after a clear.  It
     // can grow while the component set does not, so consider it when checking memory use.
     boolean secondaryPoolChanged = componentManager.numSecondarySequences() != 0;
-    if (componentsChanged && numComponents != 0 && numComponents % GenInputsAbstract.clear == 0) {
+    if (componentsChanged && numComponents >= GenInputsAbstract.clear) {
       clearComponents();
       if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
         clearMemoryThreshold =
