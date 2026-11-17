@@ -659,19 +659,22 @@ public class TypeVariableTest {
   }
 
   /**
-   * The capture variable of {@code ? super Number} can be a supertype of an array type, by being
-   * instantiated to {@code Object}.
+   * The capture variable of {@code ? super Number} is not a supertype of an array type. It stands
+   * for a particular type, which might be {@code Object} but is known only to be a supertype of
+   * {@code Number}.
    */
   @Test
-  public void testCaptureVariableCanBeSupertypeOfArray() {
+  public void testCaptureVariableIsNotSupertypeOfArray() {
     CaptureTypeVariable superNumber =
         new CaptureTypeVariable(
             new WildcardArgument(
                 new WildcardType(
                     new EagerReferenceBound(ClassOrInterfaceType.forClass(Number.class)), false)));
     ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    assertTrue(superNumber.canBeSupertypeOf(stringArray, new Substitution()));
-    assertTrue(superNumber.canBeSupertypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+    assertFalse(superNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    assertFalse(superNumber.canBeSupertypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+    assertTrue(
+        superNumber.canBeSupertypeOf(JavaTypes.INT_TYPE.toBoxedPrimitive(), new Substitution()));
 
     // An upper bound of Number leaves no supertype of String[] to instantiate the capture variable.
     CaptureTypeVariable extendsNumber =
