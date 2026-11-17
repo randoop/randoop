@@ -90,14 +90,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the owner type's type arguments are the type parameters of the declaration of the
-        // enclosing class, the result is the generic form of the member class.
+        // If the type arguments of each owner type are the type parameters of its declaration, the
+        // result is the generic form of the member class.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
             && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !Arrays.equals(
-                ((java.lang.reflect.ParameterizedType) ownerType).getActualTypeArguments(),
-                ((Class<?>) ((java.lang.reflect.ParameterizedType) ownerType).getRawType())
-                    .getTypeParameters())) {
+            && !isDeclarationOwner(ownerType)) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -123,6 +120,27 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns true if the given owner type, and each of its own owner types, has as its type
+   * arguments the type parameters of its declaration. An owner type with no type parameters of its
+   * own, such as {@code B} in {@code A<U>.B.C}, has no type arguments, so this also examines its
+   * owner type.
+   *
+   * @param ownerType the owner type of a reflective parameterized type, or null
+   * @return true if every owner type in the chain uses the type parameters of its declaration
+   */
+  private static boolean isDeclarationOwner(java.lang.reflect.@Nullable Type ownerType) {
+    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
+      return true;
+    }
+    java.lang.reflect.ParameterizedType owner = (java.lang.reflect.ParameterizedType) ownerType;
+    Class<?> ownerRawType = (Class<?>) owner.getRawType();
+    if (!Arrays.equals(owner.getActualTypeArguments(), ownerRawType.getTypeParameters())) {
+      return false;
+    }
+    return isDeclarationOwner(owner.getOwnerType());
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -359,6 +377,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
+        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+          // A non-generic enclosing goal type has no type variables to bind, so the enclosing
+          // types must be identical.  For example, Outer<Integer>.Inner2<Long> does not
+          // instantiate Outer<String>.Inner2<U>.
+          return null;
         }
       }
     }

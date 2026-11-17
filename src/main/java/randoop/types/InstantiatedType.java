@@ -375,6 +375,10 @@ public class InstantiatedType extends ParameterizedType {
 
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
+    if (substitution == null) {
+      // For example, the enclosing type of this type does not instantiate that of `goalType`.
+      return null;
+    }
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
@@ -444,7 +448,10 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
+    // Not `otherType.isParameterized()`:  a member class with no type parameters of its own, such
+    // as Outer<String>.Inner, is parameterized but is not an InstantiatedType.  The superclass
+    // check in ClassOrInterfaceType.isSubtypeOfOrEqualTo handles it.
+    if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
