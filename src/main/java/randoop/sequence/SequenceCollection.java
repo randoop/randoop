@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -73,6 +74,14 @@ public final class SequenceCollection {
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
+
+  /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
    * sequenceMap.
    */
@@ -122,6 +131,7 @@ public final class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.typesModificationCount++;
     this.sequenceCount = 0;
     checkRep();
@@ -206,6 +216,17 @@ public final class SequenceCollection {
    */
   @RequiresNonNull("this.sequenceMap")
   public void add(Sequence sequence) {
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        // NonreceiverTerm converts a primitive value to the wrapper class of its declared type, so
+        // this is the value that the statement produces when executed.
+        primitiveValues.add(statement.getValue());
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -404,6 +425,18 @@ public final class SequenceCollection {
       result.addAll(a);
     }
     return result;
+  }
+
+  /**
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
+   *
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
   }
 
   /**
