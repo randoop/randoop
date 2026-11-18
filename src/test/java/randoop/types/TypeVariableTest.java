@@ -2737,6 +2737,26 @@ public class TypeVariableTest {
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   Comparable<? super Number> comparableSuperNumberField;
 
+  /** A field whose type has a wildcard bounded below, and an unbounded wildcard bounded by it. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super Number, ?> superNumberUnboundedField;
+
+  /**
+   * An array type can be a subtype of a capture variable through a supertype of the array, even
+   * though the array type cannot instantiate the capture variable.
+   */
+  @Test
+  public void testArraySupertypeIsWithinVariableBound() throws NoSuchFieldException {
+    ReferenceType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    TypeVariable captureOfSuperNumber =
+        typeArgument(capturedFieldType("superNumberUnboundedField"), 0);
+    assertFalse(captureOfSuperNumber.canBeInstantiatedBy(stringArray));
+    // Object can instantiate the capture variable, and it is a supertype of String[].
+    assertTrue(captureOfSuperNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    TypeVariable second = typeArgument(capturedFieldType("superNumberUnboundedField"), 1);
+    assertTrue(second.canBeInstantiatedBy(stringArray));
+  }
+
   /**
    * A subtype of the lower bound of a capture variable is within a bound that is the capture
    * variable, even though it cannot instantiate the capture variable.
