@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -533,6 +534,112 @@ public class TypeInstantiatorTest {
       assertEquals(consistentMap, typeArgument(operation.getInputTypes().get(0), 0));
     }
     assertTrue("no instantiation of " + repeatedInBound, instantiated > 0);
+  }
+
+  /**
+   * A method whose second parameter type has a wildcard whose lower bound is the type variable of
+   * the first parameter type.
+   *
+   * @param <T> the element type
+   * @param list a list
+   * @param comparator a comparator
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Number> void numberAndComparator(
+      List<T> list, Comparator<? super T> comparator) {}
+
+  /**
+   * Tests that matching an input type to a parameter type uses the types already chosen for the
+   * earlier parameter types. In {@code <T extends Number> void numberAndComparator(List<T>,
+   * Comparator<? super T>)}, once {@code T} is {@code Integer}, {@code
+   * Comparator<Comparable<Integer>>} instantiates the second parameter type, even though {@code
+   * Comparable<Integer>} cannot instantiate {@code T}.
+   */
+  @Test
+  public void testMatchUsesEarlierChoices()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    GenericClassType comparableType = GenericClassType.forClass(Comparable.class);
+    InstantiatedType comparatorOfComparable =
+        GenericClassType.forClass(Comparator.class)
+            .instantiate(comparableType.instantiate(INTEGER_TYPE));
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(GenericClassType.forClass(List.class).instantiate(INTEGER_TYPE), inputTypes);
+    addTypes(comparatorOfComparable, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation numberAndComparator =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod(
+                "numberAndComparator", List.class, Comparator.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(numberAndComparator);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(INTEGER_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
+      assertEquals(comparatorOfComparable, operation.getInputTypes().get(1));
+    }
+    assertTrue("no instantiation of " + numberAndComparator, instantiated > 0);
+  }
+
+  /**
+   * A method whose return type mentions only a type variable whose bound mentions another type
+   * variable.
+   *
+   * @param <T> the result element type
+   * @param <U> the argument element type
+   * @param list a list
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<U>, U> List<T> comparableToElements(List<U> list) {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type checks the bounds of the type variables
+   * that the goal type determines, once the type variables in those bounds are chosen. For the goal
+   * type {@code List<String>}, {@code <T extends Comparable<U>, U> List<T>
+   * comparableToElements(List<U>)} must not be instantiated with a {@code List<Integer>} argument,
+   * because {@code String} is not a {@code Comparable<Integer>}.
+   */
+  @Test
+  public void testGoalTypeChecksBoundsOfDeterminedVariables()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType listOfString = listType.instantiate(JavaTypes.STRING_TYPE);
+    TypedClassOperation comparableToElements =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("comparableToElements", List.class));
+
+    // With only List<Integer> as an argument, there is no instantiation.
+    Set<Type> integerInputTypes = new LinkedHashSet<>();
+    addTypes(INTEGER_TYPE, integerInputTypes);
+    addTypes(listType.instantiate(INTEGER_TYPE), integerInputTypes);
+    TypeInstantiator integerInstantiator = new TypeInstantiator(integerInputTypes);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(integerInstantiator.instantiate(comparableToElements, listOfString));
+    }
+
+    Set<Type> inputTypes = new LinkedHashSet<>(integerInputTypes);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(listOfString, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(comparableToElements, listOfString);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(listOfString, operation.getOutputType());
+      assertEquals(listOfString, operation.getInputTypes().get(0));
+    }
+    assertTrue("no instantiation of " + comparableToElements, instantiated > 0);
   }
 
   /**

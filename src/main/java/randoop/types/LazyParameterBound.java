@@ -529,8 +529,7 @@ class LazyParameterBound extends ParameterBound {
    * @param substitution a type substitution
    * @return {@code substitution}, modified to map none of {@code variables} to a different type
    */
-  private static Substitution identityFor(
-      List<TypeVariable> variables, Substitution substitution) {
+  private static Substitution identityFor(List<TypeVariable> variables, Substitution substitution) {
     Substitution result = substitution;
     for (TypeVariable variable : variables) {
       ReferenceType type = result.get(variable);

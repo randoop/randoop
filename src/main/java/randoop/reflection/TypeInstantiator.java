@@ -43,7 +43,8 @@ public class TypeInstantiator {
 
   /**
    * The maximum number of random choices of input types for an operation's parameterized parameter
-   * types that {@link #selectOperationSubstitution(TypedClassOperation)} tries before it gives up.
+   * types that {@link #selectOperationSubstitution(TypedClassOperation, Substitution)} tries before
+   * it gives up.
    */
   private static final int MAX_INSTANTIATION_ATTEMPTS = 10;
 
@@ -79,6 +80,27 @@ public class TypeInstantiator {
    * @return an instantiated version of the operation, or null
    */
   public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
+    return instantiateWithin(operation, new Substitution());
+  }
+
+  /**
+   * Instantiate the given operation by choosing type arguments for its type parameters, such that
+   * the given substitution, extended by those choices, satisfies the bounds of the type variables
+   * that it maps.
+   *
+   * <p>{@code fixed} has already been applied to {@code operation}, so {@code operation} does not
+   * mention its type variables. But their bounds can mention type variables of {@code operation}.
+   * For example, if {@code operation} was {@code <T extends Comparable<U>, U> Box<T> make(List<U>)}
+   * and {@code fixed} maps {@code T} to {@code String}, then the type chosen for {@code U} must be
+   * {@code String}.
+   *
+   * @param operation the generic operation to instantiate
+   * @param fixed a substitution that was already applied to {@code operation}, whose type variables
+   *     can have bounds that mention type variables of {@code operation}
+   * @return an instantiated version of the operation, or null
+   */
+  private @Nullable TypedClassOperation instantiateWithin(
+      TypedClassOperation operation, Substitution fixed) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
 
@@ -111,6 +133,14 @@ public class TypeInstantiator {
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
+      // The bounds of the type variables of `fixed` can mention type parameters of the declaring
+      // type.
+      if (!fixed.isEmpty()) {
+        if (!fixed.isConsistentWith(substitution)) {
+          return null;
+        }
+        fixed = fixed.extend(substitution);
+      }
       // instantiate type parameters of declaring type
       operation = operation.substitute(substitution);
     }
@@ -125,7 +155,7 @@ public class TypeInstantiator {
           "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
-      operation = instantiateOperationTypes(operation);
+      operation = instantiateOperationTypes(operation, fixed);
     }
 
     // if operation == null failed to build instantiation
@@ -173,13 +203,16 @@ public class TypeInstantiator {
         Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
+      // This check is partial when the bound of a type variable that the substitution maps
+      // mentions a type variable that it does not map, such as U in `<T extends Comparable<U>, U>`.
+      // Instantiating the substituted operation checks such a bound again, once it chooses U.
       if (substitution == null || !satisfiesBounds(substitution)) {
         return null;
       }
       TypedClassOperation substituted = operation.substitute(substitution);
       result =
           substituted.isGeneric() || substituted.hasWildcardTypes()
-              ? instantiate(substituted)
+              ? instantiateWithin(substituted, substitution)
               : substituted;
     } else if (goalType.isAssignableFrom(outputType)) {
       result = instantiate(operation);
@@ -341,10 +374,18 @@ public class TypeInstantiator {
    */
   private static @Nullable Substitution selectSubstitution(
       ReferenceType type, List<ReferenceType> matches, Substitution substitution) {
+    // Unify with the pattern to which the substitution is applied, so that unification uses the
+    // types that the substitution already chose.  For example, for `<T extends Number> void
+    // m(List<T>, Comparator<? super T>)`, once T is Integer, Comparator<Comparable<Integer>>
+    // instantiates the second parameter type; but without that mapping, it does not, because
+    // Comparable<Integer> cannot instantiate T.
+    ReferenceType pattern = type.substitute(substitution);
+    List<TypeVariable> typeParameters = type.getTypeParameters();
     // Try the matches in random order.
     while (!matches.isEmpty()) {
       ReferenceType selectedType = Randomness.randomSetMember(matches);
-      Substitution selected = selectedType.getInstantiatingSubstitution(type);
+      Substitution selected =
+          withOriginalKeys(selectedType.getInstantiatingSubstitution(pattern), typeParameters);
       // A match can conflict with the substitution, for example if it binds a capture variable
       // that the substitution already maps to a different type.
       if (selected != null && substitution.isConsistentWith(selected)) {
@@ -356,6 +397,34 @@ public class TypeInstantiator {
       matches.remove(selectedType);
     }
     return null;
+  }
+
+  /**
+   * Returns a substitution like the given one, but whose keys are the given type variables in place
+   * of the copies of them, with other bounds, in the given substitution. Applying a substitution to
+   * a type can replace a type variable whose bounds change by such a copy, but the other
+   * substitutions of {@link TypeInstantiator} map the original type variable.
+   *
+   * @param substitution a substitution, or null
+   * @param variables type variables
+   * @return a substitution with the same mappings as {@code substitution}, whose keys are the
+   *     elements of {@code variables} where possible; or null if {@code substitution} is null
+   */
+  private static @Nullable Substitution withOriginalKeys(
+      @Nullable Substitution substitution, List<TypeVariable> variables) {
+    if (substitution == null) {
+      return null;
+    }
+    List<TypeVariable> keys = new ArrayList<>(substitution.keySet().size());
+    List<ReferenceType> values = new ArrayList<>(substitution.keySet().size());
+    for (TypeVariable key : substitution.keySet()) {
+      int index = variables.indexOf(key);
+      ReferenceType value = substitution.get(key);
+      assert value != null : "@AssumeAssertion(nullness): the key is in the substitution";
+      keys.add(index == -1 ? key : variables.get(index));
+      values.add(value);
+    }
+    return new Substitution(keys, values);
   }
 
   /**
@@ -396,10 +465,13 @@ public class TypeInstantiator {
    * the types instantiated.
    *
    * @param operation an operation
+   * @param fixed a substitution that was already applied to {@code operation}; see {@link
+   *     #selectOperationSubstitution(TypedClassOperation, Substitution)}
    * @return the operation with generic types instantiated, or null if no instantiation was found
    */
-  private @Nullable TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
-    Substitution substitution = selectOperationSubstitution(operation);
+  private @Nullable TypedClassOperation instantiateOperationTypes(
+      TypedClassOperation operation, Substitution fixed) {
+    Substitution substitution = selectOperationSubstitution(operation, fixed);
     if (substitution == null) {
       return null;
     }
@@ -418,9 +490,9 @@ public class TypeInstantiator {
    * #satisfiesBounds(Substitution)}.
    *
    * <p>This method makes one or more attempts to build such a substitution. Each attempt makes new
-   * random choices and either returns a substitution or fails. An attempt starts with an empty
-   * substitution and does the following. In step 1, the chosen input type must instantiate each
-   * type variable whose bounds are instantiated within its bounds.
+   * random choices and either returns a substitution or fails. An attempt starts with the
+   * substitution {@code fixed} and does the following. In step 1, the chosen input type must
+   * instantiate each type variable whose bounds are instantiated within its bounds.
    *
    * <ol>
    *   <li>Instantiate the type variables in the parameterized parameter types. For each parameter
@@ -464,18 +536,28 @@ public class TypeInstantiator {
    * #MAX_INSTANTIATION_ATTEMPTS} attempts in all. Otherwise, another attempt would make the same
    * choices and fail the same way, so this returns null.
    *
+   * <p>Because the result extends {@code fixed}, the bounds of the type variables that {@code
+   * fixed} maps are checked too, once the type variables in them are instantiated. For example,
+   * suppose that {@code fixed} maps {@code T} to {@code String} in {@code <T extends Comparable<U>,
+   * U> Box<T> make(List<U>)}, and {@code operation} is {@code Box<String> make(List<U>)}. Then the
+   * result does not map {@code U} to {@code Integer}, because {@code String} is not a {@code
+   * Comparable<Integer>}.
+   *
    * @param operation an operation
-   * @return a substitution that instantiates the generic types of {@code operation} and satisfies
-   *     the bounds of its type variables, or null if none was found
+   * @param fixed a substitution that was already applied to {@code operation}, whose type variables
+   *     can have bounds that mention type variables of {@code operation}
+   * @return a substitution that extends {@code fixed}, instantiates the generic types of {@code
+   *     operation}, and satisfies the bounds of its type variables, or null if none was found
    */
-  private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
+  private @Nullable Substitution selectOperationSubstitution(
+      TypedClassOperation operation, Substitution fixed) {
     // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
     // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
     for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
       // answer question: what type instantiation would allow a call to this operation?
       Set<TypeVariable> typeParameters = new LinkedHashSet<>();
-      Substitution substitution = new Substitution();
+      Substitution substitution = fixed;
       // True if an input type was chosen for some parameter type while other unrejected input types
       // remained, so that another attempt could choose differently.
       boolean choseAmongSeveral = false;
