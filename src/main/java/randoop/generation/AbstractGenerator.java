@@ -108,13 +108,7 @@ public abstract class AbstractGenerator {
   public ComponentManager componentManager;
 
   /** Customizable stopping criterion in addition to time and sequence limits. */
-  private @Nullable IStopper stopper;
-
-  /**
-   * Displays progress messages, and exits Randoop if the generator stops taking steps. Its mode is
-   * {@link ProgressDisplay.Mode#NO_DISPLAY} if no progress messages should be displayed.
-   */
-  private ProgressDisplay progressDisplay;
+  private final @Nullable IStopper stopper;
 
   /**
    * This field is set by Randoop to point to the sequence currently being executed. In the event
@@ -311,7 +305,8 @@ public abstract class AbstractGenerator {
                     || GenInputsAbstract.progressintervalsteps > 0))
             ? ProgressDisplay.Mode.MULTILINE
             : ProgressDisplay.Mode.NO_DISPLAY;
-    progressDisplay = new ProgressDisplay(this, progressDisplayMode);
+    // Displays progress messages, and exits Randoop if the generator stops taking steps.
+    ProgressDisplay progressDisplay = new ProgressDisplay(this, progressDisplayMode);
     progressDisplay.start();
 
     try {
@@ -437,7 +432,7 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  void setCurrentSequence(Sequence s) {
+  /*package*/ void setCurrentSequence(Sequence s) {
     currSeq = s;
   }
 
