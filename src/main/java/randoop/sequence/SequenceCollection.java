@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -73,10 +74,24 @@ public final class SequenceCollection {
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
+
+  /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
    * sequenceMap.
    */
   private int sequenceCount = 0;
+
+  /**
+   * The number of calls to {@link #add} that changed this collection since it was created or last
+   * cleared.
+   */
+  private int numSequencesAdded = 0;
 
   /**
    * SUT-parameter types that are not SUT-returned types. {@link
@@ -114,6 +129,18 @@ public final class SequenceCollection {
   }
 
   /**
+   * Returns the number of calls to {@link #add} that changed this collection since it was created
+   * or last cleared, including calls by {@code addAll}. A call changes this collection if its
+   * sequence has at least one active output.
+   *
+   * @return the number of calls to {@link #add} that changed this collection since it was created
+   *     or last cleared
+   */
+  public int numSequencesAdded() {
+    return numSequencesAdded;
+  }
+
+  /**
    * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
    * demand-driven input creator, and the type instantiator.
    */
@@ -122,8 +149,10 @@ public final class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.typesModificationCount++;
     this.sequenceCount = 0;
+    this.numSequencesAdded = 0;
     checkRep();
   }
 
@@ -203,9 +232,23 @@ public final class SequenceCollection {
    * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
+   * @return true if this collection changed; that is, if {@code sequence} has at least one active
+   *     output
    */
   @RequiresNonNull("this.sequenceMap")
-  public void add(Sequence sequence) {
+  public boolean add(Sequence sequence) {
+    boolean changed = false;
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        // NonreceiverTerm converts a primitive value to the wrapper class of its declared type, so
+        // this is the value that the statement produces when executed.
+        primitiveValues.add(statement.getValue());
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -231,9 +274,14 @@ public final class SequenceCollection {
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
+        changed = true;
       }
     }
+    if (changed) {
+      numSequencesAdded++;
+    }
     checkRep();
+    return changed;
   }
 
   /**
@@ -404,6 +452,18 @@ public final class SequenceCollection {
       result.addAll(a);
     }
     return result;
+  }
+
+  /**
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
+   *
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
   }
 
   /**
