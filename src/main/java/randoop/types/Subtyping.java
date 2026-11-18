@@ -244,8 +244,10 @@ final class Subtyping {
    * Returns true if {@code lowerType} is a subtype of, or equal to, {@code type}. If {@code
    * lowerType} is an unknown, returns true if some choice for it is a subtype of {@code type}:
    * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
-   * upper bound or a member of it, if it is an intersection. If {@code lowerType} contains
-   * unknowns, as {@code List<B>} does, compares its components with those of {@code type}.
+   * upper bound. If the unknown's upper bound is an intersection, returns true if some member of it
+   * is a subtype of {@code type}, since every type within the intersection is. If {@code lowerType}
+   * contains unknowns, as {@code List<B>} does, compares its components with those of {@code
+   * type}.
    *
    * @param lowerType the possible subtype, which may be or contain unknowns
    * @param type the possible supertype
@@ -281,11 +283,17 @@ final class Subtyping {
       return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
     if (unknownBound instanceof IntersectionTypeBound) {
-      // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
-      // B can be Number, which is a subtype of Serializable.
+      // Every type within the intersection is a subtype of each member of it, so the unknown can
+      // be a subtype of `type` if some member is.  For `B extends Number & Runnable`, B can be a
+      // subtype of Runnable, such as a class that extends Number and implements Runnable, even
+      // though no single member of the intersection is within the whole intersection.  As
+      // documented for this class, this does not check that some type is within the intersection.
       for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
         if (member instanceof ReferenceBound
-            && boundCanBeSubtype((ReferenceBound) member, type, unknown, substitution)) {
+            && isSubtypeOrEqual(
+                ((ReferenceBound) member).getBoundType().substitute(substitution),
+                type,
+                substitution)) {
           return true;
         }
       }
@@ -334,6 +342,16 @@ final class Subtyping {
       InstantiatedType supertype =
           ((ClassOrInterfaceType) lowerType)
               .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+      return supertype != null
+          && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
+    }
+    if (type instanceof NonParameterizedType
+        && type.isParameterized()
+        && lowerType instanceof ClassOrInterfaceType) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner; compare the enclosing types, as in isSubtypeOrEqual.
+      ClassOrInterfaceType supertype =
+          findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }
@@ -427,7 +445,7 @@ final class Subtyping {
    * Returns true if the type of the given bound of an unknown is a subtype of, or equal to, {@code
    * type}, and the unknown can be that type.
    *
-   * @param bound an upper bound, or a member of an intersection upper bound, of {@code unknown}
+   * @param bound the upper bound of {@code unknown}
    * @param type the possible supertype
    * @param unknown a type variable that stands for an unknown type
    * @param substitution the type substitution, which determines the unknowns
@@ -564,7 +582,7 @@ final class Subtyping {
    * @param otherType another type
    * @return true if the types are equal, including their enclosing types
    */
-  private static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
+  /*package*/ static boolean isIdentical(ReferenceType type, ReferenceType otherType) {
     if (!type.equals(otherType)) {
       return false;
     }
