@@ -402,18 +402,49 @@ public class DemandDrivenInputCreator {
   }
 
   /**
-   * Returns the given operation, instantiated if it is generic, if its output type is assignable to
-   * the given type.
+   * Returns the given operation, instantiated if it is generic or has wildcard types, if its output
+   * type is assignable to the given type.
    *
    * @param op a constructor or static method
    * @param type the type for {@code op} to produce
-   * @return {@code op}, instantiated if it is generic, whose output type is assignable to {@code
-   *     type}; or null if there is no such instantiation or none was found
+   * @return {@code op}, instantiated if it is generic or has wildcard types, whose output type is
+   *     assignable to {@code type}; or null if there is no such instantiation, none was found, or
+   *     the type instantiator threw an exception
    * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
    */
   private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
-    if (op.isGeneric()) {
-      return sequenceCollection.getTypeInstantiator().instantiate(op, type);
+    // Instantiate an operation whose types contain a type variable, even if its output type
+    // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`, so
+    // skip the operation if it cannot be instantiated.
+    //
+    // Also instantiate an operation whose types contain wildcards but no type variable, as in
+    // `static Foo of(Box<?> b)`.  Instantiation replaces `Box<?>` by a `Box` type that is
+    // already in the main sequence collection, and fails if there is none.  In that case, use
+    // the operation uninstantiated:  it can use any `Box`, such as one that the worklist
+    // creates, provided that Randoop treats that `Box` type as a subtype of `Box<?>`.  It does
+    // not do so until https://github.com/randoop/randoop/pull/1983 lands.
+    //
+    // If the type instantiator throws an exception, skip the operation, whether or not it is
+    // generic.
+    if (op.isGeneric() || op.hasWildcardTypes()) {
+      TypedClassOperation instantiated;
+      try {
+        instantiated = sequenceCollection.getTypeInstantiator().instantiate(op, type);
+      } catch (Throwable e) {
+        TypeInstantiator.handleInstantiationException(op, e);
+        DemandDrivenLog.logPrintf("Instantiation error for operation %s%n", op);
+        return null;
+      }
+      if (instantiated == null) {
+        DemandDrivenLog.logPrintf("Failed to instantiate operation %s%n", op);
+      } else if (type.isAssignableFrom(instantiated.getOutputType())) {
+        // The type arguments that the instantiation chose might have made the output type not
+        // assignable to `type`; this test checks that they did not.
+        return instantiated;
+      }
+      if (op.isGeneric()) {
+        return null;
+      }
     }
     return type.isAssignableFrom(op.getOutputType()) ? op : null;
   }
