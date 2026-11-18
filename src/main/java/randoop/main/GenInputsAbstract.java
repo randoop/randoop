@@ -565,6 +565,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
+  @SuppressWarnings("PMD.DataClass")
   public static class Limits {
     /**
      * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
@@ -1343,7 +1344,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 String.format(
                     "%s was read from %s but was not found on classpath."
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
-                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()),
+                e);
           } catch (ExceptionInInitializerError e) {
             // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
@@ -1456,8 +1458,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new RandoopClassNameError(
               classname,
-              String.format(
-                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
+              String.format("Cannot load class found in directory %s", directory.getAbsolutePath()),
+              e);
         }
       }
       return classnames;
@@ -1497,13 +1499,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           String.format(
               "Cannot find .jar file %s specified in classpath: %s",
-              jarFile.getAbsolutePath(), Globals.getClassPath()));
+              jarFile.getAbsolutePath(), Globals.getClassPath()),
+          e);
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file %s", Util.fileAndAbsolute(jarFile)), e);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
-          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()), e);
     }
     return classnames;
   }

@@ -200,7 +200,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     } catch (SecurityException e) {
       String msg =
           "Cannot access method " + goalMethod.getName() + " in class " + c.getCanonicalName();
-      throw new Error(msg);
+      throw new Error(msg, e);
     }
     return !defined.isBridge();
   }

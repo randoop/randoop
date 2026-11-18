@@ -193,9 +193,9 @@ public final class ConstructorCall extends CallableOperation {
     sb.append(constructor.getName());
     sb.append('.');
     sb.append("<init>");
-    sb.append("(");
+    sb.append('(');
     Class<?>[] params = constructor.getParameterTypes();
-    TypeArguments.getTypeArgumentString(sb, params);
+    TypeArguments.appendTypeArgumentString(sb, params);
     sb.append(')');
     return sb.toString();
   }
@@ -234,7 +234,7 @@ public final class ConstructorCall extends CallableOperation {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e);
     }
 
     Class<?>[] typeArguments;
@@ -255,7 +255,7 @@ public final class ConstructorCall extends CallableOperation {
               + classType
               + ": "
               + e;
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e);
     }
 
     return TypedClassOperation.forConstructor(con);
