@@ -148,10 +148,11 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are also examined. The conversion of a member class that declares no type
-   * parameters, such as {@code Outer<T>.Inner}, to a {@link ReferenceType} converts its owner type
-   * as written, so an eager bound such as {@code List<Outer<T>.Inner>}, in the bound of {@code T},
-   * would be recursive.
+   * <p>Owner types are examined too, because the conversion of a reflection type to a {@link
+   * ReferenceType} can preserve the owner type as written, as in {@code Outer<T>} for {@code
+   * Outer<T>.Inner}. Converting such an owner type eagerly can recursively convert a type variable
+   * that is being converted, so an eager bound such as {@code List<Outer<T>.Inner>}, in the bound
+   * of {@code T}, would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
