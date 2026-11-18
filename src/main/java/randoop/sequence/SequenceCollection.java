@@ -22,6 +22,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.Log;
 
@@ -42,7 +43,7 @@ public final class SequenceCollection {
   // When Randoop kept all previously-generated sequences together, in a single
   // collection, profiling showed that finding these sequences was a bottleneck in generation.
   /** For each type, all the sequences that produce one or more values of exactly the given type. */
-  private Map<Type, List<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<Type, LinkedHashSet<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   /**
    * A set of all the types that can be created with the sequences in this. This is the same as
@@ -73,10 +74,24 @@ public final class SequenceCollection {
   private final TypeInstantiator typeInstantiator = new TypeInstantiator(typesAndSupertypes);
 
   /**
+   * The values created by the sequences in this collection that consist of a single initialization
+   * of a primitive or String value.
+   *
+   * <p>Each value in the collection is a primitive wrapper or a String.
+   */
+  private final Set<Object> primitiveValues = new HashSet<>();
+
+  /**
    * Number of (type, sequence) entries in the collection: sum of sizes of all values in
    * sequenceMap.
    */
   private int sequenceCount = 0;
+
+  /**
+   * The number of calls to {@link #add} that changed this collection since it was created or last
+   * cleared.
+   */
+  private int numSequencesAdded = 0;
 
   /**
    * SUT-parameter types that are not SUT-returned types. {@link
@@ -103,14 +118,28 @@ public final class SequenceCollection {
   }
 
   /**
-   * Returns the number of (type, sequence) entries in this collection. {@link #add} adds one entry
-   * for each active value of the sequence's last statement, so this number may exceed the number of
-   * distinct sequences in this collection.
+   * Returns the number of distinct (type, sequence) entries in this collection. {@link #add} adds
+   * one entry for each active value of the sequence's last statement whose type does not already
+   * have an entry for the sequence, so this number can exceed the number of distinct sequences in
+   * this collection.
    *
    * @return the number of (type, sequence) entries in this collection
    */
   public int size() {
     return sequenceCount;
+  }
+
+  /**
+   * Returns the number of calls to {@link #add} that changed this collection since it was created
+   * or last cleared, including calls by {@code addAll}. A call changes this collection if its
+   * sequence has at least one active output whose (type, sequence) entry is not already in this
+   * collection.
+   *
+   * @return the number of calls to {@link #add} that changed this collection since it was created
+   *     or last cleared
+   */
+  public int numSequencesAdded() {
+    return numSequencesAdded;
   }
 
   /**
@@ -122,8 +151,10 @@ public final class SequenceCollection {
     this.sequenceMap = new LinkedHashMap<>();
     this.typeSet = new SubTypeSet(false);
     this.typesAndSupertypes.clear();
+    this.primitiveValues.clear();
     this.typesModificationCount++;
     this.sequenceCount = 0;
+    this.numSequencesAdded = 0;
     checkRep();
   }
 
@@ -180,7 +211,7 @@ public final class SequenceCollection {
    * @param components the sequences to add
    */
   public void addAll(SequenceCollection components) {
-    for (List<Sequence> s : components.sequenceMap.values()) {
+    for (Collection<Sequence> s : components.sequenceMap.values()) {
       addAll(s);
     }
   }
@@ -203,9 +234,23 @@ public final class SequenceCollection {
    * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
+   * @return true if this collection changed; that is, if {@code sequence} has at least one active
+   *     output whose (type, sequence) entry was not already in this collection
    */
   @RequiresNonNull("this.sequenceMap")
-  public void add(Sequence sequence) {
+  public boolean add(Sequence sequence) {
+    boolean changed = false;
+    // Record the value only if the sequence is selectable for it, i.e., its output is active.
+    if (sequence.size() == 1 && sequence.isActive(0)) {
+      Type outType = sequence.getLastVariable().getType();
+      Statement statement = sequence.getStatement(0);
+      if ((outType.isPrimitive() || outType.equals(JavaTypes.STRING_TYPE))
+          && statement.isNonreceivingInitialization()) {
+        // NonreceiverTerm converts a primitive value to the wrapper class of its declared type, so
+        // this is the value that the statement produces when executed.
+        primitiveValues.add(statement.getValue());
+      }
+    }
     List<Type> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -230,10 +275,16 @@ public final class SequenceCollection {
           typesModificationCount++;
         }
         typeSet.add(formalType);
-        updateCompatibleMap(sequence, formalType);
+        if (updateCompatibleMap(sequence, formalType)) {
+          changed = true;
+        }
       }
     }
+    if (changed) {
+      numSequencesAdded++;
+    }
     checkRep();
+    return changed;
   }
 
   /**
@@ -259,21 +310,26 @@ public final class SequenceCollection {
   }
 
   /**
-   * Add the entry (type, sequence) to {@link #sequenceMap}. No deduplication is performed; that is,
-   * the entry is added even if an equal entry already exists.
+   * Add the entry (type, sequence) to {@link #sequenceMap}, if it is not already present.
    *
    * @param sequence the sequence
    * @param type the {@link Type}
+   * @return true if the entry was added; false if it was already present
    */
   @RequiresNonNull("this.sequenceMap")
-  private void updateCompatibleMap(Sequence sequence, Type type) {
-    List<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new ArrayList<>());
-    Log.logPrintf(
-        "Adding sequence #%d of type %s of length %d%n",
-        sequences.size() + 1, type, sequence.size());
+  private boolean updateCompatibleMap(Sequence sequence, Type type) {
+    Set<Sequence> sequences = this.sequenceMap.computeIfAbsent(type, __ -> new LinkedHashSet<>());
     boolean added = sequences.add(sequence);
-    assert added;
-    sequenceCount++;
+    if (added) {
+      sequenceCount++;
+      Log.logPrintf(
+          "Added sequence #%d of type %s of length %d%n", sequences.size(), type, sequence.size());
+    } else {
+      Log.logPrintf(
+          "Didn't add duplicate sequence of type %s of length %d (collection has %d sequences)%n",
+          type, sequence.size(), sequences.size());
+    }
+    return added;
   }
 
   /**
@@ -307,7 +363,7 @@ public final class SequenceCollection {
     List<SIList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
-      List<Sequence> l = this.sequenceMap.get(type);
+      Collection<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
         resultList.add(SIList.from(l));
       }
@@ -318,7 +374,7 @@ public final class SequenceCollection {
             compatibleType.isNonreceiverType(), compatibleType);
         if (!(onlyReceivers && compatibleType.isNonreceiverType())) {
           @SuppressWarnings("nullness:assignment") // map key
-          @NonNull List<Sequence> newMethods = this.sequenceMap.get(compatibleType);
+          @NonNull Set<Sequence> newMethods = this.sequenceMap.get(compatibleType);
           Log.logPrintf("  Adding %d methods.%n", newMethods.size());
           resultList.add(SIList.from(newMethods));
         }
@@ -400,10 +456,22 @@ public final class SequenceCollection {
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
-    for (List<Sequence> a : sequenceMap.values()) {
+    for (Collection<Sequence> a : sequenceMap.values()) {
       result.addAll(a);
     }
     return result;
+  }
+
+  /**
+   * Returns true if this collection contains a sequence that consists of a single initialization to
+   * the given value.
+   *
+   * @param value a primitive wrapper or a String
+   * @return true if this collection contains a sequence that consists of a single initialization to
+   *     the given value
+   */
+  public boolean containsPrimitiveValue(Object value) {
+    return primitiveValues.contains(value);
   }
 
   /**
@@ -446,11 +514,13 @@ public final class SequenceCollection {
       return;
     }
     for (Type t : sequenceMap.keySet()) {
-      List<Sequence> a = sequenceMap.get(t);
+      Collection<Sequence> a = sequenceMap.get(t);
       int asize = a.size();
       Log.logPrintf("Type %s: %d sequences%n", t, asize);
-      for (int i = 0; i < asize; i++) {
-        Log.logPrintf("  #%d: %s%n", i, a.get(i).toString().trim().replace("\n", "\n       "));
+      int index = 0;
+      for (Sequence s : a) {
+        Log.logPrintf("  #%d: %s%n", index, s.toString().trim().replace("\n", "\n       "));
+        index++;
       }
     }
   }
