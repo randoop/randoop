@@ -1464,7 +1464,7 @@ public class TypeVariableTest {
    *
    * @param <Z> a type parameter
    */
-  static class Outer<Z> {
+  static class OuterWithMemberClass<Z> {
     /** A non-generic member class. */
     class Inner {}
   }
@@ -1475,10 +1475,11 @@ public class TypeVariableTest {
    *
    * @param <K> a type parameter
    * @param <V> a type parameter whose bound mentions {@code K}
-   * @param <T> a type parameter whose bound mentions {@code V} and {@code Outer<String>.Inner}
+   * @param <T> a type parameter whose bound mentions {@code V} and {@code
+   *     OuterWithMemberClass<String>.Inner}
    */
   static class BoundWithMemberClass<
-      K, V extends Map<K, V>, T extends Map<V, Outer<String>.Inner>> {}
+      K, V extends Map<K, V>, T extends Map<V, OuterWithMemberClass<String>.Inner>> {}
 
   /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
   @Test
@@ -1491,7 +1492,7 @@ public class TypeVariableTest {
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
     assertEquals(
-        ClassOrInterfaceType.forClass(Outer.Inner.class),
+        ClassOrInterfaceType.forClass(OuterWithMemberClass.Inner.class),
         ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
   }
 
