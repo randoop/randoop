@@ -565,7 +565,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
-  @SuppressWarnings("PMD.DataClass")
+  @SuppressWarnings("PMD.DataClass") // a parameter object, whose fields are meant to be public
   public static class Limits {
     /**
      * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
@@ -1380,8 +1380,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
             }
           } catch (Error e) {
             // One example is: "java.lang.Error: FileMonitor not implemented for Linux".
-            // Another is an UnsatisfiedLinkError, which happens when an old classfile refers to a
-            // class that has been removed from the JDK, such as one in java.awt.*.
+            // Another is an UnsatisfiedLinkError, which happens when a class's native library is
+            // unavailable, as for some classes in java.awt.* on a headless JDK.
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be loaded: %s%n",
                 className, jarFile, e);
