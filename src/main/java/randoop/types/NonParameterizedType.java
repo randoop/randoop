@@ -104,8 +104,36 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    Substitution substitution = getEnclosingTypeSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
+        runtimeType.getGenericInterfaces());
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of the enclosing classes of this member
+   * class to the type arguments of its enclosing types. For example, for {@code
+   * Outer<String>.Inner} the result maps the type parameter {@code T} of {@code Outer} to {@code
+   * String}. Applying the result to a supertype in the declaration of {@code Inner}, such as {@code
+   * Parent<T>}, yields the corresponding supertype of this type, such as {@code Parent<String>}.
+   *
+   * @return the substitution for the type parameters of the enclosing classes of this type; empty
+   *     if this is not a member class
+   */
+  private Substitution getEnclosingTypeSubstitution() {
+    Substitution substitution = new Substitution();
+    ClassOrInterfaceType type = this;
+    while (type.isMemberClass()) {
+      type = type.enclosingType;
+      if (type instanceof InstantiatedType) {
+        InstantiatedType instantiatedType = (InstantiatedType) type;
+        substitution =
+            substitution.extend(
+                instantiatedType.getGenericClassType().getTypeParameters(),
+                instantiatedType.getReferenceArguments());
+      }
+    }
+    return substitution;
   }
 
   @Override
@@ -145,7 +173,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      if (supertype == null) {
+        return null;
+      }
+      return forType(supertype).substitute(getEnclosingTypeSubstitution());
     }
   }
 
