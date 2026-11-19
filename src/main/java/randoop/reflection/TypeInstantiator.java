@@ -210,10 +210,18 @@ public class TypeInstantiator {
         return null;
       }
       TypedClassOperation substituted = operation.substitute(substitution);
-      result =
-          substituted.isGeneric() || substituted.hasWildcardTypes()
-              ? instantiateWithin(substituted, substitution)
-              : substituted;
+      if (substituted.isGeneric() || substituted.hasWildcardTypes()) {
+        result = instantiateWithin(substituted, substitution);
+      } else if (selectOperationSubstitution(substituted, substitution) != null) {
+        // The signature is concrete, but a type variable can remain in the bounds of the type
+        // variables that the substitution maps, such as U in
+        // `<T extends Comparable<U>, S extends Comparable<U>, U> Map<T, S> make()`.  Choosing a
+        // single type for each such type variable checks that the bounds are consistent with one
+        // another.  The choice does not change the signature.
+        result = substituted;
+      } else {
+        return null;
+      }
     } else if (goalType.isAssignableFrom(outputType)) {
       result = instantiate(operation);
     } else {
