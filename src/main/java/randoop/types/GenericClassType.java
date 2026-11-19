@@ -15,18 +15,43 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private final Class<?> rawType;
 
-  /** The type parameters of the generic class. */
-  private final List<TypeVariable> parameters;
+  /**
+   * The type parameters of the generic class; null if not yet computed. Use {@link
+   * #getDeclaredTypeParameters()} instead of reading this field.
+   */
+  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
+  private volatile @Nullable List<TypeVariable> parameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
+   *
+   * <p>The type parameters are computed when they are first needed, not here. Computing the bound
+   * of a type parameter can create this generic class type, as for {@code class Outer<T extends
+   * Outer<?>.Inner>} or {@code class Node<T extends Node<?>>}. If this constructor computed the
+   * type parameters, then {@link ParameterizedType#forClass(Class)} would recurse without end:
+   * computing the bound of {@code T} would construct this type again, because the cache does not
+   * yet contain it, and constructing it would compute the bound of {@code T} again, because {@link
+   * TypeVariable#forType(java.lang.reflect.Type)} does not yet cache {@code T}.
    *
    * @param rawType the {@code Class} raw type
    */
   /*package*/ GenericClassType(Class<?> rawType) {
     super();
     this.rawType = rawType;
-    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+  }
+
+  /**
+   * Returns the type parameters declared by the generic class, not those of its enclosing classes.
+   *
+   * @return the type parameters declared by the generic class
+   */
+  private List<TypeVariable> getDeclaredTypeParameters() {
+    List<TypeVariable> result = parameters;
+    if (result == null) {
+      result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+      parameters = result;
+    }
+    return result;
   }
 
   /**
@@ -67,7 +92,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters);
+            getDeclaredTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -157,7 +182,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters);
+    return CollectionsPlume.mapList(TypeArgument::forType, getDeclaredTypeParameters());
   }
 
   /**
@@ -167,7 +192,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
+    return CollectionsPlume.concatenate(super.getTypeParameters(), getDeclaredTypeParameters());
   }
 
   /**
@@ -184,6 +209,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
+    List<TypeVariable> parameters = getDeclaredTypeParameters();
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -210,6 +236,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
+    List<TypeVariable> parameters = getDeclaredTypeParameters();
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(

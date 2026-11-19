@@ -148,6 +148,39 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
+   * A generic class with two type parameters and a non-generic member class.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class TwoParameterOuter<A, B> {
+    /** A member class whose superclass mentions only the first type parameter. */
+    @SuppressWarnings("serial")
+    class ListInner extends ArrayList<A> {}
+  }
+
+  /** A field whose type is {@code TwoParameterOuter<String, ?>.ListInner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  TwoParameterOuter<String, ?>.ListInner wildcardOwnerField;
+
+  /**
+   * A wildcard type argument of the enclosing type does not prevent the other type arguments from
+   * being substituted into the superclass.
+   */
+  @Test
+  public void superclassOfMemberClassWithWildcardInOwner() throws NoSuchFieldException {
+    ClassOrInterfaceType type =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class
+                .getDeclaredField("wildcardOwnerField")
+                .getGenericType());
+    assertEquals(
+        GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
+        type.getSuperclass());
+  }
+
+  /**
    * A generic class with a generic member class.
    *
    * @param <T> the type parameter
@@ -178,6 +211,25 @@ public class ClassOrInterfaceTypeTest {
     Substitution substitution = stringInteger.getInstantiatingSubstitution(stringX);
     assertNotNull(substitution);
     assertEquals(integerType, substitution.get(x));
+  }
+
+  /** The enclosing types of member classes must match for instantiation and for subtyping. */
+  @Test
+  public void memberClassWithOtherEnclosingTypeIsNotInstantiationOrSubtype() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    // GenericOuter<String>.GenericInner<Integer>
+    InstantiatedType stringInteger = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType otherStringInteger = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    // GenericOuter<Long>.GenericInner<Integer>
+    InstantiatedType longInteger = innerType.instantiate(longType, integerType);
+    assertTrue(stringInteger.isInstantiationOf(otherStringInteger));
+    assertFalse(longInteger.isInstantiationOf(stringInteger));
+    assertTrue(stringInteger.isSubtypeOfOrEqualTo(otherStringInteger));
+    assertFalse(longInteger.isSubtypeOfOrEqualTo(stringInteger));
+    assertFalse(stringInteger.isSubtypeOfOrEqualTo(longInteger));
   }
 
   /**

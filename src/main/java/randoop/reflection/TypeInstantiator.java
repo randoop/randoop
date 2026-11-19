@@ -23,6 +23,7 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
@@ -95,6 +96,9 @@ public class TypeInstantiator {
       // if operation creates objects of its declaring type, may create new instantiation
       if (operation.isConstructorCall()
           || (operation.isStatic()
+              // The output type of a static method can be a type that is not an InstantiatedType,
+              // such as Outer<X>.Inner or a type variable.
+              && outputType instanceof InstantiatedType
               && ((InstantiatedType) outputType).getGenericClassType().equals(declaringType))) {
         if (declaringType.isSubtypeOfOrEqualTo(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
@@ -138,7 +142,11 @@ public class TypeInstantiator {
    * parameterized type of the same generic class, then the output type of the result is {@code
    * goalType}. For example, if {@code operation} is {@code static <T extends Marker> Box<T> of(T)}
    * and {@code goalType} is {@code Box<MarkerImpl>}, this method returns {@code static
-   * Box<MarkerImpl> of(MarkerImpl)}. This method chooses type arguments for the remaining type
+   * Box<MarkerImpl> of(MarkerImpl)}. Likewise, if {@code goalType} is a member class that declares
+   * no type parameters, of a parameterized type, such as {@code Outer<String>.Inner}, and the
+   * output type of {@code operation} is the same class with generic enclosing types, such as {@code
+   * Outer<X>.Inner}, then the output type of the result is {@code goalType}. This method chooses
+   * type arguments for the remaining type
    * parameters, such as those that occur only in the parameter types of {@code operation}, as
    * {@link #instantiate(TypedClassOperation)} does.
    *
@@ -154,16 +162,20 @@ public class TypeInstantiator {
     Type outputType = operation.getOutputType();
     // The instantiated operation, or null if none was found.
     TypedClassOperation result;
+    // True if the output type is matched against the goal type, to choose the substitution.
+    boolean matchGoal = false;
+    // The substitution that makes the output type of the operation equal to the goal type, or null
+    // if there is none.
+    Substitution substitution = null;
     if (goalType instanceof InstantiatedType
         && outputType instanceof ParameterizedType
         && ((ParameterizedType) outputType)
             .getGenericClassType()
             .equals(((InstantiatedType) goalType).getGenericClassType())) {
+      matchGoal = true;
       InstantiatedType goalInstantiatedType = (InstantiatedType) goalType;
-      // The substitution that makes the output type of the operation equal to the goal type.  The
-      // output type of a constructor is a generic class type, such as Box<T>.
-      Substitution substitution =
-          matchingSubstitution((ParameterizedType) outputType, goalInstantiatedType);
+      // The output type of a constructor is a generic class type, such as Box<T>.
+      substitution = matchingSubstitution((ParameterizedType) outputType, goalInstantiatedType);
       if (substitution != null
           && operation.getDeclaringType().equals(goalInstantiatedType.getGenericClassType())) {
         // A static method does not use the type parameters of its class, such as T in Box<T>.
@@ -173,6 +185,20 @@ public class TypeInstantiator {
         Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
+    } else if (goalType instanceof NonParameterizedType
+        && goalType.isParameterized()
+        && outputType instanceof ClassOrInterfaceType
+        && outputType.isGeneric()
+        && outputType.runtimeClassIs(goalType.getRuntimeClass())) {
+      // A member class that declares no type parameters, of a parameterized type, such as
+      // Outer<String>.Inner.  Its type arguments are those of its enclosing types, so an output
+      // type such as Outer<X>.Inner is not assignable to it until X is chosen.
+      matchGoal = true;
+      substitution =
+          matchingMemberSubstitution(
+              (ClassOrInterfaceType) outputType, (NonParameterizedType) goalType);
+    }
+    if (matchGoal) {
       if (substitution == null || !satisfiesBounds(substitution)) {
         return null;
       }
@@ -214,6 +240,27 @@ public class TypeInstantiator {
     } else {
       return null;
     }
+    if (substitution == null || !pattern.substitute(substitution).equals(instance)) {
+      return null;
+    }
+    return substitution;
+  }
+
+  /**
+   * Returns the substitution that, applied to the given member class type, yields the given member
+   * class type, whose type arguments come from its enclosing types. For example, for {@code
+   * Outer<X>.Inner} and {@code Outer<String>.Inner}, returns the substitution that maps {@code X} to
+   * {@code String}.
+   *
+   * @param pattern a class type that can contain type variables, such as {@code Outer<X>.Inner}
+   * @param instance a member class that declares no type parameters, of a parameterized type, such
+   *     as {@code Outer<String>.Inner}, of the same class as {@code pattern}
+   * @return the substitution {@code s} such that {@code pattern.substitute(s)} equals {@code
+   *     instance}, or null if there is no such substitution
+   */
+  private static @Nullable Substitution matchingMemberSubstitution(
+      ClassOrInterfaceType pattern, NonParameterizedType instance) {
+    Substitution substitution = instance.getInstantiatingSubstitution(pattern);
     if (substitution == null || !pattern.substitute(substitution).equals(instance)) {
       return null;
     }

@@ -142,8 +142,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * the declaration of this class, such as {@code ArrayList<T>}, yields the supertype of this type,
    * such as {@code ArrayList<String>}.
    *
+   * <p>A type argument that is a wildcard maps its type parameter to the {@link WildcardType}, as
+   * in {@link InstantiatedType#getSuperclass()}, so that the other type parameters are still
+   * substituted. For example, for {@code Outer<String, ?>.Inner}, the result maps the first type
+   * parameter of {@code Outer} to {@code String}.
+   *
    * @return the substitution for the type parameters of the enclosing classes, or null if there is
-   *     none or if a type argument of an enclosing type is a wildcard
+   *     none
    */
   private @Nullable Substitution getEnclosingTypeSubstitution() {
     Substitution result = null;
@@ -151,9 +156,14 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     while (type.isMemberClass()) {
       ClassOrInterfaceType enclosing = type.enclosingType;
       if (enclosing instanceof InstantiatedType) {
-        Substitution substitution = ((InstantiatedType) enclosing).getTypeSubstitution();
+        InstantiatedType instantiatedEnclosing = (InstantiatedType) enclosing;
+        Substitution substitution = instantiatedEnclosing.getTypeSubstitution();
         if (substitution == null) {
-          return null;
+          // A type argument is a wildcard.
+          substitution =
+              new Substitution(
+                  instantiatedEnclosing.getGenericClassType().getTypeParameters(),
+                  instantiatedEnclosing.getReferenceArguments());
         }
         result = result == null ? substitution : result.extend(substitution);
       }
