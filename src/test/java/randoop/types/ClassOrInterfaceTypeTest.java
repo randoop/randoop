@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -180,6 +181,36 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(integerType, substitution.get(x));
   }
 
+  /** A class with a member class whose superclass is a member class of a parameterized type. */
+  static class OtherOuter {
+    /** A member class whose superclass is {@code GenericOuter<String>.GenericInner<Integer>}. */
+    @SuppressWarnings("ClassCanBeStatic")
+    class Derived extends GenericOuter<String>.GenericInner<Integer> {
+      /**
+       * Creates a Derived.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      Derived(GenericOuter<String> outer) {
+        outer.super();
+      }
+    }
+  }
+
+  @Test
+  public void instantiatingSubstitutionOfMemberSubclass() {
+    ClassOrInterfaceType derived = ClassOrInterfaceType.forClass(OtherOuter.Derived.class);
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    TypeVariable x = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    // GenericOuter<String>.GenericInner<X>.  The enclosing type of Derived, OtherOuter, is not
+    // compared with GenericOuter<String>.
+    InstantiatedType stringX = innerType.instantiate(JavaTypes.STRING_TYPE, x);
+    Substitution substitution = derived.getInstantiatingSubstitution(stringX);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(x));
+  }
+
   @Test
   public void boundOfMemberOfParameterizedType() {
     GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
@@ -246,6 +277,31 @@ public class ClassOrInterfaceTypeTest {
       /** An inner class of an inner class whose enclosing type is generic. */
       class Deepest {}
     }
+
+    /** An inner class whose supertypes mention the type parameter of the enclosing class. */
+    @SuppressWarnings("serial")
+    class ListInner extends ArrayList<T> implements Supplier<T> {
+      @Override
+      public T get() {
+        return get(0);
+      }
+    }
+  }
+
+  @Test
+  public void supertypesOfMemberOfParameterizedType() {
+    GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    ClassOrInterfaceType listInnerOfString =
+        ClassOrInterfaceType.forClass(Outer.ListInner.class)
+            .substitute(new Substitution(outerType.getTypeParameters(), JavaTypes.STRING_TYPE));
+    // The supertypes of Outer<String>.ListInner are ArrayList<String> and Supplier<String>.
+    assertEquals(
+        GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
+        listInnerOfString.getSuperclass());
+    assertEquals(
+        Collections.singletonList(
+            GenericClassType.forClass(Supplier.class).instantiate(JavaTypes.STRING_TYPE)),
+        listInnerOfString.getInterfaces());
   }
 
   /**

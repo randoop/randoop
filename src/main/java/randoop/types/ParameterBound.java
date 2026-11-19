@@ -148,10 +148,13 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are not examined, because the conversion of a reflection type to a {@link
-   * ReferenceType} does not use them. It gives each member class the owner type from its class
-   * declaration, as in {@code Outer<T>} for {@code Outer<String>.Inner<Integer>}, not the owner
-   * type as written.
+   * <p>The owner type of a generic member class is not examined, because the conversion of a
+   * reflection type to a {@link ReferenceType} does not use it. It gives each generic member class
+   * the owner type from its class declaration, as in {@code Outer<T>} for {@code
+   * Outer<String>.Inner<Integer>}, not the owner type as written. The owner type of a non-generic
+   * member class, as in {@code Outer<T>.Inner}, is examined, because the conversion does use it.
+   * For example, in {@code class Outer<T extends Comparable<? extends Outer<T>.Inner[]>>}, an
+   * eager bound for {@code T} would convert {@code Outer<T>}, and so {@code T}, again.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -171,6 +174,10 @@ public abstract class ParameterBound {
           return true;
         }
       }
+    }
+    if (isNonGenericMemberClass(type)) {
+      java.lang.reflect.Type owner = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
+      return owner != null && hasTypeVariable(owner, variableSet);
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;

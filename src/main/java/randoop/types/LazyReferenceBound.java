@@ -128,10 +128,12 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type or, after the substitution is applied to it, is the type of this bound. The
-   * type of this bound contains type variables, so it stands for every instantiation of them; a
-   * type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
-   * but {@code List<T>} itself is.
+   * is the null type or, after the substitution is applied to it, is a subtype of the type of this
+   * bound, with each type variable standing for itself. The type of this bound contains type
+   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
+   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} and {@code
+   * ArrayList<T>} are. The comparison includes enclosing types, so {@code Outer<Integer>.Inner<T>}
+   * is not a lower bound of {@code Outer<Number>.Inner<T>}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -141,10 +143,11 @@ class LazyReferenceBound extends ReferenceBound {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
+    // With an empty substitution, no type variable stands for an unknown type.
     return lowerBound instanceof ReferenceBound
-        && ((ReferenceBound) lowerBound)
-            .getBoundType()
-            .substitute(substitution)
-            .equals(getBoundType());
+        && Subtyping.isSubtypeOrEqual(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            getBoundType(),
+            new Substitution());
   }
 }

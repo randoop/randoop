@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,8 +130,64 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    Substitution substitution = getEnclosingSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forSupertype(type, substitution),
+        runtimeType.getGenericInterfaces());
+  }
+
+  /**
+   * Converts a reflection type that is a supertype in the declaration of this class, and applies
+   * the given substitution to it.
+   *
+   * @param supertype a supertype in the declaration of this class
+   * @param substitution the substitution from {@link #getEnclosingSubstitution()}, or null
+   * @return the converted supertype, with {@code substitution} applied if it is non-null
+   */
+  private static ClassOrInterfaceType forSupertype(
+      java.lang.reflect.Type supertype, @Nullable Substitution substitution) {
+    ClassOrInterfaceType result = forType(supertype);
+    return substitution == null ? result : result.substitute(substitution);
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of the enclosing classes of this member
+   * class to the type arguments of its enclosing types. For example, for {@code
+   * Outer<String>.Inner}, the substitution maps the type parameter {@code T} of {@code Outer} to
+   * {@code String}. The declared supertypes of the member class, such as {@code ArrayList<T>} in
+   * {@code class Inner extends ArrayList<T>}, are instantiated by this substitution.
+   *
+   * <p>Returns null if no enclosing type is an {@link InstantiatedType}, as for the generic form
+   * {@code Outer<T>.Inner}, or if some type argument of an enclosing type is a wildcard.
+   *
+   * @return the substitution for the type parameters of the enclosing classes, or null
+   */
+  private @Nullable Substitution getEnclosingSubstitution() {
+    List<TypeVariable> parameters = new ArrayList<>();
+    List<ReferenceType> arguments = new ArrayList<>();
+    ClassOrInterfaceType type = this;
+    while (type.isMemberClass()) {
+      ClassOrInterfaceType enclosing = type.enclosingType;
+      type = enclosing;
+      if (!(enclosing instanceof InstantiatedType)) {
+        continue;
+      }
+      java.lang.reflect.TypeVariable<?>[] typeParameters =
+          enclosing.getRuntimeClass().getTypeParameters();
+      List<TypeArgument> typeArguments = enclosing.getTypeArguments();
+      if (typeParameters.length != typeArguments.size()) {
+        return null;
+      }
+      for (int i = 0; i < typeParameters.length; i++) {
+        TypeArgument argument = typeArguments.get(i);
+        if (!(argument instanceof ReferenceArgument)) {
+          return null;
+        }
+        parameters.add(TypeVariable.forType(typeParameters[i]));
+        arguments.add(((ReferenceArgument) argument).getReferenceType());
+      }
+    }
+    return parameters.isEmpty() ? null : new Substitution(parameters, arguments);
   }
 
   @Override
@@ -170,7 +227,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      return supertype == null ? null : forSupertype(supertype, getEnclosingSubstitution());
     }
   }
 

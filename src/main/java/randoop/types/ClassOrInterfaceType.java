@@ -410,6 +410,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
+      }
+      // If this type is a proper subclass of the goal type, as Other.Derived is of
+      // Outer<String>.Base<X> when Derived extends Outer<String>.Base<Integer>, then the enclosing
+      // type of this type is unrelated to that of the goal type.  The supertype of this type that
+      // is of the goal type's class, rather than this type, instantiates the goal type.
+      if (goalClassType.isMemberClass() && !this.runtimeClassIs(goalClassType.getRuntimeClass())) {
+        if (!(goalType instanceof GenericClassType)) {
+          ClassOrInterfaceType supertype = getSupertypeOfClass(goalClassType.getRuntimeClass());
+          return supertype == null ? null : supertype.getInstantiatingSubstitution(goalType);
+        }
+        // For a generic class goal type, the matching supertype, below, determines the
+        // substitution.
+      } else if (goalClassType.isMemberClass()) {
         ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
         if (enclosingGoalType.isGeneric()) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
@@ -436,6 +449,29 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
     return substitution;
+  }
+
+  /**
+   * Returns the strict supertype of this type whose runtime class is the given class.
+   *
+   * @param runtimeClass a class
+   * @return the strict supertype of this type whose runtime class is {@code runtimeClass}, or null
+   *     if there is none
+   */
+  private @Nullable ClassOrInterfaceType getSupertypeOfClass(Class<?> runtimeClass) {
+    // Unlike getSupertypesStrict, this does not compute the supertypes of the result.
+    Set<ClassOrInterfaceType> visited = new LinkedHashSet<>();
+    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>(getImmediateSupertypes());
+    while (!worklist.isEmpty()) {
+      ClassOrInterfaceType supertype = worklist.remove();
+      if (supertype.runtimeClassIs(runtimeClass)) {
+        return supertype;
+      }
+      if (visited.add(supertype)) {
+        worklist.addAll(supertype.getImmediateSupertypes());
+      }
+    }
+    return null;
   }
 
   /**

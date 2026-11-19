@@ -229,7 +229,9 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            bound = new LazyParameterBound(lowerBound);
+            // As for a type variable that is a type argument, the substitution can change the
+            // bounds of the type variable.
+            bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
           bound = forType(new HashSet<>(0), lowerBound).substitute(substitution);
