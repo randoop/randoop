@@ -144,9 +144,22 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution that, applied to a supertype in the declaration of this type's class,
+   * yields the corresponding supertype of this type. It maps the type parameters of the class to
+   * the type arguments of this type and, if this type is a member class, the type parameters of the
+   * enclosing classes to the type arguments of the enclosing types. For example, for {@code
+   * Outer<String>.Inner<Integer>} where {@code class Inner<U> extends Base<T>} is declared in {@code
+   * Outer<T>}, it maps {@code U} to {@code Integer} and {@code T} to {@code String}.
+   *
+   * @return the substitution for the type parameters of this type's class and enclosing classes
+   */
+  private Substitution getSupertypeSubstitution() {
+    return new Substitution(genericType.getTypeParameters(), getReferenceArguments())
+        .extend(getEnclosingTypeSubstitution());
   }
 
   @Override
@@ -199,15 +212,15 @@ public class InstantiatedType extends ParameterizedType {
    * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
    * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
    * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
-   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}.
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a
+   * member class, the substitution also maps the type parameters of the enclosing classes to the
+   * type arguments of the enclosing types.
    *
    * @return the superclass type for this parameterized type
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**

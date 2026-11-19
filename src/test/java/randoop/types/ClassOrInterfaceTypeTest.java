@@ -229,6 +229,74 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
+   * A generic class whose member classes extend a member class of another class, with a type
+   * argument that is the type parameter of this class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class EnclosingOuter<T> {
+    /** A member class that declares no type parameters. */
+    class Child extends BaseOuter.Base<T> {
+      /**
+       * Creates a Child.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      Child(BaseOuter outer) {
+        outer.super();
+      }
+    }
+
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class GenericChild<U> extends BaseOuter.Base<T> {
+      /**
+       * Creates a GenericChild.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      GenericChild(BaseOuter outer) {
+        outer.super();
+      }
+    }
+  }
+
+  /**
+   * In {@code EnclosingOuter<String>.Child}, which extends {@code BaseOuter.Base<T>}, the type
+   * argument of the enclosing type replaces {@code T} in the superclass.
+   */
+  @Test
+  public void instantiatingSubstitutionForSuperclassMentioningEnclosingParameter() {
+    GenericClassType baseType =
+        (GenericClassType) ClassOrInterfaceType.forClass(BaseOuter.Base.class);
+    TypeVariable baseParameter = baseType.getTypeParameters().get(0);
+    TypeVariable outerParameter =
+        GenericClassType.forClass(EnclosingOuter.class).getTypeParameters().get(0);
+    Substitution toString = new Substitution(outerParameter, JavaTypes.STRING_TYPE);
+
+    // EnclosingOuter<String>.Child
+    ClassOrInterfaceType stringChild =
+        ClassOrInterfaceType.forClass(EnclosingOuter.Child.class).substitute(toString);
+    Substitution substitution = stringChild.getInstantiatingSubstitution(baseType);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(baseParameter));
+
+    // EnclosingOuter<String>.GenericChild<Integer>
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    GenericClassType genericChildType =
+        (GenericClassType) ClassOrInterfaceType.forClass(EnclosingOuter.GenericChild.class);
+    InstantiatedType stringIntegerChild =
+        genericChildType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    substitution = stringIntegerChild.getInstantiatingSubstitution(baseType);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(baseParameter));
+  }
+
+  /**
    * A generic class with member classes, one of which extends the other.
    *
    * @param <T> the type parameter

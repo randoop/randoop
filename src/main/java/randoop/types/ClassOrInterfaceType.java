@@ -469,11 +469,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns this type, or the supertype of this type, whose runtime class is the given class. A
-   * supertype of a member class mentions the type parameters of the classes that enclose this
-   * type's class, as in {@code Outer<T>.Inner} for {@code class Child extends Inner} declared in
-   * {@code Outer<T>}. In the result, they are replaced by the type arguments of this type's
-   * enclosing types, as in {@code Outer<Integer>.Inner} for {@code Outer<Integer>.Child}.
+   * Returns this type, or the supertype of this type, whose runtime class is the given class. In a
+   * supertype of a member class, such as {@code Outer<Integer>.Inner} for {@code
+   * Outer<Integer>.Child} where {@code class Child extends Inner} is declared in {@code Outer<T>},
+   * the type arguments of this type's enclosing types replace the type parameters of the enclosing
+   * classes; {@link #getSuperclass()} and {@link #getInterfaces()} perform that replacement.
    *
    * @param runtimeClass a class
    * @return this type or its supertype whose runtime class is {@code runtimeClass}, or null if
@@ -485,7 +485,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     for (ClassOrInterfaceType supertype : getSupertypesStrict()) {
       if (supertype.runtimeClassIs(runtimeClass)) {
-        return supertype.substitute(getEnclosingTypeSubstitution());
+        return supertype;
       }
     }
     return null;
@@ -495,11 +495,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Returns a substitution that maps the type parameters of the classes that enclose this type's
    * class to the type arguments of this type's enclosing types. For example, for {@code
    * Outer<Integer>.Inner}, the result maps the type parameter {@code T} of {@code Outer<T>} to
-   * {@code Integer}. A type parameter whose type argument is a wildcard is not mapped.
+   * {@code Integer}. A type parameter whose type argument is a wildcard is not mapped. Applying the
+   * result to a supertype in the declaration of this type's class, such as {@code ArrayList<T>},
+   * yields the supertype of this type, such as {@code ArrayList<Integer>}.
    *
    * @return a substitution for the type parameters of the classes that enclose this type's class
    */
-  private Substitution getEnclosingTypeSubstitution() {
+  /*package*/ final Substitution getEnclosingTypeSubstitution() {
     Substitution result = new Substitution();
     for (ClassOrInterfaceType type = this; type.isMemberClass(); type = type.enclosingType) {
       ClassOrInterfaceType enclosing = type.enclosingType;
