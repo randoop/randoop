@@ -196,6 +196,15 @@ public class DemandDrivenInputCreator {
   }
 
   /**
+   * Returns the number of sequences in the secondary sequence collection.
+   *
+   * @return the number of sequences in the secondary sequence collection
+   */
+  public int numSecondarySequences() {
+    return secondarySequenceCollection.size();
+  }
+
+  /**
    * Returns the set of visited types.
    *
    * @return the set of visited types
