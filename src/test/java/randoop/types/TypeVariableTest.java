@@ -1480,9 +1480,16 @@ public class TypeVariableTest {
         (TypeVariable) t.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType();
+    assertEquals(NonGenericInnerOuter.Inner.class, inner.getRuntimeClass());
+    // The owner type is NonGenericInnerOuter<String>, as written, not the declaration form
+    // NonGenericInnerOuter<Z>.
     assertEquals(
-        ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class),
-        ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
+        GenericClassType.forClass(NonGenericInnerOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
+    assertFalse(inner.isGeneric());
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */

@@ -161,9 +161,9 @@ class LazyParameterBound extends ParameterBound {
 
     if (isNonGenericMemberClass(type)) {
       // A non-generic member class of a generic class, as in Outer<String>.Inner, which
-      // GenericClassType.forClass rejects.  Convert it as ClassOrInterfaceType.forType does.
-      return TypeArgument.forType(
-          ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) type).getRawType()));
+      // GenericClassType.forClass rejects.  ClassOrInterfaceType.forType preserves the owner type,
+      // such as Outer<String>, whose type arguments the substitution may change.
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
     }
 
     if (type instanceof ParameterizedType) {
