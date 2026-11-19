@@ -1550,19 +1550,22 @@ public class TypeVariableTest {
   SecondBoundedByFirst<? super String[], ?> superStringArrayField;
 
   /**
-   * An array type is within a bound that is a capture variable if a supertype of the array type,
-   * such as {@code Object}, can instantiate the capture variable.
+   * An array type is not within a bound that is a capture variable merely because a supertype of
+   * the array type, such as {@code Object}, can instantiate the capture variable. A capture
+   * variable stands for a particular unknown type, so its strict supertypes are not searched.
    */
   @Test
-  public void testArraySupertypeCanInstantiateVariableBound() throws NoSuchFieldException {
+  public void testArraySupertypeCannotInstantiateCaptureVariableBound()
+      throws NoSuchFieldException {
     ReferenceType integerArray = ArrayType.forClass(Integer[].class);
     InstantiatedType capturedType = capturedFieldType("superStringArrayField");
     TypeVariable first = typeArgument(capturedType, 0);
     TypeVariable second = typeArgument(capturedType, 1);
     assertFalse(first.canBeInstantiatedBy(integerArray));
-    // Integer[] <: Object, which can instantiate the capture variable for the first argument.
-    assertTrue(first.canBeSupertypeOf(integerArray, new Substitution()));
-    assertTrue(second.canBeInstantiatedBy(integerArray));
+    // The capture of `? super String[]` could be Object, but Integer[] is not known to be a
+    // subtype of it.
+    assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
+    assertFalse(second.canBeInstantiatedBy(integerArray));
   }
 
   /**
