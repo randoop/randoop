@@ -50,12 +50,23 @@ val testJdkVersionString =
   providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().majorVersion)
 val testJdkVersion = Integer.valueOf(testJdkVersionString)
 
-// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness) on project `p`.
-// The code does not yet type-check under the Nullness Checker, and -Werror would make javac stop at
-// the first class that has a warning.  Without -Werror, the build reports every warning, so that CI
-// can report the ones on lines that a pull request changes.
+// True if the `errorProneFix` task was requested on the command line.  Then each compilation that
+// runs Error Prone rewrites its source files in place, applying Error Prone's suggested fixes.
+// Gradle matches task names case-insensitively, so also recognize, say, "errorpronefix".
+val errorProneFix =
+  gradle.startParameter.taskNames.any {
+    it.replaceFirst(Regex("^:"), "").equals("errorProneFix", ignoreCase = true)
+  }
+
+// The -Werror flag, except in two cases:
+//  * When the build runs the Nullness Checker (-PcfNullness) on project `p`.  The code does not yet
+//    type-check under the Nullness Checker, and -Werror would make javac stop at the first class
+//    that has a warning.  Without -Werror, the build reports every warning, so that CI can report
+//    the ones on lines that a pull request changes.
+//  * When the build runs the `errorProneFix` task.  With -Werror, a warning stops javac before
+//    Error Prone applies its fixes.
 fun werror(p: Project): List<String> =
-  if (p.hasProperty("cfNullness")) listOf() else listOf("-Werror")
+  if (p.hasProperty("cfNullness") || errorProneFix) listOf() else listOf("-Werror")
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -394,6 +405,10 @@ if (isJava21orHigher) {
 
 // Error Prone linter
 
+// The compilation tasks that do not run Error Prone.
+val errorProneDisabledTasks =
+  listOf("compileTestInputJava", "compileTestJava", "compileSystemTestJava")
+
 allprojects {
   dependencies {
     "errorprone"(rootProject.libs.error.prone.core)
@@ -402,9 +417,7 @@ allprojects {
 
 allprojects {
   tasks.withType<JavaCompile>().configureEach {
-    if (
-      name == "compileTestInputJava" || name == "compileTestJava" || name == "compileSystemTestJava"
-    ) {
+    if (name in errorProneDisabledTasks) {
       options.errorprone.enabled = false
       (options as ExtensionAware)
         .extensions
@@ -425,7 +438,31 @@ allprojects {
         disable("EffectivelyPrivate")
 
         excludedPaths = ".*/testInput/.*"
+
+        if (errorProneFix) {
+          errorproneArgs.add("-XepPatchLocation:IN_PLACE")
+        }
       }
+      if (errorProneFix) {
+        // Always run Error Prone, even if the compiled classes are up to date or cached.
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+      }
+    }
+  }
+}
+
+tasks.register("errorProneFix") {
+  description = "Applies Error Prone's suggested fixes to the source files"
+  group = "Verification"
+  if (errorProneFix && !isJava21orHigher) {
+    throw GradleException("errorProneFix requires JDK 21 or higher, because Spotless does")
+  }
+  allprojects.forEach { p ->
+    dependsOn(p.tasks.withType<JavaCompile>().matching { it.name !in errorProneDisabledTasks })
+    if (isJava21orHigher) {
+      // Error Prone's fixes are not formatted.
+      finalizedBy(p.tasks.named("spotlessJavaApply"))
     }
   }
 }
