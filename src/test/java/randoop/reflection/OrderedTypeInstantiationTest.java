@@ -4,11 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -17,8 +21,10 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeArgument;
 import randoop.types.TypeVariable;
 
 /**
@@ -95,6 +101,75 @@ public class OrderedTypeInstantiationTest {
     private static final long serialVersionUID = 20261117L;
 
     public BoundedTreeSet() {}
+  }
+
+  /** A sorted map whose ordered type argument, {@code Thread}, is not comparable. */
+  public static class StringThreadMap extends MySortedMap<String, Thread> {
+    public StringThreadMap() {
+      super((MyComparator<? super Thread>) null);
+    }
+  }
+
+  /** A sorted map with a constructor that copies another sorted map. */
+  public static class CopyingSortedMap<V, K> extends MySortedMap<V, K> {
+    public CopyingSortedMap(MySortedMap<V, K> other) {
+      super(other);
+    }
+  }
+
+  /**
+   * A comparator interface whose type parameter has a bound, so that its {@code compare} method
+   * erases to {@code compare(Number, Number)}.
+   */
+  public interface NumberOrder<T extends Number> {
+    int compare(T o1, T o2);
+  }
+
+  /** An order on {@code AtomicInteger}, which is a {@code Number} that is not comparable. */
+  public static class AtomicIntegerOrder implements NumberOrder<AtomicInteger> {
+    @Override
+    public int compare(AtomicInteger o1, AtomicInteger o2) {
+      return Integer.compare(o1.get(), o2.get());
+    }
+  }
+
+  /** An ordered set of numbers whose constructor takes a {@link NumberOrder}. */
+  public static class NumberTreeSet<E extends Number> extends TreeSet<E> {
+    private static final long serialVersionUID = 20261119L;
+
+    public NumberTreeSet(NumberOrder<E> order) {
+      super(order::compare);
+    }
+  }
+
+  /** A set of threads, which are not comparable. */
+  public static class ThreadTreeSet extends TreeSet<Thread> {
+    private static final long serialVersionUID = 20261119L;
+
+    public ThreadTreeSet() {
+      super(new MyThreadOrder());
+    }
+  }
+
+  /** A {@code java.util.Comparator} for threads. */
+  public static class MyThreadOrder implements java.util.Comparator<Thread> {
+    @Override
+    public int compare(Thread o1, Thread o2) {
+      return Long.compare(o1.getId(), o2.getId());
+    }
+  }
+
+  /**
+   * An ordered set whose constructor takes a {@code NavigableSet}, which inherits its {@code
+   * comparator()} method from {@code SortedSet}.
+   */
+  public static class CopyingNavigableSet<E> extends TreeSet<E> {
+    private static final long serialVersionUID = 20261119L;
+
+    public CopyingNavigableSet(NavigableSet<E> other) {
+      // Calls TreeSet(SortedSet), which uses the comparator of `other`.
+      super(other);
+    }
   }
 
   /** How many times to instantiate each constructor, since instantiation is random. */
@@ -224,6 +299,95 @@ public class OrderedTypeInstantiationTest {
       assertTrue(outputType.toString(), k.isSubtypeOfOrEqualTo(v));
     }
     assertTrue("no instantiation of " + constructor, someInstantiation);
+  }
+
+  /**
+   * Instantiates the given constructor many times with the given input types, and returns the type
+   * arguments of the output type of each successful instantiation.
+   *
+   * @param constructor a constructor of a generic class
+   * @param inputTypes the input types
+   * @return the type arguments of the output type of each successful instantiation
+   */
+  private static List<List<Type>> instantiatedTypeArguments(
+      TypedClassOperation constructor, Set<Type> inputTypes) {
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    List<List<Type>> result = new ArrayList<>();
+    for (int i = 0; i < TRIALS; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(constructor);
+      if (instantiated == null) {
+        continue;
+      }
+      List<Type> typeArguments = new ArrayList<>();
+      for (TypeArgument argument :
+          ((InstantiatedType) instantiated.getOutputType()).getTypeArguments()) {
+        typeArguments.add(((ReferenceArgument) argument).getReferenceType());
+      }
+      result.add(typeArguments);
+    }
+    return result;
+  }
+
+  /**
+   * When an input type for a copy constructor's sorted-map parameter supplies the ordered type
+   * argument, it also supplies the other type argument, so that the input type can be passed to the
+   * constructor.
+   */
+  @Test
+  public void testCopyConstructorKeepsOtherTypeArgument() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(StringThreadMap.class).getSupertypesInclusive());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(CopyingSortedMap.class.getConstructor(MySortedMap.class));
+    ReferenceType threadType = ReferenceType.forClass(Thread.class);
+    boolean threadKey = false;
+    for (List<Type> typeArguments : instantiatedTypeArguments(constructor, inputTypes)) {
+      // Thread is not comparable, so it can be the key type only if StringThreadMap supplied it.
+      if (typeArguments.get(1).equals(threadType)) {
+        threadKey = true;
+        assertEquals(typeArguments.toString(), JavaTypes.STRING_TYPE, typeArguments.get(0));
+      }
+    }
+    assertTrue("no instantiation of " + constructor + " with key type Thread", threadKey);
+  }
+
+  /** A comparator interface whose type parameter has a bound orders a type parameter. */
+  @Test
+  public void testBoundedComparatorInterface() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(AtomicIntegerOrder.class).getSupertypesInclusive());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(NumberTreeSet.class.getConstructor(NumberOrder.class));
+    // No input type is a comparable Number, so only the comparator can supply the type argument.
+    List<List<Type>> instantiations = instantiatedTypeArguments(constructor, inputTypes);
+    assertTrue("no instantiation of " + constructor, !instantiations.isEmpty());
+    for (List<Type> typeArguments : instantiations) {
+      assertEquals(ReferenceType.forClass(AtomicInteger.class), typeArguments.get(0));
+    }
+  }
+
+  /**
+   * A {@code NavigableSet} parameter orders a type parameter, though {@code NavigableSet} inherits
+   * its {@code comparator()} method.
+   */
+  @Test
+  public void testInheritedComparatorMethod() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(ClassOrInterfaceType.forClass(ThreadTreeSet.class).getSupertypesInclusive());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(
+            CopyingNavigableSet.class.getConstructor(NavigableSet.class));
+    ReferenceType threadType = ReferenceType.forClass(Thread.class);
+    boolean threadElement = false;
+    for (List<Type> typeArguments : instantiatedTypeArguments(constructor, inputTypes)) {
+      // Thread is not comparable, so it can be the element type only if ThreadTreeSet supplied it.
+      if (typeArguments.get(0).equals(threadType)) {
+        threadElement = true;
+      }
+    }
+    assertTrue("no instantiation of " + constructor + " with element type Thread", threadElement);
   }
 
   /** A constructor whose unordered type parameter is already instantiated can be instantiated. */
