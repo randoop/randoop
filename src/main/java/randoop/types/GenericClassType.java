@@ -49,11 +49,11 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * Creates a {@link GenericClassType} whose type parameters have not been computed. The client
-   * must call {@link #initializeParameters} before using the result, other than to compare it or
-   * to store it in another type.
+   * must call {@link #initializeParameters} before using the result, other than to compare it or to
+   * store it in another type.
    *
-   * <p>This permits a client to cache the result before computing its type parameters, whose
-   * bounds may refer to the class itself, as in {@code C<T extends List<? extends C<?>[]>>}.
+   * <p>This permits a client to cache the result before computing its type parameters, whose bounds
+   * may refer to the class itself, as in {@code C<T extends List<? extends C<?>[]>>}.
    *
    * @param rawType the {@code Class} raw type
    * @return a generic class type whose type parameters have not been computed
