@@ -135,6 +135,10 @@ allprojects {
 
   apply(plugin = "org.checkerframework")
   configure<CheckerFrameworkExtension> {
+    // The `errorProneFix` task needs only Error Prone, and the Checker Framework slows it down.
+    if (errorProneFix) {
+      skipCheckerFramework = true
+    }
     version = rootProject.libs.versions.checker.get()
     if (project.hasProperty("cfNullness")) {
       checkers =
