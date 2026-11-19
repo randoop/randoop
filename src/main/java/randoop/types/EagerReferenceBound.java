@@ -115,12 +115,18 @@ class EagerReferenceBound extends ReferenceBound {
     }
     // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
     // Outer<String>.Inner, is compared by a subtype test.  The subtype test also handles an argType
-    // that is a type variable, through its upper bound.
+    // that is a type variable, through its upper bound.  A type variable in the enclosing type of
+    // the bound, such as U in Outer<U>.Inner, can be an unknown, such as a sibling of the type
+    // parameter whose bound this is, so the substitution is completed with identity mappings.
+    // ReferenceType.isSubtypeOfOrEqualTo would compare the enclosing types with equals.
     if (thisBoundType instanceof NonParameterizedType && thisBoundType.isParameterized()) {
       if (!argType.isReferenceType()) {
         return false;
       }
-      return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      Substitution completeSubstitution =
+          subst.extendWithIdentity(thisBoundType.getTypeParameters());
+      return Subtyping.isSubtypeOrEqual(
+          (ReferenceType) argType, thisBoundType, completeSubstitution);
     }
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
@@ -135,18 +141,6 @@ class EagerReferenceBound extends ReferenceBound {
       }
       argSuperType = argSuperType.applyCaptureConversion();
       return argSuperType.isInstantiationOf(boundClassType);
-    }
-    if (thisBoundType instanceof NonParameterizedType
-        && thisBoundType.isParameterized()
-        && argType instanceof ClassOrInterfaceType) {
-      // A member class that declares no type parameters, of a parameterized type, such as
-      // Outer<U>.Inner.  A type variable in its enclosing type can be an unknown, such as a sibling
-      // of the type parameter whose bound this is, so compare the enclosing types as Subtyping
-      // does.  ReferenceType.isSubtypeOfOrEqualTo would compare them with equals.
-      Substitution completeSubstitution =
-          subst.extendWithIdentity(thisBoundType.getTypeParameters());
-      return Subtyping.isSubtypeOrEqual(
-          (ReferenceType) argType, thisBoundType, completeSubstitution);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }

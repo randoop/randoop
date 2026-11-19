@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -200,6 +202,13 @@ public class ClassOrInterfaceTypeTest {
        * @param <V> the type parameter
        */
       class Inner<V> {}
+
+      /**
+       * Another generic member class of a generic member class.
+       *
+       * @param <V> the type parameter
+       */
+      class Leaf<V> {}
     }
   }
 
@@ -594,24 +603,61 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
-   * A generic class with a generic member class that has a generic member class.
+   * A generic class with a generic member class whose supertypes mention the type parameters of
+   * both classes.
    *
    * @param <T> the type parameter
    */
-  static class ThreeLevelOuter<T> {
+  @SuppressWarnings("ClassCanBeStatic")
+  static class SupertypeOuter<T> {
     /**
-     * A generic member class.
+     * A generic member class whose supertypes mention {@code T}.
      *
      * @param <U> the type parameter
      */
-    class Middle<U> {
-      /**
-       * A generic member class of a generic member class.
-       *
-       * @param <V> the type parameter
-       */
-      class Leaf<V> {}
+    @SuppressWarnings("serial")
+    class Middle<U> extends HashMap<T, U> implements Comparable<Map<U, T>> {
+      @Override
+      public int compareTo(Map<U, T> other) {
+        return 0;
+      }
     }
+  }
+
+  /** A field whose type is a generic member class of a parameterized type. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SupertypeOuter<String>.Middle<Integer> supertypeMiddleField;
+
+  /** The supertypes of a generic member class of a parameterized type use the owner's arguments. */
+  @Test
+  public void supertypesOfGenericMemberOfParameterizedType() throws NoSuchFieldException {
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ClassOrInterfaceType middle =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class
+                .getDeclaredField("supertypeMiddleField")
+                .getGenericType());
+    assertEquals(
+        GenericClassType.forClass(HashMap.class).instantiate(JavaTypes.STRING_TYPE, integerType),
+        middle.getSuperclass());
+    InstantiatedType mapOfIntegerString =
+        GenericClassType.forClass(Map.class).instantiate(integerType, JavaTypes.STRING_TYPE);
+    assertEquals(
+        Collections.singletonList(
+            GenericClassType.forClass(Comparable.class).instantiate(mapOfIntegerString)),
+        middle.getInterfaces());
+
+    // The same type, built by substitution rather than by reflection.
+    TypeVariable t = TypeVariable.forType(SupertypeOuter.class.getTypeParameters()[0]);
+    TypeVariable u = TypeVariable.forType(SupertypeOuter.Middle.class.getTypeParameters()[0]);
+    ClassOrInterfaceType substituted =
+        ClassOrInterfaceType.forClass(SupertypeOuter.Middle.class)
+            .substitute(
+                new Substitution(
+                    Arrays.asList(t, u),
+                    Arrays.<ReferenceType>asList(JavaTypes.STRING_TYPE, integerType)));
+    assertEquals(middle.getSuperclass(), substituted.getSuperclass());
+    assertEquals(middle.getInterfaces(), substituted.getInterfaces());
   }
 
   @Test

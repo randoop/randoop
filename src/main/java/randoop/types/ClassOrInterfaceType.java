@@ -496,6 +496,32 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of their declarations. For example, for {@code Outer<String>.Inner}, the
+   * result maps the type parameter {@code T} of {@code Outer} to {@code String}. Applying it to a
+   * supertype from the declaration of this class, such as {@code ArrayList<T>}, yields the
+   * supertype of this type, {@code ArrayList<String>}. The result is empty if this is not a member
+   * class of a parameterized type.
+   *
+   * <p>Unlike {@link #getEnclosingTypeSubstitution()}, this maps a type parameter whose type
+   * argument is a wildcard to the wildcard type, as {@link InstantiatedType#getSuperclass()} does
+   * for the type arguments of the class itself.
+   *
+   * @return the substitution of the type arguments of the enclosing types of this type
+   */
+  /*package*/ final Substitution getEnclosingSubstitution() {
+    Substitution result = new Substitution();
+    for (ClassOrInterfaceType type = this; type.isMemberClass(); type = type.enclosingType) {
+      ClassOrInterfaceType enclosing = type.enclosingType;
+      if (enclosing instanceof InstantiatedType) {
+        InstantiatedType instantiatedType = (InstantiatedType) enclosing;
+        result = result.extend(instantiatedType.getOwnArgumentSubstitution());
+      }
+    }
+    return result;
+  }
+
+  /**
    * Returns a substitution that maps the type parameters of the classes that enclose this type's
    * class to the type arguments of this type's enclosing types. For example, for {@code
    * Outer<Integer>.Inner}, the result maps the type parameter {@code T} of {@code Outer<T>} to

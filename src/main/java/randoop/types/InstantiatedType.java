@@ -144,9 +144,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getSupertypeSubstitution());
   }
 
   @Override
@@ -199,15 +197,47 @@ public class InstantiatedType extends ParameterizedType {
    * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
    * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
    * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
-   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}.
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a member
+   * class, the substitution also maps the type parameters of the enclosing classes to the type
+   * arguments of the enclosing types.
    *
    * @return the superclass type for this parameterized type
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution of the type arguments of this type for the type parameters that its
+   * class declares. For example, for {@code Outer<String>.Middle<Integer>}, the result maps the
+   * type parameter {@code U} of {@code Middle<U>} to {@code Integer}. A wildcard type argument is
+   * mapped to its {@link WildcardType}.
+   *
+   * @return the substitution of the type arguments of this type for the type parameters that its
+   *     class declares
+   */
+  /*package*/ Substitution getOwnArgumentSubstitution() {
+    List<ReferenceType> arguments = getReferenceArguments();
+    // The type parameters of a generic class can include those of its enclosing types, first.
+    List<TypeVariable> parameters = genericType.getTypeParameters();
+    List<TypeVariable> ownParameters =
+        parameters.subList(parameters.size() - arguments.size(), parameters.size());
+    return new Substitution(ownParameters, arguments);
+  }
+
+  /**
+   * Returns the substitution to apply to a supertype from the declaration of this type's class to
+   * obtain the supertype of this type. It maps the type parameters that the class declares to the
+   * type arguments of this type, and the type parameters of the enclosing classes to the type
+   * arguments of the enclosing types. For example, for {@code Outer<String>.Middle<Integer>}, where
+   * {@code Middle<U> extends HashMap<T, U>}, the result maps {@code T} to {@code String} and
+   * {@code U} to {@code Integer}.
+   *
+   * @return the substitution for the supertypes of this type
+   */
+  private Substitution getSupertypeSubstitution() {
+    return getEnclosingSubstitution().extend(getOwnArgumentSubstitution());
   }
 
   /**

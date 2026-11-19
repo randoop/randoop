@@ -540,10 +540,12 @@ public class TypeInstantiator {
    * of the capture variables of the wildcards against the type chosen for {@code T} ensures that
    * the types chosen for the wildcards are consistent with one another.
    *
-   * <p>If an attempt fails, and step 1 chose an input type for some parameter type while other
-   * input types that it had not rejected remained, this makes another attempt, up to {@link
-   * #MAX_INSTANTIATION_ATTEMPTS} attempts in all. Otherwise, another attempt would make the same
-   * choices and fail the same way, so this returns null.
+   * <p>If an attempt fails, this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS}
+   * attempts in all, if step 1 chose an input type for some parameter type while other input types
+   * that it had not rejected remained, or if the search in step 2 was not exhaustive because there
+   * were more than {@link #MAX_CHECKED_SUBSTITUTIONS} combinations of candidate types. Otherwise,
+   * another attempt would make the same choices, or search the same combinations exhaustively, and
+   * fail the same way, so this returns null.
    *
    * <p>Because the result extends {@code fixed}, the bounds of the type variables that {@code
    * fixed} maps are checked too, once the type variables in them are instantiated. For example,
@@ -568,7 +570,8 @@ public class TypeInstantiator {
       Set<TypeVariable> typeParameters = new LinkedHashSet<>();
       Substitution substitution = fixed;
       // True if an input type was chosen for some parameter type while other unrejected input types
-      // remained, so that another attempt could choose differently.
+      // remained, or if the search in step 2 was not exhaustive, so that another attempt could
+      // choose differently.
       boolean choseAmongSeveral = false;
       // True if each parameterized parameter type matched an input type.  If false, this attempt
       // fails without instantiating the remaining type variables.
@@ -649,6 +652,9 @@ public class TypeInstantiator {
             if (result != null && satisfiesBounds(result)) {
               return result;
             }
+            // A search that checks only some of the combinations of candidate types tries them in
+            // random order, so another attempt can find a combination that this one did not.
+            choseAmongSeveral |= combinationCount(candidatesByVariable) > MAX_CHECKED_SUBSTITUTIONS;
             if (Log.isLoggingOn()) {
               failure = "no extension of " + substitution + " satisfies the bounds";
             }
