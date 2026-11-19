@@ -1349,7 +1349,7 @@ public class TypeVariableTest {
    *
    * @param <Z> a type parameter
    */
-  static class Outer<Z> {
+  static class OuterWithMember<Z> {
     /** A non-generic member class. */
     class Inner {}
   }
@@ -1360,10 +1360,11 @@ public class TypeVariableTest {
    *
    * @param <K> a type parameter
    * @param <V> a type parameter whose bound mentions {@code K}
-   * @param <T> a type parameter whose bound mentions {@code V} and {@code Outer<String>.Inner}
+   * @param <T> a type parameter whose bound mentions {@code V} and {@code
+   *     OuterWithMember<String>.Inner}
    */
   static class BoundWithMemberClass<
-      K, V extends Map<K, V>, T extends Map<V, Outer<String>.Inner>> {}
+      K, V extends Map<K, V>, T extends Map<V, OuterWithMember<String>.Inner>> {}
 
   /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
   @Test
@@ -1376,7 +1377,7 @@ public class TypeVariableTest {
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
     assertEquals(
-        ClassOrInterfaceType.forClass(Outer.Inner.class),
+        ClassOrInterfaceType.forClass(OuterWithMember.Inner.class),
         ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
   }
 
@@ -1398,6 +1399,25 @@ public class TypeVariableTest {
     // Integer[] <: Object, which can instantiate the capture variable for the first argument.
     assertTrue(first.canBeSupertypeOf(integerArray, new Substitution()));
     assertTrue(second.canBeInstantiatedBy(integerArray));
+  }
+
+  /** A field whose type has a wildcard bounded below by {@code Number}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Comparable<? super Number> superNumberField;
+
+  /**
+   * An interface type is within a bound that is a capture variable if {@code Object}, which is a
+   * supertype of every interface, can instantiate the capture variable.
+   */
+  @Test
+  public void testObjectSupertypeOfInterfaceCanInstantiateCaptureVariable()
+      throws NoSuchFieldException {
+    ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
+    InstantiatedType capturedType = capturedFieldType("superNumberField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    assertFalse(capture.canBeInstantiatedBy(runnable));
+    // Runnable <: Object, which can instantiate the capture variable.
+    assertTrue(capture.canBeSupertypeOf(runnable, new Substitution()));
   }
 
   /**

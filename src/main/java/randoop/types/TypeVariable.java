@@ -377,9 +377,10 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns the strict supertypes of the given type, if it is a class, interface, or array type.
-   * The supertypes of an array type {@code C[]} are {@code Object}, {@code Cloneable}, {@code
-   * Serializable}, and, if {@code C} is a class, interface, or array type, {@code S[]} for each
-   * strict supertype {@code S} of {@code C}. For any other type, returns an empty list.
+   * The supertypes of every class or interface type other than {@code Object} include {@code
+   * Object}. The supertypes of an array type {@code C[]} are {@code Object}, {@code Cloneable},
+   * {@code Serializable}, and, if {@code C} is a class, interface, or array type, {@code S[]} for
+   * each strict supertype {@code S} of {@code C}. For any other type, returns an empty list.
    *
    * @param type a type
    * @return the strict supertypes of {@code type}
@@ -388,6 +389,10 @@ public abstract class TypeVariable extends ParameterType {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof ClassOrInterfaceType) {
       result.addAll(((ClassOrInterfaceType) type).getSupertypesStrict());
+      // An interface has no superclass, so its supertypes as computed above do not include Object.
+      if (!type.isObject() && !result.contains(JavaTypes.OBJECT_TYPE)) {
+        result.add(JavaTypes.OBJECT_TYPE);
+      }
     } else if (type instanceof ArrayType) {
       result.add(JavaTypes.OBJECT_TYPE);
       result.add(JavaTypes.CLONEABLE_TYPE);
