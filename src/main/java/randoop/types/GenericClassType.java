@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -15,7 +16,10 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private final Class<?> rawType;
 
-  /** The type parameters of the generic class. */
+  /**
+   * The type parameters of the generic class. It is empty until {@link #initializeParameters} is
+   * called.
+   */
   private final List<TypeVariable> parameters;
 
   /**
@@ -24,9 +28,46 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType the {@code Class} raw type
    */
   /*package*/ GenericClassType(Class<?> rawType) {
+    this(rawType, true);
+  }
+
+  /**
+   * Creates a {@link GenericClassType} for the given raw type.
+   *
+   * @param rawType the {@code Class} raw type
+   * @param initializeParameters if true, compute the type parameters; if false, the client must
+   *     call {@link #initializeParameters} before using the result
+   */
+  private GenericClassType(Class<?> rawType, boolean initializeParameters) {
     super();
     this.rawType = rawType;
-    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+    this.parameters = new ArrayList<>(rawType.getTypeParameters().length);
+    if (initializeParameters) {
+      initializeParameters();
+    }
+  }
+
+  /**
+   * Creates a {@link GenericClassType} whose type parameters have not been computed. The client
+   * must call {@link #initializeParameters} before using the result, other than to compare it or
+   * to store it in another type.
+   *
+   * <p>This permits a client to cache the result before computing its type parameters, whose
+   * bounds may refer to the class itself, as in {@code C<T extends List<? extends C<?>[]>>}.
+   *
+   * @param rawType the {@code Class} raw type
+   * @return a generic class type whose type parameters have not been computed
+   */
+  /*package*/ static GenericClassType withoutParameters(Class<?> rawType) {
+    return new GenericClassType(rawType, false);
+  }
+
+  /** Computes the type parameters of this generic class. */
+  /*package*/ void initializeParameters() {
+    if (!parameters.isEmpty()) {
+      throw new IllegalStateException("type parameters of " + rawType + " already computed");
+    }
+    parameters.addAll(CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters()));
   }
 
   /**
