@@ -643,6 +643,50 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A method in whose signature the type variable {@code U} occurs only in the bounds of other type
+   * variables.
+   *
+   * @param <T> the key type
+   * @param <S> the value type
+   * @param <U> a type variable that occurs only in bounds
+   * @return a map
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<U>, S extends Comparable<U>, U> Map<T, S> sharedBound() {
+    return Collections.emptyMap();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type chooses a type for each type variable
+   * that occurs only in bounds, even if the goal type determines the whole signature. For the goal
+   * type {@code Map<String, Integer>}, {@code <T extends Comparable<U>, S extends Comparable<U>, U>
+   * Map<T, S> sharedBound()} has no instantiation, because no {@code U} makes both {@code String}
+   * and {@code Integer} a {@code Comparable<U>}.
+   */
+  @Test
+  public void testGoalTypeChecksVariablesOnlyInBounds()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    TypedClassOperation sharedBound =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("sharedBound"));
+
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+
+    InstantiatedType stringToInteger = mapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE);
+    InstantiatedType stringToString =
+        mapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(instantiator.instantiate(sharedBound, stringToInteger));
+      TypedClassOperation operation = instantiator.instantiate(sharedBound, stringToString);
+      assertNotNull(operation);
+      assertEquals(stringToString, operation.getOutputType());
+    }
+  }
+
+  /**
    * Returns the given type argument of the given parameterized type.
    *
    * @param type a parameterized type, such as {@code List<String>}
