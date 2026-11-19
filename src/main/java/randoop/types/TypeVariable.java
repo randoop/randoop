@@ -383,7 +383,7 @@ public abstract class TypeVariable extends ParameterType {
    *
    * <ul>
    *   <li>For a class or interface type, the result is its strict supertypes that mention only its
-   *       type variables.
+   *       type variables. For an interface, the result also includes {@code Object}.
    *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
    *       if the component type is a reference type other than {@code Object}, {@code Object[]};
    *       and the arrays whose component types are the strict supertypes of the array's component
@@ -408,6 +408,10 @@ public abstract class TypeVariable extends ParameterType {
         if (typeParameters.containsAll(supertype.getTypeParameters())) {
           result.add(supertype);
         }
+      }
+      if (type.isInterface()) {
+        // Object is a supertype of every interface, but getSupertypesStrict() omits it.
+        result.add(JavaTypes.OBJECT_TYPE);
       }
     } else if (type instanceof ArrayType) {
       result.add(JavaTypes.OBJECT_TYPE);
@@ -492,8 +496,106 @@ public abstract class TypeVariable extends ParameterType {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
     }
-    return bound1.equals(bound2)
-        && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
+    if (!bound1.equals(bound2)) {
+      return false;
+    }
+    if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
+      return areIdentical(
+          ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
+    }
+    if (bound1 instanceof IntersectionTypeBound && bound2 instanceof IntersectionTypeBound) {
+      List<ParameterBound> members1 = ((IntersectionTypeBound) bound1).getBounds();
+      List<ParameterBound> members2 = ((IntersectionTypeBound) bound2).getBounds();
+      if (members1.size() != members2.size()) {
+        return false;
+      }
+      for (int i = 0; i < members1.size(); i++) {
+        if (!areIdentical(members1.get(i), members2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
+  }
+
+  /**
+   * Returns true if the given equal types are identical: the type variables at corresponding
+   * positions in them are identical, as determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * <p>This compares the types position by position, rather than comparing their lists of type
+   * parameters, because such a list contains only one of the copies of a type variable that occur
+   * in a type. For example, the lists for {@code Pair<U, U>} and {@code Pair<U, U2>}, where {@code
+   * U2} is a copy of {@code U} with other bounds, are both {@code [U]}.
+   *
+   * @param type1 a type
+   * @param type2 a type
+   * @return true if the types are equal and the type variables in them are identical
+   */
+  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  private static boolean areIdentical(Type type1, Type type2) {
+    if (type1 == type2) {
+      return true;
+    }
+    if (!type1.equals(type2)) {
+      return false;
+    }
+    if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
+      return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
+    }
+    if (type1 instanceof ArrayType && type2 instanceof ArrayType) {
+      return areIdentical(
+          ((ArrayType) type1).getComponentType(), ((ArrayType) type2).getComponentType());
+    }
+    if (type1 instanceof InstantiatedType && type2 instanceof InstantiatedType) {
+      InstantiatedType instantiated1 = (InstantiatedType) type1;
+      InstantiatedType instantiated2 = (InstantiatedType) type2;
+      @Nullable ClassOrInterfaceType enclosing1 = instantiated1.enclosingType;
+      @Nullable ClassOrInterfaceType enclosing2 = instantiated2.enclosingType;
+      if (enclosing1 != null && enclosing2 != null && !areIdentical(enclosing1, enclosing2)) {
+        return false;
+      }
+      List<TypeArgument> arguments1 = instantiated1.getTypeArguments();
+      List<TypeArgument> arguments2 = instantiated2.getTypeArguments();
+      if (arguments1.size() != arguments2.size()) {
+        return false;
+      }
+      for (int i = 0; i < arguments1.size(); i++) {
+        if (!areIdentical(arguments1.get(i), arguments2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (type1 instanceof ReferenceType && type2 instanceof ReferenceType) {
+      return areIdentical(
+          ((ReferenceType) type1).getTypeParameters(), ((ReferenceType) type2).getTypeParameters());
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if the given equal type arguments are identical, as determined by {@link
+   * #areIdentical(Type, Type)} for reference arguments and by {@link #areIdentical(ParameterBound,
+   * ParameterBound)} for the bounds of wildcard arguments.
+   *
+   * @param argument1 a type argument
+   * @param argument2 a type argument
+   * @return true if the type arguments are equal and the type variables in them are identical
+   */
+  private static boolean areIdentical(TypeArgument argument1, TypeArgument argument2) {
+    if (argument1 instanceof ReferenceArgument && argument2 instanceof ReferenceArgument) {
+      return areIdentical(
+          ((ReferenceArgument) argument1).getReferenceType(),
+          ((ReferenceArgument) argument2).getReferenceType());
+    }
+    if (argument1 instanceof WildcardArgument && argument2 instanceof WildcardArgument) {
+      return argument1.equals(argument2)
+          && areIdentical(
+              ((WildcardArgument) argument1).getTypeBound(),
+              ((WildcardArgument) argument2).getTypeBound());
+    }
+    return argument1.equals(argument2);
   }
 
   /**
