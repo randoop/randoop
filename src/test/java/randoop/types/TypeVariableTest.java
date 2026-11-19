@@ -2548,9 +2548,13 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, NonGenericInnerOuter<String>.Inner>> {}
 
+  /** A field whose type is a non-generic member class of an instantiated generic class. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  NonGenericInnerOuter<String>.Inner stringInnerField;
+
   /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
   @Test
-  public void testSubstitutionReachesBoundWithMemberClass() {
+  public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundWithMemberClass.class).getTypeParameters();
     TypeVariable t = parameters.get(2);
@@ -2558,8 +2562,12 @@ public class TypeVariableTest {
         (TypeVariable) t.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
+    // The expected type is NonGenericInnerOuter<String>.Inner, whose owner is instantiated.
+    // ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class) would have the generic class
+    // as its owner, which is not equal.
     assertEquals(
-        ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class),
+        ClassOrInterfaceType.forType(
+            TypeVariableTest.class.getDeclaredField("stringInnerField").getGenericType()),
         ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
   }
 
@@ -2568,19 +2576,22 @@ public class TypeVariableTest {
   SecondBoundedByFirst<? super String[], ?> superStringArrayField;
 
   /**
-   * An array type is within a bound that is a capture variable if a supertype of the array type,
-   * such as {@code Object}, can instantiate the capture variable.
+   * A capture variable stands for a particular type, so an array type is not within a bound that is
+   * a capture variable merely because a supertype of the array type, such as {@code Object}, could
+   * instantiate the capture variable. The search among strict supertypes applies only to explicit
+   * type variables; see {@link #testVariableBoundIsSupertype}.
    */
   @Test
-  public void testArraySupertypeCanInstantiateVariableBound() throws NoSuchFieldException {
+  public void testArraySupertypeDoesNotInstantiateCaptureBound() throws NoSuchFieldException {
     ReferenceType integerArray = ArrayType.forClass(Integer[].class);
     InstantiatedType capturedType = capturedFieldType("superStringArrayField");
     TypeVariable first = typeArgument(capturedType, 0);
     TypeVariable second = typeArgument(capturedType, 1);
     assertFalse(first.canBeInstantiatedBy(integerArray));
-    // Integer[] <: Object, which can instantiate the capture variable for the first argument.
-    assertTrue(first.canBeSupertypeOf(integerArray, new Substitution()));
-    assertTrue(second.canBeInstantiatedBy(integerArray));
+    // The capture of `? super String[]` might be String[], so Integer[] is not known to be a
+    // subtype of it, even though Integer[] <: Object.
+    assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
+    assertFalse(second.canBeInstantiatedBy(integerArray));
   }
 
   /**

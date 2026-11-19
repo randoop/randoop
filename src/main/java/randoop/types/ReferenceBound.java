@@ -114,8 +114,10 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    // An eager bound can also contain type variables, as in T[], where T is not recursive.
-    return lowerBound.isLowerBound(boundType.substitute(substitution), substitution);
+    // As specified by ParameterBound.hasLowerBound, the substitution applies only to lowerBound.
+    // A type variable in this bound, as in T[], stands for itself:  for target T with T := Number,
+    // Integer is not known to be a subtype of T.
+    return lowerBound.isLowerBound(boundType, substitution);
   }
 
   @Override
