@@ -95,8 +95,8 @@ public class WildcardArgument extends TypeArgument {
    * <p>For a non-wildcard argument {@code R}, considers the cases (JLS section 4.5.1):
    *
    * <ul>
-   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype
-   *       of {@code B}
+   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype of
+   *       {@code B}
    *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
    * </ul>
    */
