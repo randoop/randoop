@@ -15,7 +15,8 @@ public class ExplicitTypeVariable extends TypeVariable {
    * @param variable the type parameter
    * @param bound the upper bound on the parameter
    */
-  ExplicitTypeVariable(java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
+  /*package*/ ExplicitTypeVariable(
+      java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
     super(new EagerReferenceBound(JavaTypes.NULL_TYPE), bound);
     this.variable = variable;
   }
@@ -65,7 +66,7 @@ public class ExplicitTypeVariable extends TypeVariable {
    *
    * @return the reflection type variable that this type variable represents
    */
-  java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
+  /*package*/ java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
     return this.variable;
   }
 
@@ -82,15 +83,41 @@ public class ExplicitTypeVariable extends TypeVariable {
     }
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     if (type == null) {
-      if (!upperBound.equals(getUpperTypeBound())) {
+      if (!isSameAsUpperBound(upperBound)) {
         return new ExplicitTypeVariable(this.variable, upperBound);
       }
       return this;
     }
-    if (!upperBound.equals(getUpperTypeBound())) {
+    if (!isSameAsUpperBound(upperBound)) {
       return ((TypeVariable) type).createCopyWithBounds(getLowerTypeBound(), upperBound);
     }
     return type;
+  }
+
+  /**
+   * Returns true if the given bound represents the same type as the upper bound of this variable.
+   * The two can differ in representation: {@link LazyParameterBound#substitute}, given a
+   * substitution that maps each type variable in the bound to itself, returns a {@link
+   * ReferenceBound} for the same type.
+   *
+   * <p>Treating such bounds as different would make {@link #substitute(Substitution)} create a copy
+   * of this variable that is not equal to it. Then {@link TypeVariable#isInstantiationOf} on a
+   * variable that occurs in its own bound, such as {@code T extends Map<T, String>}, would compare
+   * the variable to such a copy, which creates another copy, and would not terminate.
+   *
+   * @param bound a bound
+   * @return true if {@code bound} represents the same type as the upper bound of this variable
+   */
+  private boolean isSameAsUpperBound(ParameterBound bound) {
+    ParameterBound upperBound = getUpperTypeBound();
+    if (bound.equals(upperBound)) {
+      return true;
+    }
+    if (upperBound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
+      return bound.equals(converted);
+    }
+    return false;
   }
 
   @Override

@@ -36,7 +36,7 @@ import randoop.util.TupleSet;
 public final class ContractCheckingGenerator extends TestCheckGenerator {
 
   /** The contracts to check on the values produced by executing a sequence. */
-  private ContractSet contracts;
+  private final ContractSet contracts;
 
   /**
    * Create a new visitor that checks the given contracts after the last statement in a sequence is
@@ -155,7 +155,7 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
    *     an {@link InvalidExceptionCheck} if a contract throws an exception indicating that the
    *     sequence is invalid, null otherwise.
    */
-  @Nullable Check checkContracts(
+  /*package*/ @Nullable Check checkContracts(
       List<ObjectContract> contracts, ExecutableSequence eseq, TupleSet<ReferenceValue> tuples) {
     for (List<ReferenceValue> tuple : tuples.tuples()) {
       Object[] values = getValues(tuple);

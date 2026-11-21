@@ -75,7 +75,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * @param pgen the constant pool where the instruction occurs
    * @return the {@link MethodSignature} for the method invoked by the given instruction
    */
-  static MethodSignature of(InvokeInstruction invocation, ConstantPoolGen pgen) {
+  /*package*/ static MethodSignature of(InvokeInstruction invocation, ConstantPoolGen pgen) {
     return new MethodSignature(
         invocation.getClassName(pgen),
         invocation.getMethodName(pgen),
@@ -95,7 +95,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * @return the {@link MethodSignature} for the method represented by the signature string
    * @throws IllegalArgumentException if {@code signature} is not formatted correctly
    */
-  static MethodSignature of(String signature) {
+  /*package*/ static MethodSignature of(String signature) {
     int parenPos = signature.indexOf('(');
     if (parenPos < 0) {
       throw new IllegalArgumentException(
@@ -288,7 +288,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return the fully-qualified class name of this {@link MethodSignature}
    */
-  String getClassname() {
+  /*package*/ String getClassname() {
     return classname;
   }
 
@@ -297,7 +297,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return the simple method name of this {@link MethodSignature}
    */
-  String getName() {
+  /*package*/ String getName() {
     return name;
   }
 
@@ -315,6 +315,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return the parameter types for this {@link MethodSignature}
    */
+  /*package*/
   @SuppressWarnings("PMD.MethodReturnsInternalArray")
   Type[] getParameterTypes() {
     return paramTypes;
@@ -339,7 +340,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * @throws IllegalClassFormatException if the containing class of this {@link MethodSignature}
    *     exists, but cannot be loaded
    */
-  Method toMethod()
+  /*package*/ Method toMethod()
       throws ClassNotFoundException, NoSuchMethodException, IllegalClassFormatException {
     if (method != null) {
       return method;
@@ -383,7 +384,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    *
    * @return true if the represented method exists on the classpath, false otherwise
    */
-  boolean exists() {
+  /*package*/ boolean exists() {
     try {
       return toMethod() != null;
     } catch (ClassNotFoundException
@@ -454,7 +455,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * @return a new {@link MethodSignature} with {@code classname} as the class name, and the
    *     signature of this
    */
-  MethodSignature substituteClassname(String classname) {
+  /*package*/ MethodSignature substituteClassname(String classname) {
     return new MethodSignature(classname, this.getName(), this.getParameterTypes());
   }
 
@@ -465,7 +466,7 @@ public final class MethodSignature implements Comparable<MethodSignature> {
    * @return a new {@link MethodSignature} identical to this one except the signature has the first
    *     parameter removed
    */
-  MethodSignature removeFirstParameter() {
+  /*package*/ MethodSignature removeFirstParameter() {
     Type[] types = new Type[paramTypes.length - 1];
     System.arraycopy(paramTypes, 1, types, 0, paramTypes.length - 1);
     return new MethodSignature(this.classname, this.getName(), types);

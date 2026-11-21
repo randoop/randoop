@@ -90,7 +90,7 @@ public class ExpectedOutcomeTable {
    * @param throwsClauses set of {@code <exception type, comment>} pairs for exceptions expected in
    *     post-state
    */
-  void add(
+  /*package*/ void add(
       boolean guardIsSatisfied,
       ExecutableBooleanExpression postcondition,
       List<ThrowsClause> throwsClauses) {
