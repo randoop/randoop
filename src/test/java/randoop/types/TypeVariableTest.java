@@ -1191,7 +1191,7 @@ public class TypeVariableTest {
    * @return the type of the field
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
-  private static ClassOrInterfaceType fieldType(String fieldName) throws NoSuchFieldException {
+  private static ClassOrInterfaceType ownFieldType(String fieldName) throws NoSuchFieldException {
     return ClassOrInterfaceType.forType(
         TypeVariableTest.class.getDeclaredField(fieldName).getGenericType());
   }
@@ -1200,17 +1200,17 @@ public class TypeVariableTest {
   public void testSubtypeOfWildcardInstantiation() throws NoSuchFieldException {
     InstantiatedType listOfString =
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("unboundedListField")));
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("charSequenceListField")));
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("superStringListField")));
-    assertFalse(listOfString.isSubtypeOfOrEqualTo(fieldType("numberListField")));
-    assertFalse(listOfString.isSubtypeOfOrEqualTo(fieldType("superIntegerListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("charSequenceListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("superStringListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("superIntegerListField")));
     // A wildcard argument is not contained by a non-wildcard argument.
-    assertFalse(fieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
+    assertFalse(ownFieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
 
     TypeVariable t = typeParameter(StringListBound.class, 0);
-    assertTrue(t.isSubtypeOfOrEqualTo(fieldType("unboundedListField")));
-    assertFalse(t.isSubtypeOfOrEqualTo(fieldType("numberListField")));
+    assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
   }
 
   /**
@@ -1575,10 +1575,6 @@ public class TypeVariableTest {
     assertTrue(second.canBeInstantiatedBy(integerArray));
   }
 
-  /** A field whose type has a wildcard bounded below by {@code Number}. */
-  @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  Comparable<? super Number> superNumberField;
-
   /**
    * An interface type is within a bound that is a capture variable if {@code Object}, which is a
    * supertype of every interface, can instantiate the capture variable.
@@ -1587,7 +1583,7 @@ public class TypeVariableTest {
   public void testObjectSupertypeOfInterfaceCanInstantiateCaptureVariable()
       throws NoSuchFieldException {
     ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
-    InstantiatedType capturedType = capturedFieldType("superNumberField");
+    InstantiatedType capturedType = capturedFieldType("comparableSuperNumberField");
     TypeVariable capture = typeArgument(capturedType, 0);
     assertFalse(capture.canBeInstantiatedBy(runnable));
     // Runnable <: Object, which can instantiate the capture variable.
