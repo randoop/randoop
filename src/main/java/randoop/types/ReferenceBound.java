@@ -165,9 +165,8 @@ public abstract class ReferenceBound extends ParameterBound {
    * Returns the type of the given bound, with the given substitution applied, if it is a {@link
    * ReferenceBound}. If it is a {@link LazyParameterBound}, returns its type with the given
    * substitution applied, in which a type variable that the substitution does not instantiate
-   * stands for an unknown type. Otherwise, or
-   * if the {@link LazyParameterBound} cannot be converted to a {@link ReferenceBound}, returns
-   * null.
+   * stands for an unknown type. Otherwise, or if the {@link LazyParameterBound} cannot be converted
+   * to a {@link ReferenceBound}, returns null.
    *
    * @param bound a bound
    * @param substitution a type substitution
