@@ -2675,10 +2675,17 @@ public class TypeVariableTest {
         (TypeVariable) t.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
-    // The member class keeps its parameterized owner type, OuterWithPlainInner<String>.
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType();
+    assertEquals(OuterWithPlainInner.Inner.class, inner.getRuntimeClass());
+    // The member class keeps its parameterized owner type, OuterWithPlainInner<String>, as
+    // written, not the declaration form OuterWithPlainInner<T>.
+    assertEquals(plainInnerFieldType("stringInner"), inner);
     assertEquals(
-        plainInnerFieldType("stringInner"),
-        ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
+        GenericClassType.forClass(OuterWithPlainInner.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
+    assertFalse(inner.isGeneric());
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */
@@ -2686,37 +2693,42 @@ public class TypeVariableTest {
   SecondBoundedByFirst<? super String[], ?> superStringArrayField;
 
   /**
-   * An array type is not within a bound that is a capture variable just because a supertype of the
-   * array type, such as {@code Object}, can instantiate the capture variable. The capture variable
-   * stands for a particular type, which is known only to be a supertype of {@code String[]}.
+   * An array type is not within a bound that is a capture variable merely because a supertype of
+   * the array type, such as {@code Object}, can instantiate the capture variable. A capture
+   * variable stands for a particular unknown type, which is known only to be a supertype of {@code
+   * String[]}, so its strict supertypes are not searched.
    */
   @Test
-  public void testArraySupertypeCanInstantiateVariableBound() throws NoSuchFieldException {
+  public void testArraySupertypeCannotInstantiateCaptureVariableBound()
+      throws NoSuchFieldException {
     ReferenceType integerArray = ArrayType.forClass(Integer[].class);
     InstantiatedType capturedType = capturedFieldType("superStringArrayField");
     TypeVariable first = typeArgument(capturedType, 0);
     TypeVariable second = typeArgument(capturedType, 1);
     assertFalse(first.canBeInstantiatedBy(integerArray));
-    // Integer[] <: Object, which can instantiate the capture variable for the first argument, but
-    // Integer[] is not known to be a subtype of that capture variable.
+    // The capture of `? super String[]` could be Object, but Integer[] is not known to be a
+    // subtype of it.
     assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
     // The upper bound of the second capture variable is the first one.
     assertFalse(second.canBeInstantiatedBy(integerArray));
   }
 
   /**
-   * An interface type is within a bound that is a capture variable if {@code Object}, which is a
-   * supertype of every interface, can instantiate the capture variable.
+   * An interface type is not within a bound that is a capture variable merely because {@code
+   * Object}, which is a supertype of every interface, can instantiate the capture variable. A
+   * capture variable stands for a particular unknown type, so its strict supertypes are not
+   * searched.
    */
   @Test
-  public void testObjectSupertypeOfInterfaceCanInstantiateCaptureVariable()
+  public void testInterfaceSupertypeCannotInstantiateCaptureVariableBound()
       throws NoSuchFieldException {
     ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
     InstantiatedType capturedType = capturedFieldType("comparableSuperNumberField");
     TypeVariable capture = typeArgument(capturedType, 0);
     assertFalse(capture.canBeInstantiatedBy(runnable));
-    // Runnable <: Object, which can instantiate the capture variable.
-    assertTrue(capture.canBeSupertypeOf(runnable, new Substitution()));
+    // The capture of `? super Number` could be Object, but Runnable is not known to be a subtype
+    // of it.
+    assertFalse(capture.canBeSupertypeOf(runnable, new Substitution()));
   }
 
   /**
