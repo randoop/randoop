@@ -341,15 +341,22 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the parameterized input types that instantiate the given type.
+   * Returns the class or interface input types that instantiate the given type.
    *
    * @param patternType a type
-   * @return the parameterized input types that are instantiations of {@code patternType}
+   * @return the class or interface input types that are instantiations of {@code patternType}
    */
   private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
+      // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
+      // not be parameterized.  For nested classes, isInstantiationOf compares only the enclosing
+      // types, so also check the runtime class:  otherwise Outer<String>.Other would match the
+      // pattern Outer<E>.Inner.
+      if (inputType.isClassOrInterfaceType()
+          && patternType
+              .getRuntimeClass()
+              .isAssignableFrom(((ClassOrInterfaceType) inputType).getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }
@@ -449,8 +456,10 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type need not be a ParameterizedType:  for a member class with no type
+            // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -461,7 +470,7 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;
@@ -655,13 +664,13 @@ public class TypeInstantiator {
    * the type variables that it instantiates.
    *
    * <p>This searches depth-first, instantiating the type variables in the order of the map's keys
-   * and trying each one's candidate types in random order. It checks the bounds of each type
-   * variable as soon as every type variable in those bounds, and the type variable itself, is
-   * instantiated. Thus, it abandons a partial substitution as soon as the partial substitution
-   * violates some bound, rather than extending it to every combination of the remaining candidate
-   * types. For example, for {@code <K, V extends K>}, once the search chooses {@code Integer} for
-   * {@code K}, it rejects each candidate type for {@code V} that is not a subtype of {@code
-   * Integer}.
+   * and trying each one's candidate types in a random order that favors comparable types (see
+   * {@link CandidateChooser}). It checks the bounds of each type variable as soon as every type
+   * variable in those bounds, and the type variable itself, is instantiated. Thus, it abandons a
+   * partial substitution as soon as the partial substitution violates some bound, rather than
+   * extending it to every combination of the remaining candidate types. For example, for {@code <K,
+   * V extends K>}, once the search chooses {@code Integer} for {@code K}, it rejects each candidate
+   * type for {@code V} that is not a subtype of {@code Integer}.
    *
    * <p>If there are at most {@link #MAX_CHECKED_SUBSTITUTIONS} combinations of candidate types, the
    * search is exhaustive: it returns null only if no combination satisfies the bounds. Otherwise,
@@ -740,11 +749,11 @@ public class TypeInstantiator {
    */
   private static final class BoundsSearch {
 
-    /**
-     * The type variables to instantiate, each with its candidate types, in the order that the
-     * search instantiates them.
-     */
-    private final List<Map.Entry<TypeVariable, List<ReferenceType>>> parameters;
+    /** The type variables to instantiate, in the order that the search instantiates them. */
+    private final List<TypeVariable> parameters;
+
+    /** Element i holds the candidate types of {@code parameters.get(i)}. */
+    private final List<CandidateChooser> candidates;
 
     /**
      * Element i holds the type variables whose bounds can be checked once the search instantiates
@@ -768,7 +777,11 @@ public class TypeInstantiator {
         Map<TypeVariable, List<ReferenceType>> candidatesByVariable,
         List<List<TypeVariable>> checkAfter,
         int maxChecks) {
-      this.parameters = new ArrayList<>(candidatesByVariable.entrySet());
+      this.parameters = new ArrayList<>(candidatesByVariable.keySet());
+      this.candidates = new ArrayList<>(parameters.size());
+      for (List<ReferenceType> variableCandidates : candidatesByVariable.values()) {
+        candidates.add(new CandidateChooser(variableCandidates));
+      }
       this.checkAfter = checkAfter;
       this.remainingChecks = maxChecks;
     }
@@ -786,15 +799,10 @@ public class TypeInstantiator {
       if (index == parameters.size()) {
         return substitution;
       }
-      TypeVariable parameter = parameters.get(index).getKey();
-      List<ReferenceType> untried = new ArrayList<>(parameters.get(index).getValue());
+      TypeVariable parameter = parameters.get(index);
+      CandidateChooser untried = new CandidateChooser(candidates.get(index));
       while (!untried.isEmpty() && remainingChecks > 0) {
-        // Remove a random element of `untried`.
-        int i = Randomness.nextRandomInt(untried.size());
-        ReferenceType candidate = untried.get(i);
-        untried.set(i, untried.get(untried.size() - 1));
-        untried.remove(untried.size() - 1);
-
+        ReferenceType candidate = untried.removeNext();
         remainingChecks--;
         Substitution extended = substitution.extend(new Substitution(parameter, candidate));
         if (satisfiesBounds(checkAfter.get(index), extended)) {
@@ -957,12 +965,18 @@ public class TypeInstantiator {
     }
 
     // Can always select captured wildcards independently.  Augment each existing candidate.
+    // Omit a candidate for which some capture variable has no candidate types.
     if (!captureParameters.isEmpty()) {
-      if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+      List<Substitution> bases =
+          result.isEmpty() ? Collections.singletonList(substitution) : result;
+      List<Substitution> extended = new ArrayList<>(bases.size());
+      for (Substitution base : bases) {
+        Substitution s = selectSubstitutionIndependently(captureParameters, base);
+        if (s != null) {
+          extended.add(s);
+        }
       }
+      result = extended;
     }
 
     return result;
@@ -979,7 +993,7 @@ public class TypeInstantiator {
    * @return the substitution extended by mapping given parameters to selected types; null, if there
    *     are no candidate types for some parameter
    */
-  private Substitution selectSubstitutionIndependently(
+  private @Nullable Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
     for (TypeVariable typeArgument : parameters) {
@@ -990,9 +1004,123 @@ public class TypeInstantiator {
             typeArgument);
         return null;
       }
-      selectedTypes.add(Randomness.randomMember(candidates));
+      selectedTypes.add(new CandidateChooser(candidates).removeNext());
     }
     return substitution.extend(parameters, selectedTypes);
+  }
+
+  /**
+   * The probability that {@link CandidateChooser#removeNext()} chooses among the comparable
+   * candidates, rather than among all the candidates.
+   */
+  private static final double COMPARABLE_PROBABILITY = 0.5;
+
+  /**
+   * Candidate types to instantiate a type variable, from which {@link #removeNext()} chooses and
+   * removes one at a time. The choice favors comparable types (see {@link #isComparable}), because
+   * many generic classes and methods, such as {@code TreeMap} and {@code Collections.sort}, can do
+   * useful work only on values of such types.
+   */
+  private static final class CandidateChooser {
+
+    /** The remaining candidates that are comparable. */
+    private final List<ReferenceType> comparable;
+
+    /** The remaining candidates that are not comparable. */
+    private final List<ReferenceType> notComparable;
+
+    /**
+     * Creates a chooser whose remaining candidates are the given candidates.
+     *
+     * @param candidates the candidate types
+     */
+    CandidateChooser(List<ReferenceType> candidates) {
+      this.comparable = new ArrayList<>();
+      this.notComparable = new ArrayList<>();
+      for (ReferenceType candidate : candidates) {
+        (isComparable(candidate) ? comparable : notComparable).add(candidate);
+      }
+    }
+
+    /**
+     * Creates a chooser whose remaining candidates are those of the given chooser.
+     *
+     * @param other a chooser
+     */
+    CandidateChooser(CandidateChooser other) {
+      this.comparable = new ArrayList<>(other.comparable);
+      this.notComparable = new ArrayList<>(other.notComparable);
+    }
+
+    /**
+     * Returns true if no candidates remain.
+     *
+     * @return true if no candidates remain
+     */
+    boolean isEmpty() {
+      return comparable.isEmpty() && notComparable.isEmpty();
+    }
+
+    /**
+     * Removes a randomly chosen candidate from the remaining candidates and returns it. With
+     * probability {@link #COMPARABLE_PROBABILITY}, the choice is uniform among the remaining
+     * comparable candidates, if there are any. Otherwise, it is uniform among all the remaining
+     * candidates.
+     *
+     * @return the chosen candidate
+     */
+    ReferenceType removeNext() {
+      int index;
+      if (Randomness.weightedCoinFlip(COMPARABLE_PROBABILITY) && !comparable.isEmpty()) {
+        index = Randomness.nextRandomInt(comparable.size());
+      } else {
+        index = Randomness.nextRandomInt(comparable.size() + notComparable.size());
+      }
+      if (index < comparable.size()) {
+        return swapRemove(comparable, index);
+      } else {
+        return swapRemove(notComparable, index - comparable.size());
+      }
+    }
+
+    /**
+     * Removes the element at the given index from the given list, by replacing it by the list's
+     * last element, and returns it.
+     *
+     * @param list a list
+     * @param index an index into {@code list}
+     * @return the element that was at {@code index}
+     */
+    private static ReferenceType swapRemove(List<ReferenceType> list, int index) {
+      ReferenceType result = list.get(index);
+      list.set(index, list.get(list.size() - 1));
+      list.remove(list.size() - 1);
+      return result;
+    }
+  }
+
+  /**
+   * Returns true if values of the given type can be compared to one another: that is, if the type
+   * is a subtype of {@code Comparable<? super T>}, where {@code T} is the type. That is the bound
+   * that methods such as {@code Collections.sort} and {@code Collections.max} require. For example,
+   * {@code String} is comparable, but {@code Comparable<String>} is not, because a {@code
+   * Comparable<String>} can be compared only to a {@code String}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a subtype of {@code Comparable<? super type>}
+   */
+  /*package-private*/ static boolean isComparable(ReferenceType type) {
+    if (!(type instanceof ClassOrInterfaceType)) {
+      return false;
+    }
+    InstantiatedType comparableSupertype =
+        ((ClassOrInterfaceType) type).getMatchingSupertype(JavaTypes.COMPARABLE_TYPE);
+    if (comparableSupertype == null) {
+      return false;
+    }
+    TypeArgument comparedType = comparableSupertype.getTypeArguments().get(0);
+    return comparedType instanceof ReferenceArgument
+        && type.isSubtypeOfOrEqualTo(((ReferenceArgument) comparedType).getReferenceType());
   }
 
   /**
