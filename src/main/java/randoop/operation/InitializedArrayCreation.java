@@ -41,7 +41,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    * @param length number of objects allowed in the array
    * @param arrayType the type of array this operation creates
    */
-  InitializedArrayCreation(ArrayType arrayType, int length) {
+  /*package*/ InitializedArrayCreation(ArrayType arrayType, int length) {
     super();
     assert length >= 0 : "array length may not be negative: " + length;
 
@@ -165,7 +165,8 @@ public final class InitializedArrayCreation extends CallableOperation {
     try {
       elementType = Type.forName(elementTypeName);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      throw new OperationParseException("Type not found for array element type " + elementTypeName);
+      throw new OperationParseException(
+          "Type not found for array element type " + elementTypeName, e);
     }
 
     if (elementType.isGeneric()) {

@@ -24,14 +24,14 @@ import org.plumelib.util.StringsPlume;
 class IntersectionTypeBound extends ParameterBound {
 
   /** The list of type bounds for the intersection bound. */
-  private List<ParameterBound> boundList;
+  private final List<ParameterBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
    *
    * @param boundList the list of type bounds
    */
-  IntersectionTypeBound(List<ParameterBound> boundList) {
+  /*package*/ IntersectionTypeBound(List<ParameterBound> boundList) {
     super();
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
@@ -101,6 +101,7 @@ class IntersectionTypeBound extends ParameterBound {
     return paramList;
   }
 
+  /*package*/
   @Override
   public boolean hasCaptureVariable() {
     for (ParameterBound b : boundList) {
@@ -124,17 +125,17 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Specifically, this method checks that the argument type is a subtype of all of the member
-   * bounds of this object.
+   * <p>Specifically, this method checks that some member bound of this object is a subtype of the
+   * argument type. An intersection type is a subtype of every supertype of each of its members.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution subst) {
     for (ParameterBound b : boundList) {
-      if (!b.isLowerBound(otherType, subst)) {
-        return false;
+      if (b.isLowerBound(otherType, subst)) {
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   /**
@@ -187,6 +188,7 @@ class IntersectionTypeBound extends ParameterBound {
    * @return true if the argument bound has all of the member bounds of this object as an upper
    *     bound
    */
+  /*package*/
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
     for (ParameterBound b : boundList) {

@@ -1245,7 +1245,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param className an argument that should be a class name
    * @param commandLineOption the command line option name, without leading "--"
    */
-  static void validateClassName(String className, String commandLineOption) {
+  /*package*/ static void validateClassName(String className, String commandLineOption) {
     if (className.isEmpty()) {
       throw new RandoopUsageError(
           "Do not provide the empty string as the argument to --" + commandLineOption + ".");
@@ -1347,7 +1347,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 String.format(
                     "%s was read from %s but was not found on classpath."
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
-                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()),
+                e);
           } catch (UnsatisfiedLinkError e) {
             // This happens when an old classfile refers to a class that has been removed from the
             // JDK, such as one in java.awt.*.
@@ -1465,8 +1466,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new RandoopClassNameError(
               classname,
-              String.format(
-                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
+              String.format("Cannot load class found in directory %s", directory.getAbsolutePath()),
+              e);
         }
       }
       return classnames;
@@ -1506,13 +1507,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           String.format(
               "Cannot find .jar file %s specified in classpath: %s",
-              jarFile.getAbsolutePath(), Globals.getClassPath()));
+              jarFile.getAbsolutePath(), Globals.getClassPath()),
+          e);
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file %s", Util.fileAndAbsolute(jarFile)), e);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
-          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()), e);
     }
     return classnames;
   }

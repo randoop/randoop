@@ -140,7 +140,7 @@ public class Minimize extends CommandHandler {
   private static final JavaParser javaParser = new JavaParser();
 
   /** Create the handler for Randoop's {@code minimize} command. */
-  Minimize() {
+  /*package*/ Minimize() {
     super(
         "minimize",
         "Minimize a failing JUnit test suite.",
@@ -191,7 +191,7 @@ public class Minimize extends CommandHandler {
         throw new RandoopCommandError("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
     } catch (Options.ArgException ae) {
-      throw new RandoopCommandError(ae.getMessage());
+      throw new RandoopCommandError(ae.getMessage(), ae);
     }
 
     if (suitepath == null) {
@@ -472,7 +472,7 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
       List<Comment> orphanComments = new ArrayList<>(1);
-      getOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
+      addOrphanCommentsBeforeThisChildNode(currStmt, orphanComments);
       Node parent = currStmt.getParentNode().get();
 
       // Remove the current statement. We will re-insert simplifications of it.
@@ -561,7 +561,7 @@ public class Minimize extends CommandHandler {
           // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
-            if (binaryExp.getOperator().equals(BinaryExpr.Operator.EQUALS)) {
+            if (binaryExp.getOperator() == BinaryExpr.Operator.EQUALS) {
               primitiveVarEquality(
                   binaryExp.getLeft(),
                   binaryExp.getRight(),
@@ -1332,7 +1332,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(String command, int exitValue, String stdout, String errout) {
+    /*package*/ Outputs(String command, int exitValue, String stdout, String errout) {
       this.command = command;
       this.exitValue = exitValue;
       this.stdout = stdout;
@@ -1347,7 +1347,7 @@ public class Minimize extends CommandHandler {
      * @param stdout standard output
      * @param errout error output
      */
-    Outputs(CommandLine command, int exitValue, String stdout, String errout) {
+    /*package*/ Outputs(CommandLine command, int exitValue, String stdout, String errout) {
       this(command.toString(), exitValue, stdout, errout);
     }
 
@@ -1358,7 +1358,7 @@ public class Minimize extends CommandHandler {
      * @param errout error output
      * @return an Outputs object representing a failed execution
      */
-    static Outputs failure(CommandLine command, String errout) {
+    /*package*/ static Outputs failure(CommandLine command, String errout) {
       return new Outputs(command.toString(), 1, "", errout);
     }
 
@@ -1487,7 +1487,7 @@ public class Minimize extends CommandHandler {
     "JdkObsolete", // for LinkedList
     "ReferenceEquality"
   })
-  private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
+  private static void addOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
     if (node instanceof Comment) {
       return;
     }

@@ -84,25 +84,25 @@ public final class OperationModel {
 
   /** The set of class declaration types for this model. */
   // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
-  private Set<ClassOrInterfaceType> classTypes = new TreeSet<>();
+  private final Set<ClassOrInterfaceType> classTypes = new TreeSet<>();
 
   /**
    * The set of input types for this model. It is set by {@link #addClassTypes}, which calls {@link
    * TypeExtractor}.
    */
-  private Set<Type> inputTypes = new TreeSet<>();
+  private final Set<Type> inputTypes = new TreeSet<>();
 
   /** The set of classes used as goals in the covered-class test filter. */
   private final LinkedHashSet<Class<?>> coveredClassesGoal = new LinkedHashSet<>();
 
   /** The storage for constant information. */
-  private ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
+  private final ScopeToLiteralStatistics scopeToLiteralStatistics = new ScopeToLiteralStatistics();
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
+  private final Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
 
   /** Set of object contracts used to generate tests. */
-  private ContractSet contracts;
+  private final ContractSet contracts;
 
   /** Set of concrete operations extracted from classes. */
   private final Set<TypedOperation> operations = new TreeSet<>();
@@ -111,7 +111,7 @@ public final class OperationModel {
   private final Set<TypedOperation> omittedOperations = new TreeSet<>();
 
   /** For debugging only. */
-  private List<Pattern> omitMethods;
+  private final List<Pattern> omitMethods;
 
   /** For debugging only. */
   private List<Pattern> exemptPatterns;
@@ -131,7 +131,7 @@ public final class OperationModel {
    *
    * <p>This is populated by {@link #setSutParameterOnlyTypes}.
    */
-  private Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
+  private final Set<Type> sutParameterOnlyTypes = new LinkedHashSet<>();
 
   /**
    * Create an empty model of test context.
@@ -297,7 +297,7 @@ public final class OperationModel {
    * @throws RandoopClassNameError if {@code errorHandler} throws on a bad class name
    * @throws RandoopSpecificationError if a specification for one of the classes is malformed
    */
-  static OperationModel createModel(
+  /*package*/ static OperationModel createModel(
       AccessibilityPredicate accessibility,
       ReflectionPredicate reflectionPredicate,
       Set<@ClassGetName String> classnames,
@@ -487,7 +487,7 @@ public final class OperationModel {
           continue;
         } else {
           throw new RandoopUsageError(
-              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e));
+              String.format("%s:%d: %s", er.getFileName(), er.getLineNumber(), e), e);
         }
       } catch (FailedPredicateException e) {
         throw new RandoopBug("This can't happen", e);
@@ -756,7 +756,7 @@ public final class OperationModel {
         // System.out.println(e.getMessage());
         // System.out.println();
         // continue;
-        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage());
+        throw new RandoopUsageError("Could not load class " + classname + ": " + e.getMessage(), e);
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null) {
