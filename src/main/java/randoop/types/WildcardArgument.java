@@ -80,20 +80,59 @@ public class WildcardArgument extends TypeArgument {
     return argumentType.toString();
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
-    if (argType == this.argumentType) {
+    if (Type.sameType(argType, this.argumentType)) {
       return this;
     }
     return new WildcardArgument(argType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For a non-wildcard argument {@code R}, considers the cases (JLS section 4.5.1):
+   *
+   * <ul>
+   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype of
+   *       {@code B}
+   *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
+   * </ul>
+   */
   @Override
   public boolean contains(TypeArgument argument) {
-    return argument.isWildcard()
-        && argumentType.contains(((WildcardArgument) argument).argumentType);
+    if (argument.isWildcard()) {
+      return argumentType.contains(((WildcardArgument) argument).argumentType);
+    }
+    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
+    ReferenceType boundType = boundType(argumentType.getTypeBound());
+    if (boundType == null) {
+      return false;
+    }
+    if (argumentType.hasUpperBound()) {
+      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
+    } else {
+      return boundType.isSubtypeOfOrEqualTo(otherType);
+    }
+  }
+
+  /**
+   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
+   * converted to the equivalent {@link ReferenceBound}.
+   *
+   * @param bound a bound of a wildcard
+   * @return the type of the bound, or null if it cannot be determined
+   */
+  private static @Nullable ReferenceType boundType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 
   /**
