@@ -193,8 +193,19 @@ class LazyParameterBound extends ParameterBound {
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       // For a member class such as Outer<String>.Middle<Integer>, keep the owner type, as
       // ParameterizedType.forType does.
-      ParameterizedType owner =
+      ParameterizedType preservedOwner =
           ClassOrInterfaceType.getPreservedOwnerType((ParameterizedType) type);
+      // An owner in declaration form, such as Outer<A> where A is the type parameter of Outer, is
+      // not preserved by ParameterizedType.forType.  But the substitution can change it, as when it
+      // maps A to String, and then the substituted owner must be kept.
+      java.lang.reflect.Type reflectiveOwner = ((ParameterizedType) type).getOwnerType();
+      boolean isDeclarationFormOwner =
+          preservedOwner == null
+              && reflectiveOwner instanceof ParameterizedType
+              && !java.lang.reflect.Modifier.isStatic(
+                  ((Class<?>) ((ParameterizedType) type).getRawType()).getModifiers());
+      ParameterizedType owner =
+          isDeclarationFormOwner ? (ParameterizedType) reflectiveOwner : preservedOwner;
       if (owner != null) {
         TypeArgument ownerArgument = substitute(owner, substitution);
         if (!(ownerArgument instanceof ReferenceArgument)) {
@@ -204,7 +215,11 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
+        // Keep the default enclosing type if the substitution leaves a declaration-form owner
+        // unchanged.
+        if (!isDeclarationFormOwner || !ownerType.equals(ClassOrInterfaceType.forType(owner))) {
+          instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
+        }
       }
       return TypeArgument.forType(instantiatedType);
     }
