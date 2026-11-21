@@ -20,7 +20,7 @@ import org.plumelib.util.StringsPlume;
 public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** The sequence of types in this type tuple. */
-  private final ArrayList<Type> list;
+  private final List<Type> list;
 
   /**
    * Creates a type tuple from the list of types, preserving the order.

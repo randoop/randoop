@@ -13,4 +13,14 @@ public class RandoopLoggingError extends RuntimeException {
   public RandoopLoggingError(String message) {
     super(message);
   }
+
+  /**
+   * Creates a {@code RandoopLoggingError} with the given message and cause.
+   *
+   * @param message the detail message
+   * @param cause the exception that caused the error
+   */
+  public RandoopLoggingError(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

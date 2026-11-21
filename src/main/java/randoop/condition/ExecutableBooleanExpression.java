@@ -170,7 +170,8 @@ public class ExecutableBooleanExpression {
                 // + " or pass --ignore-condition-exception=true "
                 + "."
                 + System.lineSeparator()
-                + messageDetails);
+                + messageDetails,
+            e);
       }
     }
   }

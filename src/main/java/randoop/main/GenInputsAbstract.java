@@ -165,13 +165,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
    * replacecall} agent</a>.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose that the <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression. Nor will Randoop directly call any
-   * method that such a method overrides (because such a call might dispatch to the omitted method
-   * at run time). Randoop considers only the omitted methods of the classes under test, so a call
-   * can still dispatch to an omitted method of a class that is not under test.
+   * signature</a> of method M matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
+   * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
+   * signature names the class that declares M, not a class that inherits M. Randoop considers only
+   * the omitted methods of the classes under test and the omitted methods listed in the {@code
+   * --methodlist} file, so a call can still dispatch to an omitted method of any other class.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -1343,7 +1345,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 String.format(
                     "%s was read from %s but was not found on classpath."
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
-                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()),
+                e);
           } catch (UnsatisfiedLinkError e) {
             // This happens when an old classfile refers to a class that has been removed from the
             // JDK, such as one in java.awt.*.
@@ -1461,8 +1464,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new RandoopClassNameError(
               classname,
-              String.format(
-                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
+              String.format("Cannot load class found in directory %s", directory.getAbsolutePath()),
+              e);
         }
       }
       return classnames;
@@ -1502,13 +1505,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           String.format(
               "Cannot find .jar file %s specified in classpath: %s",
-              jarFile.getAbsolutePath(), Globals.getClassPath()));
+              jarFile.getAbsolutePath(), Globals.getClassPath()),
+          e);
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file %s", Util.fileAndAbsolute(jarFile)), e);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
-          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()), e);
     }
     return classnames;
   }
