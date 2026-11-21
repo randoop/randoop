@@ -434,8 +434,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // The substitution for another argument can map a type variable to a different type, as
+          // for Map<String, Integer> and Map<T, T>.  Then no substitution instantiates the goal.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
@@ -499,7 +499,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // A member class that declares no type parameters, of a parameterized type, such as
-    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.
+    // `Outer<String>.Inner`, is parameterized but is not an InstantiatedType; it is handled by the
+    // superclass's supertype search below.
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
@@ -525,13 +526,15 @@ public class InstantiatedType extends ParameterizedType {
         return otherInstantiatedType.isGenericForm();
       }
 
-      // first clause, combined with the second:  the supertype of this type that has the same
-      // rawtype as otherType must be a subtype of otherType by type argument containment.
+      // first clause, combined with the second:  the supertype with the same rawtype as otherType
+      // is a subtype of otherType if the type arguments of otherType contain its type arguments,
+      // as List<String> is a subtype of Collection<?> because Collection<String> is.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      // The runtime class check ensures that the recursive call uses the second clause above, and
-      // so terminates.
+      // The supertype has the class of `otherType`, so this applies type argument containment, as
+      // for Collection<Integer> and Collection<? extends Number>.  The runtime class check ensures
+      // that the recursive call uses the second clause above, and so terminates.
       if (superType != null
           && superType.runtimeClassIs(otherType.getRuntimeClass())
           && superType.isSubtypeOfOrEqualTo(otherType)) {

@@ -2130,6 +2130,14 @@ public class TypeVariableTest {
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   List<? super Integer> superIntegerListField;
 
+  /** A field of type {@code Collection<?>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<?> unboundedCollectionField;
+
+  /** A field of type {@code Collection<? extends Number>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<? extends Number> numberCollectionField;
+
   /**
    * Returns the type of the given field of this class.
    *
@@ -2154,9 +2162,45 @@ public class TypeVariableTest {
     // A wildcard argument is not contained by a non-wildcard argument.
     assertFalse(ownFieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
 
+    // A supertype with another rawtype is compared by containment of its type arguments.
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
+
     TypeVariable t = typeParameter(StringListBound.class, 0);
     assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
     assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
+    assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
+  }
+
+  /**
+   * Fields whose types have nested wildcards with a bound that mentions a type variable with a
+   * recursive bound. Such a wildcard bound is a {@link LazyParameterBound}.
+   *
+   * @param <T> a type parameter with a self-referential bound
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class NestedLazyWildcardBounds<T extends Comparable<T>> {
+    /** A list whose elements are lists with a wildcard element type. */
+    List<List<? extends Comparable<T>>> source;
+
+    /** A list with a wildcard element type whose bound has a wildcard. */
+    List<? extends List<? extends Comparable<T>>> target;
+  }
+
+  /**
+   * Comparing nested wildcards whose bounds are lazy compares the bounds rather than throwing a
+   * {@link LazyParameterBound.LazyBoundException}.
+   */
+  @Test
+  public void testSubtypeOfNestedLazyWildcardBound() throws NoSuchFieldException {
+    ClassOrInterfaceType source =
+        ClassOrInterfaceType.forType(
+            NestedLazyWildcardBounds.class.getDeclaredField("source").getGenericType());
+    ClassOrInterfaceType target =
+        ClassOrInterfaceType.forType(
+            NestedLazyWildcardBounds.class.getDeclaredField("target").getGenericType());
+    assertTrue(source.isSubtypeOfOrEqualTo(target));
   }
 
   /**
@@ -2711,6 +2755,29 @@ public class TypeVariableTest {
     assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
     // The upper bound of the second capture variable is the first one.
     assertFalse(second.canBeInstantiatedBy(integerArray));
+  }
+
+  /** A field whose type has a wildcard bounded below by an array type and above by another. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
+
+  /**
+   * An array type whose component type is a type variable is not within a bound that is a capture
+   * variable merely because an array of a supertype of the type variable's bound, such as {@code
+   * Object[]}, can instantiate the capture variable. A capture variable stands for a particular
+   * unknown type, so its strict supertypes are not searched.
+   */
+  @Test
+  public void testVariableComponentArraySupertypeCannotInstantiateCaptureVariable()
+      throws NoSuchFieldException {
+    // U extends Number
+    ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
+    InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
+    TypeVariable capture = typeArgument(capturedType, 1);
+    assertFalse(capture.canBeInstantiatedBy(uArray));
+    // The capture of `? super String[]` could be Object[], but U[] is not known to be a subtype
+    // of it.
+    assertFalse(capture.canBeSupertypeOf(uArray, new Substitution()));
   }
 
   /**
