@@ -243,6 +243,81 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of their classes. The declared supertypes of a member class can mention
+   * those type parameters. For example, given {@code class Outer<E> { class Inner extends
+   * ArrayList<E> {} }}, the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
+   *
+   * <p>If an enclosing type has a wildcard type argument, the substitution is computed from the
+   * capture conversion of the enclosing types (JLS section 4.10.2), because substituting a wildcard
+   * into a declared supertype can create an invalid type: for {@code class Outer<T> { class Inner
+   * extends ArrayList<T[]> {} }}, the superclass of {@code Outer<?>.Inner} would be a list of
+   * arrays of a wildcard. The concrete type arguments are unchanged by capture conversion, so for
+   * {@code Outer<String, ?>.Inner}, the result maps the first type parameter of {@code Outer} to
+   * {@code String}. If capture conversion fails because of a lazy bound, then a wildcard type
+   * argument maps its type parameter to the {@link WildcardType}.
+   *
+   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
+   * declared supertypes are already correct), or if no enclosing type is parameterized.
+   *
+   * @return the substitution for the type parameters of the enclosing types, or null if none is
+   *     needed
+   */
+  /*package*/ final @Nullable Substitution getEnclosingSubstitution() {
+    if (!isMemberClass() || enclosingType.isGenericForm()) {
+      return null;
+    }
+    ClassOrInterfaceType enclosing = enclosingType;
+    if (enclosing.hasWildcardArgument()) {
+      try {
+        enclosing = enclosing.applyCaptureConversion();
+      } catch (LazyParameterBound.LazyBoundException e) {
+        // Use the wildcards themselves.
+      }
+    }
+    return enclosingSubstitution(enclosing);
+  }
+
+  /**
+   * Returns the substitution of the type arguments of the given type, and of its enclosing types if
+   * it is a member class, for the type parameters of their classes.
+   *
+   * @param enclosing the enclosing type of a member class, or null
+   * @return the substitution for the type parameters of {@code enclosing} and of its enclosing
+   *     types, or null if it is empty
+   */
+  /*package*/ static @Nullable Substitution enclosingSubstitution(
+      @Nullable ClassOrInterfaceType enclosing) {
+    Substitution result = new Substitution();
+    for (ClassOrInterfaceType type = enclosing; type != null; type = type.enclosingType) {
+      if (type instanceof InstantiatedType) {
+        result =
+            result.extend(
+                declaredTypeParameters(type.getRuntimeClass()),
+                ((InstantiatedType) type).getReferenceArguments());
+      }
+      if (!type.isMemberClass()) {
+        break;
+      }
+    }
+    return result.isEmpty() ? null : result;
+  }
+
+  /**
+   * Returns the type parameters declared by the given class, not those of its enclosing classes.
+   *
+   * @param c a class
+   * @return the type parameters declared by {@code c}
+   */
+  /*package*/ static List<TypeVariable> declaredTypeParameters(Class<?> c) {
+    List<TypeVariable> result = new ArrayList<>(c.getTypeParameters().length);
+    for (java.lang.reflect.TypeVariable<?> parameter : c.getTypeParameters()) {
+      result.add(TypeVariable.forType(parameter));
+    }
+    return result;
+  }
+
+  /**
    * Returns the name of this class type. Does not include package, enclosing classes, or type
    * arguments.
    *
@@ -396,6 +471,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return null;
     }
 
+    if (!goalType.isGeneric() && this.equals(goalType)) {
+      // The types differ only in their enclosing types, as Outer<String>.Inner and
+      // Outer<Long>.Inner do.  No substitution instantiates one as the other.
+      return null;
+    }
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();

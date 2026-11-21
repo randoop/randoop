@@ -155,6 +155,10 @@ public class TypeVariableTest {
             ((TypeVariable) u.substitute(new Substitution(t, v)))
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    // Check each bound explicitly, so that the test fails if both paths leave T[] unresolved.
+    String expected = "java.util.Collection<? extends java.lang.String[]>";
+    assertEquals(expected, direct.getUpperTypeBound().toString());
+    assertEquals(expected, throughV.getUpperTypeBound().toString());
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 
