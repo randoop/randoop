@@ -118,8 +118,19 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    List<TypeArgument> convertedArgumentList =
+        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
+    InstantiatedType result =
+        (InstantiatedType)
+            applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+
+    // The bound of a type parameter of a member class can mention a type parameter of an enclosing
+    // class, as in `class Inner<U extends T>` declared in `Outer<T>`.  For Outer<String>.Inner<?>,
+    // the bound of the capture variable is then String, so the substitution also maps the type
+    // parameters of the enclosing classes, to the type arguments of the converted enclosing types.
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        new Substitution(genericType.getTypeParameters(), convertedTypeList)
+            .extend(result.getEnclosingTypeSubstitution());
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
@@ -127,11 +138,7 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    List<TypeArgument> convertedArgumentList =
-        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
-
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    return result;
   }
 
   /**
@@ -487,7 +494,18 @@ public class InstantiatedType extends ParameterizedType {
         }
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        if (otherInstantiatedType.isGenericForm()) {
+          return true;
+        }
+        if (i != thisTypeArguments.size()) {
+          return false;
+        }
+        // For a member class, the type arguments of the enclosing types must be contained too:
+        // Outer<String>.Inner<Integer> is not a subtype of Outer<Long>.Inner<? extends Number>.
+        return !this.isMemberClass()
+            || !otherInstantiatedType.isMemberClass()
+            || Subtyping.isSubtypeOrEqual(
+                this.enclosingType, otherInstantiatedType.enclosingType, new Substitution());
       }
 
       // first clause.

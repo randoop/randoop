@@ -132,16 +132,20 @@ public class Substitution {
    * Two substitutions are consistent if their type variables are disjoint or, if they both map the
    * same type variable, they map it to the same type. Types that are equal but contain copies of a
    * type variable with different bounds are not the same; see {@link
-   * TypeVariable#areIdentical(ReferenceType, ReferenceType)}. This is the test for whether this
-   * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
+   * TypeVariable#areIdentical(ReferenceType, ReferenceType)}. Also, if one substitution maps the
+   * type variable to itself, so must the other: a substitution that maps a type variable to itself
+   * keeps a copy of the type variable with other bounds, but a substitution that maps a copy of the
+   * type variable to the type variable replaces that copy (see {@link
+   * #mapsToItself(TypeVariable)}). This is the test for whether this substitution can be extended
+   * by the other substitution using {@link #extend(Substitution)}.
    *
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      ReferenceType value = this.get(entry.getKey());
-      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
+      Map.Entry<TypeVariable, ReferenceType> thisEntry = getEntry(entry.getKey());
+      if (thisEntry != null && !areSameEntries(thisEntry, entry)) {
         return false;
       }
     }
@@ -189,9 +193,9 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type. Types that are
-   * equal but contain copies of a type variable with different bounds are not the same; see {@link
-   * #isConsistentWith(Substitution)}.
+   * substitutions contain the same type variable, they must map to the same type, and either both
+   * or neither must map it to itself. Types that are equal but contain copies of a type variable
+   * with different bounds are not the same; see {@link #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
@@ -199,7 +203,15 @@ public class Substitution {
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
-      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
+      Map.Entry<TypeVariable, ReferenceType> existing = result.getEntry(entry.getKey());
+      if (existing == null) {
+        result.map.put(entry.getKey(), entry.getValue());
+      } else if (!areSameEntries(existing, entry)) {
+        throw new IllegalArgumentException(
+            String.format(
+                "Substitutions map %s to distinct types %s and %s",
+                entry.getKey(), existing.getValue(), entry.getValue()));
+      }
     }
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
@@ -216,12 +228,50 @@ public class Substitution {
    * @return true if this substitution maps {@code variable} to itself
    */
   boolean mapsToItself(TypeVariable variable) {
+    Map.Entry<TypeVariable, ReferenceType> entry = getEntry(variable);
+    return entry != null && isSelfMap(entry);
+  }
+
+  /**
+   * Returns the entry of this substitution for the given type variable, or a copy of it. The key of
+   * the entry can be a copy of the type variable with other bounds.
+   *
+   * @param variable a type variable
+   * @return the entry for {@code variable}, or null if this substitution does not map it
+   */
+  private Map.@Nullable Entry<TypeVariable, ReferenceType> getEntry(TypeVariable variable) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       if (entry.getKey().equals(variable)) {
-        return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
+        return entry;
       }
     }
-    return false;
+    return null;
+  }
+
+  /**
+   * Returns true if the given entry maps its key to itself, rather than to a copy of the key with
+   * other bounds or to another type.
+   *
+   * @param entry an entry of a substitution
+   * @return true if {@code entry} maps its key to itself
+   */
+  private static boolean isSelfMap(Map.Entry<TypeVariable, ReferenceType> entry) {
+    return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
+  }
+
+  /**
+   * Returns true if the given entries, whose keys are copies of the same type variable, have the
+   * same effect: they map it to the same type, and either both or neither map it to itself.
+   *
+   * @param entry1 an entry of a substitution
+   * @param entry2 an entry of a substitution, whose key equals that of {@code entry1}
+   * @return true if the entries have the same effect
+   */
+  private static boolean areSameEntries(
+      Map.Entry<TypeVariable, ReferenceType> entry1,
+      Map.Entry<TypeVariable, ReferenceType> entry2) {
+    return isSelfMap(entry1) == isSelfMap(entry2)
+        && TypeVariable.areIdentical(entry1.getValue(), entry2.getValue());
   }
 
   /**
@@ -288,11 +338,13 @@ public class Substitution {
 
   /**
    * Returns true if the given type is a type variable that stands for an unknown type when types
-   * are compared. That is the case if this substitution maps the type variable to itself, the type
-   * variable does not occur in the type that this substitution maps a different type variable to,
-   * and the type variable is a type parameter of a declaration whose type parameters this
-   * substitution instantiates, such as a sibling of a type parameter that is being instantiated.
-   * Every other type variable, such as a type parameter of an enclosing class, stands for itself.
+   * are compared. That is the case if this substitution maps the type variable to itself, as
+   * determined by {@link #mapsToItself(TypeVariable)}, the type variable does not occur in the type
+   * that this substitution maps a different type variable to, and the type variable is a type
+   * parameter of a declaration whose type parameters this substitution instantiates, such as a
+   * sibling of a type parameter that is being instantiated. Every other type variable, such as a
+   * type parameter of an enclosing class or a copy of a type variable with other bounds that this
+   * substitution maps the type variable to, stands for itself.
    *
    * @param type a type
    * @return true if {@code type} stands for an unknown type
@@ -303,8 +355,10 @@ public class Substitution {
     }
     TypeVariable variable = (TypeVariable) type;
     GenericDeclaration declaration = getDeclaration(variable);
+    // A substitution that maps the type variable to a copy of it with other bounds, which is equal
+    // to it, replaces the type variable:  the copy stands for itself.
     return declaration != null
-        && variable.equals(get(variable))
+        && mapsToItself(variable)
         && !getReplacementVariables().contains(variable)
         && getInstantiatedDeclarations().contains(declaration);
   }

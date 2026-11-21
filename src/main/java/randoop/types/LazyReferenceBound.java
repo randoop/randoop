@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
  * {@code java.lang.reflect.Type}. Its methods that test bounds compare a type with the bound type
  * as an {@link EagerReferenceBound} would, except when the bound type is a type variable that the
- * substitution maps to no type or to a type variable.
+ * substitution does not replace by another type.
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
@@ -90,8 +90,11 @@ class LazyReferenceBound extends ReferenceBound {
 
   /**
    * Returns the bound type after the given substitution is applied, if the bound type is a type
-   * variable, the substitution maps it to no type or to a type variable, and {@code argType} is a
-   * reference type that is not a type variable. Otherwise, returns null.
+   * variable, the substitution maps it to no type or to itself (as determined by {@link
+   * Substitution#mapsToItself(TypeVariable)}), and {@code argType} is a reference type that is not
+   * a type variable. Otherwise, returns null. A type variable that the substitution replaces the
+   * bound type with stands for itself, as in {@link EagerReferenceBound}: for {@code K} mapped to
+   * {@code U}, {@code String} is not known to be a subtype of {@code U}.
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
@@ -115,6 +118,11 @@ class LazyReferenceBound extends ReferenceBound {
     if (!getBoundType().isVariable() || !argType.isReferenceType() || argType.isVariable()) {
       return null;
     }
+    // A type variable that the substitution puts in place of the bound type, including a copy of
+    // the bound type with other bounds, stands for itself, as in EagerReferenceBound.
+    if (((TypeVariable) getBoundType()).getSubstitutedType(substitution) != null) {
+      return null;
+    }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
   }
@@ -130,6 +138,8 @@ class LazyReferenceBound extends ReferenceBound {
    * type variables, so it stands for every instantiation of them; a type such as {@code
    * List<String>} is not a subtype of each instantiation of {@code List<T>}, but {@code List<T>}
    * and {@code ArrayList<T>}, for the same {@code T}, are, as is {@code NullType[]} of {@code T[]}.
+   * An intersection, such as {@code List<T> & Serializable}, is a lower bound if one of its members
+   * is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -138,6 +148,15 @@ class LazyReferenceBound extends ReferenceBound {
     }
     if (lowerBound.isNullType(substitution)) {
       return true;
+    }
+    if (lowerBound instanceof IntersectionTypeBound) {
+      // An intersection type is a subtype of each supertype of one of its members.
+      for (ParameterBound member : ((IntersectionTypeBound) lowerBound).getBounds()) {
+        if (hasLowerBound(member, substitution)) {
+          return true;
+        }
+      }
+      return false;
     }
     // With an empty substitution, no type variable is an unknown.  Subtyping.isSubtypeOrEqual
     // compares enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>

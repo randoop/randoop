@@ -17,6 +17,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
 import randoop.operation.TypedClassOperation;
+import randoop.types.ArrayType;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -658,9 +659,12 @@ public class TypeInstantiator {
    * because the input types contain {@code List<Integer>}, then {@code T} can be {@code Integer}
    * even if {@code Integer} is not an input type.
    *
+   * <p>The result does not contain the null type, which has no values other than null, or an array
+   * type whose element type is the null type, which has no runtime class for creating an array.
+   *
    * @param substitution a substitution
-   * @return the non-generic types in the range of {@code substitution}, other than the null type,
-   *     that are not input types
+   * @return the non-generic types in the range of {@code substitution}, other than the null type
+   *     and arrays of it, that are not input types
    */
   private List<ReferenceType> inferredTypes(Substitution substitution) {
     Set<ReferenceType> result = new LinkedHashSet<>();
@@ -668,12 +672,24 @@ public class TypeInstantiator {
       ReferenceType type = substitution.get(variable);
       if (type != null
           && !type.isGeneric()
-          && !type.equals(JavaTypes.NULL_TYPE)
+          && !isNullTypeOrArrayOfNullType(type)
           && !inputTypes.contains(type)) {
         result.add(type);
       }
     }
     return new ArrayList<>(result);
+  }
+
+  /**
+   * Returns true if the given type is the null type or an array type whose element type is the null
+   * type.
+   *
+   * @param type a type
+   * @return true if {@code type} is the null type or an array of it
+   */
+  private static boolean isNullTypeOrArrayOfNullType(ReferenceType type) {
+    Type elementType = type.isArray() ? ((ArrayType) type).getElementType() : type;
+    return elementType.equals(JavaTypes.NULL_TYPE);
   }
 
   /**

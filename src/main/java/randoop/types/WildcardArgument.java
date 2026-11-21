@@ -99,17 +99,42 @@ public class WildcardArgument extends TypeArgument {
    *       {@code B}
    *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
    * </ul>
+   *
+   * <p>For a wildcard argument, considers the cases:
+   *
+   * <ul>
+   *   <li>{@code ?} contains every wildcard, including {@code ? super S}
+   *   <li>{@code ? extends B} contains {@code ? extends S} if {@code S} is a subtype of {@code B}
+   *   <li>{@code ? super B} contains {@code ? super S} if {@code B} is a subtype of {@code S}
+   * </ul>
+   *
+   * A bound that is a {@link LazyParameterBound}, such as {@code Comparable<T>} for {@code T
+   * extends Comparable<T>}, is converted to the equivalent {@link ReferenceBound} before it is
+   * compared.
    */
   @Override
   public boolean contains(TypeArgument argument) {
-    if (argument.isWildcard()) {
-      return argumentType.contains(((WildcardArgument) argument).argumentType);
-    }
-    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
     ReferenceType boundType = boundType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }
+    if (argument.isWildcard()) {
+      if (argumentType.hasUpperBound() && boundType.isObject()) {
+        return true;
+      }
+      WildcardArgument otherWildcard = (WildcardArgument) argument;
+      if (otherWildcard.hasUpperBound() != argumentType.hasUpperBound()) {
+        return false;
+      }
+      ReferenceType otherBoundType = boundType(otherWildcard.getTypeBound());
+      if (otherBoundType == null) {
+        return false;
+      }
+      return argumentType.hasUpperBound()
+          ? otherBoundType.isSubtypeOfOrEqualTo(boundType)
+          : boundType.isSubtypeOfOrEqualTo(otherBoundType);
+    }
+    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
     if (argumentType.hasUpperBound()) {
       return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
     } else {

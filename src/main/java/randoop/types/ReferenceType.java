@@ -184,7 +184,10 @@ public abstract class ReferenceType extends Type {
    */
   public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
-    if (instantiatedType.equals(goalType)) {
+    // InstantiatedType.equals ignores enclosing types, so Outer<String>.Inner<Integer> equals the
+    // generic Outer<X>.Inner<Integer>.  The substitution for such a goal type must map X.
+    if (instantiatedType.equals(goalType)
+        && !(goalType.isGeneric() && haveDistinctEnclosingTypes(instantiatedType, goalType))) {
       return new Substitution();
     }
     if (goalType.isVariable()) {
@@ -196,6 +199,25 @@ public abstract class ReferenceType extends Type {
       }
     }
     return null;
+  }
+
+  /**
+   * Returns true if the given types are both member classes, and their enclosing types are not
+   * identical as determined by {@link Subtyping#isIdentical(ReferenceType, ReferenceType)}.
+   *
+   * @param type a type
+   * @param otherType another type
+   * @return true if the types are member classes with enclosing types that are not identical
+   */
+  private static boolean haveDistinctEnclosingTypes(ReferenceType type, ReferenceType otherType) {
+    if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
+      return false;
+    }
+    ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    return classType.isMemberClass()
+        && otherClassType.isMemberClass()
+        && !Subtyping.isIdentical(classType.enclosingType, otherClassType.enclosingType);
   }
 
   /**
