@@ -183,20 +183,20 @@ public abstract class TypeVariable extends ParameterType {
    * (as in {@code T extends Comparable<U>}), is converted to the equivalent {@link ReferenceBound},
    * in which every type variable remains a type variable.
    *
-   * @param bound an upper bound of a type variable
+   * @param upperBound an upper bound of a type variable
    * @param otherType the possible supertype
-   * @return true if the type of {@code bound} is a subtype of {@code otherType}
+   * @return true if the type of {@code upperBound} is a subtype of {@code otherType}
    */
-  private static boolean isSubtypeOfOrEqualTo(ParameterBound bound, Type otherType) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+  private static boolean isSubtypeOfOrEqualTo(ParameterBound upperBound, Type otherType) {
+    if (upperBound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
       return converted != null && isSubtypeOfOrEqualTo(converted, otherType);
     }
-    if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType().isSubtypeOfOrEqualTo(otherType);
+    if (upperBound instanceof ReferenceBound) {
+      return ((ReferenceBound) upperBound).getBoundType().isSubtypeOfOrEqualTo(otherType);
     }
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+    if (upperBound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) upperBound).getBounds()) {
         if (isSubtypeOfOrEqualTo(member, otherType)) {
           return true;
         }
