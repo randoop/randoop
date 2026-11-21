@@ -211,22 +211,40 @@ class WildcardType extends ParameterType {
    * 4.5.1</a>: {@code ? extends T} contains the subtypes of {@code T}, and {@code ? super T}
    * contains the supertypes of {@code T}.
    *
-   * <p>Returns false if the bound of this wildcard is not a single reference type.
+   * <p>A {@link LazyParameterBound} is converted to the equivalent {@link ReferenceBound}. Returns
+   * false if the bound of this wildcard is not a single reference type.
    *
    * @param type the type to check for
    * @return true if this wildcard contains the type, false otherwise
    */
   public boolean containsType(ReferenceType type) {
-    ParameterBound bound = getTypeBound();
-    if (!(bound instanceof EagerReferenceBound)) {
+    ReferenceType boundType = boundType(getTypeBound());
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((EagerReferenceBound) bound).getBoundType();
     if (hasUpperBound) {
-      return type.isSubtypeOfOrEqualTo(boundType);
+      return boundType.isObject() || type.isSubtypeOfOrEqualTo(boundType);
     } else {
       return boundType.isSubtypeOfOrEqualTo(type);
     }
+  }
+
+  /**
+   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
+   * converted to the equivalent {@link ReferenceBound}.
+   *
+   * @param bound a bound of a wildcard
+   * @return the type of the bound, or null if it cannot be determined
+   */
+  private static @Nullable ReferenceType boundType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 
   @Override
