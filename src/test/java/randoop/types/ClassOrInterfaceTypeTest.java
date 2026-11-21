@@ -176,9 +176,7 @@ public class ClassOrInterfaceTypeTest {
   public void superclassOfMemberClassWithWildcardInOwner() throws NoSuchFieldException {
     ClassOrInterfaceType type =
         ClassOrInterfaceType.forType(
-            ClassOrInterfaceTypeTest.class
-                .getDeclaredField("wildcardOwnerField")
-                .getGenericType());
+            ClassOrInterfaceTypeTest.class.getDeclaredField("wildcardOwnerField").getGenericType());
     assertEquals(
         GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
         type.getSuperclass());
@@ -884,12 +882,14 @@ public class ClassOrInterfaceTypeTest {
 
   @Test
   public void instantiatingSubstitutionComparesWholeEnclosingChain() {
-    TypeVariable t = GenericClassType.forClass(ThreeLevelOuter.class).getTypeParameters().get(0);
-    TypeVariable u =
-        GenericClassType.forClass(ThreeLevelOuter.Middle.class).getTypeParameters().get(0);
-    TypeVariable v =
-        GenericClassType.forClass(ThreeLevelOuter.Middle.Leaf.class).getTypeParameters().get(0);
     ClassOrInterfaceType leaf = ClassOrInterfaceType.forClass(ThreeLevelOuter.Middle.Leaf.class);
+    // The type parameters of the enclosing classes, outermost first, followed by that of Leaf.
+    // The type parameters of the cached GenericClassType for Middle would not do:  they include
+    // those of ThreeLevelOuter, if another test has set the enclosing type of that cached object.
+    List<TypeVariable> parameters = leaf.getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    TypeVariable v = parameters.get(2);
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
     ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);

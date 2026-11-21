@@ -196,9 +196,9 @@ public class InstantiatedType extends ParameterizedType {
    * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
    * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
    * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
-   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a member
-   * class, the substitution also maps the type parameters of the enclosing classes to the type
-   * arguments of the enclosing types.
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a
+   * member class, the substitution also maps the type parameters of the enclosing classes to the
+   * type arguments of the enclosing types.
    *
    * @return the superclass type for this parameterized type
    */
@@ -230,8 +230,8 @@ public class InstantiatedType extends ParameterizedType {
    * obtain the supertype of this type. It maps the type parameters that the class declares to the
    * type arguments of this type, and the type parameters of the enclosing classes to the type
    * arguments of the enclosing types. For example, for {@code Outer<String>.Middle<Integer>}, where
-   * {@code Middle<U> extends HashMap<T, U>}, the result maps {@code T} to {@code String} and
-   * {@code U} to {@code Integer}.
+   * {@code Middle<U> extends HashMap<T, U>}, the result maps {@code T} to {@code String} and {@code
+   * U} to {@code Integer}.
    *
    * @return the substitution for the supertypes of this type
    */

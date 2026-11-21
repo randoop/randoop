@@ -176,9 +176,8 @@ public class TypeInstantiator {
    * no type parameters, of a parameterized type, such as {@code Outer<String>.Inner}, and the
    * output type of {@code operation} is the same class with generic enclosing types, such as {@code
    * Outer<X>.Inner}, then the output type of the result is {@code goalType}. This method chooses
-   * type arguments for the remaining type
-   * parameters, such as those that occur only in the parameter types of {@code operation}, as
-   * {@link #instantiate(TypedClassOperation)} does.
+   * type arguments for the remaining type parameters, such as those that occur only in the
+   * parameter types of {@code operation}, as {@link #instantiate(TypedClassOperation)} does.
    *
    * @param operation a generic operation
    * @param goalType a type
@@ -290,8 +289,8 @@ public class TypeInstantiator {
   /**
    * Returns the substitution that, applied to the given member class type, yields the given member
    * class type, whose type arguments come from its enclosing types. For example, for {@code
-   * Outer<X>.Inner} and {@code Outer<String>.Inner}, returns the substitution that maps {@code X} to
-   * {@code String}.
+   * Outer<X>.Inner} and {@code Outer<String>.Inner}, returns the substitution that maps {@code X}
+   * to {@code String}.
    *
    * @param pattern a class type that can contain type variables, such as {@code Outer<X>.Inner}
    * @param instance a member class that declares no type parameters, of a parameterized type, such
