@@ -252,7 +252,6 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   private ReferenceType substituteIntoBounds(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
@@ -262,7 +261,7 @@ class CaptureTypeVariable extends TypeVariable {
     // Comparing by reference detects that change, because substitute returns its receiver if the
     // substitution changes nothing in it.
     boolean boundsUnchanged =
-        lowerBound == getLowerTypeBound() && upperBound == getUpperTypeBound();
+        sameType(lowerBound, getLowerTypeBound()) && sameType(upperBound, getUpperTypeBound());
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds

@@ -39,7 +39,6 @@ class LazyReferenceBound extends EagerReferenceBound {
     super(boundType);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     if (substitution.isEmpty()) {
@@ -57,9 +56,7 @@ class LazyReferenceBound extends EagerReferenceBound {
       inProgress.remove(this);
     }
 
-    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
-    // detect a substitution that changes only the bounds of a type variable.
-    if (referenceType == getBoundType()) {
+    if (Type.sameType(referenceType, getBoundType())) {
       return this;
     }
     return forTypeLazyIfGeneric(referenceType);
