@@ -297,7 +297,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.isInstantiationOf(goalType)) {
+            if (type.runtimeClassIs(goalType.getRuntimeClass())
+                && type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -316,7 +317,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      if (superclass.isInstantiationOf(goalType)) {
+      // The runtime class check is needed because `isInstantiationOf` returns true for distinct
+      // member classes whose enclosing types match.
+      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
+          && superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
 

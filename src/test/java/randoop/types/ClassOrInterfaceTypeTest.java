@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
@@ -136,7 +137,70 @@ public class ClassOrInterfaceTypeTest {
   static class Outer<T> {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
+
+    /**
+     * A generic inner class whose supertypes mention its type parameter.
+     *
+     * @param <U> the type parameter
+     */
+    abstract class GenericInner<U> extends Holder<U> implements Comparable<U> {}
+
+    /**
+     * A generic inner class whose type parameter has a bound.
+     *
+     * @param <U> the type parameter
+     */
+    class NumberInner<U extends Number> {}
+
+    /**
+     * A generic inner class whose supertypes mention the type parameters of both the enclosing
+     * class and the inner class.
+     *
+     * @param <U> the type parameter
+     */
+    class PairInner<U> extends Pair<T, U> implements PairInterface<T, U> {}
   }
+
+  /**
+   * A generic class.
+   *
+   * @param <V> the type parameter
+   */
+  static class Holder<V> {}
+
+  /**
+   * A generic class with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  static class Pair<A, B> {}
+
+  /**
+   * A generic interface with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  interface PairInterface<A, B> {}
+
+  /** A field of type {@code Outer<String>.PairInner<Integer>}. */
+  public Outer<String>.PairInner<Integer> pairInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<Integer>}. */
+  public Outer<String>.NumberInner<Integer> stringNumberInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<? extends Number>}. */
+  public Outer<String>.NumberInner<? extends Number> stringNumberInnerOfExtendsNumber;
+
+  /** A field of type {@code Outer<Number>.NumberInner<? extends Number>}. */
+  public Outer<Number>.NumberInner<? extends Number> numberNumberInnerOfExtendsNumber;
+
+  /** A field of type {@code Outer<String>.GenericInner<Integer>}. */
+  public Outer<String>.GenericInner<Integer> genericInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<?>}. */
+  public Outer<String>.NumberInner<?> numberInnerOfWildcard;
 
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
@@ -246,5 +310,91 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerGenericForm));
     assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
     assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static InstantiatedType fieldType(String name) {
+    try {
+      return (InstantiatedType)
+          Type.forType(ClassOrInterfaceTypeTest.class.getField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  @Test
+  public void genericMemberOfGenericClassTest() {
+    // ClassOrInterfaceType.forClass gives the generic form of a member class of a generic class
+    // an enclosing type, so the generic form has the type parameters of the enclosing class as
+    // well as its own, such as [T, U] for Outer<T>.GenericInner<U>.  A type argument, such as
+    // Integer in Outer<String>.GenericInner<Integer>, corresponds to a type parameter that the
+    // member class declares, such as U.
+    ClassOrInterfaceType.forClass(Outer.GenericInner.class);
+    ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+
+    InstantiatedType genericInnerOfInteger = fieldType("genericInnerOfInteger");
+    assertEquals(
+        ((GenericClassType) ClassOrInterfaceType.forClass(Holder.class)).instantiate(integerType),
+        genericInnerOfInteger.getSuperclass());
+    assertEquals(
+        Collections.singletonList(JavaTypes.COMPARABLE_TYPE.instantiate(integerType)),
+        genericInnerOfInteger.getInterfaces());
+
+    // The capture variable has the bound of the type parameter of NumberInner, not of Outer.
+    InstantiatedType captured = fieldType("numberInnerOfWildcard").applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(capture.isCaptureVariable());
+    ParameterBound upperBound = ((CaptureTypeVariable) capture).getUpperTypeBound();
+    Substitution substitution = new Substitution();
+    assertTrue(upperBound.isUpperBound(integerType, substitution));
+    assertFalse(upperBound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+  }
+
+  @Test
+  public void supertypeOfGenericMemberMentionsEnclosingParameterTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType pairInnerOfInteger = fieldType("pairInnerOfInteger");
+
+    // Outer<String>.PairInner<Integer> extends Pair<String, Integer>.
+    InstantiatedType pairOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(Pair.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(pairOfStringInteger, pairInnerOfInteger.getSuperclass());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairOfStringInteger));
+
+    // Outer<String>.PairInner<Integer> implements PairInterface<String, Integer>.
+    InstantiatedType pairInterfaceOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(PairInterface.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(
+        Collections.singletonList(pairInterfaceOfStringInteger),
+        pairInnerOfInteger.getInterfaces());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairInterfaceOfStringInteger));
+  }
+
+  @Test
+  public void containmentRequiresSubtypeEnclosingTypeTest() {
+    InstantiatedType stringNumberInnerOfInteger = fieldType("stringNumberInnerOfInteger");
+    InstantiatedType stringNumberInnerOfExtendsNumber =
+        fieldType("stringNumberInnerOfExtendsNumber");
+    InstantiatedType numberNumberInnerOfExtendsNumber =
+        fieldType("numberNumberInnerOfExtendsNumber");
+
+    // Identical enclosing types:  containment of the type arguments suffices.
+    assertTrue(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
+
+    // Different enclosing types:  Outer<String> is not a subtype of Outer<Number>.
+    assertFalse(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        stringNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        numberNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
   }
 }
