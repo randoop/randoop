@@ -423,7 +423,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // of this type that is of the goal type's class, rather than this type, instantiates the goal
       // type.  For a generic class goal type, the matching supertype, below, determines the
       // substitution of the goal's own type arguments.
-      if (memberSupertype != this && !(goalType instanceof GenericClassType)) {
+      if (!sameType(memberSupertype, this) && !(goalType instanceof GenericClassType)) {
         return memberSupertype.getInstantiatingSubstitution(goalType);
       }
       if (memberSupertype.isMemberClass()) {
