@@ -85,9 +85,9 @@ public abstract class ParameterBound {
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
    * type, which an eager bound cannot compare with a parameterized type. A generic array type of
    * such a class, as in {@code Outer<String>.Inner[]}, is eager: the conversion gives its element
-   * type the owner type from the class declaration, as in {@code Outer<T>.Inner}, as it does for any
-   * argument type, so the bound and argument types are compared consistently. Otherwise, the result
-   * is a {@link LazyParameterBound}.
+   * type the owner type from the class declaration, as in {@code Outer<T>.Inner}, as it does for
+   * any argument type, so the bound and argument types are compared consistently. Otherwise, the
+   * result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound

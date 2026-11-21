@@ -63,7 +63,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /** Computes the type parameters of this generic class. */
-  /*package*/ void initializeParameters() {
+  /*package*/ final void initializeParameters() {
     if (!parameters.isEmpty()) {
       throw new IllegalStateException("type parameters of " + rawType + " already computed");
     }
