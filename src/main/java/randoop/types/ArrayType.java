@@ -117,11 +117,10 @@ public final class ArrayType extends ReferenceType {
     return Objects.hash(componentType, runtimeClass);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ArrayType substitute(Substitution substitution) {
     Type type = componentType.substitute(substitution);
-    if (type != componentType) {
+    if (!sameType(type, componentType)) {
       return ofComponentType(type);
     } else {
       return this;

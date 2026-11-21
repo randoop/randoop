@@ -66,14 +66,13 @@ public class InstantiatedType extends ParameterizedType {
     return Objects.hash(genericType, argumentList);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList =
         CollectionsPlume.mapList(
             (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
     ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
-    if (enclosing == enclosingType && sameElements(argumentList, this.argumentList)) {
+    if (sameType(enclosing, enclosingType) && sameElements(argumentList, this.argumentList)) {
       return this;
     }
     InstantiatedType result = new InstantiatedType(genericType, argumentList);
@@ -348,6 +347,13 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // For a member class, the enclosing types must match too:  Outer<Long>.Inner<Integer> is not
+      // an instantiation of Outer<String>.Inner<Integer>.
+      if (this.isMemberClass()
+          && otherInstType.isMemberClass()
+          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
+        return false;
+      }
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
@@ -473,9 +479,15 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
+        // For a member class, the type arguments of the enclosing types must be contained too:
+        // Outer<String>.Inner<Integer> is not a subtype of Outer<Long>.Inner<Integer>.
+        boolean enclosingTypesContained =
+            !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
+                || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        return (i == thisTypeArguments.size() && enclosingTypesContained)
+            || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.

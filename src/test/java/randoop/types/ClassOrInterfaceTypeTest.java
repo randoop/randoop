@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
 
@@ -148,6 +149,39 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
+   * A generic class with two type parameters and a non-generic member class.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class TwoParameterOuter<A, B> {
+    /** A member class whose superclass mentions only the first type parameter. */
+    @SuppressWarnings("serial")
+    class ListInner extends ArrayList<A> {}
+  }
+
+  /** A field whose type is {@code TwoParameterOuter<String, ?>.ListInner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  TwoParameterOuter<String, ?>.ListInner wildcardOwnerField;
+
+  /**
+   * A wildcard type argument of the enclosing type does not prevent the other type arguments from
+   * being substituted into the superclass.
+   */
+  @Test
+  public void superclassOfMemberClassWithWildcardInOwner() throws NoSuchFieldException {
+    ClassOrInterfaceType type =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class
+                .getDeclaredField("wildcardOwnerField")
+                .getGenericType());
+    assertEquals(
+        GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
+        type.getSuperclass());
+  }
+
+  /**
    * A generic class with a generic member class.
    *
    * @param <T> the type parameter
@@ -178,6 +212,25 @@ public class ClassOrInterfaceTypeTest {
     Substitution substitution = stringInteger.getInstantiatingSubstitution(stringX);
     assertNotNull(substitution);
     assertEquals(integerType, substitution.get(x));
+  }
+
+  /** The enclosing types of member classes must match for instantiation and for subtyping. */
+  @Test
+  public void memberClassWithOtherEnclosingTypeIsNotInstantiationOrSubtype() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    // GenericOuter<String>.GenericInner<Integer>
+    InstantiatedType stringInteger = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType otherStringInteger = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    // GenericOuter<Long>.GenericInner<Integer>
+    InstantiatedType longInteger = innerType.instantiate(longType, integerType);
+    assertTrue(stringInteger.isInstantiationOf(otherStringInteger));
+    assertFalse(longInteger.isInstantiationOf(stringInteger));
+    assertTrue(stringInteger.isSubtypeOfOrEqualTo(otherStringInteger));
+    assertFalse(longInteger.isSubtypeOfOrEqualTo(stringInteger));
+    assertFalse(stringInteger.isSubtypeOfOrEqualTo(longInteger));
   }
 
   /**
@@ -292,7 +345,53 @@ public class ClassOrInterfaceTypeTest {
 
       /** An inner class whose enclosing type is non-generic, but is a member of a generic class. */
       class Innermost {}
+
+      /** An inner class of an inner class, whose superclass mentions {@code T}. */
+      @SuppressWarnings("serial")
+      class DeepList extends ArrayList<T> {}
     }
+
+    /** An inner class whose supertypes mention {@code T}. */
+    @SuppressWarnings("serial")
+    abstract class ListOfT extends ArrayList<T> implements Supplier<T> {}
+  }
+
+  /** Declares methods whose parameter types are used in supertype tests. */
+  static class SupertypeHolder {
+    /**
+     * A method whose parameter types are non-generic member classes of parameterized types.
+     *
+     * @param list an {@code Outer<String>.ListOfT}
+     * @param deep an {@code Outer<String>.Middle.DeepList}
+     */
+    static void m(Outer<String>.ListOfT list, Outer<String>.Middle.DeepList deep) {}
+  }
+
+  /**
+   * The supertypes of a non-generic member class of a parameterized type are instantiated by the
+   * type arguments of the enclosing type.
+   */
+  @Test
+  public void memberClassSupertypesTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        SupertypeHolder.class
+            .getDeclaredMethod("m", Outer.ListOfT.class, Outer.Middle.DeepList.class)
+            .getGenericParameterTypes();
+    ClassOrInterfaceType listOfString = ClassOrInterfaceType.forType(parameterTypes[0]);
+    InstantiatedType arrayListOfString =
+        JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(arrayListOfString, listOfString.getSuperclass());
+    assertEquals(
+        java.util.Collections.singletonList(
+            GenericClassType.forClass(Supplier.class).instantiate(JavaTypes.STRING_TYPE)),
+        listOfString.getInterfaces());
+
+    ClassOrInterfaceType deep = ClassOrInterfaceType.forType(parameterTypes[1]);
+    assertEquals(arrayListOfString, deep.getSuperclass());
+
+    // The generic form keeps the declared type variable.
+    ClassOrInterfaceType genericForm = ClassOrInterfaceType.forClass(Outer.ListOfT.class);
+    assertTrue(genericForm.getSuperclass().isGeneric());
   }
 
   /** Fields whose types are member classes of member classes of parameterized types. */
