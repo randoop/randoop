@@ -19,6 +19,10 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
+    // There is no array of the null type, so leave the bound unresolved.
+    if (createsNullTypeArray(getBoundType(), substitution)) {
+      return this;
+    }
     ReferenceType referenceType = getBoundType().substitute(substitution);
     if (Type.sameType(referenceType, getBoundType())) {
       return this;
@@ -33,6 +37,10 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution subst) {
+    if (createsNullTypeArray(getBoundType(), subst)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
@@ -69,6 +77,10 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution subst) {
+    if (createsNullTypeArray(getBoundType(), subst)) {
+      // There is no array of the null type, so no type satisfies this bound.
+      return false;
+    }
     ReferenceType thisBoundType = this.getBoundType().substitute(subst);
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
