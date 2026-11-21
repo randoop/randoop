@@ -253,6 +253,19 @@ public class ReferenceBoundTest {
   }
 
   @Test
+  public void testCaptureOfSuperVariableInstantiatedBySupertypeOfBound()
+      throws NoSuchMethodException {
+    // The capture variable of List<? super U> has lower bound U, where U extends Integer.  Number
+    // can instantiate it, because U can be Integer, a subtype of Number, though Number cannot
+    // instantiate U.
+    TypeVariable captureVariable = captureVariable("listSuperIntegerVariable");
+    assertTrue(captureVariable.canBeInstantiatedBy(NonParameterizedType.forClass(Number.class)));
+    assertTrue(captureVariable.canBeInstantiatedBy(JavaTypes.INT_TYPE.toBoxedPrimitive()));
+    // No subtype of Integer is a subtype of String.
+    assertFalse(captureVariable.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
   public void testCaptureOfSuperUnboundedVariable() throws NoSuchMethodException {
     // The capture variable of List<? super T> has lower bound T, where T extends Object.
     TypeVariable captureVariable = captureVariable("listSuperVariable");
