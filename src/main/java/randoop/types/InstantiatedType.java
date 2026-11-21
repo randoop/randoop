@@ -455,7 +455,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
+    // A member class of a parameterized type, such as `Outer<String>.Inner`, is parameterized but
+    // is not an InstantiatedType; it is handled by the superclass's supertype search below.
+    if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
@@ -473,11 +475,17 @@ public class InstantiatedType extends ParameterizedType {
         return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
-      // first clause.
+      // first clause, combined with the second:  the supertype with the same rawtype as otherType
+      // is a subtype of otherType if the type arguments of otherType contain its type arguments,
+      // as List<String> is a subtype of Collection<?> because Collection<String> is.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null && superType.equals(otherType)) {
+      // The runtime class test prevents infinite recursion:  for a superType with the same
+      // runtime class as otherType, the recursive call uses the second clause above.
+      if (superType != null
+          && otherType.runtimeClassIs(superType.getRuntimeClass())
+          && superType.isSubtypeOfOrEqualTo(otherType)) {
         return true;
       }
     }
