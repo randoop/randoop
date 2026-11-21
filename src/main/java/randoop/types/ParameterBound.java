@@ -128,6 +128,12 @@ public abstract class ParameterBound {
   /**
    * Applies the given substitution to this type bound by replacing type variables.
    *
+   * <p>If the substitution changes nothing in this bound, the result should be this bound itself,
+   * so that a caller can detect a change by comparing the result to this bound with {@code ==}.
+   * Comparing with {@code equals} would not detect a change to only the bounds of a type variable,
+   * because copies of a type variable are equal even if their bounds differ. A result that is a new
+   * object for the same bound is correct, but makes callers create needless copies.
+   *
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
    */
