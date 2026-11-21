@@ -303,6 +303,10 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+    }
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
@@ -348,6 +352,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+    }
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
