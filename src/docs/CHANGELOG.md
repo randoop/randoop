@@ -36,7 +36,9 @@ Changed command-line arguments:
 
 * `--omit-methods`:  If Randoop omits method M of a class under test, it also
   omits every method that M overrides, because a call to an overridden method
-  might dispatch to M.
+  might dispatch to M.  Randoop no longer omits methods that override M.  A
+  pattern must match the signature in the class that declares a method, not
+  in a class that inherits it.
 
 In a replacecall replacement file, a constructor may be written as
 `package-name.classname(argument-list)`, as in a Randoop fully-qualified
