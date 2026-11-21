@@ -687,6 +687,69 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A generic class with a member class that declares no type parameters.
+   *
+   * @param <T> the type parameter
+   */
+  public static class MemberOuter<T> {
+    /** A member class whose type arguments are those of its enclosing type. */
+    public class Inner {}
+  }
+
+  /** A class with a generic factory of member classes. */
+  public static class InnerFactory {
+    /**
+     * Returns a member of the given object.
+     *
+     * @param <X> the type argument of the enclosing type
+     * @param owner the enclosing object
+     * @return a member of {@code owner}
+     */
+    public static <X> MemberOuter<X>.Inner make(MemberOuter<X> owner) {
+      return owner.new Inner();
+    }
+  }
+
+  /** A field whose type is a member class of {@code MemberOuter<String>}. */
+  public MemberOuter<String>.Inner stringInner;
+
+  /** A field whose type is a member class of {@code MemberOuter<Integer>}. */
+  public MemberOuter<Integer>.Inner integerInner;
+
+  /**
+   * Tests that the goal type is matched to choose the type arguments of the enclosing type of the
+   * output type, when the goal type is a member class that declares no type parameters.
+   */
+  @Test
+  public void testInstantiateForMemberClassGoal() throws Exception {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(
+        GenericClassType.forClass(MemberOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation make =
+        TypedOperation.forMethod(InnerFactory.class.getMethod("make", MemberOuter.class));
+    Type stringInnerType =
+        Type.forType(TypeInstantiatorTest.class.getField("stringInner").getGenericType());
+    TypedClassOperation operation = instantiator.instantiate(make, stringInnerType);
+    assertNotNull(operation);
+    assertEquals(stringInnerType, operation.getOutputType());
+    assertEquals(
+        GenericClassType.forClass(MemberOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        operation.getInputTypes().get(0));
+    // The goal type determines the type argument, though it is not that of an input type.
+    Type integerInnerType =
+        Type.forType(TypeInstantiatorTest.class.getField("integerInner").getGenericType());
+    operation = instantiator.instantiate(make, integerInnerType);
+    assertNotNull(operation);
+    assertEquals(integerInnerType, operation.getOutputType());
+    assertEquals(
+        GenericClassType.forClass(MemberOuter.class).instantiate(INTEGER_TYPE),
+        operation.getInputTypes().get(0));
+  }
+
+  /**
    * Returns the given type argument of the given parameterized type.
    *
    * @param type a parameterized type, such as {@code List<String>}

@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,57 +16,42 @@ public class GenericClassType extends ParameterizedType {
   private final Class<?> rawType;
 
   /**
-   * The type parameters of the generic class. It is empty until {@link #initializeParameters} is
-   * called.
+   * The type parameters of the generic class; null if not yet computed. Use {@link
+   * #getDeclaredTypeParameters()} instead of reading this field.
    */
-  private final List<TypeVariable> parameters;
+  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
+  private volatile @Nullable List<TypeVariable> parameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
+   *
+   * <p>The type parameters are computed when they are first needed, not here. Computing the bound
+   * of a type parameter can create this generic class type, as for {@code class Outer<T extends
+   * Outer<?>.Inner>} or {@code class Node<T extends Node<?>>}. If this constructor computed the
+   * type parameters, then {@link ParameterizedType#forClass(Class)} would recurse without end:
+   * computing the bound of {@code T} would construct this type again, because the cache does not
+   * yet contain it, and constructing it would compute the bound of {@code T} again, because {@link
+   * TypeVariable#forType(java.lang.reflect.Type)} does not yet cache {@code T}.
    *
    * @param rawType the {@code Class} raw type
    */
   /*package*/ GenericClassType(Class<?> rawType) {
-    this(rawType, true);
-  }
-
-  /**
-   * Creates a {@link GenericClassType} for the given raw type.
-   *
-   * @param rawType the {@code Class} raw type
-   * @param initializeParameters if true, compute the type parameters; if false, the client must
-   *     call {@link #initializeParameters} before using the result
-   */
-  private GenericClassType(Class<?> rawType, boolean initializeParameters) {
     super();
     this.rawType = rawType;
-    this.parameters = new ArrayList<>(rawType.getTypeParameters().length);
-    if (initializeParameters) {
-      initializeParameters();
-    }
   }
 
   /**
-   * Creates a {@link GenericClassType} whose type parameters have not been computed. The client
-   * must call {@link #initializeParameters} before using the result, other than to compare it or to
-   * store it in another type.
+   * Returns the type parameters declared by the generic class, not those of its enclosing classes.
    *
-   * <p>This permits a client to cache the result before computing its type parameters, whose bounds
-   * may refer to the class itself, as in {@code C<T extends List<? extends C<?>[]>>}.
-   *
-   * @param rawType the {@code Class} raw type
-   * @return a generic class type whose type parameters have not been computed
+   * @return the type parameters declared by the generic class
    */
-  /*package*/ static GenericClassType withoutParameters(Class<?> rawType) {
-    return new GenericClassType(rawType, false);
-  }
-
-  /** Computes the type parameters of this generic class. */
-  /*package*/ final void initializeParameters() {
-    if (!parameters.isEmpty()) {
-      throw new IllegalStateException("type parameters of " + rawType + " already computed");
+  private List<TypeVariable> getDeclaredTypeParameters() {
+    List<TypeVariable> result = parameters;
+    if (result == null) {
+      result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+      parameters = result;
     }
-    parameters.addAll(CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters()));
+    return result;
   }
 
   /**
@@ -108,7 +92,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters);
+            getDeclaredTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -198,7 +182,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters);
+    return CollectionsPlume.mapList(TypeArgument::forType, getDeclaredTypeParameters());
   }
 
   /**
@@ -208,7 +192,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
+    return CollectionsPlume.concatenate(super.getTypeParameters(), getDeclaredTypeParameters());
   }
 
   /**
@@ -225,6 +209,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
+    List<TypeVariable> parameters = getDeclaredTypeParameters();
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -251,6 +236,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
+    List<TypeVariable> parameters = getDeclaredTypeParameters();
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(

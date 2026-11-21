@@ -111,8 +111,12 @@ final class Subtyping {
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
+      if (capturedType == null) {
+        return false;
+      }
       InstantiatedType supertype =
-          findMatchingSupertype((ClassOrInterfaceType) type, otherInstantiatedType);
+          findMatchingSupertype(capturedType, otherInstantiatedType);
       if (supertype == null) {
         return false;
       }
@@ -131,8 +135,12 @@ final class Subtyping {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
       // not, so compare the enclosing types here.
+      ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
+      if (capturedType == null) {
+        return false;
+      }
       ClassOrInterfaceType supertype =
-          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
+          findSupertypeOfClass(capturedType, otherType.getRuntimeClass());
       if (supertype == null) {
         return false;
       }
@@ -179,6 +187,28 @@ final class Subtyping {
       return null;
     }
     return result;
+  }
+
+  /**
+   * Returns the capture conversion of the given type, if it has a wildcard type argument, or the
+   * type itself otherwise. The supertypes of a type are computed from its capture conversion,
+   * because substituting a wildcard into a supertype can create an invalid type: for {@code class
+   * C<T> implements Box<T[]>}, the supertype of {@code C<?>} would be an array of a wildcard.
+   *
+   * @param type a type
+   * @return the capture conversion of {@code type}, or null if capture conversion fails because of
+   *     a lazy bound
+   */
+  private static @Nullable ClassOrInterfaceType captureWildcardArguments(
+      ClassOrInterfaceType type) {
+    if (!type.hasWildcardArgument()) {
+      return type;
+    }
+    try {
+      return type.applyCaptureConversion();
+    } catch (LazyBoundException e) {
+      return null;
+    }
   }
 
   /**
@@ -352,7 +382,9 @@ final class Subtyping {
   /**
    * Returns true if {@code lowerType}, an array or class type that contains unknowns, can be chosen
    * to be a subtype of, or equal to, {@code type}, by comparing their component types or type
-   * arguments, including the type arguments of the enclosing types of member classes.
+   * arguments, including the type arguments of the enclosing types of member classes. If {@code
+   * type} is a type variable, such as the capture of {@code ? super List<String>}, compares {@code
+   * lowerType} with the lower bound of {@code type}, which is a subtype of {@code type}.
    *
    * @param lowerType the possible subtype, which contains unknowns but is not an unknown
    * @param type the possible supertype
@@ -361,6 +393,17 @@ final class Subtyping {
    */
   private static boolean compoundCanBeSubtype(
       ReferenceType lowerType, ReferenceType type, Substitution substitution) {
+    if (type.isVariable()) {
+      // As in isSubtypeOrEqual, a type variable is a supertype of its lower bound.  For the capture
+      // of `? super List<String>`, List<U> can be a subtype of it, by choosing String for U.
+      ParameterBound lowerBound = ((TypeVariable) type).getResolvedLowerTypeBound();
+      if (!(lowerBound instanceof ReferenceBound)) {
+        return false;
+      }
+      ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+      return !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+          && canBeSubtype(lowerType, lowerBoundType, substitution);
+    }
     if (lowerType.isArray() && type.isArray()) {
       Type componentType = ((ArrayType) lowerType).getComponentType();
       Type otherComponentType = ((ArrayType) type).getComponentType();

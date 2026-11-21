@@ -407,6 +407,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType instanceof ClassOrInterfaceType
         && ((ClassOrInterfaceType) goalType).isMemberClass()) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
       // Matching enclosing types do not make unrelated member classes, such as
       // Outer<String>.Inner and Outer<E>.Other, unify.
       if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
@@ -419,7 +420,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       if (memberSupertype.isMemberClass()) {
         ClassOrInterfaceType thisEnclosingType = memberSupertype.enclosingType;
-        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
         if (enclosingGoalType.isGeneric()) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {

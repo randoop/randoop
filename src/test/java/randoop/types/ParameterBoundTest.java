@@ -206,6 +206,18 @@ public class ParameterBoundTest {
             selfComparableBound, new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE)));
   }
 
+  /** The substitution is not applied to the bound whose lower bound is tested. */
+  @Test
+  public void testSubstitutionNotAppliedToTargetOfLowerBound() {
+    ParameterBound variableBound = new EagerReferenceBound(arrayHolderVariable);
+    Substitution substitution = new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE);
+    // The type variable in the target bound stands for itself, not for String.
+    assertFalse(stringBound.isLowerBound(variableBound, substitution));
+    assertFalse(variableBound.hasLowerBound(stringBound, substitution));
+    // The substitution is applied to the possible lower bound.
+    assertTrue(variableBound.isLowerBound(stringBound, substitution));
+  }
+
   /** An intersection is a subtype of a type if any of its members is. */
   @Test
   public void testIntersectionAsLowerBound() {
@@ -336,6 +348,25 @@ public class ParameterBoundTest {
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
     assertTrue(bound.isLowerBound(argType, empty));
+  }
+
+  /** A substitution for a type variable that occurs only in an owner type preserves the owner. */
+  @Test
+  public void testGenericArraySubstitutionPreservesOwnerType() {
+    java.lang.reflect.Type arrayType = fieldType(Outer.class, "innerArray");
+    ParameterBound bound =
+        ParameterBound.forType(
+            Collections.singleton(Outer.class.getTypeParameters()[0]), arrayType);
+    assertTrue(bound instanceof LazyParameterBound);
+    GenericClassType outerType = GenericClassType.forClass(Outer.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ParameterBound substituted =
+        bound.substitute(new Substitution(outerType.getTypeParameters().get(0), integerType));
+    assertTrue(substituted instanceof ReferenceBound);
+    ArrayType substitutedType = (ArrayType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType componentType = (ClassOrInterfaceType) substitutedType.getComponentType();
+    assertTrue(componentType.isMemberClass());
+    assertEquals(outerType.instantiate(integerType), componentType.enclosingType);
   }
 
   /**
@@ -626,6 +657,29 @@ public class ParameterBoundTest {
         ((WildcardArgument) listType.getTypeArguments().get(0)).getWildcardType();
     TypeVariable lowerBoundVariable =
         (TypeVariable) ((ReferenceBound) wildcard.getTypeBound()).getBoundType();
+    ParameterBound uBound = lowerBoundVariable.getUpperTypeBound();
+    assertTrue(uBound.toString(), uBound.toString().contains("java.lang.String"));
+  }
+
+  /**
+   * When a substitution is extended to map each type variable in a bound to itself, a variable that
+   * is mapped to itself still has the substitution applied to its bounds.
+   */
+  @Test
+  public void testIdentityMappingAppliesSubstitutionToWildcardLowerBoundVariable() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(WildcardLower.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    LazyParameterBound bound = (LazyParameterBound) parameters.get(2).getUpperTypeBound();
+    ParameterBound substituted =
+        bound.substituteWithUnknowns(new Substitution(k, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    WildcardType wildcard =
+        ((WildcardArgument) listType.getTypeArguments().get(0)).getWildcardType();
+    TypeVariable lowerBoundVariable =
+        (TypeVariable) ((ReferenceBound) wildcard.getTypeBound()).getBoundType();
+    assertEquals(parameters.get(1), lowerBoundVariable);
     ParameterBound uBound = lowerBoundVariable.getUpperTypeBound();
     assertTrue(uBound.toString(), uBound.toString().contains("java.lang.String"));
   }
