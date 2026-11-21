@@ -119,17 +119,16 @@ public class ExplicitTypeVariable extends TypeVariable {
    * @param substitution the substitution
    * @return the result of applying {@code substitution} to this type variable
    */
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   private ReferenceType substituteIntoBound(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     if (type == null) {
-      if (upperBound != getUpperTypeBound()) {
+      if (!sameType(upperBound, getUpperTypeBound())) {
         return new ExplicitTypeVariable(this.variable, upperBound);
       }
       return this;
     }
-    if (upperBound != getUpperTypeBound()) {
+    if (!sameType(upperBound, getUpperTypeBound())) {
       return ((TypeVariable) type).createCopyWithBounds(getLowerTypeBound(), upperBound);
     }
     return type;
