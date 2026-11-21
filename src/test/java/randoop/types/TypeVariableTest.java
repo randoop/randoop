@@ -2435,7 +2435,7 @@ public class TypeVariableTest {
    *
    * @param <T> a type parameter bounded by a parameterization of this class
    */
-  static class WildcardSelfBound<T extends WildcardSelfBound<?>> {}
+  static class ColdSelfBound<T extends ColdSelfBound<?>> {}
 
   /**
    * Converting a type parameter whose bound mentions the declaring class does not recurse without
@@ -2448,11 +2448,11 @@ public class TypeVariableTest {
     assertEquals(MemberOfSelfBound.Inner.class, boundType.getRuntimeClass());
     assertSame(t, GenericClassType.forClass(MemberOfSelfBound.class).getTypeParameters().get(0));
 
-    GenericClassType wildcardSelfBound = GenericClassType.forClass(WildcardSelfBound.class);
-    TypeVariable u = wildcardSelfBound.getTypeParameters().get(0);
-    assertSame(u, TypeVariable.forType(WildcardSelfBound.class.getTypeParameters()[0]));
+    GenericClassType coldSelfBound = GenericClassType.forClass(ColdSelfBound.class);
+    TypeVariable u = coldSelfBound.getTypeParameters().get(0);
+    assertSame(u, TypeVariable.forType(ColdSelfBound.class.getTypeParameters()[0]));
     assertEquals(
-        WildcardSelfBound.class,
+        ColdSelfBound.class,
         ((ReferenceBound) u.getUpperTypeBound()).getBoundType().getRuntimeClass());
   }
 
