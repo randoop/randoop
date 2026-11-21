@@ -139,6 +139,24 @@ public class ParameterBoundTest {
     assertFalse(arrayBound.isLowerBound(stringArrayBound, substitution));
   }
 
+  /**
+   * The substitution is applied to the possible lower bound, but not to the bound that it is
+   * compared with, even if that bound is an eager bound that contains a type variable.
+   */
+  @Test
+  public void testLowerBoundDoesNotSubstituteTarget() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ParameterBound eArrayBound = new EagerReferenceBound(ArrayType.ofComponentType(e));
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    Substitution substitution = new Substitution(e, JavaTypes.STRING_TYPE);
+    // E[] is not substituted when it is the bound compared with.
+    assertFalse(stringArrayBound.isLowerBound(eArrayBound, substitution));
+    // E[] becomes String[] when it is the possible lower bound.
+    assertTrue(eArrayBound.isLowerBound(stringArrayBound, substitution));
+    assertTrue(stringArrayBound.isLowerBound(stringArrayBound, substitution));
+  }
+
   /** A {@link LazyReferenceBound} is a type with free type variables, not one instantiation. */
   @Test
   public void testLazyReferenceBoundHasOnlyNullLowerBound() {
@@ -150,6 +168,26 @@ public class ParameterBoundTest {
 
     assertFalse(stringListBound.isLowerBound(lazyListBound, new Substitution()));
     assertTrue(nullBound.isLowerBound(lazyListBound, new Substitution()));
+  }
+
+  /**
+   * A subtype of the type of a {@link LazyReferenceBound}, with the same type variables, is a lower
+   * bound of it.
+   */
+  @Test
+  public void testSubtypeWithSameVariableIsLowerBoundOfLazyReferenceBound() {
+    ParameterBound lazyListBound =
+        new LazyReferenceBound(
+            GenericClassType.forClass(List.class).instantiate(arrayHolderVariable));
+    ParameterBound arrayListBound =
+        new EagerReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(arrayHolderVariable));
+    ParameterBound stringArrayListBound =
+        new EagerReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE));
+    assertTrue(arrayListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(stringArrayListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(lazyListBound.isLowerBound(arrayListBound, new Substitution()));
   }
 
   /** A {@link LazyReferenceBound} is a lower bound of itself, but not of another type variable. */

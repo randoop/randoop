@@ -143,9 +143,27 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
+    return genericType.getInterfaces(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution to apply to the declared supertypes of the generic class of this type:
+   * the substitution of the type arguments of this type for the type parameters of its class,
+   * extended, for a member class, by the substitution of the type arguments of its enclosing types
+   * for the type parameters of their classes. For example, given {@code class Outer<T> { class
+   * Child<U> extends Outer<T>.Base implements Map<T, U> {} }}, the superclass of {@code
+   * Outer<String>.Child<Integer>} is {@code Outer<String>.Base}, and its interface is {@code
+   * Map<String, Integer>}.
+   *
+   * @return the substitution to apply to the declared supertypes of the generic class of this type
+   */
+  private Substitution getSupertypeSubstitution() {
     Substitution substitution =
         new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    Substitution enclosingSubstitution = getEnclosingSubstitution();
+    return enclosingSubstitution == null
+        ? substitution
+        : enclosingSubstitution.extend(substitution);
   }
 
   @Override
@@ -204,9 +222,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**
@@ -472,9 +488,16 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
+        // For a member class of a generic class, the type arguments of the enclosing types must
+        // also be contained:  Outer<Integer>.Inner<String> is not a subtype of
+        // Outer<String>.Inner<String>.
+        boolean enclosingContained =
+            !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
+                || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        return (i == thisTypeArguments.size() && enclosingContained)
+            || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.

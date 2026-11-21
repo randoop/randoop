@@ -357,4 +357,47 @@ public class ParameterizedTypeTest {
             .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
     assertNotNull(stringToString.getInstantiatingSubstitution(sameKeyAndValue));
   }
+
+  /** A field of type {@code List<List<?>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<?>> listOfUnboundedLists;
+
+  /** A field of type {@code List<List<String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<String>> listOfStringLists;
+
+  /** A field of type {@code List<? extends List<? super String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? extends List<? super String>> listOfSuperStringLists;
+
+  /** A field of type {@code List<?>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<?> unboundedList;
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? super String> superStringList;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of a field of this class
+   * @return the type of the field
+   */
+  private static Type fieldType(String name) throws NoSuchFieldException {
+    return Type.forType(ParameterizedTypeTest.class.getDeclaredField(name).getGenericType());
+  }
+
+  /** {@code ? super String} does not contain {@code ?}, but {@code ?} contains it (JLS 4.5.1). */
+  @Test
+  public void testLowerBoundedWildcardDoesNotContainUnbounded() throws NoSuchFieldException {
+    Type unbounded = fieldType("unboundedList");
+    Type superString = fieldType("superStringList");
+    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
+    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
+
+    Type target = fieldType("listOfSuperStringLists");
+    assertFalse(fieldType("listOfUnboundedLists").isSubtypeOfOrEqualTo(target));
+    assertTrue(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(target));
+  }
 }
