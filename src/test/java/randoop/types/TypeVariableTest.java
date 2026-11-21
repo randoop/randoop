@@ -2922,6 +2922,9 @@ public class TypeVariableTest {
     assertFalse(
         Subtyping.isSubtypeOrEqual(
             listType.instantiate(JavaTypes.STRING_TYPE), comparableList, new Substitution()));
+    // A wildcard with a lazy bound contains itself.
+    assertTrue(wildcard.contains(wildcard));
+    assertTrue(comparableList.isSubtypeOfOrEqualTo(comparableList));
   }
 
   /**
@@ -3061,6 +3064,56 @@ public class TypeVariableTest {
     // Integer <: Number <: the capture variable for the first argument.
     TypeVariable second = typeArgument(capturedFieldType("superNumberField"), 1);
     assertTrue(second.canBeInstantiatedBy(integer));
+  }
+
+  /**
+   * A class whose type parameter is bounded by an instantiation of {@link MutualB}, whose type
+   * parameter is bounded by an instantiation of this class.
+   *
+   * @param <T> a type parameter
+   */
+  static class MutualA<T extends MutualB<?>> {}
+
+  /**
+   * A class whose type parameter is bounded by an instantiation of {@link MutualA}.
+   *
+   * @param <U> a type parameter
+   */
+  static class MutualB<U extends MutualA<?>> {}
+
+  /**
+   * Creating a type variable whose bound mentions another class whose type parameter's bound
+   * mentions the first class creates both type variables, and neither is returned before its bound
+   * is set.
+   */
+  @Test
+  public void testMutuallyRecursiveBoundsAreComplete() {
+    TypeVariable t = TypeVariable.forType(MutualA.class.getTypeParameters()[0]);
+    TypeVariable u = TypeVariable.forType(MutualB.class.getTypeParameters()[0]);
+    assertFalse(t.getUpperTypeBound().isObject());
+    assertFalse(u.getUpperTypeBound().isObject());
+    assertSame(t, TypeVariable.forType(MutualA.class.getTypeParameters()[0]));
+    assertSame(u, TypeVariable.forType(MutualB.class.getTypeParameters()[0]));
+    assertSame(t, GenericClassType.forClass(MutualA.class).getTypeParameters().get(0));
+    assertSame(u, GenericClassType.forClass(MutualB.class).getTypeParameters().get(0));
+  }
+
+  /**
+   * A type that could instantiate a capture variable, but that is not a subtype of its lower bound,
+   * is not within a bound that is the capture variable. The capture of {@code ? super Number} can
+   * be Object, but it can also be Number, so Object is not known to be a subtype of it.
+   */
+  @Test
+  public void testInstantiationOfCaptureVariableIsNotWithinVariableBound()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("superNumberUnboundedField");
+    TypeVariable captureOfSuperNumber = typeArgument(capturedType, 0);
+    assertTrue(captureOfSuperNumber.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    assertFalse(captureOfSuperNumber.canBeSupertypeOf(JavaTypes.OBJECT_TYPE, new Substitution()));
+    // The capture variable for the second argument is bounded by that for the first.
+    TypeVariable second = typeArgument(capturedType, 1);
+    assertFalse(second.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    assertTrue(second.canBeInstantiatedBy(ClassOrInterfaceType.forClass(Integer.class)));
   }
 
   /**

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 import org.junit.Test;
 
@@ -49,6 +50,21 @@ public class SubtypingTest {
 
     /** A non-generic member class of a parameterized type. */
     Outer<String>.Inner innerOfString;
+
+    /** A list of a member class whose enclosing type is {@code Outer<Integer>}. */
+    List<Outer<Integer>.A<Long>> listOfIntegerA;
+
+    /** A list of a member class whose enclosing type is {@code Outer<Number>}. */
+    List<Outer<Number>.A<Long>> listOfNumberA;
+
+    /** A list whose type argument is an unbounded wildcard. */
+    List<?> listOfUnbounded;
+
+    /** A list whose type argument is a wildcard bounded below by {@code Number}. */
+    List<? super Number> listOfSuperNumber;
+
+    /** A list whose type argument is a wildcard bounded below by {@code Integer}. */
+    List<? super Integer> listOfSuperInteger;
   }
 
   /**
@@ -109,5 +125,28 @@ public class SubtypingTest {
     // Either order of merging maps tCopy to t.
     assertSame(t, tCopy.substitute(identity.extend(replacement)));
     assertSame(t, tCopy.substitute(replacement.extend(identity)));
+  }
+
+  @Test
+  public void testNonWildcardArgumentComparesEnclosingTypes() throws NoSuchFieldException {
+    ClassOrInterfaceType listOfIntegerA = fieldType("listOfIntegerA");
+    ClassOrInterfaceType listOfNumberA = fieldType("listOfNumberA");
+    assertTrue(listOfIntegerA.isSubtypeOfOrEqualTo(listOfIntegerA));
+    // Outer<Integer>.A<Long> and Outer<Number>.A<Long> are different types.
+    assertFalse(listOfIntegerA.isSubtypeOfOrEqualTo(listOfNumberA));
+    assertFalse(listOfNumberA.isSubtypeOfOrEqualTo(listOfIntegerA));
+  }
+
+  @Test
+  public void testContainmentOfLowerBoundedWildcards() throws NoSuchFieldException {
+    ClassOrInterfaceType listOfUnbounded = fieldType("listOfUnbounded");
+    ClassOrInterfaceType listOfSuperNumber = fieldType("listOfSuperNumber");
+    ClassOrInterfaceType listOfSuperInteger = fieldType("listOfSuperInteger");
+    // ? contains ? super Number, but not the reverse.
+    assertTrue(listOfSuperNumber.isSubtypeOfOrEqualTo(listOfUnbounded));
+    assertFalse(listOfUnbounded.isSubtypeOfOrEqualTo(listOfSuperNumber));
+    // ? super Integer contains ? super Number, but not the reverse.
+    assertTrue(listOfSuperNumber.isSubtypeOfOrEqualTo(listOfSuperInteger));
+    assertFalse(listOfSuperInteger.isSubtypeOfOrEqualTo(listOfSuperNumber));
   }
 }

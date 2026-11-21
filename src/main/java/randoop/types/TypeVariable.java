@@ -97,8 +97,14 @@ public abstract class TypeVariable extends ParameterType {
       new ConcurrentHashMap<>();
 
   /**
+   * The lock that {@link #forType(java.lang.reflect.Type)} holds while it creates type variables.
+   */
+  private static final Object constructionLock = new Object();
+
+  /**
    * The type variables that {@link #forType(java.lang.reflect.Type)} is creating in the current
-   * thread, whose bounds are not yet computed.
+   * thread, which are not yet in {@link #declaredTypeVariables}. The bounds of some of them are not
+   * yet computed. They are put in {@link #declaredTypeVariables} when the outermost call finishes.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Map<java.lang.reflect.TypeVariable<?>, TypeVariable>>
@@ -151,30 +157,54 @@ public abstract class TypeVariable extends ParameterType {
     if (result != null) {
       return result;
     }
-    // Computing the bound can call this method for the same type variable, through an eager bound
-    // that is an instantiation of the class that declares it, as in `class Node<T extends
-    // Node<?>>`:  converting `Node<?>` creates the GenericClassType for Node, which needs T.
-    // Such a call returns the type variable whose bound is being computed.
-    Map<java.lang.reflect.TypeVariable<?>, TypeVariable> inProgress =
-        typeVariablesInConstruction.get();
-    result = inProgress.get(v);
-    if (result != null) {
-      return result;
+    // Only one thread constructs type variables at a time, so that no thread publishes a type
+    // variable that another thread is also constructing.  The lock is reentrant, so recursive calls
+    // on the constructing thread proceed.
+    synchronized (constructionLock) {
+      result = declaredTypeVariables.get(v);
+      if (result != null) {
+        return result;
+      }
+      // Computing the bound can call this method for the same type variable, through an eager
+      // bound that is an instantiation of the class that declares it, as in `class Node<T extends
+      // Node<?>>`:  converting `Node<?>` creates the GenericClassType for Node, which needs T.
+      // Such a call returns the type variable whose bound is being computed.  Likewise, a call for
+      // a type variable whose construction finished within the outermost construction returns it.
+      Map<java.lang.reflect.TypeVariable<?>, TypeVariable> inProgress =
+          typeVariablesInConstruction.get();
+      result = inProgress.get(v);
+      if (result != null) {
+        return result;
+      }
+      boolean isOutermost = inProgress.isEmpty();
+      Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
+      variableSet.add(v);
+      // The bound is set after it is computed.  Until then, the bound is Object.
+      result = new ExplicitTypeVariable(v, new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+      inProgress.put(v, result);
+      boolean succeeded = false;
+      try {
+        // Computing the bound can call this method for other type variables, so this method does
+        // not use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
+        result.setUpperBound(ParameterBound.forTypes(variableSet, v.getBounds()));
+        succeeded = true;
+      } finally {
+        if (!succeeded) {
+          inProgress.remove(v);
+        }
+        if (isOutermost) {
+          // A type variable constructed within this construction can have a bound that refers to
+          // a type variable whose bound is not yet set, as for `A<T extends B<?>>` and `B<U extends
+          // A<?>>`, where constructing T constructs U, whose bound refers to T.  So none of them is
+          // published until the outermost construction finishes, when all their bounds are set.
+          if (succeeded) {
+            declaredTypeVariables.putAll(inProgress);
+          }
+          inProgress.clear();
+        }
+      }
     }
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>(1);
-    variableSet.add(v);
-    // The bound is set after it is computed.  Until then, the bound is Object.
-    result = new ExplicitTypeVariable(v, new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-    inProgress.put(v, result);
-    try {
-      // Computing the bound can call this method for other type variables, so this method does
-      // not use ConcurrentHashMap.computeIfAbsent, which forbids such a recursive update.
-      result.setUpperBound(ParameterBound.forTypes(variableSet, v.getBounds()));
-    } finally {
-      inProgress.remove(v);
-    }
-    TypeVariable previous = declaredTypeVariables.putIfAbsent(v, result);
-    return previous != null ? previous : result;
+    return result;
   }
 
   @Override
@@ -480,8 +510,10 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, {@code otherType} itself, and, if this variable is a type parameter, each of the strict
-   * supertypes of {@code otherType}, as determined by {@link #strictSupertypes(ReferenceType)}.
+   * of it, and, if this variable is a type parameter, {@code otherType} itself and each of the
+   * strict supertypes of {@code otherType}, as determined by {@link
+   * #strictSupertypes(ReferenceType)}. A capture variable stands for a particular type that is
+   * known only to be a supertype of its lower bound, so only its lower bound is considered.
    * Each instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
    * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
@@ -513,14 +545,18 @@ public abstract class TypeVariable extends ParameterType {
     } finally {
       inProgress.remove(inProgress.size() - 1);
     }
-    if (lowerBoundAllows || canBeInstantiatedBy(otherType, context)) {
+    if (lowerBoundAllows) {
       return true;
     }
-    // A capture variable stands for a particular type, so it is not searched for among the strict
-    // supertypes of otherType.  For example, the capture of `? super Number` can be Object, a
-    // supertype of String, but String is not known to be a subtype of it.
+    // A capture variable stands for a particular type, which is known only to be a supertype of its
+    // lower bound.  So no other instantiation of it is tried.  For example, the capture of `?
+    // super Number` can be Object, but it can also be Number, so neither Object nor String is
+    // known to be a subtype of it.
     if (!(this instanceof ExplicitTypeVariable)) {
       return false;
+    }
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
     }
     for (ReferenceType supertype : strictSupertypes(otherType)) {
       if (canBeInstantiatedBy(supertype, context)) {

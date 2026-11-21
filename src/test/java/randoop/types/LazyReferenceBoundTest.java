@@ -130,4 +130,36 @@ public class LazyReferenceBoundTest {
     assertEquals(
         Collections.singletonList(V), new LazyReferenceBound(wildcard).getTypeParameters());
   }
+
+  /**
+   * A type variable that the substitution puts in the bound stands for itself, not for an unknown:
+   * for bound {@code V} with {@code V} mapped to the unrelated, unbounded {@code W}, {@code String}
+   * is not known to be a subtype of {@code W}.
+   */
+  @Test
+  public void testFixedReplacementVariableIsNotUnknown() {
+    LazyReferenceBound bound = new LazyReferenceBound(V);
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution(V, W)));
+    // V is a sibling of W, which the substitution instantiates, so V is an unknown.
+    assertTrue(
+        bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution(W, JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A lower bound that is a {@link LazyParameterBound} is compared as the equivalent {@link
+   * ReferenceBound}: for {@code T extends Comparable<T>}, the resolved bound {@code Comparable<T>}
+   * has the reflective bound {@code Comparable<T>} as a lower bound.
+   */
+  @Test
+  public void testHasLazyParameterLowerBound() {
+    TypeVariable t = GenericClassType.forClass(SelfBound.class).getTypeParameters().get(0);
+    ParameterBound reflectiveBound = t.getUpperTypeBound();
+    assertTrue(reflectiveBound instanceof LazyParameterBound);
+    ParameterBound resolvedBound = t.getResolvedUpperTypeBound();
+    assertTrue(resolvedBound instanceof LazyReferenceBound);
+    assertTrue(
+        ((LazyReferenceBound) resolvedBound).hasLowerBound(reflectiveBound, new Substitution()));
+    assertTrue(
+        ((LazyReferenceBound) resolvedBound).hasLowerBound(resolvedBound, new Substitution()));
+  }
 }

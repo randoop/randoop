@@ -118,20 +118,29 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    List<TypeArgument> convertedArgumentList =
+        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
+    // Converts the enclosing type, too.
+    InstantiatedType result =
+        (InstantiatedType)
+            applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+
+    // The type parameters of a generic class can include those of its enclosing types, first.  The
+    // bounds of the capture variables can mention those, so the substitution maps them to the type
+    // arguments of the converted enclosing types, such as the capture variable for `?` in
+    // `Outer<?>.Middle<String>`.
+    List<TypeVariable> parameters = genericType.getTypeParameters();
+    List<TypeVariable> ownParameters =
+        parameters.subList(parameters.size() - convertedTypeList.size(), parameters.size());
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        result.getEnclosingSubstitution().extend(ownParameters, convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(ownParameters.get(i), substitution);
       }
     }
-
-    List<TypeArgument> convertedArgumentList =
-        CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
-
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    return result;
   }
 
   /**

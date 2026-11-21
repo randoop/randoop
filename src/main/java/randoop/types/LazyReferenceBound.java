@@ -157,8 +157,11 @@ class LazyReferenceBound extends EagerReferenceBound {
 
   /**
    * Returns the bound type after the given substitution is applied, if the bound type is a type
-   * variable, the substitution maps it to no type or to a type variable, and {@code argType} is a
-   * reference type that is not a type variable. Otherwise, returns null.
+   * variable, the substitution maps it to no type or to a type variable, that type variable stands
+   * for an unknown type rather than for itself (as determined by {@link
+   * Substitution#isUnknown(ReferenceType)}, or because the substitution instantiates no type
+   * parameter), and {@code argType} is a reference type that is not a type variable. Otherwise,
+   * returns null.
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
@@ -183,7 +186,22 @@ class LazyReferenceBound extends EagerReferenceBound {
       return null;
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
-    return boundType.isVariable() ? (TypeVariable) boundType : null;
+    if (!boundType.isVariable()) {
+      return null;
+    }
+    TypeVariable variable = (TypeVariable) boundType;
+    // As in TypeVariable.variableBoundAllows, a type variable is fixed rather than unknown if the
+    // substitution instantiates some type parameter and does not make the type variable an
+    // unknown, as for a type variable that the substitution put in the bound.  A fixed type
+    // variable stands for itself, so it is compared as an EagerReferenceBound would compare it:
+    // for bound `K` with `K` mapped to an unrelated type variable `E`, `String` is not known to
+    // be a subtype of `E`.
+    Substitution completeSubstitution =
+        substitution.extendWithIdentity(Collections.singletonList(variable));
+    if (substitution.instantiatesTypeParameters() && !completeSubstitution.isUnknown(variable)) {
+      return null;
+    }
+    return variable;
   }
 
   /**
@@ -213,18 +231,24 @@ class LazyReferenceBound extends EagerReferenceBound {
     // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
     // types too, which InstantiatedType.equals ignores:
     // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
-    if (lowerBound instanceof ReferenceBound
-        && Subtyping.isSubtypeOrEqual(
-            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
-            getBoundType(),
-            new Substitution())) {
+    // A lower bound that is a LazyParameterBound, such as the reflective bound `Comparable<T>` of
+    // `T extends Comparable<T>`, is first converted to the equivalent ReferenceBound.
+    ReferenceType lowerType;
+    if (lowerBound instanceof ReferenceBound) {
+      lowerType = ((ReferenceBound) lowerBound).getBoundType().substitute(substitution);
+    } else {
+      @Nullable ParameterBound b = lowerBound.substitute(substitution);
+      if (b instanceof LazyParameterBound) {
+        b = ((LazyParameterBound) b).toReferenceBound();
+      }
+      if (!(b instanceof ReferenceBound)) {
+        return false;
+      }
+      lowerType = ((ReferenceBound) b).getBoundType();
+    }
+    if (Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution())) {
       return true;
     }
-    ParameterBound b = lowerBound.substitute(substitution);
-    if (!(b instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
     // The null type is a subtype of every reference type, including a type variable, so array
     // covariance makes, for example, `NullType[]` a subtype of `T[]`.
     return lowerType.isArray()

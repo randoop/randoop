@@ -401,6 +401,81 @@ public class CaptureConversionTest {
   }
 
   /**
+   * A generic class with a generic member class whose type parameter is bounded by that of the
+   * enclosing class.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class BoundedOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U extends T> {}
+  }
+
+  /** A field whose type has a wildcard only in its enclosing type. */
+  public Outer<?>.Inner<String> wildcardOnlyInEnclosingTypeField;
+
+  /** A field whose type has wildcards in its enclosing type and its own type arguments. */
+  public BoundedOuter<? extends Number>.Inner<?> wildcardsInBothField;
+
+  /**
+   * Tests capture conversion of a member class whose generic class includes the type parameters of
+   * the enclosing class, when the enclosing type has a wildcard.
+   */
+  @Test
+  public void wildcardOnlyInEnclosingTypeTest() throws NoSuchFieldException {
+    // Afterward, the generic class of the member class has the type parameters of the enclosing
+    // class.
+    ClassOrInterfaceType.forClass(Outer.Inner.class);
+    InstantiatedType memberType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class
+                    .getField("wildcardOnlyInEnclosingTypeField")
+                    .getGenericType());
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    assertEquals(memberType.getTypeArguments(), capturedType.getTypeArguments());
+
+    // Ordinary capture conversion still works.
+    InstantiatedType wildcardOuter =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardOuterField").getGenericType());
+    assertTrue(wildcardOuter.applyCaptureConversion().hasCaptureVariable());
+  }
+
+  /**
+   * Tests that the bound of a capture variable of a member class mentions the capture variable of
+   * the enclosing type, when the bound of the type parameter mentions a type parameter of the
+   * enclosing class.
+   */
+  @Test
+  public void wildcardsInEnclosingAndMemberTypeTest() throws NoSuchFieldException {
+    ClassOrInterfaceType.forClass(BoundedOuter.Inner.class);
+    InstantiatedType memberType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardsInBothField").getGenericType());
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    InstantiatedType capturedEnclosingType = (InstantiatedType) capturedType.enclosingType;
+    TypeVariable enclosingCapture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedEnclosingType.getTypeArguments().get(0))
+                .getReferenceType();
+    TypeVariable memberCapture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    // The bound of U is T, which is the capture variable of the enclosing type.
+    assertSame(
+        enclosingCapture, ((ReferenceBound) memberCapture.getUpperTypeBound()).getBoundType());
+  }
+
+  /**
    * Checks the capture conversion by calling {@link #checkCapture(GenericClassType, ReferenceType,
    * ReferenceType, List)} where the bound type is substituted into the final type. The wildcard
    * types are carried as input types to the generic operation.
