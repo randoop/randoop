@@ -66,14 +66,13 @@ public class InstantiatedType extends ParameterizedType {
     return Objects.hash(genericType, argumentList);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public InstantiatedType substitute(Substitution substitution) {
     List<TypeArgument> argumentList =
         CollectionsPlume.mapList(
             (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
     ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
-    if (enclosing == enclosingType && sameElements(argumentList, this.argumentList)) {
+    if (sameType(enclosing, enclosingType) && sameElements(argumentList, this.argumentList)) {
       return this;
     }
     InstantiatedType result = new InstantiatedType(genericType, argumentList);
@@ -384,6 +383,7 @@ public class InstantiatedType extends ParameterizedType {
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
+      // For example, the enclosing type of this member class does not match that of `goalType`.
       return null;
     }
     if (goalType instanceof InstantiatedType) {

@@ -43,6 +43,67 @@ public class LazyParameterBoundTest {
         ((ReferenceBound) substituted).getBoundType());
   }
 
+  /**
+   * A generic class with a generic member class, which has a member class.
+   *
+   * @param <A> the type parameter
+   */
+  static class MemberOuter<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Middle<B> {
+      /** A member class with no type parameters of its own. */
+      class Deep {}
+    }
+  }
+
+  /**
+   * Type parameters whose recursive bounds differ only in the owner type of a generic member class.
+   *
+   * @param <U> a type parameter bounded by {@code List<MemberOuter<String>.Middle<U>.Deep>}
+   * @param <V> a type parameter bounded by {@code List<MemberOuter<Long>.Middle<U>.Deep>}
+   */
+  static class OwnerOfGenericMemberBound<
+      U extends List<MemberOuter<String>.Middle<U>.Deep>,
+      V extends List<MemberOuter<Long>.Middle<U>.Deep>> {}
+
+  /**
+   * Returns the enclosing type of the enclosing type of the type argument of the given bound, whose
+   * type is {@code List<MemberOuter<X>.Middle<U>.Deep>}.
+   *
+   * @param bound the bound
+   * @return the type {@code MemberOuter<X>} in the bound
+   */
+  private static ClassOrInterfaceType getOuterOfDeep(ReferenceBound bound) {
+    InstantiatedType list = (InstantiatedType) bound.getBoundType();
+    ClassOrInterfaceType deep =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType middle = deep.enclosingType;
+    assertTrue(middle != null);
+    return middle.enclosingType;
+  }
+
+  /** Converting a bound preserves the owner type of a generic member class. */
+  @Test
+  public void testOwnerOfGenericMemberClassPreserved() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerOfGenericMemberBound.class).getTypeParameters();
+    ParameterBound uBound = parameters.get(0).getUpperTypeBound();
+    ParameterBound vBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(uBound instanceof LazyParameterBound);
+    assertTrue(vBound instanceof LazyParameterBound);
+    ReferenceBound uConverted = ((LazyParameterBound) uBound).toReferenceBound();
+    ReferenceBound vConverted = ((LazyParameterBound) vBound).toReferenceBound();
+    GenericClassType outer = GenericClassType.forClass(MemberOuter.class);
+    assertEquals(outer.instantiate(JavaTypes.STRING_TYPE), getOuterOfDeep(uConverted));
+    assertEquals(outer.instantiate(ReferenceType.forClass(Long.class)), getOuterOfDeep(vConverted));
+    assertFalse(Subtyping.isIdentical(uConverted.getBoundType(), vConverted.getBoundType()));
+  }
+
   @Test
   public void testObjectIsUpperBoundOfLazyBound() {
     TypeVariable t =

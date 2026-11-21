@@ -596,6 +596,9 @@ public class InstantiationTest {
     /** Another member class with no type parameters of its own, unrelated to {@link Inner}. */
     class Other {}
 
+    /** A member class whose superclass mentions the type parameter of the enclosing class. */
+    abstract class ListInner extends java.util.AbstractList<E> {}
+
     /**
      * A method whose parameter type is the generic form of a member class.
      *
@@ -736,10 +739,37 @@ public class InstantiationTest {
     ClassOrInterfaceType stringInner =
         ClassOrInterfaceType.forClass(Outer.Inner.class)
             .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
-    Substitution substitution = stringInner.getInstantiatingSubstitution(t);
-    assertTrue(
-        "unexpected substitution " + substitution,
-        substitution == null || substitution.get(t) == null);
+    assertNull(stringInner.getInstantiatingSubstitution(t));
+  }
+
+  /**
+   * The superclass of {@code Outer<String>.ListInner} is {@code AbstractList<String>}: the type
+   * argument of the enclosing type is applied to the superclass in the declaration.
+   */
+  @Test
+  public void testMemberClassSuperclassUsesEnclosingTypeArguments() {
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringListInner =
+        ClassOrInterfaceType.forClass(Outer.ListInner.class)
+            .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    assertEquals(
+        GenericClassType.forClass(java.util.AbstractList.class).instantiate(JavaTypes.STRING_TYPE),
+        stringListInner.getSuperclass());
+  }
+
+  /**
+   * A class whose type parameter's bound mentions the type parameter only in the owner type of a
+   * member class.
+   *
+   * @param <T> the type parameter
+   */
+  private static class OwnerBound<T extends List<Outer<T>.Inner>> {}
+
+  /** Converting a type variable whose bound mentions it only in an owner type terminates. */
+  @Test
+  public void testTypeVariableInOwnerTypeOfBound() {
+    TypeVariable t = TypeVariable.forType(OwnerBound.class.getTypeParameters()[0]);
+    assertNotNull(t.getUpperTypeBound());
   }
 
   /**

@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,11 +79,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return Objects.hashCode(runtimeType);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
     ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
-    if (enclosing == enclosingType) {
+    if (sameType(enclosing, enclosingType)) {
       return this;
     }
     NonParameterizedType result = new NonParameterizedType(this.runtimeType);
@@ -101,14 +99,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * it, and {@link #substitute} can return it. If capture conversion changes the enclosing type of
    * this member class, then the result is a new type.
    */
-  @SuppressWarnings("ReferenceEquality") // detects any change made by capture conversion
   @Override
   public NonParameterizedType applyCaptureConversion() {
     if (!isMemberClass()) {
       return this;
     }
     ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
-    if (convertedEnclosingType == enclosingType) {
+    if (sameType(convertedEnclosingType, enclosingType)) {
       return this;
     }
     NonParameterizedType result = new NonParameterizedType(this.runtimeType);
@@ -132,62 +129,53 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   private List<ClassOrInterfaceType> getGenericInterfaces() {
     Substitution substitution = getEnclosingSubstitution();
     return CollectionsPlume.mapList(
-        (java.lang.reflect.Type type) -> forSupertype(type, substitution),
+        (java.lang.reflect.Type type) -> substituteEnclosing(forType(type), substitution),
         runtimeType.getGenericInterfaces());
   }
 
   /**
-   * Converts a reflection type that is a supertype in the declaration of this class, and applies
-   * the given substitution to it.
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of their classes. The declared supertypes of a member class can mention
+   * those type parameters. For example, given {@code class Outer<E> { class Inner extends
+   * ArrayList<E> {} }}, the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
    *
-   * @param supertype a supertype in the declaration of this class
-   * @param substitution the substitution from {@link #getEnclosingSubstitution()}, or null
-   * @return the converted supertype, with {@code substitution} applied if it is non-null
-   */
-  private static ClassOrInterfaceType forSupertype(
-      java.lang.reflect.Type supertype, @Nullable Substitution substitution) {
-    ClassOrInterfaceType result = forType(supertype);
-    return substitution == null ? result : result.substitute(substitution);
-  }
-
-  /**
-   * Returns the substitution that maps the type parameters of the enclosing classes of this member
-   * class to the type arguments of its enclosing types. For example, for {@code
-   * Outer<String>.Inner}, the substitution maps the type parameter {@code T} of {@code Outer} to
-   * {@code String}. The declared supertypes of the member class, such as {@code ArrayList<T>} in
-   * {@code class Inner extends ArrayList<T>}, are instantiated by this substitution.
+   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
+   * declared supertypes are already correct), or if no enclosing type is parameterized.
    *
-   * <p>Returns null if no enclosing type is an {@link InstantiatedType}, as for the generic form
-   * {@code Outer<T>.Inner}, or if some type argument of an enclosing type is a wildcard.
-   *
-   * @return the substitution for the type parameters of the enclosing classes, or null
+   * @return the substitution for the type parameters of the enclosing types, or null if none is
+   *     needed
    */
   private @Nullable Substitution getEnclosingSubstitution() {
-    List<TypeVariable> parameters = new ArrayList<>();
-    List<ReferenceType> arguments = new ArrayList<>();
+    if (!isMemberClass() || enclosingType.isGenericForm()) {
+      return null;
+    }
+    Substitution result = new Substitution();
     ClassOrInterfaceType type = this;
     while (type.isMemberClass()) {
       ClassOrInterfaceType enclosing = type.enclosingType;
+      if (enclosing instanceof InstantiatedType) {
+        List<TypeVariable> parameters =
+            CollectionsPlume.mapList(
+                TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
+        result =
+            result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
+      }
       type = enclosing;
-      if (!(enclosing instanceof InstantiatedType)) {
-        continue;
-      }
-      java.lang.reflect.TypeVariable<?>[] typeParameters =
-          enclosing.getRuntimeClass().getTypeParameters();
-      List<TypeArgument> typeArguments = enclosing.getTypeArguments();
-      if (typeParameters.length != typeArguments.size()) {
-        return null;
-      }
-      for (int i = 0; i < typeParameters.length; i++) {
-        TypeArgument argument = typeArguments.get(i);
-        if (!(argument instanceof ReferenceArgument)) {
-          return null;
-        }
-        parameters.add(TypeVariable.forType(typeParameters[i]));
-        arguments.add(((ReferenceArgument) argument).getReferenceType());
-      }
     }
-    return parameters.isEmpty() ? null : new Substitution(parameters, arguments);
+    return result.isEmpty() ? null : result;
+  }
+
+  /**
+   * Applies the given substitution, if any, to a declared supertype of this type.
+   *
+   * @param supertype a declared supertype of this type
+   * @param substitution the result of {@link #getEnclosingSubstitution()}
+   * @return {@code supertype} with {@code substitution} applied, or {@code supertype} itself if
+   *     {@code substitution} is null
+   */
+  private static ClassOrInterfaceType substituteEnclosing(
+      ClassOrInterfaceType supertype, @Nullable Substitution substitution) {
+    return substitution == null ? supertype : supertype.substitute(substitution);
   }
 
   @Override
@@ -227,7 +215,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forSupertype(supertype, getEnclosingSubstitution());
+      return supertype == null
+          ? null
+          : substituteEnclosing(forType(supertype), getEnclosingSubstitution());
     }
   }
 

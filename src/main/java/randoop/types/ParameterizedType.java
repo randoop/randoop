@@ -42,8 +42,17 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
     GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
-      cached = new GenericClassType(typeClass);
+      // Cache the generic class type before computing its type parameters.  A bound of a type
+      // parameter may refer to the class itself, as in `C<T extends List<? extends C<?>[]>>`.
+      // Converting such a bound calls this method again for the class, which must not recurse.
+      cached = GenericClassType.withoutParameters(typeClass);
       cache.put(typeClass, cached);
+      try {
+        cached.initializeParameters();
+      } catch (Throwable e) {
+        cache.remove(typeClass);
+        throw e;
+      }
     }
     return cached;
   }
@@ -72,7 +81,13 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
     GenericClassType genericClass = forClass((Class<?>) rawType);
-    return new InstantiatedType(genericClass, typeArguments);
+    InstantiatedType result = new InstantiatedType(genericClass, typeArguments);
+    // For a member class such as Outer<String>.Middle<Integer>, keep the owner type as written.
+    java.lang.reflect.ParameterizedType ownerType = ClassOrInterfaceType.getPreservedOwnerType(t);
+    if (ownerType != null) {
+      result.enclosingType = ClassOrInterfaceType.forType(ownerType);
+    }
+    return result;
   }
 
   @Override

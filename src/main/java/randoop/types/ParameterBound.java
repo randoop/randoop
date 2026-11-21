@@ -83,8 +83,11 @@ public abstract class ParameterBound {
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
    * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}: its
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
-   * type, which an eager bound cannot compare with a parameterized type. Otherwise, the result is a
-   * {@link LazyParameterBound}, which converts such a member class together with its owner type.
+   * type, which an eager bound cannot compare with a parameterized type. A generic array type of
+   * such a class, as in {@code Outer<String>.Inner[]}, is eager: the conversion gives its element
+   * type the same owner type as it gives any argument type, so the bound and argument types are
+   * compared consistently. Otherwise, the result is a {@link LazyParameterBound}, which converts
+   * such a member class together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -148,13 +151,12 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>The owner type of a generic member class is not examined, because the conversion of a
-   * reflection type to a {@link ReferenceType} does not use it. It gives each generic member class
-   * the owner type from its class declaration, as in {@code Outer<T>} for {@code
-   * Outer<String>.Inner<Integer>}, not the owner type as written. The owner type of a non-generic
-   * member class, as in {@code Outer<T>.Inner}, is examined, because the conversion does use it.
-   * For example, in {@code class Outer<T extends Comparable<? extends Outer<T>.Inner[]>>}, an
-   * eager bound for {@code T} would convert {@code Outer<T>}, and so {@code T}, again.
+   * <p>Owner types are examined too, because the conversion of a reflection type to a {@link
+   * ReferenceType} can preserve the owner type as written, as in {@code Outer<T>} for {@code
+   * Outer<T>.Inner}. Converting such an owner type eagerly can recursively convert a type variable
+   * that is being converted. For example, in {@code class Outer<T extends Comparable<? extends
+   * Outer<T>.Inner[]>>}, an eager bound for {@code T} would convert {@code Outer<T>}, and so {@code
+   * T}, again.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -185,6 +187,10 @@ public abstract class ParameterBound {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
+      }
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {
