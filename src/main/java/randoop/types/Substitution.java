@@ -230,11 +230,10 @@ public class Substitution {
    * @param variable a type variable
    * @return true if this substitution maps {@code variable} to itself
    */
-  @SuppressWarnings("ReferenceEquality") // a copy with other bounds is equal, but not the same
   boolean mapsToItself(TypeVariable variable) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
       if (entry.getKey().equals(variable)) {
-        return entry.getKey() == entry.getValue();
+        return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
       }
     }
     return false;

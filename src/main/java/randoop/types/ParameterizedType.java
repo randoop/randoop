@@ -42,8 +42,17 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
     GenericClassType cached = cache.get(typeClass);
     if (cached == null) {
-      cached = new GenericClassType(typeClass);
+      // Cache the generic class type before computing its type parameters.  A bound of a type
+      // parameter may refer to the class itself, as in `C<T extends List<? extends C<?>[]>>`.
+      // Converting such a bound calls this method again for the class, which must not recurse.
+      cached = GenericClassType.withoutParameters(typeClass);
       cache.put(typeClass, cached);
+      try {
+        cached.initializeParameters();
+      } catch (Throwable e) {
+        cache.remove(typeClass);
+        throw e;
+      }
     }
     return cached;
   }

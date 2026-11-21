@@ -251,29 +251,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return result;
   }
 
-  /**
-   * Returns true if the given lists have the same length and their corresponding elements are the
-   * same objects. Comparing the results of {@code substitute} methods this way detects any change,
-   * including a change to only the bounds of a type variable, which {@code equals} ignores.
-   *
-   * @param <T> the type of the list elements
-   * @param list1 a list
-   * @param list2 a list
-   * @return true if the corresponding elements of the lists are the same objects
-   */
-  @SuppressWarnings("ReferenceEquality") // detects any change, as documented
-  /*package*/ static <T> boolean sameElements(List<T> list1, List<T> list2) {
-    if (list1.size() != list2.size()) {
-      return false;
-    }
-    for (int i = 0; i < list1.size(); i++) {
-      if (list1.get(i) != list2.get(i)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
@@ -466,12 +443,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       ClassOrInterfaceType thisEnclosingType = enclosingType;
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
       if (goalClassType.isMemberClass()) {
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
         // Matching enclosing types do not make unrelated member classes, such as
         // Outer<String>.Inner and Outer<E>.Other, unify.
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
-        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
         if (enclosingGoalType.isGeneric()) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
