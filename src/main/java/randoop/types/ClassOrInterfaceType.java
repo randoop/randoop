@@ -378,6 +378,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (superResult != null) {
       return superResult;
     }
+    if (goalType.isVariable()) {
+      // The bounds of the type variable reject this type.
+      return null;
+    }
 
     assert goalType.isGeneric() : "goal type must be generic";
 
@@ -413,6 +417,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
+        } else if (enclosingGoalType.isParameterized()
+            && thisView != null
+            && thisView.isMemberClass()
+            && !thisView.enclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
+          // The type arguments of the enclosing goal type are fixed, as in Outer<String>.Inner<X>,
+          // and the enclosing type of this type's view does not match them, as in
+          // Outer<Integer>.Inner<String>.
+          return null;
         }
       }
     }

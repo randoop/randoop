@@ -255,6 +255,9 @@ public class ParameterBoundTest {
   public void testNonGenericMemberClassBound() {
     TypeVariable t =
         GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    java.lang.reflect.Type declaredBound =
+        NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
+    assertTrue(t.canBeInstantiatedBy(ReferenceType.forType(declaredBound)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 
