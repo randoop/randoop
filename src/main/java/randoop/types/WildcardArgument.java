@@ -89,10 +89,30 @@ public class WildcardArgument extends TypeArgument {
     return new WildcardArgument(argType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Implements containment as defined in JLS section 4.5.1. A wildcard argument is handled by
+   * {@link WildcardType#contains(WildcardType)}. A non-wildcard argument {@code S} is contained by
+   * {@code ? extends T} if {@code S} is a subtype of {@code T}, and by {@code ? super T} if {@code
+   * T} is a subtype of {@code S}.
+   */
   @Override
   public boolean contains(TypeArgument argument) {
-    return argument.isWildcard()
-        && argumentType.contains(((WildcardArgument) argument).argumentType);
+    if (argument.isWildcard()) {
+      return argumentType.contains(((WildcardArgument) argument).argumentType);
+    }
+    ReferenceType argType = ((ReferenceArgument) argument).getReferenceType();
+    ParameterBound bound = argumentType.getTypeBound();
+    if (!(bound instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (argumentType.hasUpperBound()) {
+      return argType.isSubtypeOfOrEqualTo(boundType);
+    } else {
+      return boundType.isSubtypeOfOrEqualTo(argType);
+    }
   }
 
   /**

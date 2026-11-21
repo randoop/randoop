@@ -12,8 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves an array bound unresolved if it maps the element type to the null type,
- * because there is no array of the null type.
+ * A substitution leaves the bound unresolved if applying it would create an array of the null type,
+ * because there is no such array.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -32,7 +32,7 @@ class LazyReferenceBound extends ReferenceBound {
       return this;
     }
     // There is no array of the null type, so leave the bound unresolved.
-    if (mapsArrayElementToNullType(substitution)) {
+    if (createsNullTypeArray(getBoundType(), substitution)) {
       return this;
     }
 
@@ -41,22 +41,6 @@ class LazyReferenceBound extends ReferenceBound {
       return this;
     }
     return forTypeLazyIfGeneric(referenceType);
-  }
-
-  /**
-   * Returns true if the bound type is an array type whose element type is a type variable that the
-   * given substitution maps to the null type. There is no array of the null type.
-   *
-   * @param substitution a type substitution
-   * @return true if {@code substitution} maps the element type of this array bound to the null type
-   */
-  private boolean mapsArrayElementToNullType(Substitution substitution) {
-    if (!getBoundType().isArray()) {
-      return false;
-    }
-    Type elementType = ((ArrayType) getBoundType()).getElementType();
-    return elementType.isVariable()
-        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
   }
 
   @Override
@@ -73,10 +57,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
@@ -103,10 +83,6 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.

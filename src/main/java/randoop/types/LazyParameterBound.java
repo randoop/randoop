@@ -76,19 +76,12 @@ class LazyParameterBound extends ParameterBound {
       }
       // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
-      java.lang.reflect.Type[] actualTypeArgs =
-          ((ParameterizedType) boundType).getActualTypeArguments();
-      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
-      for (java.lang.reflect.Type parameter : actualTypeArgs) {
-        TypeArgument typeArgument = substitute(parameter, substitution);
-        if (typeArgument == null) {
-          return this;
-        }
-        argumentList.add(typeArgument);
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
       }
-      GenericClassType classType =
-          GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
     }
 
     if (boundType instanceof GenericArrayType) {
@@ -158,6 +151,18 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof ParameterizedType) {
+      ParameterizedType ownerType =
+          ClassOrInterfaceType.memberClassOwnerType((ParameterizedType) type);
+      if (ownerType != null) {
+        TypeArgument ownerArgument = substitute(ownerType, substitution);
+        if (ownerArgument == null) {
+          return null;
+        }
+        return TypeArgument.forType(
+            ClassOrInterfaceType.forMemberClass(
+                (Class<?>) ((ParameterizedType) type).getRawType(),
+                (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType()));
+      }
       java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
       for (java.lang.reflect.Type parameter : actualTypeArgs) {
@@ -238,6 +243,11 @@ class LazyParameterBound extends ParameterBound {
       return substitution.get(type) != null;
     }
     if (type instanceof ParameterizedType) {
+      ParameterizedType ownerType =
+          ClassOrInterfaceType.memberClassOwnerType((ParameterizedType) type);
+      if (ownerType != null) {
+        return instantiatesAny(ownerType, substitution);
+      }
       for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution)) {
           return true;
@@ -282,6 +292,10 @@ class LazyParameterBound extends ParameterBound {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
+      ParameterizedType ownerType = ClassOrInterfaceType.memberClassOwnerType(pt);
+      if (ownerType != null) {
+        variableList.addAll(getTypeParameters(ownerType));
+      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
