@@ -419,10 +419,13 @@ public abstract class TypeVariable extends ParameterType {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {
-      // The substitution instantiates the type variable, so the bound is a known type.
+      // The substitution instantiates the type variable, so the bound is a known type.  Compare it
+      // without applying the substitution to it again, as LazyParameterBound does:  for the
+      // substitution [T := List<U>, U := String], the bound T is List<U>, not List<String>.
+      Substitution once = substitution.withIdentityFor(substituted.getTypeParameters());
       return isUpperBound
-          ? substituted.isUpperBound(otherType, substitution)
-          : substituted.isLowerBound(otherType, substitution);
+          ? substituted.isUpperBound(otherType, once)
+          : substituted.isLowerBound(otherType, once);
     }
     return isUpperBound
         ? variable.canBeSupertypeOf(otherType, substitution)

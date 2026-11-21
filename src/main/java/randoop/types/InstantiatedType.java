@@ -557,11 +557,18 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
     // For a member class of a generic class, Outer<String>.Inner<Integer> is not a subtype of
-    // Outer<Number>.Inner<Integer>.
-    if (enclosingType instanceof InstantiatedType
-        && otherType.enclosingType instanceof InstantiatedType) {
-      return ((InstantiatedType) enclosingType)
-          .typeArgumentsAreContainedBy((InstantiatedType) otherType.enclosingType);
+    // Outer<Number>.Inner<Integer>.  An enclosing class that declares no type parameters, as
+    // Middle in Outer<String>.Middle.Inner<Integer>, is skipped, as in
+    // Subtyping.argumentsContained.
+    ClassOrInterfaceType enclosing = this;
+    ClassOrInterfaceType otherEnclosing = otherType;
+    while (enclosing.isMemberClass() && otherEnclosing.isMemberClass()) {
+      enclosing = enclosing.enclosingType;
+      otherEnclosing = otherEnclosing.enclosingType;
+      if (enclosing instanceof InstantiatedType && otherEnclosing instanceof InstantiatedType) {
+        return ((InstantiatedType) enclosing)
+            .typeArgumentsAreContainedBy((InstantiatedType) otherEnclosing);
+      }
     }
     return true;
   }

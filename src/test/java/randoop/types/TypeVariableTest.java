@@ -2858,7 +2858,10 @@ public class TypeVariableTest {
 
   @Test
   public void testSuperclassOfMemberClassUsesEnclosingTypeArguments() {
-    GenericClassType innerMap = GenericClassType.forClass(OuterOfMap.InnerMap.class);
+    // ClassOrInterfaceType.forClass sets the enclosing type, whose type parameter T instantiate()
+    // expects an argument for.
+    GenericClassType innerMap =
+        (GenericClassType) ClassOrInterfaceType.forClass(OuterOfMap.InnerMap.class);
     InstantiatedType stringIntegerInner =
         innerMap.instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
     InstantiatedType expected =

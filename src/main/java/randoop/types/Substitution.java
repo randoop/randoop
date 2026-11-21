@@ -287,6 +287,30 @@ public class Substitution {
   }
 
   /**
+   * Returns this substitution, modified so that it maps each of the given type variables to
+   * itself: each one that it maps to a different object, including a copy of it with other bounds,
+   * is mapped to itself instead. Applying the result to a type in which only those type variables
+   * occur does not change the type. This is useful for comparing a type to which this substitution
+   * has already been applied, without applying it a second time to the type variables that came
+   * from its replacements. The mappings of other type variables are unchanged, so they still
+   * determine which type variables are unknowns.
+   *
+   * @param variables type variables
+   * @return this substitution, modified to map each of {@code variables} to itself
+   */
+  @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
+  Substitution withIdentityFor(Collection<TypeVariable> variables) {
+    Substitution result = this;
+    for (TypeVariable variable : variables) {
+      ReferenceType type = result.get(variable);
+      if (type != null && type != variable) {
+        result = result.replace(variable, variable);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Returns true if the given type is a type variable that stands for an unknown type when types
    * are compared. That is the case if this substitution maps the type variable to itself, the type
    * variable does not occur in the type that this substitution maps a different type variable to,

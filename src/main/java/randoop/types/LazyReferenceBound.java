@@ -127,9 +127,11 @@ class LazyReferenceBound extends ReferenceBound {
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
    * is the null type; or, after the substitution is applied to it, is the type of this bound; or is
    * an array type whose element type is the null type and that is a subtype of the type of this
-   * bound, as {@code NullType[]} is of {@code T[]}. The type of this bound contains type variables,
-   * so it stands for every instantiation of them; a type such as {@code List<String>} is not a
-   * subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   * bound, as {@code NullType[]} is of {@code T[]}; or is a subtype of the type of this bound when
+   * each type variable stands for itself, as {@code ArrayList<T>} is of {@code List<T>}. The type
+   * of this bound contains type variables, so it stands for every instantiation of them; a type
+   * such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>}, but
+   * {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -148,14 +150,25 @@ class LazyReferenceBound extends ReferenceBound {
       return true;
     }
     ParameterBound b = lowerBound.substitute(substitution);
+    if (b instanceof LazyParameterBound) {
+      // The substitution did not instantiate the lower bound.  Convert it, keeping each of its
+      // remaining type variables, so that it can be compared with the type of this bound.
+      b = ((LazyParameterBound) b).toReferenceBound();
+    }
     if (!(b instanceof ReferenceBound)) {
       return false;
     }
     ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
     // The null type is a subtype of every reference type, including a type variable, so array
     // covariance makes, for example, `NullType[]` a subtype of `T[]`.
-    return lowerType.isArray()
+    if (lowerType.isArray()
         && ((ArrayType) lowerType).getElementType().equals(JavaTypes.NULL_TYPE)
-        && lowerType.isSubtypeOfOrEqualTo(getBoundType());
+        && lowerType.isSubtypeOfOrEqualTo(getBoundType())) {
+      return true;
+    }
+    // A subtype of the type of this bound in which each type variable stands for itself, such as
+    // ArrayList<T> for List<T>, is a subtype of every instantiation of it.  The empty substitution
+    // makes no type variable an unknown.
+    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
   }
 }

@@ -95,15 +95,19 @@ final class Subtyping {
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-      InstantiatedType supertype =
-          ((ClassOrInterfaceType) type)
-              .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
-      if (supertype == null) {
-        return false;
-      }
       // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
-      // section 4.10.2).
+      // section 4.10.2).  The type is captured before its supertype is found:  if C<T> implements
+      // Supplier<List<T>>, then the supertype of C<?> is Supplier<List<CAP>>, which is not a
+      // subtype of Supplier<List<?>>.  Finding the supertype of C<?> itself would substitute the
+      // wildcard for T, giving Supplier<List<?>>.  The supertype is captured too, because its
+      // declaration can have wildcard arguments.
+      InstantiatedType supertype;
       try {
+        ClassOrInterfaceType capturedType = ((ClassOrInterfaceType) type).applyCaptureConversion();
+        supertype = capturedType.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+        if (supertype == null) {
+          return false;
+        }
         supertype = supertype.applyCaptureConversion();
       } catch (LazyBoundException e) {
         return false;

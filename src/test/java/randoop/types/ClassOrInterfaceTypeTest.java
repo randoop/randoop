@@ -503,4 +503,129 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(upperBound.isUpperBound(integerType, substitution));
     assertFalse(upperBound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
   }
+
+  /**
+   * A generic class whose member classes are used to test that the enclosing types of member
+   * classes are compared.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class OwnerChain<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+
+    /** A member class that declares no type parameters, and has a generic member class. */
+    class PlainMiddle {
+      /**
+       * A generic member class of a member class that declares no type parameters.
+       *
+       * @param <U> the type parameter
+       */
+      class Inner<U> {}
+    }
+
+    /**
+     * A generic member class that has a generic member class.
+     *
+     * @param <M> the type parameter
+     */
+    class GenericMiddle<M> {
+      /**
+       * A generic member class of a generic member class.
+       *
+       * @param <U> the type parameter
+       */
+      class Inner<U> {}
+    }
+  }
+
+  /**
+   * A class whose superclass is a member class of a parameterized type.
+   *
+   * @param <X> the type parameter
+   */
+  static class InnerChild<X> extends OwnerChain<String>.Inner<X> {
+    /**
+     * Creates an InnerChild.
+     *
+     * @param outer the enclosing instance of the superclass
+     */
+    InnerChild(OwnerChain<String> outer) {
+      outer.super();
+    }
+  }
+
+  /** A field of type {@code OwnerChain<String>.Inner<Integer>}. */
+  public OwnerChain<String>.Inner<Integer> stringInner;
+
+  /** A field of type {@code OwnerChain<Number>.Inner<Integer>}. */
+  public OwnerChain<Number>.Inner<Integer> numberInner;
+
+  /** A field of type {@code InnerChild<Integer>}. */
+  public InnerChild<Integer> innerChild;
+
+  /** A field of type {@code OwnerChain<String>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<String>.PlainMiddle.Inner<Integer> stringPlainMiddleInner;
+
+  /** Another field of type {@code OwnerChain<String>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<String>.PlainMiddle.Inner<Integer> otherStringPlainMiddleInner;
+
+  /** A field of type {@code OwnerChain<Number>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<Number>.PlainMiddle.Inner<Integer> numberPlainMiddleInner;
+
+  /** A field of type {@code OwnerChain<String>.GenericMiddle<Integer>.Inner<Long>}. */
+  public OwnerChain<String>.GenericMiddle<Integer>.Inner<Long> stringGenericMiddleInner;
+
+  /** A field of type {@code OwnerChain<Number>.GenericMiddle<Integer>.Inner<Long>}. */
+  public OwnerChain<Number>.GenericMiddle<Integer>.Inner<Long> numberGenericMiddleInner;
+
+  @Test
+  public void subtypeComparesOwnerTypeBeyondNonGenericMiddle() {
+    InstantiatedType stringType = fieldType("stringPlainMiddleInner");
+    assertTrue(stringType.isSubtypeOfOrEqualTo(fieldType("otherStringPlainMiddleInner")));
+    assertFalse(stringType.isSubtypeOfOrEqualTo(fieldType("numberPlainMiddleInner")));
+  }
+
+  @Test
+  public void superclassComparesOwnerType() {
+    InstantiatedType childType = fieldType("innerChild");
+    assertTrue(childType.isSubtypeOfOrEqualTo(fieldType("stringInner")));
+    assertFalse(childType.isSubtypeOfOrEqualTo(fieldType("numberInner")));
+  }
+
+  @Test
+  public void instantiatingSubstitutionComparesOwnerOfFixedEnclosingType() {
+    InstantiatedType stringLong = fieldType("stringGenericMiddleInner");
+    InstantiatedType numberLong = fieldType("numberGenericMiddleInner");
+    TypeVariable x = GenericClassType.forClass(Holder.class).getTypeParameters().get(0);
+    List<TypeArgument> xArgument = Collections.singletonList(TypeArgument.forType(x));
+    // OwnerChain<String>.GenericMiddle<Integer>.Inner<X>
+    InstantiatedType stringX = new InstantiatedType(stringLong.getGenericClassType(), xArgument);
+    stringX.enclosingType = stringLong.enclosingType;
+    // OwnerChain<Number>.GenericMiddle<Integer>.Inner<X>
+    InstantiatedType numberX = new InstantiatedType(numberLong.getGenericClassType(), xArgument);
+    numberX.enclosingType = numberLong.enclosingType;
+
+    Substitution substitution = stringLong.getInstantiatingSubstitution(stringX);
+    assertNotNull(substitution);
+    assertEquals(ReferenceType.forClass(Long.class), substitution.get(x));
+    // No substitution for X unifies OwnerChain<String> with OwnerChain<Number>.
+    assertNull(stringLong.getInstantiatingSubstitution(numberX));
+  }
+
+  @Test
+  public void instantiatedBoundComparesOwnerType() {
+    InstantiatedType stringType = fieldType("stringInner");
+    InstantiatedType numberType = fieldType("numberInner");
+    ParameterBound bound = new EagerReferenceBound(stringType);
+    assertTrue(bound.isUpperBound(stringType, new Substitution()));
+    assertFalse(bound.isUpperBound(numberType, new Substitution()));
+    assertTrue(bound.isLowerBound(stringType, new Substitution()));
+    assertFalse(bound.isLowerBound(numberType, new Substitution()));
+  }
 }

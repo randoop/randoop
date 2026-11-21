@@ -55,7 +55,9 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
-      return boundSuperType.isInstantiationOf(argClassType);
+      // isInstantiationOf does not compare enclosing types, so compare them too.
+      return boundSuperType.isInstantiationOf(argClassType)
+          && ClassOrInterfaceType.enclosingTypesInstantiate(boundSuperType, argClassType);
     }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
@@ -105,7 +107,10 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       argSuperType = argSuperType.applyCaptureConversion();
-      return argSuperType.isInstantiationOf(boundClassType);
+      // isInstantiationOf does not compare enclosing types, so compare them too:  for the bound
+      // Outer<String>.Inner<Integer>, Outer<Number>.Inner<Integer> is not within the bound.
+      return argSuperType.isInstantiationOf(boundClassType)
+          && ClassOrInterfaceType.enclosingTypesInstantiate(argSuperType, boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }

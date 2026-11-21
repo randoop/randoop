@@ -426,9 +426,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+        } else if (!isSameWithEnclosingTypes(thisEnclosingType, enclosingGoalType)) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
-          // different type, such as Outer<String>.
+          // different type, such as Outer<String>.  The enclosing types of the enclosing types
+          // are compared too, which InstantiatedType.equals ignores:  Outer<String>.Middle<Integer>
+          // is not Outer<Number>.Middle<Integer>.
           return null;
         }
       }
@@ -722,11 +724,70 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
-      if (current.equals(otherClass)) {
+      // InstantiatedType.equals ignores enclosing types, so compare them too:  a class that
+      // extends Outer<String>.Inner<Integer> is not a subclass of Outer<Number>.Inner<Integer>.
+      if (isSameWithEnclosingTypes(current, otherClass)) {
         return true;
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given types are equal, and so are their enclosing types at each level at
+   * which both are member classes. {@link InstantiatedType#equals(Object)} does not compare
+   * enclosing types, so it treats {@code Outer<String>.Inner<Integer>} and {@code
+   * Outer<Number>.Inner<Integer>} as equal.
+   *
+   * <p>A type that is not a member class matches any enclosing type. A conversion of a reflection
+   * type whose owner type is in declaration form, such as {@code Outer<T>.Inner<Integer>}, records
+   * no enclosing type, but stands for the same class as one that does.
+   *
+   * @param type a type
+   * @param otherType another type
+   * @return true if the types are equal, including their enclosing types where both have one
+   */
+  /*package*/ static boolean isSameWithEnclosingTypes(
+      ClassOrInterfaceType type, ClassOrInterfaceType otherType) {
+    ClassOrInterfaceType current = type;
+    ClassOrInterfaceType otherCurrent = otherType;
+    if (!current.equals(otherCurrent)) {
+      return false;
+    }
+    while (current.isMemberClass() && otherCurrent.isMemberClass()) {
+      current = current.enclosingType;
+      otherCurrent = otherCurrent.enclosingType;
+      if (!current.equals(otherCurrent)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if, at each level at which both of the given types are member classes, the
+   * enclosing type of {@code type} instantiates the enclosing type of {@code goalType}, as
+   * determined by {@link #isInstantiationOf(ReferenceType)}. {@link
+   * InstantiatedType#isInstantiationOf(ReferenceType)} compares only the type arguments of the
+   * types themselves, not those of their enclosing types.
+   *
+   * @param type a type
+   * @param goalType a type, which may be generic
+   * @return true if each enclosing type of {@code type} instantiates the corresponding enclosing
+   *     type of {@code goalType}
+   */
+  /*package*/ static boolean enclosingTypesInstantiate(
+      ClassOrInterfaceType type, ClassOrInterfaceType goalType) {
+    ClassOrInterfaceType current = type;
+    ClassOrInterfaceType goalCurrent = goalType;
+    while (current.isMemberClass() && goalCurrent.isMemberClass()) {
+      current = current.enclosingType;
+      goalCurrent = goalCurrent.enclosingType;
+      if (!current.isInstantiationOf(goalCurrent)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
