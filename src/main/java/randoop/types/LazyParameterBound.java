@@ -128,11 +128,18 @@ class LazyParameterBound extends ParameterBound {
    */
   @Nullable ReferenceBound toReferenceBound() {
     List<TypeVariable> parameters = getTypeParameters();
-    // Map each type variable to itself, so that substitute() converts this bound without changing
-    // the type that it represents.
-    ParameterBound result =
-        substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
-    return result instanceof ReferenceBound ? (ReferenceBound) result : null;
+    // Map each type variable to itself, so that the conversion does not change the type that this
+    // bound represents.  This calls the static substitute() method directly, rather than the
+    // instance method, because the instance method returns this bound unchanged if the
+    // substitution is empty or instantiates no type variable, as for a generic array type
+    // such as `List<String>[]` that contains no type variable.
+    Substitution identity = new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
+    TypeArgument typeArgument = substitute(boundType, identity);
+    if (!(typeArgument instanceof ReferenceArgument)) {
+      return null;
+    }
+    return ReferenceBound.forTypeLazyIfGeneric(
+        ((ReferenceArgument) typeArgument).getReferenceType());
   }
 
   /**
@@ -157,6 +164,13 @@ class LazyParameterBound extends ParameterBound {
         return TypeArgument.forType(referenceType);
       }
       return TypeArgument.forType(TypeVariable.forType(type).substitute(substitution));
+    }
+
+    if (isNonGenericMemberClass(type)) {
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, which
+      // GenericClassType.forClass rejects.  Convert it as ClassOrInterfaceType.forType does.
+      return TypeArgument.forType(
+          ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) type).getRawType()));
     }
 
     if (type instanceof ParameterizedType) {
@@ -368,6 +382,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isLowerBound(argType, substitution);
   }
@@ -394,6 +412,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isUpperBound(argType, substitution);
   }
@@ -410,9 +432,11 @@ class LazyParameterBound extends ParameterBound {
    * <p>Returns null if the result is still this bound. That would happen if this bound were a
    * non-generic member class of a generic class, as in {@code Outer<String>.Inner}, which {@link
    * #substitute(Substitution)} cannot convert; but {@link ParameterBound#forType(Set,
-   * java.lang.reflect.Type)} creates an eager bound for such a type. Otherwise, the result is still
-   * this bound only for a kind of type that {@link #substitute(Substitution)} does not handle; then
-   * this method also fails an assertion. Comparing the unchanged bound would recurse forever.
+   * java.lang.reflect.Type)} creates an eager bound for such a type, and {@link #isLowerBound} and
+   * {@link #isUpperBound} compare such a bound without calling this method. Otherwise, the result
+   * is still this bound only for a kind of type that {@link #substitute(Substitution)} does not
+   * handle; then this method also fails an assertion. Comparing the unchanged bound would recurse
+   * forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null

@@ -183,20 +183,20 @@ public abstract class TypeVariable extends ParameterType {
    * (as in {@code T extends Comparable<U>}), is converted to the equivalent {@link ReferenceBound},
    * in which every type variable remains a type variable.
    *
-   * @param bound an upper bound of a type variable
+   * @param upperBound an upper bound of a type variable
    * @param otherType the possible supertype
-   * @return true if the type of {@code bound} is a subtype of {@code otherType}
+   * @return true if the type of {@code upperBound} is a subtype of {@code otherType}
    */
-  private static boolean isSubtypeOfOrEqualTo(ParameterBound bound, Type otherType) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+  private static boolean isSubtypeOfOrEqualTo(ParameterBound upperBound, Type otherType) {
+    if (upperBound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
       return converted != null && isSubtypeOfOrEqualTo(converted, otherType);
     }
-    if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType().isSubtypeOfOrEqualTo(otherType);
+    if (upperBound instanceof ReferenceBound) {
+      return ((ReferenceBound) upperBound).getBoundType().isSubtypeOfOrEqualTo(otherType);
     }
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+    if (upperBound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) upperBound).getBounds()) {
         if (isSubtypeOfOrEqualTo(member, otherType)) {
           return true;
         }
@@ -386,8 +386,14 @@ public abstract class TypeVariable extends ParameterType {
         || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
+    List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
     for (ReferenceType supertype : getStrictSupertypes(otherType)) {
-      if (canBeInstantiatedBy(supertype, context)) {
+      // getStrictSupertypes omits a supertype of a class or interface type that mentions a type
+      // variable that the class or interface type does not.  This check also omits such a
+      // supertype that arises from the upper bound of a type variable, as for the component type of
+      // an array type.
+      if (otherTypeParameters.containsAll(supertype.getTypeParameters())
+          && canBeInstantiatedBy(supertype, context)) {
         return true;
       }
     }
@@ -395,24 +401,26 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns strict supertypes of the given type, other than type variables, including {@code
-   * Object}:
+   * Returns strict supertypes of the given type, including {@code Object}:
    *
    * <ul>
    *   <li>For a class or interface type, its strict supertypes, as computed by {@link
    *       ClassOrInterfaceType#getSupertypesStrict()}, and {@code Object}, which that method omits
    *       for an interface.
-   *   <li>For an array type, {@code Object}, {@code Cloneable}, {@code Serializable}, and, if its
-   *       component type is a reference type that is not a type variable, the array type of each
-   *       strict supertype of the component type that this method returns.
+   *   <li>For an array type {@code C[]}, {@code Object}, {@code Cloneable}, {@code Serializable},
+   *       and, if {@code C} is a reference type, {@code S[]} for each strict supertype {@code S} of
+   *       {@code C} that this method returns.
+   *   <li>For a type variable, the types in its upper bound and their strict supertypes, and
+   *       {@code Object}; this lets an array type such as {@code U[]}, for {@code U extends
+   *       Number}, have supertypes such as {@code Number[]} and {@code Object[]}.
    *   <li>For any other type, {@code Object}.
    * </ul>
    *
-   * <p>A supertype that mentions a type variable that {@code type} does not is omitted. It arises
-   * when {@code type} is a GenericClassType, whose supertypes are those of its raw class and do not
-   * preserve the relationship between their type parameters. A supertype that mentions only the
-   * type variables of {@code type}, such as {@code List<E>} for {@code ArrayList<E>}, is a
-   * supertype of {@code type}.
+   * <p>A supertype of a class or interface type that mentions a type variable that the class or
+   * interface type does not is omitted. It arises when the type is a GenericClassType, whose
+   * supertypes are those of its raw class and do not preserve the relationship between their type
+   * parameters. A supertype that mentions only the type variables of the type, such as {@code
+   * List<E>} for {@code ArrayList<E>}, is a supertype of the type.
    *
    * @param type a reference type
    * @return strict supertypes of {@code type}
@@ -431,16 +439,47 @@ public abstract class TypeVariable extends ParameterType {
       result.add(JavaTypes.CLONEABLE_TYPE);
       result.add(JavaTypes.SERIALIZABLE_TYPE);
       Type componentType = ((ArrayType) type).getComponentType();
-      if (componentType.isReferenceType() && !componentType.isVariable()) {
+      if (componentType instanceof ReferenceType) {
         // Arrays are covariant:  S[] is a subtype of T[] if S is a subtype of T.
         for (ReferenceType componentSupertype :
             getStrictSupertypes((ReferenceType) componentType)) {
           result.add(ArrayType.ofComponentType(componentSupertype));
         }
       }
+    } else if (type instanceof TypeVariable) {
+      ParameterBound upperBound = ((TypeVariable) type).getUpperTypeBound();
+      for (ReferenceType boundType : getUpperBoundTypes(upperBound)) {
+        result.add(boundType);
+        result.addAll(getStrictSupertypes(boundType));
+      }
     }
     result.add(JavaTypes.OBJECT_TYPE);
     result.remove(type);
+    return result;
+  }
+
+  /**
+   * Returns the types in the given upper bound of a type variable: the type of a {@link
+   * ReferenceBound}, the equivalent type of a {@link LazyParameterBound}, or the types of the
+   * members of an {@link IntersectionTypeBound}.
+   *
+   * @param upperBound an upper bound of a type variable
+   * @return the types in {@code upperBound}
+   */
+  private static List<ReferenceType> getUpperBoundTypes(ParameterBound upperBound) {
+    List<ReferenceType> result = new ArrayList<>();
+    if (upperBound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
+      if (converted != null) {
+        result.add(converted.getBoundType());
+      }
+    } else if (upperBound instanceof ReferenceBound) {
+      result.add(((ReferenceBound) upperBound).getBoundType());
+    } else if (upperBound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) upperBound).getBounds()) {
+        result.addAll(getUpperBoundTypes(member));
+      }
+    }
     return result;
   }
 

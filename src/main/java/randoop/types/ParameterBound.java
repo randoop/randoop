@@ -83,8 +83,10 @@ public abstract class ParameterBound {
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. That includes a
    * non-generic member class of a generic class, as in {@code Outer<String>.Inner}, whose
    * conversion to a {@link ReferenceType} is a non-parameterized type, which an eager bound
-   * compares by the subtype relation. A {@link LazyParameterBound} could not convert such a type,
-   * and so would not be satisfied by any type. Otherwise, the result is a {@link
+   * compares by the subtype relation. It also includes a generic array type of such a class, as in
+   * {@code Outer<String>.Inner[]}: the conversion gives its element type the owner type from the
+   * class declaration, as in {@code Outer<T>.Inner}, as it does for any argument type, so the bound
+   * and argument types are compared consistently. Otherwise, the result is a {@link
    * LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type

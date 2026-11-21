@@ -79,11 +79,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return Objects.hashCode(runtimeType);
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
     ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
-    if (enclosing == enclosingType) {
+    if (sameType(enclosing, enclosingType)) {
       return this;
     }
     NonParameterizedType result = new NonParameterizedType(this.runtimeType);
@@ -100,14 +99,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * it, and {@link #substitute} can return it. If capture conversion changes the enclosing type of
    * this member class, then the result is a new type.
    */
-  @SuppressWarnings("ReferenceEquality") // detects any change made by capture conversion
   @Override
   public NonParameterizedType applyCaptureConversion() {
     if (!isMemberClass()) {
       return this;
     }
     ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
-    if (convertedEnclosingType == enclosingType) {
+    if (sameType(convertedEnclosingType, enclosingType)) {
       return this;
     }
     NonParameterizedType result = new NonParameterizedType(this.runtimeType);
