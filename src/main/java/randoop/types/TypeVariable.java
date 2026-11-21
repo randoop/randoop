@@ -22,8 +22,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * The lower-bound checks by {@link #canBeSupertypeOf(ReferenceType, Substitution)} that are in
-   * progress in the current thread, outermost first. The substitution of each is the context of
-   * the call.
+   * progress in the current thread, outermost first. The substitution of each is the context of the
+   * call.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<List<InstantiationCheck>> supertypeChecks =

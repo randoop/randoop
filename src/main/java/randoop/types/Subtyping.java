@@ -114,8 +114,7 @@ final class Subtyping {
       if (capturedType == null) {
         return false;
       }
-      InstantiatedType supertype =
-          findMatchingSupertype(capturedType, otherInstantiatedType);
+      InstantiatedType supertype = findMatchingSupertype(capturedType, otherInstantiatedType);
       if (supertype == null) {
         return false;
       }

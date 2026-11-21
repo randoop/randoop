@@ -162,8 +162,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
         List<TypeVariable> parameters =
             CollectionsPlume.mapList(
                 TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
-        result =
-            result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
+        result = result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
       }
       type = enclosing;
     }

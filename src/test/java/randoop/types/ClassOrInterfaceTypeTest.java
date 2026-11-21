@@ -173,9 +173,7 @@ public class ClassOrInterfaceTypeTest {
   public void superclassOfMemberClassWithWildcardInOwner() throws NoSuchFieldException {
     ClassOrInterfaceType type =
         ClassOrInterfaceType.forType(
-            ClassOrInterfaceTypeTest.class
-                .getDeclaredField("wildcardOwnerField")
-                .getGenericType());
+            ClassOrInterfaceTypeTest.class.getDeclaredField("wildcardOwnerField").getGenericType());
     assertEquals(
         GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
         type.getSuperclass());
