@@ -1639,18 +1639,21 @@ public class TypeVariableTest {
   }
 
   /**
-   * An interface type is within a bound that is a capture variable if {@code Object}, which is a
-   * supertype of every interface, can instantiate the capture variable.
+   * An interface type is not within a bound that is a capture variable merely because {@code
+   * Object}, which is a supertype of every interface, can instantiate the capture variable. A
+   * capture variable stands for a particular unknown type, so its strict supertypes are not
+   * searched.
    */
   @Test
-  public void testObjectSupertypeOfInterfaceCanInstantiateCaptureVariable()
+  public void testInterfaceSupertypeCannotInstantiateCaptureVariableBound()
       throws NoSuchFieldException {
     ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
     InstantiatedType capturedType = capturedFieldType("comparableSuperNumberField");
     TypeVariable capture = typeArgument(capturedType, 0);
     assertFalse(capture.canBeInstantiatedBy(runnable));
-    // Runnable <: Object, which can instantiate the capture variable.
-    assertTrue(capture.canBeSupertypeOf(runnable, new Substitution()));
+    // The capture of `? super Number` could be Object, but Runnable is not known to be a subtype
+    // of it.
+    assertFalse(capture.canBeSupertypeOf(runnable, new Substitution()));
   }
 
   /**
