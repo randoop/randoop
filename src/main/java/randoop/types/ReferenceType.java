@@ -81,6 +81,12 @@ public abstract class ReferenceType extends Type {
    * <p>This abstract method forces typing of substitutions applied to {@link ReferenceType} objects
    * without an explicit cast.
    *
+   * <p>If the substitution changes nothing in this type, the result should be this type itself, so
+   * that a caller can detect a change by comparing the result to this type with {@code ==}.
+   * Comparing with {@code equals} would not detect a change to only the bounds of a type variable,
+   * because copies of a type variable are equal even if their bounds differ. A result that is a new
+   * object for the same type is correct, but makes callers create needless copies.
+   *
    * @param substitution the type substitution
    * @return the type created by applying the substitution to this type
    */
@@ -178,7 +184,9 @@ public abstract class ReferenceType extends Type {
    */
   public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
-    if (instantiatedType.equals(goalType)) {
+    // InstantiatedType.equals ignores enclosing types, so Outer<String>.Inner<Integer> equals
+    // Outer<X>.Inner<Integer>.  The empty substitution would not instantiate X.
+    if (Subtyping.isIdentical(instantiatedType, goalType)) {
       return new Substitution();
     }
     if (goalType.isVariable()) {

@@ -2,10 +2,10 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -44,6 +44,80 @@ public class LazyParameterBoundTest {
   }
 
   /**
+   * A generic class with a generic member class, which has a member class.
+   *
+   * @param <A> the type parameter
+   */
+  static class MemberOuter<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Middle<B> {
+      /** A member class with no type parameters of its own. */
+      class Deep {}
+    }
+  }
+
+  /**
+   * Type parameters whose recursive bounds differ only in the owner type of a generic member class.
+   *
+   * @param <U> a type parameter bounded by {@code List<MemberOuter<String>.Middle<U>.Deep>}
+   * @param <V> a type parameter bounded by {@code List<MemberOuter<Long>.Middle<U>.Deep>}
+   */
+  static class OwnerOfGenericMemberBound<
+      U extends List<MemberOuter<String>.Middle<U>.Deep>,
+      V extends List<MemberOuter<Long>.Middle<U>.Deep>> {}
+
+  /**
+   * Returns the enclosing type of the enclosing type of the type argument of the given bound, whose
+   * type is {@code List<MemberOuter<X>.Middle<U>.Deep>}.
+   *
+   * @param bound the bound
+   * @return the type {@code MemberOuter<X>} in the bound
+   */
+  private static ClassOrInterfaceType getOuterOfDeep(ReferenceBound bound) {
+    InstantiatedType list = (InstantiatedType) bound.getBoundType();
+    ClassOrInterfaceType deep =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType middle = deep.enclosingType;
+    assertTrue(middle != null);
+    return middle.enclosingType;
+  }
+
+  /** Converting a bound preserves the owner type of a generic member class. */
+  @Test
+  public void testOwnerOfGenericMemberClassPreserved() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerOfGenericMemberBound.class).getTypeParameters();
+    ParameterBound uBound = parameters.get(0).getUpperTypeBound();
+    ParameterBound vBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(uBound instanceof LazyParameterBound);
+    assertTrue(vBound instanceof LazyParameterBound);
+    ReferenceBound uConverted = ((LazyParameterBound) uBound).toReferenceBound();
+    ReferenceBound vConverted = ((LazyParameterBound) vBound).toReferenceBound();
+    GenericClassType outer = GenericClassType.forClass(MemberOuter.class);
+    assertEquals(outer.instantiate(JavaTypes.STRING_TYPE), getOuterOfDeep(uConverted));
+    assertEquals(outer.instantiate(ReferenceType.forClass(Long.class)), getOuterOfDeep(vConverted));
+    assertFalse(Subtyping.isIdentical(uConverted.getBoundType(), vConverted.getBoundType()));
+  }
+
+  @Test
+  public void testObjectIsUpperBoundOfLazyBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters().get(1);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    // Object is an upper bound of every reference type, including the type of a lazy bound.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isUpperBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(bound, new Substitution()));
+  }
+
+  /**
    * A type parameter whose self-referential bound contains an array of the type parameter.
    *
    * @param <T> the type parameter
@@ -55,15 +129,89 @@ public class LazyParameterBoundTest {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
     ParameterBound bound = t.getUpperTypeBound();
     assertTrue(bound instanceof LazyParameterBound);
-    // There is no array of the null type, so the substitution does not instantiate the bound.
-    assertSame(bound, bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE)));
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.NULL_TYPE));
+    assertEquals(
+        GenericClassType.forClass(List.class)
+            .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
+        ((ReferenceBound) substituted).getBoundType());
+  }
+
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard whose upper bound is a generic array type that contains no type variable. */
+    List<? extends List<String>[]> arrayOfListWildcard;
+  }
+
+  @Test
+  public void testGenericArrayBoundWithoutTypeVariable() throws NoSuchFieldException {
+    java.lang.reflect.ParameterizedType fieldType =
+        (java.lang.reflect.ParameterizedType)
+            FieldTypes.class.getDeclaredField("arrayOfListWildcard").getGenericType();
+    java.lang.reflect.WildcardType wildcard =
+        (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
+    ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
+    // The bound contains no type variable, so it is eager, and a substitution does not change it.
+    assertTrue(bound instanceof EagerReferenceBound);
+    ArrayType arrayOfList =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    assertEquals(new EagerReferenceBound(arrayOfList), bound.substitute(new Substitution()));
+    assertTrue(bound.isUpperBound(arrayOfList, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
   @Test
   public void testNullTypeCannotInstantiateArrayComponentBound() {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    // There is no array of the null type, so the null type does not satisfy the bound.
+    // The null type is not a subtype of the parameterized type List<NullType[]>, just as it is not
+    // a subtype of List<NullType> for a bound such as T extends List<T>.
     assertFalse(t.canBeInstantiatedBy(JavaTypes.NULL_TYPE));
+  }
+
+  @Test
+  public void testReferenceBoundWithNullTypeForArrayComponent() {
+    TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
+    ReferenceBound bound = ReferenceBound.forTypeLazyIfGeneric(ArrayType.ofComponentType(t));
+    assertTrue(bound instanceof LazyReferenceBound);
+    Substitution nullSubstitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    // The substituted bound is NullType[], which is a subtype of String[].  String[] is not a
+    // subtype of NullType[].
+    assertTrue(bound.isLowerBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(new EagerReferenceBound(stringArray), nullSubstitution));
+  }
+
+  /**
+   * A type parameter whose bound contains, in a type argument, an array of the type parameter, and
+   * another type parameter.
+   *
+   * @param <K> the other type parameter
+   * @param <U> the type parameter with the bound
+   */
+  static class NestedArrayArgumentBound<K, U extends Map<K, U[]>> {}
+
+  @Test
+  public void testSubstituteNullTypeForNestedArrayComponent() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(NestedArrayArgumentBound.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    // Substituting for K leaves the bound lazy:  Map<String, U[]>.
+    ParameterBound bound =
+        u.getUpperTypeBound().substitute(new Substitution(k, JavaTypes.STRING_TYPE));
+    assertTrue(bound instanceof LazyReferenceBound);
+    // Substituting the null type for U resolves the bound to Map<String, NullType[]>.
+    Substitution nullSubstitution = new Substitution(u, JavaTypes.NULL_TYPE);
+    assertEquals(
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
+        ((ReferenceBound) bound.substitute(nullSubstitution)).getBoundType());
+    // As in testNullTypeCannotInstantiateArrayComponentBound, the null type is not within the
+    // parameterized bound.  Neither comparison throws an exception.
+    assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, nullSubstitution));
+    assertFalse(bound.isLowerBound(JavaTypes.NULL_TYPE, nullSubstitution));
   }
 
   /**
@@ -89,10 +237,10 @@ public class LazyParameterBoundTest {
     TypeVariable u = parameters.get(1);
     TypeVariable v = GenericClassType.forClass(OneParameter.class).getTypeParameters().get(0);
     ParameterBound bound = u.getUpperTypeBound().substitute(new Substitution(t, v));
-    // There is no array of the null type, so the array bound remains unresolved.
+    // Substituting the null type resolves the array bound, as substituting String does.
     ParameterBound nullBound = bound.substitute(new Substitution(v, JavaTypes.NULL_TYPE));
-    assertEquals(bound, nullBound);
-    // Substituting a type that can be an array component resolves the array bound.
+    assertEquals(
+        u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.NULL_TYPE)), nullBound);
     ParameterBound stringBound = bound.substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     assertEquals(
         u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE)), stringBound);
