@@ -25,6 +25,7 @@ import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceBound;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -42,7 +43,8 @@ public class TypeInstantiator {
 
   /**
    * The maximum number of random choices of input types for an operation's parameterized parameter
-   * types that {@link #selectOperationSubstitution(TypedClassOperation)} tries before it gives up.
+   * types that {@link #selectOperationSubstitution(TypedClassOperation, Substitution)} tries before
+   * it gives up.
    */
   private static final int MAX_INSTANTIATION_ATTEMPTS = 10;
 
@@ -78,6 +80,27 @@ public class TypeInstantiator {
    * @return an instantiated version of the operation, or null
    */
   public @Nullable TypedClassOperation instantiate(TypedClassOperation operation) {
+    return instantiateWithin(operation, new Substitution());
+  }
+
+  /**
+   * Instantiate the given operation by choosing type arguments for its type parameters, such that
+   * the given substitution, extended by those choices, satisfies the bounds of the type variables
+   * that it maps.
+   *
+   * <p>{@code fixed} has already been applied to {@code operation}, so {@code operation} does not
+   * mention its type variables. But their bounds can mention type variables of {@code operation}.
+   * For example, if {@code operation} was {@code <T extends Comparable<U>, U> Box<T> make(List<U>)}
+   * and {@code fixed} maps {@code T} to {@code String}, then the type chosen for {@code U} must be
+   * {@code String}.
+   *
+   * @param operation the generic operation to instantiate
+   * @param fixed a substitution that was already applied to {@code operation}, whose type variables
+   *     can have bounds that mention type variables of {@code operation}
+   * @return an instantiated version of the operation, or null
+   */
+  private @Nullable TypedClassOperation instantiateWithin(
+      TypedClassOperation operation, Substitution fixed) {
     assert operation.isGeneric() || operation.hasWildcardTypes()
         : "operation " + operation + " must be generic or have wildcards";
 
@@ -110,6 +133,14 @@ public class TypeInstantiator {
       if (substitution == null) { // return null if fail to find instantiation
         return null;
       }
+      // The bounds of the type variables of `fixed` can mention type parameters of the declaring
+      // type.
+      if (!fixed.isEmpty()) {
+        if (!fixed.isConsistentWith(substitution)) {
+          return null;
+        }
+        fixed = fixed.extend(substitution);
+      }
       // instantiate type parameters of declaring type
       operation = operation.substitute(substitution);
     }
@@ -124,7 +155,7 @@ public class TypeInstantiator {
           "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
-      operation = instantiateOperationTypes(operation);
+      operation = instantiateOperationTypes(operation, fixed);
     }
 
     // if operation == null failed to build instantiation
@@ -172,14 +203,25 @@ public class TypeInstantiator {
         Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
+      // This check is partial when the bound of a type variable that the substitution maps
+      // mentions a type variable that it does not map, such as U in `<T extends Comparable<U>, U>`.
+      // Instantiating the substituted operation checks such a bound again, once it chooses U.
       if (substitution == null || !satisfiesBounds(substitution)) {
         return null;
       }
       TypedClassOperation substituted = operation.substitute(substitution);
-      result =
-          substituted.isGeneric() || substituted.hasWildcardTypes()
-              ? instantiate(substituted)
-              : substituted;
+      if (substituted.isGeneric() || substituted.hasWildcardTypes()) {
+        result = instantiateWithin(substituted, substitution);
+      } else if (selectOperationSubstitution(substituted, substitution) != null) {
+        // The signature is concrete, but a type variable can remain in the bounds of the type
+        // variables that the substitution maps, such as U in
+        // `<T extends Comparable<U>, S extends Comparable<U>, U> Map<T, S> make()`.  Choosing a
+        // single type for each such type variable checks that the bounds are consistent with one
+        // another.  The choice does not change the signature.
+        result = substituted;
+      } else {
+        return null;
+      }
     } else if (goalType.isAssignableFrom(outputType)) {
       result = instantiate(operation);
     } else {
@@ -325,6 +367,75 @@ public class TypeInstantiator {
   }
 
   /**
+   * Extends the given substitution so that it instantiates {@code type} to one of the given
+   * existing types, chosen randomly.
+   *
+   * <p>The extended substitution instantiates each type variable within its bounds, for each type
+   * variable whose bounds the extended substitution instantiates.
+   *
+   * @param type the generic type for which an instantiation is to be found
+   * @param matches existing types that instantiate {@code type}, such as the result of {@link
+   *     #matchingInputTypes}; this method side-effects the list
+   * @param substitution the substitution to extend
+   * @return {@code substitution} extended by instantiating {@code type}'s type parameters to
+   *     existing types; null if no such substitution exists
+   */
+  private static @Nullable Substitution selectSubstitution(
+      ReferenceType type, List<ReferenceType> matches, Substitution substitution) {
+    // Unify with the pattern to which the substitution is applied, so that unification uses the
+    // types that the substitution already chose.  For example, for `<T extends Number> void
+    // m(List<T>, Comparator<? super T>)`, once T is Integer, Comparator<Comparable<Integer>>
+    // instantiates the second parameter type; but without that mapping, it does not, because
+    // Comparable<Integer> cannot instantiate T.
+    ReferenceType pattern = type.substitute(substitution);
+    List<TypeVariable> typeParameters = type.getTypeParameters();
+    // Try the matches in random order.
+    while (!matches.isEmpty()) {
+      ReferenceType selectedType = Randomness.randomSetMember(matches);
+      Substitution selected =
+          withOriginalKeys(selectedType.getInstantiatingSubstitution(pattern), typeParameters);
+      // A match can conflict with the substitution, for example if it binds a capture variable
+      // that the substitution already maps to a different type.
+      if (selected != null && substitution.isConsistentWith(selected)) {
+        Substitution result = substitution.extend(selected);
+        if (satisfiesInstantiatedBounds(result)) {
+          return result;
+        }
+      }
+      matches.remove(selectedType);
+    }
+    return null;
+  }
+
+  /**
+   * Returns a substitution like the given one, but whose keys are the given type variables in place
+   * of the copies of them, with other bounds, in the given substitution. Applying a substitution to
+   * a type can replace a type variable whose bounds change by such a copy, but the other
+   * substitutions of {@link TypeInstantiator} map the original type variable.
+   *
+   * @param substitution a substitution, or null
+   * @param variables type variables
+   * @return a substitution with the same mappings as {@code substitution}, whose keys are the
+   *     elements of {@code variables} where possible; or null if {@code substitution} is null
+   */
+  private static @Nullable Substitution withOriginalKeys(
+      @Nullable Substitution substitution, List<TypeVariable> variables) {
+    if (substitution == null) {
+      return null;
+    }
+    List<TypeVariable> keys = new ArrayList<>(substitution.keySet().size());
+    List<ReferenceType> values = new ArrayList<>(substitution.keySet().size());
+    for (TypeVariable key : substitution.keySet()) {
+      int index = variables.indexOf(key);
+      ReferenceType value = substitution.get(key);
+      assert value != null : "@AssumeAssertion(nullness): the key is in the substitution";
+      keys.add(index == -1 ? key : variables.get(index));
+      values.add(value);
+    }
+    return new Substitution(keys, values);
+  }
+
+  /**
    * Selects an existing type that instantiates the given generic declaring type and returns the
    * instantiating substitution.
    *
@@ -332,12 +443,7 @@ public class TypeInstantiator {
    * @return a substitution instantiating the given type as an existing type; null if no such type
    */
   private @Nullable Substitution selectSubstitution(ClassOrInterfaceType type) {
-    List<ReferenceType> matches = matchingInputTypes(type);
-    if (matches.isEmpty()) {
-      return null;
-    }
-    ReferenceType selectedType = Randomness.randomSetMember(matches);
-    return selectedType.getInstantiatingSubstitution(type);
+    return selectSubstitution(type, matchingInputTypes(type), new Substitution());
   }
 
   /**
@@ -362,10 +468,13 @@ public class TypeInstantiator {
    * the types instantiated.
    *
    * @param operation an operation
+   * @param fixed a substitution that was already applied to {@code operation}; see {@link
+   *     #selectOperationSubstitution(TypedClassOperation, Substitution)}
    * @return the operation with generic types instantiated, or null if no instantiation was found
    */
-  private @Nullable TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
-    Substitution substitution = selectOperationSubstitution(operation);
+  private @Nullable TypedClassOperation instantiateOperationTypes(
+      TypedClassOperation operation, Substitution fixed) {
+    Substitution substitution = selectOperationSubstitution(operation, fixed);
     if (substitution == null) {
       return null;
     }
@@ -384,8 +493,9 @@ public class TypeInstantiator {
    * #satisfiesBounds(Substitution)}.
    *
    * <p>This method makes one or more attempts to build such a substitution. Each attempt makes new
-   * random choices and either returns a substitution or fails. An attempt starts with an empty
-   * substitution and does the following:
+   * random choices and either returns a substitution or fails. An attempt starts with the
+   * substitution {@code fixed} and does the following. In step 1, the chosen input type must
+   * instantiate each type variable whose bounds are instantiated within its bounds.
    *
    * <ol>
    *   <li>Instantiate the type variables in the parameterized parameter types. For each parameter
@@ -424,23 +534,35 @@ public class TypeInstantiator {
    * of the capture variables of the wildcards against the type chosen for {@code T} ensures that
    * the types chosen for the wildcards are consistent with one another.
    *
-   * <p>If an attempt fails, and step 1 chose among several input types for some parameter type,
-   * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
-   * Otherwise, another attempt would start from the same substitution, so this returns null.
+   * <p>If an attempt fails, and step 1 chose an input type for some parameter type while other
+   * input types that it had not rejected remained, this makes another attempt, up to {@link
+   * #MAX_INSTANTIATION_ATTEMPTS} attempts in all. Otherwise, another attempt would make the same
+   * choices and fail the same way, so this returns null.
+   *
+   * <p>Because the result extends {@code fixed}, the bounds of the type variables that {@code
+   * fixed} maps are checked too, once the type variables in them are instantiated. For example,
+   * suppose that {@code fixed} maps {@code T} to {@code String} in {@code <T extends Comparable<U>,
+   * U> Box<T> make(List<U>)}, and {@code operation} is {@code Box<String> make(List<U>)}. Then the
+   * result does not map {@code U} to {@code Integer}, because {@code String} is not a {@code
+   * Comparable<Integer>}.
    *
    * @param operation an operation
-   * @return a substitution that instantiates the generic types of {@code operation} and satisfies
-   *     the bounds of its type variables, or null if none was found
+   * @param fixed a substitution that was already applied to {@code operation}, whose type variables
+   *     can have bounds that mention type variables of {@code operation}
+   * @return a substitution that extends {@code fixed}, instantiates the generic types of {@code
+   *     operation}, and satisfies the bounds of its type variables, or null if none was found
    */
-  private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
+  private @Nullable Substitution selectOperationSubstitution(
+      TypedClassOperation operation, Substitution fixed) {
     // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
     // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
     for (int attempt = 0; attempt < MAX_INSTANTIATION_ATTEMPTS; attempt++) {
       // answer question: what type instantiation would allow a call to this operation?
       Set<TypeVariable> typeParameters = new LinkedHashSet<>();
-      Substitution substitution = new Substitution();
-      // True if an input type was chosen among several for some parameter type.
+      Substitution substitution = fixed;
+      // True if an input type was chosen for some parameter type while other unrejected input types
+      // remained, so that another attempt could choose differently.
       boolean choseAmongSeveral = false;
       // True if each parameterized parameter type matched an input type.  If false, this attempt
       // fails without instantiating the remaining type variables.
@@ -458,18 +580,25 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
-            choseAmongSeveral |= matches.size() > 1;
-            ReferenceType selectedType = Randomness.randomSetMember(matches);
-            Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
-            if (subst == null) {
+            Substitution extended =
+                selectSubstitution((ReferenceType) origParamType, matches, substitution);
+            if (extended == null) {
               if (Log.isLoggingOn()) {
-                failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+                failure =
+                    "no input type instantiates "
+                        + origParamType
+                        + " within the bounds, given "
+                        + substitution;
               }
               allMatched = false;
               break;
             }
-            substitution = substitution.extend(subst);
+            // selectSubstitution removed from `matches` each match that it rejected.  If others
+            // remain besides the selected one, another attempt can choose differently.  If
+            // selectSubstitution rejected every match, as above, another attempt would reject them
+            // all again, so that case does not set choseAmongSeveral.
+            choseAmongSeveral |= matches.size() > 1;
+            substitution = extended;
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
@@ -507,7 +636,9 @@ public class TypeInstantiator {
           } else {
             Substitution result =
                 selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
-            if (result != null) {
+            // The search checks each bound once its variables are instantiated; check the complete
+            // result too, in case the search scheduled some bound check too early.
+            if (result != null && satisfiesBounds(result)) {
               return result;
             }
             if (Log.isLoggingOn()) {
@@ -572,7 +703,8 @@ public class TypeInstantiator {
    * <ul>
    *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, or it is the
    *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
-   *       X}.
+   *       X}, or it is the type for {@code X} that the latter type implies; see {@link
+   *       #boundWitness(TypeVariable, TypeVariable, Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -605,6 +737,12 @@ public class TypeInstantiator {
           if (type != null && !type.isGeneric() && !candidates.contains(type)) {
             candidates.add(type);
           }
+          // Likewise, a type argument of a supertype of the type of a constrained type variable is
+          // a candidate, even if it is not an input type.
+          ReferenceType witness = boundWitness(parameter, variable, substitution);
+          if (witness != null && !candidates.contains(witness)) {
+            candidates.add(witness);
+          }
         }
         candidates.removeIf(
             candidate ->
@@ -618,6 +756,54 @@ public class TypeInstantiator {
       result.put(parameter, candidates);
     }
     return result;
+  }
+
+  /**
+   * Returns the type for the given type variable that the given substitution's type for {@code
+   * constrained} implies, if the upper bound of {@code constrained} is a parameterized type that
+   * mentions {@code parameter}. For example, if {@code constrained} is {@code T extends
+   * Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps {@code T} to
+   * {@code Ranked}, which implements {@code Comparable<String>}, then this returns {@code String}.
+   * This does not check the bounds of {@code constrained}; the caller does.
+   *
+   * @param parameter a type variable that {@code substitution} does not instantiate
+   * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
+   *     {@code parameter} and no other type variable that {@code substitution} does not instantiate
+   * @param substitution a substitution
+   * @return the non-generic type for {@code parameter} that makes the substitution's type for
+   *     {@code constrained} a subtype of its upper bound, or null if there is none or it is not
+   *     determined by a supertype of the substitution's type for {@code constrained}
+   */
+  private static @Nullable ReferenceType boundWitness(
+      TypeVariable parameter, TypeVariable constrained, Substitution substitution) {
+    ReferenceType type = substitution.get(constrained);
+    if (!(type instanceof ClassOrInterfaceType)) {
+      return null;
+    }
+    // Map `parameter` to itself, so that a lazy bound is converted to a type that mentions it.
+    ParameterBound bound =
+        constrained
+            .getUpperTypeBound()
+            .substitute(substitution.extend(new Substitution(parameter, parameter)));
+    if (!(bound instanceof ReferenceBound)) {
+      return null;
+    }
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (!(boundType instanceof InstantiatedType) || !boundType.isGeneric()) {
+      return null;
+    }
+    InstantiatedType pattern = (InstantiatedType) boundType;
+    InstantiatedType supertype =
+        ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
+    if (supertype == null) {
+      return null;
+    }
+    Substitution matching = supertype.getInstantiatingSubstitution(pattern);
+    if (matching == null) {
+      return null;
+    }
+    ReferenceType witness = matching.get(parameter);
+    return witness == null || witness.isGeneric() ? null : witness;
   }
 
   /**
@@ -833,13 +1019,56 @@ public class TypeInstantiator {
    * @param substitution a substitution
    * @return true if the type of each of {@code parameters} is within its bounds
    */
-  @SuppressWarnings("nullness:argument") // substitution instantiates each of parameters
   private static boolean satisfiesBounds(List<TypeVariable> parameters, Substitution substitution) {
-    List<ReferenceType> arguments = new ArrayList<>(parameters.size());
-    for (TypeVariable parameter : parameters) {
-      arguments.add(substitution.get(parameter));
+    return new BoundsCheck(parameters).test(substitution);
+  }
+
+  /**
+   * Returns the type variables that occur in the bounds of the given type variable.
+   *
+   * @param variable a type variable
+   * @return the type variables that occur in the bounds of {@code variable}
+   */
+  private static List<TypeVariable> boundVariables(TypeVariable variable) {
+    List<TypeVariable> result = new ArrayList<>(variable.getLowerTypeBound().getTypeParameters());
+    result.addAll(variable.getUpperTypeBound().getTypeParameters());
+    return result;
+  }
+
+  /**
+   * Returns true if the given substitution instantiates every type variable in the bounds of the
+   * given type variable.
+   *
+   * @param variable a type variable
+   * @param substitution a substitution
+   * @return true if {@code substitution} instantiates every type variable in the bounds of {@code
+   *     variable}
+   */
+  private static boolean boundsAreInstantiated(TypeVariable variable, Substitution substitution) {
+    for (TypeVariable boundVariable : boundVariables(variable)) {
+      if (!substitution.keySet().contains(boundVariable)) {
+        return false;
+      }
     }
-    return new BoundsCheck(parameters).test(arguments, substitution);
+    return true;
+  }
+
+  /**
+   * Returns true if the given substitution instantiates each of its type variables within the
+   * variable's bounds, for each type variable whose bounds the substitution instantiates.
+   *
+   * @param substitution a substitution
+   * @return true if {@code substitution} instantiates each of its type variables within the
+   *     variable's bounds, ignoring variables whose bounds it does not instantiate
+   */
+  private static boolean satisfiesInstantiatedBounds(Substitution substitution) {
+    List<TypeVariable> checked = new ArrayList<>();
+    for (TypeVariable variable : substitution.keySet()) {
+      if (boundsAreInstantiated(variable, substitution)) {
+        checked.add(variable);
+      }
+    }
+    return new BoundsCheck(checked).test(substitution);
   }
 
   /**
@@ -850,9 +1079,8 @@ public class TypeInstantiator {
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
-  private Substitution selectSubstitution(List<TypeVariable> typeParameters) {
-    Substitution substitution = new Substitution();
-    return selectSubstitution(typeParameters, substitution);
+  private @Nullable Substitution selectSubstitution(List<TypeVariable> typeParameters) {
+    return selectSubstitution(typeParameters, new Substitution());
   }
 
   /**
@@ -863,7 +1091,7 @@ public class TypeInstantiator {
    * @return the substitution extended by instantiating type variables; null if any of the variables
    *     has no instantiating types
    */
-  private Substitution selectSubstitution(
+  private @Nullable Substitution selectSubstitution(
       List<TypeVariable> typeParameters, Substitution substitution) {
     List<Substitution> substitutionList = allExtendingSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
@@ -875,12 +1103,14 @@ public class TypeInstantiator {
   /**
    * Returns all substitutions that extend a substitution for the given type parameters.
    *
+   * <p>This is package-private for testing.
+   *
    * @param typeParameters the type parameters to be instantiated
    * @param substitution the substitution to be extended
    * @return the list of possible substitutions, empty if none is found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<Substitution> allExtendingSubstitutions(
+  /*package*/ List<Substitution> allExtendingSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
 
     // Partition parameters based on whether they might have independent bounds:
@@ -888,35 +1118,38 @@ public class TypeInstantiator {
     // parameters with generic bounds may be dependent on other parameters
     List<TypeVariable> genericParameters = new ArrayList<>(typeParameters.size());
 
-    // parameters with nongeneric bounds can be selected independently, but may be used by
+    // parameters with nongeneric bounds that occur in the bounds of generic parameters
     List<TypeVariable> nongenericParameters = new ArrayList<>(typeParameters.size());
 
-    // wildcard capture variables without generic bounds can be selected independently, and
-    // may not be used in the bounds of another parameter.
-    List<TypeVariable> captureParameters = new ArrayList<>(typeParameters.size());
+    // parameters with nongeneric bounds that occur in no bound of another parameter, such as
+    // wildcard capture variables without generic bounds; they can be selected independently
+    List<TypeVariable> independentParameters = new ArrayList<>(typeParameters.size());
 
     for (TypeVariable variable : typeParameters) {
       if (variable.hasGenericBound()) {
         genericParameters.add(variable);
-      } else {
-        if (variable.isCaptureVariable()) {
-          captureParameters.add(variable);
-        } else {
+      }
+    }
+    for (TypeVariable variable : typeParameters) {
+      if (!genericParameters.contains(variable)) {
+        if (occursInBounds(variable, genericParameters)) {
           nongenericParameters.add(variable);
+        } else {
+          independentParameters.add(variable);
         }
       }
     }
 
     // If any of the type variables has a generic bound, assumes there are dependencies and
-    // enumerates all possible substitutions and tests them. Otherwise, independently selects an
-    // instantiating type for each variable.
+    // enumerates all possible substitutions for the generic parameters and the parameters in their
+    // bounds, and tests them.  Independently selects an instantiating type for each other variable.
 
     // These are the candidates that this routine will return.
     List<Substitution> result = new ArrayList<>();
     if (!genericParameters.isEmpty()) {
       // if there are type parameters with generic bounds
       if (!nongenericParameters.isEmpty()) {
-        // if there are type parameters with non-generic bounds, these may be variables in
+        // if there are type parameters with non-generic bounds that are variables in
         // generic-bounded parameters
 
         List<List<ReferenceType>> nongenCandidates = candidateTypes(nongenericParameters);
@@ -947,22 +1180,18 @@ public class TypeInstantiator {
       if (result.isEmpty()) {
         return result;
       }
-    } else if (!nongenericParameters.isEmpty()) {
-      // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectSubstitutionIndependently(nongenericParameters, substitution);
-      if (substitution == null) {
-        return Collections.emptyList();
-      }
+    } else {
       result.add(substitution);
     }
 
-    // Can always select captured wildcards independently.  Augment each existing candidate.
-    if (!captureParameters.isEmpty()) {
-      if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+    // Select the independent parameters once, and augment each existing candidate.
+    if (!independentParameters.isEmpty()) {
+      Substitution independent =
+          selectSubstitutionIndependently(independentParameters, new Substitution());
+      if (independent == null) {
+        return Collections.emptyList();
       }
+      result.replaceAll(s -> s.extend(independent));
     }
 
     return result;
@@ -996,6 +1225,23 @@ public class TypeInstantiator {
   }
 
   /**
+   * Returns true if the given type variable occurs in the bounds of any of the given type
+   * variables.
+   *
+   * @param variable a type variable
+   * @param variables type variables
+   * @return true if {@code variable} occurs in the bounds of a variable in {@code variables}
+   */
+  private static boolean occursInBounds(TypeVariable variable, List<TypeVariable> variables) {
+    for (TypeVariable v : variables) {
+      if (boundVariables(v).contains(variable)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Adds instantiating substitutions for the given parameters to the list if satisfies the given
    * type check predicate. Each constructed substitution extends the given initial substitution.
    * Assumes that the parameters are or are refinements of the set of parameters check by the type
@@ -1014,7 +1260,7 @@ public class TypeInstantiator {
     for (List<ReferenceType> tuple :
         iteratorToIterable(new CombinationIterator<>(candidateTypes))) {
       Substitution substitution = initialSubstitution.extend(parameters, tuple);
-      if (boundsCheck.test(tuple, substitution)) {
+      if (boundsCheck.test(substitution)) {
         substitutionList.add(substitution);
       }
     }

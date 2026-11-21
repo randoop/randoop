@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,10 @@ public class Substitution {
    * same type variable, they map it to the same type. This is the test for whether this
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so two substitutions that
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies, map it to the same type.
+   *
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
@@ -169,6 +174,10 @@ public class Substitution {
    * Creates a new substitution that contains the entries of two substitutions. If both
    * substitutions contain the same type variable, they must map to the same type.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so both substitutions can
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies. Then the result maps it to the type that this substitution maps it to.
+   *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
@@ -180,6 +189,63 @@ public class Substitution {
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
+    return result;
+  }
+
+  /**
+   * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
+   * that is, to the object that is the key of the entry. A copy of a type variable with other
+   * bounds is equal to it, but is not the same object.
+   *
+   * @param variable a type variable
+   * @return true if this substitution maps {@code variable} to itself
+   */
+  boolean mapsToItself(TypeVariable variable) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (entry.getKey().equals(variable)) {
+        return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns a substitution that extends this one by mapping to itself each of the given type
+   * variables that this one does not map. Returns this substitution if it maps all of them.
+   *
+   * @param variables type variables
+   * @return a substitution that maps each of {@code variables}
+   */
+  Substitution extendWithIdentity(Collection<TypeVariable> variables) {
+    // A copy of this substitution, made when the first variable is added.
+    Substitution result = null;
+    for (TypeVariable variable : variables) {
+      if ((result == null ? this : result).get(variable) == null) {
+        if (result == null) {
+          result = new Substitution(this);
+        }
+        result.put(variable, variable);
+      }
+    }
+    return result == null ? this : result;
+  }
+
+  /**
+   * Returns a substitution that is like this one, but that maps the given type variable to the
+   * given type, replacing any mapping of it in this substitution. Returns this substitution if it
+   * already maps the type variable to that type.
+   *
+   * @param variable a type variable
+   * @param type the type to map {@code variable} to
+   * @return a substitution that is like this one, but that maps {@code variable} to {@code type}
+   */
+  @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
+  Substitution withMapping(TypeVariable variable, ReferenceType type) {
+    if (map.get(variable) == type) {
+      return this;
+    }
+    Substitution result = new Substitution(this);
+    result.put(variable, type);
     return result;
   }
 
@@ -243,6 +309,10 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
+    // Copies of a type variable are equal, so `map.put` alone would keep an existing key that is a
+    // copy of `typeParameter`, and pair it with `type`.  Removing the entry first makes the new
+    // entry pair `typeParameter` with `type`, as given.
+    map.remove(typeParameter);
     map.put(typeParameter, type);
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
