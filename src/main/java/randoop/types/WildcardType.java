@@ -142,7 +142,7 @@ class WildcardType extends ParameterType {
   @Override
   public WildcardType substitute(Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
-    if (bound.equals(this.getTypeBound())) {
+    if (sameType(bound, this.getTypeBound())) {
       return this;
     }
     return new WildcardType(bound, hasUpperBound);

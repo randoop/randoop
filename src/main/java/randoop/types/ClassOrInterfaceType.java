@@ -151,6 +151,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return type;
   }
 
+  /**
+   * Returns the result of applying the given substitution to the enclosing type of this type, if
+   * this type is a member class. Otherwise, returns the enclosing type of this type, which is null
+   * if this type is not nested. The result is the enclosing type itself if the substitution changes
+   * nothing in it.
+   *
+   * @param substitution a substitution
+   * @return the enclosing type of this type, with {@code substitution} applied if this type is a
+   *     member class
+   */
+  /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
+      Substitution substitution) {
+    return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
+  }
+
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
