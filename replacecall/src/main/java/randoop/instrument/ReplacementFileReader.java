@@ -245,7 +245,10 @@ public final class ReplacementFileReader {
       return signature;
     }
 
-    MethodSignature constructor = signature.toConstructorSignature().resolveNestedClassnames();
+    // The constructor interpretation is resolved only after the method interpretation fails, so
+    // that an unreadable class in an unused constructor interpretation cannot prevent a method
+    // match.
+    MethodSignature unresolvedConstructor = signature.toConstructorSignature();
     // Mention the constructor interpretation only if the name looks like a class name.
     boolean mentionConstructor = Character.isUpperCase(signature.getName().charAt(0));
     boolean methodClassExists;
@@ -253,8 +256,10 @@ public final class ReplacementFileReader {
       methodClassExists = classExists(signature.getClassname());
     } catch (IllegalClassFormatException e) {
       // The method interpretation's class is unreadable; try the constructor interpretation.
+      MethodSignature constructor;
       boolean constructorClassExists;
       try {
+        constructor = unresolvedConstructor.resolveNestedClassnames();
         constructorClassExists = classExists(constructor.getClassname());
       } catch (IllegalClassFormatException e2) {
         e.addSuppressed(e2);
@@ -283,6 +288,13 @@ public final class ReplacementFileReader {
         return signature;
       } catch (NoSuchMethodException | ClassNotFoundException | IllegalClassFormatException e) {
         // The method lookup searches superclasses, which might be missing or unreadable.
+        MethodSignature constructor;
+        try {
+          constructor = unresolvedConstructor.resolveNestedClassnames();
+        } catch (IllegalClassFormatException e2) {
+          e.addSuppressed(e2);
+          throw e;
+        }
         if (!classExists(constructor.getClassname())) {
           if (!mentionConstructor || !(e instanceof NoSuchMethodException)) {
             throw e;
@@ -295,8 +307,13 @@ public final class ReplacementFileReader {
           withConstructor.initCause(e);
           throw withConstructor;
         }
+        constructor.toMethod();
+        return constructor;
       }
-    } else if (!classExists(constructor.getClassname())) {
+    }
+
+    MethodSignature constructor = unresolvedConstructor.resolveNestedClassnames();
+    if (!classExists(constructor.getClassname())) {
       if (mentionConstructor) {
         throw new ClassNotFoundException(
             String.format(
