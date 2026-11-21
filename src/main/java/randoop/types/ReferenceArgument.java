@@ -78,28 +78,23 @@ public final class ReferenceArgument extends TypeArgument {
 
   @Override
   public TypeArgument substitute(Substitution substitution) {
-    return TypeArgument.forType(referenceType.substitute(substitution));
+    ReferenceType type = referenceType.substitute(substitution);
+    if (Type.sameType(type, referenceType)) {
+      return this;
+    }
+    return TypeArgument.forType(type);
   }
 
   /**
    * {@inheritDoc}
    *
-   * <p>Considers cases:
-   *
-   * <ul>
-   *   <li>{@code T} contains {@code T}
-   *   <li>{@code T} contains {@code ? extends T}
-   *   <li>{@code T} contains {@code ? super T}
-   * </ul>
+   * <p>A non-wildcard type argument {@code T} contains only {@code T} itself. In particular, it
+   * does not contain a wildcard such as {@code ? extends T} or {@code ? super T}; rather, those
+   * wildcards contain {@code T}.
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
-    if (otherArgument.isWildcard()) {
-      ParameterBound boundType = ((WildcardArgument) otherArgument).getTypeBound();
-      return boundType.equals(new EagerReferenceBound(referenceType));
-    } else {
-      return referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
-    }
+    return Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**

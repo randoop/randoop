@@ -12,8 +12,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>Objects of this class are created by {@link
  * ReferenceBound#forTypeLazyIfGeneric(ReferenceType)} when the bound type contains a type variable.
- * A substitution leaves an array bound unresolved if it maps the element type to the null type,
- * because there is no array of the null type.
  */
 class LazyReferenceBound extends ReferenceBound {
 
@@ -31,32 +29,11 @@ class LazyReferenceBound extends ReferenceBound {
     if (substitution.isEmpty()) {
       return this;
     }
-    // There is no array of the null type, so leave the bound unresolved.
-    if (mapsArrayElementToNullType(substitution)) {
-      return this;
-    }
-
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    if (Type.sameType(referenceType, getBoundType())) {
       return this;
     }
     return forTypeLazyIfGeneric(referenceType);
-  }
-
-  /**
-   * Returns true if the bound type is an array type whose element type is a type variable that the
-   * given substitution maps to the null type. There is no array of the null type.
-   *
-   * @param substitution a type substitution
-   * @return true if {@code substitution} maps the element type of this array bound to the null type
-   */
-  private boolean mapsArrayElementToNullType(Substitution substitution) {
-    if (!getBoundType().isArray()) {
-      return false;
-    }
-    Type elementType = ((ArrayType) getBoundType()).getElementType();
-    return elementType.isVariable()
-        && JavaTypes.NULL_TYPE.equals(substitution.get((TypeVariable) elementType));
   }
 
   @Override
@@ -73,14 +50,11 @@ class LazyReferenceBound extends ReferenceBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
+      // of the substitution, because they can mention type variables that it instantiates.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -99,18 +73,17 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The bound type can still contain type variables after the substitution is applied. It is
    * compared as an {@link EagerReferenceBound} would be, except as described in {@link
-   * #getUnknownTypeVariable(Type, Substitution)}.
+   * #getUnknownTypeVariable(Type, Substitution)}. For an upper bound, the unknown type variable can
+   * be {@code argType} or any of its supertypes.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (mapsArrayElementToNullType(substitution)) {
-      // There is no array of the null type, so no type satisfies this bound.
-      return false;
-    }
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself, one of its supertypes, or its lower
+      // bound.  Its bounds are checked with the mappings of the substitution, because they can
+      // mention type variables that it instantiates.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -122,12 +95,16 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
-   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
-   * argType} within this bound. {@link EagerReferenceBound} instead compares {@code argType} with
-   * the upper bound of the type variable, so the two classes can differ. For example, for a type
-   * variable {@code U extends Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code
-   * Number}, because {@code Integer} is a subtype of {@code Number}, but this class does not,
-   * because {@code U} cannot be {@code Number}.
+   * {@code argType}, with the other type variables instantiated as by the substitution, because
+   * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if a supertype of
+   * {@code argType} can instantiate the type variable, or if {@code argType} is a subtype of the
+   * lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For a lower bound,
+   * {@link EagerReferenceBound} instead compares {@code argType} with the upper bound of the type
+   * variable, so the two classes can differ. For example, for a type variable {@code U extends
+   * Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code Number}, because {@code
+   * Integer} is a subtype of {@code Number}, but this class does not, because {@code U} cannot be
+   * {@code Number}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
@@ -140,5 +117,49 @@ class LazyReferenceBound extends ReferenceBound {
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
+   * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
+   * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
+   * is the null type, or if, after the substitution is applied to it, it is a subtype of the type
+   * of this bound, in which each type variable stands for itself (see {@link
+   * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
+   * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. The type of this bound contains type
+   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
+   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (getBoundType() instanceof CaptureTypeVariable) {
+      return super.hasLowerBound(lowerBound, substitution);
+    }
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    // Compare enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
+    // is not Outer<Number>.Inner<X>.
+    if (lowerBound instanceof ReferenceBound
+        && Subtyping.isIdentical(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            getBoundType())) {
+      return true;
+    }
+    ParameterBound b = lowerBound.substitute(substitution);
+    if (!(b instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
+    // The substitution is not applied to the type of this bound, in which each type variable
+    // stands for itself.  So, a subtype of it is a subtype of each instantiation of it, as
+    // ArrayList<T>[] is of List<T>[].  The null type is a subtype of every reference type,
+    // including a type variable, so array covariance makes, for example, `NullType[]` a subtype of
+    // `T[]`.  Subtyping does not treat a type as a subtype of the generic form of its class, as
+    // `isSubtypeOfOrEqualTo` does; for example, List<String>[] is not a subtype of each
+    // instantiation of List<E>[].
+    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
   }
 }

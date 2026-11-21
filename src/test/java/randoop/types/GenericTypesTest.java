@@ -270,6 +270,29 @@ public class GenericTypesTest {
   }
 
   @Test
+  public void containmentTest() {
+    TypeArgument extendsNumber =
+        new WildcardArgument(
+            new WildcardType(ParameterBound.forType(ReferenceType.forClass(Number.class)), true));
+    TypeArgument superInteger =
+        new WildcardArgument(
+            new WildcardType(ParameterBound.forType(ReferenceType.forClass(Integer.class)), false));
+    TypeArgument unbounded =
+        new WildcardArgument(new WildcardType(ParameterBound.forType(JavaTypes.OBJECT_TYPE), true));
+    TypeArgument integer = TypeArgument.forType(ReferenceType.forClass(Integer.class));
+    TypeArgument number = TypeArgument.forType(ReferenceType.forClass(Number.class));
+
+    // JLS 4.5.1:  T <= ? extends T and T <= ? super T, but a type does not contain a wildcard.
+    assertTrue(extendsNumber.contains(integer));
+    assertTrue(superInteger.contains(number));
+    assertFalse(integer.contains(extendsNumber));
+    assertTrue(integer.contains(integer));
+    // ? super T <= ?, but ? is not contained in ? super T.
+    assertTrue(unbounded.contains(superInteger));
+    assertFalse(superInteger.contains(unbounded));
+  }
+
+  @Test
   public void wildcardAssignabilityTest() {
     // List<? extends Number> list;
     // ArrayList<? extends Number> arrayList = new ArrayList<>();
@@ -293,5 +316,24 @@ public class GenericTypesTest {
 
     assertTrue(list.isAssignableFrom(arraylist));
     assertFalse(arraylist.isAssignableFrom(list));
+  }
+
+  /** Fields whose types are used in {@link #wildcardArgumentSubtypingTest}. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  private static class WildcardFields {
+    /** A list of strings. */
+    List<String> strings;
+
+    /** A list of some subtype of {@code String}. */
+    List<? extends String> extendsStrings;
+  }
+
+  @Test
+  public void wildcardArgumentSubtypingTest() throws NoSuchFieldException {
+    Type strings = Type.forType(WildcardFields.class.getDeclaredField("strings").getGenericType());
+    Type extendsStrings =
+        Type.forType(WildcardFields.class.getDeclaredField("extendsStrings").getGenericType());
+    assertTrue(strings.isSubtypeOfOrEqualTo(extendsStrings));
+    assertFalse(extendsStrings.isSubtypeOfOrEqualTo(strings));
   }
 }

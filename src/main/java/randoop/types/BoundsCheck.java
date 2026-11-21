@@ -2,7 +2,7 @@ package randoop.types;
 
 import java.util.List;
 
-/** Predicate to check the type of a substitution for a list of type variables. */
+/** Predicate to check that a substitution instantiates type variables within their bounds. */
 public class BoundsCheck {
   /** The type variables to check against. */
   private final List<TypeVariable> typeParameters;
@@ -17,22 +17,30 @@ public class BoundsCheck {
   }
 
   /**
-   * Checks if each type argument is within the bounds of the corresponding type parameter, after
-   * both arguments and parameters have been substituted.
+   * Checks if the substitution instantiates each type parameter to a type within the parameter's
+   * bounds, after the substitution has been applied to the bounds.
    *
-   * <p>Requires that the list of types be the same length as the parameters. Generally, the
-   * substitution is constructed from the tuple instantiating the type parameters of this object,
-   * but all that is required is that it instantiate any generic bounds of the type parameters.
+   * <p>Requires that the substitution instantiate each type parameter of this object. It need not
+   * instantiate the other type variables that occur in their bounds: such a type variable stands
+   * for an unknown type, which may be any type that satisfies its own bounds. For example, for
+   * {@code <T extends Comparable<U>, U>}, a substitution that maps {@code T} to {@code String} and
+   * does not map {@code U} satisfies the bound of {@code T}, because {@code String} implements
+   * {@code Comparable<String>}. A client that instantiates those type variables later should check
+   * the bounds again.
    *
-   * @param tuple the list of instantiating types
    * @param substitution substitution for checking bounds
-   * @return true if each argument's instantiation is within the bounds of the corresponding type
-   *     parameter, after both have been substituted
+   * @return true if each type parameter's instantiation is within the bounds of the type parameter,
+   *     after the bounds have been substituted
+   * @throws IllegalArgumentException if the substitution does not instantiate a type parameter of
+   *     this object
    */
-  public boolean test(List<ReferenceType> tuple, Substitution substitution) {
-    for (int i = 0; i < tuple.size(); i++) {
-      TypeVariable paramType = typeParameters.get(i);
-      ReferenceType argType = tuple.get(i);
+  public boolean test(Substitution substitution) {
+    for (TypeVariable paramType : typeParameters) {
+      ReferenceType argType = substitution.get(paramType);
+      if (argType == null) {
+        throw new IllegalArgumentException(
+            "substitution " + substitution + " does not instantiate " + paramType);
+      }
       if (!(paramType.getLowerTypeBound().isLowerBound(argType, substitution)
           && paramType.getUpperTypeBound().isUpperBound(argType, substitution))) {
         return false;
