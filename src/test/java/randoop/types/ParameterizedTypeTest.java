@@ -3,6 +3,8 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static randoop.types.ExampleClassesForTests.A;
@@ -21,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
@@ -320,5 +323,81 @@ public class ParameterizedTypeTest {
         }
       }
     }
+  }
+
+  /**
+   * A class with a field whose type has the same type variable as both type arguments.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class SameKeyAndValue<T> {
+    /** A map whose keys and values have the same type. */
+    Map<T, T> map;
+  }
+
+  /** A field of type {@code Map<String, Integer>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private Map<String, Integer> stringToInteger;
+
+  @Test
+  public void testConflictingInstantiatingSubstitution() throws NoSuchFieldException {
+    ReferenceType sameKeyAndValue =
+        (ReferenceType)
+            Type.forType(SameKeyAndValue.class.getDeclaredField("map").getGenericType());
+    ReferenceType stringToIntegerType =
+        (ReferenceType)
+            Type.forType(
+                ParameterizedTypeTest.class.getDeclaredField("stringToInteger").getGenericType());
+    // T cannot be both String and Integer.
+    assertNull(stringToIntegerType.getInstantiatingSubstitution(sameKeyAndValue));
+    // T can be String.
+    InstantiatedType stringToString =
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertNotNull(stringToString.getInstantiatingSubstitution(sameKeyAndValue));
+  }
+
+  /** A field of type {@code List<List<?>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<?>> listOfUnboundedLists;
+
+  /** A field of type {@code List<List<String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<String>> listOfStringLists;
+
+  /** A field of type {@code List<? extends List<? super String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? extends List<? super String>> listOfSuperStringLists;
+
+  /** A field of type {@code List<?>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<?> unboundedList;
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? super String> superStringList;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of a field of this class
+   * @return the type of the field
+   */
+  private static Type fieldType(String name) throws NoSuchFieldException {
+    return Type.forType(ParameterizedTypeTest.class.getDeclaredField(name).getGenericType());
+  }
+
+  /** {@code ? super String} does not contain {@code ?}, but {@code ?} contains it (JLS 4.5.1). */
+  @Test
+  public void testLowerBoundedWildcardDoesNotContainUnbounded() throws NoSuchFieldException {
+    Type unbounded = fieldType("unboundedList");
+    Type superString = fieldType("superStringList");
+    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
+    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
+
+    Type target = fieldType("listOfSuperStringLists");
+    assertFalse(fieldType("listOfUnboundedLists").isSubtypeOfOrEqualTo(target));
+    assertTrue(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(target));
   }
 }
