@@ -1,16 +1,19 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,7 @@ import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 
 /** Tests {@link TypeInstantiator}. */
 public class TypeInstantiatorTest {
@@ -347,14 +351,97 @@ public class TypeInstantiatorTest {
   }
 
   /**
-   * In {@code <T, A, B, C, D> List<T> unrelatedVariables(Collection<? extends T> c, A a, B b, C cc,
-   * D d)}, only {@code T} is related to the bound of the capture variable. The instantiator
-   * searches the instantiations of {@code T}, and selects the instantiations of the other variables
-   * independently, rather than enumerating every combination of instantiations of all the
-   * variables.
+   * A class in which only {@code T} and {@code U} are related by a bound.
+   *
+   * @param <T> a type parameter whose bound mentions {@code U}
+   * @param <U> a type parameter that occurs in the bound of {@code T}
+   * @param <A> an unrelated type
+   * @param <B> an unrelated type
+   * @param <C> an unrelated type
+   * @param <D> an unrelated type
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameters are used via reflection
+  static class UnrelatedClassVariables<T extends Comparable<U>, U, A, B, C, D> {
+    /** Creates an object. */
+    public UnrelatedClassVariables() {}
+  }
+
+  /**
+   * Returns {@code Comparable<type>}.
+   *
+   * @param type a type
+   * @return {@code Comparable<type>}
+   */
+  private static ReferenceType comparableOf(ReferenceType type) {
+    return JavaTypes.COMPARABLE_TYPE.substitute(
+        new Substitution(JavaTypes.COMPARABLE_TYPE.getTypeParameters(), type));
+  }
+
+  /**
+   * In {@code UnrelatedClassVariables<T extends Comparable<U>, U, A, B, C, D>}, only {@code T} and
+   * {@code U} are related by a bound. When the instantiator creates a new instantiation of the
+   * class, it enumerates the instantiations of {@code T} and {@code U} together, and selects the
+   * instantiations of the other variables once, independently, rather than enumerating every
+   * combination of instantiations of all the variables.
    */
   @Test(timeout = 10000)
   public void testUnrelatedVariablesAreSelectedIndependently() throws Exception {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(UnrelatedClassVariables.class).getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    List<TypeVariable> independent = parameters.subList(2, parameters.size());
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
+
+    // Only T and U enter the joint enumeration:  every substitution has the same types for the
+    // independent variables, and a distinct pair of types for T and U.
+    List<Substitution> substitutions =
+        instantiator.allExtendingSubstitutions(parameters, new Substitution());
+    assertFalse("no substitution found", substitutions.isEmpty());
+    Substitution first = substitutions.get(0);
+    Set<List<ReferenceType>> relatedTypes = new HashSet<>();
+    for (Substitution substitution : substitutions) {
+      for (TypeVariable variable : independent) {
+        assertNotNull(substitution.get(variable));
+        assertEquals(first.get(variable), substitution.get(variable));
+      }
+      ReferenceType tType = substitution.get(t);
+      ReferenceType uType = substitution.get(u);
+      assertNotNull(tType);
+      assertNotNull(uType);
+      assertTrue(
+          "bad substitution: " + substitution, tType.isSubtypeOfOrEqualTo(comparableOf(uType)));
+      assertTrue(
+          "duplicate types for T and U: " + substitution,
+          relatedTypes.add(Arrays.asList(tType, uType)));
+    }
+
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(UnrelatedClassVariables.class.getDeclaredConstructor());
+    int instantiations = 0;
+    for (int i = 0; i < 100; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(constructor);
+      if (instantiated == null) {
+        continue;
+      }
+      instantiations++;
+      ReferenceType tType = typeArgument(instantiated.getOutputType(), 0);
+      ReferenceType uType = typeArgument(instantiated.getOutputType(), 1);
+      assertTrue(
+          "bad instantiation: " + instantiated, tType.isSubtypeOfOrEqualTo(comparableOf(uType)));
+    }
+    assertTrue("no instantiation found", instantiations > 0);
+  }
+
+  /**
+   * In {@code <T, A, B, C, D> List<T> unrelatedVariables(Collection<? extends T> c, A a, B b, C cc,
+   * D d)}, only {@code T} is related to the bound of the capture variable. The search for an
+   * instantiation of the method's type variables abandons each partial substitution that violates
+   * a bound, so it terminates quickly although there are many combinations of instantiations of all
+   * the variables.
+   */
+  @Test(timeout = 10000)
+  public void testUnrelatedMethodVariables() throws Exception {
     Method m =
         TypeInstantiatorTest.class.getDeclaredMethod(
             "unrelatedVariables",
@@ -635,6 +722,112 @@ public class TypeInstantiatorTest {
       TypedClassOperation operation = instantiator.instantiate(sharedBound, stringToString);
       assertNotNull(operation);
       assertEquals(stringToString, operation.getOutputType());
+    }
+  }
+
+  /** A class that is comparable to strings. */
+  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  static class Ranked implements Comparable<String> {
+    @Override
+    public int compareTo(String other) {
+      return 0;
+    }
+  }
+
+  /** Another class that is comparable to strings. */
+  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  static class RankedToo implements Comparable<String> {
+    @Override
+    public int compareTo(String other) {
+      return 0;
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable whose bound mentions another type
+   * variable, which occurs nowhere else.
+   *
+   * @param <T> the result element type
+   * @param <U> the type that the elements are comparable to
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<U>, U> List<T> comparableList() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type derives the type of a type variable that
+   * occurs only in bounds from the types that the goal type determines, even if it is not an input
+   * type. For the goal type {@code List<Ranked>}, {@code <T extends Comparable<U>, U> List<T>
+   * comparableList()} is instantiated with {@code String} for {@code U}, because {@code Ranked} is
+   * a {@code Comparable<String>}. Incompatible shared bounds still have no instantiation.
+   */
+  @Test
+  public void testGoalTypeImpliesVariableOnlyInBounds()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType rankedType = ClassOrInterfaceType.forClass(Ranked.class);
+    ClassOrInterfaceType rankedTooType = ClassOrInterfaceType.forClass(RankedToo.class);
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+
+    TypedClassOperation comparableList =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("comparableList"));
+    InstantiatedType listOfRanked = GenericClassType.forClass(List.class).instantiate(rankedType);
+
+    TypedClassOperation sharedBound =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("sharedBound"));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType rankedToRankedToo = mapType.instantiate(rankedType, rankedTooType);
+    InstantiatedType rankedToInteger = mapType.instantiate(rankedType, INTEGER_TYPE);
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(comparableList, listOfRanked);
+      assertNotNull(operation);
+      assertEquals(listOfRanked, operation.getOutputType());
+
+      operation = instantiator.instantiate(sharedBound, rankedToRankedToo);
+      assertNotNull(operation);
+      assertEquals(rankedToRankedToo, operation.getOutputType());
+
+      // No U makes both Ranked and Integer a Comparable<U>.
+      assertNull(instantiator.instantiate(sharedBound, rankedToInteger));
+    }
+  }
+
+  /**
+   * A method whose parameter type mentions a type variable twice.
+   *
+   * @param <T> the key and value type
+   * @param map a map
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T> void sameKeyAndValue(Map<T, T> map) {}
+
+  /**
+   * Tests that an input type that matches each type argument of a parameter type separately, but
+   * that maps a type variable to two different types, is rejected without preventing the choice of
+   * another input type. {@code <T> void sameKeyAndValue(Map<T, T>)} is instantiated only as {@code
+   * sameKeyAndValue(Map<String, String>)}, not with {@code Map<String, Integer>}.
+   */
+  @Test
+  public void testConflictingMatchIsRejected()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE), inputTypes);
+    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation sameKeyAndValue =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("sameKeyAndValue", Map.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(sameKeyAndValue);
+      assertNotNull(operation);
+      assertEquals(JavaTypes.STRING_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
+      assertEquals(JavaTypes.STRING_TYPE, typeArgument(operation.getInputTypes().get(0), 1));
     }
   }
 
