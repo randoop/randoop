@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
@@ -136,7 +137,17 @@ public class ClassOrInterfaceTypeTest {
   static class Outer<T> {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
+
+    /** An inner class whose supertypes mention the type parameter of its enclosing class. */
+    abstract class InnerWithSupertypes extends Parent<T> implements Comparable<T> {}
   }
+
+  /**
+   * A generic class that is the superclass of a member class.
+   *
+   * @param <P> the type parameter
+   */
+  static class Parent<P> {}
 
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
@@ -246,5 +257,23 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerGenericForm));
     assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
     assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  @Test
+  public void memberOfGenericClassSupertypesTest() {
+    GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    ClassOrInterfaceType stringType = ClassOrInterfaceType.forClass(String.class);
+    ClassOrInterfaceType innerOfString =
+        ClassOrInterfaceType.forClass(Outer.InnerWithSupertypes.class)
+            .substitute(new Substitution(outerType.getTypeParameters(), stringType));
+
+    GenericClassType parentType = (GenericClassType) ClassOrInterfaceType.forClass(Parent.class);
+    InstantiatedType parentOfString = parentType.instantiate(stringType);
+    assertEquals(parentOfString, innerOfString.getSuperclass());
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(parentOfString));
+
+    InstantiatedType comparableOfString = JavaTypes.COMPARABLE_TYPE.instantiate(stringType);
+    assertEquals(Collections.singletonList(comparableOfString), innerOfString.getInterfaces());
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(comparableOfString));
   }
 }

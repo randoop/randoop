@@ -40,7 +40,10 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    if (argType.isParameterized()) {
+    // Not `argType.isParameterized()`:  a member class with no type parameters of its own, such as
+    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.  The subtype check
+    // below handles it.
+    if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -76,9 +79,41 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       // The substitution does not map the variable, so the variable can still be chosen.  argType
       // is within this bound if it is within the variable's upper bound, which the variable can be.
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      TypeVariable boundVariable = (TypeVariable) thisBoundType;
+      ParameterBound variableBound = boundVariable.getUpperTypeBound();
+      if (subst.get(boundVariable) != null || !(argType instanceof ReferenceType)) {
+        return variableBound.isUpperBound(argType, subst);
+      }
+      // The bound of `boundVariable` can mention `boundVariable` itself, as in `<T extends
+      // Comparable<? super T>>`, so checking it requires a choice for `boundVariable`.  `argType`
+      // is within this bound if `boundVariable` can be some supertype S of `argType` that is
+      // within the bound of `boundVariable` when `boundVariable` is S.  Try `argType` itself
+      // first.  If it fails, try its other supertypes:  for `<T extends Marker<T>>`, if Child
+      // extends Base and Base implements Marker<Base>, then T can be Base though not Child.
+      ReferenceType argRefType = (ReferenceType) argType;
+      if (variableBound.isUpperBound(
+          argRefType, subst.extend(new Substitution(boundVariable, argRefType)))) {
+        return true;
+      }
+      // If the bound does not mention `boundVariable`, then no supertype of `argType` satisfies the
+      // bound, because `argType` does not.
+      if (!(argRefType instanceof ClassOrInterfaceType)
+          || !variableBound.getTypeParameters().contains(boundVariable)) {
+        return false;
+      }
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) argRefType).getSupertypesStrict()) {
+        if (variableBound.isUpperBound(
+            supertype, subst.extend(new Substitution(boundVariable, supertype)))) {
+          return true;
+        }
+      }
+      return false;
     }
-    if (thisBoundType.isParameterized()) {
+    // Not `thisBoundType.isParameterized()`:  a member class with no type parameters of its own,
+    // such as Outer<String>.Inner, is parameterized but is not an InstantiatedType.  The subtype
+    // check below handles it.
+    if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
