@@ -151,8 +151,8 @@ public class InstantiatedType extends ParameterizedType {
    * yields the corresponding supertype of this type. It maps the type parameters of the class to
    * the type arguments of this type and, if this type is a member class, the type parameters of the
    * enclosing classes to the type arguments of the enclosing types. For example, for {@code
-   * Outer<String>.Inner<Integer>} where {@code class Inner<U> extends Base<T>} is declared in {@code
-   * Outer<T>}, it maps {@code U} to {@code Integer} and {@code T} to {@code String}.
+   * Outer<String>.Inner<Integer>} where {@code class Inner<U> extends Base<T>} is declared in
+   * {@code Outer<T>}, it maps {@code U} to {@code Integer} and {@code T} to {@code String}.
    *
    * @return the substitution for the type parameters of this type's class and enclosing classes
    */
