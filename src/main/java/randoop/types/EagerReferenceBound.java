@@ -55,9 +55,72 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
-      return boundSuperType.isInstantiationOf(argClassType);
+      return boundSuperType.isInstantiationOf(argClassType)
+          && enclosingTypesInstantiate(boundSuperType, argClassType);
     }
-    return thisBoundType.isSubtypeOfOrEqualTo(argType);
+    return isSubtypeIncludingEnclosingTypes(thisBoundType, argType);
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of {@code otherType}, as determined by {@link
+   * Type#isSubtypeOfOrEqualTo(Type)}, and, if {@code otherType} is a member class that declares no
+   * type parameters, of a parameterized type, such as {@code Outer<String>.Middle<Integer>.Leaf},
+   * the enclosing types of the supertype of {@code type} of that class instantiate those of {@code
+   * otherType} at every level. {@link Type#isSubtypeOfOrEqualTo(Type)} compares such types with
+   * {@code equals}, which does not compare the enclosing types of the enclosing types.
+   *
+   * @param type the possible subtype
+   * @param otherType the possible supertype
+   * @return true if {@code type} is a subtype of {@code otherType}, including its enclosing types
+   */
+  private static boolean isSubtypeIncludingEnclosingTypes(ReferenceType type, Type otherType) {
+    if (!type.isSubtypeOfOrEqualTo(otherType)) {
+      return false;
+    }
+    if (!(type instanceof ClassOrInterfaceType)
+        || !(otherType instanceof ClassOrInterfaceType)
+        || otherType instanceof InstantiatedType
+        || !otherType.isParameterized()) {
+      return true;
+    }
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+    if (!classType.runtimeClassIs(otherClassType.getRuntimeClass())) {
+      for (ClassOrInterfaceType supertype : classType.getSupertypesStrict()) {
+        if (supertype.runtimeClassIs(otherClassType.getRuntimeClass())) {
+          return enclosingTypesInstantiate(supertype, otherClassType);
+        }
+      }
+      return true;
+    }
+    return enclosingTypesInstantiate(classType, otherClassType);
+  }
+
+  /**
+   * Returns true if each enclosing type of {@code type} instantiates the corresponding enclosing
+   * type of {@code otherType}, for as many levels as both are member classes. {@link
+   * InstantiatedType#isInstantiationOf(ReferenceType)} does not compare enclosing types, so it
+   * treats {@code Outer<String>.Inner<Integer>} as an instantiation of {@code
+   * Outer<Number>.Inner<Integer>}.
+   *
+   * @param type a class or interface type
+   * @param otherType a class or interface type of the same class as {@code type}
+   * @return true if the enclosing types of {@code type} instantiate those of {@code otherType}
+   */
+  private static boolean enclosingTypesInstantiate(
+      ClassOrInterfaceType type, ClassOrInterfaceType otherType) {
+    ClassOrInterfaceType current = type;
+    ClassOrInterfaceType otherCurrent = otherType;
+    while (current.isMemberClass() && otherCurrent.isMemberClass()) {
+      ClassOrInterfaceType enclosing = current.enclosingType;
+      ClassOrInterfaceType otherEnclosing = otherCurrent.enclosingType;
+      if (!enclosing.isInstantiationOf(otherEnclosing)) {
+        return false;
+      }
+      current = enclosing;
+      otherCurrent = otherEnclosing;
+    }
+    return true;
   }
 
   @Override
@@ -105,7 +168,11 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       argSuperType = argSuperType.applyCaptureConversion();
-      return argSuperType.isInstantiationOf(boundClassType);
+      return argSuperType.isInstantiationOf(boundClassType)
+          && enclosingTypesInstantiate(argSuperType, boundClassType);
+    }
+    if (argType.isReferenceType()) {
+      return isSubtypeIncludingEnclosingTypes((ReferenceType) argType, thisBoundType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }

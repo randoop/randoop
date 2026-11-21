@@ -216,8 +216,11 @@ class LazyParameterBound extends ParameterBound {
           return null;
         }
         // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.
-        if (!isDeclarationFormOwner || !ownerType.equals(ClassOrInterfaceType.forType(owner))) {
+        // unchanged.  Compare the enclosing types of the owner too, which `equals` ignores:  for
+        // Outer<A>.Middle<B>.Inner<Integer> and A := String, the owner becomes
+        // Outer<String>.Middle<B>, which equals Middle<B>.
+        if (!isDeclarationFormOwner
+            || !Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
       }
@@ -454,7 +457,8 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
     ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(argType, substitution);
+    // As in isLowerBound(ParameterBound, Substitution), do not apply the substitution to b again.
+    return b != null && b.isLowerBound(argType, identityFor(b.getTypeParameters(), substitution));
   }
 
   @Override
@@ -480,7 +484,9 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isUpperBound(argType, substitution);
+    // As in isLowerBound(ParameterBound, Substitution), do not apply the substitution to b again.
+    // For the bound T[] and the substitution [T := U, U := String], b is U[], not String[].
+    return b != null && b.isUpperBound(argType, identityFor(b.getTypeParameters(), substitution));
   }
 
   /**

@@ -502,7 +502,10 @@ final class Subtyping {
       return false;
     }
     if (!(type instanceof InstantiatedType)) {
-      return classType.getRuntimeClass().equals(otherClassType.getRuntimeClass());
+      // A raw type, such as List, is not the same type as the generic form of its class, such as
+      // List<E>, though both have the same runtime class.
+      return type instanceof GenericClassType == otherType instanceof GenericClassType
+          && classType.getRuntimeClass().equals(otherClassType.getRuntimeClass());
     }
     InstantiatedType instantiatedType = (InstantiatedType) type;
     InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;

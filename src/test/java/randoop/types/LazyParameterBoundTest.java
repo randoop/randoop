@@ -161,6 +161,38 @@ public class LazyParameterBoundTest {
     assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
+  /**
+   * A generic class with a field whose type is a generic array type.
+   *
+   * @param <T> the component type of the array
+   * @param <U> another type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class ArrayField<T, U> {
+    /** A field whose type is {@code T[]}. */
+    T[] array;
+  }
+
+  @Test
+  public void testTypeComparisonAppliesSubstitutionOnce() throws NoSuchFieldException {
+    List<TypeVariable> parameters = GenericClassType.forClass(ArrayField.class).getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    LazyParameterBound bound =
+        new LazyParameterBound(ArrayField.class.getDeclaredField("array").getGenericType());
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+
+    Substitution direct = new Substitution(t, JavaTypes.STRING_TYPE);
+    assertTrue(bound.isUpperBound(stringArray, direct));
+    assertTrue(bound.isLowerBound(stringArray, direct));
+
+    // The substitution replaces T[] by U[], in which U stands for itself rather than for String.
+    Substitution chained =
+        new Substitution(t, u).extend(new Substitution(u, JavaTypes.STRING_TYPE));
+    assertFalse(bound.isUpperBound(stringArray, chained));
+    assertFalse(bound.isLowerBound(stringArray, chained));
+  }
+
   @Test
   public void testNullTypeCannotInstantiateArrayComponentBound() {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);

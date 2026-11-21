@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -158,21 +157,17 @@ public class Substitution {
    * Throws an exception if its arguments are different non-null values. Values that are equal but
    * contain copies of a type variable with different bounds are different; see {@link
    * TypeVariable#areIdentical(ReferenceType, ReferenceType)}.
+   *
+   * @param v1 a type, or null
+   * @param v2 a type, or null
+   * @throws IllegalArgumentException if {@code v1} and {@code v2} are different non-null types
    */
-  private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
-      (v1, v2) -> {
-        if (v1 == null) {
-          return v2;
-        }
-        if (v2 == null) {
-          return v1;
-        }
-        if (TypeVariable.areIdentical(v1, v2)) {
-          return v1;
-        }
-        throw new IllegalArgumentException(
-            String.format("Substitutions map a key to distinct types %s and %s", v1, v2));
-      };
+  private static void requireSameEntry(@Nullable ReferenceType v1, @Nullable ReferenceType v2) {
+    if (v1 != null && v2 != null && !TypeVariable.areIdentical(v1, v2)) {
+      throw new IllegalArgumentException(
+          String.format("Substitutions map a key to distinct types %s and %s", v1, v2));
+    }
+  }
 
   /**
    * Creates a new substitution that contains the mappings of this substitution, extended by the
@@ -197,7 +192,8 @@ public class Substitution {
    * entry in {@code other}, unless that entry maps its key to itself. Otherwise, an entry that maps
    * a copy {@code c} of a type variable to itself could replace an entry that maps the type
    * variable to {@code c}, and {@link #mapsToItself(TypeVariable)} would depend on the order in
-   * which the substitutions were combined.
+   * which the substitutions were combined. The value of the result's entry is the value of the same
+   * entry as its key, so that the key and value are kept together.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
@@ -209,15 +205,13 @@ public class Substitution {
       TypeVariable key = entry.getKey();
       ReferenceType value = entry.getValue();
       ReferenceType existing = result.map.get(key);
-      ReferenceType merged = requireSameEntry.apply(existing, value);
+      requireSameEntry(existing, value);
       if (existing == null || value != key) {
-        // Remove any existing entry first, so that the entry's key is `key`; see `put`.
-        result.map.remove(key);
-        result.map.put(key, merged);
+        // Replace the existing entry, if any, by the entry of `other`, including its key and value.
+        // `put` also updates `rawMap` with the same value.  Each key of `other.rawMap` corresponds
+        // to a key of `other.map`, so this loop handles `other.rawMap` too.
+        result.put(key, value);
       }
-    }
-    for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
-      result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
   }
@@ -380,7 +374,8 @@ public class Substitution {
   /**
    * Returns a substitution that is like this one, but that maps the given type variable to the
    * given type, replacing any mapping of it in this substitution. Returns this substitution if it
-   * already maps the type variable to that type.
+   * already maps the type variable to that type, and the key of that entry is the given type
+   * variable itself rather than a copy of it with other bounds.
    *
    * @param variable a type variable
    * @param type the type to map {@code variable} to
@@ -389,7 +384,11 @@ public class Substitution {
   @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
   Substitution withMapping(TypeVariable variable, ReferenceType type) {
     if (map.get(variable) == type) {
-      return this;
+      for (TypeVariable key : map.keySet()) {
+        if (key == variable) {
+          return this;
+        }
+      }
     }
     Substitution result = new Substitution(this);
     result.put(variable, type);

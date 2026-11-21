@@ -695,6 +695,48 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A method in whose signature the type variables {@code K} and {@code V} occur only in the bound
+   * of another type variable.
+   *
+   * @param <K> the key type
+   * @param <V> the value type
+   * @param <T> the element type
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <K, V, T extends Map<K, V>> List<T> listOfMaps() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type finds types for the type variables that
+   * occur only in a bound that mentions several of them, even if those types are not input types.
+   * For the goal type {@code List<HashMap<String, Integer>>}, {@code <K, V, T extends Map<K, V>>
+   * List<T> listOfMaps()} is instantiated with {@code K} as {@code String} and {@code V} as {@code
+   * Integer}.
+   */
+  @Test
+  public void testGoalTypeFindsTypesForVariablesInSharedBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
+    TypedClassOperation listOfMaps =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("listOfMaps"));
+
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+
+    InstantiatedType goalType =
+        listType.instantiate(hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE));
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(listOfMaps, goalType);
+      assertNotNull(operation);
+      assertEquals(goalType, operation.getOutputType());
+    }
+  }
+
+  /**
    * Returns the given type argument of the given parameterized type.
    *
    * @param type a parameterized type, such as {@code List<String>}

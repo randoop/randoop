@@ -281,6 +281,19 @@ public class TypeVariableTest {
   }
 
   @Test
+  public void testVariableBoundResolvedToOtherVariable() {
+    TypeVariable s = typeParameter(SiblingBound.class, 0);
+    TypeVariable t = typeParameter(SiblingBound.class, 1);
+    TypeVariable x = typeParameter(NumberBound.class, 0);
+    ReferenceType integer = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    // S is unknown, so it can be Integer.
+    assertTrue(t.canBeInstantiatedBy(integer, new Substitution(s, s)));
+    // S is replaced by X, which stands for itself.  Integer is not known to be a subtype of X,
+    // though Integer is within the bound of X.
+    assertFalse(t.canBeInstantiatedBy(integer, new Substitution(s, x)));
+  }
+
+  @Test
   public void testLazyReferenceBoundUsesSubstitutionForUnknownVariable() {
     TypeVariable k = typeParameter(PartiallySubstitutedRecursiveBound.class, 0);
     TypeVariable v = typeParameter(PartiallySubstitutedRecursiveBound.class, 1);
@@ -916,6 +929,40 @@ public class TypeVariableTest {
       assertFalse(substitution.mapsToItself(t));
       assertSame(c, t.substitute(substitution));
     }
+  }
+
+  /**
+   * Extending a substitution that maps a type variable {@code t} to itself by one that maps it to a
+   * distinct copy {@code c} with identical bounds, in either order, keeps the key and value of the
+   * entry that maps {@code t} to {@code c} together.
+   */
+  @Test
+  public void testExtendKeepsKeyAndValueTogether() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable c = t.createCopyWithBounds(t.getLowerTypeBound(), t.getUpperTypeBound());
+    assertNotSame(t, c);
+    Substitution identity = new Substitution(t, t);
+    Substitution replacement = new Substitution(t, c);
+    for (Substitution substitution :
+        Arrays.asList(identity.extend(replacement), replacement.extend(identity))) {
+      assertFalse(substitution.mapsToItself(t));
+      assertSame(c, substitution.get(t));
+    }
+  }
+
+  /**
+   * {@code withMapping} does not reuse an entry whose value is the given type but whose key is
+   * another copy of the given type variable.
+   */
+  @Test
+  public void testWithMappingChecksKey() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable c =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution replacement = new Substitution(t, c);
+    assertFalse(replacement.mapsToItself(c));
+    assertTrue(replacement.withMapping(c, c).mapsToItself(c));
   }
 
   /**
@@ -1732,9 +1779,13 @@ public class TypeVariableTest {
           "bound " + bound + " should be lazy since it contains a type variable",
           bound instanceof LazyReferenceBound);
       assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
-      // The substitution does not affect the captured type, whose bound refers to itself.
-      assertEquals(
-          capturedType, capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE)));
+      // The substitution does not affect the captured type, whose bound refers to itself.  Copies
+      // of a capture variable with other bounds are equal, so compare the bounds too.
+      InstantiatedType substituted =
+          capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE));
+      assertTrue(
+          capturedType + " and " + substituted + " should be identical",
+          TypeVariable.areIdentical(capturedType, substituted));
     }
   }
 

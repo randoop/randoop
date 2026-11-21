@@ -449,6 +449,22 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
+        // If the goal type is of a superclass, its enclosing type instantiates that of the
+        // supertype of this type, not of this type itself.  For example, if Outer<T>.Derived<V>
+        // extends Outer<String>.Base<V>, then the enclosing type of Outer<Integer>.Derived<Long>
+        // instantiates the enclosing type of Outer<T>.Base<U> as Outer<String>.  A supertype whose
+        // enclosing type is not given explicitly, as when Derived extends Base<V>, has the
+        // enclosing type of this type.
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())) {
+          for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
+            if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
+              if (supertype.isMemberClass()) {
+                thisEnclosingType = supertype.enclosingType;
+              }
+              break;
+            }
+          }
+        }
         if (enclosingGoalType.isGeneric()) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {

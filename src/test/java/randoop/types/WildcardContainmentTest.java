@@ -538,6 +538,18 @@ public class WildcardContainmentTest {
   }
 
   @Test
+  public void rawTypeArgumentTest() {
+    // A raw type is not the same type as the generic form of its class.
+    ReferenceArgument genericForm =
+        ReferenceArgument.forType(GenericClassType.forClass(List.class));
+    ReferenceArgument raw = ReferenceArgument.forType(ClassOrInterfaceType.forType(List.class));
+    assertTrue(genericForm.contains(genericForm));
+    assertTrue(raw.contains(raw));
+    assertFalse(genericForm.contains(raw));
+    assertFalse(raw.contains(genericForm));
+  }
+
+  @Test
   public void arrayBoundTest() {
     assertTrue(isSubtype("listStringArray", "listExtendsStringArray"));
     assertTrue(isSubtype("listStringArray", "listExtendsObjectArray"));

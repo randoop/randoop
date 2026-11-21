@@ -336,6 +336,59 @@ public class ParameterBoundTest {
     assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
   }
 
+  /**
+   * A generic class with a generic member class, which has a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class TwoLevelOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Middle<U> {
+      /** A member class that has no type parameter of its own. */
+      class Leaf {}
+    }
+  }
+
+  /** A field whose type is {@code TwoLevelOuter<String>.Middle<Integer>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private TwoLevelOuter<String>.Middle<Integer> stringMiddle;
+
+  /** A field whose type is {@code TwoLevelOuter<Long>.Middle<Integer>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private TwoLevelOuter<Long>.Middle<Integer> longMiddle;
+
+  /** A field whose type is {@code TwoLevelOuter<String>.Middle<Integer>.Leaf}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private TwoLevelOuter<String>.Middle<Integer>.Leaf stringLeaf;
+
+  /** A field whose type is {@code TwoLevelOuter<Long>.Middle<Integer>.Leaf}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private TwoLevelOuter<Long>.Middle<Integer>.Leaf longLeaf;
+
+  @Test
+  public void testMemberClassBoundComparesAllEnclosingTypes() {
+    Substitution empty = new Substitution();
+    for (String[] fieldNames :
+        Arrays.asList(
+            new String[] {"stringMiddle", "longMiddle"}, new String[] {"stringLeaf", "longLeaf"})) {
+      ReferenceType stringType =
+          (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, fieldNames[0]));
+      ReferenceType longType =
+          (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, fieldNames[1]));
+      EagerReferenceBound bound = new EagerReferenceBound(stringType);
+      assertTrue(bound.isUpperBound(stringType, empty));
+      assertTrue(bound.isLowerBound(stringType, empty));
+      // The types differ only in the type argument of the outermost enclosing type.
+      assertFalse(bound.isUpperBound(longType, empty));
+      assertFalse(bound.isLowerBound(longType, empty));
+    }
+  }
+
   @Test
   public void testArrayOfNonGenericMemberClassBound() {
     java.lang.reflect.Type type = fieldType(ParameterBoundTest.class, "stringInnerArray");
@@ -534,6 +587,25 @@ public class ParameterBoundTest {
         new EagerReferenceBound(
             ArrayType.ofComponentType(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)));
     assertFalse(nullArray2Bound.isLowerBound(lazyArrayBound, new Substitution()));
+  }
+
+  /** An array of a subtype of a type with a type variable is a lower bound of an array of it. */
+  @Test
+  public void testSubtypeArrayLowerBoundOfLazyArrayBound() {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    ParameterBound listArrayBound =
+        new LazyReferenceBound(
+            ArrayType.ofComponentType(listType.instantiate(arrayHolderVariable)));
+    ParameterBound arrayListArrayBound =
+        new EagerReferenceBound(
+            ArrayType.ofComponentType(
+                GenericClassType.forClass(ArrayList.class).instantiate(arrayHolderVariable)));
+    ParameterBound listOfStringArrayBound =
+        new EagerReferenceBound(
+            ArrayType.ofComponentType(listType.instantiate(JavaTypes.STRING_TYPE)));
+    assertTrue(arrayListArrayBound.isLowerBound(listArrayBound, new Substitution()));
+    // List<String>[] is not a subtype of List<T>[] for every T.
+    assertFalse(listOfStringArrayBound.isLowerBound(listArrayBound, new Substitution()));
   }
 
   /**

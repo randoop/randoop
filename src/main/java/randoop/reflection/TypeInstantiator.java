@@ -713,7 +713,9 @@ public class TypeInstantiator {
    *       {@code X} (such a type need not be an input type: it can be a type argument of one); or
    *       it is the non-generic type that {@code substitution} gives to a type variable constrained
    *       by {@code X}, or a supertype of that type or a type argument of such a supertype; see
-   *       {@link #relatedTypes(ReferenceType)}.
+   *       {@link #relatedTypes(ReferenceType)}; or it is such a type for a type variable whose
+   *       bounds mention {@code X} and other uninstantiated type variables, and it potentially
+   *       satisfies the bounds of {@code X}; see {@link #mentioningVariables(Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -731,6 +733,7 @@ public class TypeInstantiator {
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
+    Map<TypeVariable, List<TypeVariable>> mentioningVariables = mentioningVariables(substitution);
     List<ReferenceType> inferredTypes = inferredTypes(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
@@ -742,6 +745,24 @@ public class TypeInstantiator {
       // consume(List<? super T>)`, if the substitution maps the capture of `? super T` to MyEnum,
       // then MyEnum is a candidate for E, even if MyEnum is not an input type.
       candidates.addAll(candidateTypes(parameter, inferredTypes));
+      // The types related to the type of an instantiated type variable whose bounds mention
+      // `parameter` and other uninstantiated type variables are also candidates, if they are within
+      // the bounds of `parameter`.  For example, for `<K, V, T extends Map<K, V>> List<T> make()`,
+      // if T is instantiated to HashMap<String, Integer>, then String is a candidate for K and
+      // Integer is a candidate for V.  The bounds of T are checked once K and V are chosen.  The
+      // constrained type variables are handled below.
+      for (TypeVariable variable :
+          mentioningVariables.getOrDefault(parameter, Collections.emptyList())) {
+        ReferenceType type = substitution.get(variable);
+        if (constrained.contains(variable) || type == null || type.isGeneric()) {
+          continue;
+        }
+        for (ReferenceType related : candidateTypes(parameter, relatedTypes(type))) {
+          if (!candidates.contains(related)) {
+            candidates.add(related);
+          }
+        }
+      }
       if (!constrained.isEmpty()) {
         // The types of the constrained type variables are also candidates, even if they are not
         // input types.  For example, an input type can be List<Foo> though Foo is not an input
@@ -855,6 +876,32 @@ public class TypeInstantiator {
       boundVariables.removeAll(instantiated);
       if (boundVariables.size() == 1) {
         TypeVariable boundVariable = boundVariables.iterator().next();
+        result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns a map from each uninstantiated type variable {@code X} to the type variables that the
+   * given substitution instantiates and whose bounds mention {@code X}. Unlike {@link
+   * #constrainedVariables(Substitution)}, the bounds can also mention other uninstantiated type
+   * variables. For example, if {@code substitution} instantiates {@code T} in {@code <K, V, T
+   * extends Map<K, V>>} but not {@code K} or {@code V}, then the values for {@code K} and {@code V}
+   * contain {@code T}.
+   *
+   * @param substitution a substitution
+   * @return a map from each uninstantiated type variable to the instantiated type variables whose
+   *     bounds mention it
+   */
+  private static Map<TypeVariable, List<TypeVariable>> mentioningVariables(
+      Substitution substitution) {
+    Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
+    Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
+    for (TypeVariable variable : instantiated) {
+      Set<TypeVariable> boundVariables = new LinkedHashSet<>(boundVariables(variable));
+      boundVariables.removeAll(instantiated);
+      for (TypeVariable boundVariable : boundVariables) {
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }

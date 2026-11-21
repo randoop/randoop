@@ -164,6 +164,57 @@ public class ClassOrInterfaceTypeTest {
     class GenericInner<U> {}
   }
 
+  /**
+   * A generic class with a generic member class whose superclass has another enclosing type.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class OwnerChangingOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Base<U> {}
+
+    /**
+     * A generic member class whose superclass is a member of {@code OwnerChangingOuter<String>},
+     * whatever {@code T} is.
+     *
+     * @param <V> the type parameter
+     */
+    class Derived<V> extends OwnerChangingOuter<String>.Base<V> {
+      /**
+       * Creates a Derived.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      Derived(OwnerChangingOuter<String> outer) {
+        outer.super();
+      }
+    }
+  }
+
+  @Test
+  public void instantiatingSubstitutionUsesEnclosingTypeOfSupertype() {
+    GenericClassType derivedType =
+        (GenericClassType) ClassOrInterfaceType.forClass(OwnerChangingOuter.Derived.class);
+    GenericClassType baseType =
+        (GenericClassType) ClassOrInterfaceType.forClass(OwnerChangingOuter.Base.class);
+    GenericClassType outerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(OwnerChangingOuter.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    // OwnerChangingOuter<Integer>.Derived<Long>, whose superclass is
+    // OwnerChangingOuter<String>.Base<Long>.
+    InstantiatedType integerLong = derivedType.instantiate(integerType, longType);
+    Substitution substitution = integerLong.getInstantiatingSubstitution(baseType);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerType.getTypeParameters().get(0)));
+    assertEquals(longType, substitution.get(baseType.getDeclaredTypeParameters().get(0)));
+  }
+
   @Test
   public void instantiatingSubstitutionChecksNonGenericEnclosingType() {
     GenericClassType innerType =

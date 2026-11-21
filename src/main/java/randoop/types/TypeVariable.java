@@ -415,6 +415,16 @@ public abstract class TypeVariable extends ParameterType {
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      // The first type parameter of a bound that is a type variable is that type variable.
+      if (!variable.equals(bound.getTypeParameters().get(0))) {
+        // The substitution replaced the type variable of the bound by another type variable, such
+        // as a type parameter of another declaration.  That type variable stands for itself:  no
+        // type can be chosen for it.  A copy of the type variable of the bound, with other bounds,
+        // is not such a replacement.
+        return isUpperBound
+            ? Subtyping.isSubtypeOrEqual(otherType, variable, substitution)
+            : Subtyping.isSubtypeOrEqual(variable, otherType, substitution);
+      }
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
