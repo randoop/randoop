@@ -211,8 +211,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   private Substitution getSupertypeSubstitution() {
     return getEnclosingTypeSubstitution()
-        .extend(
-            new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
+        .extend(new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
   }
 
   /**

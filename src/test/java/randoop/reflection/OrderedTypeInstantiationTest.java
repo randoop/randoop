@@ -377,8 +377,7 @@ public class OrderedTypeInstantiationTest {
     Set<Type> inputTypes = inputTypes();
     inputTypes.addAll(ClassOrInterfaceType.forClass(ThreadTreeSet.class).getSupertypesInclusive());
     TypedClassOperation constructor =
-        TypedOperation.forConstructor(
-            CopyingNavigableSet.class.getConstructor(NavigableSet.class));
+        TypedOperation.forConstructor(CopyingNavigableSet.class.getConstructor(NavigableSet.class));
     ReferenceType threadType = ReferenceType.forClass(Thread.class);
     boolean threadElement = false;
     for (List<Type> typeArguments : instantiatedTypeArguments(constructor, inputTypes)) {

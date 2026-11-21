@@ -506,9 +506,9 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns a substitution for the given type parameters of a class that keeps the values of one
-   * of them, {@code T}, in order, or null if none is found. The substitution satisfies the bounds
-   * of the type parameters. This is a helper for {@link #instantiateOrderedType}.
+   * Returns a substitution for the given type parameters of a class that keeps the values of one of
+   * them, {@code T}, in order, or null if none is found. The substitution satisfies the bounds of
+   * the type parameters. This is a helper for {@link #instantiateOrderedType}.
    *
    * @param useOrderingType if true, choose {@code T} from an input type that instantiates {@code
    *     orderingFormal}; if false, choose a type {@code T} that is comparable
