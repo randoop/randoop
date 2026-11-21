@@ -252,7 +252,6 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution a type substitution
    * @return the result of applying {@code substitution} to this variable
    */
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   private ReferenceType substituteIntoBounds(
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
@@ -260,14 +259,15 @@ class CaptureTypeVariable extends TypeVariable {
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
-      if (lowerBound != getLowerTypeBound() || upperBound != getUpperTypeBound()) {
+      if (!sameType(lowerBound, getLowerTypeBound())
+          || !sameType(upperBound, getUpperTypeBound())) {
         WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;
     }
 
-    if (lowerBound != getLowerTypeBound() || upperBound != getUpperTypeBound()) {
+    if (!sameType(lowerBound, getLowerTypeBound()) || !sameType(upperBound, getUpperTypeBound())) {
       // need a new variable based on type with updated bounds
       return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
     }

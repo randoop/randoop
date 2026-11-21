@@ -76,11 +76,10 @@ public final class ReferenceArgument extends TypeArgument {
     return referenceType.toString();
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public TypeArgument substitute(Substitution substitution) {
     ReferenceType type = referenceType.substitute(substitution);
-    if (type == referenceType) {
+    if (Type.sameType(type, referenceType)) {
       return this;
     }
     return TypeArgument.forType(type);
