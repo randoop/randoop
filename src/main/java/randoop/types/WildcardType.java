@@ -139,11 +139,10 @@ class WildcardType extends ParameterType {
     return getLowerTypeBound();
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public WildcardType substitute(Substitution substitution) {
     ParameterBound bound = getTypeBound().substitute(substitution);
-    if (bound == this.getTypeBound()) {
+    if (sameType(bound, this.getTypeBound())) {
       return this;
     }
     return new WildcardType(bound, hasUpperBound);
