@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
@@ -491,6 +492,44 @@ public abstract class Type implements Comparable<Type> {
    */
   public Type substitute(Substitution substitution) {
     return this;
+  }
+
+  /**
+   * Returns true if the given objects are the same object. Comparing the result of a {@code
+   * substitute} method to its receiver this way detects any change, including a change to only the
+   * bounds of a type variable, which {@code equals} ignores. See {@link #substitute(Substitution)}.
+   *
+   * <p>The objects are types, or parts of types such as type arguments and type bounds.
+   *
+   * @param <T> the type of the objects
+   * @param o1 an object, or null
+   * @param o2 an object, or null
+   * @return true if {@code o1} and {@code o2} are the same object
+   */
+  @SuppressWarnings("ReferenceEquality") // detects any change, as documented
+  /*package*/ static <T> boolean sameType(@Nullable T o1, @Nullable T o2) {
+    return o1 == o2;
+  }
+
+  /**
+   * Returns true if the given lists have the same length and their corresponding elements are the
+   * same objects, as determined by {@link #sameType}.
+   *
+   * @param <T> the type of the list elements
+   * @param list1 a list
+   * @param list2 a list
+   * @return true if the corresponding elements of the lists are the same objects
+   */
+  /*package*/ static <T> boolean sameElements(List<T> list1, List<T> list2) {
+    if (list1.size() != list2.size()) {
+      return false;
+    }
+    for (int i = 0; i < list1.size(); i++) {
+      if (!sameType(list1.get(i), list2.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

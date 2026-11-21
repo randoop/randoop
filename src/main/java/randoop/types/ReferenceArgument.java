@@ -76,11 +76,10 @@ public final class ReferenceArgument extends TypeArgument {
     return referenceType.toString();
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public TypeArgument substitute(Substitution substitution) {
     ReferenceType type = referenceType.substitute(substitution);
-    if (type == referenceType) {
+    if (Type.sameType(type, referenceType)) {
       return this;
     }
     return TypeArgument.forType(type);
@@ -89,7 +88,9 @@ public final class ReferenceArgument extends TypeArgument {
   /**
    * {@inheritDoc}
    *
-   * <p>A type argument that is not a wildcard contains only the same type.
+   * <p>A non-wildcard type argument {@code T} contains only {@code T} itself. In particular, it
+   * does not contain a wildcard such as {@code ? extends T} or {@code ? super T}; rather, those
+   * wildcards contain {@code T}.
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {

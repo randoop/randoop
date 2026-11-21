@@ -80,18 +80,28 @@ public class WildcardArgument extends TypeArgument {
     return argumentType.toString();
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
     // Copies of a type variable are equal even if their bounds differ, so an equality test would
     // discard a change to the bounds of a type variable in the wildcard's bound.
-    if (argType == this.argumentType) {
+    if (Type.sameType(argType, this.argumentType)) {
       return this;
     }
     return new WildcardArgument(argType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For a non-wildcard argument {@code R}, considers the cases (JLS section 4.5.1):
+   *
+   * <ul>
+   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype of
+   *       {@code B}
+   *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
+   * </ul>
+   */
   @Override
   public boolean contains(TypeArgument argument) {
     return Subtyping.contains(this, argument, new Substitution());

@@ -223,29 +223,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
   }
 
-  /**
-   * Returns true if the given lists have the same length and their corresponding elements are the
-   * same objects. Comparing the results of {@code substitute} methods this way detects any change,
-   * including a change to only the bounds of a type variable, which {@code equals} ignores.
-   *
-   * @param <T> the type of the list elements
-   * @param list1 a list
-   * @param list2 a list
-   * @return true if the corresponding elements of the lists are the same objects
-   */
-  @SuppressWarnings("ReferenceEquality") // detects any change, as documented
-  /*package*/ static <T> boolean sameElements(List<T> list1, List<T> list2) {
-    if (list1.size() != list2.size()) {
-      return false;
-    }
-    for (int i = 0; i < list1.size(); i++) {
-      if (list1.get(i) != list2.get(i)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
