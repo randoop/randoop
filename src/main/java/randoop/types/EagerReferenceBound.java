@@ -17,10 +17,13 @@ class EagerReferenceBound extends ReferenceBound {
     super(boundType);
   }
 
+  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    // Copies of a type variable are equal even if their bounds differ, so `equals` would not
+    // detect a substitution that changes only the bounds of a type variable.
+    if (referenceType == getBoundType()) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
@@ -40,11 +43,13 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    if (argType.isParameterized()) {
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
@@ -74,15 +79,27 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      TypeVariable variable = (TypeVariable) thisBoundType;
+      if (argType.isReferenceType() && !argType.isVariable()) {
+        // The type variable can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of the type
+        // variable instead would leave the type variable unknown within that bound:  for
+        // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
+        // T is a supertype of.  The bounds of the type variable are checked with the mappings of
+        // `subst`, because they can mention other type variables that `subst` instantiates.
+        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
+      }
       // The substitution does not map the variable, so the variable can still be chosen.  argType
       // is within this bound if it is within the variable's upper bound, which the variable can be.
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (thisBoundType.isParameterized()) {
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+      InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
