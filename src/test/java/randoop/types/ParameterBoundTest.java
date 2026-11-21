@@ -558,4 +558,31 @@ public class ParameterBoundTest {
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteGenericArrayList.class)));
   }
+
+  /**
+   * A class whose type parameter has a bound with a wildcard bounded by an array of the class
+   * itself.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfArrayBound<T extends List<? extends SelfArrayBound<?>[]>> {}
+
+  // Converting the bound must not recurse infinitely by re-creating the class.
+  @Test
+  public void testSelfArrayBound() {
+    assertEquals(1, GenericClassType.forClass(SelfArrayBound.class).getTypeParameters().size());
+  }
+
+  /**
+   * A class whose type parameter has a bound with a wildcard bounded by the class itself.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfBound<T extends List<? extends SelfBound<?>>> {}
+
+  // Converting the bound must not recurse infinitely by re-creating the class.
+  @Test
+  public void testSelfBound() {
+    assertEquals(1, GenericClassType.forClass(SelfBound.class).getTypeParameters().size());
+  }
 }

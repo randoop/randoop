@@ -87,7 +87,6 @@ public class ExplicitTypeVariable extends TypeVariable {
     return true;
   }
 
-  @SuppressWarnings("ReferenceEquality") // detects any change; see Type#substitute
   @Override
   public ReferenceType substitute(Substitution substitution) {
     ReferenceType type = getSubstitutedType(substitution);
@@ -112,12 +111,12 @@ public class ExplicitTypeVariable extends TypeVariable {
       inProgress.remove(variable);
     }
     if (type == null) {
-      if (upperBound != getUpperTypeBound()) {
+      if (!sameType(upperBound, getUpperTypeBound())) {
         return new ExplicitTypeVariable(this.variable, upperBound);
       }
       return this;
     }
-    if (upperBound != getUpperTypeBound()) {
+    if (!sameType(upperBound, getUpperTypeBound())) {
       return ((TypeVariable) type).createCopyWithBounds(getLowerTypeBound(), upperBound);
     }
     return type;
