@@ -375,6 +375,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isLowerBound(argType, substitution);
   }
@@ -401,6 +405,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isUpperBound(argType, substitution);
   }
@@ -412,10 +420,9 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
    * member class of a generic class, as in {@code Outer<String>.Inner}, which {@link
-   * #substitute(Substitution)} cannot convert; no type satisfies such a bound. Otherwise, the
-   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
-   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
-   * recurse forever.
+   * #substitute(Substitution)} cannot convert. Otherwise, the result is still this bound only for a
+   * kind of type that {@link #substitute(Substitution)} does not handle; then this method also
+   * fails an assertion. Comparing the unchanged bound would recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null
