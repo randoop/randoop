@@ -385,6 +385,9 @@ public class ParameterBoundTest {
     java.lang.reflect.Type arrayType = fieldType(Outer.class, "innerArray");
     ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
     Type argType = Type.forType(arrayType);
+    // The conversion retains the owner type, Outer<T>, so T is a type parameter of the result.
+    TypeVariable t = TypeVariable.forType(Outer.class.getTypeParameters()[0]);
+    assertTrue(((ReferenceType) argType).getTypeParameters().contains(t));
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
     assertTrue(bound.isLowerBound(argType, empty));
