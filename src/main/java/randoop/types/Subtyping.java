@@ -235,8 +235,7 @@ final class Subtyping {
    * {@code type} itself, the lower bound of {@code type} if it is a type variable, or the unknown's
    * upper bound. If the unknown's upper bound is an intersection, returns true if some member of it
    * is a subtype of {@code type}, since every type within the intersection is. If {@code lowerType}
-   * contains unknowns, as {@code List<B>} does, compares its components with those of {@code
-   * type}.
+   * contains unknowns, as {@code List<B>} does, compares its components with those of {@code type}.
    *
    * @param lowerType the possible subtype, which may be or contain unknowns
    * @param type the possible supertype
