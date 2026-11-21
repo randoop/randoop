@@ -753,4 +753,66 @@ public class TypeVariableTest {
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
+
+  /** A field of type {@code List<? extends List<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends List<String>[]> extendsStringListArrayListField;
+
+  /** A field of type {@code List<? super List<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? super List<String>[]> superStringListArrayListField;
+
+  /**
+   * Returns the first type argument of the type of the given field of this class.
+   *
+   * @param fieldName the name of a field of this class, whose type is parameterized
+   * @return the first type argument of the type of the field
+   * @throws NoSuchFieldException if this class has no field named {@code fieldName}
+   */
+  private static TypeArgument firstTypeArgument(String fieldName) throws NoSuchFieldException {
+    return ((InstantiatedType) fieldType(fieldName)).getTypeArguments().get(0);
+  }
+
+  @Test
+  public void testWildcardWithVariableFreeGenericArrayBound() throws NoSuchFieldException {
+    ArrayType stringListArray =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    TypeArgument argument = TypeArgument.forType(stringListArray);
+    assertTrue(firstTypeArgument("extendsStringListArrayListField").contains(argument));
+    assertTrue(firstTypeArgument("superStringListArrayListField").contains(argument));
+    TypeArgument stringArray =
+        TypeArgument.forType(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    assertFalse(firstTypeArgument("extendsStringListArrayListField").contains(stringArray));
+    assertFalse(firstTypeArgument("superStringListArrayListField").contains(stringArray));
+  }
+
+  /** A field of type {@code List<? extends Collection<?>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Collection<?>> collectionListField;
+
+  /** A field of type {@code List<? extends Collection<? extends CharSequence>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Collection<? extends CharSequence>> charSequenceCollectionListField;
+
+  @Test
+  public void testSubtypeOfWildcardWithInheritedSupertype() throws NoSuchFieldException {
+    GenericClassType list = GenericClassType.forClass(List.class);
+    InstantiatedType listOfListOfString = list.instantiate(list.instantiate(JavaTypes.STRING_TYPE));
+    InstantiatedType listOfListOfInteger =
+        list.instantiate(list.instantiate(ClassOrInterfaceType.forClass(Integer.class)));
+    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+    assertTrue(
+        listOfListOfString.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
+    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+    assertFalse(
+        listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
+    // The inherited supertype Collection<String> of List<String> is compared with Collection<?> by
+    // containment, not equality.
+    ReferenceType collectionOfWildcard =
+        ((ReferenceBound)
+                ((WildcardArgument) firstTypeArgument("collectionListField")).getTypeBound())
+            .getBoundType();
+    assertTrue(list.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(collectionOfWildcard));
+  }
 }
