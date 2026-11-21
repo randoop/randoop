@@ -315,6 +315,10 @@ public class InstantiationTest {
     TypedClassOperation instance = instantiator.instantiate(max);
     assertNotNull("instantiation failed for " + max, instance);
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    // The capture variable for the wildcard is instantiated, too.
+    assertEquals(
+        GenericClassType.forClass(Collection.class).instantiate(JavaTypes.STRING_TYPE),
+        instance.getInputTypes().get(0));
   }
 
   /* disabled until fix type parameter management
