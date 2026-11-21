@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,6 +38,8 @@ import randoop.MethodReplacements;
  * documentation</a> for the file format.) Default replacements are given in an internal resource
  * file {@code "default-replacements.txt"}. User replacements are then loaded using the {@code
  * --replacement-file} command-line argument. A user replacement may override a default replacement.
+ * The {@code --disable-default-replacement} and {@code --disable-default-replacements-file}
+ * command-line arguments disable individual default replacements.
  *
  * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
  * excluded from transformation.
@@ -80,6 +83,25 @@ public final class ReplaceCallAgent {
   @SuppressWarnings("WeakerAccess")
   @Option("file listing packages whose classes should not be transformed")
   public static @MonotonicNonNull Path dont_transform = null;
+
+  /**
+   * Default replacements that should not be used. Each value is the signature of an original
+   * method, in the format used in replacement files, such as {@code java.lang.System.exit(int)}. If
+   * the signature contains whitespace, enclose it in quotes. This option may be given multiple
+   * times.
+   */
+  @SuppressWarnings("WeakerAccess")
+  @Option("method whose default replacement should not be used")
+  public static List<String> disable_default_replacement = new ArrayList<>();
+
+  /**
+   * File listing default replacements that should not be used. Each line is the signature of an
+   * original method, in the format used in replacement files, such as {@code
+   * java.lang.System.exit(int)}.
+   */
+  @SuppressWarnings("WeakerAccess")
+  @Option("file listing methods whose default replacements should not be used, one per line")
+  public static @MonotonicNonNull Path disable_default_replacements_file = null;
 
   /**
    * Entry point of the replacecall Java agent. Initializes the {@link CallReplacementTransformer}
@@ -167,6 +189,14 @@ public final class ReplaceCallAgent {
         }
       }
 
+      // Remove the default replacements that the user disabled.
+      Set<MethodSignature> unmatched =
+          removeDisabledReplacements(replacementMap, readDisabledSignatures());
+      if (!unmatched.isEmpty()) {
+        System.err.printf("Cannot disable nonexistent default replacement(s): %s%n", unmatched);
+        System.exit(1); // Exit on bad user input.
+      }
+
       // If the user has provided a replacement file, load user replacements and put them into the
       // map, possibly overriding default replacements that already appear in the map.
       if (replacement_file != null) {
@@ -213,6 +243,74 @@ public final class ReplaceCallAgent {
       e.printStackTrace();
       replaceCallExit(e.toString());
     }
+  }
+
+  /**
+   * Returns the signatures given by the {@code --disable-default-replacement} and {@code
+   * --disable-default-replacements-file} command-line options. Exits if a signature cannot be
+   * parsed or the file cannot be read.
+   *
+   * @return the signatures of the methods whose default replacements should not be used
+   */
+  private static Set<MethodSignature> readDisabledSignatures() {
+    Set<MethodSignature> result = new LinkedHashSet<>();
+    for (String signature : disable_default_replacement) {
+      addDisabledSignature(result, signature, "--disable-default-replacement");
+    }
+    if (disable_default_replacements_file != null) {
+      String filename = disable_default_replacements_file.toString();
+      try (Reader fileReader = Files.newBufferedReader(disable_default_replacements_file, UTF_8)) {
+        EntryFileReader.forEachEntry(
+            fileReader,
+            filename,
+            (String entry, int lineNumber) ->
+                addDisabledSignature(result, entry, filename + ":" + lineNumber));
+      } catch (IOException e) {
+        System.err.printf(
+            "Error reading disabled default replacements file %s:%n %s%n",
+            disable_default_replacements_file, e.getMessage());
+        System.exit(1); // Exit on bad user input.
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Parses a method signature and adds it to the given set. Exits if the text cannot be parsed,
+   * including if it is blank.
+   *
+   * @param signatures the set to which the parsed signature is added
+   * @param text the method signature, in the format used in replacement files
+   * @param source where the text came from, for error messages
+   */
+  private static void addDisabledSignature(
+      Set<MethodSignature> signatures, String text, String source) {
+    String trimmed = text.trim();
+    try {
+      signatures.add(MethodSignature.of(trimmed));
+    } catch (IllegalArgumentException e) {
+      System.err.printf(
+          "Bad disabled default replacement \"%s\" in %s: %s%n", trimmed, source, e.getMessage());
+      System.exit(1); // Exit on bad user input.
+    }
+  }
+
+  /**
+   * Removes the replacements for the given methods from the replacement map.
+   *
+   * @param replacementMap the map from original methods to their replacements; is side-effected
+   * @param disabled the original methods whose replacements to remove
+   * @return the elements of {@code disabled} that are not keys of {@code replacementMap}
+   */
+  static Set<MethodSignature> removeDisabledReplacements(
+      Map<MethodSignature, MethodSignature> replacementMap, Set<MethodSignature> disabled) {
+    Set<MethodSignature> unmatched = new LinkedHashSet<>();
+    for (MethodSignature signature : disabled) {
+      if (replacementMap.remove(signature) == null) {
+        unmatched.add(signature);
+      }
+    }
+    return unmatched;
   }
 
   /**
@@ -304,14 +402,15 @@ public final class ReplaceCallAgent {
   }
 
   /**
-   * Creates an agent argument string that gives the current replacement file and exclusion file,
-   * using absolute file names. Thus, the argument string has the same effect regardless of the
-   * working directory.
+   * Creates an agent argument string that gives the current replacement file, exclusion file, and
+   * disabled default replacements, using absolute file names. Thus, the argument string has the
+   * same effect regardless of the working directory.
    *
    * <p>The argument string omits the debugging options {@code --debug}, {@code --debug-directory},
    * and {@code --verbose}.
    *
-   * @return an agent argument string that gives the current replacement file and exclusion file
+   * @return an agent argument string that gives the current replacement file, exclusion file, and
+   *     disabled default replacements
    */
   static String createAgentArgs() {
     // tokenize() splits the argument string at whitespace that is not quoted.
@@ -321,6 +420,14 @@ public final class ReplaceCallAgent {
     }
     if (dont_transform != null) {
       result.add("--dont-transform=" + quote(dont_transform.toAbsolutePath().toString()));
+    }
+    for (String signature : disable_default_replacement) {
+      result.add("--disable-default-replacement=" + quote(signature.trim()));
+    }
+    if (disable_default_replacements_file != null) {
+      result.add(
+          "--disable-default-replacements-file="
+              + quote(disable_default_replacements_file.toAbsolutePath().toString()));
     }
     return result.toString();
   }

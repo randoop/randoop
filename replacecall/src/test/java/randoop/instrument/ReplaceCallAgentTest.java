@@ -5,6 +5,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.ByteArrayInputStream;
@@ -16,8 +18,13 @@ import java.net.URL;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,11 +43,19 @@ public class ReplaceCallAgentTest {
   /** The value of {@link ReplaceCallAgent#dont_transform} before the test. */
   private Path origDontTransform;
 
+  /** The value of {@link ReplaceCallAgent#disable_default_replacement} before the test. */
+  private List<String> origDisableDefaultReplacement;
+
+  /** The value of {@link ReplaceCallAgent#disable_default_replacements_file} before the test. */
+  private Path origDisableDefaultReplacementsFile;
+
   /** Saves the agent's options, which each test changes. */
   @Before
   public void saveOptions() {
     origReplacementFile = ReplaceCallAgent.replacement_file;
     origDontTransform = ReplaceCallAgent.dont_transform;
+    origDisableDefaultReplacement = ReplaceCallAgent.disable_default_replacement;
+    origDisableDefaultReplacementsFile = ReplaceCallAgent.disable_default_replacements_file;
   }
 
   /** Restores the agent's options. */
@@ -49,6 +64,8 @@ public class ReplaceCallAgentTest {
   public void restoreOptions() {
     ReplaceCallAgent.replacement_file = origReplacementFile;
     ReplaceCallAgent.dont_transform = origDontTransform;
+    ReplaceCallAgent.disable_default_replacement = origDisableDefaultReplacement;
+    ReplaceCallAgent.disable_default_replacements_file = origDisableDefaultReplacementsFile;
   }
 
   /**
@@ -71,6 +88,25 @@ public class ReplaceCallAgentTest {
     assertArrayEquals(new String[0], targetArgs);
     assertEquals(replacementFile, ReplaceCallAgent.replacement_file);
     assertEquals(dontTransform, ReplaceCallAgent.dont_transform);
+  }
+
+  @Test
+  public void removeDisabledReplacementsTest() throws IOException, ReplacementFileException {
+    Path defaultFile = Paths.get("build/resources/main/default-replacements.txt");
+    Map<MethodSignature, MethodSignature> map = ReplacementFileReader.readReplacements(defaultFile);
+    int originalSize = map.size();
+    MethodSignature exit = MethodSignature.of("java.lang.System.exit(int)");
+    MethodSignature size = MethodSignature.of("java.util.ArrayList.size()");
+    assertTrue(map.containsKey(exit));
+    assertFalse(map.containsKey(size));
+
+    Set<MethodSignature> disabled = new LinkedHashSet<>(Arrays.asList(exit, size));
+    Set<MethodSignature> unmatched = ReplaceCallAgent.removeDisabledReplacements(map, disabled);
+
+    assertEquals(Collections.singleton(size), unmatched);
+    assertFalse(map.containsKey(exit));
+    assertFalse(map.containsKey(size));
+    assertEquals(originalSize - 1, map.size());
   }
 
   /**
@@ -110,7 +146,29 @@ public class ReplaceCallAgentTest {
 
   @Test
   public void createAgentArgsTest() throws ArgException {
-    checkCreateAgentArgs(Paths.get("my replacements.txt"), Paths.get("don't transform.txt"));
+    Path replacementFile = Paths.get("my replacements.txt");
+    Path dontTransformFile = Paths.get("dont-transform.txt");
+    Path disabledFile = Paths.get("don't replace.txt");
+    assumeParseable(replacementFile);
+    assumeParseable(dontTransformFile);
+    assumeParseable(disabledFile);
+    ReplaceCallAgent.replacement_file = replacementFile;
+    ReplaceCallAgent.dont_transform = dontTransformFile;
+    ReplaceCallAgent.disable_default_replacement =
+        new ArrayList<>(
+            Arrays.asList("java.lang.System.exit(int)", "a.B.m(int, java.lang.String)"));
+    ReplaceCallAgent.disable_default_replacements_file = disabledFile;
+    String args = ReplaceCallAgent.createAgentArgs();
+    String[] expected = {
+      "--replacement-file=" + replacementFile.toAbsolutePath(),
+      "--dont-transform=" + dontTransformFile.toAbsolutePath(),
+      "--disable-default-replacement=java.lang.System.exit(int)",
+      "--disable-default-replacement=a.B.m(int, java.lang.String)",
+      "--disable-default-replacements-file=" + disabledFile.toAbsolutePath()
+    };
+    assertArrayEquals(expected, ReplaceCallAgent.tokenize(args));
+
+    checkParse(args, replacementFile.toAbsolutePath(), dontTransformFile.toAbsolutePath());
   }
 
   @Test
