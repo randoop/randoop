@@ -83,7 +83,7 @@ public class WildcardArgument extends TypeArgument {
   @Override
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
-    if (argType.equals(this.argumentType)) {
+    if (Type.sameType(argType, this.argumentType)) {
       return this;
     }
     return new WildcardArgument(argType);

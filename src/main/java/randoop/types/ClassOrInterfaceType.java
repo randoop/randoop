@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -88,25 +87,39 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
-      if (rawType.getTypeParameters().length == 0) {
-        java.lang.reflect.Type ownerType = t.getOwnerType();
-        // If the type arguments of each owner type are the type parameters of its declaration, the
-        // result is the generic form of the member class.
-        if (ownerType instanceof java.lang.reflect.ParameterizedType
-            && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-            && !isDeclarationOwner(ownerType)) {
-          // Use the owner type rather than the enclosing class, because the owner type's type
-          // arguments may differ from the enclosing class's type parameters.  For example, in
-          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
-          // method's type parameter, not the type parameter declared by `Outer`.
-          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-          NonParameterizedType result = new NonParameterizedType(rawType);
-          result.enclosingType = forType(ownerType);
-          return result;
+      // The enclosing type of the result, converted from the owner type, such as Outer<E> in
+      // Outer<E>.Inner or Outer<E>.Middle<String> in Outer<E>.Middle<String>.Inner.  It is null if
+      // the owner type supplies no type arguments or is the generic form of its class, which
+      // requires each owner type in the chain, such as A<U> in A<U>.B.C, to be the generic form of
+      // its class.  Use the
+      // owner type rather than the enclosing class, because the owner type's type arguments may
+      // differ from the enclosing class's type parameters.  For example, in
+      // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the method's
+      // type parameter, not the type parameter declared by `Outer`.
+      ClassOrInterfaceType ownerClassType = null;
+      java.lang.reflect.Type ownerType = t.getOwnerType();
+      if (ownerType instanceof java.lang.reflect.ParameterizedType
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+        ownerClassType = forType(ownerType);
+        if (ownerClassType.isGenericForm()) {
+          ownerClassType = null;
         }
-        return forClass(rawType);
       }
-      return ParameterizedType.forType(t);
+      if (rawType.getTypeParameters().length == 0) {
+        if (ownerClassType == null) {
+          // The result is the generic form of the member class.
+          return forClass(rawType);
+        }
+        // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+        NonParameterizedType result = new NonParameterizedType(rawType);
+        result.enclosingType = ownerClassType;
+        return result;
+      }
+      ParameterizedType result = ParameterizedType.forType(t);
+      if (ownerClassType != null) {
+        result.enclosingType = ownerClassType;
+      }
+      return result;
     }
 
     if (type instanceof Class<?>) {
@@ -120,27 +133,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
-  }
-
-  /**
-   * Returns true if the given owner type, and each of its own owner types, has as its type
-   * arguments the type parameters of its declaration. An owner type with no type parameters of its
-   * own, such as {@code B} in {@code A<U>.B.C}, has no type arguments, so this also examines its
-   * owner type.
-   *
-   * @param ownerType the owner type of a reflective parameterized type, or null
-   * @return true if every owner type in the chain uses the type parameters of its declaration
-   */
-  private static boolean isDeclarationOwner(java.lang.reflect.@Nullable Type ownerType) {
-    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
-      return true;
-    }
-    java.lang.reflect.ParameterizedType owner = (java.lang.reflect.ParameterizedType) ownerType;
-    Class<?> ownerRawType = (Class<?>) owner.getRawType();
-    if (!Arrays.equals(owner.getActualTypeArguments(), ownerRawType.getTypeParameters())) {
-      return false;
-    }
-    return isDeclarationOwner(owner.getOwnerType());
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -186,6 +178,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       type.enclosingType = enclosingType.substitute(substitution);
     }
     return type;
+  }
+
+  /**
+   * Returns the result of applying the given substitution to the enclosing type of this type, if
+   * this type is a member class. Otherwise, returns the enclosing type of this type, which is null
+   * if this type is not nested. The result is the enclosing type itself if the substitution changes
+   * nothing in it.
+   *
+   * @param substitution a substitution
+   * @return the enclosing type of this type, with {@code substitution} applied if this type is a
+   *     member class
+   */
+  /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
+      Substitution substitution) {
+    return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
   }
 
   @Override
@@ -377,10 +384,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
-          // A non-generic enclosing goal type has no type variables to bind, so the enclosing
-          // types must be identical.  For example, Outer<Integer>.Inner2<Long> does not
-          // instantiate Outer<String>.Inner2<U>.
+        } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
+          // A non-generic enclosing goal type has no type variables to bind, so the enclosing type
+          // of this type must be a subtype of it.  For example, Outer<Integer>.Inner2<Long> does
+          // not instantiate Outer<String>.Inner2<U>.
           return null;
         }
       }
