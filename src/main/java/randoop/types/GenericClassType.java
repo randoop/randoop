@@ -1,6 +1,9 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -15,7 +18,10 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private final Class<?> rawType;
 
-  /** The type parameters of the generic class. */
+  /**
+   * The type parameters of the generic class. It is empty until {@link #initializeParameters} is
+   * called.
+   */
   private final List<TypeVariable> parameters;
 
   /**
@@ -24,9 +30,46 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType the {@code Class} raw type
    */
   /*package*/ GenericClassType(Class<?> rawType) {
+    this(rawType, true);
+  }
+
+  /**
+   * Creates a {@link GenericClassType} for the given raw type.
+   *
+   * @param rawType the {@code Class} raw type
+   * @param initializeParameters if true, compute the type parameters; if false, the client must
+   *     call {@link #initializeParameters} before using the result
+   */
+  private GenericClassType(Class<?> rawType, boolean initializeParameters) {
     super();
     this.rawType = rawType;
-    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+    this.parameters = new ArrayList<>(rawType.getTypeParameters().length);
+    if (initializeParameters) {
+      initializeParameters();
+    }
+  }
+
+  /**
+   * Creates a {@link GenericClassType} whose type parameters have not been computed. The client
+   * must call {@link #initializeParameters} before using the result, other than to compare it or to
+   * store it in another type.
+   *
+   * <p>This permits a client to cache the result before computing its type parameters, whose bounds
+   * may refer to the class itself, as in {@code C<T extends List<? extends C<?>[]>>}.
+   *
+   * @param rawType the {@code Class} raw type
+   * @return a generic class type whose type parameters have not been computed
+   */
+  /*package*/ static GenericClassType withoutParameters(Class<?> rawType) {
+    return new GenericClassType(rawType, false);
+  }
+
+  /** Computes the type parameters of this generic class. */
+  /*package*/ final void initializeParameters() {
+    if (!parameters.isEmpty()) {
+      throw new IllegalStateException("type parameters of " + rawType + " already computed");
+    }
+    parameters.addAll(CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters()));
   }
 
   /**
@@ -171,6 +214,17 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
+   * Returns the type parameters that this generic class declares, not including those of its
+   * enclosing types. They correspond to the type arguments of an {@link InstantiatedType} of this
+   * class.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  /*package*/ List<TypeVariable> getOwnTypeParameters() {
+    return Collections.unmodifiableList(parameters);
+  }
+
+  /**
    * Creates a type substitution using the given type arguments and applies it to this type.
    *
    * @param typeArguments the type arguments
@@ -178,22 +232,7 @@ public class GenericClassType extends ParameterizedType {
    * @see #substitute(Substitution)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
-    List<TypeVariable> typeParameters = this.getTypeParameters();
-    if (typeArguments.length != typeParameters.size()) {
-      throw new IllegalArgumentException("number of arguments and parameters must match");
-    }
-
-    Substitution substitution = new Substitution(typeParameters, typeArguments);
-    for (int i = 0; i < parameters.size(); i++) {
-      if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
-        throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments[i]
-                + " does not match parameter bound "
-                + parameters.get(i).getUpperTypeBound());
-      }
-    }
-    return this.substitute(substitution);
+    return instantiate(Arrays.asList(typeArguments));
   }
 
   /**
@@ -210,13 +249,13 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    for (int i = 0; i < parameters.size(); i++) {
-      if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+    // For a member class, the type parameters of the enclosing types precede those of this class,
+    // so each type argument is checked against the type parameter at the same index.
+    for (int i = 0; i < typeParameters.size(); i++) {
+      ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
+      if (!bound.isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments.get(i)
-                + " does not match parameter bound "
-                + parameters.get(i).getUpperTypeBound());
+            "type argument " + typeArguments.get(i) + " does not match parameter bound " + bound);
       }
     }
     return this.substitute(substitution);

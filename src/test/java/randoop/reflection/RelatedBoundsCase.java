@@ -1,5 +1,11 @@
 package randoop.reflection;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /** Methods whose type variables have bounds that mention other type variables of the method. */
 public class RelatedBoundsCase {
 
@@ -28,4 +34,76 @@ public class RelatedBoundsCase {
   public static <A, B extends A, C extends B> A chain(B b, C c) {
     return b;
   }
+
+  /**
+   * Returns the size of the given map.
+   *
+   * @param <X> the key and value type
+   * @param map a map whose keys and values have the same type
+   * @return the size of {@code map}
+   */
+  public static <X> int sameKeyAndValue(java.util.Map<X, X> map) {
+    return map.size();
+  }
+
+  /**
+   * Returns null. The parameter type is parameterized, so {@code M} is instantiated by matching an
+   * input type, and the bound of {@code M} mentions {@code K} and {@code V}, which remain to be
+   * instantiated.
+   *
+   * @param <K> the key type of the maps
+   * @param <V> the value type of the maps
+   * @param <M> the type of the maps
+   * @param maps a collection of maps
+   * @return null
+   */
+  public static <K, V, M extends Map<K, V>> @Nullable Map<K, V> someMap(Collection<M> maps) {
+    return null;
+  }
+
+  /**
+   * Returns null. {@code V} is instantiated by matching an input type, and {@code K} occurs only in
+   * the bound of {@code V}.
+   *
+   * @param <K> the result type
+   * @param <V> the type of the nodes
+   * @param nodes a list of nodes
+   * @return null
+   */
+  public static <K, V extends Map<K, V>> @Nullable K selfMapKey(List<V> nodes) {
+    return null;
+  }
+
+  /** A key of a {@link Node}. It is not an input type in the tests. */
+  public static class Key {}
+
+  /** A map from keys to nodes. */
+  @SuppressWarnings("serial")
+  public static class Node extends HashMap<Key, Node> {}
+
+  /**
+   * Returns null. {@code V} is instantiated by matching an input type, and {@code T} must then be a
+   * proper supertype of the type of {@code V}.
+   *
+   * @param <T> the result type
+   * @param <V> the type of the elements
+   * @param elements a list of elements
+   * @return null
+   */
+  public static <T extends Comparable<T>, V extends T> @Nullable T comparableSupertype(
+      List<V> elements) {
+    return null;
+  }
+
+  /** A class that is comparable to itself. */
+  @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // only its type is used
+  public static class Base implements Comparable<Base> {
+    @Override
+    public int compareTo(Base other) {
+      return 0;
+    }
+  }
+
+  /** A subclass of a comparable class. It is comparable only to {@link Base}, not to itself. */
+  public static class Derived extends Base {}
 }
