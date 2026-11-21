@@ -83,16 +83,81 @@ public class WildcardArgument extends TypeArgument {
   @Override
   public WildcardArgument substitute(Substitution substitution) {
     WildcardType argType = this.argumentType.substitute(substitution);
-    if (argType.equals(this.argumentType)) {
+    if (Type.sameType(argType, this.argumentType)) {
       return this;
     }
     return new WildcardArgument(argType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For a non-wildcard argument {@code R}, considers the cases (JLS section 4.5.1):
+   *
+   * <ul>
+   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype of
+   *       {@code B}
+   *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
+   * </ul>
+   *
+   * <p>For a wildcard argument, considers the cases:
+   *
+   * <ul>
+   *   <li>{@code ? extends B} contains {@code ? extends S} if {@code S} is a subtype of {@code B}
+   *   <li>{@code ?} (that is, {@code ? extends Object}) contains every wildcard, including {@code ?
+   *       super S}
+   *   <li>{@code ? super B} contains {@code ? super S} if {@code B} is a subtype of {@code S}
+   *   <li>{@code ? super B} does not contain {@code ? extends S}, not even {@code ?}
+   * </ul>
+   *
+   * <p>A bound that is a {@link LazyParameterBound} is converted to the equivalent {@link
+   * ReferenceBound} before it is compared.
+   */
   @Override
   public boolean contains(TypeArgument argument) {
-    return argument.isWildcard()
-        && argumentType.contains(((WildcardArgument) argument).argumentType);
+    ReferenceType boundType = boundType(argumentType.getTypeBound());
+    if (boundType == null) {
+      return false;
+    }
+    if (argument.isWildcard()) {
+      if (argumentType.hasUpperBound() && boundType.isObject()) {
+        return true;
+      }
+      WildcardArgument otherWildcard = (WildcardArgument) argument;
+      ReferenceType otherBoundType = boundType(otherWildcard.getTypeBound());
+      if (otherBoundType == null) {
+        return false;
+      }
+      if (argumentType.hasUpperBound()) {
+        return otherWildcard.hasUpperBound() && otherBoundType.isSubtypeOfOrEqualTo(boundType);
+      } else {
+        return !otherWildcard.hasUpperBound() && boundType.isSubtypeOfOrEqualTo(otherBoundType);
+      }
+    }
+    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
+    if (argumentType.hasUpperBound()) {
+      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
+    } else {
+      return boundType.isSubtypeOfOrEqualTo(otherType);
+    }
+  }
+
+  /**
+   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
+   * converted to the equivalent {@link ReferenceBound}.
+   *
+   * @param bound a bound of a wildcard
+   * @return the type of the bound, or null if it cannot be determined
+   */
+  private static @Nullable ReferenceType boundType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 
   /**
