@@ -287,6 +287,40 @@ public class LazyParameterBoundTest {
   }
 
   /**
+   * A type parameter whose bound has a wildcard whose lower bound is a type parameter whose bound
+   * mentions another type parameter.
+   *
+   * @param <X> the type parameter that occurs in the bound of {@code Y}
+   * @param <Y> the type parameter that is the lower bound of the wildcard
+   * @param <Z> the type parameter with the bound
+   */
+  static class WildcardLowerBoundVariableBound<
+      X, Y extends List<X>, Z extends Map<Z, Comparable<? super Y>>> {}
+
+  @Test
+  public void testSubstituteIntoBoundOfWildcardLowerBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(WildcardLowerBoundVariableBound.class).getTypeParameters();
+    TypeVariable x = parameters.get(0);
+    TypeVariable z = parameters.get(2);
+    assertTrue(z.getUpperTypeBound() instanceof LazyParameterBound);
+    ParameterBound substituted =
+        z.getUpperTypeBound().substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    // The bound is now Map<Z, Comparable<? super Y>>, where Y extends List<String>.
+    InstantiatedType mapType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    InstantiatedType comparableType =
+        (InstantiatedType)
+            ((ReferenceArgument) mapType.getTypeArguments().get(1)).getReferenceType();
+    ParameterBound wildcardBound =
+        ((WildcardArgument) comparableType.getTypeArguments().get(0)).getTypeBound();
+    assertTrue(wildcardBound instanceof ReferenceBound);
+    TypeVariable y = (TypeVariable) ((ReferenceBound) wildcardBound).getBoundType();
+    assertEquals(
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE),
+        ((ReferenceBound) y.getUpperTypeBound()).getBoundType());
+  }
+
+  /**
    * A type parameter whose bound contains an array of a parameterized type with a concrete array
    * type argument.
    *

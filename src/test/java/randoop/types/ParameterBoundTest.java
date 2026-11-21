@@ -194,6 +194,63 @@ public class ParameterBoundTest {
     assertFalse(otherLazyListBound.isLowerBound(lazyListBound, new Substitution()));
   }
 
+  /**
+   * A {@link LazyReferenceBound} has as lower bounds its subtypes in which each type variable
+   * stands for itself.
+   */
+  @Test
+  public void testLazyReferenceBoundHasSubtypeLowerBound() {
+    ParameterBound lazyListBound =
+        new LazyReferenceBound(
+            GenericClassType.forClass(List.class).instantiate(arrayHolderVariable));
+    ParameterBound lazyArrayListBound =
+        new LazyReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(arrayHolderVariable));
+    assertTrue(lazyArrayListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(lazyListBound.isLowerBound(lazyArrayListBound, new Substitution()));
+  }
+
+  /**
+   * A generic class with a generic inner class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class LowerBoundOuter<T> {
+    /**
+     * A generic inner class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+  }
+
+  /**
+   * The comparison of a lower bound with a {@link LazyReferenceBound} whose type is a member class
+   * includes the enclosing types.
+   */
+  @Test
+  public void testLazyMemberClassBoundComparesEnclosingTypes() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(LowerBoundOuter.Inner.class);
+    TypeVariable outerVariable = TypeVariable.forType(LowerBoundOuter.class.getTypeParameters()[0]);
+    TypeVariable innerVariable =
+        TypeVariable.forType(LowerBoundOuter.Inner.class.getTypeParameters()[0]);
+    List<TypeVariable> variables = Arrays.asList(outerVariable, innerVariable);
+    ParameterBound integerInnerBound =
+        new LazyReferenceBound(
+            innerType.substitute(
+                new Substitution(
+                    variables, ReferenceType.forClass(Integer.class), arrayHolderVariable)));
+    ParameterBound numberInnerBound =
+        new LazyReferenceBound(
+            innerType.substitute(
+                new Substitution(
+                    variables, ReferenceType.forClass(Number.class), arrayHolderVariable)));
+    assertTrue(integerInnerBound.isLowerBound(integerInnerBound, new Substitution()));
+    assertFalse(integerInnerBound.isLowerBound(numberInnerBound, new Substitution()));
+  }
+
   /** The substitution is applied to the lower bound when the other bound is lazy. */
   @Test
   public void testSubstitutionAppliedToLowerBoundOfLazyBound() {
@@ -782,6 +839,29 @@ public class ParameterBoundTest {
   /** A class that satisfies the bound of {@link WildcardConcreteGenericArrayBound}. */
   @SuppressWarnings("serial")
   static class ConcreteGenericArrayList extends ArrayList<List<String>[]> {}
+
+  /**
+   * A class whose type parameter has a bound that contains an array of a non-generic member class
+   * whose owner type mentions the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  static class RecursiveOwnerInArrayBound<
+      T extends Comparable<? extends RecursiveOwnerInArrayBound<T>.Inner[]>> {
+    /** An inner class that has no type parameter of its own. */
+    class Inner {}
+  }
+
+  @Test
+  public void testRecursiveOwnerInArrayBound() {
+    // Converting the type parameter must not convert its bound eagerly, which would convert the
+    // type parameter again.
+    TypeVariable t =
+        GenericClassType.forClass(RecursiveOwnerInArrayBound.class).getTypeParameters().get(0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
 
   @Test
   public void testWildcardConcreteGenericArrayBound() {

@@ -198,7 +198,9 @@ class LazyReferenceBound extends EagerReferenceBound {
    * subtype of the type of this bound, as {@code NullType[]} is of {@code T[]}. The type of this
    * bound contains type variables, so it stands for every instantiation of them; a type such as
    * {@code List<String>} is not a subtype of each instantiation of {@code List<T>}, but {@code
-   * List<T>} and {@code ArrayList<T>}, for the same {@code T}, are.
+   * List<T>} and {@code ArrayList<T>}, for the same {@code T}, are. Because the comparison includes
+   * enclosing types, {@code Outer<Integer>.Inner<T>} is not a lower bound of {@code
+   * Outer<Number>.Inner<T>}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

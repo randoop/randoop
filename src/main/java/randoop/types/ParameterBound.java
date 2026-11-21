@@ -149,7 +149,9 @@ public abstract class ParameterBound {
    * <p>Owner types are examined too, because the conversion of a reflection type to a {@link
    * ReferenceType} can preserve the owner type as written, as in {@code Outer<T>} for {@code
    * Outer<T>.Inner}. Converting such an owner type eagerly can recursively convert a type variable
-   * that is being converted.
+   * that is being converted. For example, in {@code class Outer<T extends Comparable<? extends
+   * Outer<T>.Inner[]>>}, an eager bound for {@code T} would convert {@code Outer<T>}, and so {@code
+   * T}, again.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -169,6 +171,10 @@ public abstract class ParameterBound {
           return true;
         }
       }
+    }
+    if (isNonGenericMemberClass(type)) {
+      java.lang.reflect.Type owner = ((java.lang.reflect.ParameterizedType) type).getOwnerType();
+      return owner != null && hasTypeVariable(owner, variableSet);
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;

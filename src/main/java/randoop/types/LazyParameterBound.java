@@ -255,8 +255,9 @@ class LazyParameterBound extends ParameterBound {
             // also maps K.
             bound = forType(TypeVariable.forType(lowerBound).substitute(substitution));
           } else {
-            // The substitution can change the bounds of the type variable, as for `V extends U`
-            // when it maps U, as the upper-bound case below also does.
+            // As for a type variable that is a type argument, the substitution can change the
+            // bounds of the type variable, as for `V extends U` when it maps U, as the upper-bound
+            // case below also does.
             bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
