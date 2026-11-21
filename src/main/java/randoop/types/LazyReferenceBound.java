@@ -194,11 +194,11 @@ class LazyReferenceBound extends EagerReferenceBound {
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
    * is the null type; or, after the substitution is applied to it, is the type of this bound,
    * including the enclosing types of member classes (see {@link
-   * Subtyping#isIdentical(ReferenceType, ReferenceType)}); or is an array type whose element type
-   * is the null type and that is a subtype of the type of this bound, as {@code NullType[]} is of
-   * {@code T[]}. The type of this bound contains type variables, so it stands for every
-   * instantiation of them; a type such as {@code List<String>} is not a subtype of each
-   * instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   * Subtyping#isIdentical(ReferenceType, ReferenceType)}); or is a subtype of the type of this
+   * bound, with each type variable standing for itself, as {@code ArrayList<T>} is of {@code
+   * List<T>} and {@code NullType[]} is of {@code T[]}. The type of this bound contains type
+   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
+   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -221,10 +221,10 @@ class LazyReferenceBound extends EagerReferenceBound {
       return false;
     }
     ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
-    // The null type is a subtype of every reference type, including a type variable, so array
-    // covariance makes, for example, `NullType[]` a subtype of `T[]`.
-    return lowerType.isArray()
-        && ((ArrayType) lowerType).getElementType().equals(JavaTypes.NULL_TYPE)
-        && lowerType.isSubtypeOfOrEqualTo(getBoundType());
+    // Each type variable stands for itself, in both types, so a subtype of the type of this bound
+    // for every instantiation of its type variables is a lower bound.  For example, ArrayList<T> is
+    // a lower bound of List<T>; and, because the null type is a subtype of every reference type,
+    // including a type variable, NullType[] is a lower bound of T[].
+    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType());
   }
 }

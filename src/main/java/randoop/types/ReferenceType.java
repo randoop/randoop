@@ -184,7 +184,9 @@ public abstract class ReferenceType extends Type {
    */
   public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
-    if (instantiatedType.equals(goalType)) {
+    // InstantiatedType.equals ignores enclosing types, so it treats Outer<String>.Inner<Integer>
+    // and Outer<X>.Inner<Integer> as equal, though only the substitution [X:=String] unifies them.
+    if (Subtyping.isIdentical(instantiatedType, goalType)) {
       return new Substitution();
     }
     if (goalType.isVariable()) {

@@ -395,9 +395,12 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
    * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * an unknown type. For a lower bound, the result is true if some instantiation of it can be a
+   * subtype of {@code otherType}: {@code otherType} itself, or any instantiation if the upper bound
+   * of the type variable is a subtype of {@code otherType}. For example, for the capture of {@code
+   * ? super Y}, where {@code Y extends List<X>}, {@code Object} is within the lower bound, though
+   * it cannot instantiate {@code Y}. For an upper bound, the result is true if it can be a supertype
+   * of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -424,9 +427,11 @@ public abstract class TypeVariable extends ParameterType {
     } else {
       return false;
     }
-    return isLower
-        ? variable.canBeInstantiatedBy(otherType, substitution)
-        : variable.canBeSupertypeOf(otherType, substitution);
+    if (isLower) {
+      return variable.canBeInstantiatedBy(otherType, substitution)
+          || variable.getUpperTypeBound().isLowerBound(otherType, substitution);
+    }
+    return variable.canBeSupertypeOf(otherType, substitution);
   }
 
   /**

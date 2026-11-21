@@ -115,12 +115,23 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The substitution is applied only to {@code lowerBound}, by {@link
-   * ParameterBound#isLowerBound(Type, Substitution)}. A type variable in this bound, which an eager
-   * bound can also contain, as in {@code T[]}, stands for itself.
+   * <p>The substitution is applied only to {@code lowerBound}. A type variable in this bound, which
+   * an eager bound can also contain, as in {@code T[]} or {@code List<T>}, stands for itself. So,
+   * if {@code lowerBound} is an {@link EagerReferenceBound}, its substituted type is compared with
+   * the type of this bound by ordinary subtyping: {@code List<T>} is a lower bound of {@code
+   * List<T>}, but {@code List<String>} is not. {@link
+   * EagerReferenceBound#isLowerBound(Type, Substitution)} would instead accept {@code
+   * List<String>}, because {@code List<String>} is an instantiation of {@code List<T>}. Any other
+   * bound is compared by {@link ParameterBound#isLowerBound(Type, Substitution)}, which, for
+   * example, lets a type variable in a {@link LazyReferenceBound} be chosen.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (lowerBound instanceof EagerReferenceBound && !(lowerBound instanceof LazyReferenceBound)) {
+      ReferenceType lowerType =
+          ((EagerReferenceBound) lowerBound).getBoundType().substitute(substitution);
+      return Subtyping.isSubtypeOrEqual(lowerType, boundType);
+    }
     return lowerBound.isLowerBound(boundType, substitution);
   }
 

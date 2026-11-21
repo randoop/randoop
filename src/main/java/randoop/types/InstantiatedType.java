@@ -118,20 +118,70 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // The type arguments of this type correspond to the type parameters that its class declares.
+    // GenericClassType.getTypeParameters() can also include those of the enclosing classes.
+    List<TypeVariable> parameters = genericType.getDeclaredTypeParameters();
+    // The bounds of the type parameters can mention the type parameters of the enclosing classes,
+    // as in Outer<T>.Inner<U extends T>.  Those are replaced by the type arguments of the captured
+    // enclosing type.
+    ClassOrInterfaceType capturedEnclosingType =
+        isMemberClass() ? enclosingType.applyCaptureConversion() : null;
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        extendWithEnclosingArguments(
+            new Substitution(parameters, convertedTypeList), capturedEnclosingType);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(parameters.get(i), substitution);
       }
     }
 
     List<TypeArgument> convertedArgumentList =
         CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    InstantiatedType result = new InstantiatedType(genericType, convertedArgumentList);
+    if (capturedEnclosingType != null) {
+      result.enclosingType = capturedEnclosingType;
+    }
+    return result;
+  }
+
+  /**
+   * Returns the substitution of the type arguments of this type, and of its enclosing types if it
+   * is a member class, for the type parameters that their classes declare. A wildcard type argument
+   * is mapped to its {@link WildcardType}.
+   *
+   * @return the substitution of the type arguments of this type and of its enclosing types
+   */
+  private Substitution getSupertypeSubstitution() {
+    return extendWithEnclosingArguments(
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()),
+        isMemberClass() ? enclosingType : null);
+  }
+
+  /**
+   * Returns the given substitution, extended by the substitution of the type arguments of the given
+   * enclosing type, and of its own enclosing types, for the type parameters that their classes
+   * declare. An enclosing type that is not an {@link InstantiatedType}, such as a generic class
+   * type, contributes no mappings, so its type parameters stand for themselves.
+   *
+   * @param substitution a substitution for the type parameters of a member class
+   * @param enclosing the enclosing type of the member class, or null if it is not a member class
+   * @return {@code substitution}, extended by the type arguments of {@code enclosing}
+   */
+  private static Substitution extendWithEnclosingArguments(
+      Substitution substitution, @Nullable ClassOrInterfaceType enclosing) {
+    while (enclosing != null) {
+      if (enclosing instanceof InstantiatedType) {
+        InstantiatedType instantiatedEnclosing = (InstantiatedType) enclosing;
+        substitution =
+            substitution.extend(
+                instantiatedEnclosing.genericType.getDeclaredTypeParameters(),
+                instantiatedEnclosing.getReferenceArguments());
+      }
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
+    }
+    return substitution;
   }
 
   /**
@@ -143,9 +193,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getSupertypeSubstitution());
   }
 
   @Override
@@ -198,15 +246,15 @@ public class InstantiatedType extends ParameterizedType {
    * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
    * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
    * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
-   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}.
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a
+   * member class, such as {@code Outer<String>.Inner<Integer>}, the substitution also replaces the
+   * type parameters of the enclosing classes by the type arguments of the enclosing types.
    *
    * @return the superclass type for this parameterized type
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**
@@ -247,7 +295,7 @@ public class InstantiatedType extends ParameterizedType {
     }
     Substitution substitution = null;
     if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
+      substitution = new Substitution(genericType.getDeclaredTypeParameters(), arguments);
     }
     return substitution;
   }
@@ -386,8 +434,12 @@ public class InstantiatedType extends ParameterizedType {
     if (superResult != null) {
       return superResult;
     }
-
-    assert goalType.isGeneric();
+    if (!goalType.isGeneric()) {
+      // No substitution makes this type identical to a non-generic goal type, such as
+      // Outer<Long>.Inner<Integer> for this type Outer<String>.Inner<Integer>, which `equals` does
+      // not distinguish from it.
+      return null;
+    }
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
       // For example, the enclosing type of this member class does not match that of `goalType`.

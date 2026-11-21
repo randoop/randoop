@@ -65,7 +65,12 @@ final class Subtyping {
         return true;
       }
       if (type instanceof ClassOrInterfaceType) {
-        for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+        // As below, the supertypes are those of the capture conversion.
+        ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
+        if (capturedType == null) {
+          return false;
+        }
+        for (ClassOrInterfaceType supertype : capturedType.getSupertypesStrict()) {
           if (satisfiesBound(supertype, unknown, substitution)) {
             return true;
           }
@@ -159,11 +164,14 @@ final class Subtyping {
    * {@code goalType}, or null if there is none.
    *
    * <p>Unlike {@link ClassOrInterfaceType#getMatchingSupertype(GenericClassType)}, this handles a
-   * {@link GenericClassType} receiver, such as {@code Comparable<E>}, whose own generic class is
-   * the goal: the result is its identity instantiation. Also, the result has the runtime class of
-   * {@code goalType}. {@code getMatchingSupertype} can return a member class of another class, such
-   * as {@code Outer<String>.A<Integer>} for {@code Outer<T>.B<X>}, because it compares only the
-   * enclosing types of member classes.
+   * {@link GenericClassType} receiver, such as {@code Comparable<E>}, by searching the supertypes
+   * of its identity instantiation. If its own generic class is the goal, the result is that
+   * identity instantiation. The supertypes of a {@link GenericClassType} itself are those of its
+   * raw class, which do not preserve the relationship between its type parameters and theirs, and
+   * {@code getMatchingSupertype} fails on such a supertype that is the generic goal class. Also,
+   * the result has the runtime class of {@code goalType}. {@code getMatchingSupertype} can return a
+   * member class of another class, such as {@code Outer<String>.A<Integer>} for {@code
+   * Outer<T>.B<X>}, because it compares only the enclosing types of member classes.
    *
    * @param type a type
    * @param goalType a parameterized type
@@ -173,14 +181,16 @@ final class Subtyping {
   private static @Nullable InstantiatedType findMatchingSupertype(
       ClassOrInterfaceType type, InstantiatedType goalType) {
     GenericClassType goalClass = goalType.getGenericClassType();
-    InstantiatedType result;
-    if (type instanceof GenericClassType && type.equals(goalClass)) {
+    ClassOrInterfaceType receiver = type;
+    if (type instanceof GenericClassType) {
       GenericClassType genericType = (GenericClassType) type;
-      result = new InstantiatedType(genericType, genericType.getTypeArguments());
-      result.enclosingType = genericType.enclosingType;
-    } else {
-      result = type.getMatchingSupertype(goalClass);
+      InstantiatedType identityInstantiation =
+          new InstantiatedType(genericType, genericType.getTypeArguments());
+      identityInstantiation.enclosingType = genericType.enclosingType;
+      receiver = identityInstantiation;
     }
+    // For an InstantiatedType receiver whose generic class is the goal, this is the receiver.
+    InstantiatedType result = receiver.getMatchingSupertype(goalClass);
     if (result == null || !result.getRuntimeClass().equals(goalType.getRuntimeClass())) {
       return null;
     }
@@ -277,10 +287,13 @@ final class Subtyping {
   static boolean contains(
       TypeArgument otherArgument, TypeArgument argument, Substitution substitution) {
     if (!(argument instanceof ReferenceArgument)) {
-      // Capture conversion has replaced wildcards at the top level.  In a nested type argument, a
-      // wildcard is contained only by an identical wildcard.
+      // Callers in this class apply capture conversion first, so they do not reach this case.  A
+      // type argument nested within another one, as in List<? extends Integer>, is compared by
+      // isSameType, which requires identical wildcards.
       return otherArgument instanceof WildcardArgument
-          && isSameWildcard(argument, (WildcardArgument) otherArgument, substitution);
+          && argument instanceof WildcardArgument
+          && wildcardContains(
+              (WildcardArgument) otherArgument, (WildcardArgument) argument, substitution);
     }
     ReferenceType type = ((ReferenceArgument) argument).getReferenceType();
     if (otherArgument instanceof ReferenceArgument) {
@@ -297,6 +310,36 @@ final class Subtyping {
     }
     // ? super B contains T if B <: T.
     return canBeSubtype(boundType, type, substitution);
+  }
+
+  /**
+   * Returns true if the wildcard {@code otherWildcard} contains the wildcard {@code wildcard} (JLS
+   * section 4.5.1): {@code ? extends S} contains {@code ? extends T} if {@code T <: S}; {@code ?
+   * super S} contains {@code ? super T} if {@code S <: T}; and {@code ?}, which is {@code ? extends
+   * Object}, contains every wildcard.
+   *
+   * @param otherWildcard the possibly containing wildcard, whose bound may contain unknowns
+   * @param wildcard the possibly contained wildcard
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code otherWildcard} contains {@code wildcard}
+   */
+  private static boolean wildcardContains(
+      WildcardArgument otherWildcard, WildcardArgument wildcard, Substitution substitution) {
+    if (isSameWildcard(wildcard, otherWildcard, substitution)) {
+      return true;
+    }
+    ReferenceType otherBoundType = getBoundType(otherWildcard);
+    ReferenceType boundType = getBoundType(wildcard);
+    if (otherBoundType == null || boundType == null) {
+      return false;
+    }
+    if (otherWildcard.hasUpperBound()) {
+      if (otherBoundType.isObject()) {
+        return true;
+      }
+      return wildcard.hasUpperBound() && isSubtypeOrEqual(boundType, otherBoundType, substitution);
+    }
+    return !wildcard.hasUpperBound() && canBeSubtype(otherBoundType, boundType, substitution);
   }
 
   /**

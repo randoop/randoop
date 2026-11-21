@@ -395,8 +395,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // This type cannot instantiate the type variable.
       return null;
     }
-
-    assert goalType.isGeneric() : "goal type must be generic";
+    if (!goalType.isGeneric()) {
+      // No substitution makes this type identical to a non-generic goal type that is not identical
+      // to it, such as one whose enclosing type differs at a depth that `equals` does not compare.
+      return null;
+    }
 
     Substitution substitution = new Substitution();
     // For a member class such as Outer<String>.Inner and a member class goal type such as

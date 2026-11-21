@@ -2990,6 +2990,38 @@ public class TypeVariableTest {
   }
 
   /**
+   * A class with a field whose type has a wildcard bounded below by a type parameter whose bound
+   * mentions another type parameter.
+   *
+   * @param <X> a type parameter
+   * @param <Y> a type parameter bounded by {@code List<X>}
+   */
+  static class SuperOfListBounded<X, Y extends List<X>> {
+    /** A field whose type has a wildcard bounded below by {@code Y}. */
+    @SuppressWarnings("UnusedVariable") // the field is read reflectively
+    List<? super Y> superY;
+  }
+
+  /**
+   * A type can instantiate a capture variable whose lower bound is a type variable if every
+   * instantiation of that type variable is a subtype of the type, even if the type cannot itself
+   * instantiate that type variable.
+   */
+  @Test
+  public void testSupertypeOfVariableLowerBoundInstantiatesCaptureVariable()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(SuperOfListBounded.class.getDeclaredField("superY").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // Every Y, which is a subtype of List<X>, is a subtype of Object.
+    assertTrue(capture.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    // No Y is a subtype of String.
+    assertFalse(capture.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /**
    * An interface type is not within a bound that is a capture variable merely because {@code
    * Object}, which is a supertype of every interface, can instantiate the capture variable. A
    * capture variable stands for a particular unknown type, so its strict supertypes are not
