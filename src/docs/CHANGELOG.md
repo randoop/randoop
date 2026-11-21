@@ -47,7 +47,7 @@ quoted.  The agent cannot use a filename that contains all three.  See the
 
 In a replacecall replacement file, a constructor may be written as
 `package-name.classname(argument-list)`, as in a Randoop fully-qualified
-signature.
+signature, and a nested class may be written with "." instead of "$".
 
 Randoop compiles and runs generated tests with the JDK that runs Randoop,
 rather than with the `javac` and `java` that are on the PATH.
