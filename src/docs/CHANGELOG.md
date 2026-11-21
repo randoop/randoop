@@ -36,7 +36,9 @@ Changed command-line arguments:
 
 * `--omit-methods`:  If Randoop omits method M of a class under test, it also
   omits every method that M overrides, because a call to an overridden method
-  might dispatch to M.
+  might dispatch to M.  Randoop no longer omits methods that override M.  A
+  pattern must match the signature in the class that declares a method, not
+  in a class that inherits it.
 
 The replacecall agent removes single and double quotes from its options.  A
 filename that contains whitespace, a single quote, or a double quote must be

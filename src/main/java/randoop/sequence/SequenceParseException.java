@@ -21,7 +21,23 @@ public class SequenceParseException extends Exception {
    * @param statementCount the index of the statement at which the error occurred
    */
   public SequenceParseException(@Nullable String msg, List<String> statements, int statementCount) {
-    super();
+    this(msg, statements, statementCount, null);
+  }
+
+  /**
+   * Creates an exception for an error that occurred while parsing the given statements.
+   *
+   * @param msg a description of the error, or null
+   * @param statements the statements being parsed as a sequence
+   * @param statementCount the index of the statement at which the error occurred
+   * @param cause the exception that caused the error, or null
+   */
+  public SequenceParseException(
+      @Nullable String msg,
+      List<String> statements,
+      int statementCount,
+      @Nullable Throwable cause) {
+    super(cause);
 
     StringBuilder b = new StringBuilder(256);
     b.append(

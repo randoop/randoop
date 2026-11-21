@@ -88,7 +88,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
   private final JavaFileWriter javaFileWriter;
 
   /** Method names for flaky tests (e.g., "test005"). */
-  private final HashSet<String> flakyTestNames = new HashSet<>();
+  private final Set<String> flakyTestNames = new HashSet<>();
 
   /**
    * Create a {@link FailingAssertionCommentWriter}.
@@ -258,18 +258,16 @@ public class FailingAssertionCommentWriter implements CodeWriter {
       List<Diagnostic<? extends JavaFileObject>> diagnostics,
       FileCompiler.FileCompilerException e) {
 
+    String sourceMessage =
+        GenInputsAbstract.print_non_compiling_file
+            ? String.format("Source file:%n%s%n", classSource)
+            : String.format(
+                "Use --print-non-compiling-file to print the file with the compilation error.%n");
     String message =
         String.format(
-            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n",
-            "sourceFile", destinationDir);
-    if (GenInputsAbstract.print_non_compiling_file) {
-      message += String.format("Source file:%n%s%n", classSource);
-    } else {
-      message +=
-          String.format(
-              "Use --print-non-compiling-file to print the file with the compilation error.%n");
-    }
-    message += String.format("Diagnostics:%n%s%n", diagnostics);
+            "Compilation error during flaky-test filtering: fileCompiler.compile(%s, %s)%n"
+                + "%sDiagnostics:%n%s%n",
+            "sourceFile", destinationDir, sourceMessage, diagnostics);
     throw new RandoopBug(message, e);
   }
 
@@ -439,7 +437,8 @@ public class FailingAssertionCommentWriter implements CodeWriter {
         if (stderr.equals("Error: Could not find or load main class org.junit.runner.JUnitCore")) {
           throw new RandoopUsageError(
               "Classpath does not contain JUnit.  "
-                  + "Please correct the classpath and re-run Randoop.");
+                  + "Please correct the classpath and re-run Randoop.",
+              e);
         }
       }
       StringBuilder errorMessage = new StringBuilder(256);
@@ -622,7 +621,7 @@ public class FailingAssertionCommentWriter implements CodeWriter {
           "Unable to create temporary directory for flaky-test filtering, exception: %s%n",
           e.getMessage());
       System.exit(1);
-      throw new Error("unreachable statement");
+      throw new Error("unreachable statement", e);
     }
   }
 

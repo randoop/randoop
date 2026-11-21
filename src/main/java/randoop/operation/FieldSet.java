@@ -26,7 +26,7 @@ import randoop.types.TypeTuple;
 public class FieldSet extends CallableOperation {
 
   /** The field that this operation sets. */
-  private AccessibleField field;
+  private final AccessibleField field;
 
   /**
    * Creates a setter {@link Operation} object for a field of a class. Throws an exception if the
