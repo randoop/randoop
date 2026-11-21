@@ -37,7 +37,7 @@ class LazyReferenceBound extends ReferenceBound {
     }
 
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    if (Type.sameType(referenceType, getBoundType())) {
       return this;
     }
     return forTypeLazyIfGeneric(referenceType);
