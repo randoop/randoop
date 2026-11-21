@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -543,7 +544,11 @@ public class TypeVariableTest {
   public void testIdentitySubstitutionOfTwoCopies() {
     java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
     TypeVariable t1 = TypeVariable.forType(reflectionVariable);
-    TypeVariable t2 = TypeVariable.forType(reflectionVariable);
+    TypeVariable t2 =
+        t1.createCopyWithBounds(
+            t1.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    assertNotSame(t1, t2);
+    assertEquals(t1, t2);
     Substitution substitution = new Substitution(Arrays.asList(t1, t2), t1, t2);
     assertTrue(substitution.mapsToItself(t1));
     assertTrue(substitution.mapsToItself(t2));
@@ -1285,11 +1290,18 @@ public class TypeVariableTest {
   public void testTypeParametersOfCopyStartWithCopy() {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable original = parameters.get(1);
     TypeVariable copy =
         (TypeVariable)
-            parameters
-                .get(1)
-                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+            original.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertNotSame(original, copy);
+    assertEquals(original, copy);
+    // The bound of the copy is Map<String, List<V>>.
+    InstantiatedType copyBound =
+        (InstantiatedType) ((ReferenceBound) copy.getUpperTypeBound()).getBoundType();
+    assertEquals(
+        JavaTypes.STRING_TYPE,
+        ((ReferenceArgument) copyBound.getTypeArguments().get(0)).getReferenceType());
     assertSame(copy, copy.getTypeParameters().get(0));
   }
 
@@ -1393,5 +1405,102 @@ public class TypeVariableTest {
     assertTrue(v.canBeInstantiatedBy(subOfX));
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
+
+  /**
+   * A type parameter with an intersection bound.
+   *
+   * @param <U> a type parameter bounded by {@code Number & Runnable}
+   */
+  static class NumberAndRunnableBound<U extends Number & Runnable> {}
+
+  /** A type variable with an intersection bound can be a subtype of a supertype of a member. */
+  @Test
+  public void testIntersectionBoundCanBeSubtype() {
+    TypeVariable u = typeParameter(NumberAndRunnableBound.class, 0);
+    ReferenceType number = ClassOrInterfaceType.forClass(Number.class);
+    assertFalse(u.canBeInstantiatedBy(number));
+    assertTrue(u.canBeSubtypeOf(number, new Substitution()));
+    assertFalse(u.canBeSubtypeOf(JavaTypes.STRING_TYPE, new Substitution()));
+  }
+
+  /** A field whose type has a wildcard bounded below by an array type. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super String[], ?> superStringArrayField;
+
+  /** A field whose type has a wildcard bounded below by a class. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super String, ?> superStringField;
+
+  /**
+   * A type with a wildcard bounded below, for a type parameter whose bound is not {@code Object}.
+   *
+   * @param <A> a type parameter bounded by {@code Number}
+   * @param <B> a type parameter bounded by {@code A}
+   */
+  static class SecondBoundedByNumberFirst<A extends Number, B extends A> {}
+
+  /** A field whose type has a wildcard bounded below by {@code Integer}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByNumberFirst<? super Integer, ?> superIntegerField;
+
+  /**
+   * An array type is within a bound that is a capture variable, if a supertype of the array type
+   * can instantiate the capture variable.
+   */
+  @Test
+  public void testArrayWithinCaptureVariableBound() throws NoSuchFieldException {
+    TypeVariable second = typeArgument(capturedFieldType("superStringArrayField"), 1);
+    ReferenceType integer = ClassOrInterfaceType.forClass(Integer.class);
+    // The first type argument can be Object[] or Object.
+    assertTrue(second.canBeInstantiatedBy(ArrayType.ofComponentType(integer)));
+    assertTrue(second.canBeInstantiatedBy(ArrayType.ofComponentType(JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * An interface type is within a bound that is a capture variable, if {@code Object} can
+   * instantiate the capture variable.
+   */
+  @Test
+  public void testInterfaceWithinCaptureVariableBound() throws NoSuchFieldException {
+    ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
+    TypeVariable second = typeArgument(capturedFieldType("superStringField"), 1);
+    // The first type argument can be Object.
+    assertTrue(second.canBeInstantiatedBy(runnable));
+    // The first type argument cannot be Object, because its bound is Number.
+    TypeVariable numberSecond = typeArgument(capturedFieldType("superIntegerField"), 1);
+    assertFalse(numberSecond.canBeInstantiatedBy(runnable));
+    assertTrue(numberSecond.canBeInstantiatedBy(ClassOrInterfaceType.forClass(Integer.class)));
+  }
+
+  /**
+   * A type parameter whose bound has, as a type argument, a type parameter that is bounded by
+   * another.
+   *
+   * @param <X> a type parameter
+   * @param <U> a type parameter bounded by {@code X}
+   * @param <V> a type parameter bounded by {@code Map<V, U>}
+   */
+  static class MapValueBoundedBySibling<X, U extends X, V extends Map<V, U>> {}
+
+  /** A map whose values are integers. */
+  abstract static class IntegerValuedMap implements Map<IntegerValuedMap, Integer> {}
+
+  /**
+   * A type variable in a bound that the substitution does not map is compared under the
+   * substitution's mappings of the type variables in its bound.
+   */
+  @Test
+  public void testUnmappedVariableInBoundUsesContext() {
+    TypeVariable x = typeParameter(MapValueBoundedBySibling.class, 0);
+    TypeVariable v = typeParameter(MapValueBoundedBySibling.class, 2);
+    ReferenceType integerValuedMap = ClassOrInterfaceType.forClass(IntegerValuedMap.class);
+    assertTrue(v.canBeInstantiatedBy(integerValuedMap));
+    // U can be Integer when X is Number, but not when X is String.
+    assertTrue(
+        v.canBeInstantiatedBy(
+            integerValuedMap, new Substitution(x, ClassOrInterfaceType.forClass(Number.class))));
+    assertFalse(
+        v.canBeInstantiatedBy(integerValuedMap, new Substitution(x, JavaTypes.STRING_TYPE)));
   }
 }

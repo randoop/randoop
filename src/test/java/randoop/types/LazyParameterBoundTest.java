@@ -64,8 +64,9 @@ public class LazyParameterBoundTest {
   @Test
   public void testNullTypeCannotInstantiateArrayComponentBound() {
     TypeVariable t = GenericClassType.forClass(ArrayArgumentBound.class).getTypeParameters().get(0);
-    // The null type is not a subtype of the parameterized type List<NullType[]>, just as it is not
-    // a subtype of List<NullType> for a bound such as T extends List<T>.
+    // The null type is a subtype of List<NullType[]>, as of every reference type.  But the bound
+    // check accepts, for a parameterized bound such as List<NullType[]>, only a class or interface
+    // type that has a matching supertype, as it does for a bound such as T extends List<T>.
     assertFalse(t.canBeInstantiatedBy(JavaTypes.NULL_TYPE));
   }
 
@@ -109,7 +110,8 @@ public class LazyParameterBoundTest {
             .instantiate(JavaTypes.STRING_TYPE, ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
         ((ReferenceBound) bound.substitute(nullSubstitution)).getBoundType());
     // As in testNullTypeCannotInstantiateArrayComponentBound, the null type is not within the
-    // parameterized bound.  Neither comparison throws an exception.
+    // parameterized bound, because the null type is not a class or interface type, even though it
+    // is a subtype of the bound type.  Neither comparison throws an exception.
     assertFalse(bound.isUpperBound(JavaTypes.NULL_TYPE, nullSubstitution));
     assertFalse(bound.isLowerBound(JavaTypes.NULL_TYPE, nullSubstitution));
   }
@@ -141,6 +143,14 @@ public class LazyParameterBoundTest {
     ParameterBound nullBound = bound.substitute(new Substitution(v, JavaTypes.NULL_TYPE));
     assertEquals(
         u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.NULL_TYPE)), nullBound);
+    // The bound is List<? extends NullType[]>.
+    InstantiatedType nullBoundType =
+        (InstantiatedType) ((ReferenceBound) nullBound).getBoundType();
+    WildcardArgument wildcard = (WildcardArgument) nullBoundType.getTypeArguments().get(0);
+    assertTrue(wildcard.hasUpperBound());
+    assertEquals(
+        ArrayType.ofComponentType(JavaTypes.NULL_TYPE),
+        ((ReferenceBound) wildcard.getTypeBound()).getBoundType());
     ParameterBound stringBound = bound.substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     assertEquals(
         u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE)), stringBound);
@@ -158,6 +168,37 @@ public class LazyParameterBoundTest {
   @SuppressWarnings("serial")
   static class ConcreteArrayArgumentList
       extends ArrayList<Map<ConcreteArrayArgumentList, String[]>[]> {}
+
+  /**
+   * A type parameter whose bound has a wildcard bounded below by a type parameter with a recursive
+   * bound that mentions another type parameter.
+   *
+   * @param <T> a type parameter
+   * @param <U> a type parameter bounded by {@code Map<T, U>}
+   * @param <W> a type parameter bounded by {@code List<? super U>}
+   */
+  static class LowerWildcardOfRecursiveBound<T, U extends Map<T, U>, W extends List<? super U>> {}
+
+  @Test
+  public void testSubstituteIntoLowerWildcardVariable() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(LowerWildcardOfRecursiveBound.class).getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable u = parameters.get(1);
+    TypeVariable w = parameters.get(2);
+    ParameterBound bound =
+        w.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    InstantiatedType boundType = (InstantiatedType) ((ReferenceBound) bound).getBoundType();
+    WildcardArgument wildcard = (WildcardArgument) boundType.getTypeArguments().get(0);
+    assertFalse(wildcard.hasUpperBound());
+    // The bound of U in the wildcard is Map<String, U>.
+    TypeVariable substitutedU =
+        (TypeVariable) ((ReferenceBound) wildcard.getTypeBound()).getBoundType();
+    assertEquals(u, substitutedU);
+    assertEquals(
+        GenericClassType.forClass(Map.class).instantiate(JavaTypes.STRING_TYPE, u),
+        ((ReferenceBound) substitutedU.getUpperTypeBound()).getBoundType());
+  }
 
   @Test
   public void testConcreteArrayTypeArgument() {
