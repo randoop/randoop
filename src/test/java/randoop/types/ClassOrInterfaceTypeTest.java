@@ -266,6 +266,14 @@ public class ClassOrInterfaceTypeTest {
      */
     class NumberInner<U extends Number> {}
 
+    /**
+     * A generic inner class whose supertypes mention the type parameters of both the enclosing
+     * class and the inner class.
+     *
+     * @param <U> the type parameter
+     */
+    class PairInner<U> extends Pair<T, U> implements PairInterface<T, U> {}
+
     /** An inner class whose supertypes mention {@code T}. */
     @SuppressWarnings("serial")
     abstract class ListOfT extends ArrayList<T> implements Supplier<T> {}
@@ -315,6 +323,34 @@ public class ClassOrInterfaceTypeTest {
    * @param <V> the type parameter
    */
   static class Holder<V> {}
+
+  /**
+   * A generic class with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  static class Pair<A, B> {}
+
+  /**
+   * A generic interface with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  interface PairInterface<A, B> {}
+
+  /** A field of type {@code Outer<String>.PairInner<Integer>}. */
+  public Outer<String>.PairInner<Integer> pairInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<Integer>}. */
+  public Outer<String>.NumberInner<Integer> stringNumberInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<? extends Number>}. */
+  public Outer<String>.NumberInner<? extends Number> stringNumberInnerOfExtendsNumber;
+
+  /** A field of type {@code Outer<Number>.NumberInner<? extends Number>}. */
+  public Outer<Number>.NumberInner<? extends Number> numberNumberInnerOfExtendsNumber;
 
   /** A field of type {@code Outer<String>.GenericInner<Integer>}. */
   public Outer<String>.GenericInner<Integer> genericInnerOfInteger;
@@ -627,5 +663,46 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(bound.isUpperBound(numberType, new Substitution()));
     assertTrue(bound.isLowerBound(stringType, new Substitution()));
     assertFalse(bound.isLowerBound(numberType, new Substitution()));
+  }
+
+  @Test
+  public void supertypeOfGenericMemberMentionsEnclosingParameterTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType pairInnerOfInteger = fieldType("pairInnerOfInteger");
+
+    // Outer<String>.PairInner<Integer> extends Pair<String, Integer>.
+    InstantiatedType pairOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(Pair.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(pairOfStringInteger, pairInnerOfInteger.getSuperclass());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairOfStringInteger));
+
+    // Outer<String>.PairInner<Integer> implements PairInterface<String, Integer>.
+    InstantiatedType pairInterfaceOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(PairInterface.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(
+        Collections.singletonList(pairInterfaceOfStringInteger),
+        pairInnerOfInteger.getInterfaces());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairInterfaceOfStringInteger));
+  }
+
+  @Test
+  public void containmentRequiresSubtypeEnclosingTypeTest() {
+    InstantiatedType stringNumberInnerOfInteger = fieldType("stringNumberInnerOfInteger");
+    InstantiatedType stringNumberInnerOfExtendsNumber =
+        fieldType("stringNumberInnerOfExtendsNumber");
+    InstantiatedType numberNumberInnerOfExtendsNumber =
+        fieldType("numberNumberInnerOfExtendsNumber");
+
+    // Identical enclosing types:  containment of the type arguments suffices.
+    assertTrue(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
+
+    // Different enclosing types:  Outer<String> is not a subtype of Outer<Number>.
+    assertFalse(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        stringNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        numberNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
   }
 }

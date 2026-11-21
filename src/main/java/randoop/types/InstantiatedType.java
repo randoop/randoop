@@ -144,10 +144,21 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        withEnclosingBindings(
-            new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution to apply to the declared supertypes of the generic class of this type.
+   * It maps the type parameters that the generic class declares to the type arguments of this
+   * type, and the type parameters of each instantiated enclosing type to its type arguments. For
+   * example, for {@code Outer<String>.Inner<Integer>}, where {@code Outer<T>.Inner<U>}, the
+   * substitution is {@code [T := String, U := Integer]}.
+   *
+   * @return the substitution for the type parameters of this type and of its enclosing types
+   */
+  private Substitution getSupertypeSubstitution() {
+    return withEnclosingBindings(
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
   }
 
   /**
@@ -236,10 +247,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        withEnclosingBindings(
-            new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**
@@ -497,6 +505,11 @@ public class InstantiatedType extends ParameterizedType {
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+        // The enclosing type is part of the parameterization:  for example,
+        // `Outer<String>.Inner<Integer>` is not a subtype of `Outer<Number>.Inner<Integer>`.
+        if (!this.enclosingTypeIsSubtypeOf(otherInstantiatedType)) {
+          return otherInstantiatedType.isGenericForm();
+        }
         if (this.typeArgumentsAreContainedBy(otherInstantiatedType)) {
           return true;
         }
@@ -512,7 +525,8 @@ public class InstantiatedType extends ParameterizedType {
         return otherInstantiatedType.isGenericForm();
       }
 
-      // first clause.
+      // first clause, combined with the second:  the supertype of this type that has the same
+      // rawtype as otherType must be a subtype of otherType by type argument containment.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
@@ -538,6 +552,21 @@ public class InstantiatedType extends ParameterizedType {
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
     // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if the enclosing type of this type is a subtype of the enclosing type of the given
+   * type. The given type must be an instantiation of the same generic class as this type. Returns
+   * true if either type has no enclosing type.
+   *
+   * @param otherType an instantiation of the same generic class as this type
+   * @return true if the enclosing type of this type is a subtype of that of {@code otherType}
+   */
+  private boolean enclosingTypeIsSubtypeOf(InstantiatedType otherType) {
+    if (this.enclosingType == null || otherType.enclosingType == null) {
+      return true;
+    }
+    return this.enclosingType.isSubtypeOfOrEqualTo(otherType.enclosingType);
   }
 
   /**
