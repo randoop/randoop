@@ -1150,6 +1150,69 @@ public class TypeVariableTest {
             GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)));
   }
 
+  @Test
+  public void testSubtypeOfWildcardSelfBound() {
+    TypeVariable t = typeParameter(WildcardSelfBound.class, 0);
+    // The bound of T is Comparable<? super T>, which is not a subtype of Comparable<T>.
+    assertFalse(t.isSubtypeOfOrEqualTo(GenericClassType.forClass(Comparable.class).instantiate(t)));
+  }
+
+  /**
+   * A class whose type parameter is bounded by {@code List<String>}.
+   *
+   * @param <T> a type parameter bounded by {@code List<String>}
+   */
+  static class StringListBound<T extends List<String>> {}
+
+  /** A field of type {@code List<?>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<?> unboundedListField;
+
+  /** A field of type {@code List<? extends Number>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Number> numberListField;
+
+  /** A field of type {@code List<? extends CharSequence>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends CharSequence> charSequenceListField;
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? super String> superStringListField;
+
+  /** A field of type {@code List<? super Integer>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? super Integer> superIntegerListField;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param fieldName the name of a field of this class
+   * @return the type of the field
+   * @throws NoSuchFieldException if this class has no field named {@code fieldName}
+   */
+  private static ClassOrInterfaceType fieldType(String fieldName) throws NoSuchFieldException {
+    return ClassOrInterfaceType.forType(
+        TypeVariableTest.class.getDeclaredField(fieldName).getGenericType());
+  }
+
+  @Test
+  public void testSubtypeOfWildcardInstantiation() throws NoSuchFieldException {
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("unboundedListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("charSequenceListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(fieldType("superStringListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(fieldType("numberListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(fieldType("superIntegerListField")));
+    // A wildcard argument is not contained by a non-wildcard argument.
+    assertFalse(fieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
+
+    TypeVariable t = typeParameter(StringListBound.class, 0);
+    assertTrue(t.isSubtypeOfOrEqualTo(fieldType("unboundedListField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(fieldType("numberListField")));
+  }
+
   /**
    * A class whose type parameters have bounds that refer to each other.
    *
@@ -1510,6 +1573,25 @@ public class TypeVariableTest {
     // Integer[] <: Object, which can instantiate the capture variable for the first argument.
     assertTrue(first.canBeSupertypeOf(integerArray, new Substitution()));
     assertTrue(second.canBeInstantiatedBy(integerArray));
+  }
+
+  /** A field whose type has a wildcard bounded below by {@code Number}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Comparable<? super Number> superNumberField;
+
+  /**
+   * An interface type is within a bound that is a capture variable if {@code Object}, which is a
+   * supertype of every interface, can instantiate the capture variable.
+   */
+  @Test
+  public void testObjectSupertypeOfInterfaceCanInstantiateCaptureVariable()
+      throws NoSuchFieldException {
+    ReferenceType runnable = ClassOrInterfaceType.forClass(Runnable.class);
+    InstantiatedType capturedType = capturedFieldType("superNumberField");
+    TypeVariable capture = typeArgument(capturedType, 0);
+    assertFalse(capture.canBeInstantiatedBy(runnable));
+    // Runnable <: Object, which can instantiate the capture variable.
+    assertTrue(capture.canBeSupertypeOf(runnable, new Substitution()));
   }
 
   /**
