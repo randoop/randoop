@@ -105,20 +105,34 @@ public class ExplicitTypeVariable extends TypeVariable {
     }
     // A type variable can occur in its own bound, directly as in `T extends Comparable<T>` or
     // through the bounds of other type variables.  Such an occurrence remains as it is.
-    Set<java.lang.reflect.TypeVariable<?>> inProgress = substituteIsExecuting.get();
-    if (!inProgress.add(variable)) {
+    Set<java.lang.reflect.TypeVariable<?>> substituteIsExecutingSet = substituteIsExecuting.get();
+    if (!substituteIsExecutingSet.add(variable)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.
       // Applying the substitution to the bound again would not terminate.  If the enclosing call
       // creates a copy with new bounds, this occurrence in the copy's bound is this variable, not
       // the copy.
-      return type == null ? this : type;
+      return type != null ? type : this;
     }
-    ParameterBound upperBound;
     try {
-      upperBound = getUpperTypeBound().substitute(substitution);
+      return substituteIntoBound(type, substitution);
     } finally {
-      inProgress.remove(variable);
+      substituteIsExecutingSet.remove(variable);
     }
+  }
+
+  /**
+   * Applies the substitution to the upper bound of this type variable, for {@link
+   * #substitute(Substitution)}.
+   *
+   * @param type the type that {@code substitution} maps this variable to, or null if it does not
+   *     map this variable or maps it to itself; if non-null, a type variable that is not equal to
+   *     this
+   * @param substitution the substitution
+   * @return the result of applying {@code substitution} to this type variable
+   */
+  private ReferenceType substituteIntoBound(
+      @Nullable ReferenceType type, Substitution substitution) {
+    ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
     if (type == null) {
       if (!sameType(upperBound, getUpperTypeBound())) {
         return new ExplicitTypeVariable(this.variable, upperBound);

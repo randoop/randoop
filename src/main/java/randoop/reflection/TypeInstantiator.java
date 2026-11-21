@@ -27,6 +27,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceBound;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -766,7 +767,9 @@ public class TypeInstantiator {
    *       {@code X} (such a type need not be an input type: it can be a type argument of one); or
    *       it is the non-generic type that {@code substitution} gives to a type variable constrained
    *       by {@code X}, or a supertype of that type or a type argument of such a supertype; see
-   *       {@link #relatedTypes(ReferenceType)}.
+   *       {@link #relatedTypes(ReferenceType)}; or it is the type for {@code X} that the type of
+   *       the constrained variable implies; see {@link #boundWitness(TypeVariable, TypeVariable,
+   *       Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -811,6 +814,12 @@ public class TypeInstantiator {
                 candidates.add(related);
               }
             }
+          }
+          // Likewise, a type argument of a supertype of the type of a constrained type variable is
+          // a candidate, even if it is not an input type.
+          ReferenceType witness = boundWitness(parameter, variable, substitution);
+          if (witness != null && !candidates.contains(witness)) {
+            candidates.add(witness);
           }
         }
         candidates.removeIf(
@@ -883,6 +892,54 @@ public class TypeInstantiator {
       }
     }
     return result;
+  }
+
+  /**
+   * Returns the type for the given type variable that the given substitution's type for {@code
+   * constrained} implies, if the upper bound of {@code constrained} is a parameterized type that
+   * mentions {@code parameter}. For example, if {@code constrained} is {@code T extends
+   * Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps {@code T} to
+   * {@code Ranked}, which implements {@code Comparable<String>}, then this returns {@code String}.
+   * This does not check the bounds of {@code constrained}; the caller does.
+   *
+   * @param parameter a type variable that {@code substitution} does not instantiate
+   * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
+   *     {@code parameter} and no other type variable that {@code substitution} does not instantiate
+   * @param substitution a substitution
+   * @return the non-generic type for {@code parameter} that makes the substitution's type for
+   *     {@code constrained} a subtype of its upper bound, or null if there is none or it is not
+   *     determined by a supertype of the substitution's type for {@code constrained}
+   */
+  private static @Nullable ReferenceType boundWitness(
+      TypeVariable parameter, TypeVariable constrained, Substitution substitution) {
+    ReferenceType type = substitution.get(constrained);
+    if (!(type instanceof ClassOrInterfaceType)) {
+      return null;
+    }
+    // Map `parameter` to itself, so that a lazy bound is converted to a type that mentions it.
+    ParameterBound bound =
+        constrained
+            .getUpperTypeBound()
+            .substitute(substitution.extend(new Substitution(parameter, parameter)));
+    if (!(bound instanceof ReferenceBound)) {
+      return null;
+    }
+    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
+    if (!(boundType instanceof InstantiatedType) || !boundType.isGeneric()) {
+      return null;
+    }
+    InstantiatedType pattern = (InstantiatedType) boundType;
+    InstantiatedType supertype =
+        ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
+    if (supertype == null) {
+      return null;
+    }
+    Substitution matching = supertype.getInstantiatingSubstitution(pattern);
+    if (matching == null) {
+      return null;
+    }
+    ReferenceType witness = matching.get(parameter);
+    return witness == null || witness.isGeneric() ? null : witness;
   }
 
   /**
@@ -1182,12 +1239,14 @@ public class TypeInstantiator {
   /**
    * Returns all substitutions that extend a substitution for the given type parameters.
    *
+   * <p>This is package-private for testing.
+   *
    * @param typeParameters the type parameters to be instantiated
    * @param substitution the substitution to be extended
    * @return the list of possible substitutions, empty if none is found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<Substitution> allExtendingSubstitutions(
+  /*package*/ List<Substitution> allExtendingSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
 
     // Partition parameters based on whether they might have independent bounds:

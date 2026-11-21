@@ -139,11 +139,17 @@ class LazyParameterBound extends ParameterBound {
       return referenceBound;
     }
     List<TypeVariable> parameters = getTypeParameters();
-    // Map each type variable to itself, so that substitute() converts this bound without changing
-    // the type that it represents.
-    ParameterBound result =
-        substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
-    referenceBound = result instanceof ReferenceBound ? (ReferenceBound) result : null;
+    // Map each type variable to itself, so that the conversion does not change the type that this
+    // bound represents.  This calls the static substitute() method directly, rather than the
+    // instance method, because the instance method can return this bound unchanged, as when the
+    // substitution instantiates no type variable.
+    Substitution identity = new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
+    TypeArgument typeArgument = substitute(boundType, identity);
+    referenceBound =
+        typeArgument instanceof ReferenceArgument
+            ? ReferenceBound.forTypeLazyIfGeneric(
+                ((ReferenceArgument) typeArgument).getReferenceType())
+            : null;
     referenceBoundComputed = true;
     return referenceBound;
   }
