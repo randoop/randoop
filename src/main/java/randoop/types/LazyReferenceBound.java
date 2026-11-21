@@ -124,8 +124,8 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type, or an array type whose element type is the null type and that is a subtype
-   * of the type of this bound, as {@code NullType[]} is of {@code T[]}. The type of this bound
+   * is the null type, or an array type whose element type is the null type and that is a subtype of
+   * the type of this bound, as {@code NullType[]} is of {@code T[]}. The type of this bound
    * contains type variables, so no other type is known to be a subtype of it.
    */
   @Override
