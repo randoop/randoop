@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -430,6 +431,19 @@ public class InstantiationTest {
     class Other {}
 
     /**
+     * A member class with a type parameter of its own.
+     *
+     * @param <T> the type parameter
+     */
+    class GenericMember<T> {}
+
+    /** A member class with no type parameters of its own, which has a member class. */
+    class Middle {
+      /** A member class of a member class, with no type parameters of its own. */
+      class Deep {}
+    }
+
+    /**
      * A method whose parameter type is the generic form of a member class.
      *
      * @param inner an inner object
@@ -546,6 +560,38 @@ public class InstantiationTest {
     ClassOrInterfaceType genericOther = ClassOrInterfaceType.forClass(Outer.Other.class);
     assertNotNull(stringInner.getInstantiatingSubstitution(genericInner));
     assertNull(stringInner.getInstantiatingSubstitution(genericOther));
+    assertFalse(stringInner.isInstantiationOf(genericOther));
+    assertFalse(
+        stringInner.isInstantiationOf(ClassOrInterfaceType.forClass(Outer.GenericMember.class)));
+  }
+
+  /**
+   * A method whose parameter type is generic only through the enclosing type of its enclosing type.
+   *
+   * @param <U> the type parameter
+   * @param deep a deep object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U> void deepParameter(Outer<U>.Middle.Deep deep) {}
+
+  /**
+   * In {@code <U> void deepParameter(Outer<U>.Middle.Deep deep)}, the parameter type mentions the
+   * method's type parameter {@code U}, though the owner type {@code Outer<U>.Middle} has no type
+   * arguments of its own.
+   */
+  @Test
+  public void testMemberClassOfMemberClassParameter() throws Exception {
+    Method m =
+        InstantiationTest.class.getDeclaredMethod("deepParameter", Outer.Middle.Deep.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType parameterType = (ClassOrInterfaceType) operation.getInputTypes().get(0);
+    ClassOrInterfaceType genericDeep = ClassOrInterfaceType.forClass(Outer.Middle.Deep.class);
+    assertTrue(parameterType.isGeneric());
+    assertFalse(parameterType.isGenericForm());
+    assertFalse(genericDeep.equals(parameterType));
+    assertEquals(
+        Collections.singletonList(TypeVariable.forType(m.getTypeParameters()[0])),
+        parameterType.getTypeParameters());
   }
 
   /**

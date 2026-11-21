@@ -196,6 +196,7 @@ public class ParameterBoundTest {
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(stringInner, empty));
     assertFalse(bound.isUpperBound(integerInner, empty));
+    assertFalse(bound.isUpperBound(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), empty));
     assertTrue(bound.isLowerBound(stringInner, empty));
     assertFalse(ParameterBound.forType(JavaTypes.STRING_TYPE).isLowerBound(stringInner, empty));
   }

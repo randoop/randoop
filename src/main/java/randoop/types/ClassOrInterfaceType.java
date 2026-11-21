@@ -90,12 +90,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.ParameterizedType ownerType = memberClassOwnerType(t);
-        // If the owner type's type arguments are the type parameters of the declaration of the
-        // enclosing class, the result is the generic form of the member class.
-        if (ownerType != null
-            && !Arrays.equals(
-                ownerType.getActualTypeArguments(),
-                ((Class<?>) ownerType.getRawType()).getTypeParameters())) {
+        // If the type arguments of the owner type and of all its owner types are the type
+        // parameters of their declarations, the result is the generic form of the member class.
+        // The owner types must be checked transitively:  in `Outer<U>.Middle.Inner`, the owner
+        // type `Outer<U>.Middle` has no type arguments of its own, but `Outer<U>` does.
+        if (ownerType != null && !isDeclarationForm(ownerType)) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
           // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
@@ -118,6 +117,27 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns true if the given type is the form of its class that the class declaration denotes: the
+   * type arguments of the type and of each of its owner types are the type parameters declared by
+   * the corresponding class. For example, {@code Outer<T>.Middle} is, where {@code T} is the type
+   * parameter declared by {@code Outer}, but {@code Outer<U>.Middle} and {@code Outer<String>} are
+   * not.
+   *
+   * @param type a parameterized type
+   * @return true if {@code type} and its owner types have their declared type parameters as type
+   *     arguments
+   */
+  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+    if (!Arrays.equals(
+        type.getActualTypeArguments(), ((Class<?>) type.getRawType()).getTypeParameters())) {
+      return false;
+    }
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    return !(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
   }
 
   /**
@@ -505,8 +525,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * {@inheritDoc}
    *
    * <p>For a {@link ClassOrInterfaceType} that is a member class, if {@code otherType} is also a
-   * member class, then the enclosing type of this type must instantiate the enclosing type of
-   * {@code otherType}.
+   * member class, then this type and {@code otherType} must have the same runtime class, and the
+   * enclosing type of this type must instantiate the enclosing type of {@code otherType}.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {
@@ -515,9 +535,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
+      // Matching enclosing types do not make unrelated member classes, such as Container.Other and
+      // Container.Generic<T>, instantiations of one another.
+      // TODO: For a member class with type parameters of its own, this does not check them.
       return otherClassType.isNestedClass()
+          && this.getRuntimeClass().equals(otherClassType.getRuntimeClass())
           && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
     }
     return false;
