@@ -81,18 +81,37 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
-    return (NonParameterizedType)
-        substitute(substitution, new NonParameterizedType(this.runtimeType));
+    ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
+    if (sameType(enclosing, enclosingType)) {
+      return this;
+    }
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    if (isMemberClass()) {
+      result.enclosingType = enclosing;
+    }
+    return result;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Does not side-effect this type, which can be shared: for example, {@link #forClass} caches
+   * it, and {@link #substitute} can return it. If capture conversion changes the enclosing type of
+   * this member class, then the result is a new type.
+   */
   @Override
   public NonParameterizedType applyCaptureConversion() {
     if (!hasWildcardArgument()) {
       return this;
     }
+    ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
+    if (sameType(convertedEnclosingType, enclosingType)) {
+      return this;
+    }
     // Convert into a new object, so that this type, such as Outer<?>.Inner, retains its wildcard.
-    return (NonParameterizedType)
-        applyCaptureConversion(new NonParameterizedType(this.runtimeType));
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    result.enclosingType = convertedEnclosingType;
+    return result;
   }
 
   @Override

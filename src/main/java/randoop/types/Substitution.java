@@ -116,6 +116,10 @@ public class Substitution {
    * same type variable, they map it to the same type. This is the test for whether this
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so two substitutions that
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies, map it to the same type.
+   *
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
@@ -169,6 +173,10 @@ public class Substitution {
    * Creates a new substitution that contains the entries of two substitutions. If both
    * substitutions contain the same type variable, they must map to the same type.
    *
+   * <p>Copies of a type variable are equal even if their bounds differ, so both substitutions can
+   * map a type variable to copies of another type variable, or to types that differ only in such
+   * copies. Then the result maps it to the type that this substitution maps it to.
+   *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
@@ -181,6 +189,23 @@ public class Substitution {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     return result;
+  }
+
+  /**
+   * Returns true if this substitution maps the given type variable, or a copy of it, to itself:
+   * that is, to the object that is the key of the entry. A copy of a type variable with other
+   * bounds is equal to it, but is not the same object.
+   *
+   * @param variable a type variable
+   * @return true if this substitution maps {@code variable} to itself
+   */
+  boolean mapsToItself(TypeVariable variable) {
+    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
+      if (entry.getKey().equals(variable)) {
+        return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
+      }
+    }
+    return false;
   }
 
   /**
@@ -243,6 +268,10 @@ public class Substitution {
   @RequiresNonNull({"map", "rawMap"})
   private void put(
       @UnknownInitialization Substitution this, TypeVariable typeParameter, ReferenceType type) {
+    // Copies of a type variable are equal, so `map.put` alone would keep an existing key that is a
+    // copy of `typeParameter`, and pair it with `type`.  Removing the entry first makes the new
+    // entry pair `typeParameter` with `type`, as given.
+    map.remove(typeParameter);
     map.put(typeParameter, type);
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
