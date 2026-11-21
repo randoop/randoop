@@ -60,8 +60,8 @@ public class TypeInstantiator {
    *
    * <p>{@link randoop.sequence.SequenceCollection} adds the supertypes of class and interface types
    * but not those of array types. So, if the pool can produce a {@code String[]} but no value of a
-   * class type that implements {@code Cloneable}, then {@code Cloneable} is not an input type, and this
-   * class does not choose it as a type argument.
+   * class type that implements {@code Cloneable}, then {@code Cloneable} is not an input type, and
+   * this class does not choose it as a type argument.
    */
   private final Set<Type> inputTypes;
 
