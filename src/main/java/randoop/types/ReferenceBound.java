@@ -121,6 +121,7 @@ public abstract class ReferenceBound extends ParameterBound {
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    // For target T with T := Number, Integer is not known to be a subtype of T.
     return lowerBound.isLowerBound(boundType, substitution);
   }
 

@@ -3137,6 +3137,9 @@ public class TypeVariableTest {
         ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class)
             .substitute(new Substitution(z, JavaTypes.STRING_TYPE)),
         inner);
+    // The expected type is NonGenericInnerOuter<String>.Inner, whose owner is instantiated.
+    // ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class) would have the generic class
+    // as its owner, which is not equal.
     assertEquals(
         ClassOrInterfaceType.forType(
             TypeVariableTest.class.getDeclaredField("stringInnerField").getGenericType()),
@@ -3156,7 +3159,8 @@ public class TypeVariableTest {
    * within a bound that is the capture variable, even if a supertype of the array type, such as
    * {@code Object}, can instantiate the capture variable. The capture variable stands for a
    * particular type, which might be {@code Object} but is known only to be a supertype of {@code
-   * String[]}, so its strict supertypes are not searched.
+   * String[]}, so its strict supertypes are not searched. The search among strict supertypes
+   * applies only to explicit type variables; see {@link #testVariableBoundIsSupertype}.
    */
   @Test
   public void testUnrelatedArrayIsNotWithinCaptureVariableBound() throws NoSuchFieldException {
@@ -3166,8 +3170,8 @@ public class TypeVariableTest {
     TypeVariable first = typeArgument(capturedType, 0);
     TypeVariable second = typeArgument(capturedType, 1);
     assertFalse(first.canBeInstantiatedBy(integerArray));
-    // The capture of `? super String[]` could be Object, but Integer[] is not known to be a
-    // subtype of it.
+    // The capture of `? super String[]` might be String[], so Integer[] is not known to be a
+    // subtype of it, even though Integer[] <: Object.
     assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
     // The capture variable for the second argument is bounded by that for the first.
     assertFalse(second.canBeInstantiatedBy(integerArray));
