@@ -149,41 +149,33 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * If this type has an upper bound, checks for containment cases:
+   * Returns true if this wildcard contains the given wildcard, according to JLS section 4.5.1. From
+   * a reflection perspective, {@code ?} is just {@code ? extends Object}. The cases are:
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
-   * </ul>
-   *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
-   *
-   * <ul>
+   *   <li>{@code ? extends Object} (that is, {@code ?}) contains {@code ? super S}
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
+   *   <li>{@code ? super T} does not contain any upper-bounded wildcard, including {@code ?}
    * </ul>
-   *
-   * The last two being equivalent from the perspective of reflection.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {
-      if (otherType.hasUpperBound
-          && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
-        return true;
+      if (otherType.hasUpperBound) {
+        return otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound());
       }
+      // `? extends Object` contains every `? super S`; `? extends T` for other T does not.
+      return this.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
     } else {
       if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-      } else {
-        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
+        // `? super T` does not contain an upper-bounded wildcard, including `?`.
+        return false;
       }
+      return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
     }
-    return false;
   }
 
   @Override
