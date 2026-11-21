@@ -311,6 +311,38 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A class whose type parameter has a self-referential bound in which the type parameter occurs
+   * only in the enclosing type of a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerOnlyRecursiveBound<T extends List<GenericOuter<T>.NonGenericInner>> {}
+
+  /**
+   * A type parameter that occurs only in the enclosing type of a member class in its own bound
+   * makes the bound lazy, and a substitution reaches the enclosing type.
+   */
+  @Test
+  public void testOwnerOnlyRecursiveBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OwnerOnlyRecursiveBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    assertEquals(Collections.singletonList(t), bound.getTypeParameters());
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
+    assertEquals(
+        GenericClassType.forClass(GenericOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
+    assertNotNull(((LazyParameterBound) bound).toReferenceBound());
+  }
+
+  /**
    * A class in which a wildcard lower bound in the bound of {@code V} is a type variable whose
    * bound contains another type variable.
    *

@@ -150,16 +150,19 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return null;
     }
     Substitution result = new Substitution();
-    ClassOrInterfaceType type = this;
-    while (type.isMemberClass()) {
-      ClassOrInterfaceType enclosing = type.enclosingType;
+    // A type parameter is mapped to a type, not to a wildcard: the supertypes of a type with
+    // wildcard arguments are those of its capture conversion.  Capture conversion converts the
+    // enclosing types of the enclosing type too, and returns a type without wildcard arguments
+    // unchanged.
+    @Nullable ClassOrInterfaceType enclosing = enclosingType.applyCaptureConversion();
+    while (enclosing != null) {
       if (enclosing instanceof InstantiatedType) {
         List<TypeVariable> parameters =
             CollectionsPlume.mapList(
                 TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
         result = result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
       }
-      type = enclosing;
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
     }
     return result.isEmpty() ? null : result;
   }

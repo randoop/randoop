@@ -455,7 +455,10 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
+    // A member class whose enclosing type is parameterized, as in `Outer<String>.Inner`, is
+    // parameterized, but is not an InstantiatedType if it has no type arguments of its own.  Such a
+    // type is handled by the class and enclosing type subtyping in the superclass.
+    if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
