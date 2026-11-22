@@ -641,4 +641,42 @@ public class InstantiationTest {
     assertEquals(stringInner, instance.getInputTypes().get(0));
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
+
+  /** A class with a generic member class. */
+  private static class OwnerA {
+    /**
+     * A generic member class.
+     *
+     * @param <T> a type parameter
+     */
+    class Base<T> {}
+  }
+
+  /** A class with a member class that extends a member class of another class. */
+  private static class OwnerB {
+    /** A member class that extends a member class of another class. */
+    class Sub extends OwnerA.Base<String> {
+      /**
+       * Creates a Sub.
+       *
+       * @param a the enclosing instance of the superclass
+       */
+      Sub(OwnerA a) {
+        a.super();
+      }
+    }
+  }
+
+  /**
+   * {@code OwnerB.Sub}, which extends {@code OwnerA.Base<String>}, instantiates {@code
+   * OwnerA.Base<T>}, though the enclosing classes differ.
+   */
+  @Test
+  public void testMemberSubclassOfMemberClassOfAnotherClass() {
+    ClassOrInterfaceType sub = ClassOrInterfaceType.forClass(OwnerB.Sub.class);
+    ClassOrInterfaceType base = ClassOrInterfaceType.forClass(OwnerA.Base.class);
+    Substitution substitution = sub.getInstantiatingSubstitution(base);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(base.getTypeParameters().get(0)));
+  }
 }

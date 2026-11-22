@@ -381,14 +381,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
-        if (enclosingGoalType.isGeneric()) {
-          substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-          if (substitution == null) {
+        // If this type's class is a strict subclass of the goal type's class, possibly a member of
+        // a different class, as for B.Sub that extends A.Base<String>, then the enclosing types of
+        // this type and the goal type are unrelated, so do not match them.  The supertype
+        // matching below handles that case.
+        if (goalClassType.runtimeClassIs(this.getRuntimeClass())) {
+          if (enclosingGoalType.isGeneric()) {
+            substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+            if (substitution == null) {
+              return null;
+            }
+          } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
+            // For example, Outer<Integer>.Inner<String> does not instantiate
+            // Outer<String>.Inner<U>.
             return null;
           }
-        } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
-          // For example, Outer<Integer>.Inner<String> does not instantiate Outer<String>.Inner<U>.
-          return null;
         }
       }
     }
