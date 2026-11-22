@@ -32,6 +32,7 @@ import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
@@ -721,5 +722,45 @@ public class InstantiationTest {
     Substitution substitution = sub.getInstantiatingSubstitution(base);
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(base.getTypeParameters().get(0)));
+  }
+
+  /**
+   * Returns {@code Outer<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code Outer<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType outerInnerType(ReferenceType typeArgument) {
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    return genericInner.substitute(
+        new Substitution(genericInner.getTypeParameters(), typeArgument));
+  }
+
+  /**
+   * A method whose parameter type is a member type whose enclosing type has a wildcard.
+   *
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static void wildcardOwner(Outer<?>.Inner inner) {}
+
+  /**
+   * Capture conversion of {@code Outer<?>.Inner} does not change that type, and its result has a
+   * capture variable.
+   */
+  @Test
+  public void testMemberTypeCaptureConversion() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("wildcardOwner", Outer.Inner.class);
+    ClassOrInterfaceType wildcardInner =
+        ClassOrInterfaceType.forType(m.getGenericParameterTypes()[0]);
+    assertTrue(wildcardInner.hasWildcardArgument());
+    ClassOrInterfaceType captured = wildcardInner.applyCaptureConversion();
+    assertTrue(wildcardInner.hasWildcardArgument());
+    assertFalse(captured.hasWildcardArgument());
+    assertTrue(captured.hasCaptureVariable());
+    assertTrue(new TypeTuple(Collections.<Type>singletonList(captured)).hasCaptureVariable());
+    assertFalse(
+        new TypeTuple(Collections.<Type>singletonList(outerInnerType(JavaTypes.STRING_TYPE)))
+            .hasCaptureVariable());
   }
 }
