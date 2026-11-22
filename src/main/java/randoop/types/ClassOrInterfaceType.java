@@ -230,40 +230,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
   }
 
-  /**
-   * Returns the substitution of the type arguments of the enclosing types of this member class for
-   * the type parameters of their classes. The declared supertypes of a member class can mention
-   * those type parameters. For example, given {@code class Outer<E> { class Inner extends
-   * ArrayList<E> {} }}, the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
-   *
-   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
-   * declared supertypes are already correct), or if no enclosing type is parameterized.
-   *
-   * @return the substitution for the type parameters of the enclosing types, or null if none is
-   *     needed
-   */
-  /*package*/ final @Nullable Substitution getEnclosingSubstitution() {
-    if (!isMemberClass() || enclosingType.isGenericForm()) {
-      return null;
-    }
-    Substitution result = new Substitution();
-    // A type parameter is mapped to a type, not to a wildcard: the supertypes of a type with
-    // wildcard arguments are those of its capture conversion.  Capture conversion converts the
-    // enclosing types of the enclosing type too, and returns a type without wildcard arguments
-    // unchanged.
-    @Nullable ClassOrInterfaceType enclosing = enclosingType.applyCaptureConversion();
-    while (enclosing != null) {
-      if (enclosing instanceof InstantiatedType) {
-        List<TypeVariable> parameters =
-            CollectionsPlume.mapList(
-                TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
-        result = result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
-      }
-      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
-    }
-    return result.isEmpty() ? null : result;
-  }
-
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
@@ -417,8 +383,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      // The runtime class check is needed because `isInstantiationOf` returns true for distinct
-      // member classes whose enclosing types match.
+      // isInstantiationOf can be true for a member class of another class, if the enclosing types
+      // match, so also check the class.
       if (superclass.runtimeClassIs(goalType.getRuntimeClass())) {
         // A raw superclass, such as Box for `class RawChild extends Box`, is not an
         // InstantiatedType and does not instantiate the goal type.  Neither do its supertypes,
@@ -865,7 +831,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public boolean hasCaptureVariable() {
-    return false;
+    return isMemberClass() && enclosingType.hasCaptureVariable();
   }
 
   /**
@@ -883,6 +849,41 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return enclosingType.getTypeParameters();
     }
     return new ArrayList<>(0);
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of this type's class, and of the classes
+   * that enclose it as a member class, to the corresponding type arguments of this type. For
+   * example, for {@code Outer<String>.Inner<Integer>}, where {@code Inner<U>} is a member class of
+   * {@code Outer<T>}, the result maps {@code T} to {@code String} and {@code U} to {@code Integer}.
+   * The result omits the type parameters of a generic form, such as {@code Outer<T>}. A wildcard
+   * type argument is mapped as in {@link InstantiatedType#getReferenceArguments()}.
+   *
+   * @return the substitution that maps the type parameters of this type's class and of its
+   *     enclosing classes to the type arguments of this type
+   */
+  /*package*/ Substitution getReferenceArgumentSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
+  }
+
+  /**
+   * Returns the substitution to apply to the declared supertypes of this type's class. It is like
+   * {@link #getReferenceArgumentSubstitution()}, but it maps the type parameters of the enclosing
+   * classes to the type arguments of the capture conversion of the enclosing type, because the
+   * supertypes of a type with wildcard arguments are those of its capture conversion. For example,
+   * for {@code Outer<? extends Number>.Inner}, where {@code Inner} is a member class of {@code
+   * Outer<T>}, the result maps {@code T} to a capture variable whose upper bound is {@code Number}.
+   *
+   * @return the substitution to apply to the declared supertypes of this type's class
+   */
+  /*package*/ Substitution getSupertypeSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.applyCaptureConversion().getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
   }
 
   @Override
