@@ -198,6 +198,9 @@ public class ClassOrInterfaceTypeTest {
     /** An inner class whose supertypes mention the type parameter of the enclosing class. */
     abstract class NonGenericSupertypeInner extends Holder<T> implements Comparable<T> {}
 
+    /** An inner class whose supertypes mention an array of the type parameter of the class. */
+    abstract class ArraySupertypeInner extends Holder<T[]> implements Comparable<T[]> {}
+
     /**
      * An inner class whose superclass is a member class of another instantiation of {@link Outer}.
      */
@@ -420,6 +423,9 @@ public class ClassOrInterfaceTypeTest {
 
   /** A field of type {@code Outer<String>.NonGenericSupertypeInner}. */
   public Outer<String>.NonGenericSupertypeInner nonGenericSupertypeInner;
+
+  /** A field of type {@code Outer<? extends Number>.ArraySupertypeInner}. */
+  public Outer<? extends Number>.ArraySupertypeInner arraySupertypeInnerOfWildcardOuter;
 
   /** A field of type {@code Outer<String>.OtherOuterSubInner}. */
   public Outer<String>.OtherOuterSubInner otherOuterSubInner;
@@ -743,5 +749,29 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(
         stringInteger.isSubtypeOfOrEqualTo(genericInnerType(JavaTypes.STRING_TYPE, integerType)));
     assertFalse(stringInteger.isSubtypeOfOrEqualTo(genericInnerType(longType, integerType)));
+  }
+
+  /**
+   * The supertypes of a member class whose enclosing type has a wildcard argument are those of the
+   * capture conversion of the enclosing type: the superclass of {@code Outer<? extends
+   * Number>.ArraySupertypeInner} is {@code Holder<CAP[]>}, where {@code CAP} is a capture variable.
+   */
+  @Test
+  public void memberOfWildcardTypeSupertypesTest() throws NoSuchFieldException {
+    ClassOrInterfaceType inner =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class
+                .getField("arraySupertypeInnerOfWildcardOuter")
+                .getGenericType());
+    ClassOrInterfaceType superclass = inner.getSuperclass();
+    assertTrue(superclass.runtimeClassIs(Holder.class));
+    ReferenceType argument =
+        ((ReferenceArgument) ((InstantiatedType) superclass).getTypeArguments().get(0))
+            .getReferenceType();
+    assertTrue(argument instanceof ArrayType);
+    assertTrue(((ArrayType) argument).getComponentType() instanceof CaptureTypeVariable);
+    List<ClassOrInterfaceType> interfaces = inner.getInterfaces();
+    assertEquals(1, interfaces.size());
+    assertTrue(interfaces.get(0).runtimeClassIs(Comparable.class));
   }
 }
