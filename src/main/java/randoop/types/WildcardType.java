@@ -150,16 +150,19 @@ class WildcardType extends ParameterType {
 
   /**
    * Returns true if this wildcard contains the given wildcard (JLS section 4.5.1), as determined by
-   * {@link WildcardArgument#contains(TypeArgument)}:
+   * {@link WildcardArgument#contains(TypeArgument)}. From a reflection perspective, {@code ?} is
+   * just {@code ? extends Object}. The cases are:
    *
    * <ul>
    *   <li>{@code ?}, which is {@code ? extends Object}, contains every wildcard, including {@code ?
    *       super S}
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
+   *   <li>{@code ? super T} does not contain any upper-bounded wildcard, including {@code ?}
    * </ul>
    *
-   * {@code ? super T} does not contain {@code ?}.
+   * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
+   * equivalent {@link ReferenceBound}.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise

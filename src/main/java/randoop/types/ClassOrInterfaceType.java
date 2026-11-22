@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.plumelib.util.CollectionsPlume;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -85,11 +86,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
+      Class<?> rawType = (Class<?>) t.getRawType();
+      // If the type arguments of the owner type, and of its own owner types, are the type
+      // parameters of the declarations of the enclosing classes, then the enclosing type from the
+      // declaration of the member class is correct.  Otherwise, the owner type is preserved.
+      java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
-      Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        java.lang.reflect.Type ownerType = getPreservedOwnerType(t);
         if (ownerType != null) {
           // Use the owner type rather than the enclosing class, because the owner type's type
           // arguments may differ from the enclosing class's type parameters.  For example, in
@@ -102,6 +106,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         }
         return forClass(rawType);
       }
+      // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
+      // ParameterizedType.forType keeps the owner type, whose type arguments its own member
+      // classes and supertypes may use.
       return ParameterizedType.forType(t);
     }
 
@@ -152,7 +159,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param type a parameterized type
    * @return true if {@code type} is the type that its class declaration denotes
    */
-  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+  /*package*/ static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
     Class<?> rawType = (Class<?>) type.getRawType();
     if (!Arrays.equals(type.getActualTypeArguments(), rawType.getTypeParameters())) {
       return false;
@@ -221,6 +228,40 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
       Substitution substitution) {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
+  }
+
+  /**
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of their classes. The declared supertypes of a member class can mention
+   * those type parameters. For example, given {@code class Outer<E> { class Inner extends
+   * ArrayList<E> {} }}, the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
+   *
+   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
+   * declared supertypes are already correct), or if no enclosing type is parameterized.
+   *
+   * @return the substitution for the type parameters of the enclosing types, or null if none is
+   *     needed
+   */
+  /*package*/ final @Nullable Substitution getEnclosingSubstitution() {
+    if (!isMemberClass() || enclosingType.isGenericForm()) {
+      return null;
+    }
+    Substitution result = new Substitution();
+    // A type parameter is mapped to a type, not to a wildcard: the supertypes of a type with
+    // wildcard arguments are those of its capture conversion.  Capture conversion converts the
+    // enclosing types of the enclosing type too, and returns a type without wildcard arguments
+    // unchanged.
+    @Nullable ClassOrInterfaceType enclosing = enclosingType.applyCaptureConversion();
+    while (enclosing != null) {
+      if (enclosing instanceof InstantiatedType) {
+        List<TypeVariable> parameters =
+            CollectionsPlume.mapList(
+                TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
+        result = result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
+      }
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
+    }
+    return result.isEmpty() ? null : result;
   }
 
   @Override
@@ -436,7 +477,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return superResult;
     }
     if (goalType.isVariable()) {
-      // This type cannot instantiate the type variable.
+      // The bounds of the type variable reject this type.
       return null;
     }
 
@@ -471,7 +512,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           }
         } else if (!thisEnclosingType.equals(enclosingGoalType)) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
-          // different type, such as Outer<String>.
+          // different type, such as Outer<String>:  the type arguments of the enclosing goal type
+          // are fixed, as in Outer<String>.Inner<X>, and the enclosing type of this type's view of
+          // the goal type's class does not match them, as in Outer<Integer>.Inner<String>.
           return null;
         }
       }
@@ -512,42 +555,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
     return null;
-  }
-
-  /**
-   * Returns a substitution that maps the type parameters of the classes that enclose this type's
-   * class to the type arguments of this type's enclosing types. For example, for {@code
-   * Outer<Integer>.Inner}, the result maps the type parameter {@code T} of {@code Outer<T>} to
-   * {@code Integer}. A type parameter whose type argument is a wildcard is not mapped. Applying the
-   * result to a supertype in the declaration of this type's class, such as {@code ArrayList<T>},
-   * yields the supertype of this type, such as {@code ArrayList<Integer>}.
-   *
-   * @return a substitution for the type parameters of the classes that enclose this type's class
-   */
-  /*package*/ final Substitution getEnclosingTypeSubstitution() {
-    Substitution result = new Substitution();
-    for (ClassOrInterfaceType type = this; type.isMemberClass(); type = type.enclosingType) {
-      ClassOrInterfaceType enclosing = type.enclosingType;
-      if (!(enclosing instanceof InstantiatedType)) {
-        continue;
-      }
-      java.lang.reflect.TypeVariable<?>[] parameters =
-          enclosing.getRuntimeClass().getTypeParameters();
-      List<TypeArgument> arguments = enclosing.getTypeArguments();
-      if (parameters.length != arguments.size()) {
-        continue;
-      }
-      for (int i = 0; i < parameters.length; i++) {
-        TypeArgument argument = arguments.get(i);
-        if (argument instanceof ReferenceArgument) {
-          result =
-              result.withMapping(
-                  TypeVariable.forType(parameters[i]),
-                  ((ReferenceArgument) argument).getReferenceType());
-        }
-      }
-    }
-    return result;
   }
 
   /**
