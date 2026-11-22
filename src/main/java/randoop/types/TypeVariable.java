@@ -587,8 +587,8 @@ public abstract class TypeVariable extends ParameterType {
    * Map<X, XS>} from {@code Map<X, XI>}.
    *
    * <p>Array, class, interface, and wildcard types are compared structurally, without first
-   * comparing them with {@link Object#equals(Object)}. A wildcard bound nested in such a type can be
-   * a {@link LazyParameterBound} in one type and the equivalent {@link ReferenceBound} in the
+   * comparing them with {@link Object#equals(Object)}. A wildcard bound nested in such a type can
+   * be a {@link LazyParameterBound} in one type and the equivalent {@link ReferenceBound} in the
    * other, as for {@code List<? extends Outer<String>.Inner>} before and after a substitution; such
    * bounds are not equal, but they are identical.
    *
