@@ -187,6 +187,9 @@ public class ClassOrInterfaceTypeTest {
      */
     class ComparableInner<U extends Comparable<T>> {}
 
+    /** An inner class whose supertypes mention the type parameter of the enclosing class. */
+    abstract class NonGenericSupertypeInner extends Holder<T> implements Comparable<T> {}
+
     /**
      * An inner class whose superclass is a member class of another instantiation of {@link Outer}.
      */
@@ -346,6 +349,9 @@ public class ClassOrInterfaceTypeTest {
 
   /** A field of type {@code Outer<?>.GenericInner<Integer>}. */
   public Outer<?>.GenericInner<Integer> genericInnerOfWildcardOuter;
+
+  /** A field of type {@code Outer<String>.NonGenericSupertypeInner}. */
+  public Outer<String>.NonGenericSupertypeInner nonGenericSupertypeInner;
 
   /** A field of type {@code Outer<String>.OtherOuterSubInner}. */
   public Outer<String>.OtherOuterSubInner otherOuterSubInner;
@@ -561,5 +567,19 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(
         JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(genericInnerParameters.get(0)));
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(genericInnerParameters.get(1)));
+  }
+
+  @Test
+  public void nonGenericMemberSupertypesTest() throws NoSuchFieldException {
+    // The supertypes of Outer<String>.NonGenericSupertypeInner substitute String for T.
+    ClassOrInterfaceType inner =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class.getField("nonGenericSupertypeInner").getGenericType());
+    assertTrue(inner instanceof NonParameterizedType);
+    GenericClassType holderType = (GenericClassType) ClassOrInterfaceType.forClass(Holder.class);
+    assertEquals(holderType.instantiate(JavaTypes.STRING_TYPE), inner.getSuperclass());
+    assertEquals(
+        Collections.singletonList(JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE)),
+        inner.getInterfaces());
   }
 }
