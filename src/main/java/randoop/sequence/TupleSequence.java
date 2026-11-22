@@ -43,7 +43,7 @@ public final class TupleSequence {
   public Sequence sequence;
 
   /** The list of statement indices that define outputs of this sequence. */
-  private List<Integer> outputIndices;
+  private final List<Integer> outputIndices;
 
   /**
    * Create a TupleSequence that concatenates the given sequences, choosing the given variable from

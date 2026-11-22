@@ -1,7 +1,6 @@
 package randoop.util;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
 
 /**
  * Wraps a method or constructor together with its arguments. Can be run only once. {@link
@@ -124,14 +123,14 @@ public abstract class ReflectionCode {
     } else if (!hasStarted() && hasRun()) {
       return "ILLEGAL STATE";
     } else if (exceptionThrown == null) {
-      return "returned: " + StringsPlume.toStringAndClass(retval);
+      return "returned: " + Util.toStringAndClassSafely(retval);
     } else {
-      return "threw: " + exceptionThrown;
+      return "threw: " + Util.toStringSafely(exceptionThrown);
     }
   }
 
   /** Indicates a bug in the ReflectionCode class. */
-  static final class ReflectionCodeException extends IllegalStateException {
+  /*package*/ static final class ReflectionCodeException extends IllegalStateException {
     /** ID for serializing this class. */
     private static final long serialVersionUID = -7508201027241079866L;
 
@@ -140,7 +139,7 @@ public abstract class ReflectionCode {
      *
      * @param msg the detail message
      */
-    ReflectionCodeException(String msg) {
+    /*package*/ ReflectionCodeException(String msg) {
       super(msg);
     }
 
@@ -150,7 +149,7 @@ public abstract class ReflectionCode {
      * @param msg the detail message
      * @param cause the cause
      */
-    ReflectionCodeException(String msg, Throwable cause) {
+    /*package*/ ReflectionCodeException(String msg, Throwable cause) {
       super(msg, cause);
     }
 
@@ -159,7 +158,7 @@ public abstract class ReflectionCode {
      *
      * @param cause the cause
      */
-    ReflectionCodeException(Throwable cause) {
+    /*package*/ ReflectionCodeException(Throwable cause) {
       super(cause);
     }
   }

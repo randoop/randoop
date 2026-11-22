@@ -81,13 +81,36 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType substitute(Substitution substitution) {
-    return (NonParameterizedType)
-        substitute(substitution, new NonParameterizedType(this.runtimeType));
+    ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
+    if (sameType(enclosing, enclosingType)) {
+      return this;
+    }
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    if (isMemberClass()) {
+      result.enclosingType = enclosing;
+    }
+    return result;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Does not side-effect this type, which can be shared: for example, {@link #forClass} caches
+   * it, and {@link #substitute} can return it. If capture conversion changes the enclosing type of
+   * this member class, then the result is a new type.
+   */
   @Override
   public NonParameterizedType applyCaptureConversion() {
-    return (NonParameterizedType) applyCaptureConversion(this);
+    if (!isMemberClass()) {
+      return this;
+    }
+    ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
+    if (sameType(convertedEnclosingType, enclosingType)) {
+      return this;
+    }
+    NonParameterizedType result = new NonParameterizedType(this.runtimeType);
+    result.enclosingType = convertedEnclosingType;
+    return result;
   }
 
   @Override
@@ -209,6 +232,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
+  public boolean isGenericForm() {
+    return !isRawtype() && super.isGenericForm();
+  }
+
+  @Override
   public boolean isInterface() {
     return runtimeType.isInterface();
   }
@@ -221,6 +249,26 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public boolean isStatic() {
     return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Also returns true if {@code otherType} is the generic form of this type's class (see {@link
+   * ClassOrInterfaceType#isGenericForm()}). For example, raw {@code List} is a subtype of {@code
+   * List<E>}, and {@code Outer<String>.Inner} is a subtype of {@code Outer<T>.Inner}. This is not a
+   * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
+   * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
+   * only by unchecked conversion.
+   */
+  @Override
+  public boolean isSubtypeOfOrEqualTo(Type otherType) {
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+    return otherType instanceof ClassOrInterfaceType
+        && otherType.runtimeClassIs(runtimeType)
+        && ((ClassOrInterfaceType) otherType).isGenericForm();
   }
 
   /**

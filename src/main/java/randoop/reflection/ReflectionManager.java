@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,10 +55,10 @@ public class ReflectionManager {
    * <p>DO NOT use this field directly (except on classes and fields)! Instead, call the methods
    * {@code isAccessible()} that are defined in this class.
    */
-  private AccessibilityPredicate predicate;
+  private final AccessibilityPredicate predicate;
 
   /** The visitors to apply. */
-  private ArrayList<ClassVisitor> visitors;
+  private final List<ClassVisitor> visitors;
 
   /**
    * Creates a manager object that uses the given predicate to determine which classes, methods, and

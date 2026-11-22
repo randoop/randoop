@@ -78,7 +78,11 @@ public final class ReferenceArgument extends TypeArgument {
 
   @Override
   public TypeArgument substitute(Substitution substitution) {
-    return TypeArgument.forType(referenceType.substitute(substitution));
+    ReferenceType type = referenceType.substitute(substitution);
+    if (Type.sameType(type, referenceType)) {
+      return this;
+    }
+    return TypeArgument.forType(type);
   }
 
   /**
@@ -138,6 +142,7 @@ public final class ReferenceArgument extends TypeArgument {
     return referenceType.isGeneric(ignoreWildcards);
   }
 
+  /*package*/
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     if (!(otherArgument instanceof ReferenceArgument)) {
