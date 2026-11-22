@@ -287,9 +287,9 @@ public class Substitution {
   }
 
   /**
-   * Returns this substitution, modified so that it maps each of the given type variables to
-   * itself: each one that it maps to a different object, including a copy of it with other bounds,
-   * is mapped to itself instead. Applying the result to a type in which only those type variables
+   * Returns this substitution, modified so that it maps each of the given type variables to itself:
+   * each one that it maps to a different object, including a copy of it with other bounds, is
+   * mapped to itself instead. Applying the result to a type in which only those type variables
    * occur does not change the type. This is useful for comparing a type to which this substitution
    * has already been applied, without applying it a second time to the type variables that came
    * from its replacements. The mappings of other type variables are unchanged, so they still

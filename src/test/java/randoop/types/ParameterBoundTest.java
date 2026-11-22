@@ -520,8 +520,7 @@ public class ParameterBoundTest {
   /** Substituting only the outermost owner type argument keeps the substituted owner. */
   @Test
   public void testSubstitutionOfOutermostOwnerArgument() {
-    ParameterBound bound =
-        new LazyParameterBound(fieldType(ThreeLevelOuter.Middle.class, "inner"));
+    ParameterBound bound = new LazyParameterBound(fieldType(ThreeLevelOuter.Middle.class, "inner"));
     GenericClassType outer = GenericClassType.forClass(ThreeLevelOuter.class);
     TypeVariable a = outer.getTypeParameters().get(0);
     ParameterBound substituted = bound.substitute(new Substitution(a, JavaTypes.STRING_TYPE));
