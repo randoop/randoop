@@ -344,13 +344,6 @@ public class ClassOrInterfaceTypeTest {
         enclosing.super();
       }
     }
-
-    /**
-     * A generic inner class.
-     *
-     * @param <I> the type parameter
-     */
-    class GenericInner<I> {}
   }
 
   /** Declares methods whose parameter types are member classes of parameterized types. */
