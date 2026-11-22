@@ -428,10 +428,29 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * <p>Performs a depth-first search of the supertype relation for this type. If the goal type is
    * an interface, then searches the interfaces of this type first.
    *
+   * <p>If this type is a member class whose enclosing type has a wildcard type argument, as in
+   * {@code Outer<? extends Number>.Inner}, the search starts from this type with capture conversion
+   * applied to its enclosing type. Otherwise, a supertype such as {@code ArrayList<T>}, for {@code
+   * class Inner extends ArrayList<T>} declared in {@code Outer<T>}, would keep the type parameter
+   * {@code T} of {@code Outer} rather than the capture of {@code ? extends Number}.
+   *
    * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
+  @SuppressWarnings("ReferenceEquality") // test whether capture conversion created a new type
   public @Nullable InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    if (isMemberClass() && enclosingType.hasWildcardArgument()) {
+      ClassOrInterfaceType captured;
+      try {
+        captured = withCapturedEnclosingType();
+      } catch (LazyParameterBound.LazyBoundException e) {
+        // Search the supertypes of this type as it is.
+        captured = this;
+      }
+      if (captured != this) {
+        return captured.getMatchingSupertype(goalType);
+      }
+    }
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
@@ -468,6 +487,33 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     return null;
+  }
+
+  /**
+   * Returns this type, but with capture conversion applied to its enclosing type, if this type is a
+   * member class. Unlike {@link #applyCaptureConversion()}, does not convert the type arguments of
+   * this type itself. Returns this type if it is not a member class, or if it is neither an {@link
+   * InstantiatedType} nor a {@link NonParameterizedType}.
+   *
+   * @return this type with capture conversion applied to its enclosing type
+   */
+  private ClassOrInterfaceType withCapturedEnclosingType() {
+    if (!isMemberClass()) {
+      return this;
+    }
+    if (this instanceof NonParameterizedType) {
+      // A NonParameterizedType has no type arguments of its own to convert.
+      return applyCaptureConversion();
+    }
+    if (this instanceof InstantiatedType) {
+      InstantiatedType instantiatedType = (InstantiatedType) this;
+      InstantiatedType result =
+          new InstantiatedType(
+              instantiatedType.getGenericClassType(), instantiatedType.getTypeArguments());
+      result.enclosingType = enclosingType.applyCaptureConversion();
+      return result;
+    }
+    return this;
   }
 
   @Override
@@ -563,42 +609,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return this;
     }
     return getSupertypeOfClass(runtimeClass);
-  }
-
-  /**
-   * Returns a substitution that maps the type parameters of the classes that enclose this type's
-   * class to the type arguments of this type's enclosing types. For example, for {@code
-   * Outer<Integer>.Inner}, the result maps the type parameter {@code T} of {@code Outer<T>} to
-   * {@code Integer}. A type parameter whose type argument is a wildcard is not mapped. Applying the
-   * result to a supertype in the declaration of this type's class, such as {@code ArrayList<T>},
-   * yields the supertype of this type, such as {@code ArrayList<Integer>}.
-   *
-   * @return a substitution for the type parameters of the classes that enclose this type's class
-   */
-  /*package*/ final Substitution getEnclosingTypeSubstitution() {
-    Substitution result = new Substitution();
-    for (ClassOrInterfaceType type = this; type.isMemberClass(); type = type.enclosingType) {
-      ClassOrInterfaceType enclosing = type.enclosingType;
-      if (!(enclosing instanceof InstantiatedType)) {
-        continue;
-      }
-      java.lang.reflect.TypeVariable<?>[] parameters =
-          enclosing.getRuntimeClass().getTypeParameters();
-      List<TypeArgument> arguments = enclosing.getTypeArguments();
-      if (parameters.length != arguments.size()) {
-        continue;
-      }
-      for (int i = 0; i < parameters.length; i++) {
-        TypeArgument argument = arguments.get(i);
-        if (argument instanceof ReferenceArgument) {
-          result =
-              result.withMapping(
-                  TypeVariable.forType(parameters[i]),
-                  ((ReferenceArgument) argument).getReferenceType());
-        }
-      }
-    }
-    return result;
   }
 
   /**

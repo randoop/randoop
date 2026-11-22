@@ -1891,12 +1891,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
-  static class Version<U> implements Comparable<Version<U>> {
-    @Override
-    public int compareTo(Version<U> other) {
-      return 0;
-    }
-  }
+  abstract static class Version<U> implements Comparable<Version<U>> {}
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
@@ -3647,6 +3642,279 @@ public class TypeVariableTest {
     assertFalse(
         Subtyping.isSubtypeOrEqual(
             listType.instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()), superB, unknownB));
+  }
+
+  @Test
+  public void testEnclosingTypeParameterInParameterizedBoundStandsForItself()
+      throws NoSuchMethodException {
+    TypeVariable t =
+        TypeVariable.forType(Outer.class.getDeclaredMethod("m").getTypeParameters()[0]);
+    TypeVariable e = typeParameter(Outer.class, 0);
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    // E is fixed in Outer, so List<String> is not known to be a List<E>.
+    assertFalse(t.canBeInstantiatedBy(listOfString));
+    assertTrue(t.canBeInstantiatedBy(listOfString, new Substitution(e, JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A class with two unbounded type parameters.
+   *
+   * @param <X> a type parameter
+   * @param <Y> a type parameter
+   */
+  static class TwoUnbounded<X, Y> {}
+
+  @Test
+  public void testMappingToCopyWithOtherBoundsIsFixed() {
+    TypeVariable x = typeParameter(TwoUnbounded.class, 0);
+    TypeVariable y = typeParameter(TwoUnbounded.class, 1);
+    TypeVariable copyOfX =
+        x.createCopyWithBounds(
+            x.getLowerTypeBound(), new EagerReferenceBound(ReferenceType.forClass(Number.class)));
+    ReferenceType integer = JavaTypes.INT_TYPE.toBoxedPrimitive();
+
+    // A type variable that the substitution maps to itself is an unknown, but a copy of it that
+    // the substitution maps it to stands for itself.
+    assertTrue(
+        new Substitution(y, JavaTypes.STRING_TYPE)
+            .extendWithIdentity(Collections.singletonList(x))
+            .isUnknown(x));
+    Substitution toCopy = new Substitution(Arrays.asList(x, y), copyOfX, JavaTypes.STRING_TYPE);
+    assertFalse(toCopy.isUnknown(copyOfX));
+
+    // Integer is within the bound of the copy, but is not known to be a subtype of it.
+    assertFalse(new EagerReferenceBound(x).isUpperBound(integer, new Substitution(x, copyOfX)));
+
+    // Mapping x to itself keeps a copy of x, but mapping a copy of x to x replaces the copy.
+    assertTrue(new Substitution(x, x).isConsistentWith(new Substitution(x, x)));
+    assertFalse(new Substitution(x, x).isConsistentWith(new Substitution(copyOfX, x)));
+  }
+
+  @Test
+  public void testLazyReferenceBoundReplacementVariableIsFixed() {
+    TypeVariable x = typeParameter(TwoUnbounded.class, 0);
+    TypeVariable e = typeParameter(Outer.class, 0);
+    // An unmapped x is an unknown, which can be String.
+    assertTrue(new LazyReferenceBound(x).isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+    // With x := E, String is not known to be a subtype of E.
+    assertFalse(
+        new LazyReferenceBound(x).isUpperBound(JavaTypes.STRING_TYPE, new Substitution(x, e)));
+  }
+
+  @Test
+  public void testWildcardContainsWildcard() {
+    WildcardArgument unbounded =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true));
+    WildcardArgument superNumber =
+        new WildcardArgument(
+            new WildcardType(new EagerReferenceBound(ReferenceType.forClass(Number.class)), false));
+    WildcardArgument superInteger =
+        new WildcardArgument(
+            new WildcardType(
+                new EagerReferenceBound(JavaTypes.INT_TYPE.toBoxedPrimitive()), false));
+    assertTrue(unbounded.contains(superNumber));
+    assertFalse(superNumber.contains(unbounded));
+    assertTrue(superInteger.contains(superNumber));
+    assertFalse(superNumber.contains(superInteger));
+
+    // A lazy bound, such as Comparable<T> for T extends Comparable<T>, can be compared.
+    ParameterBound selfComparable = typeParameter(SelfComparableBound.class, 0).getUpperTypeBound();
+    assertTrue(selfComparable instanceof LazyParameterBound);
+    WildcardArgument extendsSelfComparable =
+        new WildcardArgument(new WildcardType(selfComparable, true));
+    WildcardArgument otherExtendsSelfComparable =
+        new WildcardArgument(new WildcardType(selfComparable, true));
+    assertTrue(extendsSelfComparable.contains(otherExtendsSelfComparable));
+  }
+
+  /**
+   * A generic class with a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  static class GenericOwner<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class GenericMember<U> {}
+  }
+
+  /**
+   * A generic class with a member class whose type parameter is bounded by the type parameter of
+   * the class.
+   *
+   * @param <T> the type parameter
+   */
+  static class BoundingOwner<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> a type parameter bounded by {@code T}
+     */
+    class BoundedMember<U extends T> {}
+  }
+
+  /**
+   * A generic class.
+   *
+   * @param <V> the type parameter
+   */
+  static class Box<V> {}
+
+  /**
+   * A generic class with a member class whose superclass mentions the type parameter of the class.
+   *
+   * @param <T> the type parameter
+   */
+  static class BoxOwner<T> {
+    /** A member class that declares no type parameters. */
+    class BoxMember extends Box<T> {}
+  }
+
+  /**
+   * A generic class with a generic member class of a generic member class.
+   *
+   * @param <A> the type parameter
+   */
+  static class DeclarationFormOwner<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Middle<B> {
+      /**
+       * A generic member class.
+       *
+       * @param <C> the type parameter
+       */
+      class Leaf<C> {}
+
+      /** A field whose type's owner is {@code DeclarationFormOwner<A>.Middle<B>}. */
+      Leaf<String> leaf;
+    }
+  }
+
+  /**
+   * A class whose type parameter's bound is a member class of a parameterized type.
+   *
+   * @param <T> a type parameter bounded by a member class
+   */
+  static class MemberClassBound<T extends GenericOwner<String>.GenericMember<Integer>> {}
+
+  /** Fields and methods whose types are member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class OwnerFields {
+    /** A member class of {@code GenericOwner<String>}. */
+    GenericOwner<String>.GenericMember<Integer> stringOwner;
+
+    /** A member class of {@code GenericOwner<Number>}. */
+    GenericOwner<Number>.GenericMember<Integer> numberOwner;
+
+    /** A member class of {@code GenericOwner<Long>}, with a wildcard argument. */
+    GenericOwner<Long>.GenericMember<? extends Number> longOwnerExtendsNumber;
+
+    /** A member class of {@code GenericOwner<String>}, with a wildcard argument. */
+    GenericOwner<String>.GenericMember<? extends Number> stringOwnerExtendsNumber;
+
+    /** A member class with a wildcard argument whose bound depends on the enclosing type. */
+    BoundingOwner<String>.BoundedMember<?> wildcardBoundedMember;
+
+    /** A member class of a type with a wildcard argument. */
+    BoxOwner<? extends Number>.BoxMember wildcardOwnerMember;
+
+    /** A box of a wildcard type. */
+    Box<? extends Number> extendsNumberBox;
+
+    /**
+     * A generic method whose parameter is a member class of a generic owner type.
+     *
+     * @param <X> the type parameter
+     * @param parameter a parameter
+     */
+    <X> void instantiateOwner(GenericOwner<X>.GenericMember<Integer> parameter) {}
+  }
+
+  /**
+   * Returns the type of the given field of {@link OwnerFields}.
+   *
+   * @param name the name of a field of {@link OwnerFields}
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static ReferenceType ownerFieldType(String name) throws NoSuchFieldException {
+    return (ReferenceType) Type.forType(OwnerFields.class.getDeclaredField(name).getGenericType());
+  }
+
+  @Test
+  public void testSubtypeComparesEnclosingTypes() throws NoSuchFieldException {
+    ReferenceType stringOwner = ownerFieldType("stringOwner");
+    ReferenceType numberOwner = ownerFieldType("numberOwner");
+    assertTrue(stringOwner.isSubtypeOfOrEqualTo(stringOwner));
+    assertFalse(stringOwner.isSubtypeOfOrEqualTo(numberOwner));
+    assertTrue(stringOwner.isSubtypeOfOrEqualTo(ownerFieldType("stringOwnerExtendsNumber")));
+    assertFalse(stringOwner.isSubtypeOfOrEqualTo(ownerFieldType("longOwnerExtendsNumber")));
+
+    // The same holds for a type variable whose bound is a member class.
+    TypeVariable t = typeParameter(MemberClassBound.class);
+    assertTrue(t.isSubtypeOfOrEqualTo(stringOwner));
+    assertFalse(t.isSubtypeOfOrEqualTo(numberOwner));
+  }
+
+  @Test
+  public void testCaptureBoundUsesEnclosingTypeArgument() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType) ownerFieldType("wildcardBoundedMember")).applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    // The bound of U is T, which is String in BoundingOwner<String>.
+    assertTrue(capture.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testSupertypeOfMemberOfWildcardOwner() throws NoSuchFieldException {
+    // BoxOwner<? extends Number>.BoxMember extends Box<capture of ? extends Number>.
+    assertTrue(
+        Subtyping.isSubtypeOrEqual(
+            ownerFieldType("wildcardOwnerMember"),
+            ownerFieldType("extendsNumberBox"),
+            new Substitution()));
+  }
+
+  @Test
+  public void testInstantiatingSubstitutionMatchesEnclosingType()
+      throws NoSuchMethodException, NoSuchFieldException {
+    Method method =
+        OwnerFields.class.getDeclaredMethod("instantiateOwner", GenericOwner.GenericMember.class);
+    ReferenceType goal = (ReferenceType) Type.forType(method.getGenericParameterTypes()[0]);
+    TypeVariable x = TypeVariable.forType(method.getTypeParameters()[0]);
+    ReferenceType stringOwner = ownerFieldType("stringOwner");
+    // GenericOwner<String>.GenericMember<Integer> equals GenericOwner<X>.GenericMember<Integer>
+    // except for the enclosing types, so the substitution maps X.
+    Substitution substitution = stringOwner.getInstantiatingSubstitution(goal);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(x));
+  }
+
+  @Test
+  public void testSubstitutionIntoEnclosingTypeOfDeclarationFormOwner()
+      throws NoSuchFieldException {
+    java.lang.reflect.Type leafType =
+        DeclarationFormOwner.Middle.class.getDeclaredField("leaf").getGenericType();
+    TypeVariable a = typeParameter(DeclarationFormOwner.class, 0);
+    ParameterBound bound =
+        new LazyParameterBound(leafType).substitute(new Substitution(a, JavaTypes.STRING_TYPE));
+    ClassOrInterfaceType leaf = (ClassOrInterfaceType) ((ReferenceBound) bound).getBoundType();
+    // The substitution changes only the enclosing type of Middle<B>, which is kept.
+    ClassOrInterfaceType middle = leaf.enclosingType;
+    assertNotNull(middle);
+    assertEquals(
+        GenericClassType.forClass(DeclarationFormOwner.class).instantiate(JavaTypes.STRING_TYPE),
+        middle.enclosingType);
   }
 
   /**

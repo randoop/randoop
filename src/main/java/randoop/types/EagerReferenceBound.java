@@ -87,7 +87,13 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       ReferenceType argReferenceType = (ReferenceType) argType;
-      if (thisBoundType.isVariable() && thisBoundType.equals(getBoundType())) {
+      // Test whether the substitution replaces the type variable, rather than whether the result
+      // equals it:  a copy of the type variable with other bounds is equal to it, but if the
+      // substitution maps the type variable to the copy, the copy stands for itself.  The result is
+      // also a copy if the substitution does not replace the type variable but changes its bounds.
+      if (thisBoundType.isVariable()
+          && getBoundType().isVariable()
+          && ((TypeVariable) getBoundType()).getSubstitutedType(subst) == null) {
         // The substitution does not replace the type variable.  Mapping it to itself makes it an
         // unknown if it is a type parameter of a declaration that the substitution instantiates,
         // such as a sibling of the type parameter whose bound this is.  A substitution that
@@ -129,6 +135,18 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
+      // As for a type variable bound above, a type parameter in the bound that is fixed, such as a
+      // type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
+      // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
+      // would accept String as an instantiation of E.
+      if (subst.instantiatesTypeParameters()) {
+        Substitution completeSubstitution =
+            subst.extendWithIdentity(thisBoundType.getTypeParameters());
+        if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
+          return Subtyping.isSubtypeOrEqual(
+              (ReferenceType) argType, thisBoundType, completeSubstitution);
+        }
+      }
       InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
@@ -140,5 +158,23 @@ class EagerReferenceBound extends ReferenceBound {
       return argSuperType.isInstantiationOf(boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
+  }
+
+  /**
+   * Returns true if the given type contains a type parameter that stands for itself rather than for
+   * an unknown type, as determined by {@link Substitution#isUnknown(ReferenceType)}. Capture
+   * variables are not considered.
+   *
+   * @param type a type
+   * @param substitution a substitution that maps each type variable in {@code type}
+   * @return true if {@code type} contains a type parameter that stands for itself
+   */
+  private static boolean hasFixedTypeParameter(ReferenceType type, Substitution substitution) {
+    for (TypeVariable variable : type.getTypeParameters()) {
+      if (variable instanceof ExplicitTypeVariable && !substitution.isUnknown(variable)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

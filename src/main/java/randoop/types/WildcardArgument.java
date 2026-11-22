@@ -110,8 +110,9 @@ public class WildcardArgument extends TypeArgument {
    *   <li>{@code ? super B} does not contain {@code ? extends S}, not even {@code ?}
    * </ul>
    *
-   * <p>A bound that is a {@link LazyParameterBound} is converted to the equivalent {@link
-   * ReferenceBound} before it is compared.
+   * <p>A bound that is a {@link LazyParameterBound}, such as {@code Comparable<T>} for {@code T
+   * extends Comparable<T>}, is converted to the equivalent {@link ReferenceBound} before it is
+   * compared.
    */
   @Override
   public boolean contains(TypeArgument argument) {

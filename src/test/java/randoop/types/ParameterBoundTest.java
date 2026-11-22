@@ -313,6 +313,47 @@ public class ParameterBoundTest {
     assertTrue(variableBound.isLowerBound(stringBound, substitution));
   }
 
+  /** The substitution is not applied to a lazy bound whose lower bound is being checked. */
+  @Test
+  public void testSubstitutionNotAppliedToLazyTarget() {
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    ParameterBound variableArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(arrayHolderVariable));
+    ParameterBound nullArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.NULL_TYPE));
+    // In the target T[], T stands for itself, even though the substitution maps it to String.
+    assertFalse(
+        stringArrayBound.isLowerBound(
+            arrayBound, new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE)));
+    assertTrue(variableArrayBound.isLowerBound(arrayBound, new Substitution()));
+    assertTrue(nullArrayBound.isLowerBound(arrayBound, new Substitution()));
+  }
+
+  /** An intersection is a lower bound of a lazy bound if any of its members is. */
+  @Test
+  public void testIntersectionAsLowerBoundOfLazyBound() {
+    InstantiatedType listOfT =
+        GenericClassType.forClass(List.class).instantiate(arrayHolderVariable);
+    ParameterBound listAndSerializable =
+        new IntersectionTypeBound(
+            Arrays.<ParameterBound>asList(
+                new EagerReferenceBound(listOfT),
+                new EagerReferenceBound(JavaTypes.SERIALIZABLE_TYPE)));
+    assertTrue(
+        listAndSerializable.isLowerBound(new LazyReferenceBound(listOfT), new Substitution()));
+    // List<String> is not a subtype of every instantiation of List<T>.
+    ParameterBound listOfStringAndSerializable =
+        new IntersectionTypeBound(
+            Arrays.<ParameterBound>asList(
+                new EagerReferenceBound(
+                    GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE)),
+                new EagerReferenceBound(JavaTypes.SERIALIZABLE_TYPE)));
+    assertFalse(
+        listOfStringAndSerializable.isLowerBound(
+            new LazyReferenceBound(listOfT), new Substitution()));
+  }
+
   /** An intersection is a subtype of a type if any of its members is. */
   @Test
   public void testIntersectionAsLowerBound() {

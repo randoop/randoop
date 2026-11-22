@@ -629,7 +629,9 @@ class LazyParameterBound extends ParameterBound {
    * #toReferenceBound()} converts this bound to, in which each type variable remains a type
    * variable. That bound stands for every instantiation of its type variables, so only the null
    * type and that bound's own type are lower bounds of it; see {@link
-   * LazyReferenceBound#hasLowerBound}. Returns false if this bound cannot be converted.
+   * LazyReferenceBound#hasLowerBound}. For example, for this bound {@code T[]} with {@code T :=
+   * String}, {@code String[]} is not known to be a subtype of {@code T[]}. Returns false if this
+   * bound cannot be converted.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

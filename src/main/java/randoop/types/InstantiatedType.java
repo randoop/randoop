@@ -528,9 +528,10 @@ public class InstantiatedType extends ParameterizedType {
           i++;
         }
         // For a member class, the type arguments of the enclosing types must be contained too:
-        // Outer<String>.Inner<Integer> is not a subtype of Outer<Long>.Inner<Integer>.  Subtyping
-        // compares the type arguments of every enclosing level, including through a member class
-        // that declares no type parameters, as in Outer<?>.Middle.Inner<Integer>.
+        // Outer<String>.Inner<Integer> is not a subtype of Outer<Long>.Inner<Integer>, nor of
+        // Outer<Long>.Inner<? extends Number>.  Subtyping compares the type arguments of every
+        // enclosing level, including through a member class that declares no type parameters, as
+        // in Outer<?>.Middle.Inner<Integer>.
         boolean enclosingTypesContained =
             !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
                 || Subtyping.isSubtypeOrEqual(
