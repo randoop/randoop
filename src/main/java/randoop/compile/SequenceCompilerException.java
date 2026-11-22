@@ -24,7 +24,7 @@ public class SequenceCompilerException extends RuntimeException {
    * @param sourceText the source text for the compiled class
    * @param diagnostics the compiler diagnostics
    */
-  SequenceCompilerException(
+  /*package*/ SequenceCompilerException(
       String message, String sourceText, DiagnosticCollector<JavaFileObject> diagnostics) {
     super(message);
     this.sourceText = sourceText;
@@ -40,7 +40,7 @@ public class SequenceCompilerException extends RuntimeException {
    * @param sourceText the source text for the compiled class
    * @param diagnostics the compiler diagnostics
    */
-  SequenceCompilerException(
+  /*package*/ SequenceCompilerException(
       String message,
       Throwable cause,
       String sourceText,

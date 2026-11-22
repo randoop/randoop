@@ -139,7 +139,10 @@ public final class ReflectionExecutor {
             timed_out_tests.write(msg);
             timed_out_tests.flush();
           } catch (IOException ex) {
-            throw new RandoopBug("Error writing to demand-driven logging file: " + ex);
+            RandoopBug bug =
+                new RandoopBug("Error writing to demand-driven logging file: " + ex, ex);
+            bug.addSuppressed(e);
+            throw bug;
           }
         }
         return new ExceptionalExecution(
@@ -217,7 +220,8 @@ public final class ReflectionExecutor {
           "A RunnerThread thread shouldn't be interrupted by anyone! (This may be a bug in"
               + " Randoop; please report it at https://github.com/randoop/randoop/issues ,"
               + " providing the information requested at"
-              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)");
+              + " https://randoop.github.io/randoop/manual/index.html#bug-reporting .)",
+          e);
     }
   }
 

@@ -1,0 +1,2 @@
+//replacement file with whitespace around a method replacement and a trailing comment
+  javax.mail.Service.connect() randoop.mock.javax.mail.Service.connect(javax.mail.Service)  // mock connect

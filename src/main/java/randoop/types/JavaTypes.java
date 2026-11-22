@@ -79,7 +79,7 @@ public final class JavaTypes {
   private static final List<PrimitiveType> PRIMITIVE_TYPES;
 
   static {
-    ArrayList<PrimitiveType> types = new ArrayList<>(8);
+    List<PrimitiveType> types = new ArrayList<>(8);
     types.add(BOOLEAN_TYPE);
     types.add(BYTE_TYPE);
     types.add(CHAR_TYPE);

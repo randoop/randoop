@@ -570,6 +570,22 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     assertSubtypeOfDeclaringType(operation);
 
+    if (debug) {
+      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
+    }
+
+    // Test the operation for the method's declaring class, because an omit pattern names the class
+    // that declares a method.
+    if (omitPredicate.shouldOmit(operation)) {
+      // Record the operation for classType, which might inherit the method, so that
+      // OmitMethodsPredicate.omittingOverriddenMethods also omits the methods that classType
+      // implements via the method.
+      TypedClassOperation operationForType = operation.getOperationForType(classType);
+      Log.logPrintln("omitPredicate omits " + operationForType);
+      omittedOperations.add(operationForType);
+      return;
+    }
+
     if (operation.isStatic()) {
       // If this classType inherits this static method, but declaring class is not public, then
       // consider method to have classType as declaring class.
@@ -581,20 +597,6 @@ public class OperationExtractor extends DefaultClassVisitor {
           Log.logPrintln("OperationExtractor.visit: operation changed to " + operation);
         }
       }
-    }
-
-    if (debug) {
-      Log.logPrintf("  omitPredicate=%s%n", StringsPlume.toStringAndClass(omitPredicate));
-    }
-
-    // The declaring type of the method is not necessarily the classType, but may want to omit
-    // method in classType. So, create operation with the classType as declaring type for omit
-    // search.
-    TypedClassOperation operationForType = operation.getOperationForType(classType);
-    if (omitPredicate.shouldOmit(operationForType)) {
-      Log.logPrintln("omitPreditate omits " + operationForType);
-      omittedOperations.add(operationForType);
-      return;
     }
 
     if (operationSpecifications != null) {

@@ -24,7 +24,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * A sparse representation for the operation-outcome table. The integer {@code
    * operationMap.get(A).get(B)} is the number of times that (A, B) were arguments to {@link #add}.
    */
-  private final Map<TypedOperation, EnumMap<OperationOutcome, Integer>> operationMap;
+  private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
 
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
@@ -38,7 +38,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   @Override
   public void add(TypedOperation operation, OperationOutcome outcome) {
-    EnumMap<OperationOutcome, Integer> outcomeMap =
+    Map<OperationOutcome, Integer> outcomeMap =
         operationMap.computeIfAbsent(operation, __ -> new EnumMap<>(OperationOutcome.class));
     int count = outcomeMap.getOrDefault(outcome, 0);
     count += 1;
@@ -93,7 +93,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       int firstColumnLength,
       Map<OperationOutcome, String> formatMap,
       TypedOperation operation,
-      EnumMap<OperationOutcome, Integer> countMap) {
+      Map<OperationOutcome, Integer> countMap) {
     writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
       Integer count = countMap.getOrDefault(outcome, 0);

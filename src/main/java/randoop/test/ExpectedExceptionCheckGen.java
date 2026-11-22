@@ -18,7 +18,7 @@ import randoop.sequence.ExecutableSequence;
 public class ExpectedExceptionCheckGen {
 
   /** A predicate to determine accessibility of exception classes. */
-  private AccessibilityPredicate accessibility;
+  private final AccessibilityPredicate accessibility;
 
   /**
    * Create an object that generates expected exception checks for exceptions that satisfy the given
@@ -40,7 +40,7 @@ public class ExpectedExceptionCheckGen {
    * @return an {@code ExpectedExceptionCheck} object for exception and statement if exception is
    *     checked, and an {@code EmptyExceptionCheck} otherwise
    */
-  ExceptionCheck getExceptionCheck(
+  /*package*/ ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence eseq, int statementIndex) {
     Throwable e = exec.getException();
 
