@@ -22,5 +22,9 @@ public class MemberTypeOuter<T> {
    *
    * @param <V> a type parameter
    */
-  public class Inner2<V> {}
+  public class Inner2<V> {
+
+    /** A member class whose enclosing types are both generic classes. */
+    public class Leaf {}
+  }
 }
