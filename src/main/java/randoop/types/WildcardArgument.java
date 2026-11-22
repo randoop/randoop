@@ -92,27 +92,47 @@ public class WildcardArgument extends TypeArgument {
   /**
    * {@inheritDoc}
    *
-   * <p>Implements containment as defined in JLS section 4.5.1. A wildcard argument is handled by
-   * {@link WildcardType#contains(WildcardType)}. A non-wildcard argument {@code S} is contained by
-   * {@code ? extends T} if {@code S} is a subtype of {@code T}, and by {@code ? super T} if {@code
-   * T} is a subtype of {@code S}.
+   * <p>For a non-wildcard argument {@code R}, considers the cases (JLS section 4.5.1):
+   *
+   * <ul>
+   *   <li>{@code ? extends B} (including {@code ?}) contains {@code R} if {@code R} is a subtype of
+   *       {@code B}
+   *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
+   * </ul>
    */
   @Override
   public boolean contains(TypeArgument argument) {
     if (argument.isWildcard()) {
       return argumentType.contains(((WildcardArgument) argument).argumentType);
     }
-    ReferenceType argType = ((ReferenceArgument) argument).getReferenceType();
-    ParameterBound bound = argumentType.getTypeBound();
-    if (!(bound instanceof ReferenceBound)) {
+    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
+    ReferenceType boundType = boundType(argumentType.getTypeBound());
+    if (boundType == null) {
       return false;
     }
-    ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
     if (argumentType.hasUpperBound()) {
-      return argType.isSubtypeOfOrEqualTo(boundType);
+      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
     } else {
-      return boundType.isSubtypeOfOrEqualTo(argType);
+      return boundType.isSubtypeOfOrEqualTo(otherType);
     }
+  }
+
+  /**
+   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
+   * converted to the equivalent {@link ReferenceBound}.
+   *
+   * @param bound a bound of a wildcard
+   * @return the type of the bound, or null if it cannot be determined
+   */
+  private static @Nullable ReferenceType boundType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 
   /**
