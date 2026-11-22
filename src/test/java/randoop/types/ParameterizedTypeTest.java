@@ -436,4 +436,76 @@ public class ParameterizedTypeTest {
         GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE);
     assertFalse(arrayListOfString.isSubtypeOfOrEqualTo(plainOfString));
   }
+
+  /** A field of type {@code List<List<?>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<?>> listOfUnboundedLists;
+
+  /** A field of type {@code List<? extends List<? super String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? extends List<? super String>> listOfSuperStringLists;
+
+  /** A field of type {@code List<?>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<?> unboundedList;
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? super String> superStringList;
+
+  /** {@code ? super String} does not contain {@code ?}, but {@code ?} contains it (JLS 4.5.1). */
+  @Test
+  public void testLowerBoundedWildcardDoesNotContainUnbounded() {
+    Type unbounded = fieldType("unboundedList");
+    Type superString = fieldType("superStringList");
+    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
+    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
+
+    Type target = fieldType("listOfSuperStringLists");
+    assertFalse(fieldType("listOfUnboundedLists").isSubtypeOfOrEqualTo(target));
+    assertTrue(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(target));
+  }
+
+  /** Fields whose types have wildcard type arguments with different bound directions. */
+  @SuppressWarnings("unused")
+  private static class WildcardFields {
+    /** A list with an unbounded wildcard. */
+    List<?> unbounded;
+
+    /** A list with a lower-bounded wildcard. */
+    List<? super String> superString;
+
+    /** A list with an upper-bounded wildcard. */
+    List<? extends Number> extendsNumber;
+  }
+
+  /**
+   * Returns the type of the given field of {@link WildcardFields}.
+   *
+   * @param name the field name
+   * @return the type of the field
+   */
+  private static ParameterizedType wildcardFieldType(String name) {
+    try {
+      return ParameterizedType.forType(
+          WildcardFields.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /** Tests containment between upper-bounded and lower-bounded wildcards (JLS 4.5.1). */
+  @Test
+  public void testMixedDirectionWildcardContainment() {
+    ParameterizedType unbounded = wildcardFieldType("unbounded");
+    ParameterizedType superString = wildcardFieldType("superString");
+    ParameterizedType extendsNumber = wildcardFieldType("extendsNumber");
+
+    // `?` contains `? super String`.
+    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
+    // `? super String` does not contain `?`.
+    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
+    // `? extends Number` does not contain `? super String`.
+    assertFalse(superString.isSubtypeOfOrEqualTo(extendsNumber));
+  }
 }

@@ -233,12 +233,41 @@ public class Substitution {
    * @return true if this substitution maps {@code variable} to itself
    */
   boolean mapsToItself(TypeVariable variable) {
-    for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
-      if (entry.getKey().equals(variable)) {
-        return randoop.types.Type.sameType(entry.getKey(), entry.getValue());
+    TypeVariable key = getKey(variable);
+    return key != null && isIdentityEntry(key, map.get(key));
+  }
+
+  /**
+   * Returns the key of this substitution that is equal to the given type variable. The key can be a
+   * copy of the type variable, with other bounds.
+   *
+   * @param variable a type variable
+   * @return the key that is equal to {@code variable}, or null if this substitution does not map
+   *     {@code variable}
+   */
+  private @Nullable TypeVariable getKey(TypeVariable variable) {
+    if (!map.containsKey(variable)) {
+      return null;
+    }
+    for (TypeVariable key : map.keySet()) {
+      if (key.equals(variable)) {
+        return key;
       }
     }
-    return false;
+    throw new Error("unreachable");
+  }
+
+  /**
+   * Returns true if the given entry maps a type variable to itself: that is, to the object that is
+   * the key. An entry that maps a type variable to a distinct copy of it, with other bounds,
+   * replaces the type variable.
+   *
+   * @param key the key of an entry
+   * @param value the value of the entry
+   * @return true if the entry maps {@code key} to itself
+   */
+  private static boolean isIdentityEntry(TypeVariable key, @Nullable ReferenceType value) {
+    return randoop.types.Type.sameType(key, value);
   }
 
   /**
@@ -250,12 +279,12 @@ public class Substitution {
    * @return a copy of this substitution that maps {@code parameter} to {@code argument}
    */
   Substitution replace(TypeVariable parameter, ReferenceType argument) {
-    ReferenceType oldArgument = get(parameter);
+    boolean oldIsReplacement = get(parameter) != null && !mapsToItself(parameter);
     Substitution result = new Substitution(this);
     result.put(parameter, argument);
     // Update the caches instead of recomputing them, if this substitution did not replace the
-    // type variable by a different type.
-    if ((oldArgument == null || oldArgument.equals(parameter)) && !argument.equals(parameter)) {
+    // type variable by a different type (or by a distinct copy of it), and the result does.
+    if (!oldIsReplacement && !isIdentityEntry(parameter, argument)) {
       Set<TypeVariable> oldReplacementVariables = replacementVariables;
       if (oldReplacementVariables != null) {
         Set<TypeVariable> newReplacementVariables = new HashSet<>(oldReplacementVariables);
@@ -320,8 +349,11 @@ public class Substitution {
     }
     TypeVariable variable = (TypeVariable) type;
     GenericDeclaration declaration = getDeclaration(variable);
+    // A substitution that maps the type variable to a distinct copy of it, with other bounds, fixes
+    // the type variable to that copy; the type variable does not stand for an unknown type.
     return declaration != null
         && variable.equals(get(variable))
+        && mapsToItself(variable)
         && !getReplacementVariables().contains(variable)
         && getInstantiatedDeclarations().contains(declaration);
   }
@@ -360,7 +392,7 @@ public class Substitution {
     if (result == null) {
       result = new HashSet<>();
       for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
-        if (!entry.getKey().equals(entry.getValue())) {
+        if (!isIdentityEntry(entry.getKey(), entry.getValue())) {
           result.addAll(entry.getValue().getTypeParameters());
         }
       }
@@ -381,7 +413,7 @@ public class Substitution {
       result = new HashSet<>();
       for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
         GenericDeclaration declaration = getDeclaration(entry.getKey());
-        if (declaration != null && !entry.getKey().equals(entry.getValue())) {
+        if (declaration != null && !isIdentityEntry(entry.getKey(), entry.getValue())) {
           result.add(declaration);
         }
       }
@@ -401,7 +433,13 @@ public class Substitution {
    */
   @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
   Substitution withMapping(TypeVariable variable, ReferenceType type) {
-    if (map.get(variable) == type) {
+    // Reuse this substitution only if the stored entry is also an identity entry exactly when the
+    // requested one is.  If this maps U to a distinct copy U', then withMapping(U', U') must make
+    // U' the key, so that the entry maps U' to itself.
+    TypeVariable key = getKey(variable);
+    if (key != null
+        && map.get(variable) == type
+        && isIdentityEntry(key, type) == isIdentityEntry(variable, type)) {
       return this;
     }
     Substitution result = new Substitution(this);

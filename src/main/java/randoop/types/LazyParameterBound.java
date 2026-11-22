@@ -185,7 +185,8 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      java.lang.reflect.Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
       for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
@@ -196,19 +197,18 @@ class LazyParameterBound extends ParameterBound {
       }
 
       GenericClassType classType =
-          GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
+          GenericClassType.forClass((Class<?>) parameterizedType.getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       // For a member class such as Outer<String>.Middle<Integer>, keep the owner type, as
       // ParameterizedType.forType does.  ParameterizedType.forType omits an owner type that is the
       // type that the declaration of the enclosing class denotes, such as Outer<T>.  The
       // substitution can instantiate such an owner type, as by mapping T to Integer, so the
       // substituted owner type is kept unless it is still the generic form of its class.
-      java.lang.reflect.Type owner = ((ParameterizedType) type).getOwnerType();
-      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
+      java.lang.reflect.Type owner = parameterizedType.getOwnerType();
+      Class<?> rawType = (Class<?>) parameterizedType.getRawType();
       if (owner instanceof ParameterizedType
           && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-        boolean preserved =
-            ClassOrInterfaceType.getPreservedOwnerType((ParameterizedType) type) != null;
+        boolean preserved = ClassOrInterfaceType.getPreservedOwnerType(parameterizedType) != null;
         if (preserved || instantiatesAny(owner, substitution)) {
           TypeArgument ownerArgument = substitute(owner, substitution);
           if (!(ownerArgument instanceof ReferenceArgument)) {
@@ -297,11 +297,13 @@ class LazyParameterBound extends ParameterBound {
   private static @Nullable TypeArgument substituteNonGenericMemberClass(
       ParameterizedType type, Substitution substitution) {
     Class<?> rawType = (Class<?>) type.getRawType();
-    java.lang.reflect.Type ownerType = type.getOwnerType();
-    if (!(ownerType instanceof ParameterizedType)
-        || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
+    ParameterizedType ownerType = getPreservedOwnerType(type);
+    if (ownerType == null) {
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
     }
+    // ClassOrInterfaceType.forType preserves the owner type, such as `Outer<String>`, whose type
+    // arguments the substitution may change.  The owner type is converted here, rather than by
+    // ClassOrInterfaceType.forType, so that type variables in it are treated as in type arguments.
     TypeArgument ownerArgument = substitute(ownerType, substitution);
     if (!(ownerArgument instanceof ReferenceArgument)) {
       return null;
@@ -388,8 +390,8 @@ class LazyParameterBound extends ParameterBound {
           return true;
         }
       }
-      java.lang.reflect.Type owner = ((ParameterizedType) type).getOwnerType();
-      return owner != null && instantiatesAny(owner, substitution, visited);
+      ParameterizedType ownerType = getPreservedOwnerType((ParameterizedType) type);
+      return ownerType != null && instantiatesAny(ownerType, substitution, visited);
     }
     if (type instanceof GenericArrayType) {
       return instantiatesAny(
@@ -455,9 +457,9 @@ class LazyParameterBound extends ParameterBound {
       }
       // The owner type of a member class, as in Outer<T>.Middle<Integer>, can contain type
       // variables too.
-      java.lang.reflect.Type owner = pt.getOwnerType();
-      if (owner != null) {
-        variableList.addAll(getTypeParameters(owner));
+      ParameterizedType ownerType = getPreservedOwnerType(pt);
+      if (ownerType != null) {
+        variableList.addAll(getTypeParameters(ownerType));
       }
     } else if (type instanceof GenericArrayType) {
       variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
@@ -497,6 +499,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
+      // The bound has no type variable, so no substitution changes it.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isLowerBound(argType, substitution);
   }
@@ -523,6 +529,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
+      // The bound has no type variable, so no substitution changes it.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+    }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isUpperBound(argType, substitution);
   }
@@ -574,11 +584,9 @@ class LazyParameterBound extends ParameterBound {
   @Nullable ParameterBound substituteWithUnknowns(Substitution substitution) {
     Substitution completeSubstitution = completeSubstitution(substitution);
     ParameterBound b = this.substitute(completeSubstitution);
-    if (b.equals(this)) {
-      assert false : "substitution " + completeSubstitution + " does not instantiate " + this;
-      return null;
-    }
-    return b;
+    boolean unchanged = b.equals(this);
+    assert !unchanged : "substitution " + completeSubstitution + " does not instantiate " + this;
+    return unchanged ? null : b;
   }
 
   /**

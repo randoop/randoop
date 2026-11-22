@@ -42,10 +42,13 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * Returns the type parameters declared by the generic class, not those of its enclosing classes.
+   * Unlike {@link #getTypeParameters()}, the result does not depend on whether this object has an
+   * enclosing type, so it corresponds to the type arguments of an {@link InstantiatedType} of this
+   * class.
    *
    * @return the type parameters declared by the generic class
    */
-  private List<TypeVariable> getDeclaredTypeParameters() {
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
     List<TypeVariable> result = parameters;
     if (result == null) {
       result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());

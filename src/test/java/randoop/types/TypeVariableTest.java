@@ -156,6 +156,10 @@ public class TypeVariableTest {
             ((TypeVariable) u.substitute(new Substitution(t, v)))
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    // Check each bound explicitly, so that the test fails if both paths leave T[] unresolved.
+    String expected = "java.util.Collection<? extends java.lang.String[]>";
+    assertEquals(expected, direct.getUpperTypeBound().toString());
+    assertEquals(expected, throughV.getUpperTypeBound().toString());
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 
@@ -3110,11 +3114,11 @@ public class TypeVariableTest {
   public void testTypeParametersOfCopyStartWithCopy() {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable original = parameters.get(1);
     TypeVariable copy =
         (TypeVariable)
-            parameters
-                .get(1)
-                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+            original.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertNotSame(original, copy);
     assertSame(copy, copy.getTypeParameters().get(0));
   }
 
@@ -3344,20 +3348,55 @@ public class TypeVariableTest {
   SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
 
   /**
-   * An array type whose component type is a type variable is within a bound that is a capture
-   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]}, can
-   * instantiate the capture variable.
+   * An array type whose component type is a type variable is not within a bound that is a capture
+   * variable merely because an array of a supertype of the type variable's bound, such as {@code
+   * Object[]}, can instantiate the capture variable. A capture variable stands for a particular
+   * unknown type, so its strict supertypes are not searched.
    */
   @Test
-  public void testVariableComponentArraySupertypeCanInstantiateCaptureVariable()
+  public void testVariableComponentArraySupertypeCannotInstantiateCaptureVariable()
       throws NoSuchFieldException {
     // U extends Number
     ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
     InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
     TypeVariable capture = typeArgument(capturedType, 1);
     assertFalse(capture.canBeInstantiatedBy(uArray));
-    // U[] <: Object[], which is within both bounds of the capture variable.
-    assertTrue(capture.canBeSupertypeOf(uArray, new Substitution()));
+    // U[] <: Object[], which is within both bounds of the capture variable, but the capture
+    // variable
+    // could be String[], and U[] is not known to be a subtype of it.
+    assertFalse(capture.canBeSupertypeOf(uArray, new Substitution()));
+  }
+
+  /**
+   * A class with a field whose type has a wildcard bounded below by a type parameter whose bound
+   * mentions another type parameter.
+   *
+   * @param <X> a type parameter
+   * @param <Y> a type parameter bounded by {@code List<X>}
+   */
+  static class SuperOfListBounded<X, Y extends List<X>> {
+    /** A field whose type has a wildcard bounded below by {@code Y}. */
+    @SuppressWarnings("UnusedVariable") // the field is read reflectively
+    List<? super Y> superY;
+  }
+
+  /**
+   * A type can instantiate a capture variable whose lower bound is a type variable if every
+   * instantiation of that type variable is a subtype of the type, even if the type cannot itself
+   * instantiate that type variable.
+   */
+  @Test
+  public void testSupertypeOfVariableLowerBoundInstantiatesCaptureVariable()
+      throws NoSuchFieldException {
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(SuperOfListBounded.class.getDeclaredField("superY").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture = typeArgument(capturedType, 0);
+    // Every Y, which is a subtype of List<X>, is a subtype of Object.
+    assertTrue(capture.canBeInstantiatedBy(JavaTypes.OBJECT_TYPE));
+    // No Y is a subtype of String.
+    assertFalse(capture.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 
   /**
@@ -3606,5 +3645,70 @@ public class TypeVariableTest {
     assertFalse(
         Subtyping.isSubtypeOrEqual(
             listType.instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()), superB, unknownB));
+  }
+
+  /**
+   * Type parameters whose bounds have a wildcard whose bound is a non-generic member class of a
+   * parameterized type.
+   *
+   * @param <X> a type parameter whose bound mentions {@code NonGenericInnerOuter<String>.Inner}
+   * @param <Y> a type parameter whose bound mentions {@code NonGenericInnerOuter<Integer>.Inner}
+   */
+  static class WildcardMemberBound<
+      X extends List<? extends NonGenericInnerOuter<String>.Inner>,
+      Y extends List<? extends NonGenericInnerOuter<Integer>.Inner>> {}
+
+  /**
+   * Copies of a type variable are identical if their bounds differ only in the representation of a
+   * nested wildcard bound: a {@link LazyParameterBound} in one, and the equivalent {@link
+   * ReferenceBound} in the other.
+   */
+  @Test
+  public void testIdenticalCopiesWithMaterializedWildcardBound() {
+    TypeVariable x = typeParameter(WildcardMemberBound.class, 0);
+    TypeVariable y = typeParameter(WildcardMemberBound.class, 1);
+    // The bound of X is List<? extends NonGenericInnerOuter<String>.Inner>.  Whether
+    // ParameterBound.forType represents its wildcard bound lazily or eagerly, both representations
+    // are built here explicitly.
+    java.lang.reflect.Type inner =
+        ((java.lang.reflect.WildcardType)
+                ((java.lang.reflect.ParameterizedType)
+                        WildcardMemberBound.class.getTypeParameters()[0].getBounds()[0])
+                    .getActualTypeArguments()[0])
+            .getUpperBounds()[0];
+    TypeVariable lazyCopy =
+        x.createCopyWithBounds(
+            x.getLowerTypeBound(), listOfExtendsBound(new LazyParameterBound(inner)));
+    TypeVariable copy =
+        x.createCopyWithBounds(
+            x.getLowerTypeBound(),
+            listOfExtendsBound(new EagerReferenceBound(ReferenceType.forType(inner))));
+    assertTrue(lazyCopy.isIdenticalTo(copy));
+    assertTrue(copy.isIdenticalTo(lazyCopy));
+    assertTrue(x.isIdenticalTo(copy));
+    assertTrue(copy.isIdenticalTo(x));
+    assertTrue(x.isIdenticalTo(lazyCopy));
+
+    // A copy whose bound has a different enclosing type, NonGenericInnerOuter<Integer>, is not
+    // identical.
+    ParameterBound otherBound = y.getUpperTypeBound().substitute(new Substitution(y, y));
+    TypeVariable otherCopy = x.createCopyWithBounds(x.getLowerTypeBound(), otherBound);
+    assertFalse(x.isIdenticalTo(otherCopy));
+    assertFalse(copy.isIdenticalTo(otherCopy));
+    assertFalse(lazyCopy.isIdenticalTo(otherCopy));
+  }
+
+  /**
+   * Returns the bound {@code List<? extends T>}, where {@code T} is represented by the given bound.
+   *
+   * @param wildcardBound the bound of the wildcard
+   * @return the bound {@code List<? extends T>}
+   */
+  private static ParameterBound listOfExtendsBound(ParameterBound wildcardBound) {
+    return new EagerReferenceBound(
+        new InstantiatedType(
+            JDKTypes.LIST_TYPE,
+            Collections.singletonList(
+                new WildcardArgument(new WildcardType(wildcardBound, true)))));
   }
 }

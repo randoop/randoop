@@ -127,43 +127,17 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    @Nullable Substitution substitution = getEnclosingSubstitutionIfNeeded();
+    @Nullable Substitution substitution = getEnclosingSubstitution();
     return CollectionsPlume.mapList(
         (java.lang.reflect.Type type) -> substituteEnclosing(forType(type), substitution),
         runtimeType.getGenericInterfaces());
   }
 
   /**
-   * Returns the substitution of the type arguments of the enclosing types of this member class for
-   * the type parameters of their classes, as {@link #getEnclosingSubstitution()} does, or null if
-   * no substitution is needed. The declared supertypes of a member class can mention those type
-   * parameters. For example, given {@code class Outer<E> { class Inner extends ArrayList<E> {} }},
-   * the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
-   *
-   * <p>A type argument that is a wildcard maps its type parameter to the {@link WildcardType}, as
-   * in {@link InstantiatedType#getSuperclass()}, so that the other type parameters are still
-   * substituted. For example, for {@code Outer<String, ?>.Inner}, the result maps the first type
-   * parameter of {@code Outer} to {@code String}.
-   *
-   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
-   * declared supertypes are already correct), or if no enclosing type is parameterized.
-   *
-   * @return the substitution for the type parameters of the enclosing types, or null if none is
-   *     needed
-   */
-  private @Nullable Substitution getEnclosingSubstitutionIfNeeded() {
-    if (!isMemberClass() || enclosingType.isGenericForm()) {
-      return null;
-    }
-    Substitution result = getEnclosingSubstitution();
-    return result.isEmpty() ? null : result;
-  }
-
-  /**
    * Applies the given substitution, if any, to a declared supertype of this type.
    *
    * @param supertype a declared supertype of this type
-   * @param substitution the result of {@link #getEnclosingSubstitutionIfNeeded()}
+   * @param substitution the result of {@link #getEnclosingSubstitution()}
    * @return {@code supertype} with {@code substitution} applied, or {@code supertype} itself if
    *     {@code substitution} is null
    */
@@ -211,7 +185,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
       return supertype == null
           ? null
-          : substituteEnclosing(forType(supertype), getEnclosingSubstitutionIfNeeded());
+          : substituteEnclosing(forType(supertype), getEnclosingSubstitution());
     }
   }
 
@@ -260,15 +234,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * {@inheritDoc}
    *
    * <p>For a {@link NonParameterizedType}, if this type instantiates the {@code otherType}, which
-   * is a {@link NonParameterizedType} by {@link
+   * is a {@link ClassOrInterfaceType} by {@link
    * ClassOrInterfaceType#isInstantiationOf(ReferenceType)} also checks that runtime classes are
    * equal. This allows for proper matching of member classes that are of {@link
-   * NonParameterizedType}.
+   * NonParameterizedType}: {@code Outer<String>.Plain} instantiates {@code Outer<T>.Plain} but not
+   * {@code Outer<T>.Generic<U>}, though its enclosing type instantiates that of each.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {
     boolean instantiationOf = super.isInstantiationOf(otherType);
-    if ((otherType instanceof NonParameterizedType)) {
+    if ((otherType instanceof ClassOrInterfaceType)) {
       return instantiationOf && this.runtimeClassIs(otherType.getRuntimeClass());
     }
     return instantiationOf;

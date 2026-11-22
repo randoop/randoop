@@ -460,8 +460,11 @@ public abstract class TypeVariable extends ParameterType {
    * substitution replaces it with, is fixed rather than unknown, as determined by {@link
    * Substitution#isUnknown(ReferenceType)}. Otherwise, that type variable stands for an unknown
    * type: for an upper bound, the given type is within it if that type variable can be a supertype
-   * of the given type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if the given
-   * type can instantiate that type variable.
+   * of the given type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if some
+   * instantiation of that type variable can be a subtype of the given type: the given type itself,
+   * or any instantiation if the upper bound of that type variable is a subtype of the given type.
+   * For example, for the capture of {@code ? super Y}, where {@code Y extends List<X>}, {@code
+   * Object} is within the lower bound, though it cannot instantiate {@code Y}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
@@ -501,9 +504,11 @@ public abstract class TypeVariable extends ParameterType {
           ? fixedBound.isUpperBound(otherType, substitution)
           : fixedBound.isLowerBound(otherType, substitution);
     }
-    return isUpperBound
-        ? variable.canBeSupertypeOf(otherType, substitution)
-        : variable.canBeInstantiatedBy(otherType, substitution);
+    if (isUpperBound) {
+      return variable.canBeSupertypeOf(otherType, substitution);
+    }
+    return variable.canBeInstantiatedBy(otherType, substitution)
+        || variable.getUpperTypeBound().isLowerBound(otherType, substitution);
   }
 
   /**
@@ -715,7 +720,8 @@ public abstract class TypeVariable extends ParameterType {
    * {@link Object#equals(Object)}, so that a wildcard bound that is a {@link LazyParameterBound} is
    * identical to the {@link ReferenceBound} that it converts to, as {@link
    * #areIdentical(ParameterBound, ParameterBound)} determines. {@code equals} distinguishes the two
-   * representations of a wildcard bound, as in {@code List<? extends Comparable<T>>}.
+   * representations of a wildcard bound, as in {@code List<? extends Comparable<T>>}, or as in
+   * {@code List<? extends Outer<String>.Inner>} before and after a substitution.
    *
    * @param type1 a type
    * @param type2 a type
@@ -831,8 +837,10 @@ public abstract class TypeVariable extends ParameterType {
     }
     // As in areIdentical(ReferenceType, ReferenceType), compare the bounds structurally, rather
     // than comparing their getTypeParameters(), which contain only one of several copies of a type
-    // variable.  The members of intersection bounds are compared by this method, so that a lazy
-    // member can be identical to an eager one.
+    // variable.  Do not first compare the bounds with equals():  a wildcard bound nested in the
+    // bound type can be a LazyParameterBound in one and the equivalent ReferenceBound in the other.
+    // The members of intersection bounds are compared by this method, so that a lazy member can be
+    // identical to an eager one.
     if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
       return areIdentical(
           ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());

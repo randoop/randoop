@@ -366,7 +366,7 @@ public class CaptureConversionTest {
     InstantiatedType memberType =
         (InstantiatedType)
             Type.forType(CaptureConversionTest.class.getField("memberField").getGenericType());
-    // Type.forType does not record the type arguments of an enclosing type, so set it directly.
+    // Replace the enclosing type, Outer<String>, by one that has a wildcard type argument.
     memberType.enclosingType =
         (ClassOrInterfaceType)
             Type.forType(
