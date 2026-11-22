@@ -29,10 +29,12 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
@@ -192,6 +194,30 @@ public class InstantiationTest {
 
   }
   */
+
+  /** Based on issue #1889: a type parameter bounded by its declaring type applied to a wildcard. */
+  @Test
+  public void testWildcardBoundInstantiation() {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.WildcardBoundBuilder");
+    classnames.add("randoop.reflection.ConcreteWildcardBoundBuilder");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    getOperations(model, classOperations, inputTypes);
+
+    boolean foundCreate = false;
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().endsWith(".create")
+          && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
+              == WildcardBoundBuilder.class) {
+        foundCreate = true;
+      }
+    }
+    assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
+  }
 
   /** Based on a case from imglib2. */
   @Test
@@ -787,5 +813,163 @@ public class InstantiationTest {
     assertNotNull("instantiation failed for " + get, instance);
     assertEquals(stringInner, instance.getInputTypes().get(0));
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U
+   * getInner2Leaf(MemberTypeOuter<U>.Inner2<Integer>.Leaf)}, whose parameter type has an owner type
+   * {@code MemberTypeOuter<U>.Inner2<Integer>} with a type argument of its own, instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testParameterizedOwnerReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation getInner2Leaf =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("getInner2Leaf", MemberTypeOuter.Inner2.Leaf.class));
+    // The conversion of the parameter type retains the owner MemberTypeOuter<U> of Inner2<Integer>.
+    ClassOrInterfaceType parameterType =
+        (ClassOrInterfaceType) getInner2Leaf.getInputTypes().get(0);
+    assertEquals(
+        Collections.singletonList(getInner2Leaf.getOutputType()),
+        parameterType.getTypeParameters());
+
+    // The type parameters of MemberTypeOuter<T>.Inner2<V>.Leaf are T and V, in that order.
+    ClassOrInterfaceType genericLeaf =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner2.Leaf.class);
+    ClassOrInterfaceType stringIntegerLeaf =
+        genericLeaf.substitute(
+            new Substitution(
+                genericLeaf.getTypeParameters(),
+                JavaTypes.STRING_TYPE,
+                (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive()));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringIntegerLeaf.getSupertypesInclusive());
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(getInner2Leaf);
+      assertNotNull("instantiation failed for " + getInner2Leaf, instance);
+      assertEquals(stringIntegerLeaf, instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /** A class with a generic member class. */
+  private static class OwnerA {
+    /**
+     * A generic member class.
+     *
+     * @param <T> a type parameter
+     */
+    class Base<T> {}
+  }
+
+  /** A class with a member class that extends a member class of another class. */
+  private static class OwnerB {
+    /** A member class that extends a member class of another class. */
+    class Sub extends OwnerA.Base<String> {
+      /**
+       * Creates a Sub.
+       *
+       * @param a the enclosing instance of the superclass
+       */
+      Sub(OwnerA a) {
+        a.super();
+      }
+    }
+  }
+
+  /**
+   * {@code OwnerB.Sub}, which extends {@code OwnerA.Base<String>}, instantiates {@code
+   * OwnerA.Base<T>}, though the enclosing classes differ.
+   */
+  @Test
+  public void testMemberSubclassOfMemberClassOfAnotherClass() {
+    ClassOrInterfaceType sub = ClassOrInterfaceType.forClass(OwnerB.Sub.class);
+    ClassOrInterfaceType base = ClassOrInterfaceType.forClass(OwnerA.Base.class);
+    Substitution substitution = sub.getInstantiatingSubstitution(base);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(base.getTypeParameters().get(0)));
+  }
+
+  /**
+   * Returns {@code Outer<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code Outer<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType outerInnerType(ReferenceType typeArgument) {
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    return genericInner.substitute(
+        new Substitution(genericInner.getTypeParameters(), typeArgument));
+  }
+
+  /**
+   * A method whose parameter type is a member type whose enclosing type has a wildcard.
+   *
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static void wildcardOwner(Outer<?>.Inner inner) {}
+
+  /**
+   * Capture conversion of {@code Outer<?>.Inner} does not change that type, and its result has a
+   * capture variable.
+   */
+  @Test
+  public void testMemberTypeCaptureConversion() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("wildcardOwner", Outer.Inner.class);
+    ClassOrInterfaceType wildcardInner =
+        ClassOrInterfaceType.forType(m.getGenericParameterTypes()[0]);
+    assertTrue(wildcardInner.hasWildcardArgument());
+    ClassOrInterfaceType captured = wildcardInner.applyCaptureConversion();
+    assertTrue(wildcardInner.hasWildcardArgument());
+    assertFalse(captured.hasWildcardArgument());
+    assertTrue(captured.hasCaptureVariable());
+    assertTrue(new TypeTuple(Collections.<Type>singletonList(captured)).hasCaptureVariable());
+    assertFalse(
+        new TypeTuple(Collections.<Type>singletonList(outerInnerType(JavaTypes.STRING_TYPE)))
+            .hasCaptureVariable());
+  }
+
+  /**
+   * An interface whose type argument is a type that implements it.
+   *
+   * @param <T> the type parameter
+   */
+  private interface Marker<T> {}
+
+  /** A class that implements {@link Marker} for itself. */
+  private static class MarkerBase implements Marker<MarkerBase> {}
+
+  /** A subclass of {@link MarkerBase}, which is a {@code Marker<MarkerBase>}. */
+  private static class MarkerChild extends MarkerBase {}
+
+  /**
+   * A method whose type parameter has a bound that mentions it.
+   *
+   * @param <T> the type parameter
+   * @param t a value
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Marker<T>> void marked(T t) {}
+
+  /**
+   * {@code MarkerChild} is within the bound {@code T} of {@code <T extends Marker<T>>}, because
+   * {@code T} can be its supertype {@code MarkerBase}, though not {@code MarkerChild} itself.
+   */
+  @Test
+  public void testSelfBoundedVariableBound() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("marked", Marker.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(m).getInputTypes().get(0);
+    ParameterBound bound = ParameterBound.forType(t);
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerBase.class), new Substitution()));
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerChild.class), new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 }
