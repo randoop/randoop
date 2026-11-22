@@ -46,7 +46,7 @@ public class InstantiatedType extends ParameterizedType {
    * {@inheritDoc}
    *
    * <p>Test if the given object is equal to this parameterized type. Two parameterized types are
-   * equal if they have the same raw type and the same type arguments.
+   * equal if they have the same raw type, the same type arguments, and the same enclosing type.
    */
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -57,13 +57,15 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
+    // super.equals compares the enclosing types, as for Outer<String>.Inner<Integer>.
     return genericType.equals(other.getGenericClassType())
-        && argumentList.equals(other.argumentList);
+        && argumentList.equals(other.argumentList)
+        && super.equals(obj);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList);
+    return Objects.hash(genericType, argumentList, super.hashCode());
   }
 
   @Override
