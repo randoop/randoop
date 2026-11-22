@@ -429,6 +429,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
+  @SuppressWarnings("ReferenceEquality") // tests whether this type's view is this type itself
   public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
     Substitution superResult = getInstantiatingSubstitutionforTypeVariable(this, goalType);
     if (superResult != null) {
