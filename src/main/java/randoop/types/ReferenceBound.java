@@ -119,13 +119,13 @@ public abstract class ReferenceBound extends ParameterBound {
    * an eager bound can also contain, as in {@code T[]} or {@code List<T>}, stands for itself. So,
    * if {@code lowerBound} is an {@link EagerReferenceBound}, its substituted type is compared with
    * the type of this bound by ordinary subtyping: {@code List<T>} is a lower bound of {@code
-   * List<T>}, but {@code List<String>} is not. {@link
-   * EagerReferenceBound#isLowerBound(Type, Substitution)} would instead accept {@code
-   * List<String>}, because {@code List<String>} is an instantiation of {@code List<T>}. Any other
-   * bound is compared by {@link ParameterBound#isLowerBound(Type, Substitution)}, which, for
-   * example, lets a type variable in a {@link LazyReferenceBound} be chosen. Similarly, with {@code
-   * T := String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]}
-   * is a lower bound of {@code String[]}.
+   * List<T>}, but {@code List<String>} is not. {@link EagerReferenceBound#isLowerBound(Type,
+   * Substitution)} would instead accept {@code List<String>}, because {@code List<String>} is an
+   * instantiation of {@code List<T>}. Any other bound is compared by {@link
+   * ParameterBound#isLowerBound(Type, Substitution)}, which, for example, lets a type variable in a
+   * {@link LazyReferenceBound} be chosen. Similarly, with {@code T := String}, the bound {@code
+   * String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of {@code
+   * String[]}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

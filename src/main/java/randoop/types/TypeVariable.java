@@ -399,8 +399,8 @@ public abstract class TypeVariable extends ParameterType {
    * subtype of {@code otherType}: {@code otherType} itself, or any instantiation if the upper bound
    * of the type variable is a subtype of {@code otherType}. For example, for the capture of {@code
    * ? super Y}, where {@code Y extends List<X>}, {@code Object} is within the lower bound, though
-   * it cannot instantiate {@code Y}. For an upper bound, the result is true if it can be a supertype
-   * of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
+   * it cannot instantiate {@code Y}. For an upper bound, the result is true if it can be a
+   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
