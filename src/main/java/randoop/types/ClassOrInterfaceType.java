@@ -809,6 +809,23 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return new Substitution();
   }
 
+  /**
+   * Returns the substitution to apply to the declared supertypes of this type's class. It is like
+   * {@link #getReferenceArgumentSubstitution()}, but it maps the type parameters of the enclosing
+   * classes to the type arguments of the capture conversion of the enclosing type, because the
+   * supertypes of a type with wildcard arguments are those of its capture conversion. For example,
+   * for {@code Outer<? extends Number>.Inner}, where {@code Inner} is a member class of {@code
+   * Outer<T>}, the result maps {@code T} to a capture variable whose upper bound is {@code Number}.
+   *
+   * @return the substitution to apply to the declared supertypes of this type's class
+   */
+  /*package*/ Substitution getSupertypeSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.applyCaptureConversion().getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
+  }
+
   @Override
   public boolean isClassOrInterfaceType() {
     return true;
