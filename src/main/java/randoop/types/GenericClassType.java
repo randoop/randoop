@@ -13,17 +13,17 @@ import org.plumelib.util.CollectionsPlume;
 public class GenericClassType extends ParameterizedType {
 
   /** The rawtype of the generic class. */
-  private Class<?> rawType;
+  private final Class<?> rawType;
 
   /** The type parameters of the generic class. */
-  private List<TypeVariable> parameters;
+  private final List<TypeVariable> parameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
    *
    * @param rawType the {@code Class} raw type
    */
-  GenericClassType(Class<?> rawType) {
+  /*package*/ GenericClassType(Class<?> rawType) {
     super();
     this.rawType = rawType;
     this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
@@ -102,7 +102,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the list of instantiated directly-implemented interface types of this type
    */
-  List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
+  /*package*/ List<ClassOrInterfaceType> getInterfaces(Substitution substitution) {
     return CollectionsPlume.mapList(
         (java.lang.reflect.Type type) ->
             ClassOrInterfaceType.forType(type).substitute(substitution),
@@ -145,7 +145,7 @@ public class GenericClassType extends ParameterizedType {
    * @param substitution the type substitution
    * @return the instantiated type
    */
-  ClassOrInterfaceType getSuperclass(Substitution substitution) {
+  /*package*/ ClassOrInterfaceType getSuperclass(Substitution substitution) {
     java.lang.reflect.Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return JavaTypes.OBJECT_TYPE;
@@ -167,9 +167,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> params = super.getTypeParameters();
-    params.addAll(parameters);
-    return params;
+    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
   }
 
   /**
@@ -267,7 +265,9 @@ public class GenericClassType extends ParameterizedType {
       return true;
     }
     if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-      if (otherType.isRawtype()) {
+      if (otherType.isRawtype()
+          || (otherType instanceof ClassOrInterfaceType
+              && ((ClassOrInterfaceType) otherType).isGenericForm())) {
         return true;
       }
       if (otherType instanceof InstantiatedType) {

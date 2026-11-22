@@ -159,22 +159,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing regular expressions for methods to omit")
   public static @MonotonicNonNull List<Path> omit_classes_file = null;
 
-  // Documentation to add.
-  //  Suppose that the class hierarchy is A :> B :> C. If method B.m omitted, Randoop might still
-  //  create a test case that calls A.m, and at run time that call might dispatch to the B.m
-  //  implementation. Also, Randoop might still call C.m that overrides B.m. Alternatives to these
-  //  behaviors may be desirable in certain circumstances and may be added in the future,
-  //  depending on user requests.
   /**
    * A regex that indicates methods that should not be called directly in generated tests. This does
    * not prevent indirect calls to such methods from other, allowed methods; to prevent them, see
    * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
    * replacecall} agent</a>.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose that the <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression.
+   * signature</a> of method M matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
+   * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
+   * signature names the class that declares M, not a class that inherits M. Randoop considers only
+   * the omitted methods of the classes under test and the omitted methods listed in the {@code
+   * --methodlist} file, so a call can still dispatch to an omitted method of any other class.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -568,6 +567,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
+  @SuppressWarnings("PMD.DataClass") // a parameter object, whose fields are meant to be public
   public static class Limits {
     /**
      * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
@@ -1244,7 +1244,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @param className an argument that should be a class name
    * @param commandLineOption the command line option name, without leading "--"
    */
-  static void validateClassName(String className, String commandLineOption) {
+  /*package*/ static void validateClassName(String className, String commandLineOption) {
     if (className.isEmpty()) {
       throw new RandoopUsageError(
           "Do not provide the empty string as the argument to --" + commandLineOption + ".");
@@ -1346,14 +1346,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
                 String.format(
                     "%s was read from %s but was not found on classpath."
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
-                    className, jarFile, jarFile, ReflectionPlume.classpathToString()));
-          } catch (UnsatisfiedLinkError e) {
-            // This happens when an old classfile refers to a class that has been removed from the
-            // JDK, such as one in java.awt.*.
-            System.out.printf(
-                "Ignoring %s which was read from %s but could not be loaded: %s%n",
-                className, jarFile, e);
-            continue;
+                    className, jarFile, jarFile, ReflectionPlume.classpathToString()),
+                e);
           } catch (ExceptionInInitializerError e) {
             // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
@@ -1387,7 +1381,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
               continue;
             }
           } catch (Error e) {
-            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            // One example is: "java.lang.Error: FileMonitor not implemented for Linux".
+            // Another is an UnsatisfiedLinkError, which happens when a class's native library is
+            // unavailable, as for some classes in java.awt.* on a headless JDK.
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be loaded: %s%n",
                 className, jarFile, e);
@@ -1464,8 +1460,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
           throw new RandoopClassNameError(
               classname,
-              String.format(
-                  "Cannot load class found in directory %s", directory.getAbsolutePath()));
+              String.format("Cannot load class found in directory %s", directory.getAbsolutePath()),
+              e);
         }
       }
       return classnames;
@@ -1505,13 +1501,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RandoopUsageError(
           String.format(
               "Cannot find .jar file %s specified in classpath: %s",
-              jarFile.getAbsolutePath(), Globals.getClassPath()));
+              jarFile.getAbsolutePath(), Globals.getClassPath()),
+          e);
     } catch (IOException e) {
       throw new RandoopUsageError(
           String.format("Cannot read .jar file %s", Util.fileAndAbsolute(jarFile)), e);
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       throw new RandoopClassNameError(
-          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()));
+          classname, String.format("Cannot load class found in %s", jarFile.getAbsolutePath()), e);
     }
     return classnames;
   }

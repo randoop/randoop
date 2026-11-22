@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.fail;
-import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 
 // DEPRECATED. Will delete after testing other performance tests
@@ -70,8 +68,7 @@ public class ForwardExplorerPerformanceTest {
         @SuppressWarnings("signature:assignment") // need run-time check
         @ClassGetName String entry = entryLine;
         Class<?> c = Class.forName(entry);
-        Collection<TypedOperation> oneClassOperations =
-            OperationExtractor.operations(c, new DefaultReflectionPredicate(), IS_PUBLIC);
+        Collection<TypedOperation> oneClassOperations = OperationExtractor.operations(c);
         model.addAll(oneClassOperations);
       }
     } catch (IOException e) {
