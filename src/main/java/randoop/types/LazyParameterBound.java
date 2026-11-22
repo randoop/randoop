@@ -121,8 +121,7 @@ class LazyParameterBound extends ParameterBound {
     List<TypeVariable> parameters = getTypeParameters();
     // Map each type variable to itself, so that substitute() converts this bound without changing
     // the type that it represents.
-    ParameterBound result =
-        substitute(new Substitution(parameters, new ArrayList<ReferenceType>(parameters)));
+    ParameterBound result = substitute(new Substitution(parameters, new ArrayList<>(parameters)));
     return result instanceof ReferenceBound ? (ReferenceBound) result : null;
   }
 
