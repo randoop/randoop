@@ -122,8 +122,16 @@ final class Subtyping {
       // not, so compare the enclosing types here.
       ClassOrInterfaceType supertype =
           findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
-      return supertype != null
-          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+      if (supertype == null) {
+        return false;
+      }
+      // As above, capture the wildcard arguments, here those of the enclosing types.
+      try {
+        supertype = supertype.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        return false;
+      }
+      return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
   }

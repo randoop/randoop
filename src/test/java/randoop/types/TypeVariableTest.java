@@ -2353,6 +2353,12 @@ public class TypeVariableTest {
 
     /** A parameterized type that is not related to the member classes. */
     List<String> stringList;
+
+    /** A member class of {@code OuterWithPlainInner<? extends Integer>}. */
+    OuterWithPlainInner<? extends Integer>.Inner extendsIntegerInner;
+
+    /** A member class of {@code OuterWithPlainInner<? extends Number>}. */
+    OuterWithPlainInner<? extends Number>.Inner extendsNumberInner;
   }
 
   @Test
@@ -2366,6 +2372,21 @@ public class TypeVariableTest {
     assertTrue(Subtyping.isSubtypeOrEqual(stringInner, stringInner, substitution));
     assertFalse(Subtyping.isSubtypeOrEqual(integerInner, stringInner, substitution));
     assertFalse(Subtyping.isSubtypeOrEqual(stringList, stringInner, substitution));
+  }
+
+  /**
+   * A member class whose enclosing type has a wildcard argument is a subtype of whatever its
+   * capture is a subtype of.
+   */
+  @Test
+  public void testSubtypeOfMemberClassWithWildcardInEnclosingType() throws NoSuchFieldException {
+    ReferenceType extendsIntegerInner = plainInnerFieldType("extendsIntegerInner");
+    ReferenceType extendsNumberInner = plainInnerFieldType("extendsNumberInner");
+    Substitution substitution = new Substitution();
+    // OuterWithPlainInner<? extends Number> contains the capture of ? extends Integer.
+    assertTrue(Subtyping.isSubtypeOrEqual(extendsIntegerInner, extendsNumberInner, substitution));
+    assertTrue(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsNumberInner, substitution));
+    assertFalse(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsIntegerInner, substitution));
   }
 
   /**

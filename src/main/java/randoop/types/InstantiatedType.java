@@ -410,7 +410,6 @@ public class InstantiatedType extends ParameterizedType {
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
-      // For example, the enclosing type of this member class does not match that of `goalType`.
       return null;
     }
     if (goalType instanceof InstantiatedType) {
@@ -419,6 +418,13 @@ public class InstantiatedType extends ParameterizedType {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          if (!otherTArg.isGeneric()) {
+            // A type argument with no type variables binds none, so it must match exactly.
+            if (!thisTArg.equals(otherTArg)) {
+              return null;
+            }
+            continue;
+          }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // The substitution for another argument can map a type variable to a different type, as
           // for Map<String, Integer> and Map<T, T>.  Then no substitution instantiates the goal.
