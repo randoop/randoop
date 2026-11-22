@@ -328,11 +328,14 @@ public class ClassOrInterfaceTypeTest {
   /** A field of type {@code Outer<String>.NumberInner<?>}. */
   public Outer<String>.NumberInner<?> numberInnerOfWildcard;
 
+  /** A field of type {@code Outer<String>.EnclosingSupertypeInner<Integer>}. */
+  public Outer<String>.EnclosingSupertypeInner<Integer> enclosingSupertypeInnerOfInteger;
+
   /** A field of type {@code Outer<String>.ComparableInner<?>}. */
   public Outer<String>.ComparableInner<?> comparableInnerOfWildcard;
 
-  /** A field of type {@code Outer<?>}. */
-  public Outer<?> outerOfWildcard;
+  /** A field of type {@code Outer<?>.GenericInner<Integer>}. */
+  public Outer<?>.GenericInner<Integer> genericInnerOfWildcardOuter;
 
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
@@ -494,8 +497,6 @@ public class ClassOrInterfaceTypeTest {
     ReferenceType integerType = ReferenceType.forClass(Integer.class);
     ReferenceType stringType = JavaTypes.STRING_TYPE;
     GenericClassType holderType = (GenericClassType) ClassOrInterfaceType.forClass(Holder.class);
-    InstantiatedType outerOfString =
-        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.class)).instantiate(stringType);
 
     // The substitution maps the type parameter of the enclosing class, as well as the type
     // parameter that the member class declares.
@@ -503,22 +504,16 @@ public class ClassOrInterfaceTypeTest {
         (GenericClassType) ClassOrInterfaceType.forClass(Outer.GenericInner.class);
     List<TypeVariable> genericInnerParameters = genericInnerType.getTypeParameters();
     assertEquals(2, genericInnerParameters.size());
-    InstantiatedType genericInnerOfInteger = genericInnerType.instantiate(stringType, integerType);
-    Substitution typeSubstitution = genericInnerOfInteger.getTypeSubstitution();
+    Substitution typeSubstitution = fieldType("genericInnerOfInteger").getTypeSubstitution();
     assertNotNull(typeSubstitution);
     assertEquals(stringType, typeSubstitution.get(genericInnerParameters.get(0)));
     assertEquals(integerType, typeSubstitution.get(genericInnerParameters.get(1)));
 
-    // There is no substitution for a wildcard type argument of the enclosing type.  Type.forType
-    // does not give a member class an enclosing type, so set it explicitly.
-    InstantiatedType genericInnerOfWildcardOuter = fieldType("genericInnerOfInteger");
-    genericInnerOfWildcardOuter.enclosingType = fieldType("outerOfWildcard");
-    assertNull(genericInnerOfWildcardOuter.getTypeSubstitution());
+    // There is no substitution for a wildcard type argument of the enclosing type.
+    assertNull(fieldType("genericInnerOfWildcardOuter").getTypeSubstitution());
 
     // The supertypes substitute the type argument of the enclosing type.
-    InstantiatedType enclosingSupertypeInner =
-        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.EnclosingSupertypeInner.class))
-            .instantiate(stringType, integerType);
+    InstantiatedType enclosingSupertypeInner = fieldType("enclosingSupertypeInnerOfInteger");
     assertEquals(holderType.instantiate(stringType), enclosingSupertypeInner.getSuperclass());
     assertEquals(
         Collections.singletonList(JavaTypes.COMPARABLE_TYPE.instantiate(integerType)),
@@ -528,9 +523,7 @@ public class ClassOrInterfaceTypeTest {
 
     // The bound of the capture variable substitutes the type argument of the enclosing type:  it
     // is Comparable<String>, not Comparable<T>.
-    InstantiatedType comparableInnerOfWildcard = fieldType("comparableInnerOfWildcard");
-    comparableInnerOfWildcard.enclosingType = outerOfString;
-    InstantiatedType captured = comparableInnerOfWildcard.applyCaptureConversion();
+    InstantiatedType captured = fieldType("comparableInnerOfWildcard").applyCaptureConversion();
     ReferenceType capture =
         ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
     assertTrue(capture.isCaptureVariable());
