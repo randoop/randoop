@@ -55,6 +55,13 @@ public abstract class TypeArgument {
   /**
    * Applies the type substitution to this type argument.
    *
+   * <p>If the substitution changes nothing in this argument, the result should be this argument
+   * itself, so that a caller can detect a change by comparing the result to this argument with
+   * {@code ==}. Comparing with {@code equals} would not detect a change to only the bounds of a
+   * type variable, because copies of a type variable are equal even if their bounds differ. A
+   * result that is a new object for the same argument is correct, but makes callers create needless
+   * copies.
+   *
    * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
@@ -122,7 +129,7 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    * @see InstantiatedType#isInstantiationOf(ReferenceType)
    */
-  boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
+  /*package*/ boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
     return false;
   }
 

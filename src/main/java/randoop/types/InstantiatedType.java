@@ -32,7 +32,7 @@ public class InstantiatedType extends ParameterizedType {
    * @param argumentList the list of type arguments
    * @throws IllegalArgumentException if either argument is null
    */
-  InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
+  /*package*/ InstantiatedType(GenericClassType genericType, List<TypeArgument> argumentList) {
     super();
     if (genericType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
@@ -71,8 +71,15 @@ public class InstantiatedType extends ParameterizedType {
     List<TypeArgument> argumentList =
         CollectionsPlume.mapList(
             (TypeArgument argument) -> argument.substitute(substitution), this.argumentList);
-    return (InstantiatedType)
-        substitute(substitution, new InstantiatedType(genericType, argumentList));
+    ClassOrInterfaceType enclosing = substituteEnclosingType(substitution);
+    if (sameType(enclosing, enclosingType) && sameElements(argumentList, this.argumentList)) {
+      return this;
+    }
+    InstantiatedType result = new InstantiatedType(genericType, argumentList);
+    if (isMemberClass()) {
+      result.enclosingType = enclosing;
+    }
+    return result;
   }
 
   /**
@@ -170,7 +177,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the list of reference types that are arguments to this type
    */
-  List<ReferenceType> getReferenceArguments() {
+  /*package*/ List<ReferenceType> getReferenceArguments() {
     return CollectionsPlume.mapList(
         (TypeArgument argument) ->
             argument.isWildcard()
@@ -291,6 +298,11 @@ public class InstantiatedType extends ParameterizedType {
 
     // unchecked conversion
     return otherType.isRawtype() && otherType.runtimeClassIs(this.getRuntimeClass());
+  }
+
+  @Override
+  public boolean isGenericForm() {
+    return argumentList.equals(genericType.getTypeArguments()) && super.isGenericForm();
   }
 
   @Override
@@ -452,9 +464,9 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
-        // Do not fall back to the raw type below:  ClassOrInterfaceType.isSubtypeOfOrEqualTo treats
-        // a raw type as a subtype of every generic type of the same class.
-        return i == thisTypeArguments.size();
+        // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+        // is also a subtype of the generic form of its class.
+        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.
@@ -476,6 +488,8 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
     }
 
+    // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
+    // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
   }
 

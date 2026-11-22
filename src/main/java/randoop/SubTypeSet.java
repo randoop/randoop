@@ -22,10 +22,10 @@ public class SubTypeSet {
    * Maps a type to all its proper subtypes that are in the set. If the mapped-to list is empty,
    * then the set contains no subtypes of the given type.
    */
-  private IMultiMap<Type, Type> subTypes;
+  private final IMultiMap<Type, Type> subTypes;
 
   /** If true, then {@link #mark} and {@link #undoLastStep()} are supported. */
-  private boolean supportsCheckpoints;
+  private final boolean supportsCheckpoints;
 
   /**
    * Creates an empty SubTypeSet.
