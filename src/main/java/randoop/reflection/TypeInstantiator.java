@@ -1382,18 +1382,19 @@ public class TypeInstantiator {
     }
 
     // Can always select captured wildcards independently.  Augment each existing candidate.
-    // Omit a candidate for which some capture variable has no candidate types.
     if (!captureParameters.isEmpty()) {
-      List<Substitution> bases =
-          result.isEmpty() ? Collections.singletonList(substitution) : result;
-      List<Substitution> extended = new ArrayList<>(bases.size());
-      for (Substitution base : bases) {
-        Substitution s = selectSubstitutionIndependently(captureParameters, base);
-        if (s != null) {
-          extended.add(s);
-        }
+      if (result.isEmpty()) {
+        result.add(substitution);
       }
-      result = extended;
+      for (int i = 0; i < result.size(); i++) {
+        Substitution extended = selectSubstitutionIndependently(captureParameters, result.get(i));
+        if (extended == null) {
+          // The candidate types of a capture variable do not depend on the substitution, so
+          // extending any other element of `result` would fail too.
+          return Collections.emptyList();
+        }
+        result.set(i, extended);
+      }
     }
 
     return result;
@@ -1413,12 +1414,12 @@ public class TypeInstantiator {
   private @Nullable Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = candidateTypes(typeArgument);
+    for (TypeVariable parameter : parameters) {
+      List<ReferenceType> candidates = candidateTypes(parameter);
       if (candidates.isEmpty()) {
         Log.logPrintf(
             "TypeInstantiator.selectSubstitutionIndependently: No candidate types for %s%n",
-            typeArgument);
+            parameter);
         return null;
       }
       selectedTypes.add(new CandidateChooser(candidates).removeNext());

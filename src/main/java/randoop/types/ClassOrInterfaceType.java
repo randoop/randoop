@@ -396,8 +396,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
               return null;
             }
           } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
-            // For example, Outer<Integer>.Inner<String> does not instantiate
-            // Outer<String>.Inner<U>.
+            // A non-generic enclosing goal type has no type variables to bind, so the enclosing
+            // type of this type must be a subtype of it.  For example, Outer<Integer>.Inner2<Long>
+            // does not instantiate Outer<String>.Inner2<U>.
             return null;
           }
         }
