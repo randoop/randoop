@@ -234,9 +234,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Returns the substitution that maps the type parameters of the classes that enclose this member
    * class to the type arguments of its enclosing types, at every level. For example, for {@code
    * Outer<String>.Middle.Inner}, the result maps the type parameter of {@code Outer} to {@code
-   * String}. A wildcard type argument is mapped to its wildcard type, as in {@link
-   * InstantiatedType#getSuperclass()}. The result is empty if this type is not a member class or if
-   * no enclosing type is an {@link InstantiatedType}.
+   * String}. A wildcard type argument is mapped to its wildcard type. The result is empty if this
+   * type is not a member class or if no enclosing type is an {@link InstantiatedType}.
    *
    * <p>Unlike {@link #getEnclosingSubstitution()}, which instantiates the supertypes of a member
    * class, this does not capture-convert the enclosing types.
