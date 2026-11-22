@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,22 +97,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // type parameter, not the type parameter declared by `Outer`.
       ClassOrInterfaceType ownerClassType = null;
       java.lang.reflect.Type ownerType = t.getOwnerType();
+      // The owner types must be checked transitively:  in `Outer<U>.Middle.Inner`, the owner type
+      // `Outer<U>.Middle` has no type arguments of its own, but `Outer<U>` does.
       if (ownerType instanceof java.lang.reflect.ParameterizedType
-          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+          && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
         ownerClassType = forType(ownerType);
-        if (ownerClassType.isGenericForm()) {
-          ownerClassType = null;
-        }
       }
       if (rawType.getTypeParameters().length == 0) {
         if (ownerClassType == null) {
           // The result is the generic form of the member class.
           return forClass(rawType);
         }
-        // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-        NonParameterizedType result = new NonParameterizedType(rawType);
-        result.enclosingType = ownerClassType;
-        return result;
+        return forMemberClass(rawType, ownerClassType);
       }
       ParameterizedType result = ParameterizedType.forType(t);
       if (ownerClassType != null) {
@@ -131,6 +129,66 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns true if the given type is the form of its class that the class declaration denotes: the
+   * type arguments of the type and of each of its owner types are the type parameters declared by
+   * the corresponding class. For example, {@code Outer<T>.Middle} is, where {@code T} is the type
+   * parameter declared by {@code Outer}, but {@code Outer<U>.Middle} and {@code Outer<String>} are
+   * not.
+   *
+   * @param type a parameterized type
+   * @return true if {@code type} and its owner types have their declared type parameters as type
+   *     arguments
+   */
+  private static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+    if (!Arrays.equals(
+        type.getActualTypeArguments(), ((Class<?>) type.getRawType()).getTypeParameters())) {
+      return false;
+    }
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    return !(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
+  }
+
+  /**
+   * Returns the owner type of the given parameterized type, if the parameterized type is a member
+   * class that has no type parameters of its own and whose owner type is parameterized, as {@code
+   * Outer<String>} is for {@code Outer<String>.Inner}. Such a parameterized type has no type
+   * arguments; its owner type supplies them.
+   *
+   * @param type a parameterized type
+   * @return the owner type of {@code type} if {@code type} is a member class with no type
+   *     parameters of its own and a parameterized owner type; otherwise null
+   */
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType memberClassOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    Class<?> rawType = (Class<?>) type.getRawType();
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    if (rawType.getTypeParameters().length == 0
+        && ownerType instanceof java.lang.reflect.ParameterizedType
+        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+      return (java.lang.reflect.ParameterizedType) ownerType;
+    }
+    return null;
+  }
+
+  /**
+   * Returns the type of the given member class, which has no type parameters of its own, with the
+   * given enclosing type, as {@code Outer<String>.Inner} for {@code Inner} and {@code
+   * Outer<String>}.
+   *
+   * @param memberClass a member class that has no type parameters
+   * @param enclosingType the enclosing type of the result
+   * @return the type of {@code memberClass} whose enclosing type is {@code enclosingType}
+   */
+  /*package*/ static NonParameterizedType forMemberClass(
+      Class<?> memberClass, ClassOrInterfaceType enclosingType) {
+    // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+    NonParameterizedType result = new NonParameterizedType(memberClass);
+    result.enclosingType = enclosingType;
+    return result;
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -508,8 +566,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * {@inheritDoc}
    *
    * <p>For a {@link ClassOrInterfaceType} that is a member class, if {@code otherType} is also a
-   * member class, then the enclosing type of this type must instantiate the enclosing type of
-   * {@code otherType}.
+   * member class, then this type and {@code otherType} must have the same runtime class, and the
+   * enclosing type of this type must instantiate the enclosing type of {@code otherType}.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {
@@ -518,9 +576,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
+      // Matching enclosing types do not make unrelated member classes, such as Container.Other and
+      // Container.Generic<T>, instantiations of one another.
+      // TODO: For a member class with type parameters of its own, this does not check them.
       return otherClassType.isNestedClass()
+          && this.getRuntimeClass().equals(otherClassType.getRuntimeClass())
           && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
     }
     return false;

@@ -83,13 +83,17 @@ public final class ArrayType extends ReferenceType {
 
   /**
    * Creates an {@code ArrayType} for the given component type. If the component type is a type
-   * variable then creates a type with an {@link Object} array as the rawtype.
+   * variable or the null type, then creates a type with an {@link Object} array as the rawtype. An
+   * array type whose component type is the null type, which Java has no syntax for, can result from
+   * a substitution that maps the component type of an array type to the null type. It is a subtype
+   * of every array type whose component type is a reference type, and no other array type is a
+   * subtype of it.
    *
    * @param componentType the component type
    * @return an {@code ArrayType} with the given component type
    */
   public static ArrayType ofComponentType(Type componentType) {
-    if (componentType instanceof TypeVariable) {
+    if (componentType instanceof TypeVariable || componentType.equals(JavaTypes.NULL_TYPE)) {
       return new ArrayType(componentType, Array.newInstance(Object.class, 0).getClass());
     }
     return new ArrayType(

@@ -193,6 +193,30 @@ public class InstantiationTest {
   }
   */
 
+  /** Based on issue #1889: a type parameter bounded by its declaring type applied to a wildcard. */
+  @Test
+  public void testWildcardBoundInstantiation() {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.WildcardBoundBuilder");
+    classnames.add("randoop.reflection.ConcreteWildcardBoundBuilder");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    getOperations(model, classOperations, inputTypes);
+
+    boolean foundCreate = false;
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().endsWith(".create")
+          && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
+              == WildcardBoundBuilder.class) {
+        foundCreate = true;
+      }
+    }
+    assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
+  }
+
   /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
@@ -432,6 +456,19 @@ public class InstantiationTest {
     class Other {}
 
     /**
+     * A member class with a type parameter of its own.
+     *
+     * @param <T> the type parameter
+     */
+    class GenericMember<T> {}
+
+    /** A member class with no type parameters of its own, which has a member class. */
+    class Middle {
+      /** A member class of a member class, with no type parameters of its own. */
+      class Deep {}
+    }
+
+    /**
      * A method whose parameter type is the generic form of a member class.
      *
      * @param inner an inner object
@@ -548,6 +585,37 @@ public class InstantiationTest {
     ClassOrInterfaceType genericOther = ClassOrInterfaceType.forClass(Outer.Other.class);
     assertNotNull(stringInner.getInstantiatingSubstitution(genericInner));
     assertNull(stringInner.getInstantiatingSubstitution(genericOther));
+    assertFalse(stringInner.isInstantiationOf(genericOther));
+    assertFalse(
+        stringInner.isInstantiationOf(ClassOrInterfaceType.forClass(Outer.GenericMember.class)));
+  }
+
+  /**
+   * A method whose parameter type is generic only through the enclosing type of its enclosing type.
+   *
+   * @param <U> the type parameter
+   * @param deep a deep object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U> void deepParameter(Outer<U>.Middle.Deep deep) {}
+
+  /**
+   * In {@code <U> void deepParameter(Outer<U>.Middle.Deep deep)}, the parameter type mentions the
+   * method's type parameter {@code U}, though the owner type {@code Outer<U>.Middle} has no type
+   * arguments of its own.
+   */
+  @Test
+  public void testMemberClassOfMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("deepParameter", Outer.Middle.Deep.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType parameterType = (ClassOrInterfaceType) operation.getInputTypes().get(0);
+    ClassOrInterfaceType genericDeep = ClassOrInterfaceType.forClass(Outer.Middle.Deep.class);
+    assertTrue(parameterType.isGeneric());
+    assertFalse(parameterType.isGenericForm());
+    assertFalse(genericDeep.equals(parameterType));
+    assertEquals(
+        Collections.singletonList(TypeVariable.forType(m.getTypeParameters()[0])),
+        parameterType.getTypeParameters());
   }
 
   /**

@@ -31,7 +31,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  public static synchronized GenericClassType forClass(Class<?> typeClass) {
+    // This method is synchronized because the cache can contain a GenericClassType whose type
+    // parameters have not yet been computed.  The lock is reentrant, so the initializing thread can
+    // look up the class during initialization, but another thread waits until it is complete.
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
