@@ -328,7 +328,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.isInstantiationOf(goalType)) {
+            if (type.runtimeClassIs(goalType.getRuntimeClass())
+                && type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -347,7 +348,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      if (superclass.isInstantiationOf(goalType)) {
+      // isInstantiationOf can be true for a member class of another class, if the enclosing types
+      // match, so also check the class.
+      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
+          && superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
 
@@ -392,9 +396,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
               return null;
             }
           } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
-            // A non-generic enclosing goal type has no type variables to bind, so the enclosing
-            // type of this type must be a subtype of it.  For example,
-            // Outer<Integer>.Inner2<Long> does not instantiate Outer<String>.Inner2<U>.
+            // For example, Outer<Integer>.Inner<String> does not instantiate
+            // Outer<String>.Inner<U>.
             return null;
           }
         }
