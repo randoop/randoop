@@ -7,9 +7,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.junit.Test;
@@ -233,6 +235,29 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(integerType, substitution.get(x));
   }
 
+  /** Containment of a member class of a parameterized type compares the enclosing types. */
+  @Test
+  public void wildcardContainmentComparesEnclosingTypes() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(GenericOuter.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    // GenericOuter<Integer>.GenericInner<String>
+    InstantiatedType integerString = innerType.instantiate(integerType, JavaTypes.STRING_TYPE);
+    // GenericOuter<String>.GenericInner<String>
+    InstantiatedType stringString =
+        innerType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertFalse(integerString.isSubtypeOfOrEqualTo(stringString));
+    assertFalse(stringString.isSubtypeOfOrEqualTo(integerString));
+
+    for (boolean hasUpperBound : new boolean[] {true, false}) {
+      WildcardArgument wildcard =
+          WildcardArgument.forType(
+              new WildcardType(new EagerReferenceBound(stringString), hasUpperBound));
+      assertFalse(wildcard.contains(TypeArgument.forType(integerString)));
+      assertTrue(wildcard.contains(TypeArgument.forType(stringString)));
+    }
+  }
+
   @Test
   public void boundOfMemberOfParameterizedType() {
     GenericClassType outerType = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
@@ -294,8 +319,11 @@ public class ClassOrInterfaceTypeTest {
     /** An inner class whose enclosing type is generic. */
     class Inner {}
 
-    /** An inner class whose enclosing type is generic, and that has an inner class. */
+    /** An inner class that declares no type parameters and has inner classes. */
     class Middle {
+      /** An inner class whose enclosing types are generic only through {@link Outer}. */
+      class Inner {}
+
       /** An inner class of an inner class whose enclosing type is generic. */
       class Deepest {}
 
@@ -330,11 +358,162 @@ public class ClassOrInterfaceTypeTest {
      *
      * @param <U> the type parameter
      */
-    abstract class PairInner<U> extends Holder<T> implements BiConsumer<T, U> {}
+    abstract class HolderPairInner<U> extends Holder<T> implements BiConsumer<T, U> {}
+
+    /**
+     * A generic inner class whose supertypes mention the type parameters of both the enclosing
+     * class and the inner class.
+     *
+     * @param <U> the type parameter
+     */
+    class PairInner<U> extends Pair<T, U> implements PairInterface<T, U> {}
 
     /** An inner class whose supertypes mention {@code T}. */
     @SuppressWarnings("serial")
     abstract class ListOfT extends ArrayList<T> implements Supplier<T> {}
+
+    /**
+     * A generic inner class whose supertypes mention {@code T} and its own type parameter.
+     *
+     * @param <U> the type parameter
+     */
+    abstract class GenericChild<U> extends Inner implements java.util.Map<T, U> {}
+
+    /** An inner class whose supertypes mention an array of {@code T}. */
+    @SuppressWarnings("serial")
+    abstract class ListOfArrayOfT extends ArrayList<T[]> implements Supplier<T[]> {}
+
+    /**
+     * A generic inner class whose enclosing type is generic.
+     *
+     * @param <U> a type parameter
+     */
+    class GenericMiddle<U> {
+      /** A non-generic inner class of a generic inner class, whose supertype mentions {@code T}. */
+      abstract class Leaf implements Supplier<T> {}
+
+      /** An inner class whose enclosing types are generic. */
+      class Inner {}
+    }
+
+    /** An inner class that is extended by an inner class with a different enclosing type. */
+    class Parent {}
+
+    /** An inner class whose superclass has an enclosing type that differs from its own. */
+    class Child extends Outer<Integer>.Parent {
+      /**
+       * Creates a Child.
+       *
+       * @param enclosing the enclosing instance of the superclass
+       */
+      Child(Outer<Integer> enclosing) {
+        enclosing.super();
+      }
+    }
+
+    /**
+     * A generic inner class.
+     *
+     * @param <I> the type parameter
+     */
+    class GenericInner<I> {}
+  }
+
+  /** Declares methods whose parameter types are member classes of parameterized types. */
+  static class OwnerHolder {
+    /**
+     * A method whose parameter types are member classes of parameterized types.
+     *
+     * @param leaf an {@code Outer<String>.GenericMiddle<Integer>.Leaf}
+     * @param child an {@code Outer<String>.Child}
+     * @param arrays an {@code Outer<? extends Number>.ListOfArrayOfT}
+     * @param inner an {@code Outer<String>.Inner}
+     * @param extendsInner a list whose elements are subtypes of {@code Outer<String>.Inner}
+     */
+    static void m(
+        Outer<String>.GenericMiddle<Integer>.Leaf leaf,
+        Outer<String>.Child child,
+        Outer<? extends Number>.ListOfArrayOfT arrays,
+        Outer<String>.Inner inner,
+        List<? extends Outer<String>.Inner> extendsInner) {}
+  }
+
+  /**
+   * Returns the parameter types of {@link OwnerHolder#m}.
+   *
+   * @return the parameter types of {@link OwnerHolder#m}
+   */
+  private static java.lang.reflect.Type[] ownerHolderParameterTypes() throws NoSuchMethodException {
+    return OwnerHolder.class
+        .getDeclaredMethod(
+            "m",
+            Outer.GenericMiddle.Leaf.class,
+            Outer.Child.class,
+            Outer.ListOfArrayOfT.class,
+            Outer.Inner.class,
+            List.class)
+        .getGenericParameterTypes();
+  }
+
+  /**
+   * A non-generic member class of a generic member class keeps the outermost enclosing type, whose
+   * type arguments instantiate its supertypes.
+   */
+  @Test
+  public void memberOfGenericMemberClassSupertypesTest() throws NoSuchMethodException {
+    ClassOrInterfaceType leaf = ClassOrInterfaceType.forType(ownerHolderParameterTypes()[0]);
+    assertEquals(Outer.GenericMiddle.class, leaf.enclosingType.getRuntimeClass());
+    assertEquals(Outer.class, leaf.enclosingType.enclosingType.getRuntimeClass());
+    assertEquals(
+        java.util.Collections.singletonList(
+            GenericClassType.forClass(Supplier.class).instantiate(JavaTypes.STRING_TYPE)),
+        leaf.getInterfaces());
+  }
+
+  /**
+   * The substitution that instantiates a member class from a subclass uses the enclosing type of
+   * the superclass, not that of the subclass.
+   */
+  @Test
+  public void inheritedMemberClassSubstitutionTest() throws NoSuchMethodException {
+    ClassOrInterfaceType child = ClassOrInterfaceType.forType(ownerHolderParameterTypes()[1]);
+    ClassOrInterfaceType parent = ClassOrInterfaceType.forClass(Outer.Parent.class);
+    TypeVariable t = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    Substitution substitution = child.getInstantiatingSubstitution(parent);
+    assertNotNull(substitution);
+    assertEquals(ClassOrInterfaceType.forClass(Integer.class), substitution.get(t));
+  }
+
+  /**
+   * The supertypes of a member class whose enclosing type has a wildcard argument are those of the
+   * capture conversion of the enclosing type.
+   */
+  @Test
+  public void memberOfWildcardTypeSupertypesTest() throws NoSuchMethodException {
+    ClassOrInterfaceType arrays = ClassOrInterfaceType.forType(ownerHolderParameterTypes()[2]);
+    assertEquals(ArrayList.class, arrays.getSuperclass().getRuntimeClass());
+    assertEquals(1, arrays.getInterfaces().size());
+  }
+
+  /** A parameterized type is not a subtype of a member class of a parameterized type. */
+  @Test
+  public void parameterizedTypeNotSubtypeOfMemberClassTest() throws NoSuchMethodException {
+    ClassOrInterfaceType inner = ClassOrInterfaceType.forType(ownerHolderParameterTypes()[3]);
+    InstantiatedType listOfString = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(inner));
+  }
+
+  /** A wildcard bounded by a member class of a parameterized type contains that member class. */
+  @Test
+  public void wildcardBoundedByMemberClassTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes = ownerHolderParameterTypes();
+    ClassOrInterfaceType inner = ClassOrInterfaceType.forType(parameterTypes[3]);
+    InstantiatedType extendsInner =
+        (InstantiatedType) ClassOrInterfaceType.forType(parameterTypes[4]);
+    TypeArgument wildcard = extendsInner.getTypeArguments().get(0);
+    assertTrue(wildcard.contains(TypeArgument.forType(inner)));
+    assertFalse(wildcard.contains(TypeArgument.forType(JavaTypes.STRING_TYPE)));
+    assertTrue(JDKTypes.LIST_TYPE.instantiate(inner).isSubtypeOfOrEqualTo(extendsInner));
   }
 
   /** Declares methods whose parameter types are used in supertype tests. */
@@ -346,6 +525,37 @@ public class ClassOrInterfaceTypeTest {
      * @param deep an {@code Outer<String>.Middle.DeepList}
      */
     static void m(Outer<String>.ListOfT list, Outer<String>.Middle.DeepList deep) {}
+
+    /**
+     * A method whose parameter types are member classes of parameterized types.
+     *
+     * @param child an {@code Outer<String>.GenericChild<Integer>}
+     * @param inner an {@code Outer<String>.Inner}
+     */
+    static void generic(Outer<String>.GenericChild<Integer> child, Outer<String>.Inner inner) {}
+  }
+
+  /**
+   * The supertypes of a generic member class of a parameterized type are instantiated by the type
+   * arguments of the enclosing type, as well as by those of the member class.
+   */
+  @Test
+  public void genericMemberClassSupertypesTest() throws NoSuchMethodException {
+    java.lang.reflect.Type[] parameterTypes =
+        SupertypeHolder.class
+            .getDeclaredMethod("generic", Outer.GenericChild.class, Outer.Inner.class)
+            .getGenericParameterTypes();
+    ClassOrInterfaceType child = ClassOrInterfaceType.forType(parameterTypes[0]);
+    ClassOrInterfaceType innerOfString = ClassOrInterfaceType.forType(parameterTypes[1]);
+    assertTrue(child instanceof InstantiatedType);
+
+    assertTrue(Subtyping.isIdentical(innerOfString, child.getSuperclass()));
+    assertTrue(child.isSubtypeOfOrEqualTo(innerOfString));
+
+    InstantiatedType mapOfStringInteger =
+        JDKTypes.MAP_TYPE.instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    assertEquals(Collections.singletonList(mapOfStringInteger), child.getInterfaces());
+    assertTrue(child.isSubtypeOfOrEqualTo(mapOfStringInteger));
   }
 
   /**
@@ -375,12 +585,167 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(genericForm.getSuperclass().isGeneric());
   }
 
+  /** Declares methods whose parameter types are member classes of {@link Outer}. */
+  static class MemberTypeHolder {
+    /**
+     * A method whose parameter type is generic only through an enclosing type of its enclosing
+     * type.
+     *
+     * @param <U> the type argument of the outermost enclosing type
+     * @param inner an inner object
+     */
+    static <U> void middleInner(Outer<U>.Middle.Inner inner) {}
+
+    /**
+     * A method whose parameter type has an enclosing type with a fixed type argument.
+     *
+     * @param <U> the type argument of the outermost enclosing type
+     * @param inner an inner object
+     */
+    static <U> void genericMiddleInner(Outer<U>.GenericMiddle<String>.Inner inner) {}
+
+    /**
+     * A method whose parameter type has an enclosing type that is not generic.
+     *
+     * @param <U> the type argument of the parameter type
+     * @param inner an inner object
+     */
+    static <U> void fixedOwner(Outer<String>.GenericInner<U> inner) {}
+
+    /**
+     * A method whose parameter type has an enclosing type with a parameterized type argument.
+     *
+     * @param <U> the type argument of the type argument of the enclosing type
+     * @param <V> the type argument of the parameter type
+     * @param inner an inner object
+     */
+    static <U, V> void setOwner(Outer<Set<U>>.GenericInner<V> inner) {}
+  }
+
+  /**
+   * Returns the type of the parameter of the given method of {@link MemberTypeHolder}.
+   *
+   * @param name the name of a method of {@link MemberTypeHolder}
+   * @param parameterClass the class of the method's parameter
+   * @return the type of the parameter
+   */
+  private static ClassOrInterfaceType memberParameterType(String name, Class<?> parameterClass)
+      throws NoSuchMethodException {
+    return ClassOrInterfaceType.forType(
+        MemberTypeHolder.class.getDeclaredMethod(name, parameterClass)
+            .getGenericParameterTypes()[0]);
+  }
+
+  /**
+   * Returns {@code Outer<outerArgument>.GenericInner<innerArgument>}.
+   *
+   * @param outerArgument the type argument of {@link Outer}
+   * @param innerArgument the type argument of {@link Outer.GenericInner}
+   * @return the type {@code Outer<outerArgument>.GenericInner<innerArgument>}
+   */
+  private static ClassOrInterfaceType genericInnerType(
+      ReferenceType outerArgument, ReferenceType innerArgument) {
+    ClassOrInterfaceType genericForm = ClassOrInterfaceType.forClass(Outer.GenericInner.class);
+    // The type parameters are those of Outer, then that of Outer.GenericInner.
+    return genericForm.substitute(
+        new Substitution(
+            genericForm.getTypeParameters(), Arrays.asList(outerArgument, innerArgument)));
+  }
+
+  @Test
+  public void nestedMemberClassForTypeTest() throws NoSuchMethodException {
+    String outerName = Outer.class.getCanonicalName();
+
+    // Outer<U>.Middle.Inner, where U is the method's type parameter.
+    ClassOrInterfaceType middleInner = memberParameterType("middleInner", Outer.Middle.Inner.class);
+    assertFalse(middleInner.isGenericForm());
+    List<TypeVariable> middleInnerParameters = middleInner.getTypeParameters();
+    assertEquals(1, middleInnerParameters.size());
+    assertEquals(
+        outerName + "<java.lang.Integer>.Middle.Inner",
+        middleInner
+            .substitute(
+                new Substitution(middleInnerParameters, JavaTypes.INT_TYPE.toBoxedPrimitive()))
+            .getFqName());
+
+    // Outer<U>.GenericMiddle<String>.Inner, where U is the method's type parameter.
+    ClassOrInterfaceType genericMiddleInner =
+        memberParameterType("genericMiddleInner", Outer.GenericMiddle.Inner.class);
+    assertFalse(genericMiddleInner.isGenericForm());
+    List<TypeVariable> genericMiddleInnerParameters = genericMiddleInner.getTypeParameters();
+    assertEquals(1, genericMiddleInnerParameters.size());
+    assertEquals(
+        outerName + "<java.lang.Integer>.GenericMiddle<java.lang.String>.Inner",
+        genericMiddleInner
+            .substitute(
+                new Substitution(
+                    genericMiddleInnerParameters, JavaTypes.INT_TYPE.toBoxedPrimitive()))
+            .getFqName());
+  }
+
+  @Test
+  public void memberClassEnclosingTypeSubstitutionTest() throws NoSuchMethodException {
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+
+    // Outer<Integer>.GenericInner<String> does not instantiate Outer<String>.GenericInner<U>.
+    ClassOrInterfaceType fixedOwner = memberParameterType("fixedOwner", Outer.GenericInner.class);
+    assertNull(
+        genericInnerType(integerType, JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(fixedOwner));
+    assertNotNull(
+        genericInnerType(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(fixedOwner));
+
+    // Outer<List<String>>.GenericInner<String> does not instantiate Outer<Set<U>>.GenericInner<V>,
+    // even though the type argument of GenericInner instantiates V.
+    ClassOrInterfaceType setOwner = memberParameterType("setOwner", Outer.GenericInner.class);
+    assertNull(
+        genericInnerType(
+                JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(setOwner));
+    Substitution substitution =
+        genericInnerType(JDKTypes.SET_TYPE.instantiate(integerType), JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(setOwner);
+    assertNotNull(substitution);
+    List<TypeVariable> setOwnerParameters = setOwner.getTypeParameters();
+    assertEquals(integerType, substitution.get(setOwnerParameters.get(0)));
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(setOwnerParameters.get(1)));
+  }
+
   /**
    * A generic class.
    *
    * @param <V> the type parameter
    */
   static class Holder<V> {}
+
+  /**
+   * A generic class with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  static class Pair<A, B> {}
+
+  /**
+   * A generic interface with two type parameters.
+   *
+   * @param <A> the first type parameter
+   * @param <B> the second type parameter
+   */
+  interface PairInterface<A, B> {}
+
+  /** A field of type {@code Outer<String>.PairInner<Integer>}. */
+  public Outer<String>.PairInner<Integer> pairInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<Integer>}. */
+  public Outer<String>.NumberInner<Integer> stringNumberInnerOfInteger;
+
+  /** A field of type {@code Outer<String>.NumberInner<? extends Number>}. */
+  public Outer<String>.NumberInner<? extends Number> stringNumberInnerOfExtendsNumber;
+
+  /** A field of type {@code Outer<Number>.NumberInner<? extends Number>}. */
+  public Outer<Number>.NumberInner<? extends Number> numberNumberInnerOfExtendsNumber;
 
   /** A field of type {@code Outer<String>.GenericInner<Integer>}. */
   public Outer<String>.GenericInner<Integer> genericInnerOfInteger;
@@ -590,7 +955,7 @@ public class ClassOrInterfaceTypeTest {
         listInnerOfString.getInterfaces());
 
     InstantiatedType pairInner =
-        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.PairInner.class))
+        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.HolderPairInner.class))
             .instantiate(JavaTypes.STRING_TYPE, integerType);
     assertEquals(
         GenericClassType.forClass(Holder.class).instantiate(JavaTypes.STRING_TYPE),
@@ -600,5 +965,171 @@ public class ClassOrInterfaceTypeTest {
             GenericClassType.forClass(BiConsumer.class)
                 .instantiate(JavaTypes.STRING_TYPE, integerType)),
         pairInner.getInterfaces());
+  }
+
+  /**
+   * A generic class whose member classes are used to test that the enclosing types of member
+   * classes are compared.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class OwnerChain<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+
+    /** A member class that declares no type parameters, and has a generic member class. */
+    class PlainMiddle {
+      /**
+       * A generic member class of a member class that declares no type parameters.
+       *
+       * @param <U> the type parameter
+       */
+      class Inner<U> {}
+    }
+
+    /**
+     * A generic member class that has a generic member class.
+     *
+     * @param <M> the type parameter
+     */
+    class GenericMiddle<M> {
+      /**
+       * A generic member class of a generic member class.
+       *
+       * @param <U> the type parameter
+       */
+      class Inner<U> {}
+    }
+  }
+
+  /**
+   * A class whose superclass is a member class of a parameterized type.
+   *
+   * @param <X> the type parameter
+   */
+  static class InnerChild<X> extends OwnerChain<String>.Inner<X> {
+    /**
+     * Creates an InnerChild.
+     *
+     * @param outer the enclosing instance of the superclass
+     */
+    InnerChild(OwnerChain<String> outer) {
+      outer.super();
+    }
+  }
+
+  /** A field of type {@code OwnerChain<String>.Inner<Integer>}. */
+  public OwnerChain<String>.Inner<Integer> stringInner;
+
+  /** A field of type {@code OwnerChain<Number>.Inner<Integer>}. */
+  public OwnerChain<Number>.Inner<Integer> numberInner;
+
+  /** A field of type {@code InnerChild<Integer>}. */
+  public InnerChild<Integer> innerChild;
+
+  /** A field of type {@code OwnerChain<String>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<String>.PlainMiddle.Inner<Integer> stringPlainMiddleInner;
+
+  /** Another field of type {@code OwnerChain<String>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<String>.PlainMiddle.Inner<Integer> otherStringPlainMiddleInner;
+
+  /** A field of type {@code OwnerChain<Number>.PlainMiddle.Inner<Integer>}. */
+  public OwnerChain<Number>.PlainMiddle.Inner<Integer> numberPlainMiddleInner;
+
+  /** A field of type {@code OwnerChain<String>.GenericMiddle<Integer>.Inner<Long>}. */
+  public OwnerChain<String>.GenericMiddle<Integer>.Inner<Long> stringGenericMiddleInner;
+
+  /** A field of type {@code OwnerChain<Number>.GenericMiddle<Integer>.Inner<Long>}. */
+  public OwnerChain<Number>.GenericMiddle<Integer>.Inner<Long> numberGenericMiddleInner;
+
+  @Test
+  public void subtypeComparesOwnerTypeBeyondNonGenericMiddle() {
+    InstantiatedType stringType = fieldType("stringPlainMiddleInner");
+    assertTrue(stringType.isSubtypeOfOrEqualTo(fieldType("otherStringPlainMiddleInner")));
+    assertFalse(stringType.isSubtypeOfOrEqualTo(fieldType("numberPlainMiddleInner")));
+  }
+
+  @Test
+  public void superclassComparesOwnerType() {
+    InstantiatedType childType = fieldType("innerChild");
+    assertTrue(childType.isSubtypeOfOrEqualTo(fieldType("stringInner")));
+    assertFalse(childType.isSubtypeOfOrEqualTo(fieldType("numberInner")));
+  }
+
+  @Test
+  public void instantiatingSubstitutionComparesOwnerOfFixedEnclosingType() {
+    InstantiatedType stringLong = fieldType("stringGenericMiddleInner");
+    InstantiatedType numberLong = fieldType("numberGenericMiddleInner");
+    TypeVariable x = GenericClassType.forClass(Holder.class).getTypeParameters().get(0);
+    List<TypeArgument> xArgument = Collections.singletonList(TypeArgument.forType(x));
+    // OwnerChain<String>.GenericMiddle<Integer>.Inner<X>
+    InstantiatedType stringX = new InstantiatedType(stringLong.getGenericClassType(), xArgument);
+    stringX.enclosingType = stringLong.enclosingType;
+    // OwnerChain<Number>.GenericMiddle<Integer>.Inner<X>
+    InstantiatedType numberX = new InstantiatedType(numberLong.getGenericClassType(), xArgument);
+    numberX.enclosingType = numberLong.enclosingType;
+
+    Substitution substitution = stringLong.getInstantiatingSubstitution(stringX);
+    assertNotNull(substitution);
+    assertEquals(ReferenceType.forClass(Long.class), substitution.get(x));
+    // No substitution for X unifies OwnerChain<String> with OwnerChain<Number>.
+    assertNull(stringLong.getInstantiatingSubstitution(numberX));
+  }
+
+  @Test
+  public void instantiatedBoundComparesOwnerType() {
+    InstantiatedType stringType = fieldType("stringInner");
+    InstantiatedType numberType = fieldType("numberInner");
+    ParameterBound bound = new EagerReferenceBound(stringType);
+    assertTrue(bound.isUpperBound(stringType, new Substitution()));
+    assertFalse(bound.isUpperBound(numberType, new Substitution()));
+    assertTrue(bound.isLowerBound(stringType, new Substitution()));
+    assertFalse(bound.isLowerBound(numberType, new Substitution()));
+  }
+
+  @Test
+  public void supertypeOfGenericMemberMentionsEnclosingParameterTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType pairInnerOfInteger = fieldType("pairInnerOfInteger");
+
+    // Outer<String>.PairInner<Integer> extends Pair<String, Integer>.
+    InstantiatedType pairOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(Pair.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(pairOfStringInteger, pairInnerOfInteger.getSuperclass());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairOfStringInteger));
+
+    // Outer<String>.PairInner<Integer> implements PairInterface<String, Integer>.
+    InstantiatedType pairInterfaceOfStringInteger =
+        ((GenericClassType) ClassOrInterfaceType.forClass(PairInterface.class))
+            .instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(
+        Collections.singletonList(pairInterfaceOfStringInteger),
+        pairInnerOfInteger.getInterfaces());
+    assertTrue(pairInnerOfInteger.isSubtypeOfOrEqualTo(pairInterfaceOfStringInteger));
+  }
+
+  @Test
+  public void containmentRequiresSubtypeEnclosingTypeTest() {
+    InstantiatedType stringNumberInnerOfInteger = fieldType("stringNumberInnerOfInteger");
+    InstantiatedType stringNumberInnerOfExtendsNumber =
+        fieldType("stringNumberInnerOfExtendsNumber");
+    InstantiatedType numberNumberInnerOfExtendsNumber =
+        fieldType("numberNumberInnerOfExtendsNumber");
+
+    // Identical enclosing types:  containment of the type arguments suffices.
+    assertTrue(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
+
+    // Different enclosing types:  Outer<String> is not a subtype of Outer<Number>.
+    assertFalse(stringNumberInnerOfInteger.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        stringNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(numberNumberInnerOfExtendsNumber));
+    assertFalse(
+        numberNumberInnerOfExtendsNumber.isSubtypeOfOrEqualTo(stringNumberInnerOfExtendsNumber));
   }
 }

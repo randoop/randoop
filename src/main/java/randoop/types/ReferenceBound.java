@@ -112,10 +112,18 @@ public abstract class ReferenceBound extends ParameterBound {
     return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>As specified, the substitution is applied to {@code lowerBound} but not to the type of this
+   * bound, even if that type contains type variables, as in {@code T[]}. So, with {@code T :=
+   * String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a
+   * lower bound of {@code String[]}.
+   */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
-    // The substitution applies only to lowerBound.  A type variable in this bound, as in T[] for a
-    // non-recursive T, stands for itself.
+    // The substitution applies only to lowerBound.  A type variable in this bound, such as T in
+    // T[], stands for itself, even if the substitution maps it.
     return lowerBound.isLowerBound(boundType, substitution);
   }
 

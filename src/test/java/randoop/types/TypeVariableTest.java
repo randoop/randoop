@@ -2201,6 +2201,14 @@ public class TypeVariableTest {
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   List<? super Integer> superIntegerListField;
 
+  /** A field of type {@code Collection<?>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<?> unboundedCollectionField;
+
+  /** A field of type {@code Collection<? extends Number>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<? extends Number> numberCollectionField;
+
   /**
    * Returns the type of the given field of this class.
    *
@@ -2225,9 +2233,45 @@ public class TypeVariableTest {
     // A wildcard argument is not contained by a non-wildcard argument.
     assertFalse(ownFieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
 
+    // A supertype with another rawtype is compared by containment of its type arguments.
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
+
     TypeVariable t = typeParameter(StringListBound.class, 0);
     assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
     assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
+    assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
+  }
+
+  /**
+   * Fields whose types have nested wildcards with a bound that mentions a type variable with a
+   * recursive bound. Such a wildcard bound is a {@link LazyParameterBound}.
+   *
+   * @param <T> a type parameter with a self-referential bound
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class NestedLazyWildcardBounds<T extends Comparable<T>> {
+    /** A list whose elements are lists with a wildcard element type. */
+    List<List<? extends Comparable<T>>> source;
+
+    /** A list with a wildcard element type whose bound has a wildcard. */
+    List<? extends List<? extends Comparable<T>>> target;
+  }
+
+  /**
+   * Comparing nested wildcards whose bounds are lazy compares the bounds rather than throwing a
+   * {@link LazyParameterBound.LazyBoundException}.
+   */
+  @Test
+  public void testSubtypeOfNestedLazyWildcardBound() throws NoSuchFieldException {
+    ClassOrInterfaceType source =
+        ClassOrInterfaceType.forType(
+            NestedLazyWildcardBounds.class.getDeclaredField("source").getGenericType());
+    ClassOrInterfaceType target =
+        ClassOrInterfaceType.forType(
+            NestedLazyWildcardBounds.class.getDeclaredField("target").getGenericType());
+    assertTrue(source.isSubtypeOfOrEqualTo(target));
   }
 
   /**
@@ -2634,11 +2678,11 @@ public class TypeVariableTest {
   public void testTypeParametersOfCopyStartWithCopy() {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable original = parameters.get(1);
     TypeVariable copy =
         (TypeVariable)
-            parameters
-                .get(1)
-                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+            original.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertNotSame(original, copy);
     assertSame(copy, copy.getTypeParameters().get(0));
   }
 
@@ -2782,6 +2826,29 @@ public class TypeVariableTest {
     assertFalse(first.canBeSupertypeOf(integerArray, new Substitution()));
     // The upper bound of the second capture variable is the first one.
     assertFalse(second.canBeInstantiatedBy(integerArray));
+  }
+
+  /** A field whose type has a wildcard bounded below by an array type and above by another. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
+
+  /**
+   * An array type whose component type is a type variable is not within a bound that is a capture
+   * variable merely because an array of a supertype of the type variable's bound, such as {@code
+   * Object[]}, can instantiate the capture variable. A capture variable stands for a particular
+   * unknown type, so its strict supertypes are not searched.
+   */
+  @Test
+  public void testVariableComponentArraySupertypeCannotInstantiateCaptureVariable()
+      throws NoSuchFieldException {
+    // U extends Number
+    ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
+    InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
+    TypeVariable capture = typeArgument(capturedType, 1);
+    assertFalse(capture.canBeInstantiatedBy(uArray));
+    // The capture of `? super String[]` could be Object[], but U[] is not known to be a subtype
+    // of it.
+    assertFalse(capture.canBeSupertypeOf(uArray, new Substitution()));
   }
 
   /**
@@ -2929,7 +2996,10 @@ public class TypeVariableTest {
 
   @Test
   public void testSuperclassOfMemberClassUsesEnclosingTypeArguments() {
-    GenericClassType innerMap = GenericClassType.forClass(OuterOfMap.InnerMap.class);
+    // ClassOrInterfaceType.forClass sets the enclosing type, whose type parameter T instantiate()
+    // expects an argument for.
+    GenericClassType innerMap =
+        (GenericClassType) ClassOrInterfaceType.forClass(OuterOfMap.InnerMap.class);
     InstantiatedType stringIntegerInner =
         innerMap.instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
     InstantiatedType expected =
@@ -2961,5 +3031,103 @@ public class TypeVariableTest {
     ClassOrInterfaceType rawChild = ClassOrInterfaceType.forClass(RawHolder.RawChild.class);
     GenericClassType box = GenericClassType.forClass(RawHolder.Box.class);
     assertNull(rawChild.getMatchingSupertype(box));
+  }
+
+  /** A field of type {@code List<? extends List<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends List<String>[]> extendsStringListArrayListField;
+
+  /** A field of type {@code List<? super List<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? super List<String>[]> superStringListArrayListField;
+
+  /**
+   * Returns the first type argument of the type of the given field of this class.
+   *
+   * @param fieldName the name of a field of this class, whose type is parameterized
+   * @return the first type argument of the type of the field
+   * @throws NoSuchFieldException if this class has no field named {@code fieldName}
+   */
+  private static TypeArgument firstTypeArgument(String fieldName) throws NoSuchFieldException {
+    return ((InstantiatedType) ownFieldType(fieldName)).getTypeArguments().get(0);
+  }
+
+  @Test
+  public void testWildcardWithVariableFreeGenericArrayBound() throws NoSuchFieldException {
+    ArrayType stringListArray =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    TypeArgument argument = TypeArgument.forType(stringListArray);
+    assertTrue(firstTypeArgument("extendsStringListArrayListField").contains(argument));
+    assertTrue(firstTypeArgument("superStringListArrayListField").contains(argument));
+    TypeArgument stringArray =
+        TypeArgument.forType(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    assertFalse(firstTypeArgument("extendsStringListArrayListField").contains(stringArray));
+    assertFalse(firstTypeArgument("superStringListArrayListField").contains(stringArray));
+  }
+
+  /** A field of type {@code List<? extends Collection<?>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Collection<?>> collectionListField;
+
+  /** A field of type {@code List<? extends Collection<? extends CharSequence>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Collection<? extends CharSequence>> charSequenceCollectionListField;
+
+  @Test
+  public void testSubtypeOfWildcardWithInheritedSupertype() throws NoSuchFieldException {
+    GenericClassType list = GenericClassType.forClass(List.class);
+    InstantiatedType listOfListOfString = list.instantiate(list.instantiate(JavaTypes.STRING_TYPE));
+    InstantiatedType listOfListOfInteger =
+        list.instantiate(list.instantiate(ClassOrInterfaceType.forClass(Integer.class)));
+    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
+    assertTrue(
+        listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
+    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
+    assertFalse(
+        listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
+    // The inherited supertype Collection<String> of List<String> is compared with Collection<?> by
+    // containment, not equality.
+    ReferenceType collectionOfWildcard =
+        ((ReferenceBound)
+                ((WildcardArgument) firstTypeArgument("collectionListField")).getTypeBound())
+            .getBoundType();
+    assertTrue(list.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(collectionOfWildcard));
+  }
+
+  /**
+   * Type parameters whose bounds have a wildcard whose bound is a non-generic member class of a
+   * parameterized type.
+   *
+   * @param <X> a type parameter whose bound mentions {@code OuterWithPlainInner<String>.Inner}
+   * @param <Y> a type parameter whose bound mentions {@code OuterWithPlainInner<Integer>.Inner}
+   */
+  static class WildcardMemberBound<
+      X extends List<? extends OuterWithPlainInner<String>.Inner>,
+      Y extends List<? extends OuterWithPlainInner<Integer>.Inner>> {}
+
+  /**
+   * Copies of a type variable are identical if their bounds differ only in the representation of a
+   * nested wildcard bound: a {@link LazyParameterBound} in one, and the equivalent {@link
+   * ReferenceBound} in the other.
+   */
+  @Test
+  public void testIdenticalCopiesWithMaterializedWildcardBound() {
+    TypeVariable x = typeParameter(WildcardMemberBound.class, 0);
+    TypeVariable y = typeParameter(WildcardMemberBound.class, 1);
+    ParameterBound bound = x.getUpperTypeBound();
+    // Substituting materializes the lazy bound of the wildcard, OuterWithPlainInner<String>.Inner.
+    ParameterBound materialized = bound.substitute(new Substitution(x, x));
+    assertNotSame(bound, materialized);
+    TypeVariable copy = x.createCopyWithBounds(x.getLowerTypeBound(), materialized);
+    assertTrue(x.isIdenticalTo(copy));
+    assertTrue(copy.isIdenticalTo(x));
+
+    // A copy whose bound has a different enclosing type, OuterWithPlainInner<Integer>, is not
+    // identical.
+    ParameterBound otherBound = y.getUpperTypeBound().substitute(new Substitution(y, y));
+    TypeVariable otherCopy = x.createCopyWithBounds(x.getLowerTypeBound(), otherBound);
+    assertFalse(x.isIdenticalTo(otherCopy));
+    assertFalse(copy.isIdenticalTo(otherCopy));
   }
 }

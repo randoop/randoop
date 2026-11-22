@@ -128,9 +128,11 @@ class LazyReferenceBound extends ReferenceBound {
    * is the null type, or if, after the substitution is applied to it, it is a subtype of the type
    * of this bound, in which each type variable stands for itself (see {@link
    * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
-   * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. The type of this bound contains type
-   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
-   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. A lower bound that the substitution
+   * does not instantiate is compared with its remaining type variables standing for themselves.
+   * The type of this bound contains type variables, so it stands for every instantiation of them;
+   * a type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
+   * but {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -149,6 +151,11 @@ class LazyReferenceBound extends ReferenceBound {
       return true;
     }
     ParameterBound b = lowerBound.substitute(substitution);
+    if (b instanceof LazyParameterBound) {
+      // The substitution did not instantiate the lower bound.  Convert it, keeping each of its
+      // remaining type variables, so that it can be compared with the type of this bound.
+      b = ((LazyParameterBound) b).toReferenceBound();
+    }
     if (!(b instanceof ReferenceBound)) {
       return false;
     }

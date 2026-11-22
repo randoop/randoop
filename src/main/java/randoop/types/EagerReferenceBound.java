@@ -55,8 +55,9 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
+      // isInstantiationOf does not compare enclosing types, so compare them too.
       return boundSuperType.isInstantiationOf(argClassType)
-          && enclosingTypesInstantiate(boundSuperType, argClassType);
+          && ClassOrInterfaceType.enclosingTypesInstantiate(boundSuperType, argClassType);
     }
     return isSubtypeIncludingEnclosingTypes(thisBoundType, argType);
   }
@@ -88,39 +89,12 @@ class EagerReferenceBound extends ReferenceBound {
     if (!classType.runtimeClassIs(otherClassType.getRuntimeClass())) {
       for (ClassOrInterfaceType supertype : classType.getSupertypesStrict()) {
         if (supertype.runtimeClassIs(otherClassType.getRuntimeClass())) {
-          return enclosingTypesInstantiate(supertype, otherClassType);
+          return ClassOrInterfaceType.enclosingTypesInstantiate(supertype, otherClassType);
         }
       }
       return true;
     }
-    return enclosingTypesInstantiate(classType, otherClassType);
-  }
-
-  /**
-   * Returns true if each enclosing type of {@code type} instantiates the corresponding enclosing
-   * type of {@code otherType}, for as many levels as both are member classes. {@link
-   * InstantiatedType#isInstantiationOf(ReferenceType)} does not compare enclosing types, so it
-   * treats {@code Outer<String>.Inner<Integer>} as an instantiation of {@code
-   * Outer<Number>.Inner<Integer>}.
-   *
-   * @param type a class or interface type
-   * @param otherType a class or interface type of the same class as {@code type}
-   * @return true if the enclosing types of {@code type} instantiate those of {@code otherType}
-   */
-  private static boolean enclosingTypesInstantiate(
-      ClassOrInterfaceType type, ClassOrInterfaceType otherType) {
-    ClassOrInterfaceType current = type;
-    ClassOrInterfaceType otherCurrent = otherType;
-    while (current.isMemberClass() && otherCurrent.isMemberClass()) {
-      ClassOrInterfaceType enclosing = current.enclosingType;
-      ClassOrInterfaceType otherEnclosing = otherCurrent.enclosingType;
-      if (!enclosing.isInstantiationOf(otherEnclosing)) {
-        return false;
-      }
-      current = enclosing;
-      otherCurrent = otherEnclosing;
-    }
-    return true;
+    return ClassOrInterfaceType.enclosingTypesInstantiate(classType, otherClassType);
   }
 
   @Override
@@ -168,8 +142,10 @@ class EagerReferenceBound extends ReferenceBound {
         return false;
       }
       argSuperType = argSuperType.applyCaptureConversion();
+      // isInstantiationOf does not compare enclosing types, so compare them too:  for the bound
+      // Outer<String>.Inner<Integer>, Outer<Number>.Inner<Integer> is not within the bound.
       return argSuperType.isInstantiationOf(boundClassType)
-          && enclosingTypesInstantiate(argSuperType, boundClassType);
+          && ClassOrInterfaceType.enclosingTypesInstantiate(argSuperType, boundClassType);
     }
     if (argType.isReferenceType()) {
       return isSubtypeIncludingEnclosingTypes((ReferenceType) argType, thisBoundType);

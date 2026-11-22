@@ -150,13 +150,20 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Returns the substitution to apply to the reflected supertypes of this type's class: it maps the
    * type parameters that the class declares to the type arguments of this type, and the type
-   * parameters of enclosing classes to the type arguments of the enclosing types.
+   * parameters of enclosing classes to the type arguments of the enclosing types. For example, for
+   * {@code Outer<String>.Inner<Integer>}, where {@code Outer<T>.Inner<U>}, the substitution is
+   * {@code [T := String, U := Integer]}. The enclosing types are capture-converted first (see
+   * {@link #getEnclosingSubstitution()}).
    *
    * @return the substitution that instantiates the supertypes of this type's class
    */
   private Substitution getSupertypeSubstitution() {
-    return new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments())
-        .extend(getEnclosingTypeSubstitution());
+    Substitution substitution =
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+    Substitution enclosingSubstitution = getEnclosingSubstitution();
+    return enclosingSubstitution == null
+        ? substitution
+        : enclosingSubstitution.extend(substitution);
   }
 
   @Override
@@ -404,8 +411,8 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // The substitution for another argument can map a type variable to a different type, as
+          // for Map<String, Integer> and Map<T, T>.  Then no substitution instantiates the goal.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
@@ -470,7 +477,8 @@ public class InstantiatedType extends ParameterizedType {
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // first and second clauses
     // A member class that declares no type parameters, of a parameterized type, such as
-    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.
+    // `Outer<String>.Inner`, is parameterized but is not an InstantiatedType; it is handled by the
+    // superclass's supertype search below.
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       if (Subtyping.isSubtypeOrEqual(this, otherInstantiatedType, new Substitution())) {

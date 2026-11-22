@@ -429,10 +429,13 @@ public abstract class TypeVariable extends ParameterType {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {
-      // The substitution instantiates the type variable, so the bound is a known type.
+      // The substitution instantiates the type variable, so the bound is a known type.  Compare it
+      // without applying the substitution to it again, as LazyParameterBound does:  for the
+      // substitution [T := List<U>, U := String], the bound T is List<U>, not List<String>.
+      Substitution once = substitution.withIdentityFor(substituted.getTypeParameters());
       return isUpperBound
-          ? substituted.isUpperBound(otherType, substitution)
-          : substituted.isLowerBound(otherType, substitution);
+          ? substituted.isUpperBound(otherType, once)
+          : substituted.isLowerBound(otherType, once);
     }
     return isUpperBound
         ? variable.canBeSupertypeOf(otherType, substitution)
@@ -520,11 +523,14 @@ public abstract class TypeVariable extends ParameterType {
    *       if the component type is a reference type other than {@code Object}, {@code Object[]};
    *       and the arrays whose component types are the strict supertypes of the array's component
    *       type, as determined by this method. For example, the result for {@code String[]} includes
-   *       {@code Object[]} and {@code CharSequence[]}.
+   *       {@code Object[]} and {@code CharSequence[]}, and the result for {@code U[]}, for {@code U
+   *       extends Number}, includes {@code Number[]} and {@code Object[]}.
+   *   <li>For a type variable, the result is the types in its upper bound and their strict
+   *       supertypes, as determined by this method.
    *   <li>For any other type, the result is empty.
    * </ul>
    *
-   * @param type a type, not a variable
+   * @param type a type
    * @return strict supertypes of {@code type}
    */
   private static List<ReferenceType> strictSupertypes(ReferenceType type) {
@@ -554,14 +560,49 @@ public abstract class TypeVariable extends ParameterType {
         // Object[] is a supertype even if the component type is a type variable or an interface.
         ArrayType objectArray = ArrayType.ofComponentType(JavaTypes.OBJECT_TYPE);
         result.add(objectArray);
-        if (!componentType.isVariable()) {
-          for (ReferenceType componentSupertype : strictSupertypes((ReferenceType) componentType)) {
-            ArrayType arraySupertype = ArrayType.ofComponentType(componentSupertype);
-            if (!arraySupertype.equals(objectArray)) {
-              result.add(arraySupertype);
-            }
+        for (ReferenceType componentSupertype : strictSupertypes((ReferenceType) componentType)) {
+          ArrayType arraySupertype = ArrayType.ofComponentType(componentSupertype);
+          if (!arraySupertype.equals(objectArray)) {
+            result.add(arraySupertype);
           }
         }
+      }
+    } else if (type instanceof TypeVariable) {
+      ParameterBound upperBound = ((TypeVariable) type).getUpperTypeBound();
+      for (ReferenceType boundType : getUpperBoundTypes(upperBound)) {
+        if (!result.contains(boundType)) {
+          result.add(boundType);
+        }
+        for (ReferenceType boundSupertype : strictSupertypes(boundType)) {
+          if (!result.contains(boundSupertype)) {
+            result.add(boundSupertype);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns the types in the given upper bound of a type variable: the type of a {@link
+   * ReferenceBound}, the equivalent type of a {@link LazyParameterBound}, or the types of the
+   * members of an {@link IntersectionTypeBound}.
+   *
+   * @param upperBound an upper bound of a type variable
+   * @return the types in {@code upperBound}
+   */
+  private static List<ReferenceType> getUpperBoundTypes(ParameterBound upperBound) {
+    List<ReferenceType> result = new ArrayList<>();
+    if (upperBound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) upperBound).toReferenceBound();
+      if (converted != null) {
+        result.add(converted.getBoundType());
+      }
+    } else if (upperBound instanceof ReferenceBound) {
+      result.add(((ReferenceBound) upperBound).getBoundType());
+    } else if (upperBound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) upperBound).getBounds()) {
+        result.addAll(getUpperBoundTypes(member));
       }
     }
     return result;
@@ -612,6 +653,12 @@ public abstract class TypeVariable extends ParameterType {
    * {@code XI} of a type variable {@code X} with other bounds, they would not distinguish {@code
    * Map<X, XS>} from {@code Map<X, XI>}.
    *
+   * <p>Array, class, interface, and wildcard types are compared structurally, without first
+   * comparing them with {@link Object#equals(Object)}. A wildcard bound nested in such a type can
+   * be a {@link LazyParameterBound} in one type and the equivalent {@link ReferenceBound} in the
+   * other, as for {@code List<? extends Outer<String>.Inner>} before and after a substitution; such
+   * bounds are not equal, but they are identical.
+   *
    * @param type1 a type
    * @param type2 a type
    * @return true if the types are equal and the type variables in them are identical
@@ -621,22 +668,25 @@ public abstract class TypeVariable extends ParameterType {
     if (type1 == type2) {
       return true;
     }
-    if (!type1.equals(type2)) {
-      return false;
-    }
     if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
       return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
     }
     if (type1 instanceof ArrayType && type2 instanceof ArrayType) {
       Type component1 = ((ArrayType) type1).getComponentType();
       Type component2 = ((ArrayType) type2).getComponentType();
-      return !component1.isReferenceType()
-          || !component2.isReferenceType()
-          || areIdentical((ReferenceType) component1, (ReferenceType) component2);
+      if (component1.isReferenceType() && component2.isReferenceType()) {
+        return areIdentical((ReferenceType) component1, (ReferenceType) component2);
+      }
+      return component1.equals(component2);
     }
     if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
       ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
+      if (type1.getClass() != type2.getClass()
+          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())
+          || classType1.isMemberClass() != classType2.isMemberClass()) {
+        return false;
+      }
       if (classType1.isMemberClass()
           && classType2.isMemberClass()
           && !areIdentical(classType1.enclosingType, classType2.enclosingType)) {
@@ -654,14 +704,15 @@ public abstract class TypeVariable extends ParameterType {
       }
       return true;
     }
-    if (type1 instanceof ParameterType && type2 instanceof ParameterType) {
-      // For example, a wildcard type.
-      ParameterType parameterType1 = (ParameterType) type1;
-      ParameterType parameterType2 = (ParameterType) type2;
-      return areIdentical(parameterType1.getLowerTypeBound(), parameterType2.getLowerTypeBound())
-          && areIdentical(parameterType1.getUpperTypeBound(), parameterType2.getUpperTypeBound());
+    if (type1 instanceof WildcardType && type2 instanceof WildcardType) {
+      WildcardType wildcard1 = (WildcardType) type1;
+      WildcardType wildcard2 = (WildcardType) type2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getLowerTypeBound(), wildcard2.getLowerTypeBound())
+          && areIdentical(wildcard1.getUpperTypeBound(), wildcard2.getUpperTypeBound());
     }
-    return areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+    return type1.equals(type2)
+        && areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
   }
 
   /**
@@ -712,12 +763,10 @@ public abstract class TypeVariable extends ParameterType {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
     }
-    if (!bound1.equals(bound2)) {
-      return false;
-    }
     // As in areIdentical(ReferenceType, ReferenceType), compare the bounds structurally, rather
     // than comparing their getTypeParameters(), which contain only one of several copies of a type
-    // variable.
+    // variable.  Do not first compare the bounds with equals():  a wildcard bound nested in the
+    // bound type can be a LazyParameterBound in one and the equivalent ReferenceBound in the other.
     if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
       return areIdentical(
           ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
@@ -735,7 +784,8 @@ public abstract class TypeVariable extends ParameterType {
       }
       return true;
     }
-    return areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
+    return bound1.equals(bound2)
+        && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
   }
 
   /**
