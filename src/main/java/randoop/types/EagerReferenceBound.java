@@ -40,14 +40,13 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    // A member class that declares no type parameters, of a parameterized type, such as
-    // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
-    // capture conversion.  It is compared by the subtype test below.
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
@@ -110,8 +109,8 @@ class EagerReferenceBound extends ReferenceBound {
       // argument satisfies this bound if its own upper bound does.
       return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
-    // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
-    // Outer<String>.Inner, is compared by the subtype test below.
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
@@ -128,7 +127,7 @@ class EagerReferenceBound extends ReferenceBound {
               (ReferenceType) argType, thisBoundType, completeSubstitution);
         }
       }
-      InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+      InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
