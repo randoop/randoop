@@ -7,6 +7,7 @@ import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -141,5 +142,49 @@ public class ArrayTypeTest {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       // Good
     }
+  }
+
+  /** Methods whose return types are used in the tests. */
+  @SuppressWarnings("unused")
+  abstract static class TypeHolder {
+    abstract List<? extends Number> extendsNumberList();
+
+    abstract List<? extends Number>[] extendsNumberListArray();
+
+    abstract List<? super Integer> superIntegerList();
+
+    abstract List<Integer> integerList();
+
+    abstract List<Integer>[] integerListArray();
+
+    abstract List<String> stringList();
+
+    abstract List<String>[] stringListArray();
+  }
+
+  /**
+   * Returns the Randoop type for the return type of the given method of {@link TypeHolder}.
+   *
+   * @param methodName the method name
+   * @return the return type of the method
+   */
+  private static Type returnType(String methodName) throws NoSuchMethodException {
+    return Type.forType(TypeHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
+  @Test
+  public void testSubtypeOfWildcardParameterizedType() throws NoSuchMethodException {
+    Type extendsNumberList = returnType("extendsNumberList");
+    Type superIntegerList = returnType("superIntegerList");
+    Type integerList = returnType("integerList");
+    Type stringList = returnType("stringList");
+    assertTrue(integerList.isSubtypeOfOrEqualTo(extendsNumberList));
+    assertFalse(stringList.isSubtypeOfOrEqualTo(extendsNumberList));
+    assertTrue(integerList.isSubtypeOfOrEqualTo(superIntegerList));
+    assertFalse(stringList.isSubtypeOfOrEqualTo(superIntegerList));
+
+    Type extendsNumberListArray = returnType("extendsNumberListArray");
+    assertTrue(returnType("integerListArray").isSubtypeOfOrEqualTo(extendsNumberListArray));
+    assertFalse(returnType("stringListArray").isSubtypeOfOrEqualTo(extendsNumberListArray));
   }
 }
