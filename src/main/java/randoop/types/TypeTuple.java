@@ -137,7 +137,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
    */
   public boolean hasCaptureVariable() {
     for (Type type : list) {
-      if (type.isParameterized() && ((ParameterizedType) type).hasCaptureVariable()) {
+      if (type.hasCaptureVariable()) {
         return true;
       }
     }
