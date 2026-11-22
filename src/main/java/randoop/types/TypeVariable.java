@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
@@ -13,7 +14,7 @@ public abstract class TypeVariable extends ParameterType {
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
    * Object} type as upper bound.
    */
-  TypeVariable() {
+  /*package*/ TypeVariable() {
     super();
   }
 
@@ -24,7 +25,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param lowerBound the lower type bound on this variable
    * @param upperBound the upper type bound on this variable
    */
-  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  /*package*/ TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
@@ -126,7 +127,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
-  boolean canBeInstantiatedBy(ReferenceType otherType) {
+  /*package*/ boolean canBeInstantiatedBy(ReferenceType otherType) {
     Substitution substitution;
     if (getLowerTypeBound().isVariable()) {
       substitution = getSubstitution(this, otherType);
@@ -158,14 +159,42 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the type parameters in this type, which is this variable.
+   * Returns the type that the given substitution maps this type variable to, or null if the
+   * substitution does not map this type variable or maps it to itself, as determined by {@link
+   * Substitution#mapsToItself(TypeVariable)}.
    *
-   * @return this variable
+   * <p>When the substitution maps this type variable to itself, the substitution's key can be a
+   * copy of this type variable with other bounds. Returning null keeps this copy and its bounds,
+   * rather than the substitution's copy. When the substitution maps this type variable to a copy of
+   * it with other bounds, the result is that copy.
+   *
+   * @param substitution a substitution
+   * @return the type that {@code substitution} maps this type variable to, or null if {@code
+   *     substitution} does not map this type variable or maps it to itself
+   */
+  /*package*/ @Nullable ReferenceType getSubstitutedType(Substitution substitution) {
+    ReferenceType type = substitution.get(this);
+    if (type != null && substitution.mapsToItself(this)) {
+      return null;
+    }
+    return type;
+  }
+
+  /**
+   * Returns the type parameters in this type: this variable, followed by the type variables in its
+   * bounds.
+   *
+   * <p>This variable comes first so that it, rather than a copy of it with other bounds that occurs
+   * in its bounds, represents it in the result. Copies of a type variable are equal, so the result
+   * contains only one of them.
+   *
+   * @return this variable and the type variables in its bounds
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> parameters = new LinkedHashSet<>(super.getTypeParameters());
+    Set<TypeVariable> parameters = new LinkedHashSet<>();
     parameters.add(this);
+    parameters.addAll(super.getTypeParameters());
     return new ArrayList<>(parameters);
   }
 

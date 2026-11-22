@@ -60,7 +60,7 @@ public abstract class ParameterBound {
    * @param bounds the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  static ParameterBound forTypes(
+  /*package*/ static ParameterBound forTypes(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non-null");
@@ -85,7 +85,7 @@ public abstract class ParameterBound {
    * @param type the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper bound
    */
-  static ParameterBound forType(
+  /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
@@ -94,7 +94,8 @@ public abstract class ParameterBound {
       return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {
-      return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
+      // The class can be an array class, as in `? extends String[]`.
+      return new EagerReferenceBound(ReferenceType.forType(type));
     }
     if (isTypeVariable(type)) {
       TypeVariable eagerBound = TypeVariable.forType(type);
@@ -105,6 +106,12 @@ public abstract class ParameterBound {
 
   /**
    * Applies the given substitution to this type bound by replacing type variables.
+   *
+   * <p>If the substitution changes nothing in this bound, the result should be this bound itself,
+   * so that a caller can detect a change by comparing the result to this bound with {@code ==}.
+   * Comparing with {@code equals} would not detect a change to only the bounds of a type variable,
+   * because copies of a type variable are equal even if their bounds differ. A result that is a new
+   * object for the same bound is correct, but makes callers create needless copies.
    *
    * @param substitution the type substitution
    * @return this bound with the type after the substitution has been applied
@@ -175,7 +182,7 @@ public abstract class ParameterBound {
    * @param type the type to test
    * @return true if the type is a type variable, false otherwise
    */
-  static boolean isTypeVariable(java.lang.reflect.Type type) {
+  /*package*/ static boolean isTypeVariable(java.lang.reflect.Type type) {
     return type instanceof java.lang.reflect.TypeVariable;
   }
 
@@ -184,14 +191,14 @@ public abstract class ParameterBound {
    *
    * @return true iff this bound has a capture variable
    */
-  abstract boolean hasCaptureVariable();
+  /*package*/ abstract boolean hasCaptureVariable();
 
   /**
    * Returns true if the type of this bound is generic.
    *
    * @return true, if this bound type is generic, and false otherwise
    */
-  final boolean isGeneric() {
+  /*package*/ final boolean isGeneric() {
     return isGeneric(false);
   }
 
@@ -224,7 +231,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return true iff this bound is a lower bound on the type of the given bound
    */
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+  /*package*/ boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     return false;
   }
 
@@ -261,7 +268,7 @@ public abstract class ParameterBound {
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
-  abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
+  /*package*/ abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
 
   /**
    * Returns true if this bound is a type variable.

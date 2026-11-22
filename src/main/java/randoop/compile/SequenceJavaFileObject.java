@@ -30,7 +30,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    * @param classFileName the name of the class
    * @param kind either {@code SOURCE} or {@code CLASS}
    */
-  SequenceJavaFileObject(final String classFileName, final Kind kind) {
+  /*package*/ SequenceJavaFileObject(final String classFileName, final Kind kind) {
     super(toURI(classFileName), kind);
     this.source = classFileName;
   }
@@ -41,7 +41,7 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    * @param classFileName the name of the class
    * @param sequenceClass the class source
    */
-  SequenceJavaFileObject(String classFileName, String sequenceClass) {
+  /*package*/ SequenceJavaFileObject(String classFileName, String sequenceClass) {
     super(toURI(classFileName), Kind.SOURCE);
     this.source = sequenceClass;
   }
@@ -69,8 +69,12 @@ class SequenceJavaFileObject extends SimpleJavaFileObject {
    * Returns the byte stream as a byte array.
    *
    * @return the byte array for the byte stream
+   * @throws IllegalStateException if {@link #openOutputStream()} has not been called
    */
-  byte[] getByteCode() {
+  /*package*/ byte[] getByteCode() {
+    if (byteStream == null) {
+      throw new IllegalStateException("getByteCode() called before openOutputStream()");
+    }
     return byteStream.toByteArray();
   }
 }

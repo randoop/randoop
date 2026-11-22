@@ -18,7 +18,7 @@ import randoop.util.Log;
 class TypeExtractor extends DefaultClassVisitor {
 
   /** The set of concrete types. */
-  private Set<Type> inputTypes;
+  private final Set<Type> inputTypes;
 
   /** The accessibility predicate for checking whether a type is accessible in generated tests. */
   private final AccessibilityPredicate predicate;
@@ -31,7 +31,7 @@ class TypeExtractor extends DefaultClassVisitor {
    *     class populates the set, and the client reads the set it passed in.
    * @param predicate the accessibility predicate
    */
-  TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
+  /*package*/ TypeExtractor(Set<Type> inputTypes, AccessibilityPredicate predicate) {
     super();
     this.inputTypes = inputTypes;
     this.predicate = predicate;

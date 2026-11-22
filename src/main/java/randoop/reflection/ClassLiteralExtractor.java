@@ -20,14 +20,14 @@ import randoop.util.ClassFileConstants;
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
   /** The storage for constant information. */
-  private ScopeToLiteralStatistics scopeToLiteralStatistics;
+  private final ScopeToLiteralStatistics scopeToLiteralStatistics;
 
   /**
    * Creates a visitor that records constant statistics.
    *
    * @param scopeToLiteralStatistics a map from types to sequences in them that yield a literal
    */
-  ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
+  /*package*/ ClassLiteralExtractor(ScopeToLiteralStatistics scopeToLiteralStatistics) {
     super();
     this.scopeToLiteralStatistics = scopeToLiteralStatistics;
   }
