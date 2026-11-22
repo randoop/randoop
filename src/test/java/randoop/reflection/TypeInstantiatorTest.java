@@ -484,8 +484,8 @@ public class TypeInstantiatorTest {
   /**
    * In {@code <T, A, B, C, D> List<T> unrelatedVariables(Collection<? extends T> c, A a, B b, C cc,
    * D d)}, only {@code T} is related to the bound of the capture variable. The search for an
-   * instantiation of the method's type variables abandons each partial substitution that violates
-   * a bound, so it terminates quickly although there are many combinations of instantiations of all
+   * instantiation of the method's type variables abandons each partial substitution that violates a
+   * bound, so it terminates quickly although there are many combinations of instantiations of all
    * the variables.
    */
   @Test(timeout = 10000)

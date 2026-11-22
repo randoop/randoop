@@ -2436,7 +2436,7 @@ public class TypeVariableTest {
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
   private static TypeArgument firstTypeArgument(String fieldName) throws NoSuchFieldException {
-    return ((InstantiatedType) fieldType(fieldName)).getTypeArguments().get(0);
+    return ((InstantiatedType) ownFieldType(fieldName)).getTypeArguments().get(0);
   }
 
   @Test
@@ -2467,12 +2467,12 @@ public class TypeVariableTest {
     InstantiatedType listOfListOfString = list.instantiate(list.instantiate(JavaTypes.STRING_TYPE));
     InstantiatedType listOfListOfInteger =
         list.instantiate(list.instantiate(ClassOrInterfaceType.forClass(Integer.class)));
-    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
     assertTrue(
-        listOfListOfString.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
-    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+        listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
+    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
     assertFalse(
-        listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
+        listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
     // The inherited supertype Collection<String> of List<String> is compared with Collection<?> by
     // containment, not equality.
     ReferenceType collectionOfWildcard =
@@ -3345,8 +3345,8 @@ public class TypeVariableTest {
 
   /**
    * An array type whose component type is a type variable is within a bound that is a capture
-   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]},
-   * can instantiate the capture variable.
+   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]}, can
+   * instantiate the capture variable.
    */
   @Test
   public void testVariableComponentArraySupertypeCanInstantiateCaptureVariable()
