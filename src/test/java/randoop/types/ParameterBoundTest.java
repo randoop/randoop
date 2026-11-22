@@ -420,6 +420,9 @@ public class ParameterBoundTest {
   public void testNonGenericMemberClassBound() {
     TypeVariable t =
         GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    java.lang.reflect.Type declaredBound =
+        NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
+    assertTrue(t.canBeInstantiatedBy(ReferenceType.forType(declaredBound)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 
@@ -454,6 +457,38 @@ public class ParameterBoundTest {
       assertTrue(substituted instanceof ReferenceBound);
       assertNotNull(((LazyParameterBound) bound).toReferenceBound());
     }
+  }
+
+  /**
+   * A class whose type parameter has a self-referential bound in which the type parameter occurs
+   * only in the enclosing type of a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerOnlyRecursiveBound<T extends List<GenericOuter<T>.NonGenericInner>> {}
+
+  /**
+   * A type parameter that occurs only in the enclosing type of a member class in its own bound
+   * makes the bound lazy, and a substitution reaches the enclosing type.
+   */
+  @Test
+  public void testOwnerOnlyRecursiveBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OwnerOnlyRecursiveBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    assertEquals(Collections.singletonList(t), bound.getTypeParameters());
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
+    assertEquals(
+        GenericClassType.forClass(GenericOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
+    assertNotNull(((LazyParameterBound) bound).toReferenceBound());
   }
 
   /**

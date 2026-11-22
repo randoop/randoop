@@ -17,7 +17,10 @@ import org.plumelib.util.CollectionsPlume;
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
-  /** A cache of all ParameterizedTypes that have been created. */
+  /**
+   * A cache of all ParameterizedTypes that have been created. Accessed only while holding the lock
+   * on {@code ParameterizedType.class}; see {@link #forClass}.
+   */
   private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
 
   /** Creates a ParameterizedType. */
@@ -31,7 +34,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  // This method is synchronized so that concurrent calls do not corrupt the cache, and so that an
+  // uninitialized generic class type in the cache is visible only to the thread that is
+  // initializing it.  The lock is reentrant, so recursive calls from that thread find it.
+  public static synchronized GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
