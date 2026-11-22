@@ -123,8 +123,16 @@ final class Subtyping {
       // not, so compare the enclosing types here.
       ClassOrInterfaceType supertype =
           findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
-      return supertype != null
-          && argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
+      if (supertype == null) {
+        return false;
+      }
+      // As above, capture the wildcard arguments, here those of the enclosing types.
+      try {
+        supertype = supertype.applyCaptureConversion();
+      } catch (LazyBoundException e) {
+        return false;
+      }
+      return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
   }
@@ -163,6 +171,11 @@ final class Subtyping {
   private static boolean argumentsContained(
       ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
     if (otherType instanceof InstantiatedType) {
+      // The generic form of a class can be a GenericClassType, as for the enclosing type Outer<T>
+      // of Outer<T>.Inner<String>.  Its type arguments are its type parameters.
+      if (type instanceof GenericClassType) {
+        type = ((GenericClassType) type).substitute(new Substitution());
+      }
       if (!(type instanceof InstantiatedType)) {
         return false;
       }

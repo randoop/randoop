@@ -127,27 +127,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    @Nullable Substitution substitution = getEnclosingSubstitution();
+    if (!isMemberClass()) {
+      return CollectionsPlume.mapList(
+          ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+    }
+    // For a member class such as Outer<String>.Inner, substitute the type arguments of the
+    // enclosing types.
+    Substitution substitution = getSupertypeSubstitution();
     return CollectionsPlume.mapList(
-        (java.lang.reflect.Type type) -> forSupertype(type, substitution),
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
         runtimeType.getGenericInterfaces());
-  }
-
-  /**
-   * Returns the type for a reflected supertype of this type's class, instantiated by the given
-   * substitution for the type parameters of the enclosing classes. For example, if {@code
-   * Outer<T>.Inner extends ArrayList<T>}, then the superclass of {@code Outer<String>.Inner} is
-   * {@code ArrayList<String>}.
-   *
-   * @param supertype a reflected supertype of this type's class
-   * @param substitution the result of {@link #getEnclosingSubstitution()}
-   * @return the supertype, instantiated by {@code substitution}, or the supertype itself if {@code
-   *     substitution} is null
-   */
-  private static ClassOrInterfaceType forSupertype(
-      java.lang.reflect.Type supertype, @Nullable Substitution substitution) {
-    ClassOrInterfaceType result = forType(supertype);
-    return substitution == null ? result : result.substitute(substitution);
   }
 
   @Override
@@ -187,7 +176,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forSupertype(supertype, getEnclosingSubstitution());
+      // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
+      // substitute the type arguments of the enclosing types.
+      if (supertype == null) {
+        return null;
+      }
+      ClassOrInterfaceType result = forType(supertype);
+      return isMemberClass() ? result.substitute(getSupertypeSubstitution()) : result;
     }
   }
 

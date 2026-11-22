@@ -437,6 +437,31 @@ public class ParameterizedTypeTest {
     assertFalse(arrayListOfString.isSubtypeOfOrEqualTo(plainOfString));
   }
 
+  /**
+   * A fixed type argument of a goal type must equal the corresponding type argument: {@code
+   * Map<String, Integer>} does not instantiate {@code Map<K, Long>}, but {@code Map<String, Long>}
+   * does.
+   */
+  @Test
+  public void testFixedTypeArgumentInstantiatingSubstitution() {
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    TypeVariable keyParameter = mapType.getTypeParameters().get(0);
+    ReferenceType integerType = (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = (ReferenceType) JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    // Map<K, Long>
+    InstantiatedType goalType = mapType.instantiate(keyParameter, longType);
+    assertTrue(goalType.isGeneric());
+
+    assertNull(
+        mapType
+            .instantiate(JavaTypes.STRING_TYPE, integerType)
+            .getInstantiatingSubstitution(goalType));
+    Substitution substitution =
+        mapType.instantiate(JavaTypes.STRING_TYPE, longType).getInstantiatingSubstitution(goalType);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(keyParameter));
+  }
+
   /** A field of type {@code List<List<?>>}. */
   @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
   private List<List<?>> listOfUnboundedLists;
