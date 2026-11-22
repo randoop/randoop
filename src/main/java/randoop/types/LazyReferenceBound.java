@@ -129,9 +129,9 @@ class LazyReferenceBound extends ReferenceBound {
    * of this bound, in which each type variable stands for itself (see {@link
    * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
    * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. A lower bound that the substitution
-   * does not instantiate is compared with its remaining type variables standing for themselves.
-   * The type of this bound contains type variables, so it stands for every instantiation of them;
-   * a type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
+   * does not instantiate is compared with its remaining type variables standing for themselves. The
+   * type of this bound contains type variables, so it stands for every instantiation of them; a
+   * type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
    * but {@code List<T>} itself is.
    */
   @Override
