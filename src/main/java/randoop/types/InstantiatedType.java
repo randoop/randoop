@@ -349,6 +349,13 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
+      // an instantiation.
+      if (this.isMemberClass()
+          && otherInstType.isMemberClass()
+          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
+        return false;
+      }
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
