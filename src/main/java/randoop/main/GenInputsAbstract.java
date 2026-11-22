@@ -165,13 +165,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the <a href="https://randoop.github.io/randoop/manual/index.html#replacecall">{@code
    * replacecall} agent</a>.
    *
-   * <p>Randoop will not directly call a method whose <a
+   * <p>Suppose that the <a
    * href="https://randoop.github.io/randoop/manual/#fully-qualified-signature">fully-qualified
-   * signature</a> matches the regular expression, or a method inherited from a superclass or
-   * interface whose signature matches the regular expression. Nor will Randoop directly call any
-   * method that such a method overrides (because such a call might dispatch to the omitted method
-   * at run time). Randoop considers only the omitted methods of the classes under test, so a call
-   * can still dispatch to an omitted method of a class that is not under test.
+   * signature</a> of method M matches the regular expression, and M would otherwise be a <a
+   * href="https://randoop.github.io/randoop/manual/#specifying-methods-command-line-options">method
+   * under test</a>. Randoop will not directly call M, nor any method that M overrides (because such
+   * a call might dispatch to M at run time). Randoop may call a method that overrides M. The
+   * signature names the class that declares M, not a class that inherits M. Randoop considers only
+   * the omitted methods of the classes under test and the omitted methods listed in the {@code
+   * --methodlist} file, so a call can still dispatch to an omitted method of any other class.
    *
    * <p>If the regular expression contains anchors "{@code ^}" or "{@code $}", they refer to the
    * beginning and the end of the signature string.
@@ -565,6 +567,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
+  @SuppressWarnings("PMD.DataClass") // a parameter object, whose fields are meant to be public
   public static class Limits {
     /**
      * Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no
@@ -1350,13 +1353,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
                         + "  Ensure that %s is on the classpath.  Classpath:%n%s",
                     className, jarFile, jarFile, ReflectionPlume.classpathToString()),
                 e);
-          } catch (UnsatisfiedLinkError e) {
-            // This happens when an old classfile refers to a class that has been removed from the
-            // JDK, such as one in java.awt.*.
-            System.out.printf(
-                "Ignoring %s which was read from %s but could not be loaded: %s%n",
-                className, jarFile, e);
-            continue;
           } catch (ExceptionInInitializerError e) {
             // There was a problem with initializing the class (= setting static fields).
             System.out.printf(
@@ -1390,7 +1386,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
               continue;
             }
           } catch (Error e) {
-            // An example is: "java.lang.Error: FileMonitor not implemented for Linux"
+            // One example is: "java.lang.Error: FileMonitor not implemented for Linux".
+            // Another is an UnsatisfiedLinkError, which happens when a class's native library is
+            // unavailable, as for some classes in java.awt.* on a headless JDK.
             System.out.printf(
                 "Ignoring %s which was read from %s but could not be loaded: %s%n",
                 className, jarFile, e);
