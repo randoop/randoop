@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -640,6 +641,48 @@ public class InstantiationTest {
     assertNotNull("instantiation failed for " + get, instance);
     assertEquals(stringInner, instance.getInputTypes().get(0));
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U
+   * getInner2Leaf(MemberTypeOuter<U>.Inner2<Integer>.Leaf)}, whose parameter type has an owner type
+   * {@code MemberTypeOuter<U>.Inner2<Integer>} with a type argument of its own, instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testParameterizedOwnerReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation getInner2Leaf =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("getInner2Leaf", MemberTypeOuter.Inner2.Leaf.class));
+    // The conversion of the parameter type retains the owner MemberTypeOuter<U> of Inner2<Integer>.
+    ClassOrInterfaceType parameterType =
+        (ClassOrInterfaceType) getInner2Leaf.getInputTypes().get(0);
+    assertEquals(
+        Collections.singletonList(getInner2Leaf.getOutputType()),
+        parameterType.getTypeParameters());
+
+    // The type parameters of MemberTypeOuter<T>.Inner2<V>.Leaf are T and V, in that order.
+    ClassOrInterfaceType genericLeaf =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner2.Leaf.class);
+    ClassOrInterfaceType stringIntegerLeaf =
+        genericLeaf.substitute(
+            new Substitution(
+                genericLeaf.getTypeParameters(),
+                JavaTypes.STRING_TYPE,
+                (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive()));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringIntegerLeaf.getSupertypesInclusive());
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(getInner2Leaf);
+      assertNotNull("instantiation failed for " + getInner2Leaf, instance);
+      assertEquals(stringIntegerLeaf, instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    }
+    Randomness.setSeed(0);
   }
 
   /** A class with a generic member class. */
