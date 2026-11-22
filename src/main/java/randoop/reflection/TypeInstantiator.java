@@ -959,9 +959,16 @@ public class TypeInstantiator {
     // Can always select captured wildcards independently.  Augment each existing candidate.
     if (!captureParameters.isEmpty()) {
       if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+        result.add(substitution);
+      }
+      for (int i = 0; i < result.size(); i++) {
+        Substitution extended = selectSubstitutionIndependently(captureParameters, result.get(i));
+        if (extended == null) {
+          // The candidate types of a capture variable do not depend on the substitution, so
+          // extending any other element of `result` would fail too.
+          return Collections.emptyList();
+        }
+        result.set(i, extended);
       }
     }
 
@@ -979,15 +986,15 @@ public class TypeInstantiator {
    * @return the substitution extended by mapping given parameters to selected types; null, if there
    *     are no candidate types for some parameter
    */
-  private Substitution selectSubstitutionIndependently(
+  private @Nullable Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = candidateTypes(typeArgument);
+    for (TypeVariable parameter : parameters) {
+      List<ReferenceType> candidates = candidateTypes(parameter);
       if (candidates.isEmpty()) {
         Log.logPrintf(
             "TypeInstantiator.selectSubstitutionIndependently: No candidate types for %s%n",
-            typeArgument);
+            parameter);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
