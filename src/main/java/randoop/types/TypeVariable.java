@@ -410,9 +410,9 @@ public abstract class TypeVariable extends ParameterType {
    *   <li>For an array type {@code C[]}, {@code Object}, {@code Cloneable}, {@code Serializable},
    *       and, if {@code C} is a reference type, {@code S[]} for each strict supertype {@code S} of
    *       {@code C} that this method returns.
-   *   <li>For a type variable, the types in its upper bound and their strict supertypes, and
-   *       {@code Object}; this lets an array type such as {@code U[]}, for {@code U extends
-   *       Number}, have supertypes such as {@code Number[]} and {@code Object[]}.
+   *   <li>For a type variable, the types in its upper bound and their strict supertypes, and {@code
+   *       Object}; this lets an array type such as {@code U[]}, for {@code U extends Number}, have
+   *       supertypes such as {@code Number[]} and {@code Object[]}.
    *   <li>For any other type, {@code Object}.
    * </ul>
    *

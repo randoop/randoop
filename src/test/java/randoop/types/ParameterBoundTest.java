@@ -119,9 +119,9 @@ public class ParameterBoundTest {
 
   /**
    * A generic array type in which a type variable occurs only in an owner type is within itself as
-   * a bound. This tests only that such a bound can be created and compared, not that the
-   * comparison distinguishes owner types: the conversion of a reflection type to a {@link
-   * ReferenceType} gives each member class the owner type from its class declaration.
+   * a bound. This tests only that such a bound can be created and compared, not that the comparison
+   * distinguishes owner types: the conversion of a reflection type to a {@link ReferenceType} gives
+   * each member class the owner type from its class declaration.
    */
   @Test
   public void testGenericArrayWithVariableInOwnerType() {

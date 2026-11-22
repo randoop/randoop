@@ -144,8 +144,7 @@ public class LazyParameterBoundTest {
     assertEquals(
         u.getUpperTypeBound().substitute(new Substitution(t, JavaTypes.NULL_TYPE)), nullBound);
     // The bound is List<? extends NullType[]>.
-    InstantiatedType nullBoundType =
-        (InstantiatedType) ((ReferenceBound) nullBound).getBoundType();
+    InstantiatedType nullBoundType = (InstantiatedType) ((ReferenceBound) nullBound).getBoundType();
     WildcardArgument wildcard = (WildcardArgument) nullBoundType.getTypeArguments().get(0);
     assertTrue(wildcard.hasUpperBound());
     assertEquals(
