@@ -513,8 +513,8 @@ public abstract class TypeVariable extends ParameterType {
    * of it, and, if this variable is a type parameter, {@code otherType} itself and each of the
    * strict supertypes of {@code otherType}, as determined by {@link
    * #strictSupertypes(ReferenceType)}. A capture variable stands for a particular type that is
-   * known only to be a supertype of its lower bound, so only its lower bound is considered.
-   * Each instantiation other than the lower bound is checked as by {@link
+   * known only to be a supertype of its lower bound, so only its lower bound is considered. Each
+   * instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}. For example, for {@code <S extends
    * Comparable<S>, U extends S>}, if class {@code Sub} extends {@code Base}, which implements
    * {@code Comparable<Base>}, then {@code S} can be a supertype of {@code Sub}, with {@code Base}
