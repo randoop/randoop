@@ -52,15 +52,18 @@ public final class ReplacementFileReader {
 
   /**
    * Naive regex to match a method signature consisting of a fully-qualified method name followed by
-   * anything in parentheses. The parentheses are expected to contain argument types, but the
-   * pattern permits anything.
+   * anything in parentheses. The method name is expected to be fully-qualified and the parentheses
+   * are expected to contain argument types, but the pattern permits anything other than whitespace
+   * and parentheses before the parentheses (optionally followed by whitespace), and anything other
+   * than a closing parenthesis within them. {@link MethodSignature#of(String)} validates the
+   * signature.
    *
-   * <p>The pattern permits the {@code <init>} notation for constructors in both the original and
-   * the replacement signature. A constructor cannot be a replacement, but matching one lets {@link
-   * #addMethodReplacement} report a precise error instead of a format error.
+   * <p>The original method may be a constructor, written as {@code classname.<init>(...)} or as
+   * {@code classname(...)}. A replacement is always a static method, but the pattern permits the
+   * {@code <init>} notation in the replacement signature too, so that {@link #addMethodReplacement}
+   * reports a precise error instead of a format error.
    */
-  private static final String SIGNATURE_STRING =
-      DOT_DELIMITED_IDS + "(?:\\.<init>)?" + "\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = "[^\\s()]+\\s*\\([^)]*\\)";
 
   /**
    * Unanchored pattern to match method replacements consisting of a pair of signatures. Uses the
@@ -95,7 +98,7 @@ public final class ReplacementFileReader {
    * @throws ReplacementFileException if there is an error in the replacement file
    * @see #readReplacements(Reader, String)
    */
-  static Map<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
+  /*package*/ static Map<MethodSignature, MethodSignature> readReplacements(Path replacementFile)
       throws IOException, ReplacementFileException {
     try (Reader replacementReader =
         Files.newBufferedReader(replacementFile, StandardCharsets.UTF_8)) {
@@ -115,10 +118,11 @@ public final class ReplacementFileReader {
    * @throws IOException if there is an error while reading the file
    * @throws ReplacementFileException if there is an error in the replacement file
    */
+  /*package*/
   @SuppressWarnings("nullness:argument") // https://tinyurl.com/cfissue/4006
   static Map<MethodSignature, MethodSignature> readReplacements(@Owning Reader in, String filename)
       throws ReplacementFileException, IOException {
-    HashMap<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
+    Map<MethodSignature, MethodSignature> replacementMap = new HashMap<>();
 
     EntryFileReader.<ReplacementFileException>forEachEntry(
         in,
@@ -162,7 +166,9 @@ public final class ReplacementFileReader {
    * the replacement method can replace the original method, as described in {@link
    * #addReplacement}.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. In
+   * addition, the original signature may be a constructor written as {@code
+   * package-name.classname(argument-list)} (see {@link #resolveOriginal}).
    *
    * @param replacementMap the map from a method to a replacement method
    * @param originalSignature the signature of the method to be replaced
@@ -176,9 +182,186 @@ public final class ReplacementFileReader {
       String replacementSignature)
       throws ReplacementException {
 
-    MethodSignature original = parseExistingMethod(originalSignature, "original");
+    MethodSignature original;
+    try {
+      original = resolveOriginal(originalSignature);
+    } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
+      throw new ReplacementException("Bad original method", e);
+    }
     MethodSignature replacement = parseExistingMethod(replacementSignature, "replacement");
     addReplacement(replacementMap, original, replacement);
+  }
+
+  /**
+   * Returns the signature of the method or constructor that the given original signature denotes.
+   *
+   * <p>A signature such as {@code pkg.C(int)} has two interpretations: method {@code C} of class
+   * {@code pkg}, or a constructor of class {@code pkg.C}. This uses the method interpretation if
+   * that method exists, and otherwise uses the constructor interpretation if class {@code pkg.C}
+   * exists. If class {@code pkg} is unreadable, this uses the constructor interpretation if that
+   * constructor exists, and otherwise reports that class {@code pkg} is unreadable, along with why
+   * the constructor interpretation failed. A signature such as {@code C(int)}, with no period
+   * before the parenthesis, denotes a constructor of class {@code C} in the unnamed package.
+   *
+   * <p>A nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
+   *
+   * @param signatureString the original signature, as written in a replacement file
+   * @return the signature of the method or constructor that {@code signatureString} denotes, which
+   *     exists
+   * @throws ReplacementException if the signature is badly-formed
+   * @throws ClassNotFoundException if no interpretation of the signature names an existing class,
+   *     or if a superclass that is searched is not on the classpath
+   * @throws IllegalClassFormatException if a class cannot be read
+   * @throws NoSuchMethodException if the method or constructor does not exist
+   */
+  private static MethodSignature resolveOriginal(String signatureString)
+      throws ReplacementException,
+          ClassNotFoundException,
+          IllegalClassFormatException,
+          NoSuchMethodException {
+    String fullSignatureString = signatureString;
+    int parenPos = signatureString.indexOf('(');
+    if (parenPos > 0 && signatureString.lastIndexOf('.', parenPos) == -1) {
+      // A constructor of a class in the unnamed package.
+      fullSignatureString =
+          signatureString.substring(0, parenPos) + ".<init>" + signatureString.substring(parenPos);
+    }
+    MethodSignature parsedSignature;
+    try {
+      parsedSignature = MethodSignature.of(fullSignatureString);
+    } catch (IllegalArgumentException e) {
+      throw new ReplacementException("Bad original signature", e);
+    }
+    MethodSignature signature;
+    try {
+      signature = parsedSignature.resolveNestedClassnames();
+    } catch (IllegalClassFormatException e) {
+      // A class is unreadable.  The code below reports that, or uses the constructor
+      // interpretation if the method interpretation's class is the unreadable one.
+      signature = parsedSignature;
+    }
+
+    if (signature.isConstructor()) {
+      signature.toMethod();
+      return signature;
+    }
+
+    // The constructor interpretation is resolved only after the method interpretation fails, so
+    // that an unreadable class in an unused constructor interpretation cannot prevent a method
+    // match.
+    MethodSignature unresolvedConstructor = signature.toConstructorSignature();
+    // Mention the constructor interpretation only if the name looks like a class name.
+    boolean mentionConstructor = Character.isUpperCase(signature.getName().charAt(0));
+    boolean methodClassExists;
+    try {
+      methodClassExists = classExists(signature.getClassname());
+    } catch (IllegalClassFormatException e) {
+      // The method interpretation's class is unreadable; try the constructor interpretation.
+      MethodSignature constructor;
+      boolean constructorClassExists;
+      try {
+        constructor = unresolvedConstructor.resolveNestedClassnames();
+        constructorClassExists = classExists(constructor.getClassname());
+      } catch (IllegalClassFormatException e2) {
+        e.addSuppressed(e2);
+        throw e;
+      }
+      if (!constructorClassExists) {
+        if (mentionConstructor) {
+          e.addSuppressed(
+              new ClassNotFoundException(
+                  String.format(
+                      "Class %s not found, for a constructor", constructor.getClassname())));
+        }
+        throw e;
+      }
+      try {
+        constructor.toMethod();
+      } catch (NoSuchMethodException | ClassNotFoundException | IllegalClassFormatException e2) {
+        e.addSuppressed(e2);
+        throw e;
+      }
+      return constructor;
+    }
+    if (methodClassExists) {
+      try {
+        signature.toMethod();
+        return signature;
+      } catch (NoSuchMethodException | ClassNotFoundException | IllegalClassFormatException e) {
+        // The method lookup searches superclasses, which might be missing or unreadable.
+        MethodSignature constructor;
+        try {
+          constructor = unresolvedConstructor.resolveNestedClassnames();
+        } catch (IllegalClassFormatException e2) {
+          e.addSuppressed(e2);
+          throw e;
+        }
+        if (!classExists(constructor.getClassname())) {
+          if (!mentionConstructor || !(e instanceof NoSuchMethodException)) {
+            throw e;
+          }
+          NoSuchMethodException withConstructor =
+              new NoSuchMethodException(
+                  String.format(
+                      "Method %s not found in class %s (nor class %s, for a constructor)",
+                      signature.getName(), signature.getClassname(), constructor.getClassname()));
+          withConstructor.initCause(e);
+          throw withConstructor;
+        }
+        constructor.toMethod();
+        return constructor;
+      }
+    }
+
+    MethodSignature constructor = unresolvedConstructor.resolveNestedClassnames();
+    if (!classExists(constructor.getClassname())) {
+      if (mentionConstructor) {
+        throw new ClassNotFoundException(
+            String.format(
+                "Class %s not found (nor class %s, for a constructor)",
+                signature.getClassname(), constructor.getClassname()));
+      }
+      throw new ClassNotFoundException("Class " + signature.getClassname() + " not found");
+    }
+
+    constructor.toMethod();
+    return constructor;
+  }
+
+  /**
+   * Returns true if the given class is on the classpath.
+   *
+   * @param classname a class name
+   * @return true if the class is on the classpath
+   * @throws IllegalClassFormatException if the class is on the classpath but cannot be read
+   */
+  private static boolean classExists(String classname) throws IllegalClassFormatException {
+    return readJavaClass(classname) != null;
+  }
+
+  /**
+   * Returns the binary name of the class that the given class name denotes, or null if the class
+   * name denotes no class on the classpath. As in a Randoop fully-qualified signature, a nested
+   * class may be written with "." instead of "$"; for example, {@code java.util.Map.Entry} denotes
+   * {@code java.util.Map$Entry}.
+   *
+   * @param classname a class name, possibly with "." in place of "$"
+   * @return the binary name of the class that {@code classname} denotes, or null if there is none
+   * @throws IllegalClassFormatException if a class is on the classpath but cannot be read
+   */
+  static @Nullable @BinaryName String resolveClassname(String classname)
+      throws IllegalClassFormatException {
+    String candidate = classname;
+    while (!classExists(candidate)) {
+      int dotPos = candidate.lastIndexOf('.');
+      if (dotPos == -1) {
+        return null;
+      }
+      candidate = candidate.substring(0, dotPos) + "$" + candidate.substring(dotPos + 1);
+    }
+    @SuppressWarnings("signature:assignment") // names a class on the classpath
+    @BinaryName String result = candidate;
+    return result;
   }
 
   /**
@@ -212,7 +395,8 @@ public final class ReplacementFileReader {
   /**
    * Parses a method signature and verifies that the method exists.
    *
-   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature.
+   * <p>See {@link MethodSignature#of(String)} for the expected format of a method signature. A
+   * nested class may be written with "." instead of "$"; see {@link #resolveClassname}.
    *
    * @param signature the method signature
    * @param role the role of the method in a replacement, such as "original" or "replacement"; used
@@ -222,14 +406,16 @@ public final class ReplacementFileReader {
    */
   private static MethodSignature parseExistingMethod(String signature, String role)
       throws ReplacementException {
-    MethodSignature result;
+    MethodSignature parsed;
     try {
-      result = MethodSignature.of(signature);
+      parsed = MethodSignature.of(signature);
     } catch (IllegalArgumentException e) {
       throw new ReplacementException("Bad " + role + " signature", e);
     }
+    MethodSignature result;
     // Call toMethod() instead of exists() to get more precise error messages.
     try {
+      result = parsed.resolveNestedClassnames();
       result.toMethod();
     } catch (ClassNotFoundException | IllegalClassFormatException | NoSuchMethodException e) {
       throw new ReplacementException("Bad " + role + " method", e);
@@ -644,7 +830,7 @@ public final class ReplacementFileReader {
    * @return JavaClass object or null if not found
    * @throws ReplacementException if any error loading and converting class file
    */
-  /*package-protected*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
+  /*package*/ static @Nullable JavaClass getJavaClassFromClassname(String classname)
       throws ReplacementException {
 
     JavaClass c = javaClasses.get(classname);
@@ -672,12 +858,32 @@ public final class ReplacementFileReader {
   }
 
   /**
+   * Returns a JavaClass object for the given class name, or null if the class is not on the
+   * classpath.
+   *
+   * @param classname name of class to find and load
+   * @return JavaClass object or null if not found
+   * @throws IllegalClassFormatException if the class is on the classpath but cannot be read
+   */
+  /*package-protected*/ static @Nullable JavaClass readJavaClass(String classname)
+      throws IllegalClassFormatException {
+    try {
+      return getJavaClassFromClassname(classname);
+    } catch (ReplacementException e) {
+      IllegalClassFormatException unreadable =
+          new IllegalClassFormatException("Unable to read " + classname);
+      unreadable.initCause(e);
+      throw unreadable;
+    }
+  }
+
+  /**
    * Exception to represent an error discovered while reading a replacement file. Used to represent
    * errors within the reader methods where file name and line number are not available. Repackaged
    * as a {@link ReplacementFileException} in {@link ReplacementFileReader#readReplacements(Reader,
    * String)}.
    */
-  static class ReplacementException extends Exception {
+  /*package*/ static class ReplacementException extends Exception {
 
     private static final long serialVersionUID = 20250811;
 
@@ -686,7 +892,7 @@ public final class ReplacementFileReader {
      *
      * @param message the error message
      */
-    ReplacementException(@Nullable String message) {
+    /*package*/ ReplacementException(@Nullable String message) {
       super(message);
     }
 
@@ -696,7 +902,7 @@ public final class ReplacementFileReader {
      * @param message the message
      * @param cause the error message
      */
-    ReplacementException(@Nullable String message, @Nullable Throwable cause) {
+    /*package*/ ReplacementException(@Nullable String message, @Nullable Throwable cause) {
       super(message, cause);
     }
   }

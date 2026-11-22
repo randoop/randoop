@@ -16,7 +16,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    * @param statementIndex the position of statement in sequence
    * @param catchClassName the name of the exception class to be caught
    */
-  EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  /*package*/ EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 

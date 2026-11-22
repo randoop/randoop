@@ -1,8 +1,11 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -18,8 +21,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 class CaptureTypeVariable extends TypeVariable {
 
-  /** The ID counter for capture conversion variables. */
-  private static int count = 0;
+  /**
+   * The ID counter for capture conversion variables. It is atomic so that concurrent capture
+   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
+   * relies on.
+   */
+  private static final AtomicInteger count = new AtomicInteger();
 
   /** The integer ID of this capture variable. */
   private final int varID;
@@ -28,15 +35,34 @@ class CaptureTypeVariable extends TypeVariable {
   private final WildcardArgument wildcard;
 
   /**
+   * The ids of the capture variables whose {@link #substitute(Substitution)} is executing on the
+   * current thread. A capture variable can occur in its own bound, as {@code Capture0} does in
+   * {@code Capture0 extends Comparable<? super Capture0>}. When the substitution reaches such an
+   * occurrence, it does not apply the substitution to the variable's bounds again.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<Integer>> substituteIsExecuting =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
+   * The ids of the capture variables whose {@link #getTypeParameters()} is executing on the current
+   * thread. See {@link #substituteIsExecuting}.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<Integer>> getTypeParametersIsExecuting =
+      ThreadLocal.withInitial(HashSet::new);
+
+  /**
    * Creates a {@link CaptureTypeVariable} for the given wildcard. Created object is not complete
    * until {@link #convert(TypeVariable, Substitution)} is run.
    *
    * @param wildcard the wildcard argument
    */
-  @SuppressWarnings({"PMD.AssignmentToNonFinalStatic", "PMD.ConstructorCallsOverridableMethod"})
+  /*package*/
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   CaptureTypeVariable(WildcardArgument wildcard) {
     super();
-    this.varID = count++;
+    this.varID = count.getAndIncrement();
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
@@ -66,10 +92,19 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * @return the wildcard
    */
-  WildcardArgument getWildcard() {
+  /*package*/ WildcardArgument getWildcard() {
     return wildcard;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Two capture variables are equal if they are the same capture variable, even if their bounds
+   * and wildcards differ. Substitution creates a copy of a capture variable whose bounds and
+   * wildcard differ, and the copy stands for the same capture variable.
+   *
+   * @return true if the capture variables are the same capture variable, false otherwise
+   */
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -79,14 +114,12 @@ class CaptureTypeVariable extends TypeVariable {
       return false;
     }
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
-    return this.varID == variable.varID
-        && this.wildcard.equals(variable.wildcard)
-        && super.equals(variable);
+    return this.varID == variable.varID;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, super.hashCode());
+    return Integer.hashCode(varID);
   }
 
   @Override
@@ -168,26 +201,73 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<Integer> getTypeParametersIsExecutingSet = getTypeParametersIsExecuting.get();
+    if (!getTypeParametersIsExecutingSet.add(varID)) {
+      // This variable occurs in its own bound, whose type parameters the enclosing call for this
+      // variable is already computing.  Computing them again would not terminate.  The enclosing
+      // call adds this variable to the result.
+      return Collections.emptyList();
+    }
+    try {
+      return super.getTypeParameters();
+    } finally {
+      getTypeParametersIsExecutingSet.remove(varID);
+    }
+  }
+
+  @Override
   public ReferenceType substitute(Substitution substitution) {
-    ReferenceType type = substitution.get(this);
-    // if this variable replaced by non-variable, return non-variable
-    if (type != null && !type.isVariable()) {
+    ReferenceType type = getSubstitutedType(substitution);
+    // If this variable is replaced by a non-variable, return the non-variable.  A copy of this
+    // variable with other bounds has the bounds that the substitution intends.
+    if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
-    // otherwise, apply to bounds
+    Set<Integer> substituteIsExecutingSet = substituteIsExecuting.get();
+    if (!substituteIsExecutingSet.add(varID)) {
+      // This variable occurs in its own bound, which the substitution is already being applied to.
+      // Applying the substitution to the bound again would not terminate.  If the enclosing call
+      // creates a copy with new bounds, this occurrence in the copy's bound is this variable, not
+      // the copy.
+      return type != null ? type : this;
+    }
+    try {
+      return substituteIntoBounds(type, substitution);
+    } finally {
+      substituteIsExecutingSet.remove(varID);
+    }
+  }
+
+  /**
+   * Returns the result of applying the given substitution to this variable. The substitution maps
+   * this variable to {@code type}, which can be null. Let the substituted bounds be this variable's
+   * bounds with the substitution applied. If the substituted bounds differ from this variable's
+   * bounds, the result is a copy of {@code type} (or of this variable, if {@code type} is null)
+   * whose bounds are the substituted bounds. Otherwise, the result is {@code type}, or this
+   * variable if {@code type} is null.
+   *
+   * @param type the type variable, other than a copy of this variable, that {@code substitution}
+   *     maps this variable to, or null if {@code substitution} does not map this variable
+   * @param substitution a type substitution
+   * @return the result of applying {@code substitution} to this variable
+   */
+  private ReferenceType substituteIntoBounds(
+      @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
-      if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+      if (!sameType(lowerBound, getLowerTypeBound())
+          || !sameType(upperBound, getUpperTypeBound())) {
         WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;
     }
 
-    if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+    if (!sameType(lowerBound, getLowerTypeBound()) || !sameType(upperBound, getUpperTypeBound())) {
       // need a new variable based on type with updated bounds
       return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
     }

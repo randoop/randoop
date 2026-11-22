@@ -13,14 +13,14 @@ class EagerReferenceBound extends ReferenceBound {
    *
    * @param boundType the reference boundType
    */
-  EagerReferenceBound(ReferenceType boundType) {
+  /*package*/ EagerReferenceBound(ReferenceType boundType) {
     super(boundType);
   }
 
   @Override
   public EagerReferenceBound substitute(Substitution substitution) {
     ReferenceType referenceType = getBoundType().substitute(substitution);
-    if (referenceType.equals(getBoundType())) {
+    if (Type.sameType(referenceType, getBoundType())) {
       return this;
     }
     return new EagerReferenceBound(referenceType);
@@ -38,7 +38,7 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      return ((TypeVariable) thisBoundType).getLowerTypeBound().isLowerBound(argType, subst);
+      return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     if (argType.isParameterized()) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
@@ -54,31 +54,15 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
-    if (argType instanceof CaptureTypeVariable) {
-      WildcardArgument wildcard = ((CaptureTypeVariable) argType).getWildcard();
-      if (wildcard.hasUpperBound()) {
-        return false;
-      }
-      ParameterBound argLowerBound = wildcard.getTypeBound();
-      if (argLowerBound instanceof EagerReferenceBound) {
-        Type argLowerBoundType = ((EagerReferenceBound) argLowerBound).getBoundType();
-        return thisBoundType.isSubtypeOfOrEqualTo(argLowerBoundType);
-      }
-    }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    assert bound instanceof EagerReferenceBound : "only handling reference bounds";
-    return isLowerBound(((EagerReferenceBound) bound).getBoundType(), substitution);
-  }
-
-  @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
-    if (bound instanceof EagerReferenceBound) {
-      return this.getBoundType().isSubtypeOfOrEqualTo(((EagerReferenceBound) bound).getBoundType());
+    if (bound instanceof ReferenceBound) {
+      return this.getBoundType().isSubtypeOfOrEqualTo(((ReferenceBound) bound).getBoundType());
     }
+    // TODO: change this into an unconditional exception.
     assert false : "not handling EagerReferenceBound subtype of other bound type";
     return false;
   }
@@ -90,6 +74,8 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      // The substitution does not map the variable, so the variable can still be chosen.  argType
+      // is within this bound if it is within the variable's upper bound, which the variable can be.
       return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (thisBoundType.isParameterized()) {
@@ -107,10 +93,5 @@ class EagerReferenceBound extends ReferenceBound {
       return argSuperType.isInstantiationOf(boundClassType);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
-  }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    return isUpperBound(getBoundType(), substitution);
   }
 }

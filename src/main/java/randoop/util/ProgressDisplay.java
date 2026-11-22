@@ -51,7 +51,7 @@ public class ProgressDisplay extends Thread {
   private final Mode outputMode;
 
   /** The test generator. */
-  private AbstractGenerator generator;
+  private final AbstractGenerator generator;
 
   /**
    * Creates a new ProgressDisplay.
