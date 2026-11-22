@@ -152,13 +152,18 @@ public class InstantiatedType extends ParameterizedType {
    * It maps the type parameters that the generic class declares to the type arguments of this type,
    * and the type parameters of each instantiated enclosing type to its type arguments. For example,
    * for {@code Outer<String>.Inner<Integer>}, where {@code Outer<T>.Inner<U>}, the substitution is
-   * {@code [T := String, U := Integer]}.
+   * {@code [T := String, U := Integer]}. The enclosing types are capture-converted first (see
+   * {@link #getEnclosingSubstitution()}).
    *
    * @return the substitution for the type parameters of this type and of its enclosing types
    */
   private Substitution getSupertypeSubstitution() {
-    return withEnclosingBindings(
-        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments()));
+    Substitution substitution =
+        new Substitution(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+    Substitution enclosingSubstitution = getEnclosingSubstitution();
+    return enclosingSubstitution == null
+        ? substitution
+        : enclosingSubstitution.extend(substitution);
   }
 
   /**

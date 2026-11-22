@@ -2607,11 +2607,11 @@ public class TypeVariableTest {
   public void testTypeParametersOfCopyStartWithCopy() {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundsContainingKeyedMap.class).getTypeParameters();
+    TypeVariable original = parameters.get(1);
     TypeVariable copy =
         (TypeVariable)
-            parameters
-                .get(1)
-                .substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+            original.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertNotSame(original, copy);
     assertSame(copy, copy.getTypeParameters().get(0));
   }
 
@@ -3022,5 +3022,41 @@ public class TypeVariableTest {
                 ((WildcardArgument) firstTypeArgument("collectionListField")).getTypeBound())
             .getBoundType();
     assertTrue(list.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(collectionOfWildcard));
+  }
+
+  /**
+   * Type parameters whose bounds have a wildcard whose bound is a non-generic member class of a
+   * parameterized type.
+   *
+   * @param <X> a type parameter whose bound mentions {@code OuterWithPlainInner<String>.Inner}
+   * @param <Y> a type parameter whose bound mentions {@code OuterWithPlainInner<Integer>.Inner}
+   */
+  static class WildcardMemberBound<
+      X extends List<? extends OuterWithPlainInner<String>.Inner>,
+      Y extends List<? extends OuterWithPlainInner<Integer>.Inner>> {}
+
+  /**
+   * Copies of a type variable are identical if their bounds differ only in the representation of a
+   * nested wildcard bound: a {@link LazyParameterBound} in one, and the equivalent {@link
+   * ReferenceBound} in the other.
+   */
+  @Test
+  public void testIdenticalCopiesWithMaterializedWildcardBound() {
+    TypeVariable x = typeParameter(WildcardMemberBound.class, 0);
+    TypeVariable y = typeParameter(WildcardMemberBound.class, 1);
+    ParameterBound bound = x.getUpperTypeBound();
+    // Substituting materializes the lazy bound of the wildcard, OuterWithPlainInner<String>.Inner.
+    ParameterBound materialized = bound.substitute(new Substitution(x, x));
+    assertNotSame(bound, materialized);
+    TypeVariable copy = x.createCopyWithBounds(x.getLowerTypeBound(), materialized);
+    assertTrue(x.isIdenticalTo(copy));
+    assertTrue(copy.isIdenticalTo(x));
+
+    // A copy whose bound has a different enclosing type, OuterWithPlainInner<Integer>, is not
+    // identical.
+    ParameterBound otherBound = y.getUpperTypeBound().substitute(new Substitution(y, y));
+    TypeVariable otherCopy = x.createCopyWithBounds(x.getLowerTypeBound(), otherBound);
+    assertFalse(x.isIdenticalTo(otherCopy));
+    assertFalse(copy.isIdenticalTo(otherCopy));
   }
 }

@@ -139,6 +139,24 @@ public class ParameterBoundTest {
     assertFalse(arrayBound.isLowerBound(stringArrayBound, substitution));
   }
 
+  /**
+   * The substitution is applied to the possible lower bound, but not to the bound that it is
+   * compared with, even if that bound is an eager bound that contains a type variable.
+   */
+  @Test
+  public void testLowerBoundDoesNotSubstituteTarget() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ParameterBound eArrayBound = new EagerReferenceBound(ArrayType.ofComponentType(e));
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    Substitution substitution = new Substitution(e, JavaTypes.STRING_TYPE);
+    // E[] is not substituted when it is the bound compared with.
+    assertFalse(stringArrayBound.isLowerBound(eArrayBound, substitution));
+    // E[] becomes String[] when it is the possible lower bound.
+    assertTrue(eArrayBound.isLowerBound(stringArrayBound, substitution));
+    assertTrue(stringArrayBound.isLowerBound(stringArrayBound, substitution));
+  }
+
   /** A {@link LazyReferenceBound} is a type with free type variables, not one instantiation. */
   @Test
   public void testLazyReferenceBoundHasOnlyNullLowerBound() {
@@ -150,6 +168,26 @@ public class ParameterBoundTest {
 
     assertFalse(stringListBound.isLowerBound(lazyListBound, new Substitution()));
     assertTrue(nullBound.isLowerBound(lazyListBound, new Substitution()));
+  }
+
+  /**
+   * A subtype of the type of a {@link LazyReferenceBound}, with the same type variables, is a lower
+   * bound of it.
+   */
+  @Test
+  public void testSubtypeWithSameVariableIsLowerBoundOfLazyReferenceBound() {
+    ParameterBound lazyListBound =
+        new LazyReferenceBound(
+            GenericClassType.forClass(List.class).instantiate(arrayHolderVariable));
+    ParameterBound arrayListBound =
+        new EagerReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(arrayHolderVariable));
+    ParameterBound stringArrayListBound =
+        new EagerReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE));
+    assertTrue(arrayListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(stringArrayListBound.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(lazyListBound.isLowerBound(arrayListBound, new Substitution()));
   }
 
   /** A {@link LazyReferenceBound} is a lower bound of itself, but not of another type variable. */
@@ -575,6 +613,38 @@ public class ParameterBoundTest {
       assertTrue(substituted instanceof ReferenceBound);
       assertNotNull(((LazyParameterBound) bound).toReferenceBound());
     }
+  }
+
+  /**
+   * A class whose type parameter has a self-referential bound in which the type parameter occurs
+   * only in the enclosing type of a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerOnlyRecursiveBound<T extends List<GenericOuter<T>.NonGenericInner>> {}
+
+  /**
+   * A type parameter that occurs only in the enclosing type of a member class in its own bound
+   * makes the bound lazy, and a substitution reaches the enclosing type.
+   */
+  @Test
+  public void testOwnerOnlyRecursiveBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OwnerOnlyRecursiveBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    assertEquals(Collections.singletonList(t), bound.getTypeParameters());
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
+    assertEquals(
+        GenericClassType.forClass(GenericOuter.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
+    assertNotNull(((LazyParameterBound) bound).toReferenceBound());
   }
 
   /**

@@ -3,6 +3,7 @@ package randoop.types;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -152,11 +153,11 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are examined too, because the conversion of a reflection type to a {@link
-   * ReferenceType} can preserve the owner type as written, as in {@code Outer<T>} for {@code
-   * Outer<T>.Inner}. Converting such an owner type eagerly can recursively convert a type variable
-   * that is being converted, so an eager bound such as {@code List<Outer<T>.Inner>}, in the bound
-   * of {@code T}, would be recursive.
+   * <p>The owner type of a member class is examined (see {@link #getPreservedOwnerType}), because
+   * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
+   * Outer<T>} for {@code Outer<T>.Inner}. Converting such an owner type eagerly can recursively
+   * convert a type variable that is being converted, so an eager bound such as {@code
+   * List<Outer<T>.Inner>}, in the bound of {@code T}, would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -184,7 +185,7 @@ public abstract class ParameterBound {
           return true;
         }
       }
-      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(pt);
       if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
         return true;
       }
@@ -207,6 +208,25 @@ public abstract class ParameterBound {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the owner type of the given parameterized type, if it is a parameterized type and the
+   * given type is a member class (an inner class, not a static nested class). The type arguments of
+   * such an owner type are part of the type, as in {@code Outer<String>.Inner}.
+   *
+   * @param type a parameterized type
+   * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
+   *     class of a parameterized type
+   */
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
+        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+      return (java.lang.reflect.ParameterizedType) ownerType;
+    }
+    return null;
   }
 
   /**
