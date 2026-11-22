@@ -129,11 +129,9 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>The owner type of a member class that has no type parameters of its own, as in {@code
-   * Outer<T>.Inner}, is examined, because the conversion to a {@link ClassOrInterfaceType} uses it.
-   * Other owner types are not examined, because the conversion does not use them. It gives a
-   * generic member class the owner type from its class declaration, as in {@code Outer<T>} for
-   * {@code Outer<String>.Inner<Integer>}, not the owner type as written.
+   * <p>The owner type of a member class is examined, as {@code Outer<T>} is in {@code
+   * Outer<T>.Inner} and in {@code Outer<T>.Inner<Integer>}, because the conversion to a {@link
+   * ClassOrInterfaceType} uses it.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type

@@ -233,6 +233,139 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A class whose second type parameter is bounded by a generic member class whose owner type has
+   * the first type parameter as its type argument. The first type parameter occurs only in the
+   * owner type.
+   *
+   * @param <U> the type parameter that is the type argument of the owner type in the bound of
+   *     {@code T}
+   * @param <T> the type parameter whose bound is a generic member class
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableGenericMemberClassBound<U, T extends Outer<U>.Inner<Integer>> {}
+
+  /** A field whose type is a generic member class whose owner type has the type argument String. */
+  @SuppressWarnings("unused")
+  private static Outer<String>.Inner<Integer> stringOuterIntegerInner;
+
+  /** A field whose type is a generic member class whose owner type has the type argument Long. */
+  @SuppressWarnings("unused")
+  private static Outer<Long>.Inner<Integer> longOuterIntegerInner;
+
+  @Test
+  public void testLazyGenericMemberClassBoundWithVariableInOwnerType() {
+    // The bound of T is eager, because T does not occur in it.  Test a lazy bound for the same
+    // type, as a bound that is lazy for another reason would contain.
+    java.lang.reflect.Type boundType =
+        OwnerVariableGenericMemberClassBound.class.getTypeParameters()[1].getBounds()[0];
+    LazyParameterBound bound = new LazyParameterBound(boundType);
+    TypeVariable u =
+        GenericClassType.forClass(OwnerVariableGenericMemberClassBound.class)
+            .getTypeParameters()
+            .get(0);
+    assertEquals(Collections.singletonList(u), bound.getTypeParameters());
+    Substitution substitution = new Substitution(u, JavaTypes.STRING_TYPE);
+    ReferenceType stringOuter =
+        (ReferenceType)
+            Type.forType(fieldType(ParameterBoundTest.class, "stringOuterIntegerInner"));
+    ReferenceType longOuter =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "longOuterIntegerInner"));
+    assertEquals(ParameterBound.forType(stringOuter), bound.substitute(substitution));
+    assertTrue(bound.isUpperBound(stringOuter, substitution));
+    assertFalse(bound.isUpperBound(longOuter, substitution));
+  }
+
+  /**
+   * A class whose second type parameter is bounded by a generic member class whose owner type has
+   * the first type parameter as its type argument and whose own type argument is the second type
+   * parameter.
+   *
+   * @param <U> the type parameter that is the type argument of the owner type in the bound of
+   *     {@code T}
+   * @param <T> the type parameter whose bound is a generic member class
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableSelfArgumentBound<U, T extends Outer<U>.Inner<T>> {}
+
+  /**
+   * A class that satisfies the bound of {@link OwnerVariableSelfArgumentBound} when {@code U} is
+   * String.
+   */
+  private static class StringOwnerSelfInner extends Outer<String>.Inner<StringOwnerSelfInner> {
+    /**
+     * Creates a {@code StringOwnerSelfInner}.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    StringOwnerSelfInner(Outer<String> owner) {
+      owner.super();
+    }
+  }
+
+  @Test
+  public void testGenericMemberClassBoundWithSiblingInOwnerType() {
+    List<TypeVariable> typeParameters =
+        GenericClassType.forClass(OwnerVariableSelfArgumentBound.class).getTypeParameters();
+    ParameterBound bound = typeParameters.get(1).getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ReferenceType argType = ClassOrInterfaceType.forClass(StringOwnerSelfInner.class);
+    Substitution stringSubstitution =
+        new Substitution(typeParameters, JavaTypes.STRING_TYPE, argType);
+    assertTrue(bound.isUpperBound(argType, stringSubstitution));
+    Substitution longSubstitution =
+        new Substitution(typeParameters, ClassOrInterfaceType.forClass(Long.class), argType);
+    assertFalse(bound.isUpperBound(argType, longSubstitution));
+  }
+
+  /**
+   * A class whose type parameter is bounded by a generic member class whose owner type has the type
+   * parameter as its type argument.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class SelfOwnerGenericMemberClassBound<T extends Outer<T>.Inner<Integer>> {}
+
+  /** A class that satisfies the bound of {@link SelfOwnerGenericMemberClassBound}. */
+  private static class SelfOwnerInner extends Outer<SelfOwnerInner>.Inner<Integer> {
+    /**
+     * Creates a {@code SelfOwnerInner}.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    SelfOwnerInner(Outer<SelfOwnerInner> owner) {
+      owner.super();
+    }
+  }
+
+  /**
+   * A class that does not satisfy the bound of {@link SelfOwnerGenericMemberClassBound}, because
+   * the type argument of its superclass's owner type is not the class itself.
+   */
+  private static class StringOwnerInner extends Outer<String>.Inner<Integer> {
+    /**
+     * Creates a {@code StringOwnerInner}.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    StringOwnerInner(Outer<String> owner) {
+      owner.super();
+    }
+  }
+
+  @Test
+  public void testSelfOwnerGenericMemberClassBound() {
+    TypeVariable t =
+        GenericClassType.forClass(SelfOwnerGenericMemberClassBound.class)
+            .getTypeParameters()
+            .get(0);
+    assertTrue(t.getUpperTypeBound() instanceof LazyParameterBound);
+    assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SelfOwnerInner.class)));
+    assertFalse(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(StringOwnerInner.class)));
+  }
+
+  /**
    * A class whose second type parameter has a bound that contains an array of the first.
    *
    * @param <U> the type parameter whose array occurs in the bound of {@code T}

@@ -96,12 +96,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the method's
       // type parameter, not the type parameter declared by `Outer`.
       ClassOrInterfaceType ownerClassType = null;
-      java.lang.reflect.Type ownerType = t.getOwnerType();
+      java.lang.reflect.ParameterizedType ownerType = memberClassOwnerType(t);
       // The owner types must be checked transitively:  in `Outer<U>.Middle.Inner`, the owner type
       // `Outer<U>.Middle` has no type arguments of its own, but `Outer<U>` does.
-      if (ownerType instanceof java.lang.reflect.ParameterizedType
-          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
-          && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
+      if (ownerType != null && !isDeclarationForm(ownerType)) {
         ownerClassType = forType(ownerType);
       }
       if (rawType.getTypeParameters().length == 0) {
@@ -154,20 +152,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Returns the owner type of the given parameterized type, if the parameterized type is a member
-   * class that has no type parameters of its own and whose owner type is parameterized, as {@code
-   * Outer<String>} is for {@code Outer<String>.Inner}. Such a parameterized type has no type
-   * arguments; its owner type supplies them.
+   * class (a non-static nested class) whose owner type is parameterized. For example, the result is
+   * {@code Outer<String>} for {@code Outer<String>.Inner} and for {@code
+   * Outer<String>.Inner<Integer>}. A member class that has no type parameters of its own, such as
+   * {@code Inner} in {@code Outer<String>.Inner}, has no type arguments; its owner type supplies
+   * them.
    *
    * @param type a parameterized type
-   * @return the owner type of {@code type} if {@code type} is a member class with no type
-   *     parameters of its own and a parameterized owner type; otherwise null
+   * @return the owner type of {@code type} if {@code type} is a member class with a parameterized
+   *     owner type; otherwise null
    */
   /*package*/ static java.lang.reflect.@Nullable ParameterizedType memberClassOwnerType(
       java.lang.reflect.ParameterizedType type) {
     Class<?> rawType = (Class<?>) type.getRawType();
     java.lang.reflect.Type ownerType = type.getOwnerType();
-    if (rawType.getTypeParameters().length == 0
-        && ownerType instanceof java.lang.reflect.ParameterizedType
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
         && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
