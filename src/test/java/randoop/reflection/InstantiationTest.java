@@ -581,8 +581,7 @@ public class InstantiationTest {
    */
   @Test
   public void testMemberClassOfMemberClassParameter() throws Exception {
-    Method m =
-        InstantiationTest.class.getDeclaredMethod("deepParameter", Outer.Middle.Deep.class);
+    Method m = InstantiationTest.class.getDeclaredMethod("deepParameter", Outer.Middle.Deep.class);
     TypedClassOperation operation = TypedOperation.forMethod(m);
     ClassOrInterfaceType parameterType = (ClassOrInterfaceType) operation.getInputTypes().get(0);
     ClassOrInterfaceType genericDeep = ClassOrInterfaceType.forClass(Outer.Middle.Deep.class);
