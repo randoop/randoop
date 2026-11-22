@@ -82,7 +82,7 @@ public class OrderedTypeInstantiationTest {
   public static class MyThreadComparator implements MyComparator<Thread> {
     @Override
     public int compare(Thread o1, Thread o2) {
-      return Long.compare(o1.getId(), o2.getId());
+      return o1.getName().compareTo(o2.getName());
     }
   }
 
@@ -155,7 +155,7 @@ public class OrderedTypeInstantiationTest {
   public static class MyThreadOrder implements java.util.Comparator<Thread> {
     @Override
     public int compare(Thread o1, Thread o2) {
-      return Long.compare(o1.getId(), o2.getId());
+      return o1.getName().compareTo(o2.getName());
     }
   }
 
