@@ -469,9 +469,16 @@ public class InstantiatedType extends ParameterizedType {
             && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
           i++;
         }
+        // For a member class, such as Outer<String>.Inner<Integer>, the enclosing types must also
+        // be related:  it is not a subtype of Outer<Long>.Inner<Integer>.  The enclosing types are
+        // of the same class, so subtyping between them is containment of their type arguments.
+        boolean enclosingTypesRelated =
+            !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
+                || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        return (i == thisTypeArguments.size() && enclosingTypesRelated)
+            || otherInstantiatedType.isGenericForm();
       }
 
       // first clause.

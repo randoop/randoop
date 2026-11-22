@@ -473,4 +473,18 @@ public class ClassOrInterfaceTypeTest {
         Collections.singletonList(TypeArgument.forType(JavaTypes.STRING_TYPE)),
         supertype.getTypeArguments());
   }
+
+  /**
+   * {@code Outer<String>.GenericInner<Integer>} is a subtype of itself, but not of {@code
+   * Outer<Long>.GenericInner<Integer>}, whose enclosing type is unrelated.
+   */
+  @Test
+  public void memberClassEnclosingTypeSubtypeTest() {
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    ClassOrInterfaceType stringInteger = genericInnerType(JavaTypes.STRING_TYPE, integerType);
+    assertTrue(
+        stringInteger.isSubtypeOfOrEqualTo(genericInnerType(JavaTypes.STRING_TYPE, integerType)));
+    assertFalse(stringInteger.isSubtypeOfOrEqualTo(genericInnerType(longType, integerType)));
+  }
 }
