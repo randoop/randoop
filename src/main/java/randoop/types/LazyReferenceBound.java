@@ -157,10 +157,10 @@ class LazyReferenceBound extends ReferenceBound {
       return false;
     }
     ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
-    // The null type is a subtype of every reference type, including a type variable, so array
-    // covariance makes, for example, `NullType[]` a subtype of `T[]`.
-    return lowerType.isArray()
-        && ((ArrayType) lowerType).getElementType().equals(JavaTypes.NULL_TYPE)
-        && lowerType.isSubtypeOfOrEqualTo(getBoundType());
+    // A substitution with no unknowns makes each type variable stand for itself, so that
+    // ArrayList<T> is a subtype of List<T> but List<String> is not.  The null type is a subtype of
+    // every reference type, including a type variable, so array covariance makes, for example,
+    // `NullType[]` a subtype of `T[]`.
+    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
   }
 }
