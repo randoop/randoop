@@ -2396,9 +2396,8 @@ public class TypeVariableTest {
         innerType.instantiate(ClassOrInterfaceType.forClass(Number.class), integerType);
     InstantiatedType integerInner = innerType.instantiate(integerType, integerType);
     // GenericOuter<Number>.GenericInner<Integer> and GenericOuter<Integer>.GenericInner<Integer>
-    // are equal according to InstantiatedType.equals, which ignores enclosing types, but they are
-    // different types.  So are lists of them.
-    assertEquals(numberInner, integerInner);
+    // differ only in their enclosing types.  They are different types, and so are lists of them.
+    assertFalse(numberInner.equals(integerInner));
     GenericClassType listType = GenericClassType.forClass(List.class);
     assertFalse(
         Subtyping.isSubtypeOrEqual(
