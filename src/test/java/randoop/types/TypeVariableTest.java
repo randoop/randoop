@@ -2811,12 +2811,12 @@ public class TypeVariableTest {
    * Type parameters whose bounds have a wildcard whose bound is a non-generic member class of a
    * parameterized type.
    *
-   * @param <X> a type parameter whose bound mentions {@code Outer<String>.Inner}
-   * @param <Y> a type parameter whose bound mentions {@code Outer<Integer>.Inner}
+   * @param <X> a type parameter whose bound mentions {@code NonGenericInnerOuter<String>.Inner}
+   * @param <Y> a type parameter whose bound mentions {@code NonGenericInnerOuter<Integer>.Inner}
    */
   static class WildcardMemberBound<
-      X extends List<? extends Outer<String>.Inner>,
-      Y extends List<? extends Outer<Integer>.Inner>> {}
+      X extends List<? extends NonGenericInnerOuter<String>.Inner>,
+      Y extends List<? extends NonGenericInnerOuter<Integer>.Inner>> {}
 
   /**
    * Copies of a type variable are identical if their bounds differ only in the representation of a
@@ -2828,14 +2828,15 @@ public class TypeVariableTest {
     TypeVariable x = typeParameter(WildcardMemberBound.class, 0);
     TypeVariable y = typeParameter(WildcardMemberBound.class, 1);
     ParameterBound bound = x.getUpperTypeBound();
-    // Substituting materializes the lazy bound of the wildcard, Outer<String>.Inner.
+    // Substituting materializes the lazy bound of the wildcard, NonGenericInnerOuter<String>.Inner.
     ParameterBound materialized = bound.substitute(new Substitution(x, x));
     assertNotSame(bound, materialized);
     TypeVariable copy = x.createCopyWithBounds(x.getLowerTypeBound(), materialized);
     assertTrue(x.isIdenticalTo(copy));
     assertTrue(copy.isIdenticalTo(x));
 
-    // A copy whose bound has a different enclosing type, Outer<Integer>, is not identical.
+    // A copy whose bound has a different enclosing type, NonGenericInnerOuter<Integer>, is not
+    // identical.
     ParameterBound otherBound = y.getUpperTypeBound().substitute(new Substitution(y, y));
     TypeVariable otherCopy = x.createCopyWithBounds(x.getLowerTypeBound(), otherBound);
     assertFalse(x.isIdenticalTo(otherCopy));
