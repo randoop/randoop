@@ -148,10 +148,10 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Returns the substitution to apply to the declared supertypes of the generic class of this type.
-   * It maps the type parameters that the generic class declares to the type arguments of this
-   * type, and the type parameters of each instantiated enclosing type to its type arguments. For
-   * example, for {@code Outer<String>.Inner<Integer>}, where {@code Outer<T>.Inner<U>}, the
-   * substitution is {@code [T := String, U := Integer]}.
+   * It maps the type parameters that the generic class declares to the type arguments of this type,
+   * and the type parameters of each instantiated enclosing type to its type arguments. For example,
+   * for {@code Outer<String>.Inner<Integer>}, where {@code Outer<T>.Inner<U>}, the substitution is
+   * {@code [T := String, U := Integer]}.
    *
    * @return the substitution for the type parameters of this type and of its enclosing types
    */
