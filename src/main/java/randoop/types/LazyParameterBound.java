@@ -143,7 +143,7 @@ class LazyParameterBound extends ParameterBound {
     // bound represents.  This calls the static substitute() method directly, rather than the
     // instance method, because the instance method can return this bound unchanged, as when the
     // substitution instantiates no type variable.
-    Substitution identity = new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
+    Substitution identity = new Substitution(parameters, new ArrayList<>(parameters));
     TypeArgument typeArgument = substitute(boundType, identity);
     referenceBound =
         typeArgument instanceof ReferenceArgument

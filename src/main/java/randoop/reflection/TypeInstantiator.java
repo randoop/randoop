@@ -1021,7 +1021,7 @@ public class TypeInstantiator {
     // Element i holds the type variables whose bounds can be checked once the search instantiates
     // `parameters.get(i)`, but not earlier.
     List<List<TypeVariable>> checkAfter = new ArrayList<>(parameters.size());
-    for (int i = 0; i < parameters.size(); i++) {
+    for (TypeVariable unused : parameters) {
       checkAfter.add(new ArrayList<>());
     }
     Set<TypeVariable> variables = new LinkedHashSet<>(substitution.keySet());
@@ -1360,15 +1360,15 @@ public class TypeInstantiator {
    * @return the substitution extended by mapping given parameters to selected types; null, if there
    *     are no candidate types for some parameter
    */
-  private Substitution selectSubstitutionIndependently(
+  private @Nullable Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = candidateTypes(typeArgument);
+    for (TypeVariable parameter : parameters) {
+      List<ReferenceType> candidates = candidateTypes(parameter);
       if (candidates.isEmpty()) {
         Log.logPrintf(
             "TypeInstantiator.selectSubstitutionIndependently: No candidate types for %s%n",
-            typeArgument);
+            parameter);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
