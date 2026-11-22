@@ -520,9 +520,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
           // different type, such as Outer<String>:  the type arguments of the enclosing goal type
           // are fixed, as in Outer<String>.Inner<X>, and the enclosing type of this type's view
-          // does
-          // not match them, as in Outer<Integer>.Inner<String>.  InstantiatedType.equals ignores
-          // enclosing types, so it would treat Outer<String>.Middle<Integer> and
+          // does not match them, as in Outer<Integer>.Inner<String>.  InstantiatedType.equals
+          // ignores enclosing types, so it would treat Outer<String>.Middle<Integer> and
           // Outer<Boolean>.Middle<Integer> as equal.
           return null;
         }
