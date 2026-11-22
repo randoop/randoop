@@ -343,7 +343,8 @@ public class ParameterizedTypeTest {
    */
   private static ParameterizedType wildcardFieldType(String name) {
     try {
-      return ParameterizedType.forType(WildcardFields.class.getDeclaredField(name).getGenericType());
+      return ParameterizedType.forType(
+          WildcardFields.class.getDeclaredField(name).getGenericType());
     } catch (NoSuchFieldException e) {
       throw new Error(e);
     }

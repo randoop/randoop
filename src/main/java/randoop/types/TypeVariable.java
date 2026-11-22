@@ -346,9 +346,9 @@ public abstract class TypeVariable extends ParameterType {
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
    * of it, {@code otherType} itself, and each of its supertypes as computed by {@link
-   * #getStrictSupertypes}. For example, for {@code <T extends Comparable<T>, V extends T>},
-   * {@code java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate
-   * {@code T}. Each instantiation other than the lower bound is checked as by {@link
+   * #getStrictSupertypes}. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
+   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
+   * T}. Each instantiation other than the lower bound is checked as by {@link
    * #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
