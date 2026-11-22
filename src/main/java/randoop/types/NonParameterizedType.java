@@ -133,7 +133,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     }
     // For a member class such as Outer<String>.Inner, substitute the type arguments of the
     // enclosing types.
-    Substitution substitution = getReferenceArgumentSubstitution();
+    Substitution substitution = getSupertypeSubstitution();
     return CollectionsPlume.mapList(
         (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
         runtimeType.getGenericInterfaces());
@@ -182,7 +182,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
         return null;
       }
       ClassOrInterfaceType result = forType(supertype);
-      return isMemberClass() ? result.substitute(getReferenceArgumentSubstitution()) : result;
+      return isMemberClass() ? result.substitute(getSupertypeSubstitution()) : result;
     }
   }
 
