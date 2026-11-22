@@ -60,16 +60,18 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>A {@link LazyReferenceBound} can be part of a recursive type, so the hash code is based on
-   * the string representation of the bound type to avoid recursive calls on {@code hashCode()}. All
-   * subclasses use this implementation, so that equal bounds have equal hash codes regardless of
-   * their subclass.
+   * <p>A {@link LazyReferenceBound} can be part of a recursive type, through the bounds of a type
+   * variable in the bound type. The hash code of a type variable does not depend on its bounds, so
+   * computing the hash code of the bound type terminates. That is also consistent with {@link
+   * #equals(Object)}: copies of a type variable are equal even when their bounds differ, so their
+   * string representations, which include the bounds, can differ. All subclasses use this
+   * implementation, so that equal bounds have equal hash codes regardless of their subclass.
    *
-   * @return the hashCode for the string representation of this bound
+   * @return the hash code of the type of this bound
    */
   @Override
   public int hashCode() {
-    return Objects.hashCode(boundType.toString());
+    return Objects.hashCode(boundType);
   }
 
   @Override
