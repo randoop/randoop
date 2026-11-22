@@ -461,11 +461,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
-        Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null) {
-          return null;
-        }
-        substitution = substitution.extend(supertypeSubstitution);
+        // The type substitution of the supertype maps the type parameters of the goal type,
+        // including those of its enclosing classes.  The enclosing type of the supertype can differ
+        // from that of this type, as for Outer<String>.Sub that extends Outer<Integer>.Inner, so
+        // the substitution from the enclosing type of this type does not apply.
+        return supertype.getTypeSubstitution();
       }
     }
     return substitution;
@@ -790,6 +790,24 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return enclosingType.getTypeParameters();
     }
     return new ArrayList<>(0);
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of this type's class, and of the classes
+   * that enclose it as a member class, to the corresponding type arguments of this type. For
+   * example, for {@code Outer<String>.Inner<Integer>}, where {@code Inner<U>} is a member class of
+   * {@code Outer<T>}, the result maps {@code T} to {@code String} and {@code U} to {@code Integer}.
+   * The result omits the type parameters of a generic form, such as {@code Outer<T>}. A wildcard
+   * type argument is mapped as in {@link InstantiatedType#getReferenceArguments()}.
+   *
+   * @return the substitution that maps the type parameters of this type's class and of its
+   *     enclosing classes to the type arguments of this type
+   */
+  /*package*/ Substitution getReferenceArgumentSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
   }
 
   @Override

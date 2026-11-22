@@ -127,8 +127,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    if (!isMemberClass()) {
+      return CollectionsPlume.mapList(
+          ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+    }
+    // For a member class such as Outer<String>.Inner, substitute the type arguments of the
+    // enclosing types.
+    Substitution substitution = getReferenceArgumentSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
+        runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -168,7 +176,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
+      // substitute the type arguments of the enclosing types.
+      if (supertype == null) {
+        return null;
+      }
+      ClassOrInterfaceType result = forType(supertype);
+      return isMemberClass() ? result.substitute(getReferenceArgumentSubstitution()) : result;
     }
   }
 
