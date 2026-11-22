@@ -65,7 +65,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList);
+    return Objects.hash(genericType, argumentList, super.hashCode());
   }
 
   @Override
@@ -352,6 +352,13 @@ public class InstantiatedType extends ParameterizedType {
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) otherType;
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
+        return false;
+      }
+      // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
+      // an instantiation.
+      if (this.isMemberClass()
+          && otherInstType.isMemberClass()
+          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
         return false;
       }
       for (int i = 0; i < this.argumentList.size(); i++) {
