@@ -817,7 +817,7 @@ public class TypeInstantiator {
     // Element i holds the type variables whose bounds can be checked once the search instantiates
     // `parameters.get(i)`, but not earlier.
     List<List<TypeVariable>> checkAfter = new ArrayList<>(parameters.size());
-    for (int i = 0; i < parameters.size(); i++) {
+    for (TypeVariable unused : parameters) {
       checkAfter.add(new ArrayList<>());
     }
     Set<TypeVariable> variables = new LinkedHashSet<>(substitution.keySet());

@@ -53,7 +53,7 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
@@ -110,7 +110,7 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+      InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
