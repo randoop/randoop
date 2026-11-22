@@ -133,7 +133,7 @@ class LazyParameterBound extends ParameterBound {
     // instance method, because the instance method returns this bound unchanged if the
     // substitution is empty or instantiates no type variable, as for a generic array type
     // such as `List<String>[]` that contains no type variable.
-    Substitution identity = new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
+    Substitution identity = new Substitution(parameters, new ArrayList<>(parameters));
     TypeArgument typeArgument = substitute(boundType, identity);
     if (!(typeArgument instanceof ReferenceArgument)) {
       return null;
