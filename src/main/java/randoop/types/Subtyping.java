@@ -447,8 +447,14 @@ final class Subtyping {
       return componentType.equals(otherComponentType);
     }
     if (type instanceof InstantiatedType && lowerType instanceof ClassOrInterfaceType) {
-      InstantiatedType supertype =
-          findMatchingSupertype((ClassOrInterfaceType) lowerType, (InstantiatedType) type);
+      // As in isSubtypeOrEqual, compute the supertypes from the capture conversion.  It leaves the
+      // unknowns, which are not wildcards, unchanged.
+      ClassOrInterfaceType capturedType =
+          captureWildcardArguments((ClassOrInterfaceType) lowerType);
+      if (capturedType == null) {
+        return false;
+      }
+      InstantiatedType supertype = findMatchingSupertype(capturedType, (InstantiatedType) type);
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }
@@ -457,8 +463,12 @@ final class Subtyping {
         && lowerType instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<String>.Inner; compare the enclosing types, as in isSubtypeOrEqual.
-      ClassOrInterfaceType supertype =
-          findSupertypeOfClass((ClassOrInterfaceType) lowerType, type.getRuntimeClass());
+      ClassOrInterfaceType capturedType =
+          captureWildcardArguments((ClassOrInterfaceType) lowerType);
+      if (capturedType == null) {
+        return false;
+      }
+      ClassOrInterfaceType supertype = findSupertypeOfClass(capturedType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }

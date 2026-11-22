@@ -123,7 +123,9 @@ public abstract class ReferenceBound extends ParameterBound {
    * EagerReferenceBound#isLowerBound(Type, Substitution)} would instead accept {@code
    * List<String>}, because {@code List<String>} is an instantiation of {@code List<T>}. Any other
    * bound is compared by {@link ParameterBound#isLowerBound(Type, Substitution)}, which, for
-   * example, lets a type variable in a {@link LazyReferenceBound} be chosen.
+   * example, lets a type variable in a {@link LazyReferenceBound} be chosen. Similarly, with {@code
+   * T := String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]}
+   * is a lower bound of {@code String[]}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
