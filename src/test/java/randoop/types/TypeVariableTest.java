@@ -1095,7 +1095,7 @@ public class TypeVariableTest {
    * @return the type of the field
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
-  private static ClassOrInterfaceType thisFieldType(String fieldName) throws NoSuchFieldException {
+  private static ClassOrInterfaceType ownFieldType(String fieldName) throws NoSuchFieldException {
     return ClassOrInterfaceType.forType(
         TypeVariableTest.class.getDeclaredField(fieldName).getGenericType());
   }
@@ -1104,23 +1104,23 @@ public class TypeVariableTest {
   public void testSubtypeOfWildcardInstantiation() throws NoSuchFieldException {
     InstantiatedType listOfString =
         GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(thisFieldType("unboundedListField")));
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(thisFieldType("charSequenceListField")));
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(thisFieldType("superStringListField")));
-    assertFalse(listOfString.isSubtypeOfOrEqualTo(thisFieldType("numberListField")));
-    assertFalse(listOfString.isSubtypeOfOrEqualTo(thisFieldType("superIntegerListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("charSequenceListField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("superStringListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("superIntegerListField")));
     // A wildcard argument is not contained by a non-wildcard argument.
-    assertFalse(thisFieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
+    assertFalse(ownFieldType("charSequenceListField").isSubtypeOfOrEqualTo(listOfString));
 
     // A supertype with another rawtype is compared by containment of its type arguments.
-    assertTrue(listOfString.isSubtypeOfOrEqualTo(thisFieldType("unboundedCollectionField")));
-    assertFalse(listOfString.isSubtypeOfOrEqualTo(thisFieldType("numberCollectionField")));
+    assertTrue(listOfString.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
 
     TypeVariable t = typeParameter(StringListBound.class, 0);
-    assertTrue(t.isSubtypeOfOrEqualTo(thisFieldType("unboundedListField")));
-    assertFalse(t.isSubtypeOfOrEqualTo(thisFieldType("numberListField")));
-    assertTrue(t.isSubtypeOfOrEqualTo(thisFieldType("unboundedCollectionField")));
-    assertFalse(t.isSubtypeOfOrEqualTo(thisFieldType("numberCollectionField")));
+    assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedListField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberListField")));
+    assertTrue(t.isSubtypeOfOrEqualTo(ownFieldType("unboundedCollectionField")));
+    assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
   }
 
   /**
@@ -1322,7 +1322,7 @@ public class TypeVariableTest {
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
   private static TypeArgument firstTypeArgument(String fieldName) throws NoSuchFieldException {
-    return ((InstantiatedType) fieldType(fieldName)).getTypeArguments().get(0);
+    return ((InstantiatedType) ownFieldType(fieldName)).getTypeArguments().get(0);
   }
 
   @Test
@@ -1353,12 +1353,12 @@ public class TypeVariableTest {
     InstantiatedType listOfListOfString = list.instantiate(list.instantiate(JavaTypes.STRING_TYPE));
     InstantiatedType listOfListOfInteger =
         list.instantiate(list.instantiate(ClassOrInterfaceType.forClass(Integer.class)));
-    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+    assertTrue(listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
     assertTrue(
-        listOfListOfString.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
-    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("collectionListField")));
+        listOfListOfString.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
+    assertTrue(listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("collectionListField")));
     assertFalse(
-        listOfListOfInteger.isSubtypeOfOrEqualTo(fieldType("charSequenceCollectionListField")));
+        listOfListOfInteger.isSubtypeOfOrEqualTo(ownFieldType("charSequenceCollectionListField")));
     // The inherited supertype Collection<String> of List<String> is compared with Collection<?> by
     // containment, not equality.
     ReferenceType collectionOfWildcard =
