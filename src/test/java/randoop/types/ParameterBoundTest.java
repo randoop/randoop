@@ -101,6 +101,24 @@ public class ParameterBoundTest {
     }
   }
 
+  /**
+   * The substitution is applied to the possible lower bound, but not to the bound that it is
+   * compared with, even if that bound is an eager bound that contains a type variable.
+   */
+  @Test
+  public void testLowerBoundDoesNotSubstituteTarget() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ParameterBound eArrayBound = new EagerReferenceBound(ArrayType.ofComponentType(e));
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    Substitution substitution = new Substitution(e, JavaTypes.STRING_TYPE);
+    // E[] is not substituted when it is the bound compared with.
+    assertFalse(stringArrayBound.isLowerBound(eArrayBound, substitution));
+    // E[] becomes String[] when it is the possible lower bound.
+    assertTrue(eArrayBound.isLowerBound(stringArrayBound, substitution));
+    assertTrue(stringArrayBound.isLowerBound(stringArrayBound, substitution));
+  }
+
   /** A {@link LazyReferenceBound} is a type with free type variables, not one instantiation. */
   @Test
   public void testLazyReferenceBoundHasOnlyNullLowerBound() {
