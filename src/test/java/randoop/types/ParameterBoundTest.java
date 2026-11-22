@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import org.junit.Test;
 
 /** Tests the construction of type parameters and their bounds. */
@@ -38,9 +39,21 @@ public class ParameterBoundTest {
     static class Inner {}
   }
 
+  /**
+   * A class whose type parameter has a bound with a wildcard bounded by the class itself.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfBound<T extends List<? extends SelfBound<?>>> {}
+
   @Test
   public void testWildcardSelfBound() {
     assertEquals(1, GenericClassType.forClass(WildcardSelfBound.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testSelfBound() {
+    assertEquals(1, GenericClassType.forClass(SelfBound.class).getTypeParameters().size());
   }
 
   @Test
