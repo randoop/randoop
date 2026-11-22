@@ -186,6 +186,16 @@ public class ClassOrInterfaceTypeTest {
      * @param <U> the type parameter
      */
     class ComparableInner<U extends Comparable<T>> {}
+
+    /**
+     * An inner class whose superclass is a member class of another instantiation of {@link Outer}.
+     */
+    abstract class OtherOuterSubInner extends Outer<Integer>.GenericInner<String> {
+      /** Creates an OtherOuterSubInner. */
+      OtherOuterSubInner() {
+        new Outer<Integer>().super();
+      }
+    }
   }
 
   /** Declares methods whose parameter types are member classes of {@link Outer}. */
@@ -336,6 +346,9 @@ public class ClassOrInterfaceTypeTest {
 
   /** A field of type {@code Outer<?>.GenericInner<Integer>}. */
   public Outer<?>.GenericInner<Integer> genericInnerOfWildcardOuter;
+
+  /** A field of type {@code Outer<String>.OtherOuterSubInner}. */
+  public Outer<String>.OtherOuterSubInner otherOuterSubInner;
 
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
@@ -531,5 +544,22 @@ public class ClassOrInterfaceTypeTest {
     Substitution substitution = new Substitution();
     assertTrue(upperBound.isUpperBound(stringType, substitution));
     assertFalse(upperBound.isUpperBound(integerType, substitution));
+  }
+
+  @Test
+  public void memberSubclassOfOtherInstantiationTest() throws NoSuchFieldException {
+    // Outer<String>.OtherOuterSubInner extends Outer<Integer>.GenericInner<String>, so it
+    // instantiates the generic form of GenericInner with Integer for T, not String.
+    ClassOrInterfaceType subInner =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class.getField("otherOuterSubInner").getGenericType());
+    GenericClassType genericInnerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(Outer.GenericInner.class);
+    Substitution substitution = subInner.getInstantiatingSubstitution(genericInnerType);
+    assertNotNull(substitution);
+    List<TypeVariable> genericInnerParameters = genericInnerType.getTypeParameters();
+    assertEquals(
+        JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(genericInnerParameters.get(0)));
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(genericInnerParameters.get(1)));
   }
 }
