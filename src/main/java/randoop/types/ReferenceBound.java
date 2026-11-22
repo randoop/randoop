@@ -117,7 +117,9 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * <p>The substitution is applied only to {@code lowerBound}, by {@link
    * ParameterBound#isLowerBound(Type, Substitution)}. A type variable in this bound, which an eager
-   * bound can also contain, as in {@code T[]}, stands for itself.
+   * bound can also contain, as in {@code T[]}, stands for itself. So, with {@code T := String}, the
+   * bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of
+   * {@code String[]}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

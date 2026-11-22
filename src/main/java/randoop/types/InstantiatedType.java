@@ -165,7 +165,10 @@ public class InstantiatedType extends ParameterizedType {
    * parameters of their classes, if this is a member class. For example, given {@code class
    * Outer<T> { class Inner<U> extends ArrayList<T> {} }}, the substitution for {@code
    * Outer<String>.Inner<Integer>} maps {@code U} to {@code Integer} and {@code T} to {@code
-   * String}, so the superclass is {@code ArrayList<String>}.
+   * String}, so the superclass is {@code ArrayList<String>}. Similarly, given {@code class Outer<T>
+   * { class Child<U> extends Outer<T>.Base implements Map<T, U> {} }}, the superclass of {@code
+   * Outer<String>.Child<Integer>} is {@code Outer<String>.Base}, and its interface is {@code
+   * Map<String, Integer>}.
    *
    * @return the substitution to apply to the declared supertypes of this type's class
    * @see ClassOrInterfaceType#getEnclosingSubstitution()
@@ -500,8 +503,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A member class that declares no type parameters, of a parameterized type, such as
-    // Outer<String>.Inner, is parameterized but is not an InstantiatedType.
+    // A member class whose enclosing type is parameterized, as in `Outer<String>.Inner`, is
+    // parameterized, but is not an InstantiatedType if it has no type arguments of its own.  Such a
+    // type is handled below, by the class and enclosing type subtyping in the superclass.
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
@@ -529,14 +533,20 @@ public class InstantiatedType extends ParameterizedType {
             || otherInstantiatedType.isGenericForm();
       }
 
-      // first clause.
+      // first clause, combined with the second:  the supertype with the same rawtype as otherType
+      // is a subtype of otherType if the type arguments of otherType contain its type arguments,
+      // as List<String> is a subtype of Collection<?> because Collection<String> is.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
       // The supertype has the same class as `otherType`, so this uses the second clause, which
       // checks type-argument containment.  For example, List<String> is a subtype of
       // Collection<? extends CharSequence> because its supertype Collection<String> is.
-      if (superType != null && superType.isSubtypeOfOrEqualTo(otherType)) {
+      // The runtime class test prevents infinite recursion:  for a superType with the same
+      // runtime class as otherType, the recursive call uses the second clause above.
+      if (superType != null
+          && otherType.runtimeClassIs(superType.getRuntimeClass())
+          && superType.isSubtypeOfOrEqualTo(otherType)) {
         return true;
       }
     }

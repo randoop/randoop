@@ -149,56 +149,54 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1). If this type has
-   * an upper bound, checks for containment cases:
+   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1). From a
+   * reflection perspective, {@code ?} is just {@code ? extends Object}. The cases are:
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ?}, which is {@code ? extends Object}, contains {@code ? super S}
-   * </ul>
-   *
-   * Otherwise, checks for the case
-   *
-   * <ul>
+   *   <li>{@code ? extends Object} (that is, {@code ?}) contains {@code ? super S}
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
+   *   <li>{@code ? super T} does not contain any upper-bounded wildcard, including {@code ?}
    * </ul>
-   *
-   * A lower-bounded wildcard does not contain an upper-bounded one, not even {@code ?}.
    *
    * <p>A {@link LazyParameterBound}, such as {@code Comparable<T>} in {@code ? extends
-   * Comparable<T>}, is converted to the equivalent {@link ReferenceBound} before the bounds are
-   * compared.
+   * Comparable<T>}, cannot be compared directly, so it is converted to the equivalent {@link
+   * ReferenceBound} before the bounds are compared.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
-    ParameterBound bound = resolve(this.getTypeBound());
-    ParameterBound otherBound = resolve(otherType.getTypeBound());
-    if (bound == null || otherBound == null) {
-      return false;
-    }
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound) {
-        return otherBound.isSubtypeOfOrEqualTo(bound);
+        ParameterBound otherBound = resolveLazyBound(otherType.getUpperTypeBound());
+        ParameterBound thisBound = resolveLazyBound(this.getUpperTypeBound());
+        return otherBound != null
+            && thisBound != null
+            && otherBound.isSubtypeOfOrEqualTo(thisBound);
       }
-      return bound.isObject();
+      // `? extends Object` contains every `? super S`; `? extends T` for other T does not.
+      return this.getUpperTypeBound().isObject();
     } else {
       if (otherType.hasUpperBound) {
+        // `? super T` does not contain an upper-bounded wildcard, including `?`.
         return false;
       }
-      return bound.isSubtypeOfOrEqualTo(otherBound);
+      ParameterBound thisBound = resolveLazyBound(this.getLowerTypeBound());
+      ParameterBound otherBound = resolveLazyBound(otherType.getLowerTypeBound());
+      return thisBound != null && otherBound != null && thisBound.isSubtypeOfOrEqualTo(otherBound);
     }
   }
 
   /**
-   * Returns the given bound, or the equivalent {@link ReferenceBound} if it is a {@link
-   * LazyParameterBound}.
+   * Returns the given bound, or, if it is a {@link LazyParameterBound}, the equivalent {@link
+   * ReferenceBound}, in which each type variable remains a type variable.
    *
-   * @param bound a bound
-   * @return {@code bound}, with a lazy bound converted, or null if a lazy bound cannot be converted
+   * @param bound a bound of a wildcard
+   * @return a bound that can be compared with {@link ParameterBound#isSubtypeOfOrEqualTo}, or null
+   *     if {@code bound} is a lazy bound that cannot be converted
    */
-  private static @Nullable ParameterBound resolve(ParameterBound bound) {
+  private static @Nullable ParameterBound resolveLazyBound(ParameterBound bound) {
     if (bound instanceof LazyParameterBound) {
       return ((LazyParameterBound) bound).toReferenceBound();
     }
