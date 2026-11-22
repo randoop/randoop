@@ -1576,8 +1576,8 @@ public class TypeVariableTest {
 
   /**
    * An array type whose component type is a type variable is within a bound that is a capture
-   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]},
-   * can instantiate the capture variable.
+   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]}, can
+   * instantiate the capture variable.
    */
   @Test
   public void testVariableComponentArraySupertypeCanInstantiateCaptureVariable()
