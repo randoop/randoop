@@ -451,8 +451,8 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A member class of a parameterized type, such as `Outer<String>.Inner`, is parameterized but
-    // is not an InstantiatedType; it is handled by the superclass's supertype search below.
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the supertype search below.
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this

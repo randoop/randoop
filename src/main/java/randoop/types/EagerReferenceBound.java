@@ -40,11 +40,13 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    if (argType.isParameterized()) {
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
@@ -78,11 +80,13 @@ class EagerReferenceBound extends ReferenceBound {
       // is within this bound if it is within the variable's upper bound, which the variable can be.
       return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
-    if (thisBoundType.isParameterized()) {
+    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
+    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+      InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
       InstantiatedType argSuperType =
           ((ClassOrInterfaceType) argType)
               .getMatchingSupertype(boundClassType.getGenericClassType());
