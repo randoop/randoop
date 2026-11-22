@@ -74,14 +74,26 @@ public class ParameterBoundTest {
 
   @Test
   public void testArrayOfUnboundVariableWithNullComponent() {
-    // There is no array of the null type, so no type satisfies the bound.
+    // Object is not a subtype of the array type NullType[].
     assertFalse(isUpperBoundWithNullComponent("array"));
   }
 
   @Test
   public void testNestedArrayOfUnboundVariableWithNullComponent() {
-    // There is no array of the null type, so no type satisfies the bound.
+    // Object is not a subtype of List<NullType[]>.
     assertFalse(isUpperBoundWithNullComponent("listOfArrays"));
+  }
+
+  @Test
+  public void testArrayOfUnboundVariableWithNullComponentAsLowerBound() {
+    java.lang.reflect.Type type = fieldType(ArraysOfVariable.class, "array");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), type);
+    TypeVariable t = GenericClassType.forClass(ArraysOfVariable.class).getTypeParameters().get(0);
+    Substitution nullSubstitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    // NullType[] is a subtype of String[], and String[] is not a subtype of NullType[].
+    assertTrue(bound.isLowerBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(stringArray, nullSubstitution));
   }
 
   /**
@@ -357,5 +369,52 @@ public class ParameterBoundTest {
   @Test
   public void testSelfBound() {
     assertEquals(1, GenericClassType.forClass(SelfBound.class).getTypeParameters().size());
+  }
+
+  /**
+   * A type parameter bounded by its declaring class applied to a wildcard (issue #1889).
+   *
+   * @param <T> the type parameter
+   */
+  interface WildcardSelfBound<T extends WildcardSelfBound<?>> {}
+
+  /**
+   * A type parameter whose bound refers to {@link MutualB}, which refers back to this class.
+   *
+   * @param <T> the type parameter
+   */
+  interface MutualA<T extends MutualB<?>> {}
+
+  /**
+   * A type parameter whose bound refers to {@link MutualA}, which refers back to this class.
+   *
+   * @param <U> the type parameter
+   */
+  interface MutualB<U extends MutualA<?>> {}
+
+  /**
+   * A type parameter whose bound is a class nested in this class.
+   *
+   * @param <T> the type parameter
+   */
+  static class EnclosingBound<T extends EnclosingBound.Inner> {
+    /** A class nested in {@link EnclosingBound}. */
+    static class Inner {}
+  }
+
+  @Test
+  public void testWildcardSelfBound() {
+    assertEquals(1, GenericClassType.forClass(WildcardSelfBound.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testMutuallyRecursiveBounds() {
+    assertEquals(1, GenericClassType.forClass(MutualA.class).getTypeParameters().size());
+    assertEquals(1, GenericClassType.forClass(MutualB.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testEnclosingBound() {
+    assertEquals(1, GenericClassType.forClass(EnclosingBound.class).getTypeParameters().size());
   }
 }
