@@ -54,18 +54,6 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the type parameters declared by the generic class, not those of its enclosing classes.
-   * Unlike {@link #getTypeParameters()}, the result does not depend on whether this object has an
-   * enclosing type, so it corresponds to the type arguments of an {@link InstantiatedType} of this
-   * class.
-   *
-   * @return the type parameters declared by the generic class
-   */
-  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters();
-  }
-
-  /**
    * {@inheritDoc}
    *
    * <p>Checks that the rawtypes are the same. This is sufficient since the type parameters and
@@ -194,6 +182,18 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeArgument> getTypeArguments() {
     return CollectionsPlume.mapList(TypeArgument::forType, parameters());
+  }
+
+  /**
+   * Returns the type parameters that this generic class declares. Unlike {@link
+   * #getTypeParameters()}, the result omits the type parameters of enclosing classes. For example,
+   * for {@code Outer<T>.Inner<U>}, the result is {@code [U]}. The result corresponds to the type
+   * arguments of an instantiation of this class.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
+    return parameters();
   }
 
   /**
