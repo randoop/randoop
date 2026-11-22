@@ -30,6 +30,7 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
@@ -772,5 +773,43 @@ public class InstantiationTest {
     ClassOrInterfaceType integerLong =
         genericInner2.substitute(new Substitution(parameters, integerType, longType));
     assertNull(integerLong.getInstantiatingSubstitution(goalType));
+  }
+
+  /**
+   * An interface whose type argument is a type that implements it.
+   *
+   * @param <T> the type parameter
+   */
+  private interface Marker<T> {}
+
+  /** A class that implements {@link Marker} for itself. */
+  private static class MarkerBase implements Marker<MarkerBase> {}
+
+  /** A subclass of {@link MarkerBase}, which is a {@code Marker<MarkerBase>}. */
+  private static class MarkerChild extends MarkerBase {}
+
+  /**
+   * A method whose type parameter has a bound that mentions it.
+   *
+   * @param <T> the type parameter
+   * @param t a value
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Marker<T>> void marked(T t) {}
+
+  /**
+   * {@code MarkerChild} is within the bound {@code T} of {@code <T extends Marker<T>>}, because
+   * {@code T} can be its supertype {@code MarkerBase}, though not {@code MarkerChild} itself.
+   */
+  @Test
+  public void testSelfBoundedVariableBound() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("marked", Marker.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(m).getInputTypes().get(0);
+    ParameterBound bound = ParameterBound.forType(t);
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerBase.class), new Substitution()));
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerChild.class), new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 }
