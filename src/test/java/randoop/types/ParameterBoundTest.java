@@ -74,14 +74,26 @@ public class ParameterBoundTest {
 
   @Test
   public void testArrayOfUnboundVariableWithNullComponent() {
-    // There is no array of the null type, so no type satisfies the bound.
+    // Object is not a subtype of the array type NullType[].
     assertFalse(isUpperBoundWithNullComponent("array"));
   }
 
   @Test
   public void testNestedArrayOfUnboundVariableWithNullComponent() {
-    // There is no array of the null type, so no type satisfies the bound.
+    // Object is not a subtype of List<NullType[]>.
     assertFalse(isUpperBoundWithNullComponent("listOfArrays"));
+  }
+
+  @Test
+  public void testArrayOfUnboundVariableWithNullComponentAsLowerBound() {
+    java.lang.reflect.Type type = fieldType(ArraysOfVariable.class, "array");
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), type);
+    TypeVariable t = GenericClassType.forClass(ArraysOfVariable.class).getTypeParameters().get(0);
+    Substitution nullSubstitution = new Substitution(t, JavaTypes.NULL_TYPE);
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    // NullType[] is a subtype of String[], and String[] is not a subtype of NullType[].
+    assertTrue(bound.isLowerBound(stringArray, nullSubstitution));
+    assertFalse(bound.isUpperBound(stringArray, nullSubstitution));
   }
 
   /**
