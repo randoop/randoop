@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.plumelib.util.StringsPlume;
 import randoop.ExecutionOutcome;
 import randoop.condition.RandoopSpecificationError;
 import randoop.reflection.ReflectionPredicate;
@@ -17,6 +16,7 @@ import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
+import randoop.util.Util;
 
 /**
  * Represents a call to a method. It holds a reflective {@link java.lang.reflect.Method} object. It
@@ -195,16 +195,7 @@ public final class MethodCall extends CallableOperation {
     Object[] params = Arrays.copyOfRange(input, paramsStartIndex, input.length);
     if (Log.isLoggingOn()) {
       for (int i = 0; i < params.length; i++) {
-        String paramString;
-        try {
-          paramString = StringsPlume.toStringAndClass(params[i]);
-        } catch (Throwable t) {
-          // The parameter's toString() is code under test.  It can throw, such as a
-          // StackOverflowError for a collection that contains itself.
-          paramString =
-              String.format("[%s whose toString() threw %s]", params[i].getClass(), t.getClass());
-        }
-        Log.logPrintf("  Param %d = %s%n", i, paramString);
+        Log.logPrintf("  Param %d = %s%n", i, Util.toStringAndClassSafely(params[i]));
       }
     }
 
@@ -234,9 +225,9 @@ public final class MethodCall extends CallableOperation {
     sb.append(method.getDeclaringClass().getName());
     sb.append('.');
     sb.append(method.getName());
-    sb.append("(");
+    sb.append('(');
     Class<?>[] params = method.getParameterTypes();
-    TypeArguments.getTypeArgumentString(sb, params);
+    TypeArguments.appendTypeArgumentString(sb, params);
     sb.append(')');
     return sb.toString();
   }
@@ -274,7 +265,7 @@ public final class MethodCall extends CallableOperation {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       String msg =
           "Class " + classname + " is not on classpath while parsing \"" + signature + "\"";
-      throw new OperationParseException(msg);
+      throw new OperationParseException(msg, e);
     }
 
     Class<?>[] typeArguments;
@@ -300,7 +291,9 @@ public final class MethodCall extends CallableOperation {
                 + classType
                 + ": "
                 + e;
-        throw new OperationParseException(msg);
+        OperationParseException ope = new OperationParseException(msg, e2);
+        ope.addSuppressed(e);
+        throw ope;
       }
     }
 

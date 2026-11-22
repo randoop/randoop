@@ -93,15 +93,7 @@ public final class Main {
           "To get help on this command, invoke Randoop with arguments: help " + handler.fcommand);
       System.exit(1);
 
-    } catch (RandoopUsageError e) {
-
-      System.out.println();
-      if (e.getMessage() != null) {
-        System.out.println(e.getMessage());
-      }
-      System.exit(1);
-
-    } catch (RandoopSpecificationError e) {
+    } catch (RandoopUsageError | RandoopSpecificationError e) {
 
       System.out.println();
       if (e.getMessage() != null) {
