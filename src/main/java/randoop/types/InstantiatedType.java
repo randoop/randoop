@@ -46,7 +46,7 @@ public class InstantiatedType extends ParameterizedType {
    * {@inheritDoc}
    *
    * <p>Test if the given object is equal to this parameterized type. Two parameterized types are
-   * equal if they have the same raw type and the same type arguments.
+   * equal if they have the same raw type, the same type arguments, and the same enclosing type.
    */
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -57,13 +57,15 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
+    // super.equals compares the enclosing types, as for Outer<String>.Inner<Integer>.
     return genericType.equals(other.getGenericClassType())
-        && argumentList.equals(other.argumentList);
+        && argumentList.equals(other.argumentList)
+        && super.equals(obj);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList);
+    return Objects.hash(genericType, argumentList, super.hashCode());
   }
 
   @Override
@@ -319,6 +321,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasCaptureVariable() {
+    if (super.hasCaptureVariable()) { // an enclosing type has a capture variable
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.hasCaptureVariable()) {
         return true;
@@ -389,8 +394,8 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
-      // For a member class, the enclosing types must match too:  Outer<Long>.Inner<Integer> is not
-      // an instantiation of Outer<String>.Inner<Integer>.
+      // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
+      // an instantiation.
       if (this.isMemberClass()
           && otherInstType.isMemberClass()
           && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
@@ -436,7 +441,6 @@ public class InstantiatedType extends ParameterizedType {
     }
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
-      // For example, the enclosing type of this member class does not match that of `goalType`.
       return null;
     }
     if (goalType instanceof InstantiatedType) {
@@ -445,6 +449,13 @@ public class InstantiatedType extends ParameterizedType {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          if (!otherTArg.isGeneric()) {
+            // A type argument with no type variables binds none, so it must match exactly.
+            if (!thisTArg.equals(otherTArg)) {
+              return null;
+            }
+            continue;
+          }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // The arguments can map a type variable to different types, as for Map<X, X> and
           // Map<String, Integer>.  Then no substitution instantiates the goal.
