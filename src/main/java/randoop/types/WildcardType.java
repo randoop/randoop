@@ -150,7 +150,8 @@ class WildcardType extends ParameterType {
 
   /**
    * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
-   * converted to the equivalent {@link ReferenceBound}.
+   * converted to the equivalent {@link ReferenceBound}, in which each type variable remains a type
+   * variable.
    *
    * @param bound a bound of a wildcard
    * @return the type of the bound, or null if it cannot be determined

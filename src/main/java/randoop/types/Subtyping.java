@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -53,6 +54,79 @@ final class Subtyping {
    * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
    */
   static boolean isSubtypeOrEqual(
+      ReferenceType type, ReferenceType otherType, Substitution substitution) {
+    // A cyclic declaration can make a query depend on itself:  for `class C implements
+    // I<I<? super C>>`, whether C <: I<? super C> depends on whether I<? super C> contains
+    // I<? super C>... and thus on whether C <: I<? super C>.  As for any recursive bound, assume
+    // that the repeated query succeeds; the outer query checks everything else.
+    List<SubtypeQuery> inProgress = activeQueries.get();
+    for (SubtypeQuery query : inProgress) {
+      if (query.isSameQuery(type, otherType, substitution)) {
+        return true;
+      }
+    }
+    inProgress.add(new SubtypeQuery(type, otherType, substitution));
+    try {
+      return isSubtypeOrEqualUnchecked(type, otherType, substitution);
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
+  }
+
+  /** The queries by {@link #isSubtypeOrEqual} that are in progress in the current thread. */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<SubtypeQuery>> activeQueries =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /** A query by {@link #isSubtypeOrEqual(ReferenceType, ReferenceType, Substitution)}. */
+  private static final class SubtypeQuery {
+    /** The possible subtype. */
+    final ReferenceType type;
+
+    /** The possible supertype. */
+    final ReferenceType otherType;
+
+    /** The type substitution. */
+    final Substitution substitution;
+
+    /**
+     * Creates a query.
+     *
+     * @param type the possible subtype
+     * @param otherType the possible supertype
+     * @param substitution the type substitution
+     */
+    SubtypeQuery(ReferenceType type, ReferenceType otherType, Substitution substitution) {
+      this.type = type;
+      this.otherType = otherType;
+      this.substitution = substitution;
+    }
+
+    /**
+     * Returns true if this query asks the same question as the given one.
+     *
+     * @param type the possible subtype
+     * @param otherType the possible supertype
+     * @param substitution the type substitution
+     * @return true if this query asks the same question as the given one
+     */
+    boolean isSameQuery(ReferenceType type, ReferenceType otherType, Substitution substitution) {
+      return this.substitution.equals(substitution)
+          && TypeVariable.areIdentical(this.type, type)
+          && TypeVariable.areIdentical(this.otherType, otherType);
+    }
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. Does not guard
+   * against recursion; see {@link #isSubtypeOrEqual(ReferenceType, ReferenceType, Substitution)}.
+   *
+   * @param type the possible subtype
+   * @param otherType the possible supertype, which may contain unknowns
+   * @param substitution the type substitution, which determines the unknowns
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOrEqualUnchecked(
       ReferenceType type, ReferenceType otherType, Substitution substitution) {
     if (isIdentical(type, otherType) || otherType.isObject()) {
       return true;
@@ -169,19 +243,32 @@ final class Subtyping {
   private static @Nullable InstantiatedType findMatchingSupertype(
       ClassOrInterfaceType type, InstantiatedType goalType) {
     GenericClassType goalClass = goalType.getGenericClassType();
-    ClassOrInterfaceType receiver = type;
-    if (type instanceof GenericClassType) {
-      GenericClassType genericType = (GenericClassType) type;
-      InstantiatedType identityInstantiation =
-          new InstantiatedType(genericType, genericType.getTypeArguments());
-      identityInstantiation.enclosingType = genericType.enclosingType;
-      receiver = identityInstantiation;
-    }
+    ClassOrInterfaceType receiver = identityInstantiation(type);
     // For an InstantiatedType receiver whose generic class is the goal, this is the receiver.
     InstantiatedType result = receiver.getMatchingSupertype(goalClass);
     if (result == null || !result.getRuntimeClass().equals(goalType.getRuntimeClass())) {
       return null;
     }
+    return result;
+  }
+
+  /**
+   * Returns the identity instantiation of the given type, if it is a {@link GenericClassType}, such
+   * as {@code Outer<T>} as an {@link InstantiatedType} whose type argument is {@code T}. Otherwise,
+   * returns the type itself. A {@link GenericClassType} and its identity instantiation denote the
+   * same type, but only an {@link InstantiatedType} has type arguments that can be compared. A raw
+   * type is not a {@link GenericClassType}, so it remains distinct.
+   *
+   * @param type a type
+   * @return the identity instantiation of {@code type}, or {@code type} itself
+   */
+  private static ClassOrInterfaceType identityInstantiation(ClassOrInterfaceType type) {
+    if (!(type instanceof GenericClassType)) {
+      return type;
+    }
+    GenericClassType genericType = (GenericClassType) type;
+    InstantiatedType result = new InstantiatedType(genericType, genericType.getTypeArguments());
+    result.enclosingType = genericType.enclosingType;
     return result;
   }
 
@@ -234,8 +321,10 @@ final class Subtyping {
    */
   private static boolean argumentsContained(
       ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
-    // An enclosing type can be a GenericClassType, such as Outer in Outer<E>.Inner<Integer>, whose
-    // type arguments are its type parameters, such as E.  Each stands for itself.
+    // An enclosing type can be a GenericClassType, such as Outer in Outer<E>.Inner<Integer>, or
+    // an owner type in declaration form, such as Outer<T> in Outer<T>.Middle<String>.Leaf.  Its
+    // type arguments are its type parameters, such as E, which contain only themselves unless
+    // they are unknowns:  Outer<Integer> is not contained by Outer<T>.
     if (otherType instanceof ParameterizedType) {
       if (!(type instanceof ParameterizedType)) {
         return false;
@@ -594,8 +683,12 @@ final class Subtyping {
     if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
       return false;
     }
-    ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
-    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    // A GenericClassType, such as List<E>, is the same type as its identity instantiation, but not
+    // as the raw type List.
+    ClassOrInterfaceType classType = identityInstantiation((ClassOrInterfaceType) type);
+    ClassOrInterfaceType otherClassType = identityInstantiation((ClassOrInterfaceType) otherType);
+    type = classType;
+    otherType = otherClassType;
     // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the enclosing
     // types must also be the same.
     if (classType.isMemberClass() != otherClassType.isMemberClass()) {
@@ -682,8 +775,9 @@ final class Subtyping {
 
   /**
    * Returns true if the two types are equal, including the enclosing types of member classes at any
-   * depth. {@link InstantiatedType#equals(Object)} does not compare enclosing types, so it treats
-   * {@code Outer<String>.Inner<Integer>} and {@code Outer<Number>.Inner<Integer>} as equal.
+   * depth, and type variables in corresponding positions are identical, including their bounds (see
+   * {@link TypeVariable#isIdenticalTo(TypeVariable)}). {@link Object#equals(Object)} treats copies
+   * of a type variable with different bounds as equal.
    *
    * @param type a type
    * @param otherType another type
@@ -698,6 +792,9 @@ final class Subtyping {
       Type otherComponentType = ((ArrayType) otherType).getComponentType();
       return !(componentType.isReferenceType() && otherComponentType.isReferenceType())
           || isIdentical((ReferenceType) componentType, (ReferenceType) otherComponentType);
+    }
+    if (type instanceof TypeVariable && otherType instanceof TypeVariable) {
+      return ((TypeVariable) type).isIdenticalTo((TypeVariable) otherType);
     }
     if (!(type instanceof ClassOrInterfaceType && otherType instanceof ClassOrInterfaceType)) {
       return true;

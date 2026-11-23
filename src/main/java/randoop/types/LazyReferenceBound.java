@@ -247,40 +247,20 @@ class LazyReferenceBound extends EagerReferenceBound {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    if (lowerBound instanceof IntersectionTypeBound) {
-      // An intersection type is a subtype of each supertype of one of its members.
-      for (ParameterBound member : ((IntersectionTypeBound) lowerBound).getBounds()) {
-        if (hasLowerBound(member, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
-    // types too:  GenericOuter<Integer>.GenericInner<U> is not
+    // Compare enclosing types too:  GenericOuter<Integer>.GenericInner<U> is not
     // GenericOuter<Number>.GenericInner<U>.
-    // A lower bound that is a LazyParameterBound, such as the reflective bound `Comparable<T>` of
-    // `T extends Comparable<T>`, is first converted to the equivalent ReferenceBound.
-    ReferenceType lowerType;
-    if (lowerBound instanceof ReferenceBound) {
-      lowerType = ((ReferenceBound) lowerBound).getBoundType().substitute(substitution);
-    } else {
-      @Nullable ParameterBound b = lowerBound.substitute(substitution);
-      if (b instanceof LazyParameterBound) {
-        b = ((LazyParameterBound) b).toReferenceBound();
-      }
-      if (!(b instanceof ReferenceBound)) {
-        return false;
-      }
-      lowerType = ((ReferenceBound) b).getBoundType();
-    }
-    if (Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution())) {
+    if (lowerBound instanceof ReferenceBound
+        && Subtyping.isIdentical(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            getBoundType())) {
       return true;
     }
-    // The null type is a subtype of every reference type, including a type variable, so array
-    // covariance makes, for example, `NullType[]` a subtype of `T[]`.
-    return lowerType.isArray()
-        && ((ArrayType) lowerType).getElementType().equals(JavaTypes.NULL_TYPE)
-        && lowerType.isSubtypeOfOrEqualTo(getBoundType());
+    // Each type variable stands for itself, so that ArrayList<T> is a subtype of List<T> but
+    // List<String> is not.  The null type is a subtype of every reference type, including a type
+    // variable, so array covariance makes, for example, `NullType[]` a subtype of `T[]`.  An
+    // intersection, such as `Number & Comparable<T>`, is a subtype if any member is.  A lower bound
+    // that is a LazyParameterBound, such as the reflective bound `Comparable<T>` of
+    // `T extends Comparable<T>`, is first converted to the equivalent ReferenceBound.
+    return isSubtypeOfFixed(lowerBound.substitute(substitution), getBoundType());
   }
 }

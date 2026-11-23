@@ -133,17 +133,34 @@ public class WildcardArgument extends TypeArgument {
         return false;
       }
       if (argumentType.hasUpperBound()) {
-        return otherWildcard.hasUpperBound() && otherBoundType.isSubtypeOfOrEqualTo(boundType);
+        return otherWildcard.hasUpperBound() && isSubtypeOfOrEqualTo(otherBoundType, boundType);
       } else {
-        return !otherWildcard.hasUpperBound() && boundType.isSubtypeOfOrEqualTo(otherBoundType);
+        return !otherWildcard.hasUpperBound() && isSubtypeOfOrEqualTo(boundType, otherBoundType);
       }
     }
     ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
+    // Subtyping compares the type arguments of enclosing types by containment, so that, for
+    // example, `? extends Outer<?>.Plain` contains Outer<String>.Plain.
     if (argumentType.hasUpperBound()) {
-      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
+      return boundType.isObject() || isSubtypeOfOrEqualTo(otherType, boundType);
     } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
+      return isSubtypeOfOrEqualTo(boundType, otherType);
     }
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. Besides {@link
+   * ReferenceType#isSubtypeOfOrEqualTo(Type)}, uses {@link Subtyping}, which compares the type
+   * arguments of enclosing types by containment: {@code Outer<String>.Plain} is a subtype of {@code
+   * Outer<?>.Plain}.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ReferenceType type, ReferenceType otherType) {
+    return type.isSubtypeOfOrEqualTo(otherType)
+        || Subtyping.isSubtypeOrEqual(type, otherType, new Substitution());
   }
 
   /**

@@ -181,7 +181,7 @@ public class Substitution {
   /**
    * Creates a new substitution that contains the mappings of this substitution, extended by the
    * given mappings. If this and the additional mappings contain the same type variable, both must
-   * map it to the same type.
+   * map it to the same type; see {@link #isConsistentWith(Substitution)}.
    *
    * @param parameters the type parameters
    * @param arguments the type arguments

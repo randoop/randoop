@@ -213,6 +213,36 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
+   * Checks that each type argument is within the upper bound of the corresponding type parameter.
+   * The type parameters include those of enclosing classes, as returned by {@link
+   * #getTypeParameters()}, so that the type arguments of an enclosing type, as in {@code Outer<T
+   * extends Number>.Inner<U>}, are checked too.
+   *
+   * @param typeParameters the type parameters, including those of enclosing classes
+   * @param typeArguments the type arguments, corresponding to {@code typeParameters}
+   * @param substitution the substitution of {@code typeArguments} for {@code typeParameters}
+   * @throws IllegalArgumentException if a type argument is not within the bound of its parameter
+   */
+  private static void checkBounds(
+      List<TypeVariable> typeParameters,
+      List<ReferenceType> typeArguments,
+      Substitution substitution) {
+    // For a member class, the type parameters of the enclosing types precede those of this class,
+    // such as [T, U] for Outer<T>.Inner<U>, so each type argument is checked against the type
+    // parameter at the same index.
+    for (int i = 0; i < typeParameters.size(); i++) {
+      ParameterBound upperBound = typeParameters.get(i).getUpperTypeBound();
+      if (!upperBound.isUpperBound(typeArguments.get(i), substitution)) {
+        throw new IllegalArgumentException(
+            "type argument "
+                + typeArguments.get(i)
+                + " does not match parameter bound "
+                + upperBound);
+      }
+    }
+  }
+
+  /**
    * Creates a type substitution using the given type arguments and applies it to this type.
    *
    * @param typeArguments the type arguments
@@ -226,16 +256,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    // For a member class, the type parameters of the enclosing types precede those of this class,
-    // such as [T, U] for Outer<T>.Inner<U>, so each type argument is checked against the type
-    // parameter at the same index.
-    for (int i = 0; i < typeParameters.size(); i++) {
-      ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
-      if (!bound.isUpperBound(typeArguments.get(i), substitution)) {
-        throw new IllegalArgumentException(
-            "type argument " + typeArguments.get(i) + " does not match parameter bound " + bound);
-      }
-    }
+    checkBounds(typeParameters, typeArguments, substitution);
     return this.substitute(substitution);
   }
 

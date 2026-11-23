@@ -548,18 +548,36 @@ public class ParameterizedTypeTest {
     }
   }
 
+  /**
+   * Returns the type argument of the type of the given field of {@link WildcardFields}.
+   *
+   * @param name the field name
+   * @return the type argument of the type of the field
+   */
+  private static TypeArgument wildcardFieldArgument(String name) {
+    return wildcardFieldType(name).getTypeArguments().get(0);
+  }
+
   /** Tests containment between upper-bounded and lower-bounded wildcards (JLS 4.5.1). */
   @Test
   public void testMixedDirectionWildcardContainment() {
-    ParameterizedType unbounded = wildcardFieldType("unbounded");
-    ParameterizedType superString = wildcardFieldType("superString");
-    ParameterizedType extendsNumber = wildcardFieldType("extendsNumber");
+    TypeArgument unbounded = wildcardFieldArgument("unbounded");
+    TypeArgument superString = wildcardFieldArgument("superString");
+    TypeArgument extendsNumber = wildcardFieldArgument("extendsNumber");
+    Substitution substitution = new Substitution();
 
-    // `?` contains `? super String`.
-    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
-    // `? super String` does not contain `?`.
-    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
-    // `? extends Number` does not contain `? super String`.
-    assertFalse(superString.isSubtypeOfOrEqualTo(extendsNumber));
+    // Every wildcard contains itself.
+    assertTrue(Subtyping.contains(unbounded, unbounded, substitution));
+    assertTrue(Subtyping.contains(superString, superString, substitution));
+    assertTrue(Subtyping.contains(extendsNumber, extendsNumber, substitution));
+    // `?` contains `? super String` and `? extends Number`.
+    assertTrue(Subtyping.contains(unbounded, superString, substitution));
+    assertTrue(Subtyping.contains(unbounded, extendsNumber, substitution));
+    // `? super String` does not contain `?` or `? extends Number`.
+    assertFalse(Subtyping.contains(superString, unbounded, substitution));
+    assertFalse(Subtyping.contains(superString, extendsNumber, substitution));
+    // `? extends Number` does not contain `?` or `? super String`.
+    assertFalse(Subtyping.contains(extendsNumber, unbounded, substitution));
+    assertFalse(Subtyping.contains(extendsNumber, superString, substitution));
   }
 }

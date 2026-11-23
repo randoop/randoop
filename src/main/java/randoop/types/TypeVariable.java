@@ -459,13 +459,16 @@ public abstract class TypeVariable extends ParameterType {
    * type variable. If the substitution instantiates that type variable, the instantiated bound is
    * compared with the given type. Likewise if that type variable, or the type variable that the
    * substitution replaces it with, is fixed rather than unknown, as determined by {@link
-   * Substitution#isUnknown(ReferenceType)}. Otherwise, that type variable stands for an unknown
-   * type: for an upper bound, the given type is within it if that type variable can be a supertype
-   * of the given type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if some
-   * instantiation of that type variable can be a subtype of the given type: the given type itself,
-   * or any instantiation if the upper bound of that type variable is a subtype of the given type.
-   * For example, for the capture of {@code ? super Y}, where {@code Y extends List<X>}, {@code
-   * Object} is within the lower bound, though it cannot instantiate {@code Y}.
+   * Substitution#isUnknown(ReferenceType)}. For example, if the substitution replaces that type
+   * variable by a type parameter {@code X} of another declaration, then {@code X} is fixed and
+   * stands for itself, and the given type must be a subtype (for an upper bound) or supertype (for a
+   * lower bound) of {@code X}. Otherwise, that type variable stands for an unknown type: for an
+   * upper bound, the given type is within it if that type variable can be a supertype of the given
+   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if some instantiation of
+   * that type variable can be a subtype of the given type: the given type itself, or any
+   * instantiation if the upper bound of that type variable is a subtype of the given type. For
+   * example, for the capture of {@code ? super Y}, where {@code Y extends List<X>}, {@code Object}
+   * is within the lower bound, though it cannot instantiate {@code Y}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
@@ -578,8 +581,9 @@ public abstract class TypeVariable extends ParameterType {
    *
    * <ul>
    *   <li>For a class or interface type, the result is its strict supertypes that mention only its
-   *       type variables. For every class or interface type other than {@code Object}, the result
-   *       also includes {@code Object}.
+   *       type variables. The supertypes of a class or interface type with a wildcard type argument
+   *       are those of its capture conversion. For every class or interface type other than {@code
+   *       Object}, the result also includes {@code Object}.
    *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
    *       if the component type is a reference type other than {@code Object}, {@code Object[]};
    *       and the arrays whose component types are the strict supertypes of the array's component
@@ -598,7 +602,15 @@ public abstract class TypeVariable extends ParameterType {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof ClassOrInterfaceType) {
       List<TypeVariable> typeParameters = type.getTypeParameters();
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+      // As in Subtyping, compute the supertypes from the capture conversion.  Substituting a
+      // wildcard into a supertype can create an invalid type:  for `class C<T> implements
+      // Box<T[]>`, the supertype of C<?> would be an array of a wildcard.  A supertype that
+      // mentions a capture variable is not a supertype of `type` itself; the test below skips it.
+      if (classType.hasWildcardArgument()) {
+        classType = classType.applyCaptureConversion();
+      }
+      for (ClassOrInterfaceType supertype : classType.getSupertypesStrict()) {
         // A supertype that mentions a type variable that `type` does not is not a supertype of
         // `type`.  It arises when `type` is a GenericClassType, whose supertypes are those of its
         // raw class and do not preserve the relationship between their type parameters.  A

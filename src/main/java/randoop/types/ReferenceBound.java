@@ -117,15 +117,14 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * <p>The substitution is applied only to {@code lowerBound}. A type variable in this bound, which
    * an eager bound can also contain, as in {@code T[]} or {@code List<T>}, stands for itself. So,
-   * if {@code lowerBound} is an {@link EagerReferenceBound}, its substituted type is compared with
-   * the type of this bound by ordinary subtyping: {@code List<T>} is a lower bound of {@code
-   * List<T>}, but {@code List<String>} is not. {@link EagerReferenceBound#isLowerBound(Type,
-   * Substitution)} would instead accept {@code List<String>}, because {@code List<String>} is an
-   * instantiation of {@code List<T>}. Any other bound is compared by {@link
-   * ParameterBound#isLowerBound(Type, Substitution)}, which, for example, lets a type variable in a
-   * {@link LazyReferenceBound} be chosen. Similarly, with {@code T := String}, the bound {@code
-   * String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of {@code
-   * String[]}. An intersection {@code lowerBound} is a lower bound if one of its members is.
+   * with {@code T := String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but
+   * {@code T[]} is a lower bound of {@code String[]}. Likewise, with the empty substitution, {@code
+   * List<String>} is not a lower bound of {@code List<T>}, though {@link
+   * EagerReferenceBound#isLowerBound(Type, Substitution)} would accept it, because {@code
+   * List<String>} is an instantiation of {@code List<T>}. The null type is a lower bound of every
+   * bound, and an intersection is a lower bound if any of its members is. Only a {@link
+   * LazyReferenceBound} whose type is a type variable is compared by {@link
+   * ParameterBound#isLowerBound(Type, Substitution)}, which lets that type variable be chosen.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -143,12 +142,45 @@ public abstract class ReferenceBound extends ParameterBound {
       }
       return false;
     }
-    if (lowerBound instanceof EagerReferenceBound && !(lowerBound instanceof LazyReferenceBound)) {
-      ReferenceType lowerType =
-          ((EagerReferenceBound) lowerBound).getBoundType().substitute(substitution);
-      return Subtyping.isSubtypeOrEqual(lowerType, boundType);
+    // A lazy bound whose type is compound, such as ArrayList<T>, is compared as an eager one:  the
+    // type variables of this bound are fixed, so they must not be inferred.  Only a lazy bound
+    // whose type is a type variable is compared by isLowerBound, which lets the variable be chosen.
+    if (lowerBound instanceof LazyReferenceBound
+        && ((LazyReferenceBound) lowerBound).getBoundType().isVariable()) {
+      return lowerBound.isLowerBound(boundType, substitution);
     }
-    return lowerBound.isLowerBound(boundType, substitution);
+    return isSubtypeOfFixed(lowerBound.substitute(substitution), boundType);
+  }
+
+  /**
+   * Returns true if the type of the given bound is a subtype of, or equal to, the given type, in
+   * which every type variable stands for itself. An intersection bound is a subtype of the type if
+   * any of its members is. A {@link LazyParameterBound} is converted to the equivalent {@link
+   * ReferenceBound}.
+   *
+   * @param bound a bound, to which a substitution has already been applied
+   * @param type a type whose type variables stand for themselves
+   * @return true if the type of {@code bound} is a subtype of, or equal to, {@code type}
+   */
+  static boolean isSubtypeOfFixed(ParameterBound bound, ReferenceType type) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted != null && isSubtypeOfFixed(converted, type);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isSubtypeOfFixed(member, type)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (bound instanceof ReferenceBound) {
+      // A substitution with no unknowns makes each type variable stand for itself.
+      return Subtyping.isSubtypeOrEqual(
+          ((ReferenceBound) bound).getBoundType(), type, new Substitution());
+    }
+    return false;
   }
 
   @Override
