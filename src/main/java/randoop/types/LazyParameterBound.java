@@ -149,8 +149,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard, or is a member class whose owner type cannot be converted
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard, or is a member
+   *     class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -581,19 +582,19 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Unlike for other bounds, the substitution is also applied to this bound before {@code
-   * lowerBound} is compared with it; a type variable in this bound that the substitution does not
-   * instantiate stands for an unknown type, as in {@link #isUpperBound(Type, Substitution)}.
+   * <p>As for other bounds, the substitution is applied to {@code lowerBound} but not to this
+   * bound: this bound is compared as written, by converting it with {@link #toReferenceBound()}.
+   * So, with {@code T := String}, the bound {@code String[]} is not a lower bound of {@code T[]}.
    * Returns true if {@code lowerBound} is the null type, which is a lower bound of every reference
-   * type. Otherwise, returns false if the result is not a {@link ReferenceBound}.
+   * type. Otherwise, returns false if this bound cannot be converted.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    ParameterBound converted = substituteWithUnknowns(substitution);
-    return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.hasLowerBound(lowerBound, substitution);
   }
 
   @Override

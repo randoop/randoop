@@ -57,15 +57,37 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
-    // super.equals compares the enclosing types, as for Outer<String>.Inner<Integer>.
+    // Compare the enclosing types, as for Outer<String>.Inner<Integer>.
     return genericType.equals(other.getGenericClassType())
         && argumentList.equals(other.argumentList)
-        && super.equals(obj);
+        && Objects.equals(getDistinguishingEnclosingType(), other.getDistinguishingEnclosingType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList, super.hashCode());
+    return Objects.hash(genericType, argumentList, getDistinguishingEnclosingType());
+  }
+
+  /**
+   * Returns the enclosing type of this type that distinguishes it from another type with the same
+   * class and type arguments: the enclosing type of a member class, as {@code Outer<String>} for
+   * {@code Outer<String>.Inner<Integer>}, if that enclosing type is not the generic form of its
+   * class. Otherwise, returns null.
+   *
+   * <p>An enclosing type that is the generic form of its class, as {@code NonGenericOuter} for
+   * {@code NonGenericOuter.Inner<Integer>} or {@code Outer<T>} for {@code Outer<T>.Inner<Integer>}
+   * where {@code T} is the type parameter of {@code Outer}, is equivalent to no enclosing type.
+   * Some constructions of a type omit such an enclosing type, but others, such as {@link
+   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} for an owner type in declaration form and
+   * {@link GenericClassType#instantiate(ReferenceType...)}, keep it.
+   *
+   * @return the enclosing type of this type that distinguishes it, or null
+   */
+  private @Nullable ClassOrInterfaceType getDistinguishingEnclosingType() {
+    if (isMemberClass() && !enclosingType.isGenericForm()) {
+      return enclosingType;
+    }
+    return null;
   }
 
   @Override
@@ -438,12 +460,20 @@ public class InstantiatedType extends ParameterizedType {
             continue;
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // The substitutions conflict if they map a type variable to different types, as for
+          // Pair<String, Integer> and Pair<K, K>, or as for an enclosing type and a type argument
+          // that map a type variable differently, as for Outer<String>.Inner<Integer> and
+          // Outer<U>.Inner<U>.  Then this type does not instantiate goalType.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
-          substitution = substitution.extend(subst);
+          try {
+            substitution = substitution.extend(subst);
+          } catch (IllegalArgumentException e) {
+            // The bindings map a type variable to distinct types, as for
+            // Outer<String>.GenericInner<Integer> and Outer<X>.GenericInner<X>.
+            return null;
+          }
         }
         return substitution;
       }

@@ -70,6 +70,10 @@ final class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
+    if (arrayType.getElementType().equals(JavaTypes.NULL_TYPE)) {
+      // Java has no syntax for an array of the null type, so no code can create one.
+      return SIList.empty();
+    }
     Type componentType = arrayType.getComponentType();
 
     SIList<Sequence> candidates;
@@ -145,6 +149,13 @@ final class HelperSequenceCreator {
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);
+    if (elementType.equals(JavaTypes.NULL_TYPE)
+        || (elementType.isArray()
+            && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))) {
+      // Java has no syntax for the null type or an array of it, so no code can create such an
+      // array of elements.
+      return null;
+    }
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
@@ -286,12 +297,17 @@ final class HelperSequenceCreator {
    * given list of candidates.
    *
    * @param elementsSequence the sequence creating element values
-   * @param elementType the type of elements for the array
+   * @param elementType the type of elements for the array; neither the null type nor an array whose
+   *     element type is the null type, which Java has no syntax for
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(
       TupleSequence elementsSequence, Type elementType, int length) {
+    assert !elementType.equals(JavaTypes.NULL_TYPE)
+            && !(elementType.isArray()
+                && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))
+        : "cannot create an array of the null type: " + elementType;
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()

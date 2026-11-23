@@ -88,7 +88,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       // If the type arguments of the owner type, and of its own owner types, are the type
       // parameters of the declarations of the enclosing classes, then the enclosing type from the
-      // declaration of the member class is correct.  Otherwise, the owner type is preserved.
+      // declaration of the member class is correct, and getPreservedOwnerType returns null.
+      // Otherwise, the owner type is preserved.
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
@@ -107,7 +108,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
       // ParameterizedType.forType keeps the owner type, whose type arguments its own member
-      // classes and supertypes may use.
+      // classes and supertypes may use.  It also supplies an enclosing type for an owner type in
+      // declaration form, as in Outer<T>.Middle<Integer>.
       return ParameterizedType.forType(t);
     }
 
