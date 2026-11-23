@@ -89,6 +89,12 @@ final class HelperSequenceCreator {
           // XXX being incautious, argument type might be parameterized
           componentType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+          if (componentType.equals(JavaTypes.NULL_TYPE)
+              || (componentType.isArray()
+                  && ((ArrayType) componentType).getElementType().equals(JavaTypes.NULL_TYPE))) {
+            // Java has no syntax for an array of the null type, so no code can create one.
+            return SIList.empty();
+          }
         }
       }
       candidates = components.getSequencesForType(componentType);
