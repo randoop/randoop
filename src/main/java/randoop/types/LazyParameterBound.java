@@ -146,8 +146,8 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -160,8 +160,9 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (isNonGenericMemberClass(type)) {
-      // A non-generic member class of a generic class, as in Outer<String>.Inner, which
-      // GenericClassType.forClass rejects.  ClassOrInterfaceType.forType preserves the owner type,
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
+      // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
+      // isUpperBound and isLowerBound do:  ClassOrInterfaceType.forType preserves the owner type,
       // such as Outer<String>, whose type arguments the substitution may change.
       return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
     }

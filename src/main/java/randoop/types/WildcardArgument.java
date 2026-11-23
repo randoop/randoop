@@ -116,7 +116,7 @@ public class WildcardArgument extends TypeArgument {
       return thisResolved.contains(otherResolved);
     }
     ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
-    ReferenceType boundType = boundType(argumentType.getTypeBound());
+    ReferenceType boundType = WildcardType.boundType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }
@@ -145,24 +145,6 @@ public class WildcardArgument extends TypeArgument {
       return null;
     }
     return new WildcardType(converted, wildcard.hasUpperBound());
-  }
-
-  /**
-   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
-   * converted to the equivalent {@link ReferenceBound}.
-   *
-   * @param bound a bound of a wildcard
-   * @return the type of the bound, or null if it cannot be determined
-   */
-  private static @Nullable ReferenceType boundType(ParameterBound bound) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
-      return converted == null ? null : converted.getBoundType();
-    }
-    if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType();
-    }
-    return null;
   }
 
   /**
