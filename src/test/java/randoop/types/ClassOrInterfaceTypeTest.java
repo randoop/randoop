@@ -811,8 +811,8 @@ public class ClassOrInterfaceTypeTest {
 
   /**
    * A member class that declares no type parameters but has a parameterized enclosing type is
-   * parameterized, but is not an {@link InstantiatedType}. Comparing an unrelated parameterized type
-   * with it returns false.
+   * parameterized, but is not an {@link InstantiatedType}. Comparing an unrelated parameterized
+   * type with it returns false.
    */
   @Test
   public void subtypeOfNonGenericMemberOfParameterizedTypeTest() throws NoSuchFieldException {
