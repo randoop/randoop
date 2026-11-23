@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Subtyping and type-argument containment (JLS sections 4.10 and 4.5.1) for reference types in
@@ -96,9 +95,6 @@ final class Subtyping {
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
-      if (capturedType == null) {
-        return false;
-      }
       InstantiatedType supertype =
           capturedType.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (supertype == null) {
@@ -106,11 +102,7 @@ final class Subtyping {
       }
       // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
       // section 4.10.2).
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
     if (otherType instanceof NonParameterizedType
@@ -120,9 +112,6 @@ final class Subtyping {
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
       // not, so compare the enclosing types here.
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
-      if (capturedType == null) {
-        return false;
-      }
       ClassOrInterfaceType supertype =
           findSupertypeOfClass(capturedType, otherType.getRuntimeClass());
       if (supertype == null) {
@@ -130,11 +119,7 @@ final class Subtyping {
       }
       // As above, capture the wildcard arguments of the enclosing types, as in
       // Outer<? extends Integer>.Inner.
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
@@ -147,19 +132,13 @@ final class Subtyping {
    * C<T> implements Box<T[]>}, the supertype of {@code C<?>} would be an array of a wildcard.
    *
    * @param type a type
-   * @return the capture conversion of {@code type}, or null if capture conversion fails because of
-   *     a lazy bound
+   * @return the capture conversion of {@code type}
    */
-  private static @Nullable ClassOrInterfaceType captureWildcardArguments(
-      ClassOrInterfaceType type) {
+  private static ClassOrInterfaceType captureWildcardArguments(ClassOrInterfaceType type) {
     if (!type.hasWildcardArgument()) {
       return type;
     }
-    try {
-      return type.applyCaptureConversion();
-    } catch (LazyBoundException e) {
-      return null;
-    }
+    return type.applyCaptureConversion();
   }
 
   /**
@@ -360,9 +339,6 @@ final class Subtyping {
       // unknowns, which are not wildcards, unchanged.
       ClassOrInterfaceType capturedType =
           captureWildcardArguments((ClassOrInterfaceType) lowerType);
-      if (capturedType == null) {
-        return false;
-      }
       InstantiatedType supertype =
           capturedType.getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
       return supertype != null
@@ -375,9 +351,6 @@ final class Subtyping {
       // Outer<String>.Inner; compare the enclosing types, as in isSubtypeOrEqual.
       ClassOrInterfaceType capturedType =
           captureWildcardArguments((ClassOrInterfaceType) lowerType);
-      if (capturedType == null) {
-        return false;
-      }
       ClassOrInterfaceType supertype = findSupertypeOfClass(capturedType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
