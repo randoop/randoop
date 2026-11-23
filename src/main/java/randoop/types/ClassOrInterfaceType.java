@@ -95,9 +95,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the method's
       // type parameter, not the type parameter declared by `Outer`.
       ClassOrInterfaceType ownerClassType = null;
-      java.lang.reflect.Type ownerType = t.getOwnerType();
-      if (ownerType instanceof java.lang.reflect.ParameterizedType
-          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+      java.lang.reflect.Type ownerType = ParameterBound.getConvertedOwnerType(t);
+      if (ownerType != null) {
         ownerClassType = forType(ownerType);
         if (ownerClassType.isGenericForm()) {
           ownerClassType = null;
@@ -410,7 +409,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null) {
+        if (supertypeSubstitution == null
+            || !substitution.isConsistentWith(supertypeSubstitution)) {
           return null;
         }
         substitution = substitution.extend(supertypeSubstitution);

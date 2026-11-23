@@ -21,6 +21,14 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of type variables, compared by object identity.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
    * instantiated as by a substitution.
    */
@@ -457,7 +465,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
    */
-  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  @SuppressWarnings("ReferenceEquality") // fast path; pairs are compared by identity
   boolean isIdenticalTo(TypeVariable other) {
     if (this == other) {
       return true;
@@ -465,14 +473,23 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself, so comparing
-      // them deeply would not terminate.
-      return getLowerTypeBound().equals(other.getLowerTypeBound())
-          && getUpperTypeBound().equals(other.getUpperTypeBound());
+    // The bounds of a type variable, such as a capture variable, can refer to the type variable
+    // itself, so the comparison of the bounds can compare the same pair of type variables again.
+    // As for a recursive bound in canBeInstantiatedBy, assume that the inner comparison succeeds:
+    // any difference is found by the comparison of the other parts of the bounds.
+    List<TypeVariable[]> inProgress = identityChecks.get();
+    for (TypeVariable[] pair : inProgress) {
+      if (pair[0] == this && pair[1] == other) {
+        return true;
+      }
     }
-    return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-        && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    inProgress.add(new TypeVariable[] {this, other});
+    try {
+      return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+          && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
   }
 
   /**

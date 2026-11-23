@@ -176,6 +176,107 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A class whose type parameter occurs in its bound only in an owner type.
+   *
+   * @param <T> a type parameter bounded by {@code Outer<T>.Inner<String>}
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerRecursiveBound<T extends Outer<T>.Inner<String>> {}
+
+  /**
+   * A class whose second type parameter has a bound with a fixed owner type, and with a type
+   * argument whose bound is recursive.
+   *
+   * @param <V> a recursively bounded type parameter
+   * @param <T> a type parameter bounded by {@code Outer<String>.Inner<V>}
+   */
+  @SuppressWarnings("unused")
+  private static class FixedOwnerBound<V extends Comparable<V>, T extends Outer<String>.Inner<V>> {}
+
+  /**
+   * A class whose second type parameter is bounded by a non-generic member class whose owner type
+   * mentions the first.
+   *
+   * @param <X> a type parameter
+   * @param <T> a type parameter bounded by {@code GenericOuter<X>.NonGenericInner}
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableMemberBound<X, T extends GenericOuter<X>.NonGenericInner> {}
+
+  /** A field whose type is a member class whose owner type is {@code Outer<String>}. */
+  @SuppressWarnings("unused")
+  private static Outer<String>.Inner<String> innerOfStringOuter;
+
+  /** A field whose type is a member class whose owner type is {@code Outer<Integer>}. */
+  @SuppressWarnings("unused")
+  private static Outer<Integer>.Inner<String> innerOfIntegerOuter;
+
+  /** A field whose type is a non-generic member class of {@code GenericOuter<String>}. */
+  @SuppressWarnings("unused")
+  private static GenericOuter<String>.NonGenericInner nonGenericInnerOfStringOuter;
+
+  /** A field whose type is a list of a non-generic member class of a parameterized type. */
+  @SuppressWarnings("unused")
+  private static List<GenericOuter<String>.NonGenericInner> listOfNonGenericInner;
+
+  /** A field whose type is a list of a wildcard bounded by a non-generic member class. */
+  @SuppressWarnings("unused")
+  private static List<? extends GenericOuter<String>.NonGenericInner> listOfWildcardNonGenericInner;
+
+  @Test
+  public void testBoundWithVariableInOwnerType() {
+    // Creating the type parameter does not recurse forever through the owner type of its bound.
+    TypeVariable t =
+        GenericClassType.forClass(OwnerRecursiveBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    Substitution stringSubstitution = new Substitution(t, JavaTypes.STRING_TYPE);
+    Type stringOuter = Type.forType(fieldType(ParameterBoundTest.class, "innerOfStringOuter"));
+    Type integerOuter = Type.forType(fieldType(ParameterBoundTest.class, "innerOfIntegerOuter"));
+    assertTrue(bound.isUpperBound(stringOuter, stringSubstitution));
+    assertFalse(bound.isUpperBound(integerOuter, stringSubstitution));
+  }
+
+  @Test
+  public void testLazyBoundKeepsFixedOwnerType() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(FixedOwnerBound.class).getTypeParameters();
+    TypeVariable v = parameters.get(0);
+    ParameterBound bound = parameters.get(1).getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    Substitution stringSubstitution = new Substitution(v, JavaTypes.STRING_TYPE);
+    Type stringOuter = Type.forType(fieldType(ParameterBoundTest.class, "innerOfStringOuter"));
+    Type integerOuter = Type.forType(fieldType(ParameterBoundTest.class, "innerOfIntegerOuter"));
+    assertTrue(bound.isUpperBound(stringOuter, stringSubstitution));
+    // The bound is Outer<String>.Inner<String>, not Inner<String> with any owner type.
+    assertFalse(bound.isUpperBound(integerOuter, stringSubstitution));
+  }
+
+  @Test
+  public void testNonGenericMemberClassBoundWithVariableInOwnerType() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
+    TypeVariable x = parameters.get(0);
+    ParameterBound bound = parameters.get(1).getUpperTypeBound();
+    Type stringOuter =
+        Type.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    assertTrue(bound.isUpperBound(stringOuter, new Substitution(x, JavaTypes.STRING_TYPE)));
+    assertFalse(bound.isUpperBound(stringOuter, new Substitution(x, integerType)));
+  }
+
+  @Test
+  public void testWildcardBoundedByNonGenericMemberClass() {
+    InstantiatedType list =
+        (InstantiatedType)
+            Type.forType(fieldType(ParameterBoundTest.class, "listOfNonGenericInner"));
+    InstantiatedType wildcardList =
+        (InstantiatedType)
+            Type.forType(fieldType(ParameterBoundTest.class, "listOfWildcardNonGenericInner"));
+    assertTrue(list.isSubtypeOfOrEqualTo(wildcardList));
+  }
+
+  /**
    * A class whose second type parameter has a bound that contains an array of the first.
    *
    * @param <U> the type parameter whose array occurs in the bound of {@code T}

@@ -1,8 +1,10 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -86,9 +88,9 @@ public abstract class ParameterBound {
    * type, which an eager bound cannot compare with a parameterized type. The lazy bound for such a
    * class has no type variable, and {@link LazyParameterBound} compares it with an argument type by
    * subtyping. A generic array type of such a class, as in {@code Outer<String>.Inner[]}, is eager:
-   * the conversion gives its element type the owner type from the class declaration, as in {@code
-   * Outer<T>.Inner}, as it does for any argument type, so the bound and argument types are compared
-   * consistently. Otherwise, the result is a {@link LazyParameterBound}.
+   * the conversion keeps the owner type as written, as in {@code Outer<String>.Inner}, as it does
+   * for any argument type, so the bound and argument types are compared consistently. Otherwise,
+   * the result is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -127,6 +129,25 @@ public abstract class ParameterBound {
   }
 
   /**
+   * Returns the owner type of the given parameterized type, if {@link
+   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} uses it as the enclosing type of the
+   * result: that is, if the owner type is itself a parameterized type, as in {@code Outer<T>} for
+   * {@code Outer<T>.Inner<String>}, and the class is not static. Otherwise, returns null.
+   *
+   * @param type a reflection parameterized type
+   * @return the owner type of {@code type} that its conversion uses, or null
+   */
+  /*package*/ static java.lang.reflect.@Nullable Type getConvertedOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
+        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+      return ownerType;
+    }
+    return null;
+  }
+
+  /**
    * Applies the given substitution to this type bound by replacing type variables.
    *
    * <p>If the substitution changes nothing in this bound, the result should be this bound itself,
@@ -152,10 +173,11 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>Owner types are not examined, because the conversion of a reflection type to a {@link
-   * ReferenceType} does not use them. It gives each member class the owner type from its class
-   * declaration, as in {@code Outer<T>} for {@code Outer<String>.Inner<Integer>}, not the owner
-   * type as written.
+   * <p>The owner type of a parameterized type is examined if the conversion of a reflection type to
+   * a {@link ReferenceType} uses it, as determined by {@link #getConvertedOwnerType}. The conversion
+   * keeps such an owner type as written, as in {@code Outer<String>} for {@code
+   * Outer<String>.Inner<Integer>}, so a type variable in it, as in {@code T extends
+   * Outer<T>.Inner<String>}, would also make an eager bound recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -182,6 +204,10 @@ public abstract class ParameterBound {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
+      }
+      java.lang.reflect.Type ownerType = getConvertedOwnerType(pt);
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {
