@@ -89,7 +89,9 @@ public abstract class ParameterBound {
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
+        // Unlike ParameterizedType.forType, ClassOrInterfaceType.forType retains a parameterized
+        // owner type, as in Outer<String>.Inner<Integer>.
+        return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
       }
       return new LazyParameterBound(type);
     }

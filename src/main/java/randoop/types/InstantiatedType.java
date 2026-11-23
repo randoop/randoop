@@ -419,7 +419,10 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // The substitution from the enclosing type, or from an earlier type argument, can map a
+          // type variable to a different type, as for Outer<String>.Inner<Integer> and
+          // Outer<E>.Inner<E>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           substitution = substitution.extend(subst);
@@ -481,7 +484,10 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
+    // A member class with a parameterized enclosing type, such as Outer<String>.Inner, is
+    // parameterized even if it is not an InstantiatedType.  The supertype search below
+    // (super.isSubtypeOfOrEqualTo) handles such a type.
+    if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {

@@ -89,7 +89,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       // The enclosing type of the result, converted from the owner type, such as Outer<E> in
       // Outer<E>.Inner or Outer<E>.Middle<String> in Outer<E>.Middle<String>.Inner.  It is null if
-      // the owner type supplies no type arguments or is the generic form of its class.  Use the
+      // the owner type supplies no type arguments or is the generic form of its class; equality
+      // treats such a result like one whose enclosing type is that generic form (see
+      // constrainingEnclosingType), as substitution into a generic member class produces.  Use the
       // owner type rather than the enclosing class, because the owner type's type arguments may
       // differ from the enclosing class's type parameters.  For example, in
       // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the method's
@@ -143,14 +145,30 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
-    ClassOrInterfaceType enclosingThis = this.enclosingType;
-    ClassOrInterfaceType enclosingOther = otherType.enclosingType;
-    return Objects.equals(enclosingThis, enclosingOther);
+    return Objects.equals(this.constrainingEnclosingType(), otherType.constrainingEnclosingType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(enclosingType);
+    return Objects.hashCode(constrainingEnclosingType());
+  }
+
+  /**
+   * Returns the enclosing type of this type, or null if this type has no enclosing type or its
+   * enclosing type is the generic form of its class. Equality and hashing use this rather than the
+   * enclosing type itself. A generic-form enclosing type, such as {@code Outer<T>} in {@code
+   * Outer<T>.Inner<String>}, places no constraint on the type, so it is equivalent to no enclosing
+   * type. Different construction paths yield either representation: {@link
+   * #forType(java.lang.reflect.Type)} omits a generic-form owner type, but substitution into a
+   * generic member class retains its generic-form enclosing type.
+   *
+   * @return the enclosing type of this type, or null if it does not constrain this type
+   */
+  private @Nullable ClassOrInterfaceType constrainingEnclosingType() {
+    if (enclosingType == null || enclosingType.isGenericForm()) {
+      return null;
+    }
+    return enclosingType;
   }
 
   /**

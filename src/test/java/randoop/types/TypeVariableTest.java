@@ -1083,6 +1083,39 @@ public class TypeVariableTest {
     assertFalse(firstTypeArgument("superStringListArrayListField").contains(stringArray));
   }
 
+  /** A field of type {@code List<? extends Outer<String>.Inner<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Outer<String>.Inner<String>[]> extendsStringOuterInnerArrayListField;
+
+  /** A field of type {@code List<? extends Outer<Object>.Inner<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Outer<Object>.Inner<String>[]> extendsObjectOuterInnerArrayListField;
+
+  /** A field of type {@code Outer<String>.Inner<String>[]}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Outer<String>.Inner<String>[] stringOuterInnerArrayField;
+
+  /** A field of type {@code Outer<Object>.Inner<String>[]}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Outer<Object>.Inner<String>[] objectOuterInnerArrayField;
+
+  /** A generic array bound retains the owner type of its component type. */
+  @Test
+  public void testWildcardWithMemberClassGenericArrayBound() throws NoSuchFieldException {
+    TypeArgument stringOuter =
+        TypeArgument.forType(
+            TypeVariableTest.class.getDeclaredField("stringOuterInnerArrayField").getGenericType());
+    TypeArgument objectOuter =
+        TypeArgument.forType(
+            TypeVariableTest.class.getDeclaredField("objectOuterInnerArrayField").getGenericType());
+    TypeArgument extendsStringOuter = firstTypeArgument("extendsStringOuterInnerArrayListField");
+    TypeArgument extendsObjectOuter = firstTypeArgument("extendsObjectOuterInnerArrayListField");
+    assertTrue(extendsStringOuter.contains(stringOuter));
+    assertFalse(extendsStringOuter.contains(objectOuter));
+    assertTrue(extendsObjectOuter.contains(objectOuter));
+    assertFalse(extendsObjectOuter.contains(stringOuter));
+  }
+
   /** A field of type {@code List<? extends Collection<?>>}. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   List<? extends Collection<?>> collectionListField;
