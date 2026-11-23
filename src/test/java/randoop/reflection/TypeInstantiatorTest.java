@@ -774,7 +774,10 @@ public class TypeInstantiatorTest {
   }
 
   /** A class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // only its Comparable<String> type is used
+  })
   static class Ranked implements Comparable<String> {
     @Override
     public int compareTo(String other) {
@@ -783,7 +786,10 @@ public class TypeInstantiatorTest {
   }
 
   /** Another class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // only its Comparable<String> type is used
+  })
   static class RankedToo implements Comparable<String> {
     @Override
     public int compareTo(String other) {

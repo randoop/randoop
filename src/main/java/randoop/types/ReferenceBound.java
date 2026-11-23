@@ -125,13 +125,24 @@ public abstract class ReferenceBound extends ParameterBound {
    * ParameterBound#isLowerBound(Type, Substitution)}, which, for example, lets a type variable in a
    * {@link LazyReferenceBound} be chosen. Similarly, with {@code T := String}, the bound {@code
    * String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of {@code
-   * String[]}.
+   * String[]}. An intersection {@code lowerBound} is a lower bound if one of its members is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
     // type variables, as in T[], where T is not recursive; they stand for themselves.
     // For target T with T := Number, Integer is not known to be a subtype of T.
+    if (lowerBound instanceof IntersectionTypeBound) {
+      // An intersection type is a subtype of each supertype of one of its members.  Each member is
+      // compared by this method, so that this bound stays fixed:  `List<String> & Serializable` is
+      // not a lower bound of `List<T>`, though `List<String>` is an instantiation of `List<T>`.
+      for (ParameterBound member : ((IntersectionTypeBound) lowerBound).getBounds()) {
+        if (hasLowerBound(member, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
     if (lowerBound instanceof EagerReferenceBound && !(lowerBound instanceof LazyReferenceBound)) {
       ReferenceType lowerType =
           ((EagerReferenceBound) lowerBound).getBoundType().substitute(substitution);

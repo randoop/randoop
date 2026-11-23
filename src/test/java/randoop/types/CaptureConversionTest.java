@@ -427,9 +427,6 @@ public class CaptureConversionTest {
    */
   @Test
   public void wildcardOnlyInEnclosingTypeTest() throws NoSuchFieldException {
-    // Afterward, the generic class of the member class has the type parameters of the enclosing
-    // class.
-    ClassOrInterfaceType.forClass(Outer.Inner.class);
     InstantiatedType memberType =
         (InstantiatedType)
             Type.forType(
@@ -449,13 +446,59 @@ public class CaptureConversionTest {
   }
 
   /**
+   * A generic class with a generic member class, used by no other test, so that its types are
+   * first created by {@link ParameterizedType#forType(java.lang.reflect.Type)} rather than by
+   * {@link ClassOrInterfaceType#forClass(Class)}.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class UnprimedOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U> {}
+  }
+
+  /** A field whose type is a generic member class with a wildcard in its enclosing type. */
+  public UnprimedOuter<?>.Inner<String> unprimedMemberField;
+
+  /**
+   * Tests that the generic class of a member class has the type parameters of the enclosing class
+   * when it is first created by {@link ParameterizedType#forType(java.lang.reflect.Type)}, as when
+   * it is first created by {@link ClassOrInterfaceType#forClass(Class)}.
+   */
+  @Test
+  public void memberGenericClassTypeParametersIndependentOfCreationOrder()
+      throws NoSuchFieldException {
+    InstantiatedType memberType =
+        (InstantiatedType)
+            ParameterizedType.forType(
+                CaptureConversionTest.class.getField("unprimedMemberField").getGenericType());
+    List<TypeVariable> parameters = memberType.getGenericClassType().getTypeParameters();
+    assertEquals(
+        Arrays.asList(
+            TypeVariable.forType(UnprimedOuter.class.getTypeParameters()[0]),
+            TypeVariable.forType(UnprimedOuter.Inner.class.getTypeParameters()[0])),
+        parameters);
+    assertEquals(
+        parameters,
+        ((GenericClassType) ClassOrInterfaceType.forClass(UnprimedOuter.Inner.class))
+            .getTypeParameters());
+
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    assertEquals(memberType.getTypeArguments(), capturedType.getTypeArguments());
+  }
+
+  /**
    * Tests that the bound of a capture variable of a member class mentions the capture variable of
    * the enclosing type, when the bound of the type parameter mentions a type parameter of the
    * enclosing class.
    */
   @Test
   public void wildcardsInEnclosingAndMemberTypeTest() throws NoSuchFieldException {
-    ClassOrInterfaceType.forClass(BoundedOuter.Inner.class);
     InstantiatedType memberType =
         (InstantiatedType)
             Type.forType(

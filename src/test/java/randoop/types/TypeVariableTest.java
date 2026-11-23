@@ -3739,13 +3739,17 @@ public class TypeVariableTest {
     assertTrue(superInteger.contains(superNumber));
     assertFalse(superNumber.contains(superInteger));
 
-    // A lazy bound, such as Comparable<T> for T extends Comparable<T>, can be compared.
+    // A lazy bound, such as Comparable<T> for T extends Comparable<T>, can be compared with the
+    // equivalent materialized bound.
     ParameterBound selfComparable = typeParameter(SelfComparableBound.class, 0).getUpperTypeBound();
     assertTrue(selfComparable instanceof LazyParameterBound);
+    ReferenceBound materializedSelfComparable =
+        ((LazyParameterBound) selfComparable).toReferenceBound();
+    assertNotNull(materializedSelfComparable);
     WildcardArgument extendsSelfComparable =
         new WildcardArgument(new WildcardType(selfComparable, true));
     WildcardArgument otherExtendsSelfComparable =
-        new WildcardArgument(new WildcardType(selfComparable, true));
+        new WildcardArgument(new WildcardType(materializedSelfComparable, true));
     assertTrue(extendsSelfComparable.contains(otherExtendsSelfComparable));
   }
 

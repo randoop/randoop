@@ -1246,12 +1246,7 @@ public class ClassOrInterfaceTypeTest {
      * @param <U> the type parameter
      */
     @SuppressWarnings("serial")
-    class Middle<U> extends HashMap<T, U> implements Comparable<Map<U, T>> {
-      @Override
-      public int compareTo(Map<U, T> other) {
-        return 0;
-      }
-    }
+    abstract class Middle<U> extends HashMap<T, U> implements Comparable<Map<U, T>> {}
   }
 
   /** A field whose type is a generic member class of a parameterized type. */

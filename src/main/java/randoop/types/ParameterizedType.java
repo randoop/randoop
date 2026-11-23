@@ -50,6 +50,15 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     if (cached == null) {
       cached = new GenericClassType(typeClass);
       cache.put(typeClass, cached);
+      // Set the enclosing type, as ClassOrInterfaceType.forClass does, so that the type parameters
+      // of the cached object, which include those of the enclosing classes of a member class, do
+      // not depend on whether ClassOrInterfaceType.forClass has been called for this class.  This
+      // is done after the object is cached, because converting the enclosing class can convert
+      // this class again.
+      Class<?> enclosingClass = typeClass.getEnclosingClass();
+      if (enclosingClass != null) {
+        cached.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+      }
     }
     return cached;
   }

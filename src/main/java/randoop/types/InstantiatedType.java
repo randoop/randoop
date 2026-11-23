@@ -133,7 +133,9 @@ public class InstantiatedType extends ParameterizedType {
       substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
     }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables created above.  A type argument that is not a wildcard
+      // can be a capture variable already, which is shared and must not be side-effected.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
@@ -446,6 +448,14 @@ public class InstantiatedType extends ParameterizedType {
         }
         return substitution;
       }
+      // This type's class is a proper subclass of the class of a member class goal type, as for
+      // Derived<Integer> and Outer<String>.Base<X>, where Derived<D> extends Outer<String>.Base<D>.
+      // ClassOrInterfaceType.getInstantiatingSubstitution has matched the supertype of this type
+      // that is of the goal type's class, including its own type arguments, so its result is
+      // complete.  It is null if that class is not a superclass of this type's class.
+      if (otherInstType.isMemberClass()) {
+        return substitution;
+      }
       return null;
     }
     // TODO: Why is this test so late, after expensive computation?
@@ -521,9 +531,16 @@ public class InstantiatedType extends ParameterizedType {
         // For a member class, such as Outer<String>.Inner<Integer>, the enclosing types must also
         // be related:  it is not a subtype of Outer<Long>.Inner<Integer>, nor of
         // Outer<Long>.Inner<? extends Number>.  The enclosing types are of the same class, so
-        // subtyping between them is containment of their type arguments.
+        // subtyping between them is containment of their type arguments.  Subtyping compares the
+        // type arguments of the enclosing types through a non-generic enclosing level, as for
+        // O<String>.M.I<Integer> and O<? extends CharSequence>.M.I<Integer>, where M is a member
+        // class of O<T> that declares no type parameters.  NonParameterizedType.isSubtypeOfOrEqualTo
+        // would compare O<String>.M and O<? extends CharSequence>.M by equality.  It is still
+        // used, because it also accepts an enclosing type that is the generic form of its class.
         boolean enclosingTypesRelated =
             !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
+                || Subtyping.isSubtypeOrEqual(
+                    this.enclosingType, otherInstantiatedType.enclosingType)
                 || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.

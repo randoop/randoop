@@ -130,7 +130,13 @@ public class TypeInstantiator {
           substitution = instantiateClass(declaringType);
         }
       } else { // otherwise, select from existing one
-        substitution = selectSubstitution(declaringType);
+        // Extend `fixed`, so that an existing type is rejected if it violates the bound of a type
+        // variable of `fixed`.  For example, for `Maker<T>.<U extends Comparable<T>> Box<U>
+        // make()` with `fixed` mapping U to String, Maker<Integer> is rejected and Maker<String>
+        // can be chosen.  The mappings of `fixed` do not change `operation`, to which `fixed` has
+        // already been applied.
+        substitution =
+            selectSubstitution(declaringType, matchingInputTypes(declaringType), fixed);
       }
       if (debug) {
         Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);
@@ -775,6 +781,11 @@ public class TypeInstantiator {
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
    *
+   * <p>The value for {@code X} also contains the related types of the non-generic type that {@code
+   * substitution} gives to a type variable whose bounds mention {@code X} and other uninstantiated
+   * type variables; see {@link #mentioningVariables(Substitution)}. Such a candidate is not checked
+   * against those bounds here, because they mention type variables that are not yet chosen.
+   *
    * <p>For example, for {@code <K, V> Map<K, V> unmodifiableMap(Map<? extends K, ? extends V>)}, if
    * {@code substitution} maps the capture of {@code ? extends K} to {@code Integer}, then the
    * result contains only supertypes of {@code Integer} for {@code K}.
@@ -788,6 +799,7 @@ public class TypeInstantiator {
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
+    Map<TypeVariable, List<TypeVariable>> mentioningVariables = mentioningVariables(substitution);
     List<ReferenceType> inferredTypes = inferredTypes(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
@@ -827,6 +839,25 @@ public class TypeInstantiator {
             candidate ->
                 !satisfiesBounds(
                     constrained, substitution.extend(new Substitution(parameter, candidate))));
+      }
+      // The bounds of an instantiated type variable can mention several uninstantiated ones, as
+      // for `<K, V, M extends Map<K, V>>` when M is HashMap<Key, Value>.  Then the related types of
+      // its type, such as Key and Value, are also candidates, for each of them.  They cannot be
+      // checked against the bounds until all of those type variables are chosen;
+      // selectSubstitutionSatisfyingBounds checks the complete combinations.
+      for (TypeVariable variable :
+          mentioningVariables.getOrDefault(parameter, Collections.emptyList())) {
+        if (constrained.contains(variable)) {
+          continue;
+        }
+        ReferenceType type = substitution.get(variable);
+        if (type != null && !type.isGeneric()) {
+          for (ReferenceType related : relatedTypes(type)) {
+            if (!candidates.contains(related)) {
+              candidates.add(related);
+            }
+          }
+        }
       }
       if (candidates.isEmpty()) {
         Log.logPrintf("No candidate types for %s consistent with %s%n", parameter, substitution);
@@ -981,6 +1012,33 @@ public class TypeInstantiator {
       boundVariables.removeAll(instantiated);
       if (boundVariables.size() == 1) {
         TypeVariable boundVariable = boundVariables.iterator().next();
+        result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns a map from each uninstantiated type variable {@code X} to the type variables that the
+   * given substitution instantiates and whose bounds mention {@code X}, possibly with other
+   * uninstantiated type variables. Unlike {@link #constrainedVariables(Substitution)}, the bounds
+   * of those type variables can mention several uninstantiated type variables, as for {@code M
+   * extends Map<K, V>} when the substitution instantiates {@code M} but not {@code K} or {@code V}.
+   *
+   * @param substitution a substitution
+   * @return a map from each uninstantiated type variable to the instantiated type variables whose
+   *     bounds mention it
+   */
+  private static Map<TypeVariable, List<TypeVariable>> mentioningVariables(
+      Substitution substitution) {
+    Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
+    Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
+    for (TypeVariable variable : instantiated) {
+      Set<TypeVariable> boundVariables =
+          new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
+      boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+      boundVariables.removeAll(instantiated);
+      for (TypeVariable boundVariable : boundVariables) {
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }
     }
