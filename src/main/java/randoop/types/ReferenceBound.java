@@ -111,8 +111,9 @@ public abstract class ReferenceBound extends ParameterBound {
     if (bound instanceof LazyParameterBound) {
       // The substitution has already been applied to the type, so do not apply it again by
       // calling isUpperBound(ParameterBound, Substitution).
-      ReferenceType type = asReferenceType(bound, substitution);
-      return type != null && isUpperBound(type, substitution);
+      ParameterBound converted = ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
+      return converted instanceof ReferenceBound
+          && isUpperBound(((ReferenceBound) converted).getBoundType(), substitution);
     }
     return false;
   }
