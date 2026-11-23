@@ -59,17 +59,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       throw new IllegalArgumentException("type must be a class or interface, got " + classType);
     }
 
-    ClassOrInterfaceType type;
+    // Each of these sets the enclosing type of the result before caching it.  Setting it here,
+    // after the result is cached and visible to other threads, would be a data race.
     if (classType.getTypeParameters().length > 0) {
-      type = ParameterizedType.forClass(classType);
+      return ParameterizedType.forClass(classType);
     } else {
-      type = NonParameterizedType.forClass(classType);
+      return NonParameterizedType.forClass(classType);
     }
-    Class<?> enclosingClass = classType.getEnclosingClass();
-    if (enclosingClass != null) {
-      type.enclosingType = forClass(enclosingClass);
-    }
-    return type;
   }
 
   /**
@@ -88,7 +84,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       // If the type arguments of the owner type, and of its own owner types, are the type
       // parameters of the declarations of the enclosing classes, then the enclosing type from the
-      // declaration of the member class is correct.  Otherwise, the owner type is preserved.
+      // declaration of the member class is correct, and getPreservedOwnerType returns null.
+      // Otherwise, the owner type is preserved.
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
@@ -107,7 +104,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
       // ParameterizedType.forType keeps the owner type, whose type arguments its own member
-      // classes and supertypes may use.
+      // classes and supertypes may use.  It also supplies an enclosing type for an owner type in
+      // declaration form, as in Outer<T>.Middle<Integer>.
       return ParameterizedType.forType(t);
     }
 
@@ -410,19 +408,20 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return null;
     }
     if (!goalType.isGeneric()) {
-      // No substitution makes this type identical to a non-generic goal type that is not identical
-      // to it, such as one whose enclosing type differs.
+      // getInstantiatingSubstitutionforTypeVariable returned the empty substitution if the types
+      // are identical.  No substitution instantiates a different non-generic type, such as
+      // Outer<Long>.Inner for Outer<String>.Inner.
       return null;
     }
 
     Substitution substitution = new Substitution();
-    // This type's view of the class of a member class goal type: this type or its supertype.
-    ClassOrInterfaceType memberView = null;
-    // For a member class such as Outer<String>.Inner and a member class goal type such as
-    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
-    // type.  This type need not be a member class itself:  a top-level class can extend
-    // Outer<String>.Inner.  The enclosing type of this type is not matched against a goal type
-    // that is not a member class, such as a type variable.
+    // The view of the goal type's class from this type, if the goal type is a member class.
+    ClassOrInterfaceType thisView = null;
+    // For a member class goal type such as Outer<E>.Inner, the enclosing type of this type's view
+    // of the goal type's class instantiates the enclosing type of the goal type.  This type need
+    // not be a member class itself:  a top-level class can extend Outer<String>.Inner.  The
+    // enclosing type of this type is not matched against a goal type that is not a member class,
+    // such as a type variable.
     if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
       if (goalClassType.isMemberClass()) {
@@ -435,9 +434,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         // The enclosing type to match is that of this type's view of the goal type's class, which
         // differs from this type's own enclosing type if, for example, Outer<String>.Child
         // extends Outer<Integer>.Parent.
-        ClassOrInterfaceType thisView = this;
-        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())) {
-          thisView = null;
+        if (this.runtimeClassIs(goalClassType.getRuntimeClass())) {
+          thisView = this;
+        } else {
           for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
             if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
               thisView = supertype;
@@ -449,7 +448,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           // No supertype of this type has the goal type's class.
           return null;
         }
-        memberView = thisView;
         if (enclosingGoalType.isGeneric() && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
@@ -468,12 +466,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     if (goalType instanceof GenericClassType) {
-      // Reuse the view found above, if any.  Computing the supertype again would capture a
-      // wildcard in an enclosing type again, as for Outer<?>.StringInner, giving a capture
-      // variable that differs from the one in the substitution.
+      // Reuse the view of the goal type's class found above, if any.  Computing it again would
+      // capture the wildcards of an enclosing type again, as for Outer<?>.Child, giving capture
+      // variables that are not consistent with those in the substitution found above.
       InstantiatedType supertype =
-          memberView instanceof InstantiatedType
-              ? (InstantiatedType) memberView
+          thisView instanceof InstantiatedType
+              ? (InstantiatedType) thisView
               : this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();

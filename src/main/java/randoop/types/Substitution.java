@@ -140,8 +140,7 @@ public class Substitution {
    */
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      ReferenceType value = this.get(entry.getKey());
-      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
+      if (!isConsistentWith(entry.getKey(), entry.getValue())) {
         return false;
       }
     }
@@ -152,6 +151,28 @@ public class Substitution {
       }
     }
     return true;
+  }
+
+  /**
+   * Returns true if this substitution does not map the given type variable, or maps it to the same
+   * type as the given entry does. The two must also agree on whether they map the type variable to
+   * itself: an entry that maps a type variable {@code U} to a distinct copy {@code U'} of it fixes
+   * {@code U'}, but an entry that maps {@code U'} to itself leaves it unknown (see {@link
+   * #isUnknown(ReferenceType)}), though the two values are the same.
+   *
+   * @param key the key of an entry
+   * @param value the value of the entry
+   * @return true if the entry is consistent with this substitution
+   */
+  private boolean isConsistentWith(TypeVariable key, ReferenceType value) {
+    ReferenceType thisValue = get(key);
+    if (thisValue == null) {
+      return true;
+    }
+    TypeVariable thisKey = getKey(key);
+    return thisKey != null
+        && TypeVariable.areIdentical(thisValue, value)
+        && isIdentityEntry(thisKey, thisValue) == isIdentityEntry(key, value);
   }
 
   /**
@@ -177,7 +198,7 @@ public class Substitution {
   /**
    * Creates a new substitution that contains the mappings of this substitution, extended by the
    * given mappings. If this and the additional mappings contain the same type variable, both must
-   * map it to the same type.
+   * map it to the same type; see {@link #isConsistentWith(Substitution)}.
    *
    * @param parameters the type parameters
    * @param arguments the type arguments
@@ -189,8 +210,10 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type. Types that are
-   * equal but contain copies of a type variable with different bounds are not the same; see {@link
+   * substitutions contain the same type variable, they must map to the same type. If one maps a
+   * type variable to itself and the other maps an equal copy of it to the same type, the result
+   * keeps the replacement, regardless of the order of the substitutions. Types that are equal but
+   * contain copies of a type variable with different bounds are not the same; see {@link
    * #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution

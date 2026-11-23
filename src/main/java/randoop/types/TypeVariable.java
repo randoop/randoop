@@ -31,7 +31,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
-   * thread, outermost first. Each element is a pair of the receiver and the argument.
+   * thread, outermost first. Each element is a pair of the receiver and the argument, compared by
+   * object identity.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
@@ -394,17 +395,17 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if some instantiation of it can be a
-   * subtype of {@code otherType}: {@code otherType} itself, or any instantiation if the upper bound
-   * of the type variable is a subtype of {@code otherType}. For example, for the capture of {@code
-   * ? super Y}, where {@code Y extends List<X>}, {@code Object} is within the lower bound, though
-   * it cannot instantiate {@code Y}. For an upper bound, the result is true if it can be a
-   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}. If the
-   * substitution instead replaces that type variable by a different type variable that does not
-   * stand for an unknown type, such as a type parameter {@code X} of another declaration, then
-   * {@code X} stands for itself, and the result is true only if {@code otherType} is a subtype of
-   * {@code X}.
+   * variable, compares {@code otherType} with that type. If the substitution replaces that type
+   * variable by a different type variable that does not stand for an unknown type, such as a type
+   * parameter {@code X} of another declaration, then {@code X} is fixed and stands for itself, and
+   * {@code otherType} must be a subtype (for an upper bound) or supertype (for a lower bound) of
+   * {@code X}. Otherwise, that type variable stands for an unknown type. For a lower bound, the
+   * result is true if some instantiation of it can be a subtype of {@code otherType}: {@code
+   * otherType} itself, or any instantiation if the upper bound of the type variable is a subtype of
+   * {@code otherType}. For example, for the capture of {@code ? super Y}, where {@code Y extends
+   * List<X>}, {@code Object} is within the lower bound, though it cannot instantiate {@code Y}. For
+   * an upper bound, the result is true if it can be a supertype of {@code otherType}, as determined
+   * by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -415,21 +416,31 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean variableBoundAllows(
       ParameterBound bound, boolean isLower, Substitution substitution, ReferenceType otherType) {
+    // If the substitution replaces the bound's type variable by a different type variable, as for
+    // `<S, T extends S>` with S := X, then X is fixed:  it is not chosen to suit otherType.  For
+    // example, with `X extends Number`, Integer is not known to be a subtype of X.  A replacement
+    // that stands for an unknown type can still be chosen, so it is handled below.
+    TypeVariable boundVariable = null;
+    if (bound instanceof ReferenceBound) {
+      boundVariable = (TypeVariable) ((ReferenceBound) bound).getBoundType();
+    } else if (bound instanceof LazyParameterBound) {
+      boundVariable = bound.getTypeParameters().get(0);
+    }
+    ReferenceType replacement =
+        boundVariable == null ? null : boundVariable.getSubstitutedType(substitution);
+    if (replacement != null
+        && replacement.isVariable()
+        && !replacement.equals(boundVariable)
+        && !substitution.isUnknown(replacement)) {
+      return isLower
+          ? Subtyping.isSubtypeOrEqual(replacement, otherType, substitution)
+          : Subtyping.isSubtypeOrEqual(otherType, replacement, substitution);
+    }
     ParameterBound substituted = bound.substitute(substitution);
     TypeVariable variable;
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
-      List<TypeVariable> boundVariables = bound.getTypeParameters();
-      if (!isLower
-          && !boundVariables.isEmpty()
-          && !variable.equals(boundVariables.get(0))
-          && !substitution.isUnknown(variable)) {
-        // The substitution replaces the type variable of the bound by a different type variable,
-        // which stands for a particular type.  No other type can be chosen for it, so otherType
-        // must be a subtype of it.
-        return Subtyping.isSubtypeOrEqual(otherType, variable, substitution);
-      }
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
@@ -600,7 +611,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
    */
-  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  @SuppressWarnings("ReferenceEquality") // fast path; pairs are compared by identity
   boolean isIdenticalTo(TypeVariable other) {
     if (this == other) {
       return true;
@@ -608,9 +619,10 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
-    // deeply can reach this comparison again.  As for any recursive comparison, assume that the
-    // inner comparison succeeds.
+    // The bounds of a type variable, such as a capture variable, can refer to the type variable
+    // itself, so the comparison of the bounds can compare the same pair of type variables again.
+    // As for a recursive bound in canBeInstantiatedBy, assume that the inner comparison succeeds:
+    // any difference is found by the comparison of the other parts of the bounds.
     List<TypeVariable[]> inProgress = identityChecks.get();
     for (TypeVariable[] pair : inProgress) {
       if (pair[0] == this && pair[1] == other) {

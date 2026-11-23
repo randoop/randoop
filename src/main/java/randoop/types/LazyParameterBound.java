@@ -150,8 +150,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard, or is a member class whose owner type cannot be converted
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard, or is a member
+   *     class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -207,6 +208,13 @@ class LazyParameterBound extends ParameterBound {
           if (preserved || !ownerClassType.isGenericForm()) {
             instantiatedType.enclosingType = ownerClassType;
           }
+        }
+        if (instantiatedType.enclosingType == null) {
+          // The owner type remains the type that the declaration of the enclosing class denotes,
+          // such as Outer<T>.  Use that declaration, as ParameterizedType.forType does, so that
+          // the result still has the type parameters of the enclosing class.
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) owner).getRawType());
         }
       }
       return TypeArgument.forType(instantiatedType);
@@ -282,9 +290,19 @@ class LazyParameterBound extends ParameterBound {
   private static @Nullable TypeArgument substituteNonGenericMemberClass(
       ParameterizedType type, Substitution substitution) {
     Class<?> rawType = (Class<?>) type.getRawType();
-    ParameterizedType ownerType = getPreservedOwnerType(type);
+    // Use the same rule as ClassOrInterfaceType.forType, which uses the declaration of the
+    // enclosing class for an owner type in declaration form, such as Outer<T> for Outer's own T.
+    ParameterizedType ownerType = ClassOrInterfaceType.getPreservedOwnerType(type);
     if (ownerType == null) {
-      return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
+      ClassOrInterfaceType declared = ClassOrInterfaceType.forType(type);
+      ClassOrInterfaceType result = declared.substitute(substitution);
+      // Substitution converts a declaration owner, which is a GenericClassType, to an
+      // InstantiatedType, even if the substitution does not change its type arguments.  Keep the
+      // declaration owner in that case, as ClassOrInterfaceType.forType does.
+      if (result.isMemberClass() && result.enclosingType.isGenericForm()) {
+        result = declared;
+      }
+      return TypeArgument.forType(result);
     }
     // ClassOrInterfaceType.forType preserves the owner type, such as `Outer<String>`, whose type
     // arguments the substitution may change.  The owner type is converted here, rather than by
@@ -500,7 +518,43 @@ class LazyParameterBound extends ParameterBound {
       return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
     }
     ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isUpperBound(argType, substitution);
+    // Comparing b with the substitution would apply the substitution to b again.
+    return b != null && b.isUpperBound(argType, withoutReplacingTypeVariablesOf(b, substitution));
+  }
+
+  /**
+   * Returns a substitution that is like the given one, but that maps to itself each type variable
+   * that occurs in {@code bound} and that the given substitution maps to a type other than a copy
+   * of the type variable. The given substitution has already been applied to {@code bound}, so each
+   * such type variable came from a type that the substitution maps another type variable to;
+   * applying the result to {@code bound} does not substitute for it again. For example, for {@code
+   * [T := U, U := Integer]}, the bound {@code T[]} becomes {@code U[]}, and {@code U} in it stands
+   * for itself, not for {@code Integer}. The other mappings remain available for comparisons, such
+   * as for the bounds of type variables.
+   *
+   * <p>Does not examine the bounds of the type variables in {@code bound}.
+   *
+   * @param bound a bound to which {@code substitution} has been applied
+   * @param substitution a type substitution
+   * @return a substitution that does not replace the type variables in {@code bound}
+   */
+  private static Substitution withoutReplacingTypeVariablesOf(
+      ParameterBound bound, Substitution substitution) {
+    // A bound that contains a type variable is a LazyReferenceBound, whose getTypeParameters()
+    // does not examine the bounds of the type variables.  See ReferenceBound.forTypeLazyIfGeneric.
+    if (!(bound instanceof LazyReferenceBound)) {
+      return substitution;
+    }
+    Substitution result = substitution;
+    for (TypeVariable variable : bound.getTypeParameters()) {
+      ReferenceType replacement = result.get(variable);
+      // A mapping to a copy of the type variable, with other bounds, does not change the copy
+      // again, so it is kept.
+      if (replacement != null && !replacement.equals(variable)) {
+        result = result.withMapping(variable, variable);
+      }
+    }
+    return result;
   }
 
   /**
@@ -595,7 +649,8 @@ class LazyParameterBound extends ParameterBound {
    * #toReferenceBound()} converts this bound to, in which each type variable remains a type
    * variable. That bound stands for every instantiation of its type variables, so only the null
    * type and that bound's own type are lower bounds of it; see {@link
-   * LazyReferenceBound#hasLowerBound}. Returns false if this bound cannot be converted.
+   * LazyReferenceBound#hasLowerBound}. So, with {@code T := String}, the bound {@code String[]} is
+   * not a lower bound of {@code T[]}. Returns false if this bound cannot be converted.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

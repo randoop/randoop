@@ -217,32 +217,10 @@ class LazyReferenceBound extends EagerReferenceBound {
             getBoundType())) {
       return true;
     }
-    ParameterBound b = lowerBound.substitute(substitution);
-    if (b instanceof IntersectionTypeBound) {
-      // An intersection type is a subtype of each of its members, so it is a lower bound if any
-      // member is.  The type variables of this bound stay fixed.
-      for (ParameterBound member : ((IntersectionTypeBound) b).getBounds()) {
-        ParameterBound converted =
-            member instanceof LazyParameterBound
-                ? ((LazyParameterBound) member).toReferenceBound()
-                : member;
-        if (converted instanceof ReferenceBound) {
-          ReferenceType memberType = ((ReferenceBound) converted).getBoundType();
-          if (Subtyping.isSubtypeOrEqual(memberType, getBoundType())) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-    if (!(b instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
-    // Each type variable stands for itself, in both types, so a subtype of the type of this bound
-    // for every instantiation of its type variables is a lower bound.  For example, ArrayList<T> is
-    // a lower bound of List<T>; and, because the null type is a subtype of every reference type,
-    // including a type variable, NullType[] is a lower bound of T[].
-    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType());
+    // Each type variable stands for itself, so that ArrayList<T> is a subtype of List<T> but
+    // List<String> is not.  The null type is a subtype of every reference type, including a type
+    // variable, so array covariance makes, for example, `NullType[]` a subtype of `T[]`.  An
+    // intersection, such as `Number & Comparable<T>`, is a subtype if any member is.
+    return isSubtypeOfFixed(lowerBound.substitute(substitution), getBoundType());
   }
 }
