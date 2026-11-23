@@ -210,40 +210,25 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type. If one maps a
-   * type variable to itself and the other maps an equal copy of it to the same type, the result
-   * keeps the replacement, regardless of the order of the substitutions. Types that are equal but
-   * contain copies of a type variable with different bounds are not the same; see {@link
-   * #isConsistentWith(Substitution)}.
+   * substitutions contain the same type variable, they must map to the same type, and they must
+   * agree on whether they map it to itself. Types that are equal but contain copies of a type
+   * variable with different bounds are not the same; see {@link #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
    */
-  @SuppressWarnings("ReferenceEquality") // an identity mapping maps a key to the key object itself
   public Substitution extend(Substitution other) {
     Substitution result = new Substitution(this);
     for (Map.Entry<TypeVariable, ReferenceType> entry : other.map.entrySet()) {
-      TypeVariable key = entry.getKey();
-      ReferenceType value = entry.getValue();
-      if (key != value && result.mapsToItself(key)) {
-        // The existing entry maps a copy of `key` to itself, and `other` maps `key` to the same
-        // type, which is not `key` itself:  for example, {T -> T} and {Tcopy -> T}.  Keeping the
-        // existing key would make the result an identity mapping, which leaves Tcopy unchanged.
-        // Replace the entry, so that the result does not depend on the order of the merge.
-        ReferenceType existing = result.map.get(key);
-        if (existing != null) {
-          // Called only for its check, which throws if the two values differ.
-          ReferenceType unused = requireSameEntry.apply(existing, value);
-        }
-        result.map.remove(key);
-        result.map.put(key, value);
-        // Keep rawMap consistent with map.  The merge of other.rawMap below then finds this value.
-        if (key instanceof ExplicitTypeVariable) {
-          result.rawMap.put(((ExplicitTypeVariable) key).getReflectionTypeVariable(), value);
-        }
-      } else {
-        result.map.merge(key, value, requireSameEntry);
+      // Also reject entries that disagree on whether they map the type variable to itself, so that
+      // the result does not depend on the order of the substitutions.
+      if (!this.isConsistentWith(entry.getKey(), entry.getValue())) {
+        throw new IllegalArgumentException(
+            String.format(
+                "Substitutions map %s to distinct types %s and %s",
+                entry.getKey(), this.get(entry.getKey()), entry.getValue()));
       }
+      result.map.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);

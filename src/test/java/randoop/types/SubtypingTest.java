@@ -2,7 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -99,15 +99,18 @@ public class SubtypingTest {
   }
 
   @Test
-  public void testExtendKeepsExplicitReplacement() {
+  public void testIdentityIsInconsistentWithCopyReplacement() {
     TypeVariable t = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
     TypeVariable tCopy =
         t.createCopyWithBounds(
             t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.STRING_TYPE));
     Substitution identity = new Substitution(t, t);
     Substitution replacement = new Substitution(tCopy, t);
-    // Either order of merging maps tCopy to t.
-    assertSame(t, tCopy.substitute(identity.extend(replacement)));
-    assertSame(t, tCopy.substitute(replacement.extend(identity)));
+    // The identity mapping keeps tCopy, but the replacement replaces tCopy by t.  So, in either
+    // order, the substitutions are inconsistent and cannot be merged.
+    assertFalse(identity.isConsistentWith(replacement));
+    assertFalse(replacement.isConsistentWith(identity));
+    assertThrows(IllegalArgumentException.class, () -> identity.extend(replacement));
+    assertThrows(IllegalArgumentException.class, () -> replacement.extend(identity));
   }
 }
