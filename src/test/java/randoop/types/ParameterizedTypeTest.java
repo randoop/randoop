@@ -533,4 +533,40 @@ public class ParameterizedTypeTest {
     // `? extends Number` does not contain `? super String`.
     assertFalse(superString.isSubtypeOfOrEqualTo(extendsNumber));
   }
+
+  /**
+   * A generic class with a generic inner class whose type parameter has a bound.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class OuterOfBoundedInner<T> {
+    /**
+     * An inner class whose type parameter has a bound.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U extends Number> {}
+  }
+
+  /**
+   * Instantiating a member class checks each type argument against the bound of its own type
+   * parameter. The type arguments of the enclosing class come first.
+   */
+  @Test
+  public void testInstantiateMemberClassChecksMatchingBounds() {
+    GenericClassType innerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(OuterOfBoundedInner.Inner.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType instantiated = innerType.instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertEquals(
+        GenericClassType.forClass(OuterOfBoundedInner.class).instantiate(JavaTypes.STRING_TYPE),
+        instantiated.enclosingType);
+    try {
+      innerType.instantiate(integerType, JavaTypes.STRING_TYPE);
+      fail("String is not within the bound of U");
+    } catch (IllegalArgumentException e) {
+      // expected
+    }
+  }
 }

@@ -118,13 +118,80 @@ public abstract class ReferenceBound extends ParameterBound {
    * <p>As specified, the substitution is applied to {@code lowerBound} but not to the type of this
    * bound, even if that type contains type variables, as in {@code T[]}. So, with {@code T :=
    * String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a
-   * lower bound of {@code String[]}.
+   * lower bound of {@code String[]}. If the type of this bound contains type variables but is not
+   * itself a type variable, it is compared as by {@link #hasLowerBoundWithFixedVariables}: for
+   * example, {@code List<String>} is not a lower bound of {@code List<T>}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
     // type variables, as in T[], where T is not recursive; they stand for themselves.
+    // lowerBound.isLowerBound(Type, Substitution) would treat them as instantiable, accepting
+    // List<String> for List<T>.
+    if (boundType.isGeneric() && !boundType.isVariable()) {
+      return hasLowerBoundWithFixedVariables(lowerBound, substitution);
+    }
     return lowerBound.isLowerBound(boundType, substitution);
+  }
+
+  /**
+   * Returns true if {@code lowerBound}, after the substitution is applied to it, is a lower bound
+   * of the type of this bound, in which each type variable stands for itself.
+   *
+   * <p>Returns true if {@code lowerBound} is the null type, or if, after the substitution is
+   * applied to it, it is a subtype of the type of this bound (see {@link
+   * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
+   * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. A lower bound that the substitution
+   * does not instantiate is compared with its remaining type variables standing for themselves. An
+   * intersection is a lower bound if any of its members is. The type of this bound stands for
+   * every instantiation of its type variables; a type such as {@code List<String>} is not a subtype
+   * of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound of the type of this bound, with its type
+   *     variables fixed
+   */
+  final boolean hasLowerBoundWithFixedVariables(
+      ParameterBound lowerBound, Substitution substitution) {
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    // Subtyping.isIdentical compares enclosing types too:  Outer<Integer>.Inner<X> is not
+    // Outer<Number>.Inner<X>.
+    if (lowerBound instanceof ReferenceBound
+        && Subtyping.isIdentical(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution), boundType)) {
+      return true;
+    }
+    ParameterBound b = lowerBound.substitute(substitution);
+    if (b instanceof LazyParameterBound) {
+      // The substitution did not instantiate the lower bound.  Convert it, keeping each of its
+      // remaining type variables, so that it can be compared with the type of this bound.
+      b = ((LazyParameterBound) b).toReferenceBound();
+    }
+    if (b instanceof IntersectionTypeBound) {
+      // An intersection is a subtype of each of its members, such as List<T> & Serializable of
+      // List<T>.  The substitution has already been applied to the members.
+      for (ParameterBound member : ((IntersectionTypeBound) b).getBounds()) {
+        if (hasLowerBoundWithFixedVariables(member, new Substitution())) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (!(b instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
+    // The substitution is not applied to the type of this bound, in which each type variable
+    // stands for itself.  So, a subtype of it is a subtype of each instantiation of it, as
+    // ArrayList<T>[] is of List<T>[].  The null type is a subtype of every reference type,
+    // including a type variable, so array covariance makes, for example, `NullType[]` a subtype of
+    // `T[]`.  Subtyping does not treat a type as a subtype of the generic form of its class, as
+    // `isSubtypeOfOrEqualTo` does; for example, List<String>[] is not a subtype of each
+    // instantiation of List<E>[].
+    return Subtyping.isSubtypeOrEqual(lowerType, boundType, new Substitution());
   }
 
   @Override

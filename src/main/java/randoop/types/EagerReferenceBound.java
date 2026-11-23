@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
@@ -48,17 +49,39 @@ class EagerReferenceBound extends ReferenceBound {
       }
       InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
-          ((ClassOrInterfaceType) thisBoundType)
-              .getMatchingSupertype(argClassType.getGenericClassType());
+          capturedMatchingSupertype(
+              (ClassOrInterfaceType) thisBoundType, argClassType.getGenericClassType());
       if (boundSuperType == null) {
         return false;
       }
-      boundSuperType = boundSuperType.applyCaptureConversion();
       // isInstantiationOf does not compare enclosing types, so compare them too.
       return boundSuperType.isInstantiationOf(argClassType)
           && ClassOrInterfaceType.enclosingTypesInstantiate(boundSuperType, argClassType);
     }
     return isSubtypeIncludingEnclosingTypes(thisBoundType, argType);
+  }
+
+  /**
+   * Returns the supertype of the capture conversion of {@code type} that instantiates {@code
+   * goalType}, with capture conversion applied to it too. As in {@link Subtyping}, {@code type} is
+   * captured before its supertype is found: if {@code Nested<T>} extends {@code
+   * ArrayList<List<T>>}, then the supertype of {@code Nested<?>} is {@code List<List<CAP>>}, not
+   * {@code List<List<?>>}. The supertype is captured because its declaration can have wildcard
+   * arguments.
+   *
+   * @param type a type
+   * @param goalType a generic class
+   * @return the captured supertype of the captured {@code type} that instantiates {@code goalType},
+   *     or null if there is none or a bound cannot be evaluated
+   */
+  private static @Nullable InstantiatedType capturedMatchingSupertype(
+      ClassOrInterfaceType type, GenericClassType goalType) {
+    try {
+      InstantiatedType supertype = type.applyCaptureConversion().getMatchingSupertype(goalType);
+      return supertype == null ? null : supertype.applyCaptureConversion();
+    } catch (LazyParameterBound.LazyBoundException e) {
+      return null;
+    }
   }
 
   /**
@@ -135,12 +158,11 @@ class EagerReferenceBound extends ReferenceBound {
       }
       InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
       InstantiatedType argSuperType =
-          ((ClassOrInterfaceType) argType)
-              .getMatchingSupertype(boundClassType.getGenericClassType());
+          capturedMatchingSupertype(
+              (ClassOrInterfaceType) argType, boundClassType.getGenericClassType());
       if (argSuperType == null) {
         return false;
       }
-      argSuperType = argSuperType.applyCaptureConversion();
       // isInstantiationOf does not compare enclosing types, so compare them too:  for the bound
       // Outer<String>.Inner<Integer>, Outer<Number>.Inner<Integer> is not within the bound.
       return argSuperType.isInstantiationOf(boundClassType)

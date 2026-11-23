@@ -349,9 +349,25 @@ final class Subtyping {
       return componentType.equals(otherComponentType);
     }
     if (type instanceof InstantiatedType && lowerType instanceof ClassOrInterfaceType) {
-      InstantiatedType supertype =
-          ((ClassOrInterfaceType) lowerType)
-              .getMatchingSupertype(((InstantiatedType) type).getGenericClassType());
+      ClassOrInterfaceType lowerClassType = (ClassOrInterfaceType) lowerType;
+      GenericClassType goalType = ((InstantiatedType) type).getGenericClassType();
+      InstantiatedType supertype;
+      try {
+        // As in isSubtypeOrEqual, a wildcard of lowerType must be captured before the supertype is
+        // found, so that it is not substituted into a type argument of the supertype:  if
+        // Pair<P, Q> extends Base<List<P>, Q>, then the supertype of Pair<?, B> is
+        // Base<List<CAP>, B>, which no choice of B makes a subtype of Base<List<?>, String>.
+        // If lowerType is of the goal class, it is its own matching supertype, and its wildcards
+        // are compared directly with the type arguments of `type`; it is not captured, because the
+        // capture of a wildcard whose bound contains an unknown, such as `? extends B`, would not
+        // be compared as an unknown.
+        if (!lowerClassType.runtimeClassIs(goalType.getRuntimeClass())) {
+          lowerClassType = lowerClassType.applyCaptureConversion();
+        }
+        supertype = lowerClassType.getMatchingSupertype(goalType);
+      } catch (LazyBoundException e) {
+        return false;
+      }
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
     }

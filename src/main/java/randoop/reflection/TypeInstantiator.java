@@ -868,7 +868,9 @@ public class TypeInstantiator {
    * mentions {@code parameter}. For example, if {@code constrained} is {@code T extends
    * Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps {@code T} to
    * {@code Ranked}, which implements {@code Comparable<String>}, then this returns {@code String}.
-   * This does not check the bounds of {@code constrained}; the caller does.
+   * The upper bound can also be a member class that mentions {@code parameter} only in its
+   * enclosing type, as in {@code T extends Outer<U>.Inner}. This does not check the bounds of
+   * {@code constrained}; the caller does.
    *
    * @param parameter a type variable that {@code substitution} does not instantiate
    * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
@@ -893,16 +895,28 @@ public class TypeInstantiator {
       return null;
     }
     ReferenceType boundType = ((ReferenceBound) bound).getBoundType();
-    if (!(boundType instanceof InstantiatedType) || !boundType.isGeneric()) {
+    if (!boundType.isGeneric()) {
       return null;
     }
-    InstantiatedType pattern = (InstantiatedType) boundType;
-    InstantiatedType supertype =
-        ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
-    if (supertype == null) {
+    Substitution matching;
+    if (boundType instanceof InstantiatedType) {
+      InstantiatedType pattern = (InstantiatedType) boundType;
+      InstantiatedType supertype =
+          ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
+      if (supertype == null) {
+        return null;
+      }
+      matching = supertype.getInstantiatingSubstitution(pattern);
+    } else if (boundType instanceof ClassOrInterfaceType
+        && !(boundType instanceof ParameterizedType)
+        && ((ClassOrInterfaceType) boundType).isMemberClass()) {
+      // A member class that declares no type parameters, such as Outer<U>.Inner, has no type
+      // arguments of its own.  getInstantiatingSubstitution matches the enclosing type of the
+      // supertype of `type` that is of that class, such as Outer<String> for Outer<String>.Inner.
+      matching = ((ClassOrInterfaceType) type).getInstantiatingSubstitution(boundType);
+    } else {
       return null;
     }
-    Substitution matching = supertype.getInstantiatingSubstitution(pattern);
     if (matching == null) {
       return null;
     }

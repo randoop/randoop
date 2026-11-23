@@ -129,7 +129,10 @@ public class InstantiatedType extends ParameterizedType {
       substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
     }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables created above.  A type argument that is not a wildcard
+      // can itself be a capture variable, created by an earlier capture conversion; converting it
+      // again would add another member to its upper bound.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }

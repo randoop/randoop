@@ -83,6 +83,87 @@ public class ParameterBoundTest {
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
     assertTrue(bound.isLowerBound(argType, empty));
+    // ParameterBound.forType makes an eager bound, so also test the lazy bound for the type.
+    ParameterBound lazy = new LazyParameterBound(arrayType);
+    assertTrue(lazy.isUpperBound(argType, empty));
+    assertTrue(lazy.isLowerBound(argType, empty));
+  }
+
+  /**
+   * A generic class whose supertype has a nested type argument that mentions the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class NestedList<T> extends ArrayList<List<T>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261122;
+  }
+
+  /** A field whose type is {@code NestedList<?>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private NestedList<?> wildcardNestedList;
+
+  /** A field whose type is {@code List<List<?>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<?>> listOfWildcardLists;
+
+  /**
+   * An eager bound captures the type whose supertype it finds. The supertype of {@code
+   * NestedList<?>} is {@code List<List<CAP>>}, not {@code List<List<?>>}.
+   */
+  @Test
+  public void testEagerBoundCapturesBeforeSupertypeSearch() {
+    ReferenceType wildcardNested =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "wildcardNestedList"));
+    ReferenceType listOfLists =
+        (ReferenceType) Type.forType(fieldType(ParameterBoundTest.class, "listOfWildcardLists"));
+    Substitution empty = new Substitution();
+    assertFalse(new EagerReferenceBound(listOfLists).isUpperBound(wildcardNested, empty));
+    assertFalse(new EagerReferenceBound(wildcardNested).isLowerBound(listOfLists, empty));
+
+    InstantiatedType stringNested =
+        GenericClassType.forClass(NestedList.class).instantiate(JavaTypes.STRING_TYPE);
+    InstantiatedType listOfStringLists =
+        GenericClassType.forClass(List.class)
+            .instantiate(GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    assertTrue(new EagerReferenceBound(listOfStringLists).isUpperBound(stringNested, empty));
+    assertTrue(new EagerReferenceBound(stringNested).isLowerBound(listOfStringLists, empty));
+  }
+
+  /**
+   * The type variables of an eager bound stand for themselves when it is compared with a possible
+   * lower bound, as for a {@link LazyReferenceBound}.
+   */
+  @Test
+  public void testEagerGenericBoundHasFixedVariables() {
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    ParameterBound eagerListBound =
+        new EagerReferenceBound(listType.instantiate(arrayHolderVariable));
+    ParameterBound stringListBound =
+        new EagerReferenceBound(listType.instantiate(JavaTypes.STRING_TYPE));
+    ParameterBound arrayListBound =
+        new EagerReferenceBound(
+            GenericClassType.forClass(ArrayList.class).instantiate(arrayHolderVariable));
+    assertFalse(stringListBound.isLowerBound(eagerListBound, new Substitution()));
+    assertTrue(eagerListBound.isLowerBound(eagerListBound, new Substitution()));
+    assertTrue(arrayListBound.isLowerBound(eagerListBound, new Substitution()));
+    assertTrue(nullBound.isLowerBound(eagerListBound, new Substitution()));
+  }
+
+  /** An intersection is a lower bound of a {@link LazyReferenceBound} if any of its members is. */
+  @Test
+  public void testIntersectionLowerBoundOfLazyReferenceBound() {
+    InstantiatedType listOfT =
+        GenericClassType.forClass(List.class).instantiate(arrayHolderVariable);
+    ParameterBound lazyListBound = new LazyReferenceBound(listOfT);
+    ParameterBound serializableBound =
+        ParameterBound.forType(ReferenceType.forClass(Serializable.class));
+    ParameterBound listAndSerializable =
+        new IntersectionTypeBound(Arrays.asList(lazyListBound, serializableBound));
+    ParameterBound integerAndSerializable =
+        new IntersectionTypeBound(Arrays.asList(integerBound, serializableBound));
+    assertTrue(listAndSerializable.isLowerBound(lazyListBound, new Substitution()));
+    assertFalse(integerAndSerializable.isLowerBound(lazyListBound, new Substitution()));
   }
 
   @Test
@@ -329,6 +410,69 @@ public class ParameterBoundTest {
      * type.
      */
     Inner<String>[] innerArray;
+
+    /** A field whose type has an owner type in declaration form. */
+    Inner<String> inner;
+  }
+
+  /**
+   * A lazy bound for a member class whose owner type is in declaration form keeps the owner type
+   * when it is converted, so that a later substitution reaches the owner's type parameter.
+   */
+  @Test
+  public void testConvertedBoundKeepsDeclarationFormOwner() {
+    java.lang.reflect.Type innerType = fieldType(Outer.class, "inner");
+    ReferenceBound converted = new LazyParameterBound(innerType).toReferenceBound();
+    assertNotNull(converted);
+    ClassOrInterfaceType convertedType = (ClassOrInterfaceType) converted.getBoundType();
+    assertTrue(convertedType.isMemberClass());
+    assertEquals(Type.forType(innerType), convertedType);
+    GenericClassType outer = GenericClassType.forClass(Outer.class);
+    TypeVariable t = outer.getTypeParameters().get(0);
+    ClassOrInterfaceType substituted =
+        convertedType.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertEquals(outer.instantiate(JavaTypes.STRING_TYPE), substituted.enclosingType);
+  }
+
+  /**
+   * A generic class whose type parameter has a bound, with an inner class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class BoundedOuter<T extends Number> {
+    /**
+     * An inner class, whose owner type has a type variable.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+
+    /** A field whose type has an owner type in declaration form. */
+    Inner<String> inner;
+  }
+
+  /**
+   * A substitution that changes only the bound of the type parameter of a declaration-form owner
+   * changes the owner.
+   */
+  @Test
+  public void testSubstitutionChangingOwnerVariableBound() {
+    TypeVariable t = GenericClassType.forClass(BoundedOuter.class).getTypeParameters().get(0);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    TypeVariable integerBoundedT =
+        t.createCopyWithBounds(t.getLowerTypeBound(), ParameterBound.forType(integerType));
+    ParameterBound substituted =
+        new LazyParameterBound(fieldType(BoundedOuter.class, "inner"))
+            .substitute(new Substitution(t, integerBoundedT));
+    assertTrue(substituted instanceof ReferenceBound);
+    ClassOrInterfaceType innerType =
+        (ClassOrInterfaceType) ((ReferenceBound) substituted).getBoundType();
+    assertTrue(innerType.isMemberClass());
+    InstantiatedType ownerType = (InstantiatedType) innerType.enclosingType;
+    TypeVariable ownerArgument =
+        (TypeVariable) ((ReferenceArgument) ownerType.getTypeArguments().get(0)).getReferenceType();
+    assertEquals(integerType, ((ReferenceBound) ownerArgument.getUpperTypeBound()).getBoundType());
   }
 
   @Test

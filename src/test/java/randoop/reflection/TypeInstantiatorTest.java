@@ -851,6 +851,61 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A generic class with an inner class that declares no type parameters.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  static class MemberOuter<T> {
+    /** An inner class that declares no type parameters. */
+    class Inner {}
+  }
+
+  /** A field whose type is a list of a member class of a parameterized type. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private static List<MemberOuter<String>.Inner> stringInnerList;
+
+  /**
+   * A method whose return type mentions only a type variable whose bound is a member class whose
+   * enclosing type mentions another type variable.
+   *
+   * @param <U> the type argument of the enclosing type of the bound of {@code T}
+   * @param <T> the element type
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U, T extends MemberOuter<U>.Inner> List<T> memberClassBound() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type derives a type variable that occurs only
+   * in the enclosing type of a member-class bound. For the goal type {@code
+   * List<MemberOuter<String>.Inner>}, {@code <U, T extends MemberOuter<U>.Inner> List<T>
+   * memberClassBound()} is instantiated with {@code String} for {@code U}, though {@code String} is
+   * not an input type.
+   */
+  @Test
+  public void testGoalTypeImpliesVariableInMemberClassBound()
+      throws NoSuchMethodException, NoSuchFieldException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.OBJECT_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation memberClassBound =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("memberClassBound"));
+    ReferenceType goalType =
+        (ReferenceType)
+            Type.forType(
+                TypeInstantiatorTest.class.getDeclaredField("stringInnerList").getGenericType());
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(memberClassBound, goalType);
+      assertNotNull(operation);
+      assertEquals(goalType, operation.getOutputType());
+    }
+  }
+
+  /**
    * A method whose parameter type mentions a type variable twice.
    *
    * @param <T> the key and value type

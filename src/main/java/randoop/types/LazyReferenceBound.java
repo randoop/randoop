@@ -124,49 +124,14 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
-   * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type, or if, after the substitution is applied to it, it is a subtype of the type
-   * of this bound, in which each type variable stands for itself (see {@link
-   * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
-   * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. A lower bound that the substitution
-   * does not instantiate is compared with its remaining type variables standing for themselves. The
-   * type of this bound contains type variables, so it stands for every instantiation of them; a
-   * type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>},
-   * but {@code List<T>} itself is.
+   * as for a capture of {@code ? super String}. Otherwise, compares as {@link
+   * #hasLowerBoundWithFixedVariables} does, even if the type of this bound is a type variable.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (getBoundType() instanceof CaptureTypeVariable) {
       return super.hasLowerBound(lowerBound, substitution);
     }
-    if (lowerBound.isNullType(substitution)) {
-      return true;
-    }
-    // Compare enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
-    // is not Outer<Number>.Inner<X>.
-    if (lowerBound instanceof ReferenceBound
-        && Subtyping.isIdentical(
-            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
-            getBoundType())) {
-      return true;
-    }
-    ParameterBound b = lowerBound.substitute(substitution);
-    if (b instanceof LazyParameterBound) {
-      // The substitution did not instantiate the lower bound.  Convert it, keeping each of its
-      // remaining type variables, so that it can be compared with the type of this bound.
-      b = ((LazyParameterBound) b).toReferenceBound();
-    }
-    if (!(b instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
-    // The substitution is not applied to the type of this bound, in which each type variable
-    // stands for itself.  So, a subtype of it is a subtype of each instantiation of it, as
-    // ArrayList<T>[] is of List<T>[].  The null type is a subtype of every reference type,
-    // including a type variable, so array covariance makes, for example, `NullType[]` a subtype of
-    // `T[]`.  Subtyping does not treat a type as a subtype of the generic form of its class, as
-    // `isSubtypeOfOrEqualTo` does; for example, List<String>[] is not a subtype of each
-    // instantiation of List<E>[].
-    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
+    return hasLowerBoundWithFixedVariables(lowerBound, substitution);
   }
 }

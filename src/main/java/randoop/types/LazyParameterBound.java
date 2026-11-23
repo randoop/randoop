@@ -228,12 +228,19 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.  The comparison includes the owner's own enclosing types, which
-        // InstantiatedType.equals ignores:  for O<A>.M<B>.I<U>, substituting only A changes only
-        // the enclosing type of M<B>.
-        if (!isDeclarationFormOwner
-            || !Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+        if (isDeclarationFormOwner) {
+          // If the substitution leaves a declaration-form owner unchanged, use the enclosing type
+          // from the declaration, as ParameterizedType.forType does.  The owner must be kept
+          // either way, so that a later substitution reaches its type parameters.  The test
+          // includes the type parameters of the owner's own enclosing classes:  for O<A>.M<B>.I<U>,
+          // substituting only A changes only the enclosing type of M<B>.
+          ClassOrInterfaceType declaredOwner =
+              ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
+          instantiatedType.enclosingType =
+              changesAny(declaredOwner.getTypeParameters(), substitution)
+                  ? (ClassOrInterfaceType) ownerType
+                  : declaredOwner;
+        } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
       }
@@ -286,6 +293,25 @@ class LazyParameterBound extends ParameterBound {
     }
 
     return null;
+  }
+
+  /**
+   * Returns true if the given substitution changes some of the given type variables, including by
+   * changing only the bounds of a type variable. Copies of a type variable are equal even if their
+   * bounds differ, so this compares the result of the substitution with {@link Type#sameType}.
+   *
+   * @param variables type variables
+   * @param substitution a type substitution
+   * @return true if applying {@code substitution} to some element of {@code variables} yields a
+   *     different object
+   */
+  private static boolean changesAny(List<TypeVariable> variables, Substitution substitution) {
+    for (TypeVariable variable : variables) {
+      if (!Type.sameType(variable.substitute(substitution), variable)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

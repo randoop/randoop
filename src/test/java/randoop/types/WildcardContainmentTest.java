@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -558,5 +559,70 @@ public class WildcardContainmentTest {
     assertTrue(isSubtype("listExtendsStringArray", "listExtendsObjectArray"));
     assertFalse(isSubtype("listObjectArray", "listExtendsStringArray"));
     assertFalse(isSubtype("listExtendsObjectArray", "listExtendsStringArray"));
+  }
+
+  /**
+   * A generic class with two type parameters.
+   *
+   * @param <X> the first type parameter
+   * @param <Y> the second type parameter
+   */
+  @SuppressWarnings("unused")
+  public static class Base<X, Y> {}
+
+  /**
+   * A generic class whose supertype has a nested type argument that mentions a type parameter.
+   *
+   * @param <P> the type parameter that occurs in a nested type argument of the supertype
+   * @param <Q> the type parameter that is a type argument of the supertype
+   */
+  public static class Pair<P, Q> extends Base<List<P>, Q> {}
+
+  /**
+   * A class whose second type parameter is an unknown when only the first is instantiated.
+   *
+   * @param <A> the type parameter that is instantiated
+   * @param <B> the type parameter that is an unknown
+   */
+  @SuppressWarnings("unused")
+  public static class UnknownHolder<A, B> {
+    /** A list whose wildcard has a lower bound that mentions {@code B}. */
+    List<? super Pair<?, B>> superPair;
+  }
+
+  /** A field whose first type argument has a wildcard type argument. */
+  @SuppressWarnings("unused")
+  public static Base<List<?>, String> nestedWildcardBase;
+
+  /** A field whose first type argument is a wildcard. */
+  @SuppressWarnings("unused")
+  public static Base<? extends List<?>, String> wildcardBase;
+
+  /**
+   * Containment with an unknown in a wildcard's lower bound captures the bound type before finding
+   * its supertype. The supertype of {@code Pair<?, B>} is {@code Base<List<CAP>, B>}, which no
+   * choice of {@code B} makes a subtype of {@code Base<List<?>, String>}.
+   */
+  @Test
+  public void unknownInLowerBoundCapturesBeforeSupertypeSearchTest() throws Exception {
+    List<TypeVariable> holderParameters =
+        GenericClassType.forClass(UnknownHolder.class).getTypeParameters();
+    // B is an unknown, because the substitution instantiates its sibling A.
+    Substitution substitution =
+        new Substitution(holderParameters.get(0), JavaTypes.STRING_TYPE)
+            .extendWithIdentity(Collections.singletonList(holderParameters.get(1)));
+    InstantiatedType superPairList =
+        (InstantiatedType)
+            Type.forType(UnknownHolder.class.getDeclaredField("superPair").getGenericType());
+    TypeArgument superPair = superPairList.getTypeArguments().get(0);
+    TypeArgument nestedWildcard =
+        TypeArgument.forType(
+            WildcardContainmentTest.class.getDeclaredField("nestedWildcardBase").getGenericType());
+    TypeArgument wildcard =
+        TypeArgument.forType(
+            WildcardContainmentTest.class.getDeclaredField("wildcardBase").getGenericType());
+    assertFalse(Subtyping.contains(superPair, nestedWildcard, substitution));
+    // With B := String, Pair<?, String> is a subtype of Base<? extends List<?>, String>.
+    assertTrue(Subtyping.contains(superPair, wildcard, substitution));
   }
 }
