@@ -179,12 +179,15 @@ public class TypeInstantiatorTest {
     }
     assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
 
-    // Without String among the input types, no type for K satisfies the bound of V.
+    // Without String among the input types, K can still be String, which is a type argument of
+    // HashMap<String, Node>, a supertype of Node.
     Set<Type> inputTypesWithoutKey = new LinkedHashSet<>();
     addTypes(listType.instantiate(nodeType), inputTypesWithoutKey);
     TypeInstantiator instantiatorWithoutKey = new TypeInstantiator(inputTypesWithoutKey);
     for (int i = 0; i < ATTEMPTS; i++) {
-      assertNull(instantiatorWithoutKey.instantiate(kOnlyInBound));
+      TypedClassOperation operation = instantiatorWithoutKey.instantiate(kOnlyInBound);
+      assertNotNull("no instantiation of " + kOnlyInBound, operation);
+      assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
     }
   }
 
@@ -211,7 +214,7 @@ public class TypeInstantiatorTest {
             .instantiate(ClassOrInterfaceType.forClass(Node.class)),
         inputTypes);
     // The bound `V extends Map<K, V>` requires that K be String, since Node extends
-    // HashMap<String, Node>.  The candidate types for K are the input types.
+    // HashMap<String, Node>.  The candidate types for K include the input types, such as String.
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     assertSomeInstantiation(
         new TypeInstantiator(inputTypes),
