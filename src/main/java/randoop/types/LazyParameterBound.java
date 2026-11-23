@@ -361,12 +361,14 @@ class LazyParameterBound extends ParameterBound {
       return owner != null && instantiatesAny(owner, substitution, visited);
     }
     if (type instanceof ParameterizedType) {
-      for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      for (java.lang.reflect.Type argType : parameterizedType.getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution, visited)) {
           return true;
         }
       }
-      ParameterizedType ownerType = getPreservedOwnerType((ParameterizedType) type);
+      // The substitution can change an owner type even in declaration form, as substitute() does.
+      java.lang.reflect.Type ownerType = parameterizedType.getOwnerType();
       return ownerType != null && instantiatesAny(ownerType, substitution, visited);
     }
     if (type instanceof GenericArrayType) {
@@ -433,7 +435,7 @@ class LazyParameterBound extends ParameterBound {
       }
       // The owner type of a member class, as in Outer<T>.Middle<Integer>, can contain type
       // variables too.
-      ParameterizedType ownerType = getPreservedOwnerType(pt);
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
       if (ownerType != null) {
         variableList.addAll(getTypeParameters(ownerType));
       }

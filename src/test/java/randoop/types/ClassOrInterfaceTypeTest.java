@@ -374,6 +374,9 @@ public class ClassOrInterfaceTypeTest {
 
     /** An inner class whose superclass is a generic inner class of the same class. */
     abstract class StringInner extends GenericInner<String> {}
+
+    /** A field whose type has the generic form {@code Outer<T>} as its owner type. */
+    public GenericInner<String> ownGenericInnerOfString;
   }
 
   /** A subclass of {@code Outer<Integer>.StringInner}. */
@@ -588,6 +591,15 @@ public class ClassOrInterfaceTypeTest {
      * @param inner an inner object
      */
     static <U, V> void setOwner(Outer<Set<U>>.GenericInner<V> inner) {}
+
+    /**
+     * A method whose parameter type uses the same type variable in the enclosing type and as the
+     * type argument.
+     *
+     * @param <E> the type argument of both the enclosing type and the parameter type
+     * @param inner an inner object
+     */
+    static <E> void sameVariable(Outer<E>.GenericInner<E> inner) {}
   }
 
   /**
@@ -735,6 +747,18 @@ public class ClassOrInterfaceTypeTest {
 
   /** A field of type {@code Outer<? extends Number>.ArraySupertypeInner}. */
   public Outer<? extends Number>.ArraySupertypeInner arraySupertypeInnerOfWildcardOuter;
+
+  /** A field of type {@code Outer<String>.Inner}. */
+  public Outer<String>.Inner innerOfString;
+
+  /** A field of type {@code Outer<?>.Inner}. */
+  public Outer<?>.Inner innerOfWildcard;
+
+  /** A field of type {@code Outer<Long>.Inner}. */
+  public Outer<Long>.Inner innerOfLong;
+
+  /** A field of type {@code NonGenericOuter.Base<String>}. */
+  public NonGenericOuter.Base<String> baseOfString;
 
   /** A field of type {@code Outer<String>.OtherOuterSubInner}. */
   public Outer<String>.OtherOuterSubInner otherOuterSubInner;
@@ -1234,5 +1258,141 @@ public class ClassOrInterfaceTypeTest {
     List<ClassOrInterfaceType> interfaces = inner.getInterfaces();
     assertEquals(1, interfaces.size());
     assertTrue(interfaces.get(0).runtimeClassIs(Comparable.class));
+  }
+
+  /**
+   * {@code ClassOrInterfaceType.forType} omits a generic-form owner type, but substitution into the
+   * generic form of a member class retains its generic-form enclosing type. The two representations
+   * of {@code Outer<T>.GenericInner<String>} are equal.
+   */
+  @Test
+  public void genericFormOwnerEqualityTest() throws NoSuchFieldException {
+    ClassOrInterfaceType fromField =
+        ClassOrInterfaceType.forType(
+            Outer.class.getField("ownGenericInnerOfString").getGenericType());
+    ClassOrInterfaceType genericForm = ClassOrInterfaceType.forClass(Outer.GenericInner.class);
+    List<TypeVariable> parameters = genericForm.getTypeParameters();
+    // The type parameters are those of Outer, then that of Outer.GenericInner.
+    ClassOrInterfaceType substituted =
+        genericForm.substitute(
+            new Substitution(parameters, Arrays.asList(parameters.get(0), JavaTypes.STRING_TYPE)));
+    assertEquals(fromField, substituted);
+    assertEquals(substituted, fromField);
+    assertEquals(fromField.hashCode(), substituted.hashCode());
+    assertFalse(fromField.equals(genericInnerType(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A member class that declares no type parameters but has a parameterized enclosing type is
+   * parameterized, but is not an {@link InstantiatedType}. Comparing an unrelated parameterized
+   * type with it returns false.
+   */
+  @Test
+  public void subtypeOfNonGenericMemberOfParameterizedTypeTest() throws NoSuchFieldException {
+    ClassOrInterfaceType inner =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class.getField("nonGenericSupertypeInner").getGenericType());
+    assertTrue(inner instanceof NonParameterizedType);
+    assertTrue(inner.isParameterized());
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(inner));
+    // Outer<String>.NonGenericSupertypeInner extends Holder<String>, not the reverse.
+    InstantiatedType holderOfString =
+        GenericClassType.forClass(Holder.class).instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(holderOfString.isSubtypeOfOrEqualTo(inner));
+    assertTrue(inner.isSubtypeOfOrEqualTo(holderOfString));
+  }
+
+  /**
+   * If the enclosing type and the type argument of a member class map the same type variable to
+   * different types, then there is no instantiating substitution.
+   */
+  @Test
+  public void conflictingEnclosingTypeSubstitutionTest() throws NoSuchMethodException {
+    ClassOrInterfaceType goal = memberParameterType("sameVariable", Outer.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    assertNull(
+        genericInnerType(JavaTypes.STRING_TYPE, integerType).getInstantiatingSubstitution(goal));
+    Substitution substitution =
+        genericInnerType(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(goal);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(goal.getTypeParameters().get(0)));
+  }
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static ClassOrInterfaceType classFieldType(String name) {
+    try {
+      return ClassOrInterfaceType.forType(
+          ClassOrInterfaceTypeTest.class.getField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * {@code Outer<String>.Inner} is a subtype of {@code Outer<?>.Inner}, but not of {@code
+   * Outer<Long>.Inner}.
+   */
+  @Test
+  public void nonGenericMemberEnclosingTypeSubtypeTest() {
+    ClassOrInterfaceType innerOfString = classFieldType("innerOfString");
+    ClassOrInterfaceType innerOfWildcard = classFieldType("innerOfWildcard");
+    ClassOrInterfaceType innerOfLong = classFieldType("innerOfLong");
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerOfString));
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerOfWildcard));
+    assertFalse(innerOfString.isSubtypeOfOrEqualTo(innerOfLong));
+    assertFalse(innerOfWildcard.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  /**
+   * A parameterized type is not a subtype of an unrelated member class that is parameterized only
+   * through its enclosing type, and the check does not throw.
+   */
+  @Test
+  public void subtypeOfNonGenericMemberTest() {
+    ClassOrInterfaceType nonGenericSupertypeInner = classFieldType("nonGenericSupertypeInner");
+    assertTrue(nonGenericSupertypeInner.isParameterized());
+    assertFalse(fieldType("genericInnerOfInteger").isSubtypeOfOrEqualTo(nonGenericSupertypeInner));
+    assertFalse(
+        JDKTypes.LIST_TYPE
+            .instantiate(JavaTypes.STRING_TYPE)
+            .isSubtypeOfOrEqualTo(nonGenericSupertypeInner));
+  }
+
+  /**
+   * The type of a field declared as {@code NonGenericOuter.Base<String>} equals the instantiation
+   * of the generic class {@code NonGenericOuter.Base}.
+   */
+  @Test
+  public void memberOfNonGenericClassForTypeTest() {
+    GenericClassType genericBase =
+        (GenericClassType) ClassOrInterfaceType.forClass(NonGenericOuter.Base.class);
+    InstantiatedType instantiated = genericBase.instantiate(JavaTypes.STRING_TYPE);
+    ClassOrInterfaceType baseOfString = classFieldType("baseOfString");
+    assertEquals(instantiated, baseOfString);
+    assertEquals(instantiated.hashCode(), baseOfString.hashCode());
+  }
+
+  /**
+   * {@code Outer<String>.GenericInner<Integer>} does not instantiate {@code
+   * Outer<X>.GenericInner<X>}, because the bindings of {@code X} conflict.
+   */
+  @Test
+  public void conflictingInstantiatingSubstitutionTest() throws NoSuchMethodException {
+    ClassOrInterfaceType sameVariable =
+        memberParameterType("sameVariable", Outer.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    assertNull(
+        genericInnerType(JavaTypes.STRING_TYPE, integerType)
+            .getInstantiatingSubstitution(sameVariable));
+    assertNotNull(
+        genericInnerType(integerType, integerType).getInstantiatingSubstitution(sameVariable));
   }
 }
