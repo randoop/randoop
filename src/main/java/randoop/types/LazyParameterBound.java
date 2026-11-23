@@ -213,10 +213,11 @@ class LazyParameterBound extends ParameterBound {
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) parameterizedType.getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      // As ClassOrInterfaceType.forType does, preserve an owner type that is not the one from the
-      // declaration of the member class, as in `Outer<String>.Middle<Integer>`.
+      // As ClassOrInterfaceType.forType does, preserve the owner type of a generic member class, as
+      // in `Outer<String>.Middle<Integer>`.  An owner type in declaration form, as in
+      // `Outer<X>.Middle<Integer>`, is preserved too, because the substitution may instantiate it.
       ParameterizedType ownerType = getPreservedOwnerType(parameterizedType);
-      if (ownerType != null && !ClassOrInterfaceType.isDeclarationForm(ownerType)) {
+      if (ownerType != null) {
         TypeArgument ownerArgument = substitute(ownerType, substitution);
         if (!(ownerArgument instanceof ReferenceArgument)) {
           return null;
@@ -482,12 +483,16 @@ class LazyParameterBound extends ParameterBound {
     return unchanged ? null : b;
   }
 
-  /*package*/
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    throw new LazyBoundException();
-    // assert false : " not quite sure what to do with lazy type bound";
-    // return false;
+    ParameterBound b = substituteWithUnknowns(substitution);
+    return b != null && b.isUpperBound(bound, substitution);
   }
 
   /**

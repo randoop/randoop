@@ -238,6 +238,22 @@ public class ParameterBoundTest {
      * type.
      */
     Inner<String>[] innerArray;
+
+    /**
+     * A class whose type parameter has a self-referential bound that contains a generic member
+     * class whose owner type is in declaration form, {@code Outer<T>}.
+     *
+     * @param <V> the type parameter
+     */
+    class DeclarationOwnerBound<V extends Map<V, Inner<String>>> {}
+
+    /**
+     * A class whose type parameter has a self-referential bound that contains a generic member
+     * class whose owner type is fixed, {@code Outer<String>}.
+     *
+     * @param <V> the type parameter
+     */
+    class FixedOwnerBound<V extends Map<V, Outer<String>.Inner<String>>> {}
   }
 
   @Test
@@ -361,6 +377,61 @@ public class ParameterBoundTest {
         GenericClassType.forClass(GenericOuter.class).instantiate(JavaTypes.STRING_TYPE),
         inner.enclosingType);
     assertNotNull(((LazyParameterBound) bound).toReferenceBound());
+  }
+
+  /**
+   * Returns the enclosing type of the second type argument of the upper bound of the type parameter
+   * of {@code c}, after substituting {@code String} for that type parameter and {@code Integer} for
+   * the type parameter of {@link Outer}.
+   *
+   * @param c a class declared in {@link Outer}, whose type parameter is bounded by a map whose
+   *     second type argument is a member class
+   * @return the enclosing type of the member class in the substituted bound
+   */
+  private static ClassOrInterfaceType substitutedOwner(Class<?> c) {
+    TypeVariable v = TypeVariable.forType(c.getTypeParameters()[0]);
+    TypeVariable t = TypeVariable.forType(Outer.class.getTypeParameters()[0]);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ParameterBound bound = v.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    Substitution substitution =
+        new Substitution(v, JavaTypes.STRING_TYPE).extend(new Substitution(t, integerType));
+    ParameterBound substituted = bound.substitute(substitution);
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType mapType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) mapType.getTypeArguments().get(1)).getReferenceType();
+    assertTrue(inner.runtimeClassIs(Outer.Inner.class));
+    return inner.enclosingType;
+  }
+
+  /**
+   * A substitution reaches an owner type in declaration form, {@code Outer<T>}, in a lazy bound,
+   * and leaves a fixed owner type, {@code Outer<String>}, unchanged.
+   */
+  @Test
+  public void testSubstituteOwnerTypeInLazyBound() {
+    GenericClassType outer = GenericClassType.forClass(Outer.class);
+    assertEquals(
+        outer.instantiate(ReferenceType.forClass(Integer.class)),
+        substitutedOwner(Outer.DeclarationOwnerBound.class));
+    assertEquals(
+        outer.instantiate(JavaTypes.STRING_TYPE), substitutedOwner(Outer.FixedOwnerBound.class));
+  }
+
+  /**
+   * An unbounded type variable is not an instantiation of a type variable whose bound is a
+   * non-generic member class of a parameterized type. Comparing their upper bounds does not throw
+   * an exception.
+   */
+  @Test
+  public void testUnboundedVariableIsNotInstantiationOfMemberClassBoundedVariable() {
+    TypeVariable unbounded = TypeVariable.forType(ArraysOfVariable.class.getTypeParameters()[0]);
+    TypeVariable memberBounded =
+        TypeVariable.forType(NonGenericMemberClassBound.class.getTypeParameters()[0]);
+    assertTrue(memberBounded.getUpperTypeBound() instanceof LazyParameterBound);
+    assertFalse(unbounded.isInstantiationOf(memberBounded));
   }
 
   /**

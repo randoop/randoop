@@ -145,9 +145,48 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
+    return genericType.getInterfaces(getSupertypeSubstitution());
+  }
+
+  /**
+   * Returns the substitution to apply to the declared supertypes of the generic class of this type.
+   * It maps the type parameters declared by the class of this type to the type arguments of this
+   * type, and, for a member class, the type parameters declared by each parameterized enclosing
+   * class to the type arguments of the corresponding enclosing type. For example, for {@code
+   * Outer<String>.Middle<Integer>}, it maps the type parameter of {@code Middle} to {@code Integer}
+   * and the type parameter of {@code Outer} to {@code String}.
+   *
+   * <p>The type parameters of {@link #genericType} are not used, because they include those of its
+   * enclosing types if it is a member class, but {@link #argumentList} does not.
+   *
+   * @return the substitution to apply to the declared supertypes of the generic class of this type
+   */
+  private Substitution getSupertypeSubstitution() {
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
+    ClassOrInterfaceType type = this;
+    while (type.isMemberClass()) {
+      ClassOrInterfaceType enclosing = type.enclosingType;
+      if (enclosing instanceof InstantiatedType) {
+        substitution =
+            substitution.extend(
+                declaredTypeParameters(enclosing.getRuntimeClass()),
+                ((InstantiatedType) enclosing).getReferenceArguments());
+      }
+      type = enclosing;
+    }
+    return substitution;
+  }
+
+  /**
+   * Returns the type parameters that the given class declares, not including those of its enclosing
+   * classes.
+   *
+   * @param c a class
+   * @return the type parameters declared by {@code c}
+   */
+  private static List<TypeVariable> declaredTypeParameters(Class<?> c) {
+    return CollectionsPlume.mapList(TypeVariable::forType, c.getTypeParameters());
   }
 
   @Override
@@ -208,9 +247,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getSupertypeSubstitution());
   }
 
   /**
@@ -407,7 +444,9 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // The type arguments can map the same type variable to different types, as when
+          // Map<Y,Z> is matched against Map<X,X>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           substitution = substitution.extend(subst);
