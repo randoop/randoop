@@ -140,6 +140,21 @@ public class ParameterBoundTest {
   }
 
   /**
+   * The substitution is applied to the possible lower bound, but not to a lazy bound that it is
+   * compared with.
+   */
+  @Test
+  public void testLowerBoundDoesNotSubstituteLazyTarget() {
+    Substitution substitution = new Substitution(arrayHolderVariable, JavaTypes.STRING_TYPE);
+    ParameterBound stringArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(JavaTypes.STRING_TYPE));
+    // T[] is not substituted when it is the bound compared with.
+    assertFalse(stringArrayBound.isLowerBound(arrayBound, substitution));
+    // T[] becomes String[] when it is the possible lower bound.
+    assertTrue(arrayBound.isLowerBound(stringArrayBound, substitution));
+  }
+
+  /**
    * The substitution is applied to the possible lower bound, but not to the bound that it is
    * compared with, even if that bound is an eager bound that contains a type variable.
    */
@@ -329,6 +344,30 @@ public class ParameterBoundTest {
      * type.
      */
     Inner<String>[] innerArray;
+
+    /**
+     * An inner class whose type parameter has a recursive bound that mentions {@link Inner}, whose
+     * owner type is {@code Outer<T>}.
+     *
+     * @param <V> the type parameter
+     */
+    class SelfInnerBound<V extends List<Inner<V>>> {}
+  }
+
+  /** Converting a lazy bound keeps the declaration-form owner type of a member class in it. */
+  @Test
+  public void testLazyBoundKeepsDeclarationFormOwner() {
+    TypeVariable v = TypeVariable.forType(Outer.SelfInnerBound.class.getTypeParameters()[0]);
+    ParameterBound bound = v.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+    assertNotNull(converted);
+    InstantiatedType listType = (InstantiatedType) converted.getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(inner.isMemberClass());
+    assertEquals(Outer.class, inner.enclosingType.getRuntimeClass());
   }
 
   @Test
@@ -604,6 +643,9 @@ public class ParameterBoundTest {
 
     /** A field whose type is the same as that of {@link #first}. */
     List<? extends List<U[]>> second;
+
+    /** A field whose wildcard bound is a subtype of that of {@link #first}. */
+    List<? extends ArrayList<U[]>> arrayList;
   }
 
   @Test
@@ -611,6 +653,10 @@ public class ParameterBoundTest {
     Type firstType = Type.forType(fieldType(WildcardWithArrayOfVariable.class, "first"));
     Type secondType = Type.forType(fieldType(WildcardWithArrayOfVariable.class, "second"));
     assertTrue(firstType.isSubtypeOfOrEqualTo(secondType));
+    // The wildcards differ, so the comparison resolves their bounds.
+    Type arrayListType = Type.forType(fieldType(WildcardWithArrayOfVariable.class, "arrayList"));
+    assertTrue(arrayListType.isSubtypeOfOrEqualTo(firstType));
+    assertFalse(firstType.isSubtypeOfOrEqualTo(arrayListType));
   }
 
   /**

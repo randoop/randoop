@@ -228,9 +228,12 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.
-        if (!isDeclarationFormOwner || !ownerType.equals(ClassOrInterfaceType.forType(owner))) {
+        if (isDeclarationFormOwner && ownerType.equals(ClassOrInterfaceType.forType(owner))) {
+          // The substitution leaves a declaration-form owner unchanged.  Represent it as
+          // ParameterizedType.forType does, by the declaration of the enclosing class.
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
+        } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
       }
@@ -567,19 +570,19 @@ class LazyParameterBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>Unlike for other bounds, the substitution is also applied to this bound before {@code
-   * lowerBound} is compared with it; a type variable in this bound that the substitution does not
-   * instantiate stands for an unknown type, as in {@link #isUpperBound(Type, Substitution)}.
+   * <p>As for other bounds, the substitution is applied to {@code lowerBound} but not to this
+   * bound: this bound is compared as written, by converting it with {@link #toReferenceBound()}.
+   * So, with {@code T := String}, the bound {@code String[]} is not a lower bound of {@code T[]}.
    * Returns true if {@code lowerBound} is the null type, which is a lower bound of every reference
-   * type. Otherwise, returns false if the result is not a {@link ReferenceBound}.
+   * type. Otherwise, returns false if this bound cannot be converted.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    ParameterBound converted = substituteWithUnknowns(substitution);
-    return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.hasLowerBound(lowerBound, substitution);
   }
 
   @Override

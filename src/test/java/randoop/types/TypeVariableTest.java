@@ -2314,6 +2314,22 @@ public class TypeVariableTest {
     assertFalse(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsIntegerInner, substitution));
   }
 
+  /** An eager bound compares the enclosing types of member classes by containment. */
+  @Test
+  public void testEagerBoundOfMemberClassWithWildcardOwner() throws NoSuchFieldException {
+    ReferenceType extendsIntegerInner = plainInnerFieldType("extendsIntegerInner");
+    ReferenceType extendsNumberInner = plainInnerFieldType("extendsNumberInner");
+    ParameterBound integerBound = new EagerReferenceBound(extendsIntegerInner);
+    ParameterBound numberBound = new EagerReferenceBound(extendsNumberInner);
+    Substitution substitution = new Substitution();
+    assertTrue(numberBound.isUpperBound(extendsIntegerInner, substitution));
+    assertTrue(numberBound.isUpperBound(extendsNumberInner, substitution));
+    assertFalse(integerBound.isUpperBound(extendsNumberInner, substitution));
+    assertTrue(integerBound.isLowerBound(extendsNumberInner, substitution));
+    assertTrue(numberBound.isLowerBound(extendsNumberInner, substitution));
+    assertFalse(numberBound.isLowerBound(extendsIntegerInner, substitution));
+  }
+
   /**
    * Returns the type of the given field of {@link PlainInnerFields}.
    *

@@ -409,9 +409,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     Substitution substitution = new Substitution();
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
-    // type.  The enclosing type of this type is not matched against a goal type that is not a
-    // member class, such as a type variable.
-    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
+    // type.  This type need not itself be a member class:  for a top-level class that extends
+    // Outer<String>.Inner, the enclosing type of that supertype instantiates the goal's.  No
+    // enclosing type is matched against a goal type that is not a member class, such as a type
+    // variable.
+    if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
       if (goalClassType.isMemberClass()) {
         ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
