@@ -161,6 +161,16 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
+   * Returns the type parameters declared by this generic class, excluding any type parameters of
+   * its enclosing classes.
+   *
+   * @return the type parameters declared by this generic class
+   */
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
+    return parameters;
+  }
+
+  /**
    * Returns the list of type parameters of this generic class.
    *
    * @return the list of type parameters of this generic class

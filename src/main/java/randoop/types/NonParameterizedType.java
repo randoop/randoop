@@ -150,9 +150,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       type = type.enclosingType;
       if (type instanceof InstantiatedType) {
         InstantiatedType instantiatedType = (InstantiatedType) type;
+        // Use only the owner's own type parameters.  getTypeParameters() would also include the
+        // parameters of the owner's enclosing classes, which are bound at later loop iterations.
         substitution =
             substitution.extend(
-                instantiatedType.getGenericClassType().getTypeParameters(),
+                instantiatedType.getGenericClassType().getDeclaredTypeParameters(),
                 instantiatedType.getReferenceArguments());
       }
     }
