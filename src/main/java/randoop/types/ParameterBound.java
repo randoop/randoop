@@ -174,8 +174,8 @@ public abstract class ParameterBound {
    * such a type variable. Either would make an eager bound recursive.
    *
    * <p>The owner type of a parameterized type is examined if the conversion of a reflection type to
-   * a {@link ReferenceType} uses it, as determined by {@link #getConvertedOwnerType}. The conversion
-   * keeps such an owner type as written, as in {@code Outer<String>} for {@code
+   * a {@link ReferenceType} uses it, as determined by {@link #getConvertedOwnerType}. The
+   * conversion keeps such an owner type as written, as in {@code Outer<String>} for {@code
    * Outer<String>.Inner<Integer>}, so a type variable in it, as in {@code T extends
    * Outer<T>.Inner<String>}, would also make an eager bound recursive.
    *

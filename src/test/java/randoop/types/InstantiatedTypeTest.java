@@ -141,8 +141,7 @@ public class InstantiatedTypeTest {
     ReferenceType goalType =
         (ReferenceType)
             Type.forType(
-                TypeHolder.class
-                    .getDeclaredMethod("sameKeyAndValue", java.util.Map.class)
+                TypeHolder.class.getDeclaredMethod("sameKeyAndValue", java.util.Map.class)
                     .getGenericParameterTypes()[0]);
     InstantiatedType stringToInteger = (InstantiatedType) fieldType("stringToInteger");
     InstantiatedType stringToString = (InstantiatedType) fieldType("stringToString");
