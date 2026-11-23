@@ -1223,7 +1223,8 @@ public class InstantiationTest {
   @Test
   public void testTypeSubstitutionWithEnclosingTypes() {
     ReferenceType integerType = (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive();
-    InstantiatedType stringInteger = (InstantiatedType) holderType(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType stringInteger =
+        (InstantiatedType) holderType(JavaTypes.STRING_TYPE, integerType);
     Substitution substitution = stringInteger.getTypeSubstitutionWithEnclosingTypes();
     assertNotNull(substitution);
     ClassOrInterfaceType genericHolder = ClassOrInterfaceType.forClass(Outer.Holder.class);

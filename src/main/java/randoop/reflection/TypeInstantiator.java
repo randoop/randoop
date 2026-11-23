@@ -236,9 +236,9 @@ public class TypeInstantiator {
    * Returns the index of the type parameter whose values instances of the given class keep in
    * order, or -1 if there is none. Such a type parameter is recognized by a constructor whose only
    * formal parameter is a comparator for it (see {@link #isComparatorInterface}), in the class or
-   * in a generic superclass. If a generic superclass orders a type parameter of the class, that type
-   * parameter takes precedence. Examples are the {@code E} in {@code TreeSet<E>} and the {@code K}
-   * in {@code TreeMap<K,V>}.
+   * in a generic superclass. If a generic superclass orders a type parameter of the class, that
+   * type parameter takes precedence. Examples are the {@code E} in {@code TreeSet<E>} and the
+   * {@code K} in {@code TreeMap<K,V>}.
    *
    * @param c a class
    * @return the index of the ordered type parameter of {@code c}, or -1
@@ -569,7 +569,9 @@ public class TypeInstantiator {
     List<TypeVariable> otherParameters = new ArrayList<>(typeParameters);
     otherParameters.removeAll(substitution.keySet());
     @Nullable Substitution result =
-        otherParameters.isEmpty() ? substitution : selectSubstitution(otherParameters, substitution);
+        otherParameters.isEmpty()
+            ? substitution
+            : selectSubstitution(otherParameters, substitution);
     // The choice for the ordered type parameter ignored any bound that mentions another type
     // parameter, as in `<K extends V, V>`, so check all the bounds now.
     if (result == null || !satisfiesBounds(result)) {

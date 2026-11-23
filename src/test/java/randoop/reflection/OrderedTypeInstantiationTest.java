@@ -519,7 +519,8 @@ public class OrderedTypeInstantiationTest {
   @Test
   public void testOrderingInputMatchesFixedTypeArgument() throws NoSuchMethodException {
     Set<Type> inputTypes = inputTypes();
-    inputTypes.addAll(ClassOrInterfaceType.forClass(ThreadBitSetMap.class).getSupertypesInclusive());
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(ThreadBitSetMap.class).getSupertypesInclusive());
     TypedClassOperation constructor =
         TypedOperation.forConstructor(FixedValueCopySet.class.getConstructor(MySortedMap.class));
     List<List<Type>> instantiations = instantiatedTypeArguments(constructor, inputTypes);
