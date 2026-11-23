@@ -149,8 +149,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard, or is a member class whose owner type cannot be converted
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard, or is a member
+   *     class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -228,12 +229,16 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.  Compare the enclosing types of the owner too, which InstantiatedType.equals
-        // ignores:  for Outer<A>.Middle<B>.Leaf<C>, substituting String for A changes only the
-        // enclosing type of Middle<B>.
-        if (!isDeclarationFormOwner
-            || !Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+        // Compare the enclosing types of the owner too, which InstantiatedType.equals ignores:  for
+        // Outer<A>.Middle<B>.Leaf<C>, substituting String for A changes only the enclosing type of
+        // Middle<B>.
+        if (isDeclarationFormOwner
+            && Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+          // The substitution leaves a declaration-form owner unchanged.  Represent it as
+          // ParameterizedType.forType does, by the declaration of the enclosing class.
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
+        } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
       }

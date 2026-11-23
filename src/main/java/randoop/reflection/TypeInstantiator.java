@@ -476,7 +476,9 @@ public class TypeInstantiator {
               break;
             }
             // The substitution can conflict with an earlier one, for example if two parameter
-            // types contain copies of one capture variable.  Then extending would throw.
+            // types contain copies of one capture variable, or for an enclosing type:  for
+            // parameters List<U> and Outer<U>.Inner, U might already be String while the selected
+            // type is Outer<Integer>.Inner.  Then extending would throw.
             if (!substitution.isConsistentWith(subst)) {
               if (Log.isLoggingOn()) {
                 failure = subst + " for " + origParamType + " conflicts with " + substitution;

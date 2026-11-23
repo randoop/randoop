@@ -149,17 +149,17 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Returns true if this wildcard contains the given wildcard (JLS section 4.5.1), as determined by
-   * {@link WildcardArgument#contains(TypeArgument)}. From a reflection perspective, {@code ?} is
-   * just {@code ? extends Object}. The cases are:
+   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1), as determined by
+   * {@link WildcardArgument#contains(TypeArgument)}:
    *
    * <ul>
-   *   <li>{@code ?}, which is {@code ? extends Object}, contains every wildcard, including {@code ?
-   *       super S}
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} does not contain any upper-bounded wildcard, including {@code ?}
+   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S} is a subtype of {@code T}.
+   *       This includes {@code ?}, which is {@code ? extends Object}.
+   *   <li>{@code ?} contains every wildcard, including {@code ? super S}
+   *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
+   *
+   * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
@@ -169,6 +169,24 @@ class WildcardType extends ParameterType {
    */
   public boolean contains(WildcardType otherType) {
     return new WildcardArgument(this).contains(new WildcardArgument(otherType));
+  }
+
+  /**
+   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
+   * converted to the equivalent {@link ReferenceBound}.
+   *
+   * @param bound a bound of a wildcard
+   * @return the type of the bound, or null if it cannot be determined
+   */
+  /*package*/ static @Nullable ReferenceType boundType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
   }
 
   @Override

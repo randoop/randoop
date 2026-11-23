@@ -56,6 +56,11 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
+    if (isMemberOfParameterizedType(argType)) {
+      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  The type
+      // variables in argType, which the substitution does not apply to, stand for themselves.
+      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, new Substitution());
+    }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
@@ -137,13 +142,11 @@ class EagerReferenceBound extends ReferenceBound {
       argSuperType = argSuperType.applyCaptureConversion();
       return argSuperType.isInstantiationOf(boundClassType);
     }
-    if (thisBoundType instanceof NonParameterizedType
-        && thisBoundType.isParameterized()
-        && argType instanceof ClassOrInterfaceType) {
+    if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<U>.Inner.  A type variable in its enclosing type can be an unknown, such as a sibling
-      // of the type parameter whose bound this is, so compare the enclosing types as Subtyping
-      // does.  ReferenceType.isSubtypeOfOrEqualTo would compare them with equals.
+      // of the type parameter whose bound this is, so compare the enclosing types by containment as
+      // Subtyping does.  ReferenceType.isSubtypeOfOrEqualTo would compare them with equals.
       Substitution completeSubstitution =
           subst.extendWithIdentity(thisBoundType.getTypeParameters());
       return Subtyping.isSubtypeOrEqual(
@@ -168,5 +171,17 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given type is a member class that declares no type parameters, of a
+   * parameterized type, such as {@code Outer<String>.Inner}. Such a type is parameterized, but is
+   * not an {@link InstantiatedType}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a non-generic member class of a parameterized type
+   */
+  private static boolean isMemberOfParameterizedType(Type type) {
+    return type instanceof NonParameterizedType && type.isParameterized();
   }
 }
