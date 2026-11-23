@@ -784,7 +784,7 @@ public class TypeInstantiator {
       TypeVariable parameter, TypeVariable constrained, Substitution substitution) {
     ReferenceType type = substitution.get(constrained);
     if (!(type instanceof ClassOrInterfaceType)) {
-      return Collections.emptyList();
+      return new ArrayList<>(0);
     }
     // Map `parameter` to itself, so that a lazy bound is converted to a type that mentions it.
     ParameterBound bound =
