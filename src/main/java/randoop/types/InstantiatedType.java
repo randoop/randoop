@@ -564,7 +564,8 @@ public class InstantiatedType extends ParameterizedType {
         // subtyping between them is containment of their type arguments.  Subtyping compares the
         // type arguments of the enclosing types through a non-generic enclosing level, as for
         // O<String>.M.I<Integer> and O<? extends CharSequence>.M.I<Integer>, where M is a member
-        // class of O<T> that declares no type parameters.  NonParameterizedType.isSubtypeOfOrEqualTo
+        // class of O<T> that declares no type parameters.
+        // NonParameterizedType.isSubtypeOfOrEqualTo
         // would compare O<String>.M and O<? extends CharSequence>.M by equality.  It is still
         // used, because it also accepts an enclosing type that is the generic form of its class.
         boolean enclosingTypesRelated =

@@ -135,8 +135,7 @@ public class TypeInstantiator {
         // make()` with `fixed` mapping U to String, Maker<Integer> is rejected and Maker<String>
         // can be chosen.  The mappings of `fixed` do not change `operation`, to which `fixed` has
         // already been applied.
-        substitution =
-            selectSubstitution(declaringType, matchingInputTypes(declaringType), fixed);
+        substitution = selectSubstitution(declaringType, matchingInputTypes(declaringType), fixed);
       }
       if (debug) {
         Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);

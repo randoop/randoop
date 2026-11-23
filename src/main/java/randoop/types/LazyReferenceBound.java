@@ -257,7 +257,8 @@ class LazyReferenceBound extends EagerReferenceBound {
       return false;
     }
     // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
-    // types too:  GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
+    // types too:  GenericOuter<Integer>.GenericInner<U> is not
+    // GenericOuter<Number>.GenericInner<U>.
     // A lower bound that is a LazyParameterBound, such as the reflective bound `Comparable<T>` of
     // `T extends Comparable<T>`, is first converted to the equivalent ReferenceBound.
     ReferenceType lowerType;

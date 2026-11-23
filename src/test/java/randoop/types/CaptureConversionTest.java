@@ -446,9 +446,9 @@ public class CaptureConversionTest {
   }
 
   /**
-   * A generic class with a generic member class, used by no other test, so that its types are
-   * first created by {@link ParameterizedType#forType(java.lang.reflect.Type)} rather than by
-   * {@link ClassOrInterfaceType#forClass(Class)}.
+   * A generic class with a generic member class, used by no other test, so that its types are first
+   * created by {@link ParameterizedType#forType(java.lang.reflect.Type)} rather than by {@link
+   * ClassOrInterfaceType#forClass(Class)}.
    *
    * @param <T> the type parameter of the outer class
    */
