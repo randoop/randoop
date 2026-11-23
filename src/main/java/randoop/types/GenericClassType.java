@@ -231,8 +231,8 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Checks that each type argument is within the upper bound of the corresponding type parameter.
    * The type parameters include those of enclosing classes, as returned by {@link
-   * #getTypeParameters()}, so that the type arguments of an enclosing type, as in {@code
-   * Outer<T extends Number>.Inner<U>}, are checked too.
+   * #getTypeParameters()}, so that the type arguments of an enclosing type, as in {@code Outer<T
+   * extends Number>.Inner<U>}, are checked too.
    *
    * @param typeParameters the type parameters, including those of enclosing classes
    * @param typeArguments the type arguments, corresponding to {@code typeParameters}
