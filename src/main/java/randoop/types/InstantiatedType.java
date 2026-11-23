@@ -129,7 +129,10 @@ public class InstantiatedType extends ParameterizedType {
       substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
     }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables created above.  A type argument that was already a
+      // capture variable, as in Outer<?>.Inner<Capture0>, is shared with other types, and convert
+      // would change its bounds.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
@@ -409,12 +412,12 @@ public class InstantiatedType extends ParameterizedType {
       return superResult;
     }
 
-    if (!goalType.isGeneric() && this.equals(goalType)) {
-      // The types differ only in their enclosing types, as Outer<String>.Inner<Integer> and
-      // Outer<Long>.Inner<Integer> do.  No substitution instantiates one as the other.
+    if (!goalType.isGeneric()) {
+      // getInstantiatingSubstitutionforTypeVariable returned the empty substitution if the types
+      // are identical.  No substitution instantiates a different non-generic type, such as
+      // Outer<Long>.Inner<Integer> for Outer<String>.Inner<Integer>.
       return null;
     }
-    assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
       return null;

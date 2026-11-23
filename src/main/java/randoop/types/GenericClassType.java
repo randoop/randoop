@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -223,17 +224,35 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
-    for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
+    checkBounds(typeParameters, Arrays.asList(typeArguments), substitution);
+    return this.substitute(substitution);
+  }
+
+  /**
+   * Checks that each type argument is within the upper bound of the corresponding type parameter.
+   * The type parameters include those of enclosing classes, as returned by {@link
+   * #getTypeParameters()}, so that the type arguments of an enclosing type, as in {@code
+   * Outer<T extends Number>.Inner<U>}, are checked too.
+   *
+   * @param typeParameters the type parameters, including those of enclosing classes
+   * @param typeArguments the type arguments, corresponding to {@code typeParameters}
+   * @param substitution the substitution of {@code typeArguments} for {@code typeParameters}
+   * @throws IllegalArgumentException if a type argument is not within the bound of its parameter
+   */
+  private static void checkBounds(
+      List<TypeVariable> typeParameters,
+      List<ReferenceType> typeArguments,
+      Substitution substitution) {
+    for (int i = 0; i < typeParameters.size(); i++) {
+      ParameterBound upperBound = typeParameters.get(i).getUpperTypeBound();
+      if (!upperBound.isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
             "type argument "
-                + typeArguments[i]
+                + typeArguments.get(i)
                 + " does not match parameter bound "
-                + params.get(i).getUpperTypeBound());
+                + upperBound);
       }
     }
-    return this.substitute(substitution);
   }
 
   /**
@@ -250,16 +269,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
-    for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
-        throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments.get(i)
-                + " does not match parameter bound "
-                + params.get(i).getUpperTypeBound());
-      }
-    }
+    checkBounds(typeParameters, typeArguments, substitution);
     return this.substitute(substitution);
   }
 

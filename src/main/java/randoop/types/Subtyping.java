@@ -188,6 +188,20 @@ final class Subtyping {
           return false;
         }
       }
+    } else if (otherType instanceof GenericClassType && type instanceof ParameterizedType) {
+      // An owner type in declaration form, such as Outer<T> in Outer<T>.Middle<String>.Leaf, can
+      // be a GenericClassType.  Its type arguments are its type parameters, which contain only
+      // themselves unless they are unknowns:  Outer<Integer> is not contained by Outer<T>.
+      List<TypeArgument> typeArguments = type.getTypeArguments();
+      List<TypeArgument> otherTypeArguments = otherType.getTypeArguments();
+      if (typeArguments.size() != otherTypeArguments.size()) {
+        return false;
+      }
+      for (int i = 0; i < typeArguments.size(); i++) {
+        if (!contains(otherTypeArguments.get(i), typeArguments.get(i), substitution)) {
+          return false;
+        }
+      }
     }
     // For a member class of a generic class, such as Outer<String>.Inner<Integer>, the type
     // arguments of the enclosing type must also be contained.

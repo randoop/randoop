@@ -115,17 +115,49 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * <p>The substitution is applied only to {@code lowerBound}, by {@link
-   * ParameterBound#isLowerBound(Type, Substitution)}. A type variable in this bound, which an eager
-   * bound can also contain, as in {@code T[]}, stands for itself. So, with {@code T := String}, the
-   * bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of
-   * {@code String[]}.
+   * <p>The substitution is applied only to {@code lowerBound}. A type variable in this bound, which
+   * an eager bound can also contain, as in {@code T[]}, stands for itself. So, with {@code T :=
+   * String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a
+   * lower bound of {@code String[]}. Likewise, with the empty substitution, {@code List<String>} is
+   * not a lower bound of {@code List<T>}. The null type is a lower bound of every bound, and an
+   * intersection is a lower bound if any of its members is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
     // type variables, as in T[], where T is not recursive; they stand for themselves.
-    return lowerBound.isLowerBound(boundType, substitution);
+    return isSubtypeOfFixed(lowerBound.substitute(substitution), boundType);
+  }
+
+  /**
+   * Returns true if the type of the given bound is a subtype of, or equal to, the given type, in
+   * which every type variable stands for itself. An intersection bound is a subtype of the type if
+   * any of its members is. A {@link LazyParameterBound} is converted to the equivalent {@link
+   * ReferenceBound}.
+   *
+   * @param bound a bound, to which a substitution has already been applied
+   * @param type a type whose type variables stand for themselves
+   * @return true if the type of {@code bound} is a subtype of, or equal to, {@code type}
+   */
+  static boolean isSubtypeOfFixed(ParameterBound bound, ReferenceType type) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted != null && isSubtypeOfFixed(converted, type);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isSubtypeOfFixed(member, type)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (bound instanceof ReferenceBound) {
+      // A substitution with no unknowns makes each type variable stand for itself.
+      return Subtyping.isSubtypeOrEqual(
+          ((ReferenceBound) bound).getBoundType(), type, new Substitution());
+    }
+    return false;
   }
 
   @Override

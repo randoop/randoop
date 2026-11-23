@@ -173,7 +173,7 @@ class WildcardType extends ParameterType {
         ParameterBound thisBound = resolveLazyBound(this.getUpperTypeBound());
         return otherBound != null
             && thisBound != null
-            && otherBound.isSubtypeOfOrEqualTo(thisBound);
+            && isSubtypeOfOrEqualTo(otherBound, thisBound);
       }
       // `? extends Object` contains every `? super S`; `? extends T` for other T does not.
       return this.getUpperTypeBound().isObject();
@@ -184,8 +184,31 @@ class WildcardType extends ParameterType {
       }
       ParameterBound thisBound = resolveLazyBound(this.getLowerTypeBound());
       ParameterBound otherBound = resolveLazyBound(otherType.getLowerTypeBound());
-      return thisBound != null && otherBound != null && thisBound.isSubtypeOfOrEqualTo(otherBound);
+      return thisBound != null && otherBound != null && isSubtypeOfOrEqualTo(thisBound, otherBound);
     }
+  }
+
+  /**
+   * Returns true if the type of {@code bound} is a subtype of, or equal to, the type of {@code
+   * otherBound}. Besides {@link ParameterBound#isSubtypeOfOrEqualTo(ParameterBound)}, uses {@link
+   * Subtyping}, which compares the type arguments of enclosing types by containment: {@code
+   * Outer<String>.Plain} is a subtype of {@code Outer<?>.Plain}.
+   *
+   * @param bound a bound that is not a {@link LazyParameterBound}
+   * @param otherBound a bound that is not a {@link LazyParameterBound}
+   * @return true if the type of {@code bound} is a subtype of, or equal to, that of {@code
+   *     otherBound}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ParameterBound bound, ParameterBound otherBound) {
+    if (bound.isSubtypeOfOrEqualTo(otherBound)) {
+      return true;
+    }
+    return bound instanceof ReferenceBound
+        && otherBound instanceof ReferenceBound
+        && Subtyping.isSubtypeOrEqual(
+            ((ReferenceBound) bound).getBoundType(),
+            ((ReferenceBound) otherBound).getBoundType(),
+            new Substitution());
   }
 
   /**

@@ -420,10 +420,12 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * variable, compares {@code otherType} with that type. If the substitution replaces that type
+   * variable by a different type variable, that replacement is fixed, and {@code otherType} must be
+   * a subtype (for an upper bound) or supertype (for a lower bound) of it. Otherwise, that type
+   * variable stands for an unknown type. For a lower bound, the result is true if {@code otherType}
+   * can instantiate it; for an upper bound, the result is true if it can be a supertype of {@code
+   * otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -434,6 +436,22 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean variableBoundAllows(
       ParameterBound bound, boolean isLower, Substitution substitution, ReferenceType otherType) {
+    // If the substitution replaces the bound's type variable by a different type variable, as for
+    // `<S, T extends S>` with S := X, then X is fixed:  it is not chosen to suit otherType.  For
+    // example, with `X extends Number`, Integer is not known to be a subtype of X.
+    TypeVariable boundVariable = null;
+    if (bound instanceof ReferenceBound) {
+      boundVariable = (TypeVariable) ((ReferenceBound) bound).getBoundType();
+    } else if (bound instanceof LazyParameterBound) {
+      boundVariable = bound.getTypeParameters().get(0);
+    }
+    ReferenceType replacement =
+        boundVariable == null ? null : boundVariable.getSubstitutedType(substitution);
+    if (replacement != null && replacement.isVariable() && !replacement.equals(boundVariable)) {
+      return isLower
+          ? Subtyping.isSubtypeOrEqual(replacement, otherType, substitution)
+          : Subtyping.isSubtypeOrEqual(otherType, replacement, substitution);
+    }
     ParameterBound substituted = bound.substitute(substitution);
     TypeVariable variable;
     if (substituted instanceof ReferenceBound

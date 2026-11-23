@@ -216,15 +216,10 @@ class LazyReferenceBound extends EagerReferenceBound {
             getBoundType())) {
       return true;
     }
-    ParameterBound b = lowerBound.substitute(substitution);
-    if (!(b instanceof ReferenceBound)) {
-      return false;
-    }
-    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
-    // A substitution with no unknowns makes each type variable stand for itself, so that
-    // ArrayList<T> is a subtype of List<T> but List<String> is not.  The null type is a subtype of
-    // every reference type, including a type variable, so array covariance makes, for example,
-    // `NullType[]` a subtype of `T[]`.
-    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
+    // Each type variable stands for itself, so that ArrayList<T> is a subtype of List<T> but
+    // List<String> is not.  The null type is a subtype of every reference type, including a type
+    // variable, so array covariance makes, for example, `NullType[]` a subtype of `T[]`.  An
+    // intersection, such as `Number & Comparable<T>`, is a subtype if any member is.
+    return isSubtypeOfFixed(lowerBound.substitute(substitution), getBoundType());
   }
 }
