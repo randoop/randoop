@@ -158,8 +158,8 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * A {@code ? super T} wildcard contains no upper-bounded wildcard, not even {@code ?}: JLS section
-   * 4.5.1 states that {@code ? super T} is contained by {@code ?}, not the reverse.
+   * A {@code ? super T} wildcard contains no upper-bounded wildcard, not even {@code ?}: JLS
+   * section 4.5.1 states that {@code ? super T} is contained by {@code ?}, not the reverse.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
