@@ -419,7 +419,9 @@ public class InstantiatedType extends ParameterizedType {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // The type arguments can conflict with the enclosing type, as for
+          // Outer<String>.Inner<Integer> and Outer<U>.Inner<U>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           try {
