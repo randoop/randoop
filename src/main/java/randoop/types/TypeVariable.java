@@ -461,8 +461,8 @@ public abstract class TypeVariable extends ParameterType {
    * substitution replaces it with, is fixed rather than unknown, as determined by {@link
    * Substitution#isUnknown(ReferenceType)}. For example, if the substitution replaces that type
    * variable by a type parameter {@code X} of another declaration, then {@code X} is fixed and
-   * stands for itself, and the given type must be a subtype (for an upper bound) or supertype (for a
-   * lower bound) of {@code X}. Otherwise, that type variable stands for an unknown type: for an
+   * stands for itself, and the given type must be a subtype (for an upper bound) or supertype (for
+   * a lower bound) of {@code X}. Otherwise, that type variable stands for an unknown type: for an
    * upper bound, the given type is within it if that type variable can be a supertype of the given
    * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if some instantiation of
    * that type variable can be a subtype of the given type: the given type itself, or any
