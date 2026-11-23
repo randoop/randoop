@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.plumelib.util.CollectionsPlume;
@@ -200,6 +201,30 @@ public class ClassOrInterfaceTypeTest {
         new WildcardArgument(
             new WildcardType(new EagerReferenceBound((ReferenceType) listOfString), true));
     assertFalse(extendsListOfT.contains(extendsListOfString));
+  }
+
+  @Test
+  public void lowerBoundedWildcardContainmentTest() {
+    WildcardType superString =
+        new WildcardType(new EagerReferenceBound(JavaTypes.STRING_TYPE), false);
+    WildcardType superObject =
+        new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), false);
+    WildcardType unbounded = new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true);
+    // JLS 4.5.1: `? super T` contains `? super S` if T is a subtype of S.
+    assertTrue(superString.contains(superObject));
+    assertFalse(superObject.contains(superString));
+    // `? super T` does not contain `?`, which is `? extends Object`.
+    assertFalse(superString.contains(unbounded));
+    // `List<?>` is not a subtype of `List<? super String>`.
+    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
+    InstantiatedType listOfUnbounded =
+        new InstantiatedType(
+            listType, Collections.singletonList((TypeArgument) new WildcardArgument(unbounded)));
+    InstantiatedType listOfSuperString =
+        new InstantiatedType(
+            listType, Collections.singletonList((TypeArgument) new WildcardArgument(superString)));
+    assertFalse(listOfUnbounded.isSubtypeOfOrEqualTo(listOfSuperString));
+    assertTrue(listOfSuperString.isSubtypeOfOrEqualTo(listOfUnbounded));
   }
 
   @Test
