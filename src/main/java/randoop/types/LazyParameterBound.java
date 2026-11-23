@@ -619,7 +619,8 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>As for other bounds, the substitution is applied only to {@code lowerBound}. This bound is
    * compared as the {@link ReferenceBound} that {@link #toReferenceBound()} converts it to, in
-   * which each type variable stands for itself. Returns true if {@code lowerBound} is the null
+   * which each type variable stands for itself. So, with {@code T := String}, the bound {@code
+   * String[]} is not a lower bound of {@code T[]}. Returns true if {@code lowerBound} is the null
    * type, which is a lower bound of every reference type. Otherwise, returns false if this bound
    * cannot be converted.
    */

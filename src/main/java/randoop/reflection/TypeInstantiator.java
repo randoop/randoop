@@ -396,7 +396,9 @@ public class TypeInstantiator {
       Substitution selected =
           withOriginalKeys(selectedType.getInstantiatingSubstitution(pattern), typeParameters);
       // A match can conflict with the substitution, for example if it binds a capture variable
-      // that the substitution already maps to a different type.
+      // that the substitution already maps to a different type, or for an enclosing type:  for
+      // parameters List<U> and Outer<U>.Inner, U might already be String while the selected type
+      // is Outer<Integer>.Inner.
       if (selected != null && substitution.isConsistentWith(selected)) {
         Substitution result = substitution.extend(selected);
         if (satisfiesInstantiatedBounds(result)) {

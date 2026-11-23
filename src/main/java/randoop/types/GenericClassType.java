@@ -215,16 +215,14 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    // The type parameters include those of enclosing classes, as for Outer<T>.Inner<U>, so check
-    // each argument against the bound of its own type parameter.
+    // The type parameters include those of enclosing classes, such as [T, U] for
+    // Outer<T>.Inner<U>, in the order of the type arguments, so check each argument against the
+    // bound of its own type parameter.
     for (int i = 0; i < typeParameters.size(); i++) {
-      TypeVariable typeParameter = typeParameters.get(i);
-      if (!typeParameter.getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
+      ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
+      if (!bound.isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments[i]
-                + " does not match parameter bound "
-                + typeParameter.getUpperTypeBound());
+            "type argument " + typeArguments[i] + " does not match parameter bound " + bound);
       }
     }
     return this.substitute(substitution);
@@ -244,15 +242,13 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    // As above, check each argument against the bound of its own type parameter.
+    // As above, the type parameters include those of enclosing classes, in the order of the type
+    // arguments, so check each argument against the bound of its own type parameter.
     for (int i = 0; i < typeParameters.size(); i++) {
-      TypeVariable typeParameter = typeParameters.get(i);
-      if (!typeParameter.getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+      ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
+      if (!bound.isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments.get(i)
-                + " does not match parameter bound "
-                + typeParameter.getUpperTypeBound());
+            "type argument " + typeArguments.get(i) + " does not match parameter bound " + bound);
       }
     }
     return this.substitute(substitution);

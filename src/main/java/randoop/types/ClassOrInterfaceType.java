@@ -88,7 +88,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       // If the type arguments of the owner type, and of its own owner types, are the type
       // parameters of the declarations of the enclosing classes, then the enclosing type from the
-      // declaration of the member class is correct.  Otherwise, the owner type is preserved.
+      // declaration of the member class is correct, and getPreservedOwnerType returns null.
+      // Otherwise, the owner type is preserved.
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
@@ -108,7 +109,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
       // ParameterizedType.forType keeps the owner type, whose type arguments its own member
       // classes and supertypes may use.  It also sets the enclosing type of a member of a
-      // non-generic class, such as NonGenericOuter.Base<String>.
+      // non-generic class, such as NonGenericOuter.Base<String>, and supplies an enclosing type
+      // for an owner type in declaration form, as in Outer<T>.Middle<Integer>.
       return ParameterizedType.forType(t);
     }
 
@@ -464,9 +466,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     Substitution substitution = new Substitution();
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
-    // type.  The enclosing type of this type is not matched against a goal type that is not a
-    // member class, such as a type variable.
-    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
+    // type.  This type need not itself be a member class:  for a top-level class that extends
+    // Outer<String>.Inner, the enclosing type of that supertype instantiates the goal's.  No
+    // enclosing type is matched against a goal type that is not a member class, such as a type
+    // variable.
+    if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
       if (goalClassType.isMemberClass()) {
         ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
