@@ -526,10 +526,10 @@ public abstract class TypeVariable extends ParameterType {
    * those of its capture conversion. The supertypes of every class or interface type other than
    * {@code Object} include {@code Object}. The supertypes of an array type {@code C[]} are {@code
    * Object}, {@code Cloneable}, {@code Serializable}, and, if {@code C} is a reference type, {@code
-   * S[]} for each strict supertype {@code S} of {@code C}. The supertypes of a type variable are the
-   * types in its upper bound and their supertypes; this lets an array type such as {@code U[]}, for
-   * {@code U extends Number}, have supertypes such as {@code Number[]} and {@code Object[]}. For any
-   * other type, returns an empty list.
+   * S[]} for each strict supertype {@code S} of {@code C}. The supertypes of a type variable are
+   * the types in its upper bound and their supertypes; this lets an array type such as {@code U[]},
+   * for {@code U extends Number}, have supertypes such as {@code Number[]} and {@code Object[]}.
+   * For any other type, returns an empty list.
    *
    * @param type a type
    * @return the strict supertypes of {@code type}

@@ -764,9 +764,9 @@ final class Subtyping {
 
   /**
    * Returns true if the two types are equal, including the enclosing types of member classes at any
-   * depth, and type variables in corresponding positions are identical, including their bounds
-   * (see {@link TypeVariable#isIdenticalTo(TypeVariable)}). {@link Object#equals(Object)} treats
-   * copies of a type variable with different bounds as equal.
+   * depth, and type variables in corresponding positions are identical, including their bounds (see
+   * {@link TypeVariable#isIdenticalTo(TypeVariable)}). {@link Object#equals(Object)} treats copies
+   * of a type variable with different bounds as equal.
    *
    * @param type a type
    * @param otherType another type

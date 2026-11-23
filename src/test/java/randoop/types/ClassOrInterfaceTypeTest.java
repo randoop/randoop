@@ -1400,8 +1400,8 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
-   * The bound of a type parameter that a member class declares is checked against the type
-   * argument for that type parameter, not against the type argument of the enclosing class.
+   * The bound of a type parameter that a member class declares is checked against the type argument
+   * for that type parameter, not against the type argument of the enclosing class.
    */
   @Test
   public void instantiateMemberClassChecksDeclaredBoundTest() {
@@ -1501,8 +1501,7 @@ public class ClassOrInterfaceTypeTest {
   public void nonMemberSubclassOfMemberClassSubstitutionTest() throws NoSuchMethodException {
     ClassOrInterfaceType goal =
         ClassOrInterfaceType.forType(
-            MemberSupertypeHolder.class
-                .getDeclaredMethod("ofX", Outer.Inner.class)
+            MemberSupertypeHolder.class.getDeclaredMethod("ofX", Outer.Inner.class)
                 .getGenericParameterTypes()[0]);
     List<TypeVariable> goalParameters = goal.getTypeParameters();
     assertEquals(1, goalParameters.size());
@@ -1515,8 +1514,8 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
-   * A subtype of a member class that declares no type parameters is compared with it by
-   * containment of the type arguments of the enclosing types.
+   * A subtype of a member class that declares no type parameters is compared with it by containment
+   * of the type arguments of the enclosing types.
    */
   @Test
   public void subtypeOfMemberClassWithWildcardOwnerTest() throws NoSuchFieldException {
@@ -1570,8 +1569,7 @@ public class ClassOrInterfaceTypeTest {
     ClassOrInterfaceType type = ClassOrInterfaceType.forClass(SelfReferringClass.class);
     InstantiatedType iface = (InstantiatedType) type.getInterfaces().get(0);
     // SelfReferringInterface<? super SelfReferringClass>
-    ReferenceType target =
-        ((ReferenceArgument) iface.getTypeArguments().get(0)).getReferenceType();
+    ReferenceType target = ((ReferenceArgument) iface.getTypeArguments().get(0)).getReferenceType();
     assertTrue(Subtyping.isSubtypeOrEqual(type, target));
   }
 
