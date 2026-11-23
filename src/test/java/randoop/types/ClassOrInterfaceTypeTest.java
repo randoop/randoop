@@ -439,6 +439,18 @@ public class ClassOrInterfaceTypeTest {
   /** A field of type {@code Outer<? extends Number>.ArraySupertypeInner}. */
   public Outer<? extends Number>.ArraySupertypeInner arraySupertypeInnerOfWildcardOuter;
 
+  /** A field of type {@code Outer<String>.Inner}. */
+  public Outer<String>.Inner innerOfString;
+
+  /** A field of type {@code Outer<?>.Inner}. */
+  public Outer<?>.Inner innerOfWildcard;
+
+  /** A field of type {@code Outer<Long>.Inner}. */
+  public Outer<Long>.Inner innerOfLong;
+
+  /** A field of type {@code NonGenericOuter.Base<String>}. */
+  public NonGenericOuter.Base<String> baseOfString;
+
   /** A field of type {@code Outer<String>.OtherOuterSubInner}. */
   public Outer<String>.OtherOuterSubInner otherOuterSubInner;
 
@@ -846,5 +858,80 @@ public class ClassOrInterfaceTypeTest {
             .getInstantiatingSubstitution(goal);
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(goal.getTypeParameters().get(0)));
+  }
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of the field
+   * @return the type of the field
+   */
+  private static ClassOrInterfaceType classFieldType(String name) {
+    try {
+      return ClassOrInterfaceType.forType(
+          ClassOrInterfaceTypeTest.class.getField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * {@code Outer<String>.Inner} is a subtype of {@code Outer<?>.Inner}, but not of {@code
+   * Outer<Long>.Inner}.
+   */
+  @Test
+  public void nonGenericMemberEnclosingTypeSubtypeTest() {
+    ClassOrInterfaceType innerOfString = classFieldType("innerOfString");
+    ClassOrInterfaceType innerOfWildcard = classFieldType("innerOfWildcard");
+    ClassOrInterfaceType innerOfLong = classFieldType("innerOfLong");
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerOfString));
+    assertTrue(innerOfString.isSubtypeOfOrEqualTo(innerOfWildcard));
+    assertFalse(innerOfString.isSubtypeOfOrEqualTo(innerOfLong));
+    assertFalse(innerOfWildcard.isSubtypeOfOrEqualTo(innerOfString));
+  }
+
+  /**
+   * A parameterized type is not a subtype of an unrelated member class that is parameterized only
+   * through its enclosing type, and the check does not throw.
+   */
+  @Test
+  public void subtypeOfNonGenericMemberTest() {
+    ClassOrInterfaceType nonGenericSupertypeInner = classFieldType("nonGenericSupertypeInner");
+    assertTrue(nonGenericSupertypeInner.isParameterized());
+    assertFalse(fieldType("genericInnerOfInteger").isSubtypeOfOrEqualTo(nonGenericSupertypeInner));
+    assertFalse(
+        JDKTypes.LIST_TYPE
+            .instantiate(JavaTypes.STRING_TYPE)
+            .isSubtypeOfOrEqualTo(nonGenericSupertypeInner));
+  }
+
+  /**
+   * The type of a field declared as {@code NonGenericOuter.Base<String>} equals the instantiation
+   * of the generic class {@code NonGenericOuter.Base}.
+   */
+  @Test
+  public void memberOfNonGenericClassForTypeTest() {
+    GenericClassType genericBase =
+        (GenericClassType) ClassOrInterfaceType.forClass(NonGenericOuter.Base.class);
+    InstantiatedType instantiated = genericBase.instantiate(JavaTypes.STRING_TYPE);
+    ClassOrInterfaceType baseOfString = classFieldType("baseOfString");
+    assertEquals(instantiated, baseOfString);
+    assertEquals(instantiated.hashCode(), baseOfString.hashCode());
+  }
+
+  /**
+   * {@code Outer<String>.GenericInner<Integer>} does not instantiate {@code
+   * Outer<X>.GenericInner<X>}, because the bindings of {@code X} conflict.
+   */
+  @Test
+  public void conflictingInstantiatingSubstitutionTest() throws NoSuchMethodException {
+    ClassOrInterfaceType sameVariable =
+        memberParameterType("sameVariable", Outer.GenericInner.class);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    assertNull(
+        genericInnerType(JavaTypes.STRING_TYPE, integerType)
+            .getInstantiatingSubstitution(sameVariable));
+    assertNotNull(
+        genericInnerType(integerType, integerType).getInstantiatingSubstitution(sameVariable));
   }
 }

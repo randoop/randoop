@@ -473,6 +473,17 @@ public class TypeInstantiator {
               allMatched = false;
               break;
             }
+            // The selected type need not be consistent with the type variables instantiated for
+            // earlier parameters, as for an enclosing type:  for parameters List<U> and
+            // Outer<U>.Inner, U might already be String while the selected type is
+            // Outer<Integer>.Inner.
+            if (!substitution.isConsistentWith(subst)) {
+              if (Log.isLoggingOn()) {
+                failure = selectedType + " is inconsistent with " + substitution;
+              }
+              allMatched = false;
+              break;
+            }
             substitution = substitution.extend(subst);
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());

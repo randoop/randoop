@@ -425,7 +425,13 @@ public class InstantiatedType extends ParameterizedType {
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
-          substitution = substitution.extend(subst);
+          try {
+            substitution = substitution.extend(subst);
+          } catch (IllegalArgumentException e) {
+            // The bindings map a type variable to distinct types, as for
+            // Outer<String>.GenericInner<Integer> and Outer<X>.GenericInner<X>.
+            return null;
+          }
         }
         return substitution;
       }
