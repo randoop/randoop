@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -179,6 +178,18 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
+   * Returns the type parameters that this generic class declares. Unlike {@link
+   * #getTypeParameters()}, the result omits the type parameters of enclosing classes. For example,
+   * for {@code Outer<T>.Inner<U>}, the result is {@code [U]}. The result corresponds to the type
+   * arguments of an instantiation of this class.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
+    return parameters();
+  }
+
+  /**
    * Returns the list of type parameters of this generic class.
    *
    * @return the list of type parameters of this generic class
@@ -186,17 +197,6 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeVariable> getTypeParameters() {
     return CollectionsPlume.concatenate(super.getTypeParameters(), parameters());
-  }
-
-  /**
-   * Returns the type parameters that this generic class declares, not including those of its
-   * enclosing types. They correspond to the type arguments of an {@link InstantiatedType} of this
-   * class.
-   *
-   * @return the type parameters that this generic class declares
-   */
-  /*package*/ List<TypeVariable> getOwnTypeParameters() {
-    return Collections.unmodifiableList(parameters());
   }
 
   /**
