@@ -774,15 +774,24 @@ public class ParameterBoundTest {
   }
 
   /**
+   * A class whose type parameter is bounded by a non-generic member class whose owner type mentions
+   * the type parameter itself, so the bound is lazy.
+   *
+   * @param <T> a type parameter bounded by {@code GenericOuter<T>.NonGenericInner}
+   */
+  @SuppressWarnings("unused")
+  private static class SelfOwnerMemberBound<T extends GenericOuter<T>.NonGenericInner> {}
+
+  /**
    * An unbounded type variable is not an instantiation of a type variable whose bound is a
-   * non-generic member class of a parameterized type. Comparing their upper bounds does not throw
-   * an exception.
+   * non-generic member class of a parameterized type, {@code GenericOuter<T>.NonGenericInner}.
+   * Comparing their upper bounds, one of which is lazy, does not throw an exception.
    */
   @Test
   public void testUnboundedVariableIsNotInstantiationOfMemberClassBoundedVariable() {
     TypeVariable unbounded = TypeVariable.forType(ArraysOfVariable.class.getTypeParameters()[0]);
     TypeVariable memberBounded =
-        TypeVariable.forType(NonGenericMemberClassBound.class.getTypeParameters()[0]);
+        TypeVariable.forType(SelfOwnerMemberBound.class.getTypeParameters()[0]);
     assertTrue(memberBounded.getUpperTypeBound() instanceof LazyParameterBound);
     assertFalse(unbounded.isInstantiationOf(memberBounded));
   }
