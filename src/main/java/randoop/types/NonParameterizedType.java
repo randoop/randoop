@@ -127,23 +127,16 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
-    @Nullable Substitution substitution = getEnclosingSubstitution();
+    if (!isMemberClass()) {
+      return CollectionsPlume.mapList(
+          ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+    }
+    // For a member class such as Outer<String>.Inner, substitute the type arguments of the
+    // enclosing types.
+    Substitution substitution = getSupertypeSubstitution();
     return CollectionsPlume.mapList(
-        (java.lang.reflect.Type type) -> substituteEnclosing(forType(type), substitution),
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
         runtimeType.getGenericInterfaces());
-  }
-
-  /**
-   * Applies the given substitution, if any, to a declared supertype of this type.
-   *
-   * @param supertype a declared supertype of this type
-   * @param substitution the result of {@link #getEnclosingSubstitution()}
-   * @return {@code supertype} with {@code substitution} applied, or {@code supertype} itself if
-   *     {@code substitution} is null
-   */
-  private static ClassOrInterfaceType substituteEnclosing(
-      ClassOrInterfaceType supertype, @Nullable Substitution substitution) {
-    return substitution == null ? supertype : supertype.substitute(substitution);
   }
 
   @Override
@@ -183,9 +176,13 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null
-          ? null
-          : substituteEnclosing(forType(supertype), getEnclosingSubstitution());
+      // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
+      // substitute the type arguments of the enclosing types.
+      if (supertype == null) {
+        return null;
+      }
+      ClassOrInterfaceType result = forType(supertype);
+      return isMemberClass() ? result.substitute(getSupertypeSubstitution()) : result;
     }
   }
 

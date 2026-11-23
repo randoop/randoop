@@ -17,7 +17,9 @@ public class GenericClassType extends ParameterizedType {
   private final Class<?> rawType;
 
   /**
-   * The type parameters of the generic class; null if not yet computed. Use {@link
+   * The type parameters of the generic class. Null until first needed: computing them computes
+   * their bounds, which may refer to this class, as in {@code Builder<T extends Builder<?>>}.
+   * Computing them in the constructor would recurse infinitely for such a class. Use {@link
    * #getDeclaredTypeParameters()} instead of reading this field.
    */
   // Volatile so that a thread that reads a non-null value also sees the contents of the list.
@@ -42,12 +44,12 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the type parameters declared by the generic class, not those of its enclosing classes.
-   * Unlike {@link #getTypeParameters()}, the result does not depend on whether this object has an
-   * enclosing type, so it corresponds to the type arguments of an {@link InstantiatedType} of this
-   * class.
+   * Returns the type parameters that this generic class declares, computing them if necessary.
+   * Unlike {@link #getTypeParameters()}, the result omits the type parameters of enclosing classes.
+   * For example, for {@code Outer<T>.Inner<U>}, the result is {@code [U]}. The result corresponds
+   * to the type arguments of an instantiation of this class.
    *
-   * @return the type parameters declared by the generic class
+   * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
     List<TypeVariable> result = parameters;
