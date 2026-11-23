@@ -50,6 +50,16 @@ class IntersectionTypeBound extends ParameterBound {
     return Collections.unmodifiableList(boundList);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the member bounds of this intersection bound
+   */
+  @Override
+  public List<ParameterBound> getMembers() {
+    return boundList;
+  }
+
   // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can
   // be reordered)
   @Override
