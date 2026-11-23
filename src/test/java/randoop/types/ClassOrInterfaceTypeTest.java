@@ -743,7 +743,7 @@ public class ClassOrInterfaceTypeTest {
    * arguments of the enclosing type, as well as by those of the member class.
    */
   @Test
-  public void genericMemberClassSupertypesTest() throws NoSuchMethodException {
+  public void genericMemberSubclassSupertypesTest() throws NoSuchMethodException {
     java.lang.reflect.Type[] parameterTypes =
         SupertypeHolder.class
             .getDeclaredMethod("generic", Outer.GenericChild.class, Outer.Inner.class)
