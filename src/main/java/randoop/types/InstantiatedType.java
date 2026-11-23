@@ -430,7 +430,8 @@ public class InstantiatedType extends ParameterizedType {
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // The substitutions conflict if they map a type variable to different types, as for
           // Pair<String, Integer> and Pair<K, K>, or as for an enclosing type and a type argument
-          // that map a type variable differently.  Then this type does not instantiate goalType.
+          // that map a type variable differently, as for Outer<String>.Inner<Integer> and
+          // Outer<U>.Inner<U>.  Then this type does not instantiate goalType.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
