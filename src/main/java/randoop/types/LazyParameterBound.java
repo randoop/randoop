@@ -231,6 +231,11 @@ class LazyParameterBound extends ParameterBound {
           instantiatedType.enclosingType =
               ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) owner).getRawType());
         }
+      } else if (owner instanceof Class
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+        // A generic member class of a non-generic class, as in Outer.Inner<T>.  As in
+        // ParameterizedType.forType, the enclosing type is the non-generic class.
+        instantiatedType.enclosingType = ClassOrInterfaceType.forClass((Class<?>) owner);
       }
       return TypeArgument.forType(instantiatedType);
     }

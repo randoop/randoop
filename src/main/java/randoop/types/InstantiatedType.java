@@ -572,7 +572,7 @@ public class InstantiatedType extends ParameterizedType {
             !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
                 || Subtyping.isSubtypeOrEqual(
                     this.enclosingType, otherInstantiatedType.enclosingType)
-                || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
+                || isEnclosingSubtype(this.enclosingType, otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
         return (i == thisTypeArguments.size() && enclosingTypesRelated)
@@ -611,6 +611,29 @@ public class InstantiatedType extends ParameterizedType {
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
     // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if the given enclosing type is a subtype of, or equal to, the other enclosing
+   * type, which is of the same class. An enclosing type that declares no type parameters, such as
+   * {@code Middle} in {@code Outer<String>.Middle.Inner<Integer>}, is compared through its own
+   * enclosing type, so that, for example, {@code Outer<String>.Middle} is a subtype of {@code
+   * Outer<?>.Middle} but not of {@code Outer<Long>.Middle}.
+   *
+   * @param enclosing an enclosing type
+   * @param otherEnclosing an enclosing type of the same class as {@code enclosing}
+   * @return true if {@code enclosing} is a subtype of, or equal to, {@code otherEnclosing}
+   */
+  private static boolean isEnclosingSubtype(
+      ClassOrInterfaceType enclosing, ClassOrInterfaceType otherEnclosing) {
+    if (enclosing instanceof NonParameterizedType
+        && otherEnclosing instanceof NonParameterizedType
+        && enclosing.runtimeClassIs(otherEnclosing.getRuntimeClass())
+        && enclosing.isMemberClass()
+        && otherEnclosing.isMemberClass()) {
+      return isEnclosingSubtype(enclosing.enclosingType, otherEnclosing.enclosingType);
+    }
+    return enclosing.isSubtypeOfOrEqualTo(otherEnclosing);
   }
 
   @Override

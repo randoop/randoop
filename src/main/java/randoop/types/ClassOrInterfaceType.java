@@ -905,9 +905,55 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   /*package*/ Substitution getSupertypeSubstitution() {
     if (this.isMemberClass()) {
-      return enclosingType.applyCaptureConversion().getReferenceArgumentSubstitution();
+      return getCapturedEnclosingType(enclosingType).getReferenceArgumentSubstitution();
     }
     return new Substitution();
+  }
+
+  /**
+   * The capture conversion of the enclosing type, together with the enclosing type that it was
+   * computed for; null if not yet computed. Use {@link
+   * #getCapturedEnclosingType(ClassOrInterfaceType)} instead of reading this field.
+   */
+  private volatile @Nullable CapturedEnclosingType capturedEnclosingType = null;
+
+  /** The capture conversion of an enclosing type. Immutable, so it can be shared across threads. */
+  private static final class CapturedEnclosingType {
+    /** The enclosing type. */
+    final ClassOrInterfaceType enclosing;
+
+    /** The capture conversion of {@link #enclosing}. */
+    final ClassOrInterfaceType captured;
+
+    /**
+     * Creates a CapturedEnclosingType.
+     *
+     * @param enclosing an enclosing type
+     * @param captured the capture conversion of {@code enclosing}
+     */
+    CapturedEnclosingType(ClassOrInterfaceType enclosing, ClassOrInterfaceType captured) {
+      this.enclosing = enclosing;
+      this.captured = captured;
+    }
+  }
+
+  /**
+   * Returns the capture conversion of the given enclosing type of this type. Each call for the same
+   * enclosing type returns the same result, so that the supertypes of this type that are found
+   * through different paths, such as through the superclass and through an interface, share the
+   * same capture variables and can be recognized as the same type.
+   *
+   * @param enclosing the enclosing type of this type
+   * @return the capture conversion of {@code enclosing}
+   */
+  @SuppressWarnings("ReferenceEquality") // the cached result is for the same enclosing type object
+  private ClassOrInterfaceType getCapturedEnclosingType(ClassOrInterfaceType enclosing) {
+    CapturedEnclosingType cached = capturedEnclosingType;
+    if (cached == null || cached.enclosing != enclosing) {
+      cached = new CapturedEnclosingType(enclosing, enclosing.applyCaptureConversion());
+      capturedEnclosingType = cached;
+    }
+    return cached.captured;
   }
 
   @Override

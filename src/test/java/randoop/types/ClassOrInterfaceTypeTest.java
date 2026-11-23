@@ -1693,29 +1693,25 @@ public class ClassOrInterfaceTypeTest {
                 .getGenericType());
     ClassOrInterfaceType superclass = inner.getSuperclass();
     assertTrue(superclass.runtimeClassIs(Holder.class));
-    ReferenceType argument =
-        ((ReferenceArgument) ((InstantiatedType) superclass).getTypeArguments().get(0))
-            .getReferenceType();
-    assertTrue(argument instanceof ArrayType);
-    assertTrue(((ArrayType) argument).getComponentType() instanceof CaptureTypeVariable);
-    assertCaptureOfNumberArray(argument);
+    assertCapturedNumberArrayArgument(superclass);
     List<ClassOrInterfaceType> interfaces = inner.getInterfaces();
     assertEquals(1, interfaces.size());
     assertTrue(interfaces.get(0).runtimeClassIs(Comparable.class));
-    assertCaptureOfNumberArray(
-        ((ReferenceArgument) ((InstantiatedType) interfaces.get(0)).getTypeArguments().get(0))
-            .getReferenceType());
+    assertCapturedNumberArrayArgument(interfaces.get(0));
   }
 
   /**
-   * Asserts that the given type is an array whose component is a capture variable with upper bound
-   * {@code Number}.
+   * Asserts that the only type argument of the given type is an array whose component type is a
+   * capture variable with upper bound {@code Number}.
    *
-   * @param type a type
+   * @param type a parameterized type with one type argument
    */
-  private static void assertCaptureOfNumberArray(ReferenceType type) {
-    assertTrue(type instanceof ArrayType);
-    Type component = ((ArrayType) type).getComponentType();
+  private static void assertCapturedNumberArrayArgument(ClassOrInterfaceType type) {
+    List<TypeArgument> arguments = ((InstantiatedType) type).getTypeArguments();
+    assertEquals(1, arguments.size());
+    ReferenceType argument = ((ReferenceArgument) arguments.get(0)).getReferenceType();
+    assertTrue(argument instanceof ArrayType);
+    Type component = ((ArrayType) argument).getComponentType();
     assertTrue(component instanceof CaptureTypeVariable);
     ParameterBound upperBound = ((CaptureTypeVariable) component).getUpperTypeBound();
     Substitution empty = new Substitution();

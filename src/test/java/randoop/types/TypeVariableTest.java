@@ -157,9 +157,22 @@ public class TypeVariableTest {
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     // Check each bound explicitly, so that the test fails if both paths leave T[] unresolved.
-    String expected = "java.util.Collection<? extends java.lang.String[]>";
-    assertEquals(expected, direct.getUpperTypeBound().toString());
-    assertEquals(expected, throughV.getUpperTypeBound().toString());
+    String expectedString = "java.util.Collection<? extends java.lang.String[]>";
+    assertEquals(expectedString, direct.getUpperTypeBound().toString());
+    assertEquals(expectedString, throughV.getUpperTypeBound().toString());
+    // Collection<? extends String[]>, constructed independently of substitution.
+    ParameterBound expected =
+        new EagerReferenceBound(
+            new InstantiatedType(
+                GenericClassType.forClass(Collection.class),
+                Collections.<TypeArgument>singletonList(
+                    new WildcardArgument(
+                        new WildcardType(
+                            new EagerReferenceBound(
+                                ArrayType.ofComponentType(JavaTypes.STRING_TYPE)),
+                            true)))));
+    assertEquals(expected, direct.getUpperTypeBound());
+    assertEquals(expected, throughV.getUpperTypeBound());
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 

@@ -213,6 +213,14 @@ public class InstantiationTest {
       if (operation.getName().endsWith(".create")
           && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
               == WildcardBoundBuilder.class) {
+        // The operation is an instantiation of the generic create, not the generic one itself.
+        assertFalse(operation + " should be instantiated", operation.isGeneric());
+        assertTrue(
+            operation + " should use ConcreteWildcardBoundBuilder",
+            operation
+                .getOutputType()
+                .toString()
+                .contains(ConcreteWildcardBoundBuilder.class.getSimpleName()));
         foundCreate = true;
       }
     }
@@ -340,9 +348,9 @@ public class InstantiationTest {
       throws NoSuchMethodException, RandoopSpecificationError {
     Set<Type> inputTypes = new LinkedHashSet<>();
     // The input types include List<Integer>, but not Integer.
-    addTypes(
-        GenericClassType.forClass(List.class).instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()),
-        inputTypes);
+    InstantiatedType integerList =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive());
+    addTypes(integerList, inputTypes);
     assertFalse(inputTypes.contains(JavaTypes.INT_TYPE.toBoxedPrimitive()));
     TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
     // <T> void copy(List<? super T>, List<? extends T>)
@@ -353,6 +361,13 @@ public class InstantiationTest {
       TypedClassOperation copyInstance = instantiator.instantiate(copy);
       assertNotNull("instantiation failed for " + copy, copyInstance);
       assertFalse(copyInstance.isGeneric(/* ignoreWildcards= */ true));
+      // The inferred signature accepts the available List<Integer> for both parameters.
+      for (int i = 0; i < 2; i++) {
+        Type parameterType = copyInstance.getInputTypes().get(i);
+        assertTrue(
+            parameterType + " should accept " + integerList,
+            parameterType.isAssignableFrom(integerList));
+      }
     }
     Randomness.setSeed(0);
   }
