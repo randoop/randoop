@@ -217,10 +217,7 @@ public class InstantiationTest {
         assertFalse(operation + " should be instantiated", operation.isGeneric());
         assertTrue(
             operation + " should use ConcreteWildcardBoundBuilder",
-            operation
-                .getOutputType()
-                .toString()
-                .contains(ConcreteWildcardBoundBuilder.class.getSimpleName()));
+            operation.getOutputType().toString().contains("ConcreteWildcardBoundBuilder"));
         foundCreate = true;
       }
     }
