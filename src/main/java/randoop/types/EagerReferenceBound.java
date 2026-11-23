@@ -1,12 +1,27 @@
 package randoop.types;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
  * directly. Contrast with {@link LazyReferenceBound}.
  */
 class EagerReferenceBound extends ReferenceBound {
+
+  /**
+   * The (bound type, argument type) pairs whose {@link #isUpperBound(Type, Substitution)} check of
+   * a parameterized bound is executing on the current thread. The check captures the bound, and a
+   * capture variable's upper bound can be the bound itself, as for {@code T extends
+   * Builder<?>} in {@code Builder<T extends Builder<?>>}. Checking that the argument instantiates
+   * the capture variable then repeats the same check. The repeated check returns true: it
+   * succeeds if the rest of the original check succeeds.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<Type>>> upperBoundChecksInProgress =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a bound for the given reference type.
@@ -82,15 +97,26 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
-      InstantiatedType argSuperType =
-          ((ClassOrInterfaceType) argType)
-              .getMatchingSupertype(boundClassType.getGenericClassType());
-      if (argSuperType == null) {
-        return false;
+      List<Type> check = Arrays.asList(thisBoundType, argType);
+      Set<List<Type>> inProgress = upperBoundChecksInProgress.get();
+      if (!inProgress.add(check)) {
+        // This check depends on itself, so assume it holds. Any other condition still holds or
+        // fails on its own.
+        return true;
       }
-      argSuperType = argSuperType.applyCaptureConversion();
-      return argSuperType.isInstantiationOf(boundClassType);
+      try {
+        InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+        InstantiatedType argSuperType =
+            ((ClassOrInterfaceType) argType)
+                .getMatchingSupertype(boundClassType.getGenericClassType());
+        if (argSuperType == null) {
+          return false;
+        }
+        argSuperType = argSuperType.applyCaptureConversion();
+        return argSuperType.isInstantiationOf(boundClassType);
+      } finally {
+        inProgress.remove(check);
+      }
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }

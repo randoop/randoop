@@ -1,7 +1,9 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -14,6 +16,9 @@ public class ParameterBoundTest {
    * @param <T> the type parameter
    */
   interface WildcardSelfBound<T extends WildcardSelfBound<?>> {}
+
+  /** An implementation of {@link WildcardSelfBound}. */
+  static class ConcreteWildcardSelfBound implements WildcardSelfBound<ConcreteWildcardSelfBound> {}
 
   /**
    * A type parameter whose bound refers to {@link MutualB}, which refers back to this class.
@@ -52,8 +57,35 @@ public class ParameterBoundTest {
   }
 
   @Test
+  public void testWildcardSelfBoundInstantiateArray() {
+    GenericClassType genericType = GenericClassType.forClass(WildcardSelfBound.class);
+    ReferenceType concrete = ClassOrInterfaceType.forClass(ConcreteWildcardSelfBound.class);
+    assertEquals(genericType, genericType.instantiate(concrete).getGenericClassType());
+    assertThrows(
+        IllegalArgumentException.class, () -> genericType.instantiate(JavaTypes.STRING_TYPE));
+  }
+
+  @Test
+  public void testWildcardSelfBoundInstantiateList() {
+    GenericClassType genericType = GenericClassType.forClass(WildcardSelfBound.class);
+    ReferenceType concrete = ClassOrInterfaceType.forClass(ConcreteWildcardSelfBound.class);
+    assertEquals(
+        genericType,
+        genericType.instantiate(Collections.singletonList(concrete)).getGenericClassType());
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> genericType.instantiate(Collections.singletonList(JavaTypes.STRING_TYPE)));
+  }
+
+  @Test
   public void testSelfBound() {
-    assertEquals(1, GenericClassType.forClass(SelfBound.class).getTypeParameters().size());
+    List<TypeVariable> parameters = GenericClassType.forClass(SelfBound.class).getTypeParameters();
+    assertEquals(1, parameters.size());
+    ReferenceType boundType =
+        ((ReferenceBound) parameters.get(0).getUpperTypeBound()).getBoundType();
+    assertEquals(
+        "java.util.List<? extends randoop.types.ParameterBoundTest.SelfBound<?>>",
+        boundType.toString());
   }
 
   @Test
