@@ -271,6 +271,15 @@ public class ClassOrInterfaceTypeTest {
      * @param inner an inner object
      */
     static <U, V> void setOwner(Outer<Set<U>>.GenericInner<V> inner) {}
+
+    /**
+     * A method whose parameter type uses the same type variable in the enclosing type and as its
+     * own type argument.
+     *
+     * @param <X> the type argument of the enclosing type and of the parameter type
+     * @param inner an inner object
+     */
+    static <X> void sameOwner(Outer<X>.GenericInner<X> inner) {}
   }
 
   /**
@@ -361,6 +370,16 @@ public class ClassOrInterfaceTypeTest {
     List<TypeVariable> setOwnerParameters = setOwner.getTypeParameters();
     assertEquals(integerType, substitution.get(setOwnerParameters.get(0)));
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(setOwnerParameters.get(1)));
+
+    // Outer<String>.GenericInner<Integer> does not instantiate Outer<X>.GenericInner<X>, because
+    // the enclosing type and the type argument map X to different types.
+    ClassOrInterfaceType sameOwner = memberParameterType("sameOwner", Outer.GenericInner.class);
+    assertNull(
+        genericInnerType(JavaTypes.STRING_TYPE, integerType)
+            .getInstantiatingSubstitution(sameOwner));
+    assertNotNull(
+        genericInnerType(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)
+            .getInstantiatingSubstitution(sameOwner));
   }
 
   /**
@@ -637,6 +656,16 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(
         Collections.singletonList(TypeArgument.forType(JavaTypes.STRING_TYPE)),
         supertype.getTypeArguments());
+    // The enclosing type of the supertype is Outer<Integer>, so T maps to Integer.
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    assertEquals(genericInnerType(integerType, JavaTypes.STRING_TYPE), supertype);
+    Substitution substitution =
+        ClassOrInterfaceType.forClass(StringInnerSubclass.class)
+            .getInstantiatingSubstitution(genericInner);
+    assertNotNull(substitution);
+    List<TypeVariable> genericInnerParameters = genericInner.getTypeParameters();
+    assertEquals(integerType, substitution.get(genericInnerParameters.get(0)));
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(genericInnerParameters.get(1)));
   }
 
   /**

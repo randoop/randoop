@@ -109,6 +109,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         }
         return forMemberClass(rawType, ownerClassType);
       }
+      // For a generic member class, keep even an owner type that is the generic form of its class,
+      // such as Outer<T> in Outer<T>.GenericInner<String>.  A substitution into the result, such as
+      // when computing the supertypes of Outer<Integer>.StringInner, can then replace T.
+      if (ownerClassType == null && ownerType != null) {
+        ownerClassType = forType(ownerType);
+      }
       ParameterizedType result = ParameterizedType.forType(t);
       if (ownerClassType != null) {
         result.enclosingType = ownerClassType;
