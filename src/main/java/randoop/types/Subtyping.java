@@ -10,7 +10,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * substitution that has no unknowns, these are the ordinary relations.
  *
  * <p>These relations differ from {@link ReferenceType#isSubtypeOfOrEqualTo(Type)}, which treats a
- * raw type as a subtype of every parameterized type that contains a type variable.
+ * raw type, and every parameterized type of a class, as a subtype of the generic form of that
+ * class: for example, raw {@code List} and {@code List<String>} are subtypes of {@code List<E>},
+ * where {@code E} is the type parameter of {@code List}, though not of {@code List<T>} for another
+ * type variable {@code T}. Here, {@code E} stands for itself, as any other type variable does.
  *
  * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
  * which treats every type variable in the bound as an unknown.
@@ -94,14 +97,16 @@ final class Subtyping {
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
+      // section 4.10.2).  Capture this type before finding its supertype:  for
+      // `C<T> implements Comparable<List<T>>`, the supertype of C<?> is Comparable<List<CAP>>, not
+      // Comparable<List<?>>, whose nested wildcard capture conversion would not convert.
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
       InstantiatedType supertype =
           capturedType.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (supertype == null) {
         return false;
       }
-      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
-      // section 4.10.2).
       supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
@@ -174,24 +179,14 @@ final class Subtyping {
    */
   private static boolean argumentsContained(
       ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
-    if (otherType instanceof InstantiatedType) {
-      if (!(type instanceof InstantiatedType)) {
+    // An enclosing type can be a GenericClassType, such as Outer in Outer<E>.Inner<Integer>, or
+    // an owner type in declaration form, such as Outer<T> in Outer<T>.Middle<String>.Leaf.  Its
+    // type arguments are its type parameters, such as E, which contain only themselves unless
+    // they are unknowns:  Outer<Integer> is not contained by Outer<T>.
+    if (otherType instanceof ParameterizedType) {
+      if (!(type instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
-      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
-      if (typeArguments.size() != otherTypeArguments.size()) {
-        return false;
-      }
-      for (int i = 0; i < typeArguments.size(); i++) {
-        if (!contains(otherTypeArguments.get(i), typeArguments.get(i), substitution)) {
-          return false;
-        }
-      }
-    } else if (otherType instanceof GenericClassType && type instanceof ParameterizedType) {
-      // An owner type in declaration form, such as Outer<T> in Outer<T>.Middle<String>.Leaf, can
-      // be a GenericClassType.  Its type arguments are its type parameters, which contain only
-      // themselves unless they are unknowns:  Outer<Integer> is not contained by Outer<T>.
       List<TypeArgument> typeArguments = type.getTypeArguments();
       List<TypeArgument> otherTypeArguments = otherType.getTypeArguments();
       if (typeArguments.size() != otherTypeArguments.size()) {
@@ -385,12 +380,14 @@ final class Subtyping {
    */
   private static boolean argumentsCanBeContained(
       ClassOrInterfaceType lowerType, ClassOrInterfaceType type, Substitution substitution) {
-    if (type instanceof InstantiatedType) {
-      if (!(lowerType instanceof InstantiatedType)) {
+    // As in argumentsContained, a GenericClassType enclosing type is compared by its type
+    // parameters.
+    if (type instanceof ParameterizedType) {
+      if (!(lowerType instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> lowerTypeArguments = ((InstantiatedType) lowerType).getTypeArguments();
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> lowerTypeArguments = lowerType.getTypeArguments();
+      List<TypeArgument> typeArguments = type.getTypeArguments();
       if (lowerTypeArguments.size() != typeArguments.size()) {
         return false;
       }

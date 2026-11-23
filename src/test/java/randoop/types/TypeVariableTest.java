@@ -874,6 +874,52 @@ public class TypeVariableTest {
     assertSame(copy, capture.substitute(substitution));
   }
 
+  /**
+   * Copies of a capture variable are not identical if their bounds contain copies of a type
+   * variable with different bounds.
+   */
+  @Test
+  public void testIsIdenticalToComparesNestedBoundsOfCaptureVariable() {
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable yCopy =
+        y.createCopyWithBounds(
+            y.getLowerTypeBound(),
+            new EagerReferenceBound(
+                ((GenericClassType) ClassOrInterfaceType.forClass(List.class))
+                    .instantiate(JavaTypes.STRING_TYPE)));
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(new WildcardType(new EagerReferenceBound(y), true)));
+    ParameterBound lower = capture.getLowerTypeBound();
+    TypeVariable withY = capture.createCopyWithBounds(lower, new EagerReferenceBound(y));
+    TypeVariable withY2 = capture.createCopyWithBounds(lower, new EagerReferenceBound(y));
+    TypeVariable withYCopy = capture.createCopyWithBounds(lower, new EagerReferenceBound(yCopy));
+    assertTrue(withY.isIdenticalTo(withY2));
+    assertFalse(withY.isIdenticalTo(withYCopy));
+  }
+
+  /** Comparing copies of a capture variable whose bounds refer to the copies terminates. */
+  @Test
+  public void testIsIdenticalToSelfReferentialCaptureVariables() {
+    GenericClassType comparable = JavaTypes.COMPARABLE_TYPE;
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true)));
+    TypeVariable copy1 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    TypeVariable copy2 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    // Each copy is bounded by Comparable of itself.
+    copy1.setUpperBound(new EagerReferenceBound(comparable.instantiate(copy1)));
+    copy2.setUpperBound(new EagerReferenceBound(comparable.instantiate(copy2)));
+    assertTrue(copy1.isIdenticalTo(copy2));
+    TypeVariable copy3 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    copy3.setUpperBound(new EagerReferenceBound(comparable.instantiate(JavaTypes.STRING_TYPE)));
+    assertFalse(copy1.isIdenticalTo(copy3));
+  }
+
   /** A substitution that maps two copies of a type variable to themselves maps it to itself. */
   @Test
   public void testIdentitySubstitutionOfTwoCopies() {
@@ -2582,6 +2628,22 @@ public class TypeVariableTest {
     assertTrue(Subtyping.isSubtypeOrEqual(extendsIntegerInner, extendsNumberInner, substitution));
     assertTrue(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsNumberInner, substitution));
     assertFalse(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsIntegerInner, substitution));
+  }
+
+  /** An eager bound compares the enclosing types of member classes by containment. */
+  @Test
+  public void testEagerBoundOfMemberClassWithWildcardOwner() throws NoSuchFieldException {
+    ReferenceType extendsIntegerInner = plainInnerFieldType("extendsIntegerInner");
+    ReferenceType extendsNumberInner = plainInnerFieldType("extendsNumberInner");
+    ParameterBound integerBound = new EagerReferenceBound(extendsIntegerInner);
+    ParameterBound numberBound = new EagerReferenceBound(extendsNumberInner);
+    Substitution substitution = new Substitution();
+    assertTrue(numberBound.isUpperBound(extendsIntegerInner, substitution));
+    assertTrue(numberBound.isUpperBound(extendsNumberInner, substitution));
+    assertFalse(integerBound.isUpperBound(extendsNumberInner, substitution));
+    assertTrue(integerBound.isLowerBound(extendsNumberInner, substitution));
+    assertTrue(numberBound.isLowerBound(extendsNumberInner, substitution));
+    assertFalse(numberBound.isLowerBound(extendsIntegerInner, substitution));
   }
 
   /**

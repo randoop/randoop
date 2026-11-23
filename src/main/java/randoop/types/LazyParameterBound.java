@@ -150,8 +150,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard, or is a member class whose owner type cannot be converted
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard, or is a member
+   *     class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -648,7 +649,8 @@ class LazyParameterBound extends ParameterBound {
    * #toReferenceBound()} converts this bound to, in which each type variable remains a type
    * variable. That bound stands for every instantiation of its type variables, so only the null
    * type and that bound's own type are lower bounds of it; see {@link
-   * LazyReferenceBound#hasLowerBound}. Returns false if this bound cannot be converted.
+   * LazyReferenceBound#hasLowerBound}. So, with {@code T := String}, the bound {@code String[]} is
+   * not a lower bound of {@code T[]}. Returns false if this bound cannot be converted.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {

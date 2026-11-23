@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,8 +150,9 @@ public abstract class ParameterBound {
    *
    * <p>The owner type of a member class is examined (see {@link #getPreservedOwnerType}), because
    * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
-   * Outer<T>} for {@code Outer<T>.Inner}. Converting such an owner type eagerly can recursively
-   * convert a type variable that is being converted.
+   * Outer<T>} for {@code Outer<T>.Inner}. So a type variable in it, as in {@code T extends
+   * Outer<T>.Inner<String>}, would also make an eager bound recursive: converting such an owner
+   * type eagerly can recursively convert a type variable that is being converted.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -206,7 +208,8 @@ public abstract class ParameterBound {
   /**
    * Returns the owner type of the given parameterized type, if it is a parameterized type and the
    * given type is a member class (an inner class, not a static nested class). The type arguments of
-   * such an owner type are part of the type, as in {@code Outer<String>.Inner}.
+   * such an owner type are part of the type, as in {@code Outer<String>.Inner}, and {@link
+   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} preserves it.
    *
    * @param type a parameterized type
    * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
@@ -216,7 +219,7 @@ public abstract class ParameterBound {
       java.lang.reflect.ParameterizedType type) {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
     return null;
