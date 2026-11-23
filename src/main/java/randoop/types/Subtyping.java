@@ -228,7 +228,7 @@ final class Subtyping {
    * @param substitution the type substitution, which determines the unknowns
    * @return true if {@code lowerType} is, or can be chosen to be, a subtype of {@code type}
    */
-  private static boolean canBeSubtype(
+  /*package*/ static boolean canBeSubtype(
       ReferenceType lowerType, ReferenceType type, Substitution substitution) {
     if (!substitution.isUnknown(lowerType)) {
       if (isSubtypeOrEqual(lowerType, type, substitution)) {
@@ -253,16 +253,17 @@ final class Subtyping {
       }
     }
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
+    // Every choice for the unknown is a subtype of its upper bound, and of every member of an
+    // intersection upper bound.  For `B extends Number & Runnable`, B is a subtype of Runnable,
+    // though Runnable, which is not a Number, cannot be B.  For `B extends Comparable<B>`, B is a
+    // subtype of Comparable<?>, though neither Comparable<?> nor Comparable<B> can be B.
+    if (unknownBound.hasUpperBound(type, substitution)) {
+      return true;
+    }
     if (unknownBound instanceof ReferenceBound) {
       return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
     if (unknownBound instanceof IntersectionTypeBound) {
-      // Every choice for the unknown is a subtype of every member of the intersection, so it is a
-      // subtype of each supertype of a member.  For `B extends Number & Runnable`, B is a subtype
-      // of Runnable, though Runnable, which is not a Number, cannot be B.
-      if (unknownBound.hasUpperBound(type, substitution)) {
-        return true;
-      }
       // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
       // B can be Number, which is a subtype of Serializable.
       for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
@@ -282,7 +283,7 @@ final class Subtyping {
    * @param substitution the type substitution, which determines the unknowns
    * @return true if {@code type} contains an unknown
    */
-  private static boolean hasUnknown(ReferenceType type, Substitution substitution) {
+  /*package*/ static boolean hasUnknown(ReferenceType type, Substitution substitution) {
     for (TypeVariable variable : type.getTypeParameters()) {
       if (substitution.isUnknown(variable)) {
         return true;

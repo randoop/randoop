@@ -473,7 +473,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(enclosingGoalType)) {
+        } else if (!Subtyping.isIdentical(thisEnclosingType, enclosingGoalType)) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
           // different type, such as Outer<String>:  the type arguments of the enclosing goal type
           // are fixed, as in Outer<String>.Inner<X>, and the enclosing type of this type's view of

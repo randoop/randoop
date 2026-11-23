@@ -3,7 +3,9 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
@@ -78,7 +80,8 @@ public class ParameterBoundTest {
   @Test
   public void testConcreteGenericArrayBoundWithEmptySubstitution() {
     java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "concreteGenericArray");
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
+    // ParameterBound.forType would create an eager bound, which does not exercise the lazy bound.
+    ParameterBound bound = new LazyParameterBound(arrayType);
     Type argType = Type.forType(arrayType);
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
@@ -748,5 +751,168 @@ public class ParameterBoundTest {
   @Test
   public void testEnclosingBound() {
     assertEquals(1, GenericClassType.forClass(EnclosingBound.class).getTypeParameters().size());
+  }
+
+  /**
+   * A class whose type parameter has an intersection bound with a lazy member.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class LazyIntersectionMember<T extends Comparable<T> & Serializable> {}
+
+  /** A lazy member of an intersection is a lower bound of a lazy bound of the same type. */
+  @Test
+  public void testLazyIntersectionMemberAsLowerBound() {
+    TypeVariable t =
+        GenericClassType.forClass(LazyIntersectionMember.class).getTypeParameters().get(0);
+    ParameterBound intersection = t.getUpperTypeBound();
+    assertTrue(intersection instanceof IntersectionTypeBound);
+    assertTrue(
+        ((IntersectionTypeBound) intersection).getBounds().get(0) instanceof LazyParameterBound);
+    ParameterBound comparableOfT =
+        new LazyReferenceBound(GenericClassType.forClass(Comparable.class).instantiate(t));
+    assertTrue(intersection.isLowerBound(comparableOfT, new Substitution()));
+  }
+
+  /** The lower-bound check applies the substitution to a lazy bound only once. */
+  @Test
+  public void testLazyLowerBoundSubstitutedOnce() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ArrayType numberArray = ArrayType.ofComponentType(ReferenceType.forClass(Number.class));
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    // T[] with T := E is E[], whose type variable E is not known to be a Number.
+    Substitution viaVariable =
+        new Substitution(Arrays.asList(arrayHolderVariable, e), e, integerType);
+    assertFalse(arrayBound.isLowerBound(numberArray, viaVariable));
+    assertTrue(
+        arrayBound.isLowerBound(numberArray, new Substitution(arrayHolderVariable, integerType)));
+  }
+
+  /**
+   * A class with sibling type parameters, and a field whose type contains one of them in the
+   * enclosing type of a member class.
+   *
+   * @param <S> a type parameter
+   * @param <U> a type parameter that occurs in the type of the field
+   */
+  @SuppressWarnings("unused")
+  private static class SiblingInOwner<S, U extends Number> {
+    /** A field whose type contains {@code U} in an enclosing type. */
+    GenericOuter<U>.NonGenericInner inner;
+  }
+
+  /** A field whose type is a non-generic member class of a parameterized type. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private GenericOuter<Integer>.NonGenericInner integerInner;
+
+  /** An unknown in a lazy reference bound can be chosen to make it a lower bound. */
+  @Test
+  public void testUnknownInLazyReferenceBoundAsLowerBound() {
+    ParameterBound bound =
+        new LazyReferenceBound(ReferenceType.forType(fieldType(SiblingInOwner.class, "inner")));
+    TypeVariable s = GenericClassType.forClass(SiblingInOwner.class).getTypeParameters().get(0);
+    Substitution substitution = new Substitution(s, JavaTypes.STRING_TYPE);
+    Type integerInnerType = Type.forType(fieldType(ParameterBoundTest.class, "integerInner"));
+    Type stringInnerType = Type.forType(fieldType(ParameterBoundTest.class, "stringInner"));
+    assertTrue(bound.isLowerBound(integerInnerType, substitution));
+    assertFalse(bound.isLowerBound(stringInnerType, substitution));
+  }
+
+  /**
+   * A class whose second type parameter has a recursive bound.
+   *
+   * @param <A> a type parameter
+   * @param <B> a type parameter with a recursive bound
+   */
+  @SuppressWarnings("unused")
+  private static class RecursiveSibling<A, B extends Comparable<B>> {}
+
+  /** A field whose type is a comparable of a wildcard. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private Comparable<?> wildcardComparable;
+
+  /** The upper bound of an unknown settles that the unknown is a subtype of a type. */
+  @Test
+  public void testUnknownSubtypeOfItsUpperBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(RecursiveSibling.class).getTypeParameters();
+    TypeVariable b = parameters.get(1);
+    Substitution substitution =
+        new Substitution(parameters.get(0), JavaTypes.STRING_TYPE).extendWithIdentity(parameters);
+    ReferenceType comparableOfWildcard =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "wildcardComparable"));
+    assertTrue(Subtyping.canBeSubtype(b, comparableOfWildcard, substitution));
+  }
+
+  /** A substitution that replaces a type variable by a copy does not map the copy to itself. */
+  @Test
+  public void testWithMappingOfCopy() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(WildcardLower.class).getTypeParameters();
+    TypeVariable u = parameters.get(1);
+    TypeVariable uCopy =
+        (TypeVariable) u.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    assertNotSame(u, uCopy);
+    Substitution replacing = new Substitution(u, uCopy);
+    assertFalse(replacing.mapsToItself(uCopy));
+    assertTrue(replacing.withMapping(uCopy, uCopy).mapsToItself(uCopy));
+    Substitution selfMap = new Substitution(uCopy, uCopy);
+    assertSame(selfMap, selfMap.withMapping(uCopy, uCopy));
+  }
+
+  /**
+   * A generic class with a member class whose type parameter is bounded.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class BoundedMemberOuter<T> {
+    /**
+     * A member class with a bounded type parameter.
+     *
+     * @param <U> the type parameter
+     */
+    class BoundedInner<U extends Number> {}
+  }
+
+  /** Each type argument is checked against its own type parameter, including enclosing ones. */
+  @Test
+  public void testInstantiateMemberClass() {
+    GenericClassType inner =
+        (GenericClassType) ClassOrInterfaceType.forClass(BoundedMemberOuter.BoundedInner.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    inner.instantiate(JavaTypes.STRING_TYPE, integerType);
+    inner.instantiate(Arrays.asList(JavaTypes.STRING_TYPE, integerType));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(integerType, JavaTypes.STRING_TYPE));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE)));
+  }
+
+  /** A non-generic class with a generic member class. */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class PlainOuter {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class GenericInner<U> {}
+
+    /** A field whose type is a parameterized member class of a non-generic class. */
+    GenericInner<String> stringInner;
+  }
+
+  /** A member class of a non-generic class keeps its enclosing type when converted. */
+  @Test
+  public void testMemberOfNonGenericClass() {
+    ClassOrInterfaceType converted =
+        ClassOrInterfaceType.forType(fieldType(PlainOuter.class, "stringInner"));
+    GenericClassType inner =
+        (GenericClassType) ClassOrInterfaceType.forClass(PlainOuter.GenericInner.class);
+    assertEquals(inner.instantiate(JavaTypes.STRING_TYPE), converted);
   }
 }

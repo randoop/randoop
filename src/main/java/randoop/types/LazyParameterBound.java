@@ -454,8 +454,12 @@ class LazyParameterBound extends ParameterBound {
       // The bound has no type variable, so no substitution changes it.
       return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
     }
-    ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(argType, substitution);
+    // Compare the converted bound, in which each type variable is the one in this bound, so that
+    // the comparison applies the substitution exactly once.  Applying the substitution first, and
+    // then again in the comparison, would replace a type variable that the substitution put in the
+    // bound:  for `T[]` with `T := W` and `W := Integer`, it would compare Integer[], not W[].
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.isLowerBound(argType, substitution);
   }
 
   @Override

@@ -56,6 +56,17 @@ class LazyReferenceBound extends ReferenceBound {
       // of the substitution, because they can mention type variables that it instantiates.
       return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
+    if (argType.isReferenceType() && substitution.instantiatesTypeParameters()) {
+      // The bound type can contain unknowns, such as U in Outer<U>.Inner, where U is a sibling of
+      // a type parameter that the substitution instantiates.  The bound is a lower bound if some
+      // choice for the unknowns makes it one:  for `U extends Number`, Outer<U>.Inner is a lower
+      // bound of Outer<Integer>.Inner, but not of Outer<String>.Inner.
+      Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+      ReferenceType boundType = getBoundType().substitute(completeSubstitution);
+      if (Subtyping.hasUnknown(boundType, completeSubstitution)) {
+        return Subtyping.canBeSubtype(boundType, (ReferenceType) argType, completeSubstitution);
+      }
+    }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
 
@@ -158,13 +169,19 @@ class LazyReferenceBound extends ReferenceBound {
       }
       return false;
     }
+    // A lazy bound, such as the member Comparable<T> of `T extends Comparable<T> & Serializable`,
+    // is compared as the reference bound in which each of its type variables stands for itself.
+    ParameterBound bound =
+        lowerBound instanceof LazyParameterBound
+            ? ((LazyParameterBound) lowerBound).toReferenceBound()
+            : lowerBound;
     // With an empty substitution, no type variable is an unknown.  Subtyping.isSubtypeOrEqual
-    // compares enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
-    // is not Outer<Number>.Inner<X>.  The null type is a subtype of every reference type, including
-    // a type variable, so array covariance makes, for example, `NullType[]` a subtype of `T[]`.
-    return lowerBound instanceof ReferenceBound
+    // compares enclosing types too:  Outer<Integer>.Inner<X> is not Outer<Number>.Inner<X>.  The
+    // null type is a subtype of every reference type, including a type variable, so array
+    // covariance makes, for example, `NullType[]` a subtype of `T[]`.
+    return bound instanceof ReferenceBound
         && Subtyping.isSubtypeOrEqual(
-            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            ((ReferenceBound) bound).getBoundType().substitute(substitution),
             getBoundType(),
             new Substitution());
   }

@@ -439,7 +439,12 @@ public class Substitution {
   @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
   Substitution withMapping(TypeVariable variable, ReferenceType type) {
     if (map.get(variable) == type) {
-      return this;
+      // The existing entry can have a copy of `variable` as its key.  Reuse this substitution only
+      // if the entry has the same effect:  {X := Xcopy} replaces X, but {Xcopy := Xcopy} does not.
+      Map.Entry<TypeVariable, ReferenceType> entry = getEntry(variable);
+      if (entry != null && isSelfMap(entry) == randoop.types.Type.sameType(variable, type)) {
+        return this;
+      }
     }
     Substitution result = new Substitution(this);
     result.put(variable, type);
