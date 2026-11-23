@@ -177,7 +177,8 @@ public class TypeInstantiator {
         // Instantiate them as in the goal type, as for a constructor, so that the declaring type
         // is not generic.  Otherwise, instantiate(TypedClassOperation) would fail to instantiate
         // the declaring type.
-        Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
+        Substitution classSubstitution =
+            goalInstantiatedType.getTypeSubstitutionWithEnclosingTypes();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
       if (substitution == null || !satisfiesBounds(substitution)) {
@@ -214,8 +215,9 @@ public class TypeInstantiator {
       ParameterizedType pattern, InstantiatedType instance) {
     Substitution substitution;
     if (pattern instanceof GenericClassType) {
-      // A generic class type, such as Box<T>.
-      substitution = instance.getTypeSubstitution();
+      // A generic class type, such as Box<T> or Outer<T>.Holder<U>.  The substitution binds the
+      // type parameters of the enclosing classes, such as T, as well.
+      substitution = instance.getTypeSubstitutionWithEnclosingTypes();
     } else if (instance.isInstantiationOf(pattern)) {
       substitution = instance.getInstantiatingSubstitution(pattern);
     } else {
@@ -234,8 +236,9 @@ public class TypeInstantiator {
    * Returns the index of the type parameter whose values instances of the given class keep in
    * order, or -1 if there is none. Such a type parameter is recognized by a constructor whose only
    * formal parameter is a comparator for it (see {@link #isComparatorInterface}), in the class or
-   * in a generic superclass. Examples are the {@code E} in {@code TreeSet<E>} and the {@code K} in
-   * {@code TreeMap<K,V>}.
+   * in a generic superclass. If a generic superclass orders a type parameter of the class, that type
+   * parameter takes precedence. Examples are the {@code E} in {@code TreeSet<E>} and the {@code K}
+   * in {@code TreeMap<K,V>}.
    *
    * @param c a class
    * @return the index of the ordered type parameter of {@code c}, or -1
@@ -262,6 +265,23 @@ public class TypeInstantiator {
     if (classTypeParameters.isEmpty()) {
       return -1;
     }
+    // A subclass of an ordered class, such as `class MySet<E> extends TreeSet<E>`, is also ordered,
+    // even if it has no comparator constructor.  Check the superclass first:  a constructor that
+    // takes a comparator for a different type parameter, as in `class Mixed<K,V> extends
+    // TreeSet<K>` with a constructor `Mixed(Comparator<V>)`, does not change which type parameter
+    // the superclass orders.
+    java.lang.reflect.Type superclass = c.getGenericSuperclass();
+    if (superclass instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType superType =
+          (java.lang.reflect.ParameterizedType) superclass;
+      int superIndex = orderedTypeParameterIndex((Class<?>) superType.getRawType());
+      if (superIndex != -1) {
+        int index = classTypeParameters.indexOf(superType.getActualTypeArguments()[superIndex]);
+        if (index != -1) {
+          return index;
+        }
+      }
+    }
     for (Constructor<?> constructor : c.getDeclaredConstructors()) {
       java.lang.reflect.Type[] formals = constructor.getGenericParameterTypes();
       if (formals.length != 1) {
@@ -270,17 +290,6 @@ public class TypeInstantiator {
       int index = comparedTypeParameterIndex(formals[0], classTypeParameters);
       if (index != -1) {
         return index;
-      }
-    }
-    // A subclass of an ordered class, such as `class MySet<E> extends TreeSet<E>`, is also ordered,
-    // even if it has no comparator constructor.
-    java.lang.reflect.Type superclass = c.getGenericSuperclass();
-    if (superclass instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType superType =
-          (java.lang.reflect.ParameterizedType) superclass;
-      int superIndex = orderedTypeParameterIndex((Class<?>) superType.getRawType());
-      if (superIndex != -1) {
-        return classTypeParameters.indexOf(superType.getActualTypeArguments()[superIndex]);
       }
     }
     return -1;
@@ -335,11 +344,18 @@ public class TypeInstantiator {
         continue;
       }
       java.lang.reflect.Type[] formals = m.getGenericParameterTypes();
+      if (formals.length != 2
+          || !(formals[0] instanceof java.lang.reflect.TypeVariable<?>)
+          || !formals[0].equals(formals[1])) {
+        continue;
+      }
       // The type variable may be that of a superinterface, such as Comparator, that declares
-      // compare.
-      if (formals.length == 2
-          && formals[0] instanceof java.lang.reflect.TypeVariable<?>
-          && formals[0].equals(formals[1])) {
+      // compare.  It must correspond to the type parameter of `c`:  in `interface StringOrder<T>
+      // extends Comparator<String>`, compare's formal parameters are String, not T.
+      Class<?> declaringClass = m.getDeclaringClass();
+      int declaringIndex = Arrays.asList(declaringClass.getTypeParameters()).indexOf(formals[0]);
+      if (declaringIndex != -1
+          && typeParameterIndexInSubtype(c, declaringClass, declaringIndex) == 0) {
         return true;
       }
     }
@@ -525,31 +541,41 @@ public class TypeInstantiator {
       int orderingIndex,
       TypeVariable orderedParameter,
       List<TypeVariable> typeParameters) {
-    Substitution substitution;
     if (useOrderingType) {
       if (orderingFormal == null) {
         throw new IllegalArgumentException("useOrderingType requires an ordering formal");
       }
-      substitution =
-          selectSubstitutionForOrderedType(
-              orderingFormal, orderingIndex, orderedParameter, typeParameters);
-    } else {
-      substitution = selectComparableSubstitution(orderedParameter);
+      return selectSubstitutionForOrderedType(
+          orderingFormal, orderingIndex, orderedParameter, typeParameters);
     }
+    Substitution substitution = selectComparableSubstitution(orderedParameter);
     if (substitution == null) {
       return null;
     }
+    return completeSubstitution(substitution, typeParameters);
+  }
+
+  /**
+   * Extends the given substitution to the given type parameters, and checks the bounds of all of
+   * them. This is a helper for {@link #completeOrderedSubstitution}.
+   *
+   * @param substitution a substitution for some of {@code typeParameters}
+   * @param typeParameters all the type parameters to instantiate
+   * @return an extension of {@code substitution} to {@code typeParameters} that satisfies the
+   *     bounds, or null if none is found
+   */
+  private @Nullable Substitution completeSubstitution(
+      Substitution substitution, List<TypeVariable> typeParameters) {
     List<TypeVariable> otherParameters = new ArrayList<>(typeParameters);
     otherParameters.removeAll(substitution.keySet());
-    if (!otherParameters.isEmpty()) {
-      substitution = selectSubstitution(otherParameters, substitution);
-    }
+    @Nullable Substitution result =
+        otherParameters.isEmpty() ? substitution : selectSubstitution(otherParameters, substitution);
     // The choice for the ordered type parameter ignored any bound that mentions another type
     // parameter, as in `<K extends V, V>`, so check all the bounds now.
-    if (substitution == null || !satisfiesBounds(substitution)) {
+    if (result == null || !satisfiesBounds(result)) {
       return null;
     }
-    return substitution;
+    return result;
   }
 
   /**
@@ -578,13 +604,16 @@ public class TypeInstantiator {
    * Copy(SortedMap<K,V> map)} and an input type {@code SortedMap<Thread,String>}, the substitution
    * maps {@code K} to {@code Thread} and {@code V} to {@code String}.
    *
+   * <p>The result is completed to all of {@code classTypeParameters} (see {@link
+   * #completeSubstitution}). If an input type yields a substitution that cannot be completed, this
+   * tries the other input types.
+   *
    * @param formal a formal parameter type that orders one of its type arguments, such as {@code
    *     Comparator<? super T>}, {@code SortedSet<T>}, or {@code SortedMap<T,V>}
    * @param searchIndex the index of the type argument of {@code formal} that it orders
    * @param typeParameter the type parameter to create an instantiation for
-   * @param classTypeParameters the type parameters of the class, which the result may bind
-   * @return a substitution for {@code typeParameter} and possibly other type parameters, or null if
-   *     none is found
+   * @param classTypeParameters the type parameters of the class, all of which the result binds
+   * @return a substitution for {@code classTypeParameters}, or null if none is found
    */
   private @Nullable Substitution selectSubstitutionForOrderedType(
       ParameterizedType formal,
@@ -598,7 +627,10 @@ public class TypeInstantiator {
       Substitution result =
           orderingSubstitution(formal, candidate, searchIndex, typeParameter, classTypeParameters);
       if (result != null) {
-        return result;
+        Substitution completed = completeSubstitution(result, classTypeParameters);
+        if (completed != null) {
+          return completed;
+        }
       }
     }
     return null;
@@ -669,6 +701,28 @@ public class TypeInstantiator {
       ReferenceType type = result.get(variable);
       if (!getLowerBound(variable).isLowerBound(type, result)
           || !getUpperBound(variable).isUpperBound(type, result)) {
+        return null;
+      }
+    }
+    // The input type must match the whole formal parameter type, including each type argument that
+    // the loop above skips.  For example, for a formal parameter type SortedMap<K,String>, the
+    // input type SortedMap<Thread,UUID> binds K to Thread, but it is not a
+    // SortedMap<Thread,String>.  A type argument that is not a wildcard must be the same type in
+    // both.  (This does not check a wildcard type argument of the formal parameter type.)
+    for (int i = 0; i < formalArguments.size(); i++) {
+      TypeArgument formalArgument = formalArguments.get(i);
+      if (i == searchIndex || !(formalArgument instanceof ReferenceArgument)) {
+        continue;
+      }
+      ReferenceType formalType =
+          ((ReferenceArgument) formalArgument).getReferenceType().substitute(result);
+      if (formalType.isGeneric()) {
+        // A type variable that a later choice binds.
+        continue;
+      }
+      TypeArgument inputArgument = inputArguments.get(i);
+      if (!(inputArgument instanceof ReferenceArgument)
+          || !formalType.equals(((ReferenceArgument) inputArgument).getReferenceType())) {
         return null;
       }
     }
@@ -768,7 +822,12 @@ public class TypeInstantiator {
       // the runtime classes.
       if (inputType.isClassOrInterfaceType()
           && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
-          && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
+          && ((ReferenceType) inputType).isInstantiationOf(patternType)
+          // isInstantiationOf matches the enclosing type and each type argument separately, so it
+          // accepts Outer<String>.Holder<Integer> for Outer<T>.Holder<T>, which would bind T to
+          // two types.  Exclude such an input type, which the caller would reject.
+          && (!patternType.isGeneric()
+              || ((ReferenceType) inputType).getInstantiatingSubstitution(patternType) != null)) {
         matches.add((ReferenceType) inputType);
       }
     }

@@ -971,6 +971,17 @@ public class InstantiationTest {
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(t));
 
+    // Positive control:  the only member type input is Outer<String>.Holder<String>.
+    Set<Type> onlyMatchingInputTypes = new LinkedHashSet<>();
+    onlyMatchingInputTypes.add(JavaTypes.OBJECT_TYPE);
+    onlyMatchingInputTypes.add(stringString);
+    TypedClassOperation onlyMatchingInstance =
+        new TypeInstantiator(onlyMatchingInputTypes).instantiate(operation);
+    assertNotNull("instantiation failed for " + operation, onlyMatchingInstance);
+    assertEquals(stringString, onlyMatchingInstance.getInputTypes().get(0));
+
+    // The candidate input types exclude Outer<String>.Holder<Integer>, so instantiation never
+    // chooses it, and it always succeeds.
     Set<Type> inputTypes = new LinkedHashSet<>();
     inputTypes.add(JavaTypes.OBJECT_TYPE);
     inputTypes.add(stringInteger);
@@ -978,9 +989,8 @@ public class InstantiationTest {
     for (int seed = 0; seed < 10; seed++) {
       Randomness.setSeed(seed);
       TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(operation);
-      if (instance != null) {
-        assertEquals(stringString, instance.getInputTypes().get(0));
-      }
+      assertNotNull("instantiation failed for " + operation, instance);
+      assertEquals(stringString, instance.getInputTypes().get(0));
     }
     Randomness.setSeed(0);
   }
@@ -1008,6 +1018,19 @@ public class InstantiationTest {
         holderType(JavaTypes.STRING_TYPE, longType).getInstantiatingSubstitution(goalType);
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerParameter));
+  }
+
+  /**
+   * {@code Outer<String>.Holder<Integer>} is not a subtype of {@code Outer<Long>.Holder<Integer>},
+   * because the enclosing types differ.
+   */
+  @Test
+  public void testMemberTypeSubtypeRequiresSameEnclosingType() {
+    ReferenceType integerType = (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType longType = (ReferenceType) JavaTypes.LONG_TYPE.toBoxedPrimitive();
+    ClassOrInterfaceType stringInteger = holderType(JavaTypes.STRING_TYPE, integerType);
+    assertTrue(stringInteger.isSubtypeOfOrEqualTo(holderType(JavaTypes.STRING_TYPE, integerType)));
+    assertFalse(stringInteger.isSubtypeOfOrEqualTo(holderType(longType, integerType)));
   }
 
   /**
@@ -1117,5 +1140,130 @@ public class InstantiationTest {
     assertTrue(
         bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerChild.class), new Substitution()));
     assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
+  }
+
+  /** A class with a member class that extends {@code Outer<String>.Inner}. */
+  private static class OwnerC {
+    /** A member class that extends a member class, of another class, with no type parameters. */
+    class SubOfInner extends Outer<String>.Inner {
+      /**
+       * Creates a SubOfInner.
+       *
+       * @param outer the enclosing instance of the superclass
+       */
+      SubOfInner(Outer<String> outer) {
+        outer.super();
+      }
+    }
+  }
+
+  /**
+   * {@code OwnerC.SubOfInner}, which extends {@code Outer<String>.Inner}, instantiates {@code
+   * Outer<E>.Inner} by binding {@code E} to {@code String}, though {@code Inner} declares no type
+   * parameters and the enclosing classes differ.
+   */
+  @Test
+  public void testMemberSubclassOfNonParameterizedMemberClass() {
+    ClassOrInterfaceType sub = ClassOrInterfaceType.forClass(OwnerC.SubOfInner.class);
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable outerParameter = genericInner.getTypeParameters().get(0);
+    Substitution substitution = sub.getInstantiatingSubstitution(genericInner);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerParameter));
+  }
+
+  /**
+   * A generic class whose member class has a type parameter bounded by the enclosing class's type
+   * parameter.
+   *
+   * @param <T> the type parameter
+   */
+  private static class BoundedOuter<T extends Number> {
+    /**
+     * A member class whose type parameter is bounded by that of the enclosing class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U extends T> {}
+  }
+
+  /**
+   * A method whose parameter type is a member type with a wildcard type argument.
+   *
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static void boundedWildcardInner(BoundedOuter<Integer>.Inner<?> inner) {}
+
+  /**
+   * The capture variable of {@code BoundedOuter<Integer>.Inner<?>}, where the type parameter of
+   * {@code Inner} is bounded by the type parameter of {@code BoundedOuter}, has upper bound {@code
+   * Integer}.
+   */
+  @Test
+  public void testMemberTypeCaptureBoundFromEnclosingType() throws Exception {
+    Method m =
+        InstantiationTest.class.getDeclaredMethod("boundedWildcardInner", BoundedOuter.Inner.class);
+    InstantiatedType wildcardInner =
+        (InstantiatedType) ClassOrInterfaceType.forType(m.getGenericParameterTypes()[0]);
+    InstantiatedType captured = wildcardInner.applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    ParameterBound upperBound = capture.getUpperTypeBound();
+    assertTrue(upperBound.toString(), upperBound.getTypeParameters().isEmpty());
+    assertTrue(
+        upperBound.toString(),
+        upperBound.isUpperBound(ReferenceType.forClass(Integer.class), new Substitution()));
+  }
+
+  /**
+   * Applying the substitution from {@link InstantiatedType#getTypeSubstitutionWithEnclosingTypes()}
+   * to the generic class type yields the instantiated type, including its enclosing type.
+   */
+  @Test
+  public void testTypeSubstitutionWithEnclosingTypes() {
+    ReferenceType integerType = (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive();
+    InstantiatedType stringInteger = (InstantiatedType) holderType(JavaTypes.STRING_TYPE, integerType);
+    Substitution substitution = stringInteger.getTypeSubstitutionWithEnclosingTypes();
+    assertNotNull(substitution);
+    ClassOrInterfaceType genericHolder = ClassOrInterfaceType.forClass(Outer.Holder.class);
+    assertEquals(stringInteger, genericHolder.substitute(substitution));
+  }
+
+  /**
+   * A method whose type parameter is bounded by a member type that has no type parameters of its
+   * own.
+   *
+   * @param <T> the type parameter
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Outer<String>.Inner> void boundedByInner(T inner) {}
+
+  /**
+   * A method whose type parameter is bounded by a member type whose owner type mentions the type
+   * parameter.
+   *
+   * @param <T> the type parameter
+   * @param holder a holder
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Outer<T>.Holder<Integer>> void boundedByRecursiveOwner(T holder) {}
+
+  /**
+   * Converting a type variable whose bound is a member type, such as {@code T extends
+   * Outer<String>.Inner} or {@code T extends Outer<T>.Holder<Integer>}, succeeds.
+   */
+  @Test
+  public void testMemberTypeBoundsFromReflection() throws Exception {
+    Method inner = InstantiationTest.class.getDeclaredMethod("boundedByInner", Outer.Inner.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(inner).getInputTypes().get(0);
+    ClassOrInterfaceType stringInner = outerInnerType(JavaTypes.STRING_TYPE);
+    assertTrue(t.getUpperTypeBound().isUpperBound(stringInner, new Substitution()));
+
+    Method recursive =
+        InstantiationTest.class.getDeclaredMethod("boundedByRecursiveOwner", Outer.Holder.class);
+    TypeVariable u = (TypeVariable) TypedOperation.forMethod(recursive).getInputTypes().get(0);
+    assertTrue(u.getUpperTypeBound().getTypeParameters().contains(u));
   }
 }

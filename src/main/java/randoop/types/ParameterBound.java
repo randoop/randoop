@@ -89,7 +89,9 @@ public abstract class ParameterBound {
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
+        // Not ParameterizedType.forType, which cannot convert a member class with no type
+        // parameters of its own, such as Outer<String>.Inner.
+        return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
       }
       return new LazyParameterBound(type);
     }
@@ -154,6 +156,11 @@ public abstract class ParameterBound {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
+      }
+      // The owner type can mention a type variable, as in Outer<T>.Holder<Integer>.
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {

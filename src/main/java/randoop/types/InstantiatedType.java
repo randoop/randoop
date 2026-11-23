@@ -120,8 +120,19 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // Convert the enclosing type first.  The bound of a type parameter of this type can mention a
+    // type parameter of an enclosing class, as in Outer<T extends Number>.Inner<U extends T>, so
+    // the bounds of the capture variables of this type depend on the converted enclosing type.
+    @Nullable ClassOrInterfaceType convertedEnclosingType =
+        isMemberClass() ? enclosingType.applyCaptureConversion() : null;
+    Substitution enclosingSubstitution =
+        convertedEnclosingType == null
+            ? new Substitution()
+            : getOwnTypeArgumentSubstitution(convertedEnclosingType);
+
     List<TypeVariable> declaredParameters = genericType.getDeclaredTypeParameters();
-    Substitution substitution = new Substitution(declaredParameters, convertedTypeList);
+    Substitution substitution =
+        enclosingSubstitution.extend(new Substitution(declaredParameters, convertedTypeList));
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
@@ -132,8 +143,11 @@ public class InstantiatedType extends ParameterizedType {
     List<TypeArgument> convertedArgumentList =
         CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    InstantiatedType result = new InstantiatedType(genericType, convertedArgumentList);
+    if (convertedEnclosingType != null) {
+      result.enclosingType = convertedEnclosingType;
+    }
+    return result;
   }
 
   /**
@@ -264,6 +278,24 @@ public class InstantiatedType extends ParameterizedType {
       substitution = new Substitution(genericType.getDeclaredTypeParameters(), arguments);
     }
     return substitution;
+  }
+
+  /**
+   * Like {@link #getTypeSubstitution()}, but also maps the type parameters of the classes that
+   * enclose the class of this type to the type arguments of the enclosing types of this type. For
+   * example, for {@code Outer<String>.Holder<Integer>}, maps the type parameter of {@code Outer} to
+   * {@code String} and the type parameter of {@code Holder} to {@code Integer}. Applying the result
+   * to the generic class type of this type yields this type.
+   *
+   * @return the type substitution for the type parameters of the class of this type and of its
+   *     enclosing classes, or null if any type argument of this type is a wildcard
+   */
+  public @Nullable Substitution getTypeSubstitutionWithEnclosingTypes() {
+    Substitution substitution = getTypeSubstitution();
+    if (substitution == null) {
+      return null;
+    }
+    return getEnclosingTypeSubstitution().extend(substitution);
   }
 
   @Override

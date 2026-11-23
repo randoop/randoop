@@ -172,6 +172,70 @@ public class OrderedTypeInstantiationTest {
     }
   }
 
+  /**
+   * A subclass of an ordered class whose own comparator constructor orders a different type
+   * parameter. The superclass orders {@code K}.
+   */
+  public static class MixedTreeSet<K, V> extends TreeSet<K> {
+    private static final long serialVersionUID = 20261122L;
+
+    public MixedTreeSet() {}
+
+    public MixedTreeSet(MyComparator<V> labels) {}
+  }
+
+  /** An interface that is a comparator of strings, not of its own type parameter. */
+  public interface StringOrder<T> extends java.util.Comparator<String> {}
+
+  /** A {@link StringOrder} whose type argument is {@code Thread}, which is not comparable. */
+  public static class ThreadStringOrder implements StringOrder<Thread> {
+    @Override
+    public int compare(String o1, String o2) {
+      return o1.compareTo(o2);
+    }
+  }
+
+  /** A naturally ordered set whose constructor takes a {@link StringOrder} for its labels. */
+  public static class LabeledTreeSet<E> extends TreeSet<E> {
+    private static final long serialVersionUID = 20261122L;
+
+    public LabeledTreeSet(StringOrder<E> labels) {}
+  }
+
+  /**
+   * An ordered set whose ordered type parameter is bounded by its other type parameter, which is
+   * bounded by {@code Number}, and whose constructor takes a comparator.
+   */
+  public static class ChainedBoundTreeSet<K extends V, V extends Number> extends TreeSet<K> {
+    private static final long serialVersionUID = 20261122L;
+
+    public ChainedBoundTreeSet(java.util.Comparator<K> order) {
+      super(order);
+    }
+  }
+
+  /** A {@code java.util.Comparator} for {@code AtomicInteger}, which is not comparable. */
+  public static class AtomicIntegerComparator implements java.util.Comparator<AtomicInteger> {
+    @Override
+    public int compare(AtomicInteger o1, AtomicInteger o2) {
+      return Integer.compare(o1.get(), o2.get());
+    }
+  }
+
+  /** A sorted map from {@code Thread} to {@code BitSet}, which is not comparable. */
+  public static class ThreadBitSetMap extends MySortedMap<Thread, BitSet> {
+    public ThreadBitSetMap() {
+      super((MyComparator<? super BitSet>) null);
+    }
+  }
+
+  /** An ordered set whose constructor takes a sorted map with a fixed value type. */
+  public static class FixedValueCopySet<K> extends TreeSet<K> {
+    private static final long serialVersionUID = 20261122L;
+
+    public FixedValueCopySet(MySortedMap<String, K> source) {}
+  }
+
   /** How many times to instantiate each constructor, since instantiation is random. */
   private static final int TRIALS = 50;
 
@@ -387,6 +451,82 @@ public class OrderedTypeInstantiationTest {
       }
     }
     assertTrue("no instantiation of " + constructor + " with element type Thread", threadElement);
+  }
+
+  /**
+   * A comparator constructor for a different type parameter does not override the type parameter
+   * that the superclass orders.
+   */
+  @Test
+  public void testLocalComparatorDoesNotOverrideInheritedOrder() throws NoSuchMethodException {
+    checkOrderedTypeArgument(
+        TypedOperation.forConstructor(MixedTreeSet.class.getConstructor()),
+        0,
+        JavaTypes.STRING_TYPE);
+  }
+
+  /**
+   * An interface whose inherited {@code compare} method compares a type other than its type
+   * parameter, such as {@code StringOrder<T> extends Comparator<String>}, does not order its type
+   * argument.
+   */
+  @Test
+  public void testComparatorOfOtherTypeIsNotOrdering() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(ThreadStringOrder.class).getSupertypesInclusive());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(LabeledTreeSet.class.getConstructor(StringOrder.class));
+    List<List<Type>> instantiations = instantiatedTypeArguments(constructor, inputTypes);
+    assertTrue("no instantiation of " + constructor, !instantiations.isEmpty());
+    for (List<Type> typeArguments : instantiations) {
+      assertEquals(JavaTypes.STRING_TYPE, typeArguments.get(0));
+    }
+  }
+
+  /**
+   * If the substitution from one ordering input type cannot be completed, the instantiation tries
+   * the other ordering input types.
+   */
+  @Test
+  public void testRetryOrderingCandidates() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(ClassOrInterfaceType.forClass(MyThreadOrder.class).getSupertypesInclusive());
+    inputTypes.addAll(
+        ClassOrInterfaceType.forClass(AtomicIntegerComparator.class).getSupertypesInclusive());
+    inputTypes.addAll(ClassOrInterfaceType.forClass(AtomicInteger.class).getSupertypesInclusive());
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(
+            ChainedBoundTreeSet.class.getConstructor(java.util.Comparator.class));
+    for (int i = 0; i < TRIALS; i++) {
+      TypedClassOperation instantiated = instantiator.instantiate(constructor);
+      assertNotNull("instantiation of " + constructor, instantiated);
+      InstantiatedType outputType = (InstantiatedType) instantiated.getOutputType();
+      ReferenceArgument typeArgument = (ReferenceArgument) outputType.getTypeArguments().get(0);
+      assertEquals(
+          outputType.toString(),
+          ReferenceType.forClass(AtomicInteger.class),
+          typeArgument.getReferenceType());
+    }
+  }
+
+  /**
+   * An ordering input type supplies the ordered type argument only if it matches the fixed type
+   * arguments of the formal parameter type: {@code MySortedMap<Thread,BitSet>} is not a {@code
+   * MySortedMap<String,BitSet>}.
+   */
+  @Test
+  public void testOrderingInputMatchesFixedTypeArgument() throws NoSuchMethodException {
+    Set<Type> inputTypes = inputTypes();
+    inputTypes.addAll(ClassOrInterfaceType.forClass(ThreadBitSetMap.class).getSupertypesInclusive());
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(FixedValueCopySet.class.getConstructor(MySortedMap.class));
+    List<List<Type>> instantiations = instantiatedTypeArguments(constructor, inputTypes);
+    assertTrue("no instantiation of " + constructor, !instantiations.isEmpty());
+    for (List<Type> typeArguments : instantiations) {
+      assertEquals(JavaTypes.STRING_TYPE, typeArguments.get(0));
+    }
   }
 
   /** A constructor whose unordered type parameter is already instantiated can be instantiated. */
