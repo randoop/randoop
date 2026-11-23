@@ -67,6 +67,29 @@ public class ReferenceBoundTest {
   }
 
   /**
+   * A generic interface, used to make a lower bound whose check depends on itself.
+   *
+   * @param <T> the type parameter
+   */
+  interface SuperCycle<T> {}
+
+  /**
+   * A class that is a subtype of {@code SuperCycle<? super SuperCycleImpl>} only if that same
+   * subtype relationship holds, because its supertype is {@code SuperCycle<SuperCycle<? super
+   * SuperCycleImpl>>}.
+   */
+  static class SuperCycleImpl implements SuperCycle<SuperCycle<? super SuperCycleImpl>> {}
+
+  /**
+   * Returns {@code SuperCycle<? super SuperCycleImpl>}.
+   *
+   * @return null
+   */
+  public static SuperCycle<? super SuperCycleImpl> superCycle() {
+    return null;
+  }
+
+  /**
    * Returns the given method of this class.
    *
    * @param methodName the name of a method of this class that has no parameters
@@ -105,6 +128,19 @@ public class ReferenceBoundTest {
     return (TypeVariable)
         ((ReferenceArgument) listType.applyCaptureConversion().getTypeArguments().get(0))
             .getReferenceType();
+  }
+
+  @Test
+  public void testLowerBoundCheckThatDependsOnItself() throws NoSuchMethodException {
+    ReferenceBound bound =
+        new EagerReferenceBound(ClassOrInterfaceType.forClass(SuperCycleImpl.class));
+    ReferenceType superCycle =
+        (ReferenceType) Type.forType(method("superCycle").getGenericReturnType());
+    assertTrue(bound.isLowerBound(superCycle, new Substitution()));
+    assertFalse(
+        bound.isLowerBound(
+            GenericClassType.forClass(SuperCycle.class).instantiate(JavaTypes.STRING_TYPE),
+            new Substitution()));
   }
 
   @Test
