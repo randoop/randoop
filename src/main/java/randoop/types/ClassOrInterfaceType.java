@@ -116,6 +116,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       ParameterizedType result = ParameterizedType.forType(t);
       if (ownerClassType != null) {
         result.enclosingType = ownerClassType;
+      } else if (ownerType instanceof Class<?>
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+        // The owner type supplies no type arguments, as for NonGenericOuter.Base<String>.  Set the
+        // enclosing type as GenericClassType#substitute does for a member class, so that the two
+        // representations of the type are equal.
+        result.enclosingType = forClass((Class<?>) ownerType);
       }
       return result;
     }
