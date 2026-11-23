@@ -814,20 +814,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * supertypes of a type with wildcard arguments are those of its capture conversion. For example,
    * for {@code Outer<? extends Number>.Inner}, where {@code Inner} is a member class of {@code
    * Outer<T>}, the result maps {@code T} to a capture variable whose upper bound is {@code Number}.
-   * If capture conversion fails because of a lazy bound, then a wildcard type argument maps its
-   * type parameter to the {@link WildcardType}.
    *
    * @return the substitution to apply to the declared supertypes of this type's class
    */
   /*package*/ Substitution getSupertypeSubstitution() {
     if (this.isMemberClass()) {
-      ClassOrInterfaceType enclosing = enclosingType;
-      try {
-        enclosing = enclosing.applyCaptureConversion();
-      } catch (LazyParameterBound.LazyBoundException e) {
-        // Use the wildcards themselves.
-      }
-      return enclosing.getReferenceArgumentSubstitution();
+      return enclosingType.applyCaptureConversion().getReferenceArgumentSubstitution();
     }
     return new Substitution();
   }
