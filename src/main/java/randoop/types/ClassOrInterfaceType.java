@@ -363,13 +363,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @SuppressWarnings("ReferenceEquality") // test whether capture conversion created a new type
   public @Nullable InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (isMemberClass() && enclosingType.hasWildcardArgument()) {
-      ClassOrInterfaceType captured;
-      try {
-        captured = withCapturedEnclosingType();
-      } catch (LazyParameterBound.LazyBoundException e) {
-        // Search the supertypes of this type as it is.
-        captured = this;
-      }
+      ClassOrInterfaceType captured = withCapturedEnclosingType();
       if (captured != this) {
         return captured.getMatchingSupertype(goalType);
       }

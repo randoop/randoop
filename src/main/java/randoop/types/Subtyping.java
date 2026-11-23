@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Subtyping and type-argument containment (JLS sections 4.10 and 4.5.1) for reference types in
@@ -104,11 +103,7 @@ final class Subtyping {
       }
       // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
       // section 4.10.2).
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
     if (otherType instanceof NonParameterizedType
@@ -123,11 +118,7 @@ final class Subtyping {
         return false;
       }
       // As above, capture the wildcard arguments, here those of the enclosing types.
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
