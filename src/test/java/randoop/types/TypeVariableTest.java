@@ -599,6 +599,12 @@ public class TypeVariableTest {
     assertFalse(u.isInstantiationOf(t));
   }
 
+  @Test
+  public void testVariableWithNumberBoundIsNotSubtypeOfGenericClass() {
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    assertFalse(u.isSubtypeOfOrEqualTo(GenericClassType.forClass(List.class)));
+  }
+
   /**
    * A class whose type parameter's bound is the type parameter's own interface.
    *

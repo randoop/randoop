@@ -1,8 +1,10 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -24,7 +26,30 @@ public class MemberClassOfParameterizedTypeTest {
 
     /** Another non-generic member class of a generic class. */
     class Other {}
+
+    /**
+     * A generic member class of a generic class.
+     *
+     * @param <V> the type parameter
+     */
+    class GenericInner<V> {}
   }
+
+  /**
+   * A class whose type parameter's bound is a generic member class whose owner type and type
+   * argument contain the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class GenericMemberBound<T extends Outer<T>.GenericInner<T>> {}
+
+  /**
+   * A class whose type parameter's bound is a generic member class whose owner type, but not its
+   * type argument, contains the type parameter.
+   *
+   * @param <T> the type parameter
+   */
+  static class OwnerOnlyBound<T extends Outer<T>.GenericInner<String>> {}
 
   /**
    * A generic subclass of a member class of a parameterized type.
@@ -52,6 +77,14 @@ public class MemberClassOfParameterizedTypeTest {
     abstract Sub<Integer> subType();
 
     abstract List<Integer> integerList();
+
+    abstract Outer<Integer>.Inner integerInnerType();
+
+    abstract Outer<?>.Inner wildcardInnerType();
+
+    abstract Outer<? extends Number>.Inner numberInnerType();
+
+    abstract Outer<String>.GenericInner<String> stringGenericInnerType();
   }
 
   /**
@@ -80,5 +113,51 @@ public class MemberClassOfParameterizedTypeTest {
     EagerReferenceBound subBound = new EagerReferenceBound(sub);
     assertTrue(subBound.isLowerBound(inner, empty));
     assertFalse(subBound.isLowerBound(returnType("otherType"), empty));
+  }
+
+  @Test
+  public void testSubtypeOfMemberClassWithWildcardOwner() throws NoSuchMethodException {
+    ReferenceType sub = returnType("subType");
+    // Sub<Integer> extends Outer<String>.Inner, and Outer<String> is a subtype of Outer<?>.
+    assertTrue(sub.isSubtypeOfOrEqualTo(returnType("wildcardInnerType")));
+    assertTrue(sub.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertFalse(sub.isSubtypeOfOrEqualTo(returnType("integerInnerType")));
+    assertFalse(sub.isSubtypeOfOrEqualTo(returnType("numberInnerType")));
+
+    ReferenceType integerInner = returnType("integerInnerType");
+    assertTrue(integerInner.isSubtypeOfOrEqualTo(returnType("numberInnerType")));
+    assertTrue(integerInner.isSubtypeOfOrEqualTo(returnType("wildcardInnerType")));
+    assertFalse(integerInner.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertFalse(returnType("innerType").isSubtypeOfOrEqualTo(returnType("numberInnerType")));
+  }
+
+  @Test
+  public void testEagerBoundOfMemberClassWithWildcardOwner() throws NoSuchMethodException {
+    Substitution empty = new Substitution();
+    EagerReferenceBound numberInnerBound = new EagerReferenceBound(returnType("numberInnerType"));
+    assertTrue(numberInnerBound.isUpperBound(returnType("integerInnerType"), empty));
+    assertFalse(numberInnerBound.isUpperBound(returnType("innerType"), empty));
+    assertFalse(numberInnerBound.isUpperBound(returnType("subType"), empty));
+  }
+
+  @Test
+  public void testLazyBoundOfGenericMemberClassKeepsOwner() throws NoSuchMethodException {
+    TypeVariable t = GenericClassType.forClass(GenericMemberBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertEquals(
+        returnType("stringGenericInnerType"), ((ReferenceBound) substituted).getBoundType());
+  }
+
+  @Test
+  public void testBoundWithTypeVariableOnlyInOwnerIsLazy() throws NoSuchMethodException {
+    TypeVariable t = GenericClassType.forClass(OwnerOnlyBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    assertEquals(Collections.singletonList(t), bound.getTypeParameters());
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertEquals(
+        returnType("stringGenericInnerType"), ((ReferenceBound) substituted).getBoundType());
   }
 }
