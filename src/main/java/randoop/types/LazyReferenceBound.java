@@ -132,6 +132,17 @@ class LazyReferenceBound extends EagerReferenceBound {
       // of the substitution, because they can mention type variables that it instantiates.
       return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
+    if (argType.isReferenceType() && substitution.instantiatesTypeParameters()) {
+      // The bound type can contain unknowns, such as U in Outer<U>.Inner, where U is a sibling of
+      // a type parameter that the substitution instantiates.  The bound is a lower bound if some
+      // choice for the unknowns makes it one:  for `U extends Number`, Outer<U>.Inner is a lower
+      // bound of Outer<Integer>.Inner, but not of Outer<String>.Inner.
+      Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+      ReferenceType boundType = getBoundType().substitute(completeSubstitution);
+      if (Subtyping.hasUnknown(boundType, completeSubstitution)) {
+        return Subtyping.canBeSubtype(boundType, (ReferenceType) argType, completeSubstitution);
+      }
+    }
     return super.isLowerBound(argType, substitution);
   }
 
@@ -246,8 +257,7 @@ class LazyReferenceBound extends EagerReferenceBound {
       return false;
     }
     // With an empty substitution, no type variable is an unknown.  Subtyping compares enclosing
-    // types too, which InstantiatedType.equals ignores:
-    // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
+    // types too:  GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
     // A lower bound that is a LazyParameterBound, such as the reflective bound `Comparable<T>` of
     // `T extends Comparable<T>`, is first converted to the equivalent ReferenceBound.
     ReferenceType lowerType;

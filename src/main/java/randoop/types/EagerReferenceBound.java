@@ -42,12 +42,14 @@ class EagerReferenceBound extends ReferenceBound {
     }
     // A member class that declares no type parameters, of a parameterized type, such as
     // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
-    // capture conversion.  It is compared by a subtype test.
-    if (argType instanceof NonParameterizedType && argType.isParameterized()) {
+    // capture conversion.  It is compared by a subtype test, which compares the enclosing types by
+    // containment, as isSubtypeOfOrEqualTo does not.  The type variables in argType, which the
+    // substitution does not apply to, stand for themselves.
+    if (isMemberOfParameterizedType(argType)) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, subst);
+      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, new Substitution());
     }
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
@@ -121,8 +123,9 @@ class EagerReferenceBound extends ReferenceBound {
     // that is a type variable, through its upper bound.  A type variable in the enclosing type of
     // the bound, such as U in Outer<U>.Inner, can be an unknown, such as a sibling of the type
     // parameter whose bound this is, so the substitution is completed with identity mappings.
-    // ReferenceType.isSubtypeOfOrEqualTo would compare the enclosing types with equals.
-    if (thisBoundType instanceof NonParameterizedType && thisBoundType.isParameterized()) {
+    // The subtype test compares the enclosing types by containment;
+    // ReferenceType.isSubtypeOfOrEqualTo would compare them with equals.
+    if (isMemberOfParameterizedType(thisBoundType)) {
       if (!argType.isReferenceType()) {
         return false;
       }
@@ -176,5 +179,17 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given type is a member class that declares no type parameters, of a
+   * parameterized type, such as {@code Outer<String>.Inner}. Such a type is parameterized, but is
+   * not an {@link InstantiatedType}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a non-generic member class of a parameterized type
+   */
+  private static boolean isMemberOfParameterizedType(Type type) {
+    return type instanceof NonParameterizedType && type.isParameterized();
   }
 }

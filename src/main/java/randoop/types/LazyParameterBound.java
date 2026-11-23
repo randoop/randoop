@@ -165,8 +165,9 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard, or is a member class whose owner type cannot be converted
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard, or is a member
+   *     class whose owner type cannot be converted
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -200,10 +201,11 @@ class LazyParameterBound extends ParameterBound {
           GenericClassType.forClass((Class<?>) parameterizedType.getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       // For a member class such as Outer<String>.Middle<Integer>, keep the owner type, as
-      // ParameterizedType.forType does.  ParameterizedType.forType omits an owner type that is the
-      // type that the declaration of the enclosing class denotes, such as Outer<T>.  The
-      // substitution can instantiate such an owner type, as by mapping T to Integer, so the
-      // substituted owner type is kept unless it is still the generic form of its class.
+      // ParameterizedType.forType does.  ParameterizedType.forType does not preserve an owner type
+      // that is the type that the declaration of the enclosing class denotes, such as Outer<T>, but
+      // uses the declaration of the enclosing class.  The substitution can instantiate such an
+      // owner type, as by mapping T to Integer, so the substituted owner type is kept unless it is
+      // still the generic form of its class.
       java.lang.reflect.Type owner = parameterizedType.getOwnerType();
       Class<?> rawType = (Class<?>) parameterizedType.getRawType();
       if (owner instanceof ParameterizedType
@@ -222,6 +224,12 @@ class LazyParameterBound extends ParameterBound {
           if (preserved || !ownerClassType.isGenericForm()) {
             instantiatedType.enclosingType = ownerClassType;
           }
+        }
+        if (instantiatedType.enclosingType == null) {
+          // The substitution leaves a declaration-form owner unchanged.  Represent it as
+          // ParameterizedType.forType does, by the declaration of the enclosing class.
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) ((ParameterizedType) owner).getRawType());
         }
       }
       return TypeArgument.forType(instantiatedType);
@@ -503,8 +511,12 @@ class LazyParameterBound extends ParameterBound {
       // The bound has no type variable, so no substitution changes it.
       return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
     }
-    ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(argType, substitution);
+    // Compare the converted bound, in which each type variable is the one in this bound, so that
+    // the comparison applies the substitution exactly once.  Applying the substitution first, and
+    // then again in the comparison, would replace a type variable that the substitution put in the
+    // bound:  for `T[]` with `T := W` and `W := Integer`, it would compare Integer[], not W[].
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.isLowerBound(argType, substitution);
   }
 
   @Override

@@ -10,7 +10,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * substitution that has no unknowns, these are the ordinary relations.
  *
  * <p>These relations differ from {@link ReferenceType#isSubtypeOfOrEqualTo(Type)}, which treats a
- * raw type as a subtype of every parameterized type that contains a type variable.
+ * raw type, and every parameterized type of a class, as a subtype of the generic form of that
+ * class: for example, raw {@code List} and {@code List<String>} are subtypes of {@code List<E>},
+ * where {@code E} is the type parameter of {@code List}, though not of {@code List<T>} for another
+ * type variable {@code T}. Here, {@code E} stands for itself, as any other type variable does.
  *
  * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
  * which, unless the bound or the argument is a type variable, treats every type variable in the
@@ -112,13 +115,15 @@ final class Subtyping {
     }
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
+      // section 4.10.2).  Capture this type before finding its supertype:  for
+      // `C<T> implements Comparable<List<T>>`, the supertype of C<?> is Comparable<List<CAP>>, not
+      // Comparable<List<?>>, whose nested wildcard capture conversion would not convert.
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
       InstantiatedType supertype = findMatchingSupertype(capturedType, otherInstantiatedType);
       if (supertype == null) {
         return false;
       }
-      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
-      // section 4.10.2).
       supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
@@ -229,12 +234,14 @@ final class Subtyping {
    */
   private static boolean argumentsContained(
       ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
-    if (otherType instanceof InstantiatedType) {
-      if (!(type instanceof InstantiatedType)) {
+    // An enclosing type can be a GenericClassType, such as Outer in Outer<E>.Inner<Integer>, whose
+    // type arguments are its type parameters, such as E.  Each stands for itself.
+    if (otherType instanceof ParameterizedType) {
+      if (!(type instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
-      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
+      List<TypeArgument> typeArguments = type.getTypeArguments();
+      List<TypeArgument> otherTypeArguments = otherType.getTypeArguments();
       if (typeArguments.size() != otherTypeArguments.size()) {
         return false;
       }
@@ -333,7 +340,7 @@ final class Subtyping {
    * @param substitution the type substitution, which determines the unknowns
    * @return true if {@code lowerType} is, or can be chosen to be, a subtype of {@code type}
    */
-  private static boolean canBeSubtype(
+  /*package*/ static boolean canBeSubtype(
       ReferenceType lowerType, ReferenceType type, Substitution substitution) {
     if (!substitution.isUnknown(lowerType)) {
       if (isSubtypeOrEqual(lowerType, type, substitution)) {
@@ -359,16 +366,17 @@ final class Subtyping {
     }
     // Try the unknown's upper bound, or each member of an intersection upper bound.
     ParameterBound unknownBound = unknown.getResolvedUpperTypeBound();
+    // Every choice for the unknown is a subtype of its upper bound, and of every member of an
+    // intersection upper bound.  For `B extends Number & Runnable`, B is a subtype of Runnable,
+    // though Runnable, which is not a Number, cannot be B.  For `B extends Comparable<B>`, B is a
+    // subtype of Comparable<?>, though neither Comparable<?> nor Comparable<B> can be B.
+    if (unknownBound.hasUpperBound(type, substitution)) {
+      return true;
+    }
     if (unknownBound instanceof ReferenceBound) {
       return boundCanBeSubtype((ReferenceBound) unknownBound, type, unknown, substitution);
     }
     if (unknownBound instanceof IntersectionTypeBound) {
-      // Every choice for the unknown is a subtype of every member of the intersection, so it is a
-      // subtype of each supertype of a member.  For `B extends Number & Runnable`, B is a subtype
-      // of Runnable, though Runnable, which is not a Number, cannot be B.
-      if (unknownBound.hasUpperBound(type, substitution)) {
-        return true;
-      }
       // Each member of the intersection is a candidate.  For `B extends Number & Serializable`,
       // B can be Number, which is a subtype of Serializable.
       for (ParameterBound member : ((IntersectionTypeBound) unknownBound).getBounds()) {
@@ -388,7 +396,7 @@ final class Subtyping {
    * @param substitution the type substitution, which determines the unknowns
    * @return true if {@code type} contains an unknown
    */
-  private static boolean hasUnknown(ReferenceType type, Substitution substitution) {
+  /*package*/ static boolean hasUnknown(ReferenceType type, Substitution substitution) {
     for (TypeVariable variable : type.getTypeParameters()) {
       if (substitution.isUnknown(variable)) {
         return true;
@@ -468,12 +476,14 @@ final class Subtyping {
    */
   private static boolean argumentsCanBeContained(
       ClassOrInterfaceType lowerType, ClassOrInterfaceType type, Substitution substitution) {
-    if (type instanceof InstantiatedType) {
-      if (!(lowerType instanceof InstantiatedType)) {
+    // As in argumentsContained, a GenericClassType enclosing type is compared by its type
+    // parameters.
+    if (type instanceof ParameterizedType) {
+      if (!(lowerType instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> lowerTypeArguments = ((InstantiatedType) lowerType).getTypeArguments();
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> lowerTypeArguments = lowerType.getTypeArguments();
+      List<TypeArgument> typeArguments = type.getTypeArguments();
       if (lowerTypeArguments.size() != typeArguments.size()) {
         return false;
       }
