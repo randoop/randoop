@@ -228,12 +228,18 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.  The comparison includes the owner's own enclosing types, which
-        // InstantiatedType.equals ignores:  for O<A>.M<B>.I<U>, substituting only A changes only
-        // the enclosing type of M<B>.
-        if (!isDeclarationFormOwner
-            || !Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+        // If the substitution leaves a declaration-form owner unchanged, use the enclosing type
+        // that ParameterizedType.forType uses for it:  the declaration of the enclosing class,
+        // whose type parameters, such as A in Outer<A>.Inner<String>, remain type parameters of
+        // the result.  The comparison includes the owner's own enclosing types:  for
+        // O<A>.M<B>.I<U>, substituting only A changes only the enclosing type of M<B>.  It also
+        // includes the bounds of type variables, which a substitution can replace by copies with
+        // other bounds.
+        if (isDeclarationFormOwner
+            && TypeVariable.areIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
+        } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
       }
@@ -470,8 +476,11 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
-      // The bound has no type variable, so no substitution changes it.
-      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+      // The bound has no type variable, so no substitution changes it.  Subtyping compares the
+      // whole chain of enclosing types, as for O<String>.M<Integer>.I and O<Number>.M<Integer>.I.
+      return argType.isReferenceType()
+          && Subtyping.isSubtypeOrEqual(
+              ReferenceType.forType(boundType), (ReferenceType) argType, new Substitution());
     }
     ParameterBound b = substituteWithUnknowns(substitution);
     // As in isLowerBound(ParameterBound, Substitution), compare the instantiated bound without
@@ -503,8 +512,11 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
-      // The bound has no type variable, so no substitution changes it.
-      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+      // The bound has no type variable, so no substitution changes it.  As in isLowerBound,
+      // Subtyping compares the whole chain of enclosing types.
+      return argType.isReferenceType()
+          && Subtyping.isSubtypeOrEqual(
+              (ReferenceType) argType, ReferenceType.forType(boundType), new Substitution());
     }
     ParameterBound b = substituteWithUnknowns(substitution);
     // As in isLowerBound(ParameterBound, Substitution), compare the instantiated bound without

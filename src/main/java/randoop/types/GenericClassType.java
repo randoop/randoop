@@ -215,14 +215,16 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
-    for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
+    // The type parameters include those of enclosing classes, as for Outer<T>.Inner<U>, so check
+    // each argument against the bound of its own type parameter.
+    for (int i = 0; i < typeParameters.size(); i++) {
+      TypeVariable typeParameter = typeParameters.get(i);
+      if (!typeParameter.getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
             "type argument "
                 + typeArguments[i]
                 + " does not match parameter bound "
-                + params.get(i).getUpperTypeBound());
+                + typeParameter.getUpperTypeBound());
       }
     }
     return this.substitute(substitution);
@@ -242,14 +244,15 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
-    for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+    // As above, check each argument against the bound of its own type parameter.
+    for (int i = 0; i < typeParameters.size(); i++) {
+      TypeVariable typeParameter = typeParameters.get(i);
+      if (!typeParameter.getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
             "type argument "
                 + typeArguments.get(i)
                 + " does not match parameter bound "
-                + params.get(i).getUpperTypeBound());
+                + typeParameter.getUpperTypeBound());
       }
     }
     return this.substitute(substitution);

@@ -119,14 +119,15 @@ final class Subtyping {
         && type instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
-      // not, so compare the enclosing types here.
-      ClassOrInterfaceType supertype =
-          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
-      if (supertype == null) {
-        return false;
-      }
-      // As above, capture the wildcard arguments, here those of the enclosing types.
+      // not, so compare the enclosing types here.  As above, the type is captured before its
+      // supertype is found, and the supertype is captured too.
+      ClassOrInterfaceType supertype;
       try {
+        ClassOrInterfaceType capturedType = ((ClassOrInterfaceType) type).applyCaptureConversion();
+        supertype = findSupertypeOfClass(capturedType, otherType.getRuntimeClass());
+        if (supertype == null) {
+          return false;
+        }
         supertype = supertype.applyCaptureConversion();
       } catch (LazyBoundException e) {
         return false;
@@ -499,7 +500,9 @@ final class Subtyping {
         && !isSameType(classType.enclosingType, otherClassType.enclosingType, substitution)) {
       return false;
     }
-    if (type instanceof InstantiatedType != otherType instanceof InstantiatedType) {
+    // A raw type, such as List, is not the same type as its generic declaration, List<E>, though
+    // both have the same runtime class.
+    if (type.getClass() != otherType.getClass()) {
       return false;
     }
     if (!(type instanceof InstantiatedType)) {

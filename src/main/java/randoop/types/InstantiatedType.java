@@ -521,8 +521,12 @@ public class InstantiatedType extends ParameterizedType {
       // is a subtype of otherType if the type arguments of otherType contain its type arguments,
       // as List<String> is a subtype of Collection<?> because Collection<String> is.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
+      // As in Subtyping.isSubtypeOrEqual, a type with wildcard arguments is captured before its
+      // supertype is found:  if C<T> implements Supplier<List<T>>, then the supertype of C<?> is
+      // Supplier<List<CAP>>, not Supplier<List<?>>, which substituting the wildcard would give.
+      InstantiatedType source = this.hasWildcardArgument() ? this.applyCaptureConversion() : this;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          source.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
       // The supertype has the class of `otherType`, so this applies type argument containment, as
       // for Collection<Integer> and Collection<? extends Number>.  The runtime class check ensures
       // that the recursive call uses the second clause above, and so terminates.

@@ -78,11 +78,18 @@ public class ParameterBoundTest {
   @Test
   public void testConcreteGenericArrayBoundWithEmptySubstitution() {
     java.lang.reflect.Type arrayType = fieldType(ParameterBoundTest.class, "concreteGenericArray");
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), arrayType);
     Type argType = Type.forType(arrayType);
     Substitution empty = new Substitution();
-    assertTrue(bound.isUpperBound(argType, empty));
-    assertTrue(bound.isLowerBound(argType, empty));
+    // ParameterBound.forType creates an eager bound, so also test a lazy bound directly:  an empty
+    // substitution materializes it.
+    for (ParameterBound bound :
+        Arrays.asList(
+            ParameterBound.forType(Collections.emptySet(), arrayType),
+            new LazyParameterBound(arrayType))) {
+      assertTrue(bound.isUpperBound(argType, empty));
+      assertTrue(bound.isLowerBound(argType, empty));
+    }
+    assertTrue(new LazyParameterBound(arrayType).substitute(empty) instanceof ReferenceBound);
   }
 
   @Test
@@ -380,15 +387,60 @@ public class ParameterBoundTest {
   @Test
   public void testArrayOfNonGenericMemberClassBound() {
     java.lang.reflect.Type type = fieldType(ParameterBoundTest.class, "stringInnerArray");
-    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), type);
     Type argType = Type.forType(type);
     Substitution empty = new Substitution();
-    assertTrue(bound.isUpperBound(argType, empty));
-    assertTrue(bound.isLowerBound(argType, empty));
-    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
     ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
-    assertFalse(bound.isUpperBound(stringArray, empty));
-    assertFalse(bound.isLowerBound(stringArray, empty));
+    // ParameterBound.forType creates an eager bound, so also test a lazy bound directly:  an empty
+    // substitution materializes it.
+    for (ParameterBound bound :
+        Arrays.asList(
+            ParameterBound.forType(Collections.emptySet(), type), new LazyParameterBound(type))) {
+      assertTrue(bound.isUpperBound(argType, empty));
+      assertTrue(bound.isLowerBound(argType, empty));
+      assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
+      assertFalse(bound.isUpperBound(stringArray, empty));
+      assertFalse(bound.isLowerBound(stringArray, empty));
+    }
+    assertTrue(new LazyParameterBound(type).substitute(empty) instanceof ReferenceBound);
+  }
+
+  /**
+   * A generic class with a generic member class that has a non-generic member class.
+   *
+   * @param <A> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class ThreeLevelPlain<A> {
+    /**
+     * A generic member class that has a non-generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Middle<B> {
+      /** A non-generic member class of a generic member class. */
+      class Plain {}
+    }
+  }
+
+  /** A field whose type is a non-generic member class with two parameterized enclosing types. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private ThreeLevelPlain<String>.Middle<Integer>.Plain stringPlain;
+
+  /** A field like {@link #stringPlain}, but whose outermost type argument differs. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private ThreeLevelPlain<Number>.Middle<Integer>.Plain numberPlain;
+
+  /** A bound that is a non-generic member class is compared with each of its enclosing types. */
+  @Test
+  public void testNonGenericMemberClassBoundComparesAllEnclosingTypes() {
+    java.lang.reflect.Type stringType = fieldType(ParameterBoundTest.class, "stringPlain");
+    Type numberType = Type.forType(fieldType(ParameterBoundTest.class, "numberPlain"));
+    ParameterBound bound = new LazyParameterBound(stringType);
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(Type.forType(stringType), empty));
+    assertTrue(bound.isLowerBound(Type.forType(stringType), empty));
+    assertFalse(bound.isUpperBound(numberType, empty));
+    assertFalse(bound.isLowerBound(numberType, empty));
   }
 
   @Test

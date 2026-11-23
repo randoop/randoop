@@ -774,7 +774,10 @@ public class TypeInstantiatorTest {
   }
 
   /** A class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // only its type is used
+  })
   static class Ranked implements Comparable<String> {
     @Override
     public int compareTo(String other) {
@@ -783,7 +786,10 @@ public class TypeInstantiatorTest {
   }
 
   /** Another class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // only its type is used
+  })
   static class RankedToo implements Comparable<String> {
     @Override
     public int compareTo(String other) {
@@ -839,6 +845,45 @@ public class TypeInstantiatorTest {
 
       // No U makes both Ranked and Integer a Comparable<U>.
       assertNull(instantiator.instantiate(sharedBound, rankedToInteger));
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable whose bound mentions two other type
+   * variables, which occur nowhere else.
+   *
+   * @param <T> the result element type
+   * @param <K> the key type of {@code T}
+   * @param <V> the value type of {@code T}
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Map<K, V>, K, V> List<T> mapList() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type derives the types of type variables that
+   * occur only in a bound that mentions several of them. For the goal type {@code
+   * List<HashMap<String, Integer>>}, {@code <T extends Map<K, V>, K, V> List<T> mapList()} is
+   * instantiated with {@code String} for {@code K} and {@code Integer} for {@code V}, though
+   * neither is an input type.
+   */
+  @Test
+  public void testGoalTypeImpliesSeveralVariablesOnlyInBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation mapList =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("mapList"));
+    InstantiatedType listOfMap =
+        GenericClassType.forClass(List.class)
+            .instantiate(
+                GenericClassType.forClass(HashMap.class)
+                    .instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE));
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(mapList, listOfMap);
+      assertNotNull(operation);
+      assertEquals(listOfMap, operation.getOutputType());
     }
   }
 

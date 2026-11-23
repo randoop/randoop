@@ -125,13 +125,13 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
    * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
    * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
-   * is the null type; or, after the substitution is applied to it, is the type of this bound; or is
-   * an array type whose element type is the null type and that is a subtype of the type of this
-   * bound, as {@code NullType[]} is of {@code T[]}; or is a subtype of the type of this bound when
-   * each type variable stands for itself, as {@code ArrayList<T>} is of {@code List<T>}. The type
-   * of this bound contains type variables, so it stands for every instantiation of them; a type
-   * such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>}, but
-   * {@code List<T>} itself is.
+   * is the null type; or is an intersection, some member of which passes this test; or, after the
+   * substitution is applied to it, is the type of this bound; or is an array type whose element
+   * type is the null type and that is a subtype of the type of this bound, as {@code NullType[]} is
+   * of {@code T[]}; or is a subtype of the type of this bound when each type variable stands for
+   * itself, as {@code ArrayList<T>} is of {@code List<T>}. The type of this bound contains type
+   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
+   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -140,6 +140,16 @@ class LazyReferenceBound extends ReferenceBound {
     }
     if (lowerBound.isNullType(substitution)) {
       return true;
+    }
+    if (lowerBound instanceof IntersectionTypeBound) {
+      // An intersection is a subtype of a type if any of its members is, as AbstractList<T> &
+      // Serializable is a subtype of List<T>.
+      for (ParameterBound member : ((IntersectionTypeBound) lowerBound).getBounds()) {
+        if (hasLowerBound(member, substitution)) {
+          return true;
+        }
+      }
+      return false;
     }
     // Compare enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
     // is not Outer<Number>.Inner<X>.
