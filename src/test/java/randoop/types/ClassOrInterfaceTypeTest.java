@@ -247,4 +247,53 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(rawInner.isSubtypeOfOrEqualTo(innerGenericForm));
     assertFalse(rawInner.isSubtypeOfOrEqualTo(innerOfString));
   }
+
+  /** Declares a method whose parameter types have wildcards. */
+  static class WildcardHolder {
+    /**
+     * A method whose parameter types have wildcards.
+     *
+     * @param unboundedList a list of unknown elements
+     * @param superStrings a collection whose elements are supertypes of String
+     * @param strings a list of strings
+     * @param unboundedCollection a collection of unknown elements
+     * @param superStringList a list whose elements are supertypes of String
+     */
+    static void m(
+        List<?> unboundedList,
+        Collection<? super String> superStrings,
+        List<String> strings,
+        Collection<?> unboundedCollection,
+        List<? super String> superStringList) {}
+  }
+
+  /**
+   * Returns the type of the given parameter of {@link WildcardHolder#m}.
+   *
+   * @param i the index of the parameter
+   * @return the type of the parameter
+   */
+  private static Type wildcardParameterType(int i) throws NoSuchMethodException {
+    return Type.forType(
+        WildcardHolder.class.getDeclaredMethod(
+                "m", List.class, Collection.class, List.class, Collection.class, List.class)
+            .getGenericParameterTypes()[i]);
+  }
+
+  /** `? super String` does not contain `?`, though `?` contains `? super String` (JLS 4.5.1). */
+  @Test
+  public void inheritedWildcardSubtypeTest() throws NoSuchMethodException {
+    Type unboundedList = wildcardParameterType(0);
+    Type superStrings = wildcardParameterType(1);
+    Type strings = wildcardParameterType(2);
+    Type unboundedCollection = wildcardParameterType(3);
+    Type superStringList = wildcardParameterType(4);
+
+    assertFalse(unboundedList.isSubtypeOfOrEqualTo(superStrings));
+    assertTrue(strings.isSubtypeOfOrEqualTo(superStrings));
+    assertTrue(unboundedList.isSubtypeOfOrEqualTo(unboundedCollection));
+    assertTrue(superStringList.isSubtypeOfOrEqualTo(superStrings));
+    assertTrue(superStringList.isSubtypeOfOrEqualTo(unboundedCollection));
+    assertFalse(unboundedCollection.isSubtypeOfOrEqualTo(superStrings));
+  }
 }

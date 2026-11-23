@@ -149,23 +149,24 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * If this type has an upper bound, checks for containment cases:
+   * Returns true if this wildcard contains the given one, following <a
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
+   * 4.5.1</a>. From a reflection perspective, {@code ?} is just {@code ? extends Object}. If this
+   * type has an upper bound, checks for the containment cases:
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
+   *   <li>{@code ?} contains {@code ? super S}
    * </ul>
    *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
+   * Otherwise, checks for the case
    *
    * <ul>
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
    *
-   * The last two being equivalent from the perspective of reflection.
+   * A wildcard {@code ? super T} does not contain {@code ?}, nor any other wildcard with an upper
+   * bound.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
@@ -181,10 +182,14 @@ class WildcardType extends ParameterType {
         return otherBound != null
             && thisBound != null
             && otherBound.isSubtypeOfOrEqualTo(thisBound);
+      } else {
+        // `?` contains `? super S`.
+        return this.getUpperTypeBound().isObject();
       }
     } else {
       if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+        // `? super T` does not contain `?` or `? extends S`.
+        return false;
       } else {
         ParameterBound thisBound = resolveLazyBound(this.getLowerTypeBound());
         ParameterBound otherBound = resolveLazyBound(otherType.getLowerTypeBound());
@@ -193,7 +198,6 @@ class WildcardType extends ParameterType {
             && thisBound.isSubtypeOfOrEqualTo(otherBound);
       }
     }
-    return false;
   }
 
   /**

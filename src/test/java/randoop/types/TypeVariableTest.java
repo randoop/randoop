@@ -1728,10 +1728,6 @@ public class TypeVariableTest {
     assertFalse(u.canBeSubtypeOf(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
-  /** A field whose type has a wildcard bounded below by an array type. */
-  @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SecondBoundedByFirst<? super String[], ?> superStringArrayField;
-
   /** A field whose type has a wildcard bounded below by a class. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   SecondBoundedByFirst<? super String, ?> superStringField;
@@ -1806,5 +1802,38 @@ public class TypeVariableTest {
             integerValuedMap, new Substitution(x, ClassOrInterfaceType.forClass(Number.class))));
     assertFalse(
         v.canBeInstantiatedBy(integerValuedMap, new Substitution(x, JavaTypes.STRING_TYPE)));
+  }
+
+  /**
+   * A generic class.
+   *
+   * @param <B> a type parameter
+   */
+  static class ArrayArgumentBase<B> {}
+
+  /**
+   * A generic class whose superclass has an array of its type parameter as type argument.
+   *
+   * @param <T> a type parameter
+   */
+  static class ArrayArgumentSub<T> extends ArrayArgumentBase<T[]> {}
+
+  /** A field whose type is an array of a type with a wildcard argument. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  ArrayArgumentSub<?>[] wildcardSubArrayField;
+
+  /**
+   * Computing the supertypes of an array type whose component type has a wildcard argument does
+   * not create an array type of a wildcard.
+   */
+  @Test
+  public void testWildcardComponentArrayCannotBeSupertype() throws NoSuchFieldException {
+    // U extends Number
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    ReferenceType wildcardSubArray =
+        (ReferenceType)
+            Type.forType(
+                TypeVariableTest.class.getDeclaredField("wildcardSubArrayField").getGenericType());
+    assertFalse(u.canBeSupertypeOf(wildcardSubArray, new Substitution()));
   }
 }

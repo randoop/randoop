@@ -420,7 +420,9 @@ public abstract class TypeVariable extends ParameterType {
    * interface type does not is omitted. It arises when the type is a GenericClassType, whose
    * supertypes are those of its raw class and do not preserve the relationship between their type
    * parameters. A supertype that mentions only the type variables of the type, such as {@code
-   * List<E>} for {@code ArrayList<E>}, is a supertype of the type.
+   * List<E>} for {@code ArrayList<E>}, is a supertype of the type. For a class or interface type
+   * with a wildcard argument, the supertypes are those of its capture conversion, so the supertypes
+   * that mention a capture variable are omitted.
    *
    * @param type a reference type
    * @return strict supertypes of {@code type}
@@ -429,7 +431,15 @@ public abstract class TypeVariable extends ParameterType {
     Set<ReferenceType> result = new LinkedHashSet<>();
     if (type instanceof ClassOrInterfaceType) {
       List<TypeVariable> typeParameters = type.getTypeParameters();
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+      if (classType.hasWildcardArgument()) {
+        // Computing the supertypes of a type with a wildcard argument would substitute the
+        // wildcard for a type parameter, which fails if the type parameter is the component type of
+        // an array type in a supertype, as for `C<T> extends Base<T[]>`.  The supertypes of the
+        // capture conversion that mention a capture variable are omitted by the test below.
+        classType = classType.applyCaptureConversion();
+      }
+      for (ClassOrInterfaceType supertype : classType.getSupertypesStrict()) {
         if (typeParameters.containsAll(supertype.getTypeParameters())) {
           result.add(supertype);
         }
