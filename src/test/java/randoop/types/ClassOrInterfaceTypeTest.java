@@ -762,8 +762,7 @@ public class ClassOrInterfaceTypeTest {
     ClassOrInterfaceType.forClass(Outer.GenericListOfT.class);
     ClassOrInterfaceType type =
         ClassOrInterfaceType.forType(
-            GenericMemberHolder.class
-                .getDeclaredMethod("m", Outer.GenericListOfT.class)
+            GenericMemberHolder.class.getDeclaredMethod("m", Outer.GenericListOfT.class)
                 .getGenericParameterTypes()[0]);
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     InstantiatedType supplierOfInteger =
