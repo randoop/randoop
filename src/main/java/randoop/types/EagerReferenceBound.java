@@ -14,10 +14,15 @@ class EagerReferenceBound extends ReferenceBound {
   /**
    * The (bound type, argument type) pairs whose {@link #isUpperBound(Type, Substitution)} check of
    * a parameterized bound is executing on the current thread. The check captures the bound, and a
-   * capture variable's upper bound can be the bound itself, as for {@code T extends
-   * Builder<?>} in {@code Builder<T extends Builder<?>>}. Checking that the argument instantiates
-   * the capture variable then repeats the same check. The repeated check returns true: it
-   * succeeds if the rest of the original check succeeds.
+   * capture variable's upper bound can be the bound itself, as for {@code T extends Builder<?>} in
+   * {@code Builder<T extends Builder<?>>}. Checking that the argument instantiates the capture
+   * variable then repeats the same check. The repeated check returns true: it succeeds if the rest
+   * of the original check succeeds.
+   *
+   * <p>Checks are compared by {@code equals}, which ignores the bounds of a type variable. They
+   * cannot be compared by identity: when a bound mentions a type variable, as in {@code D<T, S
+   * extends D<T, ?>>}, each repetition of a check has a new bound object, so a check compared by
+   * identity would never repeat.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<Set<List<Type>>> upperBoundChecksInProgress =

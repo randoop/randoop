@@ -34,6 +34,12 @@ public class ParameterBoundTest {
    */
   interface MutualB<U extends MutualA<?>> {}
 
+  /** An implementation of {@link MutualA}, whose type argument implements {@link MutualB}. */
+  static class ConcreteMutualA implements MutualA<ConcreteMutualB> {}
+
+  /** An implementation of {@link MutualB}, whose type argument implements {@link MutualA}. */
+  static class ConcreteMutualB implements MutualB<ConcreteMutualA> {}
+
   /**
    * A type parameter whose bound is a class nested in this class.
    *
@@ -84,7 +90,7 @@ public class ParameterBoundTest {
     ReferenceType boundType =
         ((ReferenceBound) parameters.get(0).getUpperTypeBound()).getBoundType();
     assertEquals(
-        "java.util.List<? extends randoop.types.ParameterBoundTest.SelfBound<?>>",
+        "java.util.List<? extends randoop.types.ParameterBoundTest$SelfBound<?>>",
         boundType.toString());
   }
 
@@ -92,6 +98,18 @@ public class ParameterBoundTest {
   public void testMutuallyRecursiveBounds() {
     assertEquals(1, GenericClassType.forClass(MutualA.class).getTypeParameters().size());
     assertEquals(1, GenericClassType.forClass(MutualB.class).getTypeParameters().size());
+  }
+
+  @Test
+  public void testMutuallyRecursiveBoundsInstantiate() {
+    GenericClassType mutualA = GenericClassType.forClass(MutualA.class);
+    GenericClassType mutualB = GenericClassType.forClass(MutualB.class);
+    ReferenceType concreteA = ClassOrInterfaceType.forClass(ConcreteMutualA.class);
+    ReferenceType concreteB = ClassOrInterfaceType.forClass(ConcreteMutualB.class);
+    assertEquals(mutualA, mutualA.instantiate(concreteB).getGenericClassType());
+    assertEquals(mutualB, mutualB.instantiate(concreteA).getGenericClassType());
+    assertThrows(IllegalArgumentException.class, () -> mutualA.instantiate(JavaTypes.STRING_TYPE));
+    assertThrows(IllegalArgumentException.class, () -> mutualA.instantiate(concreteA));
   }
 
   @Test
