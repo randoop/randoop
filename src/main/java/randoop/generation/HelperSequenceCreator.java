@@ -297,8 +297,8 @@ final class HelperSequenceCreator {
    * given list of candidates.
    *
    * @param elementsSequence the sequence creating element values
-   * @param elementType the type of elements for the array; neither the null type nor an array
-   *     whose element type is the null type, which Java has no syntax for
+   * @param elementType the type of elements for the array; neither the null type nor an array whose
+   *     element type is the null type, which Java has no syntax for
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */

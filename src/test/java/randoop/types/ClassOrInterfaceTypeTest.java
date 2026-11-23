@@ -209,8 +209,7 @@ public class ClassOrInterfaceTypeTest {
         new WildcardType(new EagerReferenceBound(JavaTypes.STRING_TYPE), false);
     WildcardType superObject =
         new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), false);
-    WildcardType unbounded =
-        new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true);
+    WildcardType unbounded = new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true);
     // JLS 4.5.1: `? super T` contains `? super S` if T is a subtype of S.
     assertTrue(superString.contains(superObject));
     assertFalse(superObject.contains(superString));
