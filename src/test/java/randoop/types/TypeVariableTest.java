@@ -1712,9 +1712,11 @@ public class TypeVariableTest {
           "bound " + bound + " should be lazy since it contains a type variable",
           bound instanceof LazyReferenceBound);
       assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
-      // The substitution does not affect the captured type, whose bound refers to itself.
-      assertEquals(
-          capturedType, capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE)));
+      // The substitution does not affect the captured type, whose bound refers to itself.  The
+      // comparison includes the bounds of the capture variable.
+      assertTrue(
+          TypeVariable.areIdentical(
+              capturedType, capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE))));
     }
   }
 
