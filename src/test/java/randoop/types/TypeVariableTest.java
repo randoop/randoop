@@ -1789,4 +1789,38 @@ public class TypeVariableTest {
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
   }
+
+  /**
+   * A generic class with a non-generic member class.
+   *
+   * @param <E> a type parameter
+   */
+  @SuppressWarnings({"ClassCanBeStatic", "UnusedTypeParameter"}) // the member class is an inner
+  static class OuterOfComparable<E> {
+    /** A non-generic member class that is comparable to strings. */
+    @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+    abstract class ComparableMember implements Comparable<String> {}
+  }
+
+  /**
+   * A class whose type parameters are bounded by a non-generic member class and by an interface
+   * that it implements.
+   *
+   * @param <T> a type parameter bounded by a non-generic member class
+   * @param <U> a type parameter bounded by {@code Comparable<String>}
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameters are used via reflection
+  static class MemberClassBound<
+      T extends OuterOfComparable<String>.ComparableMember, U extends Comparable<String>> {}
+
+  /**
+   * A type variable whose bound is a non-generic member class of a generic class is an
+   * instantiation of a type variable whose bound is an interface that the member class implements.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundIsInstantiation() {
+    TypeVariable t = typeParameter(MemberClassBound.class, 0);
+    TypeVariable u = typeParameter(MemberClassBound.class, 1);
+    assertTrue(t.isInstantiationOf(u));
+  }
 }

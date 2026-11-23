@@ -440,6 +440,16 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
+   * Returns true if this bound is a non-generic member class of a generic class, as in {@code
+   * Outer<String>.Inner}, which has no type variable.
+   *
+   * @return true if this bound is a non-generic member class of a generic class
+   */
+  /*package*/ boolean isNonGenericMemberClass() {
+    return isNonGenericMemberClass(boundType);
+  }
+
+  /**
    * Returns this bound with the given substitution applied, after the substitution is extended to
    * map to itself each type variable in this bound that it does not map. Each such type variable
    * stands for an unknown type in the result.

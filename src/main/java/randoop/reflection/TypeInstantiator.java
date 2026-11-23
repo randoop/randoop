@@ -703,8 +703,8 @@ public class TypeInstantiator {
    * <ul>
    *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}, or it is the
    *       non-generic type that {@code substitution} gives to a type variable constrained by {@code
-   *       X}, or it is the type for {@code X} that the latter type implies; see {@link
-   *       #boundWitness(TypeVariable, TypeVariable, Substitution)}.
+   *       X}, or it is a type for {@code X} that the latter type implies; see {@link
+   *       #boundWitnesses(TypeVariable, TypeVariable, Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -739,9 +739,10 @@ public class TypeInstantiator {
           }
           // Likewise, a type argument of a supertype of the type of a constrained type variable is
           // a candidate, even if it is not an input type.
-          ReferenceType witness = boundWitness(parameter, variable, substitution);
-          if (witness != null && !candidates.contains(witness)) {
-            candidates.add(witness);
+          for (ReferenceType witness : boundWitnesses(parameter, variable, substitution)) {
+            if (!candidates.contains(witness)) {
+              candidates.add(witness);
+            }
           }
         }
         candidates.removeIf(
@@ -759,32 +760,61 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the type for the given type variable that the given substitution's type for {@code
-   * constrained} implies, if the upper bound of {@code constrained} is a parameterized type that
-   * mentions {@code parameter}. For example, if {@code constrained} is {@code T extends
-   * Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps {@code T} to
-   * {@code Ranked}, which implements {@code Comparable<String>}, then this returns {@code String}.
-   * This does not check the bounds of {@code constrained}; the caller does.
+   * Returns the types for the given type variable that the given substitution's type for {@code
+   * constrained} implies, through each member of the upper bound of {@code constrained} that is a
+   * parameterized type that mentions {@code parameter}. For example, if {@code constrained} is
+   * {@code T extends Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps
+   * {@code T} to {@code Ranked}, which implements {@code Comparable<String>}, then this returns
+   * {@code [String]}.
+   *
+   * <p>If the upper bound is an intersection, as in {@code T extends Comparable<U> & Serializable},
+   * then each member is considered separately, and the result contains the type that each member
+   * implies. This does not check the bounds of {@code constrained}, including the other members of
+   * an intersection; the caller does.
    *
    * @param parameter a type variable that {@code substitution} does not instantiate
    * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
    *     {@code parameter} and no other type variable that {@code substitution} does not instantiate
    * @param substitution a substitution
-   * @return the non-generic type for {@code parameter} that makes the substitution's type for
-   *     {@code constrained} a subtype of its upper bound, or null if there is none or it is not
-   *     determined by a supertype of the substitution's type for {@code constrained}
+   * @return the non-generic types for {@code parameter} that make the substitution's type for
+   *     {@code constrained} a subtype of a member of its upper bound, as determined by a supertype
+   *     of the substitution's type for {@code constrained}; may be empty
    */
-  private static @Nullable ReferenceType boundWitness(
+  private static List<ReferenceType> boundWitnesses(
       TypeVariable parameter, TypeVariable constrained, Substitution substitution) {
     ReferenceType type = substitution.get(constrained);
     if (!(type instanceof ClassOrInterfaceType)) {
-      return null;
+      return Collections.emptyList();
     }
     // Map `parameter` to itself, so that a lazy bound is converted to a type that mentions it.
     ParameterBound bound =
         constrained
             .getUpperTypeBound()
             .substitute(substitution.extend(new Substitution(parameter, parameter)));
+    List<ReferenceType> result = new ArrayList<>();
+    for (ParameterBound member : bound.getMembers()) {
+      ReferenceType witness = boundWitness(parameter, (ClassOrInterfaceType) type, member);
+      if (witness != null && !result.contains(witness)) {
+        result.add(witness);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns the type for the given type variable that makes the given type a subtype of the given
+   * bound, if the bound is a parameterized type that mentions {@code parameter}; see {@link
+   * #boundWitnesses(TypeVariable, TypeVariable, Substitution)}.
+   *
+   * @param parameter a type variable
+   * @param type a type
+   * @param bound an upper bound, or a member of an intersection upper bound, that can mention
+   *     {@code parameter}
+   * @return the non-generic type for {@code parameter} that makes a supertype of {@code type} an
+   *     instantiation of {@code bound}, or null if there is none
+   */
+  private static @Nullable ReferenceType boundWitness(
+      TypeVariable parameter, ClassOrInterfaceType type, ParameterBound bound) {
     if (!(bound instanceof ReferenceBound)) {
       return null;
     }
@@ -793,8 +823,7 @@ public class TypeInstantiator {
       return null;
     }
     InstantiatedType pattern = (InstantiatedType) boundType;
-    InstantiatedType supertype =
-        ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
+    InstantiatedType supertype = type.getMatchingSupertype(pattern.getGenericClassType());
     if (supertype == null) {
       return null;
     }

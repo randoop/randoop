@@ -153,19 +153,17 @@ class WildcardType extends ParameterType {
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
+   *   <li>{@code ?}, which is {@code ? extends Object}, contains {@code ? super S}
    * </ul>
    *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
+   * Otherwise, checks for the case
    *
    * <ul>
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
    *
-   * The last two being equivalent from the perspective of reflection.
+   * A wildcard {@code ? super T} contains no wildcard with an upper bound, not even {@code ?}: JLS
+   * section 4.5.1 states that {@code ? super T} is contained by {@code ?}, not the reverse.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
@@ -181,11 +179,11 @@ class WildcardType extends ParameterType {
         return otherBound != null
             && thisBound != null
             && otherBound.isSubtypeOfOrEqualTo(thisBound);
+      } else {
+        return this.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
       }
     } else {
-      if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
-      } else {
+      if (!otherType.hasUpperBound) {
         ParameterBound thisBound = resolveLazyBound(this.getLowerTypeBound());
         ParameterBound otherBound = resolveLazyBound(otherType.getLowerTypeBound());
         return thisBound != null

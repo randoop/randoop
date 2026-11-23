@@ -339,6 +339,18 @@ public class ParameterizedTypeTest {
   @SuppressWarnings("unused")
   private static List<? extends Collection<? extends Number>> listOfNumberCollections;
 
+  /** A field whose type is a collection of supertypes of integers. */
+  @SuppressWarnings("unused")
+  private static Collection<? super Integer> integerSuperCollection;
+
+  /** A field whose type is a list of unknown elements. */
+  @SuppressWarnings("unused")
+  private static List<?> unknownList;
+
+  /** A field whose type is a collection of unknown elements. */
+  @SuppressWarnings("unused")
+  private static Collection<?> unknownCollection;
+
   /**
    * Returns the type of the given field of this class.
    *
@@ -371,6 +383,23 @@ public class ParameterizedTypeTest {
     Type listOfNumberCollections = fieldType("listOfNumberCollections");
     assertTrue(fieldType("listOfIntegerLists").isSubtypeOfOrEqualTo(listOfNumberCollections));
     assertFalse(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(listOfNumberCollections));
+  }
+
+  /**
+   * Tests containment of wildcards with different kinds of bounds, in a supertype of another class:
+   * {@code ? super Integer} does not contain {@code ?}, but {@code ?} contains {@code ? super
+   * Integer}. So {@code List<?>} is not a subtype of {@code Collection<? super Integer>}, but
+   * {@code List<Integer>} is.
+   */
+  @Test
+  public void testMixedWildcardContainment() {
+    InstantiatedType listOfInteger =
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Integer.class));
+    Type integerSuperCollection = fieldType("integerSuperCollection");
+    assertTrue(listOfInteger.isSubtypeOfOrEqualTo(integerSuperCollection));
+    assertFalse(fieldType("unknownList").isSubtypeOfOrEqualTo(integerSuperCollection));
+    assertTrue(integerSuperCollection.isSubtypeOfOrEqualTo(fieldType("unknownCollection")));
   }
 
   /**

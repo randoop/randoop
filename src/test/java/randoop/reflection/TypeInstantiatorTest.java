@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -729,7 +730,10 @@ public class TypeInstantiatorTest {
   }
 
   /** A class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
   static class Ranked implements Comparable<String> {
     @Override
     public int compareTo(String other) {
@@ -738,7 +742,10 @@ public class TypeInstantiatorTest {
   }
 
   /** Another class that is comparable to strings. */
-  @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
   static class RankedToo implements Comparable<String> {
     @Override
     public int compareTo(String other) {
@@ -794,6 +801,64 @@ public class TypeInstantiatorTest {
 
       // No U makes both Ranked and Integer a Comparable<U>.
       assertNull(instantiator.instantiate(sharedBound, rankedToInteger));
+    }
+  }
+
+  /** A serializable class that is comparable to strings. */
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
+  static class SerializableRanked implements Comparable<String>, Serializable {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261122;
+
+    @Override
+    public int compareTo(String other) {
+      return 0;
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable with an intersection bound, one of
+   * whose members mentions another type variable, which occurs nowhere else.
+   *
+   * @param <T> the result element type
+   * @param <U> the type that the elements are comparable to
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<U> & Serializable, U> List<T> serializableComparableList() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type derives the type of a type variable that
+   * occurs only in a member of an intersection bound. For the goal type {@code
+   * List<SerializableRanked>}, {@code <T extends Comparable<U> & Serializable, U> List<T>
+   * serializableComparableList()} is instantiated with {@code String} for {@code U}. For the goal
+   * type {@code List<Ranked>}, there is no instantiation, because {@code Ranked} is not {@code
+   * Serializable}.
+   */
+  @Test
+  public void testGoalTypeImpliesVariableInIntersectionBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation serializableComparableList =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("serializableComparableList"));
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType listOfSerializableRanked =
+        listType.instantiate(ClassOrInterfaceType.forClass(SerializableRanked.class));
+    InstantiatedType listOfRanked =
+        listType.instantiate(ClassOrInterfaceType.forClass(Ranked.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation =
+          instantiator.instantiate(serializableComparableList, listOfSerializableRanked);
+      assertNotNull(operation);
+      assertEquals(listOfSerializableRanked, operation.getOutputType());
+      assertNull(instantiator.instantiate(serializableComparableList, listOfRanked));
     }
   }
 
