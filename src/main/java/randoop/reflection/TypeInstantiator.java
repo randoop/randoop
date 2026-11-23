@@ -137,8 +137,8 @@ public class TypeInstantiator {
   /**
    * Handles an exception that {@link #instantiate(TypedClassOperation)} threw. If {@code
    * --fail-on-generation-error} is set, throws a {@link RandoopInstantiationError}. Otherwise,
-   * reports the exception on standard output and in the log, and returns normally so that the
-   * caller can skip the operation.
+   * reports the operation and the exception's type and message on standard output, logs the
+   * exception's stack trace, and returns normally so that the caller can skip the operation.
    *
    * @param operation an operation that {@link #instantiate(TypedClassOperation)} was instantiating
    * @param e the exception that {@link #instantiate(TypedClassOperation)} threw
@@ -152,7 +152,7 @@ public class TypeInstantiator {
     }
     Log.logPrintf("Instantiation error for operation%n %s%n", operation);
     Log.logStackTrace(e);
-    System.out.printf("Instantiation error for operation%n %s%n", operation);
+    System.out.printf("Instantiation error for operation%n %s%n %s%n", operation, e);
   }
 
   /**
