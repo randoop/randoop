@@ -274,15 +274,30 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
    * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
    * only by unchecked conversion.
+   *
+   * <p>A member class that declares no type parameters is a subtype of the same member class whose
+   * enclosing type is a supertype of its enclosing type. For example, {@code Outer<String>.Inner}
+   * is a subtype of {@code Outer<?>.Inner}, but not of {@code Outer<Long>.Inner}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
-    return otherType instanceof ClassOrInterfaceType
-        && otherType.runtimeClassIs(runtimeType)
-        && ((ClassOrInterfaceType) otherType).isGenericForm();
+    if (!(otherType instanceof ClassOrInterfaceType) || !otherType.runtimeClassIs(runtimeType)) {
+      return false;
+    }
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    if (otherClassType.isGenericForm()) {
+      return true;
+    }
+    // A member class that declares no type parameters, such as Outer<String>.Inner, is a subtype
+    // of the same member class of a supertype of its enclosing type, such as Outer<?>.Inner.
+    return !this.isRawtype()
+        && otherClassType instanceof NonParameterizedType
+        && this.isMemberClass()
+        && otherClassType.isMemberClass()
+        && this.enclosingType.isSubtypeOfOrEqualTo(otherClassType.enclosingType);
   }
 
   /**

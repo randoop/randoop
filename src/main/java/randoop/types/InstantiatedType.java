@@ -427,11 +427,18 @@ public class InstantiatedType extends ParameterizedType {
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // Map<String, Integer>.  The type arguments can also conflict with the enclosing type,
+          // as for Outer<String>.Inner<Integer> and Outer<U>.Inner<U>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
-          substitution = substitution.extend(subst);
+          try {
+            substitution = substitution.extend(subst);
+          } catch (IllegalArgumentException e) {
+            // The bindings map a type variable to distinct types, as for
+            // Outer<String>.GenericInner<Integer> and Outer<X>.GenericInner<X>.
+            return null;
+          }
         }
         return substitution;
       }
