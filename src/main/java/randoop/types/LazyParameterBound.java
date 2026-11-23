@@ -134,8 +134,8 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -178,6 +178,8 @@ class LazyParameterBound extends ParameterBound {
 
       GenericClassType classType = GenericClassType.forClass(rawType);
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      // A generic member class, as in Outer<T>.GenericInner<T>, keeps the substituted owner type
+      // as its enclosing type, as ClassOrInterfaceType.forType does.
       instantiatedType.enclosingType = enclosingType;
       return TypeArgument.forType(instantiatedType);
     }
@@ -243,7 +245,7 @@ class LazyParameterBound extends ParameterBound {
     }
     if (type instanceof ParameterizedType) {
       ParameterizedType ownerType =
-          ClassOrInterfaceType.memberClassOwnerType((ParameterizedType) type);
+          ClassOrInterfaceType.enclosingOwnerType((ParameterizedType) type);
       if (ownerType != null && instantiatesAny(ownerType, substitution)) {
         return true;
       }
@@ -291,7 +293,7 @@ class LazyParameterBound extends ParameterBound {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
-      ParameterizedType ownerType = ClassOrInterfaceType.memberClassOwnerType(pt);
+      ParameterizedType ownerType = ClassOrInterfaceType.enclosingOwnerType(pt);
       if (ownerType != null) {
         variableList.addAll(getTypeParameters(ownerType));
       }

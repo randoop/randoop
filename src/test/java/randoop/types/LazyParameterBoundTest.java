@@ -166,4 +166,33 @@ public class LazyParameterBoundTest {
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
   }
+
+  /**
+   * A class with fields whose types contain a type parameter with a recursive bound.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class SelfComparableFields<T extends Comparable<T>> {
+    /** A field of type {@code List<List<T>>}. */
+    List<List<T>> listOfListField;
+
+    /** A field of type {@code List<? extends List<T>>}. */
+    List<? extends List<T>> wildcardListField;
+  }
+
+  @Test
+  public void testWildcardWithLazyBoundContainsTypeArgument() throws NoSuchFieldException {
+    InstantiatedType listOfList =
+        (InstantiatedType)
+            Type.forType(
+                SelfComparableFields.class.getDeclaredField("listOfListField").getGenericType());
+    InstantiatedType wildcardList =
+        (InstantiatedType)
+            Type.forType(
+                SelfComparableFields.class.getDeclaredField("wildcardListField").getGenericType());
+    WildcardArgument wildcard = (WildcardArgument) wildcardList.getTypeArguments().get(0);
+    assertTrue(wildcard.getTypeBound() instanceof LazyParameterBound);
+    assertTrue(wildcard.contains(listOfList.getTypeArguments().get(0)));
+  }
 }

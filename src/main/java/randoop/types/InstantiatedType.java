@@ -424,7 +424,12 @@ public class InstantiatedType extends ParameterizedType {
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
-          substitution = substitution.extend(subst);
+          try {
+            substitution = substitution.extend(subst);
+          } catch (IllegalArgumentException e) {
+            // The bindings map a type variable to distinct types.
+            return null;
+          }
         }
         return substitution;
       }
@@ -483,8 +488,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the supertype search below.
+    // A parameterized type need not be an InstantiatedType:  a NonParameterizedType member class,
+    // such as Outer<String>.Inner, is parameterized through its enclosing type.  The class and
+    // interface subtype check below handles such a type.
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
