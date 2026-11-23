@@ -3,7 +3,6 @@ package randoop.types;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
@@ -19,9 +18,11 @@ public class GenericClassType extends ParameterizedType {
   /**
    * The type parameters of the generic class. Null until first needed: computing them computes
    * their bounds, which may refer to this class, as in {@code Builder<T extends Builder<?>>}.
-   * Computing them in the constructor would recurse infinitely for such a class.
+   * Computing them in the constructor would recurse infinitely for such a class. Use {@link
+   * #parameters()} instead of reading this field.
    */
-  private @MonotonicNonNull List<TypeVariable> parameters;
+  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
+  private volatile @Nullable List<TypeVariable> parameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -39,10 +40,12 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters of this generic class
    */
   private List<TypeVariable> parameters() {
-    if (parameters == null) {
-      parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+    List<TypeVariable> result = parameters;
+    if (result == null) {
+      result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+      parameters = result;
     }
-    return parameters;
+    return result;
   }
 
   /**
