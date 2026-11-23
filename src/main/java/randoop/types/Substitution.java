@@ -321,11 +321,12 @@ public class Substitution {
 
   /**
    * Returns true if the given type is a type variable that stands for an unknown type when types
-   * are compared. That is the case if this substitution maps the type variable to itself, the type
-   * variable does not occur in the type that this substitution maps a different type variable to,
-   * and the type variable is a type parameter of a declaration whose type parameters this
-   * substitution instantiates, such as a sibling of a type parameter that is being instantiated.
-   * Every other type variable, such as a type parameter of an enclosing class, stands for itself.
+   * are compared. That is the case if this substitution maps the type variable to itself (not to a
+   * copy of it with other bounds; see {@link #mapsToItself(TypeVariable)}), the type variable does
+   * not occur in the type that this substitution maps a different type variable to, and the type
+   * variable is a type parameter of a declaration whose type parameters this substitution
+   * instantiates, such as a sibling of a type parameter that is being instantiated. Every other
+   * type variable, such as a type parameter of an enclosing class, stands for itself.
    *
    * @param type a type
    * @return true if {@code type} stands for an unknown type
@@ -336,8 +337,10 @@ public class Substitution {
     }
     TypeVariable variable = (TypeVariable) type;
     GenericDeclaration declaration = getDeclaration(variable);
+    // mapsToItself, unlike equals, distinguishes a mapping of a type variable to itself from a
+    // mapping to a copy of it with other bounds, which stands for that copy rather than an unknown.
     return declaration != null
-        && variable.equals(get(variable))
+        && mapsToItself(variable)
         && !getReplacementVariables().contains(variable)
         && getInstantiatedDeclarations().contains(declaration);
   }

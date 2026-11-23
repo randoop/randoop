@@ -11,8 +11,11 @@ import randoop.types.LazyParameterBound.LazyBoundException;
  * substitution that has no unknowns, these are the ordinary relations.
  *
  * <p>{@link ReferenceType#isSubtypeOfOrEqualTo(Type)} uses these relations, and additionally treats
- * a raw or parameterized type as a subtype of the generic form of its class (see {@link
- * ClassOrInterfaceType#isGenericForm()}).
+ * a raw type, and every parameterized type of a class, as a subtype of the generic form of that
+ * class (see {@link ClassOrInterfaceType#isGenericForm()}): for example, raw {@code List} and
+ * {@code List<String>} are subtypes of {@code List<E>}, where {@code E} is the type parameter of
+ * {@code List}, though not of {@code List<T>} for another type variable {@code T}. In these
+ * relations, {@code E} stands for itself, as any other type variable does.
  *
  * <p>These relations also differ from {@link ParameterBound#isUpperBound(Type, Substitution)},
  * which treats every type variable in the bound as an unknown.
@@ -100,8 +103,9 @@ final class Subtyping {
       // section 4.10.2).  The type is captured before its supertype is found:  if C<T> implements
       // Supplier<List<T>>, then the supertype of C<?> is Supplier<List<CAP>>, which is not a
       // subtype of Supplier<List<?>>.  Finding the supertype of C<?> itself would substitute the
-      // wildcard for T, giving Supplier<List<?>>.  The supertype is captured too, because its
-      // declaration can have wildcard arguments.
+      // wildcard for T, giving Supplier<List<?>>, whose nested wildcard capture conversion would
+      // not convert.  The supertype is captured too, because its declaration can have wildcard
+      // arguments.
       InstantiatedType supertype;
       try {
         ClassOrInterfaceType capturedType = ((ClassOrInterfaceType) type).applyCaptureConversion();
@@ -120,14 +124,15 @@ final class Subtyping {
         && type instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
-      // not, so compare the enclosing types here.
-      ClassOrInterfaceType supertype =
-          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
-      if (supertype == null) {
-        return false;
-      }
-      // As above, capture the wildcard arguments, here those of the enclosing types.
+      // not, so compare the enclosing types here.  As above, the type is captured before its
+      // supertype is found, and the supertype is captured too.
+      ClassOrInterfaceType supertype;
       try {
+        ClassOrInterfaceType capturedType = ((ClassOrInterfaceType) type).applyCaptureConversion();
+        supertype = findSupertypeOfClass(capturedType, otherType.getRuntimeClass());
+        if (supertype == null) {
+          return false;
+        }
         supertype = supertype.applyCaptureConversion();
       } catch (LazyBoundException e) {
         return false;
@@ -170,17 +175,14 @@ final class Subtyping {
    */
   private static boolean argumentsContained(
       ClassOrInterfaceType type, ClassOrInterfaceType otherType, Substitution substitution) {
-    if (otherType instanceof InstantiatedType) {
-      // The generic form of a class can be a GenericClassType, as for the enclosing type Outer<T>
-      // of Outer<T>.Inner<String>.  Its type arguments are its type parameters.
-      if (type instanceof GenericClassType) {
-        type = ((GenericClassType) type).substitute(new Substitution());
-      }
-      if (!(type instanceof InstantiatedType)) {
+    // An enclosing type can be a GenericClassType, such as Outer in Outer<E>.Inner<Integer>, whose
+    // type arguments are its type parameters, such as E.  Each stands for itself.
+    if (otherType instanceof ParameterizedType) {
+      if (!(type instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
-      List<TypeArgument> otherTypeArguments = ((InstantiatedType) otherType).getTypeArguments();
+      List<TypeArgument> typeArguments = type.getTypeArguments();
+      List<TypeArgument> otherTypeArguments = otherType.getTypeArguments();
       if (typeArguments.size() != otherTypeArguments.size()) {
         return false;
       }
@@ -397,12 +399,14 @@ final class Subtyping {
    */
   private static boolean argumentsCanBeContained(
       ClassOrInterfaceType lowerType, ClassOrInterfaceType type, Substitution substitution) {
-    if (type instanceof InstantiatedType) {
-      if (!(lowerType instanceof InstantiatedType)) {
+    // As in argumentsContained, a GenericClassType enclosing type is compared by its type
+    // parameters.
+    if (type instanceof ParameterizedType) {
+      if (!(lowerType instanceof ParameterizedType)) {
         return false;
       }
-      List<TypeArgument> lowerTypeArguments = ((InstantiatedType) lowerType).getTypeArguments();
-      List<TypeArgument> typeArguments = ((InstantiatedType) type).getTypeArguments();
+      List<TypeArgument> lowerTypeArguments = lowerType.getTypeArguments();
+      List<TypeArgument> typeArguments = type.getTypeArguments();
       if (lowerTypeArguments.size() != typeArguments.size()) {
         return false;
       }
@@ -525,7 +529,9 @@ final class Subtyping {
         && !isSameType(classType.enclosingType, otherClassType.enclosingType, substitution)) {
       return false;
     }
-    if (type instanceof InstantiatedType != otherType instanceof InstantiatedType) {
+    // A raw type, such as List, is not the same type as its generic declaration, List<E>, though
+    // both have the same runtime class.
+    if (type.getClass() != otherType.getClass()) {
       return false;
     }
     if (!(type instanceof InstantiatedType)) {

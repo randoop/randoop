@@ -396,7 +396,9 @@ public class TypeInstantiator {
       Substitution selected =
           withOriginalKeys(selectedType.getInstantiatingSubstitution(pattern), typeParameters);
       // A match can conflict with the substitution, for example if it binds a capture variable
-      // that the substitution already maps to a different type.
+      // that the substitution already maps to a different type, or for an enclosing type:  for
+      // parameters List<U> and Outer<U>.Inner, U might already be String while the selected type
+      // is Outer<Integer>.Inner.
       if (selected != null && substitution.isConsistentWith(selected)) {
         Substitution result = substitution.extend(selected);
         if (satisfiesInstantiatedBounds(result)) {
@@ -712,13 +714,12 @@ public class TypeInstantiator {
    *   <li>The type is one of the {@link #candidateTypes(TypeVariable)} of {@code X}; or it is one
    *       of the {@link #inferredTypes(Substitution)} that potentially satisfies the bounds of
    *       {@code X} (such a type need not be an input type: it can be a type argument of one); or
-   *       it is the non-generic type that {@code substitution} gives to a type variable constrained
-   *       by {@code X}, or a supertype of that type or a type argument of such a supertype; see
-   *       {@link #relatedTypes(ReferenceType)}; or it is the type for {@code X} that the type of
-   *       the constrained variable implies; see {@link #boundWitness(TypeVariable, TypeVariable,
-   *       Substitution)}; or it is such a type for a type variable whose bounds mention {@code X}
-   *       and other uninstantiated type variables, and it potentially satisfies the bounds of
-   *       {@code X}; see {@link #mentioningVariables(Substitution)}.
+   *       it is the non-generic type that {@code substitution} gives to a type variable whose
+   *       bounds mention {@code X} (whether or not they mention other uninstantiated type
+   *       variables), or a supertype of that type or a type argument of such a supertype; see
+   *       {@link #relatedTypes(ReferenceType)}; or it is a type for {@code X} that the type of such
+   *       a variable implies; see {@link #boundWitnesses(TypeVariable, TypeVariable,
+   *       Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -736,60 +737,50 @@ public class TypeInstantiator {
   private @Nullable Map<TypeVariable, List<ReferenceType>> consistentCandidatesByVariable(
       List<TypeVariable> parameters, Substitution substitution) {
     Map<TypeVariable, List<TypeVariable>> constrainedVariables = constrainedVariables(substitution);
-    Map<TypeVariable, List<TypeVariable>> mentioningVariables = mentioningVariables(substitution);
+    Map<TypeVariable, List<TypeVariable>> mentioningVariables = boundMentions(substitution, false);
     List<ReferenceType> inferredTypes = inferredTypes(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
       List<TypeVariable> constrained =
           constrainedVariables.getOrDefault(parameter, Collections.emptyList());
+      List<TypeVariable> mentioning =
+          mentioningVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
       // A type that the substitution gives to another type variable is also a candidate, if it is
       // within the bounds of `parameter`.  For example, for `<E extends Enum<E>, T extends E> void
       // consume(List<? super T>)`, if the substitution maps the capture of `? super T` to MyEnum,
       // then MyEnum is a candidate for E, even if MyEnum is not an input type.
       candidates.addAll(candidateTypes(parameter, inferredTypes));
-      // The types related to the type of an instantiated type variable whose bounds mention
-      // `parameter` and other uninstantiated type variables are also candidates, if they are within
-      // the bounds of `parameter`.  For example, for `<K, V, T extends Map<K, V>> List<T> make()`,
-      // if T is instantiated to HashMap<String, Integer>, then String is a candidate for K and
-      // Integer is a candidate for V.  The bounds of T are checked once K and V are chosen.  The
-      // constrained type variables are handled below.
-      for (TypeVariable variable :
-          mentioningVariables.getOrDefault(parameter, Collections.emptyList())) {
+      // The types of the type variables whose bounds mention `parameter` are also candidates,
+      // even if they are not input types.  For example, an input type can be List<Foo> though Foo
+      // is not an input type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a
+      // candidate for T.  The bounds of `parameter` itself are checked when the substitution is
+      // completed.  The supertypes of such a type, and their type arguments, are also candidates.
+      // For example, for `<K, V extends Map<K, V>> void consume(List<V>)`, if V is instantiated
+      // to Node, which extends HashMap<Key, Node>, then Key is a candidate for K.  This includes
+      // a type variable whose bounds mention other uninstantiated type variables too:  for
+      // `<T extends Map<K, V>, K, V>`, if T is HashMap<String, Integer>, then String is a candidate
+      // for K and Integer for V.
+      for (TypeVariable variable : mentioning) {
         ReferenceType type = substitution.get(variable);
-        if (constrained.contains(variable) || type == null || type.isGeneric()) {
-          continue;
-        }
-        for (ReferenceType related : candidateTypes(parameter, relatedTypes(type))) {
-          if (!candidates.contains(related)) {
-            candidates.add(related);
-          }
-        }
-      }
-      if (!constrained.isEmpty()) {
-        // The types of the constrained type variables are also candidates, even if they are not
-        // input types.  For example, an input type can be List<Foo> though Foo is not an input
-        // type.  If a capture of `? extends T` is instantiated to Foo, then Foo is a candidate for
-        // T.  The bounds of `parameter` itself are checked when the substitution is completed.
-        // The supertypes of such a type, and their type arguments, are also candidates.  For
-        // example, for `<K, V extends Map<K, V>> void consume(List<V>)`, if V is instantiated to
-        // Node, which extends HashMap<Key, Node>, then Key is a candidate for K.
-        for (TypeVariable variable : constrained) {
-          ReferenceType type = substitution.get(variable);
-          if (type != null && !type.isGeneric()) {
-            for (ReferenceType related : relatedTypes(type)) {
-              if (!candidates.contains(related)) {
-                candidates.add(related);
-              }
+        if (type != null && !type.isGeneric()) {
+          for (ReferenceType related : relatedTypes(type)) {
+            if (!candidates.contains(related)) {
+              candidates.add(related);
             }
           }
-          // Likewise, a type argument of a supertype of the type of a constrained type variable is
-          // a candidate, even if it is not an input type.
-          ReferenceType witness = boundWitness(parameter, variable, substitution);
-          if (witness != null && !candidates.contains(witness)) {
+        }
+        // Likewise, a type argument of a supertype of the type of such a type variable is a
+        // candidate, even if it is not an input type.
+        for (ReferenceType witness : boundWitnesses(parameter, variable, substitution)) {
+          if (!candidates.contains(witness)) {
             candidates.add(witness);
           }
         }
+      }
+      // Only the bounds of the constrained type variables can be checked with `parameter` alone
+      // instantiated.  The others are checked when the substitution is completed.
+      if (!constrained.isEmpty()) {
         candidates.removeIf(
             candidate ->
                 !satisfiesBounds(
@@ -863,34 +854,64 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the type for the given type variable that the given substitution's type for {@code
-   * constrained} implies, if the upper bound of {@code constrained} is a parameterized type that
-   * mentions {@code parameter}. For example, if {@code constrained} is {@code T extends
-   * Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps {@code T} to
-   * {@code Ranked}, which implements {@code Comparable<String>}, then this returns {@code String}.
-   * The upper bound can also be a member class that mentions {@code parameter} only in its
-   * enclosing type, as in {@code T extends Outer<U>.Inner}. This does not check the bounds of
-   * {@code constrained}; the caller does.
+   * Returns the types for the given type variable that the given substitution's type for {@code
+   * constrained} implies, through each member of the upper bound of {@code constrained} that is a
+   * parameterized type that mentions {@code parameter}. For example, if {@code constrained} is
+   * {@code T extends Comparable<U>}, {@code parameter} is {@code U}, and {@code substitution} maps
+   * {@code T} to {@code Ranked}, which implements {@code Comparable<String>}, then this returns
+   * {@code [String]}. A member can also be a member class that mentions {@code parameter} only in
+   * its enclosing type, as in {@code T extends Outer<U>.Inner}.
+   *
+   * <p>If the upper bound is an intersection, as in {@code T extends Comparable<U> & Serializable},
+   * then each member is considered separately, and the result contains the type that each member
+   * implies. This does not check the bounds of {@code constrained}, including the other members of
+   * an intersection; the caller does.
    *
    * @param parameter a type variable that {@code substitution} does not instantiate
    * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
-   *     {@code parameter} and no other type variable that {@code substitution} does not instantiate
+   *     {@code parameter}; they can also mention other type variables that {@code substitution}
+   *     does not instantiate, as {@code T extends Map<K, V>} mentions {@code K} and {@code V}
    * @param substitution a substitution
-   * @return the non-generic type for {@code parameter} that makes the substitution's type for
-   *     {@code constrained} a subtype of its upper bound, or null if there is none or it is not
-   *     determined by a supertype of the substitution's type for {@code constrained}
+   * @return the non-generic types for {@code parameter} that make the substitution's type for
+   *     {@code constrained} a subtype of a member of its upper bound, as determined by a supertype
+   *     of the substitution's type for {@code constrained}; may be empty
    */
-  private static @Nullable ReferenceType boundWitness(
+  private static List<ReferenceType> boundWitnesses(
       TypeVariable parameter, TypeVariable constrained, Substitution substitution) {
     ReferenceType type = substitution.get(constrained);
     if (!(type instanceof ClassOrInterfaceType)) {
-      return null;
+      return new ArrayList<>(0);
     }
     // Map `parameter` to itself, so that a lazy bound is converted to a type that mentions it.
     ParameterBound bound =
         constrained
             .getUpperTypeBound()
             .substitute(substitution.extend(new Substitution(parameter, parameter)));
+    List<ReferenceType> result = new ArrayList<>();
+    for (ParameterBound member : bound.getMembers()) {
+      ReferenceType witness = boundWitness(parameter, (ClassOrInterfaceType) type, member);
+      if (witness != null && !result.contains(witness)) {
+        result.add(witness);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns the type for the given type variable that makes the given type a subtype of the given
+   * bound, if the bound is a parameterized type that mentions {@code parameter}, or a member class
+   * that mentions {@code parameter} only in its enclosing type; see {@link
+   * #boundWitnesses(TypeVariable, TypeVariable, Substitution)}.
+   *
+   * @param parameter a type variable
+   * @param type a type
+   * @param bound an upper bound, or a member of an intersection upper bound, that can mention
+   *     {@code parameter}
+   * @return the non-generic type for {@code parameter} that makes a supertype of {@code type} an
+   *     instantiation of {@code bound}, or null if there is none
+   */
+  private static @Nullable ReferenceType boundWitness(
+      TypeVariable parameter, ClassOrInterfaceType type, ParameterBound bound) {
     if (!(bound instanceof ReferenceBound)) {
       return null;
     }
@@ -901,8 +922,7 @@ public class TypeInstantiator {
     Substitution matching;
     if (boundType instanceof InstantiatedType) {
       InstantiatedType pattern = (InstantiatedType) boundType;
-      InstantiatedType supertype =
-          ((ClassOrInterfaceType) type).getMatchingSupertype(pattern.getGenericClassType());
+      InstantiatedType supertype = type.getMatchingSupertype(pattern.getGenericClassType());
       if (supertype == null) {
         return null;
       }
@@ -913,7 +933,7 @@ public class TypeInstantiator {
       // A member class that declares no type parameters, such as Outer<U>.Inner, has no type
       // arguments of its own.  getInstantiatingSubstitution matches the enclosing type of the
       // supertype of `type` that is of that class, such as Outer<String> for Outer<String>.Inner.
-      matching = ((ClassOrInterfaceType) type).getInstantiatingSubstitution(boundType);
+      matching = type.getInstantiatingSubstitution(boundType);
     } else {
       return null;
     }
@@ -937,6 +957,23 @@ public class TypeInstantiator {
    */
   private static Map<TypeVariable, List<TypeVariable>> constrainedVariables(
       Substitution substitution) {
+    return boundMentions(substitution, true);
+  }
+
+  /**
+   * Returns a map from each uninstantiated type variable {@code X} to the type variables that the
+   * given substitution instantiates and whose bounds mention {@code X}. If {@code onlyOne} is true,
+   * the values contain only the type variables whose bounds mention no other uninstantiated type
+   * variable; see {@link #constrainedVariables(Substitution)}.
+   *
+   * @param substitution a substitution
+   * @param onlyOne if true, omit each type variable whose bounds mention more than one
+   *     uninstantiated type variable
+   * @return a map from each uninstantiated type variable to the instantiated type variables whose
+   *     bounds mention it
+   */
+  private static Map<TypeVariable, List<TypeVariable>> boundMentions(
+      Substitution substitution, boolean onlyOne) {
     Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
     Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
     for (TypeVariable variable : instantiated) {
@@ -945,33 +982,9 @@ public class TypeInstantiator {
           new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
       boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
       boundVariables.removeAll(instantiated);
-      if (boundVariables.size() == 1) {
-        TypeVariable boundVariable = boundVariables.iterator().next();
-        result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
+      if (onlyOne && boundVariables.size() != 1) {
+        continue;
       }
-    }
-    return result;
-  }
-
-  /**
-   * Returns a map from each uninstantiated type variable {@code X} to the type variables that the
-   * given substitution instantiates and whose bounds mention {@code X}. Unlike {@link
-   * #constrainedVariables(Substitution)}, the bounds can also mention other uninstantiated type
-   * variables. For example, if {@code substitution} instantiates {@code T} in {@code <K, V, T
-   * extends Map<K, V>>} but not {@code K} or {@code V}, then the values for {@code K} and {@code V}
-   * contain {@code T}.
-   *
-   * @param substitution a substitution
-   * @return a map from each uninstantiated type variable to the instantiated type variables whose
-   *     bounds mention it
-   */
-  private static Map<TypeVariable, List<TypeVariable>> mentioningVariables(
-      Substitution substitution) {
-    Set<TypeVariable> instantiated = new LinkedHashSet<>(substitution.keySet());
-    Map<TypeVariable, List<TypeVariable>> result = new HashMap<>();
-    for (TypeVariable variable : instantiated) {
-      Set<TypeVariable> boundVariables = new LinkedHashSet<>(boundVariables(variable));
-      boundVariables.removeAll(instantiated);
       for (TypeVariable boundVariable : boundVariables) {
         result.computeIfAbsent(boundVariable, k -> new ArrayList<>()).add(variable);
       }

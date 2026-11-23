@@ -897,6 +897,52 @@ public class TypeVariableTest {
     assertSame(copy, capture.substitute(substitution));
   }
 
+  /**
+   * Copies of a capture variable are not identical if their bounds contain copies of a type
+   * variable with different bounds.
+   */
+  @Test
+  public void testIsIdenticalToComparesNestedBoundsOfCaptureVariable() {
+    TypeVariable y = typeParameter(ListBound.class, 1);
+    TypeVariable yCopy =
+        y.createCopyWithBounds(
+            y.getLowerTypeBound(),
+            new EagerReferenceBound(
+                ((GenericClassType) ClassOrInterfaceType.forClass(List.class))
+                    .instantiate(JavaTypes.STRING_TYPE)));
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(new WildcardType(new EagerReferenceBound(y), true)));
+    ParameterBound lower = capture.getLowerTypeBound();
+    TypeVariable withY = capture.createCopyWithBounds(lower, new EagerReferenceBound(y));
+    TypeVariable withY2 = capture.createCopyWithBounds(lower, new EagerReferenceBound(y));
+    TypeVariable withYCopy = capture.createCopyWithBounds(lower, new EagerReferenceBound(yCopy));
+    assertTrue(withY.isIdenticalTo(withY2));
+    assertFalse(withY.isIdenticalTo(withYCopy));
+  }
+
+  /** Comparing copies of a capture variable whose bounds refer to the copies terminates. */
+  @Test
+  public void testIsIdenticalToSelfReferentialCaptureVariables() {
+    GenericClassType comparable = JavaTypes.COMPARABLE_TYPE;
+    CaptureTypeVariable capture =
+        new CaptureTypeVariable(
+            new WildcardArgument(
+                new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true)));
+    TypeVariable copy1 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    TypeVariable copy2 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    // Each copy is bounded by Comparable of itself.
+    copy1.setUpperBound(new EagerReferenceBound(comparable.instantiate(copy1)));
+    copy2.setUpperBound(new EagerReferenceBound(comparable.instantiate(copy2)));
+    assertTrue(copy1.isIdenticalTo(copy2));
+    TypeVariable copy3 =
+        capture.createCopyWithBounds(capture.getLowerTypeBound(), capture.getUpperTypeBound());
+    copy3.setUpperBound(new EagerReferenceBound(comparable.instantiate(JavaTypes.STRING_TYPE)));
+    assertFalse(copy1.isIdenticalTo(copy3));
+  }
+
   /** A substitution that maps two copies of a type variable to themselves maps it to itself. */
   @Test
   public void testIdentitySubstitutionOfTwoCopies() {
@@ -2460,6 +2506,22 @@ public class TypeVariableTest {
     assertFalse(Subtyping.isSubtypeOrEqual(extendsNumberInner, extendsIntegerInner, substitution));
   }
 
+  /** An eager bound compares the enclosing types of member classes by containment. */
+  @Test
+  public void testEagerBoundOfMemberClassWithWildcardOwner() throws NoSuchFieldException {
+    ReferenceType extendsIntegerInner = plainInnerFieldType("extendsIntegerInner");
+    ReferenceType extendsNumberInner = plainInnerFieldType("extendsNumberInner");
+    ParameterBound integerBound = new EagerReferenceBound(extendsIntegerInner);
+    ParameterBound numberBound = new EagerReferenceBound(extendsNumberInner);
+    Substitution substitution = new Substitution();
+    assertTrue(numberBound.isUpperBound(extendsIntegerInner, substitution));
+    assertTrue(numberBound.isUpperBound(extendsNumberInner, substitution));
+    assertFalse(integerBound.isUpperBound(extendsNumberInner, substitution));
+    assertTrue(integerBound.isLowerBound(extendsNumberInner, substitution));
+    assertTrue(numberBound.isLowerBound(extendsNumberInner, substitution));
+    assertFalse(numberBound.isLowerBound(extendsIntegerInner, substitution));
+  }
+
   /**
    * Returns the type of the given field of {@link PlainInnerFields}.
    *
@@ -3085,6 +3147,39 @@ public class TypeVariableTest {
     assertFalse(firstTypeArgument("superStringListArrayListField").contains(stringArray));
   }
 
+  /** A field of type {@code List<? extends Outer<String>.Inner<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Outer<String>.Inner<String>[]> extendsStringOuterInnerArrayListField;
+
+  /** A field of type {@code List<? extends Outer<Object>.Inner<String>[]>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends Outer<Object>.Inner<String>[]> extendsObjectOuterInnerArrayListField;
+
+  /** A field of type {@code Outer<String>.Inner<String>[]}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Outer<String>.Inner<String>[] stringOuterInnerArrayField;
+
+  /** A field of type {@code Outer<Object>.Inner<String>[]}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Outer<Object>.Inner<String>[] objectOuterInnerArrayField;
+
+  /** A generic array bound retains the owner type of its component type. */
+  @Test
+  public void testWildcardWithMemberClassGenericArrayBound() throws NoSuchFieldException {
+    TypeArgument stringOuter =
+        TypeArgument.forType(
+            TypeVariableTest.class.getDeclaredField("stringOuterInnerArrayField").getGenericType());
+    TypeArgument objectOuter =
+        TypeArgument.forType(
+            TypeVariableTest.class.getDeclaredField("objectOuterInnerArrayField").getGenericType());
+    TypeArgument extendsStringOuter = firstTypeArgument("extendsStringOuterInnerArrayListField");
+    TypeArgument extendsObjectOuter = firstTypeArgument("extendsObjectOuterInnerArrayListField");
+    assertTrue(extendsStringOuter.contains(stringOuter));
+    assertFalse(extendsStringOuter.contains(objectOuter));
+    assertTrue(extendsObjectOuter.contains(objectOuter));
+    assertFalse(extendsObjectOuter.contains(stringOuter));
+  }
+
   /** A field of type {@code List<? extends Collection<?>>}. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   List<? extends Collection<?>> collectionListField;
@@ -3148,5 +3243,39 @@ public class TypeVariableTest {
     TypeVariable otherCopy = x.createCopyWithBounds(x.getLowerTypeBound(), otherBound);
     assertFalse(x.isIdenticalTo(otherCopy));
     assertFalse(copy.isIdenticalTo(otherCopy));
+  }
+
+  /**
+   * A generic class with a non-generic member class.
+   *
+   * @param <E> a type parameter
+   */
+  @SuppressWarnings({"ClassCanBeStatic", "UnusedTypeParameter"}) // the member class is an inner
+  static class OuterOfComparable<E> {
+    /** A non-generic member class that is comparable to strings. */
+    @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+    abstract class ComparableMember implements Comparable<String> {}
+  }
+
+  /**
+   * A class whose type parameters are bounded by a non-generic member class and by an interface
+   * that it implements.
+   *
+   * @param <T> a type parameter bounded by a non-generic member class
+   * @param <U> a type parameter bounded by {@code Comparable<String>}
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameters are used via reflection
+  static class MemberClassBound<
+      T extends OuterOfComparable<String>.ComparableMember, U extends Comparable<String>> {}
+
+  /**
+   * A type variable whose bound is a non-generic member class of a generic class is an
+   * instantiation of a type variable whose bound is an interface that the member class implements.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundIsInstantiation() {
+    TypeVariable t = typeParameter(MemberClassBound.class, 0);
+    TypeVariable u = typeParameter(MemberClassBound.class, 1);
+    assertTrue(t.isInstantiationOf(u));
   }
 }

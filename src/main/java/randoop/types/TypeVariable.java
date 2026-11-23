@@ -22,7 +22,8 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
-   * thread, outermost first. Each element is a pair of the receiver and the argument.
+   * thread, outermost first. Each element is a pair of the receiver and the argument, compared by
+   * object identity.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
   private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
@@ -617,7 +618,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
    */
-  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  @SuppressWarnings("ReferenceEquality") // fast path; pairs are compared by identity
   boolean isIdenticalTo(TypeVariable other) {
     if (this == other) {
       return true;
@@ -625,9 +626,10 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    // The bounds of a capture variable can refer to the capture variable itself, so comparing them
-    // deeply can reach this comparison again.  As for any recursive comparison, assume that the
-    // inner comparison succeeds.
+    // The bounds of a type variable, such as a capture variable, can refer to the type variable
+    // itself, so the comparison of the bounds can compare the same pair of type variables again.
+    // As for a recursive bound in canBeInstantiatedBy, assume that the inner comparison succeeds:
+    // any difference is found by the comparison of the other parts of the bounds.
     List<TypeVariable[]> inProgress = identityChecks.get();
     for (TypeVariable[] pair : inProgress) {
       if (pair[0] == this && pair[1] == other) {
