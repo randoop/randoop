@@ -487,9 +487,15 @@ allprojects {
     }
   }
   if (errorProneFix && isJava21orHigher) {
-    // Format only after every compilation in this project has applied its fixes.
-    tasks.named("spotlessJavaApply") {
-      mustRunAfter(tasks.withType<JavaCompile>().matching { it.name !in errorProneDisabledTasks })
+    // Format only after every compilation in this project has applied its fixes.  This applies to
+    // `spotlessJava` as well as to `spotlessJavaApply`:  `spotlessJava` computes the formatted
+    // content, and `spotlessJavaApply` copies that content over the source files.  If
+    // `spotlessJava` ran before a compilation, then `spotlessJavaApply` would discard that
+    // compilation's fixes.
+    listOf("spotlessJava", "spotlessJavaApply").forEach { spotlessTask ->
+      tasks.named(spotlessTask) {
+        mustRunAfter(tasks.withType<JavaCompile>().matching { it.name !in errorProneDisabledTasks })
+      }
     }
   }
 }
