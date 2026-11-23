@@ -132,7 +132,8 @@ class LazyReferenceBound extends ReferenceBound {
    * instantiation of them; a type such as {@code List<String>} is not a subtype of each
    * instantiation of {@code List<T>}, but {@code List<T>} and {@code ArrayList<T>} are. The
    * comparison includes enclosing types, so {@code Outer<Integer>.Inner<T>} is not a lower bound of
-   * {@code Outer<Number>.Inner<T>}.
+   * {@code Outer<Number>.Inner<T>}. An intersection {@code lowerBound} is a lower bound if any of
+   * its members is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -141,6 +142,16 @@ class LazyReferenceBound extends ReferenceBound {
     }
     if (lowerBound.isNullType(substitution)) {
       return true;
+    }
+    if (lowerBound instanceof IntersectionTypeBound) {
+      // An intersection type is a subtype of each of its members, so it is a subtype of the type of
+      // this bound if any member is.
+      for (ParameterBound member : ((IntersectionTypeBound) lowerBound).getBounds()) {
+        if (hasLowerBound(member, substitution)) {
+          return true;
+        }
+      }
+      return false;
     }
     // With an empty substitution, no type variable stands for an unknown type.  The comparison
     // includes enclosing types, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X> is

@@ -228,11 +228,23 @@ class LazyParameterBound extends ParameterBound {
         if (!(ownerType instanceof ClassOrInterfaceType)) {
           return null;
         }
-        // Keep the default enclosing type if the substitution leaves a declaration-form owner
-        // unchanged.
-        if (!isDeclarationFormOwner || !ownerType.equals(ClassOrInterfaceType.forType(owner))) {
+        if (isDeclarationFormOwner
+            && Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+          // The substitution leaves a declaration-form owner unchanged.  Use the declaration of
+          // the enclosing class, as ParameterizedType.forType does.  The comparison includes the
+          // owners of the owner.
+          instantiatedType.enclosingType =
+              ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
+        } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
+      } else if (reflectiveOwner instanceof Class
+          && !java.lang.reflect.Modifier.isStatic(
+              ((Class<?>) parameterizedType.getRawType()).getModifiers())) {
+        // A generic member class of a non-generic class, as in Outer.Inner<T>.  As in
+        // ParameterizedType.forType, the enclosing type is the non-generic class.
+        instantiatedType.enclosingType =
+            ClassOrInterfaceType.forClass((Class<?>) reflectiveOwner);
       }
       return TypeArgument.forType(instantiatedType);
     }

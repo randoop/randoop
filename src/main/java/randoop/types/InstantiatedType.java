@@ -131,7 +131,10 @@ public class InstantiatedType extends ParameterizedType {
       substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
     }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables created above.  A type argument that is already a
+      // capture variable, as in Outer<?>.Inner<CAP>, can be shared with other types, and
+      // converting it again would change its bounds.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
@@ -416,6 +419,13 @@ public class InstantiatedType extends ParameterizedType {
     }
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
+      if (otherInstType.isMemberClass() && !this.runtimeClassIs(otherInstType.getRuntimeClass())) {
+        // The superclass method matched the supertype of this type that is of the goal type's
+        // class, such as Outer<String>.Base<Integer> for Outer<String>.Derived<Integer>, against
+        // the goal type.  That match includes the type arguments, which differ from those of this
+        // type.
+        return substitution;
+      }
       if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
@@ -512,7 +522,7 @@ public class InstantiatedType extends ParameterizedType {
         // of the same class, so subtyping between them is containment of their type arguments.
         boolean enclosingTypesRelated =
             !(this.isMemberClass() && otherInstantiatedType.isMemberClass())
-                || this.enclosingType.isSubtypeOfOrEqualTo(otherInstantiatedType.enclosingType);
+                || isEnclosingSubtype(this.enclosingType, otherInstantiatedType.enclosingType);
         // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
         // is also a subtype of the generic form of its class.
         return (i == thisTypeArguments.size() && enclosingTypesRelated)
@@ -547,6 +557,29 @@ public class InstantiatedType extends ParameterizedType {
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`
     // only if `otherType` is the generic form of this type's class.
     return this.getRawtype().isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns true if the given enclosing type is a subtype of, or equal to, the other enclosing
+   * type, which is of the same class. An enclosing type that declares no type parameters, such as
+   * {@code Middle} in {@code Outer<String>.Middle.Inner<Integer>}, is compared through its own
+   * enclosing type, so that, for example, {@code Outer<String>.Middle} is a subtype of {@code
+   * Outer<?>.Middle} but not of {@code Outer<Long>.Middle}.
+   *
+   * @param enclosing an enclosing type
+   * @param otherEnclosing an enclosing type of the same class as {@code enclosing}
+   * @return true if {@code enclosing} is a subtype of, or equal to, {@code otherEnclosing}
+   */
+  private static boolean isEnclosingSubtype(
+      ClassOrInterfaceType enclosing, ClassOrInterfaceType otherEnclosing) {
+    if (enclosing instanceof NonParameterizedType
+        && otherEnclosing instanceof NonParameterizedType
+        && enclosing.runtimeClassIs(otherEnclosing.getRuntimeClass())
+        && enclosing.isMemberClass()
+        && otherEnclosing.isMemberClass()) {
+      return isEnclosingSubtype(enclosing.enclosingType, otherEnclosing.enclosingType);
+    }
+    return enclosing.isSubtypeOfOrEqualTo(otherEnclosing);
   }
 
   @Override

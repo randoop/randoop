@@ -155,6 +155,19 @@ public class TypeVariableTest {
             ((TypeVariable) u.substitute(new Substitution(t, v)))
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    // Collection<? extends String[]>, constructed independently of substitution.
+    ParameterBound expected =
+        new EagerReferenceBound(
+            new InstantiatedType(
+                GenericClassType.forClass(Collection.class),
+                Collections.<TypeArgument>singletonList(
+                    new WildcardArgument(
+                        new WildcardType(
+                            new EagerReferenceBound(
+                                ArrayType.ofComponentType(JavaTypes.STRING_TYPE)),
+                            true)))));
+    assertEquals(expected, direct.getUpperTypeBound());
+    assertEquals(expected, throughV.getUpperTypeBound());
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
   }
 

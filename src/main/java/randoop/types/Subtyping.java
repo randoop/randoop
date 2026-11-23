@@ -96,7 +96,7 @@ final class Subtyping {
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       InstantiatedType supertype =
-          ((ClassOrInterfaceType) type)
+          captureSource((ClassOrInterfaceType) type)
               .getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (supertype == null) {
         return false;
@@ -117,7 +117,8 @@ final class Subtyping {
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
       // not, so compare the enclosing types here.
       ClassOrInterfaceType supertype =
-          findSupertypeOfClass((ClassOrInterfaceType) type, otherType.getRuntimeClass());
+          findSupertypeOfClass(
+              captureSource((ClassOrInterfaceType) type), otherType.getRuntimeClass());
       if (supertype == null) {
         return false;
       }
@@ -130,6 +131,26 @@ final class Subtyping {
       return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
+  }
+
+  /**
+   * Returns the capture conversion of the given type, whose supertypes are those of the type (JLS
+   * section 4.10.2). Capturing before projecting to a supertype keeps the bounds of the type
+   * parameters of the type's own class: for {@code Child<T extends Number> extends Parent<T>}, the
+   * capture of {@code Child<?>} has the {@code Parent} supertype {@code Parent<CAP>}, where {@code
+   * CAP} has upper bound {@code Number}, whereas the capture of the projection {@code Parent<?>}
+   * does not have that bound. Returns the type itself if capture conversion fails because of a lazy
+   * bound.
+   *
+   * @param type a type
+   * @return the capture conversion of {@code type}, or {@code type} itself
+   */
+  private static ClassOrInterfaceType captureSource(ClassOrInterfaceType type) {
+    try {
+      return type.applyCaptureConversion();
+    } catch (LazyBoundException e) {
+      return type;
+    }
   }
 
   /**

@@ -393,10 +393,10 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * variable, or with a different type variable, compares {@code otherType} with that type.
+   * Otherwise, that type variable stands for an unknown type. For a lower bound, the result is true
+   * if {@code otherType} can instantiate it; for an upper bound, the result is true if it can be a
+   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -412,6 +412,16 @@ public abstract class TypeVariable extends ParameterType {
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      List<TypeVariable> boundVariables = bound.getTypeParameters();
+      if (!boundVariables.isEmpty() && !variable.equals(boundVariables.get(0))) {
+        // The substitution replaces the bound by a different type variable, such as a type
+        // parameter of another declaration.  No value is chosen for that type variable:
+        // otherType must be within the bound as it is.  (Subtyping treats the type variable as an
+        // unknown if the substitution makes it one.)
+        return isLower
+            ? Subtyping.isSubtypeOrEqual(variable, otherType, substitution)
+            : Subtyping.isSubtypeOrEqual(otherType, variable, substitution);
+      }
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
