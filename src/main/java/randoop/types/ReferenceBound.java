@@ -117,21 +117,27 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * <p>The substitution is applied only to {@code lowerBound}. A type variable in this bound, which
    * an eager bound can also contain, as in {@code T[]} or {@code List<T>}, stands for itself. So,
-   * if {@code lowerBound} is an {@link EagerReferenceBound}, its substituted type is compared with
-   * the type of this bound by ordinary subtyping: {@code List<T>} is a lower bound of {@code
-   * List<T>}, but {@code List<String>} is not. {@link EagerReferenceBound#isLowerBound(Type,
+   * if {@code lowerBound} is an {@link EagerReferenceBound} (including a {@link LazyReferenceBound}
+   * whose type is not a type variable, such as {@code ArrayList<T>}), its substituted type is
+   * compared with the type of this bound by ordinary subtyping: {@code List<T>} is a lower bound of
+   * {@code List<T>}, but {@code List<String>} is not. {@link EagerReferenceBound#isLowerBound(Type,
    * Substitution)} would instead accept {@code List<String>}, because {@code List<String>} is an
    * instantiation of {@code List<T>}. Any other bound is compared by {@link
-   * ParameterBound#isLowerBound(Type, Substitution)}, which, for example, lets a type variable in a
-   * {@link LazyReferenceBound} be chosen. Similarly, with {@code T := String}, the bound {@code
-   * String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a lower bound of {@code
-   * String[]}.
+   * ParameterBound#isLowerBound(Type, Substitution)}, which, for example, lets the type variable
+   * that is the type of a {@link LazyReferenceBound} be chosen. Similarly, with {@code T :=
+   * String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a
+   * lower bound of {@code String[]}.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
     // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
     // type variables, as in T[], where T is not recursive; they stand for themselves.
-    if (lowerBound instanceof EagerReferenceBound && !(lowerBound instanceof LazyReferenceBound)) {
+    // A lazy bound whose type is compound, such as ArrayList<T>, is compared in the same way:  the
+    // type variables of this bound are fixed, so they must not be inferred.  Only a lazy bound
+    // whose type is a type variable is compared by isLowerBound, which lets the variable be chosen.
+    if (lowerBound instanceof EagerReferenceBound
+        && !(lowerBound instanceof LazyReferenceBound
+            && ((LazyReferenceBound) lowerBound).getBoundType().isVariable())) {
       ReferenceType lowerType =
           ((EagerReferenceBound) lowerBound).getBoundType().substitute(substitution);
       return Subtyping.isSubtypeOrEqual(lowerType, boundType);

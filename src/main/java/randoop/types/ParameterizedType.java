@@ -91,6 +91,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       Class<?> enclosingClass =
           (Class<?>) ((java.lang.reflect.ParameterizedType) t.getOwnerType()).getRawType();
       result.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+    } else if (t.getOwnerType() instanceof Class<?>
+        && !java.lang.reflect.Modifier.isStatic(((Class<?>) rawType).getModifiers())) {
+      // For a member class of a class that is not generic, such as Host.Inner<String>, the owner
+      // type is a Class.  An instantiation of the class declaration from
+      // ClassOrInterfaceType.forClass has that enclosing type too, so the two types are equal.
+      result.enclosingType = ClassOrInterfaceType.forClass((Class<?>) t.getOwnerType());
     }
     return result;
   }

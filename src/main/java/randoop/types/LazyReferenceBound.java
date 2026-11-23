@@ -196,9 +196,10 @@ class LazyReferenceBound extends EagerReferenceBound {
    * including the enclosing types of member classes (see {@link
    * Subtyping#isIdentical(ReferenceType, ReferenceType)}); or is a subtype of the type of this
    * bound, with each type variable standing for itself, as {@code ArrayList<T>} is of {@code
-   * List<T>} and {@code NullType[]} is of {@code T[]}. The type of this bound contains type
-   * variables, so it stands for every instantiation of them; a type such as {@code List<String>} is
-   * not a subtype of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   * List<T>} and {@code NullType[]} is of {@code T[]}; or is an intersection type that has such a
+   * subtype as a member. The type of this bound contains type variables, so it stands for every
+   * instantiation of them; a type such as {@code List<String>} is not a subtype of each
+   * instantiation of {@code List<T>}, but {@code List<T>} itself is.
    */
   @Override
   boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
@@ -208,8 +209,8 @@ class LazyReferenceBound extends EagerReferenceBound {
     if (lowerBound.isNullType(substitution)) {
       return true;
     }
-    // Compare enclosing types too, which InstantiatedType.equals ignores:
-    // GenericOuter<Integer>.GenericInner<U> is not GenericOuter<Number>.GenericInner<U>.
+    // Compare enclosing types too:  GenericOuter<Integer>.GenericInner<U> is not
+    // GenericOuter<Number>.GenericInner<U>.
     if (lowerBound instanceof ReferenceBound
         && Subtyping.isIdentical(
             ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
@@ -217,6 +218,23 @@ class LazyReferenceBound extends EagerReferenceBound {
       return true;
     }
     ParameterBound b = lowerBound.substitute(substitution);
+    if (b instanceof IntersectionTypeBound) {
+      // An intersection type is a subtype of each of its members, so it is a lower bound if any
+      // member is.  The type variables of this bound stay fixed.
+      for (ParameterBound member : ((IntersectionTypeBound) b).getBounds()) {
+        ParameterBound converted =
+            member instanceof LazyParameterBound
+                ? ((LazyParameterBound) member).toReferenceBound()
+                : member;
+        if (converted instanceof ReferenceBound) {
+          ReferenceType memberType = ((ReferenceBound) converted).getBoundType();
+          if (Subtyping.isSubtypeOrEqual(memberType, getBoundType())) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
     if (!(b instanceof ReferenceBound)) {
       return false;
     }

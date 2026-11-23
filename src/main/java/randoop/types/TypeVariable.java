@@ -400,7 +400,11 @@ public abstract class TypeVariable extends ParameterType {
    * of the type variable is a subtype of {@code otherType}. For example, for the capture of {@code
    * ? super Y}, where {@code Y extends List<X>}, {@code Object} is within the lower bound, though
    * it cannot instantiate {@code Y}. For an upper bound, the result is true if it can be a
-   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
+   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}. If the
+   * substitution instead replaces that type variable by a different type variable that does not
+   * stand for an unknown type, such as a type parameter {@code X} of another declaration, then
+   * {@code X} stands for itself, and the result is true only if {@code otherType} is a subtype of
+   * {@code X}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
@@ -416,6 +420,16 @@ public abstract class TypeVariable extends ParameterType {
     if (substituted instanceof ReferenceBound
         && ((ReferenceBound) substituted).getBoundType().isVariable()) {
       variable = (TypeVariable) ((ReferenceBound) substituted).getBoundType();
+      List<TypeVariable> boundVariables = bound.getTypeParameters();
+      if (!isLower
+          && !boundVariables.isEmpty()
+          && !variable.equals(boundVariables.get(0))
+          && !substitution.isUnknown(variable)) {
+        // The substitution replaces the type variable of the bound by a different type variable,
+        // which stands for a particular type.  No other type can be chosen for it, so otherType
+        // must be a subtype of it.
+        return Subtyping.isSubtypeOrEqual(otherType, variable, substitution);
+      }
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
@@ -497,13 +511,14 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns the strict supertypes of the given type, if it is a class, interface, array, or type
-   * variable type. The supertypes of every class or interface type other than {@code Object}
-   * include {@code Object}. The supertypes of an array type {@code C[]} are {@code Object}, {@code
-   * Cloneable}, {@code Serializable}, and, if {@code C} is a reference type, {@code S[]} for each
-   * strict supertype {@code S} of {@code C}. The supertypes of a type variable are the types in its
-   * upper bound and their supertypes; this lets an array type such as {@code U[]}, for {@code U
-   * extends Number}, have supertypes such as {@code Number[]} and {@code Object[]}. For any other
-   * type, returns an empty list.
+   * variable type. The supertypes of a class or interface type with a wildcard type argument are
+   * those of its capture conversion. The supertypes of every class or interface type other than
+   * {@code Object} include {@code Object}. The supertypes of an array type {@code C[]} are {@code
+   * Object}, {@code Cloneable}, {@code Serializable}, and, if {@code C} is a reference type, {@code
+   * S[]} for each strict supertype {@code S} of {@code C}. The supertypes of a type variable are the
+   * types in its upper bound and their supertypes; this lets an array type such as {@code U[]}, for
+   * {@code U extends Number}, have supertypes such as {@code Number[]} and {@code Object[]}. For any
+   * other type, returns an empty list.
    *
    * @param type a type
    * @return the strict supertypes of {@code type}
@@ -511,7 +526,15 @@ public abstract class TypeVariable extends ParameterType {
   private static List<ReferenceType> getStrictSupertypes(ReferenceType type) {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof ClassOrInterfaceType) {
-      result.addAll(((ClassOrInterfaceType) type).getSupertypesStrict());
+      ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
+      // As in Subtyping, compute the supertypes from the capture conversion.  Substituting a
+      // wildcard into a supertype can create an invalid type:  for `class C<T> implements
+      // Box<T[]>`, the supertype of C<?> would be an array of a wildcard.  A supertype that
+      // mentions a capture variable is not a supertype of `type` itself; canBeSupertypeOf skips it.
+      if (classType.hasWildcardArgument()) {
+        classType = classType.applyCaptureConversion();
+      }
+      result.addAll(classType.getSupertypesStrict());
       // An interface has no superclass, so its supertypes as computed above do not include Object.
       if (!type.isObject() && !result.contains(JavaTypes.OBJECT_TYPE)) {
         result.add(JavaTypes.OBJECT_TYPE);

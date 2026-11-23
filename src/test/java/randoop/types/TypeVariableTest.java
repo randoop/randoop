@@ -1719,11 +1719,20 @@ public class TypeVariableTest {
           "bound " + bound + " should be lazy since it contains a type variable",
           bound instanceof LazyReferenceBound);
       assertEquals(Collections.singletonList(capture), capturedType.getTypeParameters());
+      ParameterBound lowerBound = capture.getLowerTypeBound();
       // The substitution does not affect the captured type, whose bound refers to itself.  The
       // comparison includes the bounds of the capture variable.
-      assertTrue(
-          TypeVariable.areIdentical(
-              capturedType, capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE))));
+      InstantiatedType substitutedType =
+          capturedType.substitute(new Substitution(v, JavaTypes.STRING_TYPE));
+      assertTrue(TypeVariable.areIdentical(capturedType, substitutedType));
+      // CaptureTypeVariable.equals compares only the capture IDs, so compare the bounds directly.
+      // The substitution neither changes the bounds of the original capture variable nor gives the
+      // capture variable in the result other bounds.
+      assertSame(bound, capture.getUpperTypeBound());
+      assertSame(lowerBound, capture.getLowerTypeBound());
+      TypeVariable substitutedCapture = typeArgument(substitutedType, 0);
+      assertTrue(TypeVariable.areIdentical(bound, substitutedCapture.getUpperTypeBound()));
+      assertTrue(TypeVariable.areIdentical(lowerBound, substitutedCapture.getLowerTypeBound()));
     }
   }
 
@@ -3327,5 +3336,61 @@ public class TypeVariableTest {
             JDKTypes.LIST_TYPE,
             Collections.singletonList(
                 new WildcardArgument(new WildcardType(wildcardBound, true)))));
+  }
+
+  /**
+   * A class whose second type parameter is bounded by the first.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class ChainedBound<K, V extends K> {}
+
+  /**
+   * A class whose type parameter is bounded by {@code Comparable} of itself.
+   *
+   * @param <X> a self-bounded type parameter
+   */
+  static class SelfComparableHolder<X extends Comparable<X>> {}
+
+  /** A class that is comparable to itself. */
+  abstract static class ComparableBaseForFixed implements Comparable<ComparableBaseForFixed> {}
+
+  /** A subclass of a class that is comparable to itself; it is not comparable to itself. */
+  abstract static class ComparableSubForFixed extends ComparableBaseForFixed {}
+
+  /**
+   * A type variable that a substitution maps a type parameter to is fixed: no other type is chosen
+   * for it.
+   */
+  @Test
+  public void testFixedReplacementVariableIsNotInferred() {
+    TypeVariable k = typeParameter(ChainedBound.class, 0);
+    TypeVariable v = typeParameter(ChainedBound.class, 1);
+    TypeVariable x = typeParameter(SelfComparableHolder.class, 0);
+    ReferenceType sub = ClassOrInterfaceType.forClass(ComparableSubForFixed.class);
+    // ComparableSubForFixed is not known to be a subtype of X, though it would be if X were
+    // ComparableBaseForFixed.
+    assertFalse(v.canBeInstantiatedBy(sub, new Substitution(k, x)));
+    // K is unknown, so it can be ComparableSubForFixed itself.
+    assertTrue(v.canBeInstantiatedBy(sub, new Substitution()));
+  }
+
+  /**
+   * A class whose second type parameter is bounded by the first, which has a bound.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter bounded by {@code K}
+   */
+  static class NumberChainedBound<K extends Number, V extends K> {}
+
+  /**
+   * The search for a supertype of a type with a wildcard argument that can instantiate a type
+   * variable does not create an array of a wildcard.
+   */
+  @Test
+  public void testSupertypeSearchCapturesWildcard() throws NoSuchFieldException {
+    TypeVariable v = typeParameter(NumberChainedBound.class, 1);
+    assertFalse(v.canBeInstantiatedBy(arrayBoxFieldType("wildcardSource"), new Substitution()));
   }
 }

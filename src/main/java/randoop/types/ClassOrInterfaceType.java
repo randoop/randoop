@@ -211,7 +211,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /*package*/ final ClassOrInterfaceType substitute(
       Substitution substitution, ClassOrInterfaceType type) {
     if (this.isMemberClass()) {
-      type.enclosingType = enclosingType.substitute(substitution);
+      type.enclosingType = substituteEnclosingType(substitution);
     }
     return type;
   }
@@ -360,7 +360,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          // A member class of a parameterized type, such as Outer<String>.Inner, is parameterized
+          // but is not an InstantiatedType.
+          if (interfaceType instanceof InstantiatedType) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.runtimeClassIs(goalType.getRuntimeClass())
                 && type.isInstantiationOf(goalType)) {
@@ -384,9 +386,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
       // isInstantiationOf can be true for a member class of another class, if the enclosing types
       // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
-          && superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType) superclass;
+      if (superclass.runtimeClassIs(goalType.getRuntimeClass())) {
+        // A raw superclass, as for `class Child extends Parent`, does not instantiate the goal.
+        return superclass instanceof InstantiatedType && superclass.isInstantiationOf(goalType)
+            ? (InstantiatedType) superclass
+            : null;
       }
 
       return superclass.getMatchingSupertype(goalType);
@@ -407,16 +411,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     if (!goalType.isGeneric()) {
       // No substitution makes this type identical to a non-generic goal type that is not identical
-      // to it, such as one whose enclosing type differs at a depth that `equals` does not compare.
+      // to it, such as one whose enclosing type differs.
       return null;
     }
 
     Substitution substitution = new Substitution();
+    // This type's view of the class of a member class goal type: this type or its supertype.
+    ClassOrInterfaceType memberView = null;
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
-    // type.  The enclosing type of this type is not matched against a goal type that is not a
-    // member class, such as a type variable.
-    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
+    // type.  This type need not be a member class itself:  a top-level class can extend
+    // Outer<String>.Inner.  The enclosing type of this type is not matched against a goal type
+    // that is not a member class, such as a type variable.
+    if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
       if (goalClassType.isMemberClass()) {
         ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
@@ -438,14 +445,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
             }
           }
         }
-        if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
+        if (thisView == null) {
+          // No supertype of this type has the goal type's class.
+          return null;
+        }
+        memberView = thisView;
+        if (enclosingGoalType.isGeneric() && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
             return null;
           }
         } else if (enclosingGoalType.isParameterized()
-            && (thisView == null
-                || !thisView.isMemberClass()
+            && (!thisView.isMemberClass()
                 || !Subtyping.isIdentical(thisView.enclosingType, enclosingGoalType))) {
           // No substitution instantiates a non-generic enclosing type, such as Outer<Long>, by a
           // different type, such as Outer<String>:  the type arguments of the enclosing goal type
@@ -457,7 +468,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     if (goalType instanceof GenericClassType) {
-      InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
+      // Reuse the view found above, if any.  Computing the supertype again would capture a
+      // wildcard in an enclosing type again, as for Outer<?>.StringInner, giving a capture
+      // variable that differs from the one in the substitution.
+      InstantiatedType supertype =
+          memberView instanceof InstantiatedType
+              ? (InstantiatedType) memberView
+              : this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
@@ -661,6 +678,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (!(otherType instanceof ClassOrInterfaceType)) {
       return false;
+    }
+    // A member class that declares no type parameters, of a parameterized type, such as
+    // Outer<? extends Number>.Inner:  its enclosing type can contain the enclosing type of a
+    // supertype of this type, as Outer<? extends Number> contains Outer<Integer>.  The supertype
+    // search below compares enclosing types by equality instead.
+    if (otherType instanceof NonParameterizedType && otherType.isParameterized()) {
+      return Subtyping.isSubtypeOrEqual(this, (ReferenceType) otherType);
     }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
     if (otherRefType.isInterface()) {

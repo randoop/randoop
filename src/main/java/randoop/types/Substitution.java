@@ -214,6 +214,10 @@ public class Substitution {
         }
         result.map.remove(key);
         result.map.put(key, value);
+        // Keep rawMap consistent with map.  The merge of other.rawMap below then finds this value.
+        if (key instanceof ExplicitTypeVariable) {
+          result.rawMap.put(((ExplicitTypeVariable) key).getReflectionTypeVariable(), value);
+        }
       } else {
         result.map.merge(key, value, requireSameEntry);
       }
