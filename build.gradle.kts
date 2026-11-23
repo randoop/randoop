@@ -512,6 +512,20 @@ tasks.register("errorProneFix") {
   }
 }
 
+// The `errorProneFix` variable above only approximates Gradle's task selection.  For example,
+// Gradle resolves "eP" to `eclipseProject` (a complete camel-case match) rather than to
+// `errorProneFix` (a prefix match).  If the approximation is wrong, then either an ordinary build
+// would rewrite source files, or `errorProneFix` would apply no fixes.  So, before any task runs,
+// check the approximation against the task graph that Gradle actually built.
+gradle.taskGraph.whenReady {
+  if (hasTask(":errorProneFix") != errorProneFix) {
+    throw GradleException(
+      "Could not tell whether the errorProneFix task was requested; " +
+        "spell out its full name \"errorProneFix\" on the command line, or omit it.",
+    )
+  }
+}
+
 // The classes in these source sets are inputs to, or harnesses for, Randoop's own tests.  Some of
 // them are deliberately odd, so linting them is not useful.
 val pmdDisabledTasks = listOf("pmdTestInput", "pmdSystemTest", "pmdAgentTest")
