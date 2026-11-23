@@ -109,9 +109,10 @@ public abstract class ReferenceBound extends ParameterBound {
       return false;
     }
     if (bound instanceof LazyParameterBound) {
-      ParameterBound substituted =
-          ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
-      return substituted != null && isUpperBound(substituted, substitution);
+      // The substitution has already been applied to the type, so do not apply it again by
+      // calling isUpperBound(ParameterBound, Substitution).
+      ReferenceType type = asReferenceType(bound, substitution);
+      return type != null && isUpperBound(type, substitution);
     }
     return false;
   }
