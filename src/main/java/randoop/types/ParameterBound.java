@@ -158,7 +158,7 @@ public abstract class ParameterBound {
    * <p>The owner type of a member class is examined (see {@link #getPreservedOwnerType}), because
    * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
    * Outer<T>} for {@code Outer<T>.Inner}. So a type variable in it, as in {@code T extends
-   * Outer<T>.Inner<String>}, would also make an eager bound recursive:  converting such an owner
+   * Outer<T>.Inner<String>}, would also make an eager bound recursive: converting such an owner
    * type eagerly can recursively convert a type variable that is being converted.
    *
    * @param type a reflection type
