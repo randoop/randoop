@@ -143,9 +143,9 @@ public abstract class ReferenceBound extends ParameterBound {
    * Subtyping#isSubtypeOrEqual}). Examples are {@code List<T>} itself, {@code ArrayList<T>[]} for
    * {@code List<T>[]}, and {@code NullType[]} for {@code T[]}. A lower bound that the substitution
    * does not instantiate is compared with its remaining type variables standing for themselves. An
-   * intersection is a lower bound if any of its members is. The type of this bound stands for
-   * every instantiation of its type variables; a type such as {@code List<String>} is not a subtype
-   * of each instantiation of {@code List<T>}, but {@code List<T>} itself is.
+   * intersection is a lower bound if any of its members is. The type of this bound stands for every
+   * instantiation of its type variables; a type such as {@code List<String>} is not a subtype of
+   * each instantiation of {@code List<T>}, but {@code List<T>} itself is.
    *
    * @param lowerBound the possible lower bound
    * @param substitution the type substitution to apply to {@code lowerBound}
