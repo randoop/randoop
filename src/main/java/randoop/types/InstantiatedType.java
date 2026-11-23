@@ -457,7 +457,8 @@ public class InstantiatedType extends ParameterizedType {
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // A type variable can occur more than once, as in Outer<T>.Inner<T>; its bindings must
-          // agree.
+          // agree.  So the type arguments can conflict with the enclosing type, as for
+          // Outer<String>.Inner<Integer> and Outer<U>.Inner<U>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }

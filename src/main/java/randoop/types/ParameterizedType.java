@@ -77,7 +77,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
         (GenericClassType) ClassOrInterfaceType.forClass((Class<?>) rawType);
     InstantiatedType result = new InstantiatedType(genericClass, typeArguments);
     // For a member class, such as Outer<X>.Inner<Integer>, the owner type can supply type
-    // arguments, such as X.  Retain it, as substitute() does for a member class.
+    // arguments, such as X.  Retain it, as substitute() does for a member class.  Otherwise, a
+    // reflected member type would not equal the same type constructed by substitution.
     Type ownerType = t.getOwnerType();
     if (ownerType != null && genericClass.isMemberClass()) {
       result.enclosingType = ClassOrInterfaceType.forType(ownerType);

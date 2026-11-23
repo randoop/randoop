@@ -941,6 +941,10 @@ public class TypeInstantiator {
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
                 selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
+            // The selected type need not be consistent with the type variables instantiated for
+            // earlier parameters, as for an enclosing type:  for parameters List<U> and
+            // Outer<U>.Inner, U might already be String while the selected type is
+            // Outer<Integer>.Inner.
             if (subst == null || !substitution.isConsistentWith(subst)) {
               if (Log.isLoggingOn()) {
                 failure =
