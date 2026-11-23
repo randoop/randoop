@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import randoop.types.LazyParameterBound.LazyBoundException;
 
 /**
  * Subtyping and type-argument containment (JLS sections 4.10 and 4.5.1) for reference types in
@@ -68,9 +67,6 @@ final class Subtyping {
       if (type instanceof ClassOrInterfaceType) {
         // As below, the supertypes are those of the capture conversion.
         ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
-        if (capturedType == null) {
-          return false;
-        }
         for (ClassOrInterfaceType supertype : capturedType.getSupertypesStrict()) {
           if (satisfiesBound(supertype, unknown, substitution)) {
             return true;
@@ -117,20 +113,13 @@ final class Subtyping {
     if (otherType instanceof InstantiatedType && type instanceof ClassOrInterfaceType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
-      if (capturedType == null) {
-        return false;
-      }
       InstantiatedType supertype = findMatchingSupertype(capturedType, otherInstantiatedType);
       if (supertype == null) {
         return false;
       }
       // A type with wildcard arguments is a subtype of whatever its capture is a subtype of (JLS
       // section 4.10.2).
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, otherInstantiatedType, substitution);
     }
     if (otherType instanceof NonParameterizedType
@@ -140,9 +129,6 @@ final class Subtyping {
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
       // not, so compare the enclosing types here.
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
-      if (capturedType == null) {
-        return false;
-      }
       ClassOrInterfaceType supertype =
           findSupertypeOfClass(capturedType, otherType.getRuntimeClass());
       if (supertype == null) {
@@ -150,11 +136,7 @@ final class Subtyping {
       }
       // As for an InstantiatedType above, capture the wildcards, such as in Outer<? extends
       // Integer>.Inner, so that a wildcard of otherType can contain the capture variable.
-      try {
-        supertype = supertype.applyCaptureConversion();
-      } catch (LazyBoundException e) {
-        return false;
-      }
+      supertype = supertype.applyCaptureConversion();
       return argumentsContained(supertype, (ClassOrInterfaceType) otherType, substitution);
     }
     return type.isSubtypeOfOrEqualTo(otherType);
@@ -205,19 +187,13 @@ final class Subtyping {
    * C<T> implements Box<T[]>}, the supertype of {@code C<?>} would be an array of a wildcard.
    *
    * @param type a type
-   * @return the capture conversion of {@code type}, or null if capture conversion fails because of
-   *     a lazy bound
+   * @return the capture conversion of {@code type}
    */
-  private static @Nullable ClassOrInterfaceType captureWildcardArguments(
-      ClassOrInterfaceType type) {
+  private static ClassOrInterfaceType captureWildcardArguments(ClassOrInterfaceType type) {
     if (!type.hasWildcardArgument()) {
       return type;
     }
-    try {
-      return type.applyCaptureConversion();
-    } catch (LazyBoundException e) {
-      return null;
-    }
+    return type.applyCaptureConversion();
   }
 
   /**
@@ -460,9 +436,6 @@ final class Subtyping {
       // unknowns, which are not wildcards, unchanged.
       ClassOrInterfaceType capturedType =
           captureWildcardArguments((ClassOrInterfaceType) lowerType);
-      if (capturedType == null) {
-        return false;
-      }
       InstantiatedType supertype = findMatchingSupertype(capturedType, (InstantiatedType) type);
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
@@ -475,9 +448,6 @@ final class Subtyping {
       // types, so compare the enclosing types.
       ClassOrInterfaceType capturedType =
           captureWildcardArguments((ClassOrInterfaceType) lowerType);
-      if (capturedType == null) {
-        return false;
-      }
       ClassOrInterfaceType supertype = findSupertypeOfClass(capturedType, type.getRuntimeClass());
       return supertype != null
           && argumentsCanBeContained(supertype, (ClassOrInterfaceType) type, substitution);
