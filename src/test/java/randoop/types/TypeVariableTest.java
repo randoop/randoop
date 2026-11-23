@@ -2911,9 +2911,8 @@ public class TypeVariableTest {
 
     // The same comparisons, made directly with B as an unknown.
     TypeVariable b = typeParameter(ListSuperIntersectionBound.class, 0);
-    ReferenceBound listSuperB = ((LazyParameterBound) t.getUpperTypeBound()).toReferenceBound();
-    assertNotNull(listSuperB);
-    ReferenceType listSuperBType = listSuperB.getBoundType();
+    // The bound of T is eager, because it does not mention T.
+    ReferenceType listSuperBType = ((ReferenceBound) t.getUpperTypeBound()).getBoundType();
     Substitution unknownB =
         new Substitution(t, list.instantiate(ClassOrInterfaceType.forClass(Runnable.class)))
             .extendWithIdentity(Collections.singletonList(b));
