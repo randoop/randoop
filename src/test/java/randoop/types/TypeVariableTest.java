@@ -1823,8 +1823,8 @@ public class TypeVariableTest {
   ArrayArgumentSub<?>[] wildcardSubArrayField;
 
   /**
-   * Computing the supertypes of an array type whose component type has a wildcard argument does
-   * not create an array type of a wildcard.
+   * Computing the supertypes of an array type whose component type has a wildcard argument does not
+   * create an array type of a wildcard.
    */
   @Test
   public void testWildcardComponentArrayCannotBeSupertype() throws NoSuchFieldException {
