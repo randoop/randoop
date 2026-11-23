@@ -777,7 +777,8 @@ public abstract class TypeVariable extends ParameterType {
     if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
       ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
-      // InstantiatedType.equals does not compare enclosing types.
+      // Compare the enclosing types by identity, as the type arguments are compared below.
+      // InstantiatedType.equals compares the enclosing types only by `equals`.
       if (classType1.isMemberClass() != classType2.isMemberClass()) {
         return false;
       }

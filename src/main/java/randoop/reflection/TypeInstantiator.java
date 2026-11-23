@@ -458,9 +458,9 @@ public class TypeInstantiator {
           return result;
         }
       }
-      // Remove by index, not by object:  InstantiatedType.equals ignores enclosing types, so
-      // removing an equal object could remove a different match, such as one whose enclosing type
-      // has other type arguments.
+      // Remove by index, not by object:  removing by object would remove the first equal match,
+      // which can differ from the selected one in the bounds of its type variables, because
+      // `equals` ignores those bounds.
       matches.remove(selectedIndex);
     }
     return null;
