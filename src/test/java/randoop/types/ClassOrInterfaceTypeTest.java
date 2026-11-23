@@ -828,8 +828,7 @@ public class ClassOrInterfaceTypeTest {
    */
   @Test
   public void conflictingInstantiatingSubstitutionTest() throws NoSuchMethodException {
-    ClassOrInterfaceType sameVariable =
-        memberParameterType("sameOwner", Outer.GenericInner.class);
+    ClassOrInterfaceType sameVariable = memberParameterType("sameOwner", Outer.GenericInner.class);
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     assertNull(
         genericInnerType(JavaTypes.STRING_TYPE, integerType)
