@@ -410,6 +410,7 @@ public class InstantiatedType extends ParameterizedType {
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
+      // The enclosing type of this member class does not instantiate that of the goal type.
       return null;
     }
     if (goalType instanceof InstantiatedType) {
