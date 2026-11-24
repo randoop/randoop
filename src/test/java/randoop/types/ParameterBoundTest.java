@@ -572,6 +572,31 @@ public class ParameterBoundTest {
     assertFalse(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(OtherOwnerMap.class)));
   }
 
+  /** A field of type {@code GenericOuter<String>.NonGenericInner}. */
+  @SuppressWarnings("unused")
+  private static GenericOuter<String>.NonGenericInner stringOwnerInner;
+
+  /**
+   * Tests that a reference bound is compared with a lazy bound for a non-generic member class of a
+   * generic class, through the overloads of isLowerBound and isUpperBound that take a bound.
+   */
+  @Test
+  public void testReferenceBoundComparedWithNonGenericMemberClassBound() {
+    java.lang.reflect.Type innerType = fieldType(ParameterBoundTest.class, "stringOwnerInner");
+    ParameterBound lazyBound = ParameterBound.forType(Collections.emptySet(), innerType);
+    assertTrue(lazyBound instanceof LazyParameterBound);
+    ReferenceBound sameBound = new EagerReferenceBound(ReferenceType.forType(innerType));
+    Substitution empty = new Substitution();
+    assertTrue(sameBound.isLowerBound(lazyBound, empty));
+    assertTrue(sameBound.isUpperBound(lazyBound, empty));
+
+    ReferenceBound otherOwnerBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner")));
+    assertFalse(otherOwnerBound.isLowerBound(lazyBound, empty));
+    assertFalse(otherOwnerBound.isUpperBound(lazyBound, empty));
+  }
+
   /**
    * A class whose type parameter has a self-referential bound that contains, as a type argument, a
    * non-generic member class of a generic class.
