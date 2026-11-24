@@ -42,7 +42,8 @@ public class TypeInstantiator {
 
   /**
    * The maximum number of random choices of input types for an operation's parameterized parameter
-   * types that {@link #selectOperationSubstitution(TypedClassOperation)} tries before it gives up.
+   * types that {@link #selectOperationSubstitution(TypedClassOperation, TypedClassOperation)} tries
+   * before it gives up.
    */
   private static final int MAX_INSTANTIATION_ATTEMPTS = 10;
 
@@ -115,6 +116,8 @@ public class TypeInstantiator {
     }
     // type parameters of declaring type are instantiated
 
+    // The operation before capture conversion.
+    TypedClassOperation uncaptured = operation;
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
       Log.logPrintf(
@@ -124,7 +127,7 @@ public class TypeInstantiator {
           "Result of capture conversion = %s%n", StringsPlume.toStringAndClass(operation));
     }
     if (operation != null) {
-      operation = instantiateOperationTypes(operation);
+      operation = instantiateOperationTypes(operation, uncaptured);
     }
 
     // if operation == null failed to build instantiation
@@ -358,26 +361,103 @@ public class TypeInstantiator {
   }
 
   /**
+   * Returns the input types that have a wildcard type argument and that match the given parameter
+   * type; see {@link #wildcardMatchingSubstitution(ReferenceType, ClassOrInterfaceType)}. For
+   * example, for the parameter type {@code Comparator<? super String>}, returns the input type
+   * {@code Comparator<? super String>} but not {@code Comparator<Object>}.
+   *
+   * @param paramType a parameter type that has a wildcard type argument
+   * @return the input types that have a wildcard type argument and match {@code paramType}
+   */
+  private List<ReferenceType> wildcardInputTypesMatching(ClassOrInterfaceType paramType) {
+    List<ReferenceType> matches = new ArrayList<>();
+    for (Type inputType : inputTypes) {
+      if (inputType instanceof ClassOrInterfaceType
+          && ((ClassOrInterfaceType) inputType).hasWildcardArgument()
+          && wildcardMatchingSubstitution((ReferenceType) inputType, paramType) != null) {
+        matches.add((ReferenceType) inputType);
+      }
+    }
+    return matches;
+  }
+
+  /**
+   * Returns the substitution that makes the given parameter type a supertype of the given input
+   * type. For example, for the input type {@code Comparator<? super String>} and the parameter type
+   * {@code Comparator<? super T>}, returns the substitution that maps {@code T} to {@code String}.
+   *
+   * <p>Capture conversion replaces a wildcard in a parameter type by a capture variable, and no
+   * substitution for the capture variable yields a wildcard. This method instead matches an input
+   * type that has a wildcard against the parameter type before capture conversion.
+   *
+   * @param inputType an input type
+   * @param paramType a parameter type that has a wildcard type argument
+   * @return the substitution that makes {@code paramType} a supertype of {@code inputType} with no
+   *     type variables, or null if there is none
+   */
+  private static @Nullable Substitution wildcardMatchingSubstitution(
+      ReferenceType inputType, ClassOrInterfaceType paramType) {
+    Substitution substitution =
+        paramType.isGeneric()
+            ? inputType.getInstantiatingSubstitution(paramType)
+            : new Substitution();
+    if (substitution == null) {
+      return null;
+    }
+    ReferenceType instantiated = paramType.substitute(substitution);
+    if (instantiated.isGeneric() || !inputType.isSubtypeOfOrEqualTo(instantiated)) {
+      return null;
+    }
+    return substitution;
+  }
+
+  /**
    * Selects an instantiation of the generic types of an operation, and returns a new operation with
    * the types instantiated.
    *
-   * @param operation an operation
+   * <p>A parameter type that an input type with a wildcard matched, as {@code Comparator<? super
+   * String>} matches {@code Comparator<? super K>}, keeps its wildcard in the result; see {@link
+   * #selectOperationSubstitution(TypedClassOperation, TypedClassOperation)}.
+   *
+   * @param operation an operation, after capture conversion
+   * @param uncaptured the operation before capture conversion; the same as {@code operation} if
+   *     capture conversion did not change it
    * @return the operation with generic types instantiated, or null if no instantiation was found
    */
-  private @Nullable TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
-    Substitution substitution = selectOperationSubstitution(operation);
+  private @Nullable TypedClassOperation instantiateOperationTypes(
+      TypedClassOperation operation, TypedClassOperation uncaptured) {
+    Substitution substitution = selectOperationSubstitution(operation, uncaptured);
     if (substitution == null) {
       return null;
     }
     operation = operation.substitute(substitution);
+    TypeTuple inputTypes = operation.getInputTypes();
+    if (inputTypes.hasCaptureVariable()) {
+      // A capture variable that the substitution does not replace is in a parameter type that an
+      // input type with a wildcard matched.  Restore the wildcard that capture conversion replaced.
+      List<Type> restored = new ArrayList<>(inputTypes.size());
+      for (int i = 0; i < inputTypes.size(); i++) {
+        Type inputType = inputTypes.get(i);
+        restored.add(
+            inputType.hasCaptureVariable()
+                ? uncaptured.getInputTypes().get(i).substitute(substitution)
+                : inputType);
+      }
+      operation =
+          new TypedClassOperation(
+              operation.getOperation(),
+              operation.getDeclaringType(),
+              new TypeTuple(restored),
+              operation.getOutputType(),
+              operation.getExecutableSpecification());
+    }
     // An operation is generic if it has type variables.  This seems to assume that substitution
     // failed, because it left some type variables unreplaced.  Should that be an error?
     if (operation.isGeneric(/* ignoreWildcards= */ true)) {
       return null;
     }
-    // isGeneric(true) ignores capture variables.  A capture variable that the substitution did not
-    // replace would appear in the generated test, as in `Comparator<Capture0> c = null;`, which
-    // does not compile.
+    // isGeneric(true) ignores capture variables.  A capture variable that remains would appear in
+    // the generated test, as in `Comparator<Capture0> c = null;`, which does not compile.
     if (operation.getInputTypes().hasCaptureVariable()
         || operation.getOutputType().hasCaptureVariable()) {
       return null;
@@ -401,8 +481,12 @@ public class TypeInstantiator {
    *         <li>If the parameter type is a generic class or interface type, such as {@code
    *             List<T>}, randomly choose an {@link #inputTypes input type} that instantiates it,
    *             such as {@code List<String>}, and extend the substitution accordingly, as by
-   *             mapping {@code T} to {@code String}. If no input type instantiates the parameter
-   *             type, the attempt fails.
+   *             mapping {@code T} to {@code String}. If the parameter type has a capture variable,
+   *             also choose among the input types with a wildcard that match the parameter type
+   *             before capture conversion, such as {@code Comparator<? super String>} for the
+   *             capture of {@code Comparator<? super T>}; see {@link
+   *             #wildcardMatchingSubstitution(ReferenceType, ClassOrInterfaceType)}. If no input
+   *             type matches the parameter type, the attempt fails.
    *         <li>If the parameter type is some other generic type, such as {@code T} or {@code T[]},
    *             defer its type variables to step 2.
    *       </ul>
@@ -435,11 +519,13 @@ public class TypeInstantiator {
    * this makes another attempt, up to {@link #MAX_INSTANTIATION_ATTEMPTS} attempts in all.
    * Otherwise, another attempt would start from the same substitution, so this returns null.
    *
-   * @param operation an operation
+   * @param operation an operation, after capture conversion
+   * @param uncaptured the operation before capture conversion
    * @return a substitution that instantiates the generic types of {@code operation} and satisfies
    *     the bounds of its type variables, or null if none was found
    */
-  private @Nullable Substitution selectOperationSubstitution(TypedClassOperation operation) {
+  private @Nullable Substitution selectOperationSubstitution(
+      TypedClassOperation operation, TypedClassOperation uncaptured) {
     // Why the most recent attempt failed; used for diagnostics.  It is computed only if logging is
     // on, because failure is common and computing it calls toString() on types and substitutions.
     String failure = "";
@@ -452,12 +538,24 @@ public class TypeInstantiator {
       // True if each parameterized parameter type matched an input type.  If false, this attempt
       // fails without instantiating the remaining type variables.
       boolean allMatched = true;
-      for (Type origParamType : operation.getInputTypes()) {
+      for (int i = 0; i < operation.getInputTypes().size(); i++) {
+        Type origParamType = operation.getInputTypes().get(i);
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            // The number of elements of `matches` that instantiate the parameter type.  The other
+            // elements have a wildcard, and they match the parameter type before capture
+            // conversion.
+            int instantiatingMatchCount = matches.size();
+            // The parameter type before capture conversion.
+            ClassOrInterfaceType uncapturedParamType =
+                (ClassOrInterfaceType) uncaptured.getInputTypes().get(i);
+            if (origParamType.hasCaptureVariable()) {
+              matches.addAll(
+                  wildcardInputTypesMatching(uncapturedParamType.substitute(substitution)));
+            }
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -466,9 +564,12 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            ReferenceType selectedType = Randomness.randomSetMember(matches);
+            int selected = Randomness.nextRandomInt(matches.size());
+            ReferenceType selectedType = matches.get(selected);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selected < instantiatingMatchCount
+                    ? selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType)
+                    : wildcardMatchingSubstitution(selectedType, uncapturedParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;

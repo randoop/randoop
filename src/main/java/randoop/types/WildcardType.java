@@ -186,6 +186,32 @@ class WildcardType extends ParameterType {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This wildcard instantiates a wildcard of the same kind, upper or lower bounded, if the bound
+   * type of this wildcard instantiates the bound type of the other. For example, {@code ? super
+   * String} instantiates {@code ? super T} by the substitution that maps {@code T} to {@code
+   * String}.
+   */
+  @Override
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    if (goalType instanceof WildcardType) {
+      WildcardType goalWildcard = (WildcardType) goalType;
+      if (this.hasUpperBound == goalWildcard.hasUpperBound
+          && this.getTypeBound() instanceof ReferenceBound
+          && goalWildcard.getTypeBound() instanceof ReferenceBound) {
+        ReferenceType boundType = ((ReferenceBound) this.getTypeBound()).getBoundType();
+        ReferenceType goalBoundType = ((ReferenceBound) goalWildcard.getTypeBound()).getBoundType();
+        if (!goalBoundType.isGeneric()) {
+          return boundType.equals(goalBoundType) ? new Substitution() : null;
+        }
+        return boundType.getInstantiatingSubstitution(goalBoundType);
+      }
+    }
+    return super.getInstantiatingSubstitution(goalType);
+  }
+
   @Override
   public boolean hasWildcard() {
     return true;
