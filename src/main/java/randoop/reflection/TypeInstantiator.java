@@ -392,10 +392,17 @@ public class TypeInstantiator {
    */
   private static @Nullable Substitution wildcardMatchingSubstitution(
       ReferenceType inputType, ClassOrInterfaceType paramType) {
-    Substitution substitution =
-        paramType.isGeneric()
-            ? inputType.getInstantiatingSubstitution(paramType)
-            : new Substitution();
+    Substitution substitution;
+    try {
+      substitution =
+          paramType.isGeneric()
+              ? inputType.getInstantiatingSubstitution(paramType)
+              : new Substitution();
+    } catch (IllegalArgumentException e) {
+      // The input type gives one type variable distinct types, as Map<? extends String, ? extends
+      // Integer> does for T in Map<? extends T, ? extends T>.
+      return null;
+    }
     if (substitution == null) {
       return null;
     }
@@ -438,13 +445,8 @@ public class TypeInstantiator {
                 ? uncaptured.getInputTypes().get(i).substitute(substitution)
                 : inputType);
       }
-      operation =
-          new TypedClassOperation(
-              operation.getOperation(),
-              operation.getDeclaringType(),
-              new TypeTuple(restored),
-              operation.getOutputType(),
-              operation.getExecutableSpecification());
+      // withInputTypes keeps the class of the operation, such as TypedClassOperationWithCast.
+      operation = operation.withInputTypes(new TypeTuple(restored));
     }
     // An operation is generic if it has type variables.  This seems to assume that substitution
     // failed, because it left some type variables unreplaced.  Should that be an error?
@@ -544,12 +546,13 @@ public class TypeInstantiator {
             // elements have a wildcard, and they match the parameter type before capture
             // conversion.
             int instantiatingMatchCount = matches.size();
-            // The parameter type before capture conversion.
+            // The parameter type before capture conversion, with the substitution so far applied
+            // to it.  Applying the substitution keeps the inference from a wildcard input type
+            // consistent with the type variables that are already instantiated.
             ClassOrInterfaceType uncapturedParamType =
-                (ClassOrInterfaceType) uncaptured.getInputTypes().get(i);
+                ((ClassOrInterfaceType) uncaptured.getInputTypes().get(i)).substitute(substitution);
             if (origParamType.hasCaptureVariable()) {
-              matches.addAll(
-                  wildcardInputTypesMatching(uncapturedParamType.substitute(substitution)));
+              matches.addAll(wildcardInputTypesMatching(uncapturedParamType));
             }
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {

@@ -153,19 +153,19 @@ class WildcardType extends ParameterType {
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
    * </ul>
    *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the cases
+   * From the perspective of reflection, {@code ?} is just {@code ? extends Object}, so {@code ?
+   * extends T} contains {@code ?} only if {@code T} is {@code Object}. Otherwise, checks for the
+   * case
    *
    * <ul>
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   *   <li>{@code ? super T} contains {@code ?}
-   *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
    *
-   * The last two being equivalent from the perspective of reflection.
+   * A wildcard {@code ? super T} contains no wildcard with an upper bound, such as {@code ?} or
+   * {@code ? extends Object} (JLS 4.5.1). For example, {@code Comparator<?>} is not a subtype of
+   * {@code Comparator<? super String>}.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
@@ -178,7 +178,7 @@ class WildcardType extends ParameterType {
       }
     } else {
       if (otherType.hasUpperBound) {
-        return otherType.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+        return false;
       } else {
         return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
       }

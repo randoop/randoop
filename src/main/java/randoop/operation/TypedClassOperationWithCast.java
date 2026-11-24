@@ -67,6 +67,16 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
   }
 
   @Override
+  public TypedClassOperationWithCast withInputTypes(TypeTuple inputTypes) {
+    return new TypedClassOperationWithCast(
+        this.getOperation(),
+        this.getDeclaringType(),
+        inputTypes,
+        this.getOutputType(),
+        this.getExecutableSpecification());
+  }
+
+  @Override
   public TypedClassOperationWithCast applyCaptureConversion() {
     return new TypedClassOperationWithCast(
         this.getOperation(),

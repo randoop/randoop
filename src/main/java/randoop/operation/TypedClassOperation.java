@@ -116,6 +116,22 @@ public class TypedClassOperation extends TypedOperation {
         this.getExecutableSpecification());
   }
 
+  /**
+   * Returns an operation that is like this one, but has the given input types. The result has the
+   * same run-time class as this, so it executes the same way.
+   *
+   * @param inputTypes the input types of the result
+   * @return an operation like this one, with the given input types
+   */
+  public TypedClassOperation withInputTypes(TypeTuple inputTypes) {
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        this.getOutputType(),
+        this.getExecutableSpecification());
+  }
+
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
