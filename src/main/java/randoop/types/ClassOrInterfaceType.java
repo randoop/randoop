@@ -191,18 +191,22 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the enclosing type of this type, or null if this type has no enclosing type or its
-   * enclosing type is the generic form of its class. Equality and hashing use this rather than the
-   * enclosing type itself. A generic-form enclosing type, such as {@code Outer<T>} in {@code
-   * Outer<T>.Inner<String>}, places no constraint on the type, so it is equivalent to no enclosing
-   * type. Different construction paths yield either representation: {@link
-   * #forType(java.lang.reflect.Type)} omits a generic-form owner type, but substitution into a
-   * generic member class retains its generic-form enclosing type.
+   * Returns the enclosing type of this type, or null if this type is not a member class (an inner
+   * class, which is not static), has no enclosing type, or has an enclosing type that is the
+   * generic form of its class. Equality and hashing use this rather than the enclosing type itself.
+   * The enclosing type of a static nested class places no constraint on the type, and neither does
+   * a generic-form enclosing type, such as {@code NonGenericOuter} in {@code
+   * NonGenericOuter.Inner<Integer>} or {@code Outer<T>} in {@code Outer<T>.Inner<String>}, where
+   * {@code T} is the type parameter of {@code Outer}; such an enclosing type is equivalent to no
+   * enclosing type. Different construction paths yield either representation: some omit a
+   * generic-form enclosing type, but others keep it, such as {@link
+   * #forType(java.lang.reflect.Type)} for an owner type in declaration form and {@link
+   * GenericClassType#instantiate(ReferenceType...)}.
    *
    * @return the enclosing type of this type, or null if it does not constrain this type
    */
   private @Nullable ClassOrInterfaceType constrainingEnclosingType() {
-    if (enclosingType == null || enclosingType.isGenericForm()) {
+    if (!isMemberClass() || enclosingType == null || enclosingType.isGenericForm()) {
       return null;
     }
     return enclosingType;
