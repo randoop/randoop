@@ -546,15 +546,16 @@ public class InstantiatedType extends ParameterizedType {
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // A member class whose enclosing type is parameterized, as in `Outer<String>.Inner`, is
     // parameterized, but is a NonParameterizedType, not an InstantiatedType, if it has no type
-    // arguments of its own.  Such a type is handled below, by the supertype search and the class
-    // and enclosing type subtyping in the superclass, which compares the enclosing types by
-    // containment.  For example, a subclass of `Outer<Integer>.Inner` is a subtype of
-    // `Outer<? extends Number>.Inner`, but not of `Outer<Long>.Inner`.
+    // arguments of its own.  The clauses below need an InstantiatedType; such a type is handled
+    // below, by the supertype search and the class and enclosing type subtyping in the superclass,
+    // which compares the enclosing types by containment.  For example, a subclass of
+    // `Outer<Integer>.Inner` is a subtype of `Outer<? extends Number>.Inner`, but not of
+    // `Outer<Long>.Inner`.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -587,9 +588,8 @@ public class InstantiatedType extends ParameterizedType {
       // first clause, combined with the second:  the supertype with the same rawtype as otherType
       // is a subtype of otherType if the type arguments of otherType contain its type arguments,
       // as List<String> is a subtype of Collection<?> because Collection<String> is.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {
         // getMatchingSupertype returns an instantiation of otherType's generic class, so the
         // recursive call uses the second clause above, which checks type-argument containment, and
