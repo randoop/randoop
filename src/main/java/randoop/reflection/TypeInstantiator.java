@@ -344,13 +344,17 @@ public class TypeInstantiator {
    * Returns the parameterized input types that instantiate the given type.
    *
    * @param patternType a type
-   * @return the parameterized input types that are instantiations of {@code patternType}
+   * @return the parameterized input types that are instantiations of {@code patternType} and that
+   *     have an instantiating substitution for it
    */
   private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
+      // isInstantiationOf checks each type argument separately, so it accepts Map<String, Integer>
+      // for Map<X, X>, which has no instantiating substitution.
       if (inputType.isParameterized()
-          && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
+          && ((ReferenceType) inputType).isInstantiationOf(patternType)
+          && ((ReferenceType) inputType).getInstantiatingSubstitution(patternType) != null) {
         matches.add((ReferenceType) inputType);
       }
     }
