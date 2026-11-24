@@ -2897,7 +2897,10 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, OuterWithPlainInner<String>.Inner>> {}
 
-  /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
+  /**
+   * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. The
+   * member class keeps its owner type, {@code OuterWithPlainInner<String>}.
+   */
   @Test
   public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
     List<TypeVariable> parameters =

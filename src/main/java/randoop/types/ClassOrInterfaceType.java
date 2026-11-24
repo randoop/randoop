@@ -818,11 +818,23 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
-      // InstantiatedType.equals ignores enclosing types, so compare them too:  a class that
-      // extends Outer<String>.Inner<Integer> is not a subclass of Outer<Number>.Inner<Integer>.
+    // InstantiatedType.equals ignores enclosing types, so compare them too:  a class that
+    // extends Outer<String>.Inner<Integer> is not a subclass of Outer<Number>.Inner<Integer>.
+    if (isSameWithEnclosingTypes(this, otherClass)) {
+      return true;
+    }
+    for (ClassOrInterfaceType current = this.getSuperclass();
+        current != null;
+        current = current.getSuperclass()) {
       if (isSameWithEnclosingTypes(current, otherClass)) {
         return true;
+      }
+      // A strict superclass of the same class as otherClass can be a subtype of otherClass without
+      // being equal to it, as Outer<String>.Inner is a subtype of Outer<?>.Inner.  The recursive
+      // call does not recurse further, because the strict superclasses of current are of other
+      // classes.
+      if (current.runtimeClassIs(otherClass.getRuntimeClass())) {
+        return current.isSubtypeOfOrEqualTo(otherClass);
       }
     }
     return false;
