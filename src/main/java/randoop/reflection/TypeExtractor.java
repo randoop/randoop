@@ -92,9 +92,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * @param type the general type
    */
   private void addIfConcrete(Type type) {
-    if (!type.isVoid()
-        && !type.isGeneric()
-        && !(type.isParameterized() && type.hasWildcard())) {
+    if (!type.isVoid() && !type.isGeneric() && !(type.isParameterized() && type.hasWildcard())) {
       if (!predicate.isAccessible(type.getRuntimeClass())) {
         return;
       }
