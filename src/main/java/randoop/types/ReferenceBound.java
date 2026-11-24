@@ -176,7 +176,16 @@ public abstract class ReferenceBound extends ParameterBound {
   private static @Nullable ReferenceType asReferenceType(
       ParameterBound bound, Substitution substitution) {
     if (bound instanceof LazyParameterBound) {
-      ParameterBound converted = ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
+      LazyParameterBound lazyBound = (LazyParameterBound) bound;
+      ParameterBound converted = lazyBound.substituteWithUnknowns(substitution);
+      if (converted == null) {
+        // The bound is a non-generic member class of a generic class whose owner type contains no
+        // type variable, as in Outer<String>.Inner, which substituteWithUnknowns cannot convert.
+        ReferenceBound referenceBound = lazyBound.toReferenceBound();
+        return referenceBound == null
+            ? null
+            : referenceBound.getBoundType().substitute(substitution);
+      }
       return converted instanceof ReferenceBound
           ? ((ReferenceBound) converted).getBoundType()
           : null;
