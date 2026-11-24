@@ -1748,26 +1748,41 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
-   * The bound of a type parameter that a member class declares is checked against the type argument
-   * for that type parameter, not against the type argument of the enclosing class.
+   * A generic class whose type parameter has a bound, with a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class NumberOuter<T extends Number> {
+    /**
+     * A generic member class whose type parameter has no bound.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+  }
+
+  /**
+   * The bound of a type parameter of the enclosing class is checked against the type argument for
+   * that type parameter, even if the member class's own type parameter has no bound.
    */
   @Test
-  public void instantiateMemberClassChecksDeclaredBoundTest() {
-    GenericClassType numberInner =
-        (GenericClassType) ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+  public void instantiateMemberClassChecksEnclosingBoundTest() {
+    GenericClassType numberOuterInner =
+        (GenericClassType) ClassOrInterfaceType.forClass(NumberOuter.Inner.class);
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // Outer<String>.NumberInner<Integer>
-    assertNotNull(numberInner.instantiate(JavaTypes.STRING_TYPE, integerType));
-    assertNotNull(numberInner.instantiate(Arrays.asList(JavaTypes.STRING_TYPE, integerType)));
-    // Outer<Integer>.NumberInner<String>
+    // NumberOuter<Integer>.Inner<String>
+    assertNotNull(numberOuterInner.instantiate(integerType, JavaTypes.STRING_TYPE));
+    assertNotNull(numberOuterInner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE)));
+    // NumberOuter<String>.Inner<String>
     try {
-      numberInner.instantiate(integerType, JavaTypes.STRING_TYPE);
+      numberOuterInner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
       throw new AssertionError("String is not within the bound Number");
     } catch (IllegalArgumentException e) {
       // expected
     }
     try {
-      numberInner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE));
+      numberOuterInner.instantiate(Arrays.asList(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE));
       throw new AssertionError("String is not within the bound Number");
     } catch (IllegalArgumentException e) {
       // expected
