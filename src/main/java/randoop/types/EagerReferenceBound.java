@@ -1,12 +1,32 @@
 package randoop.types;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
  * directly. Contrast with {@link LazyReferenceBound}.
  */
 class EagerReferenceBound extends ReferenceBound {
+
+  /**
+   * The (bound type, argument type) pairs whose {@link #isUpperBound(Type, Substitution)} check of
+   * a parameterized bound is executing on the current thread. The check captures the bound, and a
+   * capture variable's upper bound can be the bound itself, as for {@code T extends Builder<?>} in
+   * {@code Builder<T extends Builder<?>>}. Checking that the argument instantiates the capture
+   * variable then repeats the same check. The repeated check returns true: it succeeds if the rest
+   * of the original check succeeds.
+   *
+   * <p>Checks are compared by {@code equals}, which ignores the bounds of a type variable. They
+   * cannot be compared by identity: when a bound mentions a type variable, as in {@code D<T, S
+   * extends D<T, ?>>}, each repetition of a check has a new bound object, so a check compared by
+   * identity would never repeat.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<Type>>> upperBoundChecksInProgress =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a bound for the given reference type.
@@ -41,7 +61,10 @@ class EagerReferenceBound extends ReferenceBound {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
+    // enclosing type to equal that of the other member class (or that member class to be the
+    // generic form of its class), rather than to be contained in it.  For example, the test does
+    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
@@ -115,32 +138,47 @@ class EagerReferenceBound extends ReferenceBound {
       return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
+    // enclosing type to equal that of the other member class (or that member class to be the
+    // generic form of its class), rather than to be contained in it.  For example, the test does
+    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      // As for a type variable bound above, a type parameter in the bound that is fixed, such as a
-      // type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
-      // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
-      // would accept String as an instantiation of E.
-      if (subst.instantiatesTypeParameters()) {
-        Substitution completeSubstitution =
-            subst.extendWithIdentity(thisBoundType.getTypeParameters());
-        if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
-          return Subtyping.isSubtypeOrEqual(
-              (ReferenceType) argType, thisBoundType, completeSubstitution);
+      List<Type> check = Arrays.asList(thisBoundType, argType);
+      Set<List<Type>> inProgress = upperBoundChecksInProgress.get();
+      if (!inProgress.add(check)) {
+        // This check depends on itself, so assume it holds. Any other condition still holds or
+        // fails on its own.
+        return true;
+      }
+      try {
+        // As for a type variable bound above, a type parameter in the bound that is fixed, such as
+        // a type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
+        // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
+        // would accept String as an instantiation of E.
+        if (subst.instantiatesTypeParameters()) {
+          Substitution completeSubstitution =
+              subst.extendWithIdentity(thisBoundType.getTypeParameters());
+          if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
+            return Subtyping.isSubtypeOrEqual(
+                (ReferenceType) argType, thisBoundType, completeSubstitution);
+          }
         }
+        InstantiatedType boundClassType =
+            ((InstantiatedType) thisBoundType).applyCaptureConversion();
+        InstantiatedType argSuperType =
+            ((ClassOrInterfaceType) argType)
+                .getMatchingSupertype(boundClassType.getGenericClassType());
+        if (argSuperType == null) {
+          return false;
+        }
+        argSuperType = argSuperType.applyCaptureConversion();
+        return argSuperType.isInstantiationOf(boundClassType);
+      } finally {
+        inProgress.remove(check);
       }
-      InstantiatedType boundClassType = ((InstantiatedType) thisBoundType).applyCaptureConversion();
-      InstantiatedType argSuperType =
-          ((ClassOrInterfaceType) argType)
-              .getMatchingSupertype(boundClassType.getGenericClassType());
-      if (argSuperType == null) {
-        return false;
-      }
-      argSuperType = argSuperType.applyCaptureConversion();
-      return argSuperType.isInstantiationOf(boundClassType);
     }
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
       // A member class that declares no type parameters, of a parameterized type, such as

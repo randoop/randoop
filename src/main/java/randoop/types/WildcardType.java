@@ -171,24 +171,6 @@ class WildcardType extends ParameterType {
     return new WildcardArgument(this).contains(new WildcardArgument(otherType));
   }
 
-  /**
-   * Returns the type of the given wildcard bound, as written. A {@link LazyParameterBound} is
-   * converted to the equivalent {@link ReferenceBound}.
-   *
-   * @param bound a bound of a wildcard
-   * @return the type of the bound, or null if it cannot be determined
-   */
-  /*package*/ static @Nullable ReferenceType boundType(ParameterBound bound) {
-    if (bound instanceof LazyParameterBound) {
-      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
-      return converted == null ? null : converted.getBoundType();
-    }
-    if (bound instanceof ReferenceBound) {
-      return ((ReferenceBound) bound).getBoundType();
-    }
-    return null;
-  }
-
   @Override
   public boolean hasWildcard() {
     return true;
