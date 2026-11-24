@@ -547,7 +547,9 @@ public class InstantiatedType extends ParameterizedType {
     // A member class whose enclosing type is parameterized, as in `Outer<String>.Inner`, is
     // parameterized, but is a NonParameterizedType, not an InstantiatedType, if it has no type
     // arguments of its own.  Such a type is handled below, by the supertype search and the class
-    // and enclosing type subtyping in the superclass.
+    // and enclosing type subtyping in the superclass, which compares the enclosing types by
+    // containment.  For example, a subclass of `Outer<Integer>.Inner` is a subtype of
+    // `Outer<? extends Number>.Inner`, but not of `Outer<Long>.Inner`.
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
