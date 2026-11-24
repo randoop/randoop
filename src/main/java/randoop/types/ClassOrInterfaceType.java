@@ -710,7 +710,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
+    if (this.equals(otherClass)) {
+      return true;
+    }
+    for (ClassOrInterfaceType current = this.getSuperclass();
+        current != null;
+        current = current.getSuperclass()) {
       if (current.equals(otherClass)) {
         return true;
       }
@@ -718,7 +723,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // being equal to it, as Outer<String>.Inner is a subtype of Outer<?>.Inner.  The recursive
       // call does not recurse further, because the strict superclasses of current are of other
       // classes.
-      if (current != this && current.runtimeClassIs(otherClass.getRuntimeClass())) {
+      if (current.runtimeClassIs(otherClass.getRuntimeClass())) {
         return current.isSubtypeOfOrEqualTo(otherClass);
       }
     }
