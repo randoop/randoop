@@ -56,6 +56,12 @@ public class MemberClassOfParameterizedTypeTest {
     abstract List<? extends Outer<String>.Inner> innerUpperWildcardList();
 
     abstract List<? super Outer<String>.Inner> innerLowerWildcardList();
+
+    abstract Outer<?>.Inner wildcardInnerType();
+
+    abstract Outer<? extends CharSequence>.Inner charSequenceInnerType();
+
+    abstract Outer<Long>.Inner longInnerType();
   }
 
   /**
@@ -112,5 +118,21 @@ public class MemberClassOfParameterizedTypeTest {
     assertTrue(lower.contains(inner));
     assertFalse(lower.contains(sub));
     assertFalse(lower.contains(other));
+  }
+
+  @Test
+  public void testSubclassOfMemberClassWithWildcardEnclosingType() throws NoSuchMethodException {
+    ReferenceType inner = returnType("innerType");
+    ReferenceType sub = returnType("subType");
+    ReferenceType wildcardInner = returnType("wildcardInnerType");
+    ReferenceType charSequenceInner = returnType("charSequenceInnerType");
+    ReferenceType longInner = returnType("longInnerType");
+
+    assertTrue(inner.isSubtypeOfOrEqualTo(wildcardInner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(inner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(wildcardInner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(charSequenceInner));
+    assertFalse(sub.isSubtypeOfOrEqualTo(longInner));
+    assertFalse(inner.isSubtypeOfOrEqualTo(longInner));
   }
 }
