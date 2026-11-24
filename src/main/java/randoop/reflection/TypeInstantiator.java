@@ -869,7 +869,7 @@ public class TypeInstantiator {
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
-  private Substitution selectSubstitution(List<TypeVariable> typeParameters) {
+  private @Nullable Substitution selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution substitution = new Substitution();
     return selectSubstitution(typeParameters, substitution);
   }
@@ -882,7 +882,7 @@ public class TypeInstantiator {
    * @return the substitution extended by instantiating type variables; null if any of the variables
    *     has no instantiating types
    */
-  private Substitution selectSubstitution(
+  private @Nullable Substitution selectSubstitution(
       List<TypeVariable> typeParameters, Substitution substitution) {
     List<Substitution> substitutionList = allExtendingSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
@@ -899,7 +899,7 @@ public class TypeInstantiator {
    * @return the list of possible substitutions, empty if none is found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<Substitution> allExtendingSubstitutions(
+  /*package*/ List<Substitution> allExtendingSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
 
     // Partition parameters based on whether they might have independent bounds:
@@ -968,11 +968,11 @@ public class TypeInstantiator {
       }
     } else if (!nongenericParameters.isEmpty()) {
       // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectSubstitutionIndependently(nongenericParameters, substitution);
-      if (substitution == null) {
+      Substitution extended = selectSubstitutionIndependently(nongenericParameters, substitution);
+      if (extended == null) {
         return Collections.emptyList();
       }
-      result.add(substitution);
+      result.add(extended);
     }
 
     // Can always select captured wildcards independently.  Augment each existing candidate.
