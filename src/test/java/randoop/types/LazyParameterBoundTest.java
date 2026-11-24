@@ -124,6 +124,40 @@ public class LazyParameterBoundTest {
      * @param <T> the type parameter
      */
     class Holder<T extends List<Inner<T>>> {}
+
+    /** A member class with no type parameters of its own. */
+    class Plain {}
+
+    /**
+     * A member class whose type parameter's bound is {@code List<DeclarationOwner<A>.Plain>}.
+     *
+     * @param <T> the type parameter
+     */
+    class PlainHolder<T extends List<Plain>> {}
+  }
+
+  /**
+   * Substituting a copy of a type parameter with other bounds into the declaration-form owner of a
+   * non-generic member class keeps the copy, rather than restoring the declaration.
+   */
+  @Test
+  public void testDeclarationFormOwnerOfNonGenericMemberKeepsSubstitutedCopy() {
+    TypeVariable a = GenericClassType.forClass(DeclarationOwner.class).getTypeParameters().get(0);
+    TypeVariable t = TypeVariable.forType(DeclarationOwner.PlainHolder.class.getTypeParameters()[0]);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    TypeVariable aCopy =
+        a.createCopyWithBounds(
+            a.getLowerTypeBound(), new EagerReferenceBound(ReferenceType.forClass(Number.class)));
+    ParameterBound substituted = bound.substitute(new Substitution(a, aCopy));
+    InstantiatedType list = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType plain =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType owner = plain.enclosingType;
+    ReferenceType ownerArgument =
+        ((ReferenceArgument) owner.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(TypeVariable.areIdentical(aCopy, ownerArgument));
   }
 
   /**
