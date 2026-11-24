@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 /**
- * Tests a generic member class of a parameterized type, such as {@code Outer<String>.Inner<Integer>},
- * whose enclosing type or own type arguments are wildcards.
+ * Tests a generic member class of a parameterized type, such as {@code
+ * Outer<String>.Inner<Integer>}, whose enclosing type or own type arguments are wildcards.
  */
 public class GenericMemberClassOfParameterizedTypeTest {
 
