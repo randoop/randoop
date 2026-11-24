@@ -17,9 +17,10 @@ public class GenericClassType extends ParameterizedType {
   private final Class<?> rawType;
 
   /**
-   * The type parameters of the generic class. Null until first needed: computing them computes
-   * their bounds, which may refer to this class, as in {@code Builder<T extends Builder<?>>}.
-   * Computing them in the constructor would recurse infinitely for such a class.
+   * The type parameters that the generic class declares, not including those of an enclosing class.
+   * Null until first needed: computing them computes their bounds, which may refer to this class,
+   * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
+   * infinitely for such a class.
    */
   private @MonotonicNonNull List<TypeVariable> parameters;
 
@@ -34,9 +35,11 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the type parameters of this generic class, computing them if necessary.
+   * Returns the type parameters that this generic class declares, computing them if necessary.
+   * Unlike {@link #getTypeParameters()}, the result omits the type parameters of enclosing classes.
+   * For example, for {@code Outer<T>.Inner<U>}, the result is {@code [U]}.
    *
-   * @return the type parameters of this generic class
+   * @return the type parameters that this generic class declares
    */
   private List<TypeVariable> parameters() {
     if (parameters == null) {
