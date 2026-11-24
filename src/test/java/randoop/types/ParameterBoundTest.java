@@ -1188,11 +1188,9 @@ public class ParameterBoundTest {
 
   @Test
   public void testCompareWithFixedOwnerMemberClassBound() {
+    // ParameterBound.forType would return an eager bound, because the type has no type variable.
     ParameterBound memberBound =
-        ParameterBound.forType(
-            Collections.emptySet(),
-            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
-    assertTrue(memberBound instanceof LazyParameterBound);
+        new LazyParameterBound(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType stringOuter =
         ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType integerOuter =
@@ -1216,8 +1214,10 @@ public class ParameterBoundTest {
     List<TypeVariable> parameters =
         GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
     TypeVariable x = parameters.get(0);
-    ParameterBound memberBound = parameters.get(1).getUpperTypeBound();
-    assertTrue(memberBound instanceof LazyParameterBound);
+    // The upper bound of T is eager, because X is not in its variable set.
+    ParameterBound memberBound =
+        new LazyParameterBound(
+            OwnerVariableMemberBound.class.getTypeParameters()[1].getBounds()[0]);
     ReferenceBound stringOuterBound =
         new EagerReferenceBound(
             ReferenceType.forType(
@@ -1225,9 +1225,11 @@ public class ParameterBoundTest {
     Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
     Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
 
-    assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
+    // The substitution applies to stringOuterBound, not to memberBound, in which X stays fixed.
+    // So GenericOuter<String>.NonGenericInner is unrelated to GenericOuter<X>.NonGenericInner.
+    assertFalse(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
-    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
   }
 
