@@ -57,37 +57,15 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
-    // Compare the enclosing types, as for Outer<String>.Inner<Integer>.
+    // super.equals compares the enclosing types, as for Outer<String>.Inner<Integer>.
     return genericType.equals(other.getGenericClassType())
         && argumentList.equals(other.argumentList)
-        && Objects.equals(getDistinguishingEnclosingType(), other.getDistinguishingEnclosingType());
+        && super.equals(obj);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList, getDistinguishingEnclosingType());
-  }
-
-  /**
-   * Returns the enclosing type of this type that distinguishes it from another type with the same
-   * class and type arguments: the enclosing type of a member class, as {@code Outer<String>} for
-   * {@code Outer<String>.Inner<Integer>}, if that enclosing type is not the generic form of its
-   * class. Otherwise, returns null.
-   *
-   * <p>An enclosing type that is the generic form of its class, as {@code NonGenericOuter} for
-   * {@code NonGenericOuter.Inner<Integer>} or {@code Outer<T>} for {@code Outer<T>.Inner<Integer>}
-   * where {@code T} is the type parameter of {@code Outer}, is equivalent to no enclosing type.
-   * Some constructions of a type omit such an enclosing type, but others, such as {@link
-   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} for an owner type in declaration form and
-   * {@link GenericClassType#instantiate(ReferenceType...)}, keep it.
-   *
-   * @return the enclosing type of this type that distinguishes it, or null
-   */
-  private @Nullable ClassOrInterfaceType getDistinguishingEnclosingType() {
-    if (isMemberClass() && !enclosingType.isGenericForm()) {
-      return enclosingType;
-    }
-    return null;
+    return Objects.hash(genericType, argumentList, super.hashCode());
   }
 
   @Override
