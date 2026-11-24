@@ -350,13 +350,11 @@ public class TypeInstantiator {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.  For nested classes, isInstantiationOf compares only the enclosing
-      // types, so also check the runtime class:  otherwise Outer<String>.Other would match the
-      // pattern Outer<E>.Inner.
+      // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
+      // types, so it is true for an unrelated member class such as Outer<String>.Other.  The
+      // runtime class check excludes such types but admits subclasses of the pattern's class.
       if (inputType.isClassOrInterfaceType()
-          && patternType
-              .getRuntimeClass()
-              .isAssignableFrom(((ClassOrInterfaceType) inputType).getRuntimeClass())
+          && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }
