@@ -154,6 +154,7 @@ class WildcardType extends ParameterType {
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
    *   <li>{@code ? extends T} contains {@code ?}
+   *   <li>{@code ?} contains {@code ? super S}
    * </ul>
    *
    * Both of which are technically the same because from a reflection perspective {@code ?} is just
@@ -173,6 +174,11 @@ class WildcardType extends ParameterType {
     if (this.hasUpperBound) {
       if (otherType.hasUpperBound
           && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
+        return true;
+      }
+      // `?`, which is `? extends Object`, contains every `? super S`.
+      if (!otherType.hasUpperBound
+          && this.getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE))) {
         return true;
       }
     } else {
