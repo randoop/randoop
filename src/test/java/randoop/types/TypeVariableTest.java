@@ -3412,8 +3412,8 @@ public class TypeVariableTest {
       K, V extends Map<K, V>, T extends Map<V, NonGenericInnerOuter<String>.Inner>> {}
 
   /**
-   * A field whose type, {@code NonGenericInnerOuter<String>.Inner}, is a non-generic member class of
-   * an instantiated generic class.
+   * A field whose type, {@code NonGenericInnerOuter<String>.Inner}, is a non-generic member class
+   * of an instantiated generic class.
    */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   NonGenericInnerOuter<String>.Inner stringInnerField;
