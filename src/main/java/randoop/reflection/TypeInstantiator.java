@@ -850,7 +850,7 @@ public class TypeInstantiator {
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
-  private Substitution selectSubstitution(List<TypeVariable> typeParameters) {
+  private @Nullable Substitution selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution substitution = new Substitution();
     return selectSubstitution(typeParameters, substitution);
   }
@@ -863,7 +863,7 @@ public class TypeInstantiator {
    * @return the substitution extended by instantiating type variables; null if any of the variables
    *     has no instantiating types
    */
-  private Substitution selectSubstitution(
+  private @Nullable Substitution selectSubstitution(
       List<TypeVariable> typeParameters, Substitution substitution) {
     List<Substitution> substitutionList = allExtendingSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
@@ -880,7 +880,7 @@ public class TypeInstantiator {
    * @return the list of possible substitutions, empty if none is found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<Substitution> allExtendingSubstitutions(
+  /*package*/ List<Substitution> allExtendingSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
 
     // Partition parameters based on whether they might have independent bounds:
