@@ -1542,6 +1542,30 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(innerOfWildcard.isSubtypeOfOrEqualTo(innerOfString));
   }
 
+  /** A top-level class whose superclass is {@code Outer<String>.Inner}. */
+  static class StringInnerChild extends Outer<String>.Inner {
+    /**
+     * Creates a StringInnerChild.
+     *
+     * @param enclosing the enclosing instance of the superclass
+     */
+    StringInnerChild(Outer<String> enclosing) {
+      enclosing.super();
+    }
+  }
+
+  /**
+   * A class that extends {@code Outer<String>.Inner} is a subtype of {@code Outer<?>.Inner}, but
+   * not of {@code Outer<Long>.Inner}.
+   */
+  @Test
+  public void inheritedNonGenericMemberSubtypeTest() {
+    ClassOrInterfaceType child = ClassOrInterfaceType.forClass(StringInnerChild.class);
+    assertTrue(child.isSubtypeOfOrEqualTo(classFieldType("innerOfString")));
+    assertTrue(child.isSubtypeOfOrEqualTo(classFieldType("innerOfWildcard")));
+    assertFalse(child.isSubtypeOfOrEqualTo(classFieldType("innerOfLong")));
+  }
+
   /**
    * A parameterized type is not a subtype of an unrelated member class that is parameterized only
    * through its enclosing type, and the check does not throw.
