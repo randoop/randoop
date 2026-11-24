@@ -820,8 +820,8 @@ public class TypeInstantiator {
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
       // not be parameterized.  isInstantiationOf can accept an unrelated member class, such as
-      // Outer<String>.Inner for Outer<T>.Other<U>, because its enclosing type matches; so check
-      // the runtime classes.
+      // Outer<String>.Inner for Outer<T>.Other<U>, because its enclosing type matches.  The
+      // runtime class check excludes such types but admits subclasses of the pattern's class.
       if (inputType.isClassOrInterfaceType()
           && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)
