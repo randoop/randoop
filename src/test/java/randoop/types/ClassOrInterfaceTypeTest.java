@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -592,6 +593,30 @@ public class ClassOrInterfaceTypeTest {
     Substitution substitution = new Substitution();
     assertTrue(upperBound.isUpperBound(integerType, substitution));
     assertFalse(upperBound.isUpperBound(JavaTypes.STRING_TYPE, substitution));
+  }
+
+  @Test
+  public void instantiateBoundedMemberOfGenericClassTest() {
+    // The type arguments of Outer<T>.NumberInner<U extends Number> are for T, then for U.  The
+    // bound of U is checked against the type argument for U, not the one for T.
+    GenericClassType numberInnerType =
+        (GenericClassType) ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ReferenceType stringType = JavaTypes.STRING_TYPE;
+
+    List<TypeArgument> expectedArguments =
+        Collections.singletonList(TypeArgument.forType(integerType));
+    assertEquals(
+        expectedArguments, numberInnerType.instantiate(stringType, integerType).getTypeArguments());
+    assertEquals(
+        expectedArguments,
+        numberInnerType.instantiate(Arrays.asList(stringType, integerType)).getTypeArguments());
+
+    assertThrows(
+        IllegalArgumentException.class, () -> numberInnerType.instantiate(integerType, stringType));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> numberInnerType.instantiate(Arrays.asList(integerType, stringType)));
   }
 
   @Test

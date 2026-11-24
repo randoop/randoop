@@ -20,7 +20,8 @@ public class GenericClassType extends ParameterizedType {
    * The type parameters that the generic class declares, not including those of an enclosing class.
    * Null until first needed: computing them computes their bounds, which may refer to this class,
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
-   * infinitely for such a class.
+   * infinitely for such a class. The lazy initialization is not synchronized, because Randoop uses
+   * the type model from a single thread.
    */
   private @MonotonicNonNull List<TypeVariable> parameters;
 
@@ -216,11 +217,14 @@ public class GenericClassType extends ParameterizedType {
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
     List<TypeVariable> params = parameters();
+    // The type arguments for the type parameters of enclosing classes come first.
+    int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
+      ReferenceType typeArgument = typeArguments[offset + i];
+      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArgument, substitution)) {
         throw new IllegalArgumentException(
             "type argument "
-                + typeArguments[i]
+                + typeArgument
                 + " does not match parameter bound "
                 + params.get(i).getUpperTypeBound());
       }
@@ -243,11 +247,14 @@ public class GenericClassType extends ParameterizedType {
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
     List<TypeVariable> params = parameters();
+    // The type arguments for the type parameters of enclosing classes come first.
+    int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+      ReferenceType typeArgument = typeArguments.get(offset + i);
+      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArgument, substitution)) {
         throw new IllegalArgumentException(
             "type argument "
-                + typeArguments.get(i)
+                + typeArgument
                 + " does not match parameter bound "
                 + params.get(i).getUpperTypeBound());
       }
