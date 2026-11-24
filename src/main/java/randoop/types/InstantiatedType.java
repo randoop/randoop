@@ -142,20 +142,31 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // Pair the converted arguments with the type parameters that the class of this type declares.
+    // The type parameters of `genericType` can also include those of its enclosing classes, which
+    // are instead mapped to the type arguments of the (converted) enclosing type, because the
+    // bounds of the declared type parameters can mention them.
+    @Nullable ClassOrInterfaceType convertedEnclosingType =
+        isMemberClass() ? enclosingType.applyCaptureConversion() : enclosingType;
+    List<TypeVariable> declaredParameters = declaredTypeParameters(getRuntimeClass());
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        extendWithEnclosingTypes(
+            new Substitution(declaredParameters, convertedTypeList), convertedEnclosingType);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(declaredParameters.get(i), substitution);
       }
     }
 
     List<TypeArgument> convertedArgumentList =
         CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    InstantiatedType result = new InstantiatedType(genericType, convertedArgumentList);
+    if (isMemberClass()) {
+      result.enclosingType = convertedEnclosingType;
+    }
+    return result;
   }
 
   /**
@@ -181,21 +192,41 @@ public class InstantiatedType extends ParameterizedType {
    * <p>The type parameters of {@link #genericType} are not used, because they include those of its
    * enclosing types if it is a member class, but {@link #argumentList} does not.
    *
+   * <p>A type parameter of an enclosing class is mapped to a type, not to a wildcard: the
+   * supertypes of a type with wildcard arguments are those of its capture conversion. So, as in
+   * {@link NonParameterizedType}, the enclosing type is capture converted first. Capture conversion
+   * returns a type without wildcard arguments unchanged.
+   *
    * @return the substitution to apply to the declared supertypes of the generic class of this type
    */
   private Substitution getSupertypeSubstitution() {
     Substitution substitution =
         new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
-    ClassOrInterfaceType type = this;
-    while (type.isMemberClass()) {
-      ClassOrInterfaceType enclosing = type.enclosingType;
+    if (!isMemberClass()) {
+      return substitution;
+    }
+    return extendWithEnclosingTypes(substitution, enclosingType.applyCaptureConversion());
+  }
+
+  /**
+   * Extends the given substitution to map the type parameters declared by each parameterized class
+   * among the given type and its enclosing types to the type arguments of that type.
+   *
+   * @param substitution the substitution to extend
+   * @param enclosing the enclosing type of a member class, or null
+   * @return {@code substitution}, extended by the type arguments of {@code enclosing} and of its
+   *     enclosing types
+   */
+  private static Substitution extendWithEnclosingTypes(
+      Substitution substitution, @Nullable ClassOrInterfaceType enclosing) {
+    while (enclosing != null) {
       if (enclosing instanceof InstantiatedType) {
         substitution =
             substitution.extend(
                 declaredTypeParameters(enclosing.getRuntimeClass()),
                 ((InstantiatedType) enclosing).getReferenceArguments());
       }
-      type = enclosing;
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
     }
     return substitution;
   }
