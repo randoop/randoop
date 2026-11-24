@@ -1,5 +1,6 @@
 package randoop.operation;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -46,7 +47,7 @@ public class TypedClassOperationWithCast extends TypedClassOperation {
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
       Type outputType,
-      ExecutableSpecification execSpec) {
+      @Nullable ExecutableSpecification execSpec) {
     super(op, declaringType, inputTypes, outputType, execSpec);
   }
 
