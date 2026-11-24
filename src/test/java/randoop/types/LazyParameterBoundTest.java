@@ -168,8 +168,7 @@ public class LazyParameterBoundTest {
   @Test
   public void testDeclarationFormOwnerKeepsSubstitutedCopy() {
     TypeVariable a = GenericClassType.forClass(DeclarationOwner.class).getTypeParameters().get(0);
-    TypeVariable t =
-        GenericClassType.forClass(DeclarationOwner.Holder.class).getTypeParameters().get(0);
+    TypeVariable t = TypeVariable.forType(DeclarationOwner.Holder.class.getTypeParameters()[0]);
     ParameterBound bound = t.getUpperTypeBound();
     assertTrue(bound instanceof LazyParameterBound);
     TypeVariable aCopy =
