@@ -332,21 +332,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
         return true;
       }
     }
-    if (!isRawtype() && otherType instanceof NonParameterizedType) {
-      NonParameterizedType otherClassType = (NonParameterizedType) otherType;
-      ClassOrInterfaceType otherEnclosingType =
-          otherClassType.isMemberClass() ? otherClassType.enclosingType : null;
-      if (otherEnclosingType != null) {
-        for (ClassOrInterfaceType supertype : getSupertypesInclusive()) {
-          if (supertype.runtimeClassIs(otherClassType.getRuntimeClass())) {
-            if (supertype.isMemberClass()
-                && supertype.enclosingType.isSubtypeOfOrEqualTo(otherEnclosingType)) {
-              return true;
-            }
-            break;
-          }
-        }
-      }
+    if (!isRawtype() && isSubtypeOfMemberClass(otherType)) {
+      return true;
     }
     return otherType instanceof ClassOrInterfaceType
         && otherType.runtimeClassIs(runtimeType)

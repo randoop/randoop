@@ -333,25 +333,26 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Creates the type substitution of the type arguments of this type for the type variables of the
-   * instantiated class, if the type arguments are reference types. If any type argument is a
-   * wildcard, then null is returned.
+   * instantiated class, if the type arguments are reference types. For a member class, the
+   * substitution also maps the type parameters of each parameterized enclosing class to the type
+   * arguments of the corresponding enclosing type, as for {@link #getSupertypeSubstitution()}. If
+   * any type argument of this type or of an enclosing type is a wildcard, then null is returned.
    *
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
   public @Nullable Substitution getTypeSubstitution() {
-    List<TypeArgument> typeArgs = this.getTypeArguments();
-    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
-    for (TypeArgument arg : typeArgs) {
-      if (!arg.isWildcard()) {
-        arguments.add(((ReferenceArgument) arg).getReferenceType());
-      }
+    if (hasWildcardArgument()) {
+      return null;
     }
-    Substitution substitution = null;
-    if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
+    // The type parameters of genericType include those of its enclosing classes if genericType has
+    // an enclosing type, but argumentList does not include their type arguments.
+    Substitution substitution =
+        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
+    if (!isMemberClass()) {
+      return substitution;
     }
-    return substitution;
+    return extendWithEnclosingArguments(substitution, enclosingType);
   }
 
   @Override
@@ -571,12 +572,6 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the supertype search below, which requires
-    // the enclosing type of the matching supertype to equal that of `otherType` (or `otherType` to
-    // be the generic form of its class), rather than to be contained in it.  For example, the
-    // search does not report that a subclass of `Outer<Integer>.Inner` is a subtype of
-    // `Outer<? extends Number>.Inner`.
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
@@ -619,6 +614,14 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+
+    // A non-generic member class of a generic class, as in `Outer<?>.Inner`, is parameterized but
+    // is not an InstantiatedType.  The supertype search in super.isSubtypeOfOrEqualTo compares it
+    // by equality, so compare the enclosing type of the matching supertype by subtyping:  a
+    // subclass of `Outer<String>.Inner` is a subtype of `Outer<?>.Inner`.
+    if (isSubtypeOfMemberClass(otherType)) {
       return true;
     }
 

@@ -732,6 +732,38 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return false;
   }
 
+  /**
+   * Returns true if {@code otherType} is a non-generic member class of a parameterized type, such as
+   * {@code Outer<?>.Inner}, and this type has a supertype of the same class whose enclosing type is
+   * a subtype of the enclosing type of {@code otherType}. For example, a subclass of {@code
+   * Outer<String>.Inner} is a subtype of {@code Outer<?>.Inner} but not of {@code
+   * Outer<Integer>.Inner}.
+   *
+   * <p>The superclass and interface search in {@link #isSubtypeOfOrEqualTo(Type)} compares such
+   * supertypes by equality, so it does not handle this case.
+   *
+   * @param otherType the possible supertype
+   * @return true if this type is a subtype of {@code otherType}, which is a non-generic member class
+   */
+  /*package*/ boolean isSubtypeOfMemberClass(Type otherType) {
+    if (!(otherType instanceof NonParameterizedType)) {
+      return false;
+    }
+    NonParameterizedType otherClassType = (NonParameterizedType) otherType;
+    ClassOrInterfaceType otherEnclosingType =
+        otherClassType.isMemberClass() ? otherClassType.enclosingType : null;
+    if (otherEnclosingType == null) {
+      return false;
+    }
+    for (ClassOrInterfaceType supertype : getSupertypesInclusive()) {
+      if (supertype.runtimeClassIs(otherClassType.getRuntimeClass())) {
+        return supertype.isMemberClass()
+            && supertype.enclosingType.isSubtypeOfOrEqualTo(otherEnclosingType);
+      }
+    }
+    return false;
+  }
+
   @Override
   public boolean hasWildcard() {
     return false;

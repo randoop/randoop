@@ -51,6 +51,10 @@ public class MemberClassOfParameterizedTypeTest {
 
     abstract Sub<Integer> subType();
 
+    abstract Outer<?>.Inner wildcardOwnerInnerType();
+
+    abstract Outer<Integer>.Inner integerOwnerInnerType();
+
     abstract List<Integer> integerList();
 
     abstract List<? extends Outer<String>.Inner> innerUpperWildcardList();
@@ -140,5 +144,15 @@ public class MemberClassOfParameterizedTypeTest {
     assertFalse(new EagerReferenceBound(integerList).isLowerBound(inner, empty));
     assertFalse(new EagerReferenceBound(inner).isUpperBound(integerList, empty));
     assertFalse(integerList.isSubtypeOfOrEqualTo(inner));
+  }
+
+  @Test
+  public void testSubclassOfMemberClassWithWildcardOwner() throws NoSuchMethodException {
+    ReferenceType sub = returnType("subType");
+    assertTrue(sub instanceof InstantiatedType);
+    // The superclass of Sub<Integer> is Outer<String>.Inner, whose enclosing type is contained in
+    // Outer<?> but not in Outer<Integer>.
+    assertTrue(sub.isSubtypeOfOrEqualTo(returnType("wildcardOwnerInnerType")));
+    assertFalse(sub.isSubtypeOfOrEqualTo(returnType("integerOwnerInnerType")));
   }
 }

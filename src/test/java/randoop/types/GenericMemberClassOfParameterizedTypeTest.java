@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ public class GenericMemberClassOfParameterizedTypeTest {
     abstract Outer<? super Integer>.Middle<Integer> wildcardOwnerMiddle();
 
     abstract Outer<String>.Middle<?> wildcardArgumentMiddle();
+
+    abstract Outer<String>.Inner<Integer> stringOwnerInner();
   }
 
   /**
@@ -101,5 +104,19 @@ public class GenericMemberClassOfParameterizedTypeTest {
         ((CaptureTypeVariable) argument)
             .getUpperTypeBound()
             .isSubtypeOfOrEqualTo(new EagerReferenceBound(JavaTypes.STRING_TYPE)));
+  }
+
+  @Test
+  public void testTypeSubstitutionOfMemberOfParameterizedType() throws NoSuchMethodException {
+    Substitution substitution = returnType("stringOwnerInner").getTypeSubstitution();
+    TypeVariable outerParameter = TypeVariable.forType(Outer.class.getTypeParameters()[0]);
+    TypeVariable innerParameter = TypeVariable.forType(Outer.Inner.class.getTypeParameters()[0]);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerParameter));
+    assertEquals(JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(innerParameter));
+
+    // As for a wildcard type argument of the member class, there is no substitution for a wildcard
+    // type argument of the enclosing type.
+    assertNull(returnType("wildcardOwnerInner").getTypeSubstitution());
+    assertNull(returnType("wildcardArgumentMiddle").getTypeSubstitution());
   }
 }
