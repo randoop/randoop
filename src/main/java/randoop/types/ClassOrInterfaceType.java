@@ -84,11 +84,26 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // non-generic member classes of a generic class show up as ParameterizedType
-      // treat these as Class<?>
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, shows up as a
+      // ParameterizedType.  Its enclosing type is the owner type, Outer<String>, rather than the
+      // generic form Outer<T> that forClass would give it.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        return forClass(rawType);
+        java.lang.reflect.Type ownerType = t.getOwnerType();
+        if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
+          return forClass(rawType);
+        }
+        ClassOrInterfaceType enclosing = forType(ownerType);
+        if (enclosing.isGenericForm()) {
+          // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
+          // Use forClass, whose enclosing type is the GenericClassType, so that the result is
+          // equal to forClass(rawType).
+          return forClass(rawType);
+        }
+        // Do not side-effect the cached result of forClass.
+        NonParameterizedType result = new NonParameterizedType(rawType);
+        result.enclosingType = enclosing;
+        return result;
       }
       return ParameterizedType.forType(t);
     }
