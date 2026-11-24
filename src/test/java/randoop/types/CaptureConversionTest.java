@@ -453,9 +453,7 @@ public class CaptureConversionTest {
     InstantiatedType boundedType =
         (InstantiatedType)
             Type.forType(
-                CaptureConversionTest.class
-                    .getField("wildcardOwnerBoundedField")
-                    .getGenericType());
+                CaptureConversionTest.class.getField("wildcardOwnerBoundedField").getGenericType());
     InstantiatedType capturedBounded = boundedType.applyCaptureConversion();
     assertFalse(capturedBounded.hasWildcardArgument());
     // The upper bound of the captured type argument is the upper bound of U, T, with T replaced by

@@ -898,7 +898,6 @@ public class ClassOrInterfaceTypeTest {
     ClassOrInterfaceType supers = types[5];
     assertTrue(wrappers.isSubtypeOfOrEqualTo(supers));
     // A check that does not depend on itself still fails, after the recursive check.
-    assertFalse(
-        JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(supers));
+    assertFalse(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(supers));
   }
 }

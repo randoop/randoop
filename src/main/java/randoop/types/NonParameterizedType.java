@@ -315,8 +315,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * <p>A supertype of this type that is a parameterized type, such as {@code Supplier<String>} for
    * a class that implements {@code Supplier<String>}, is compared to {@code otherType} by
    * containment of type arguments, so the class is a subtype of {@code Supplier<?>}. Likewise, for
-   * a member class, the enclosing types are compared by subtyping: {@code Outer<String>.Inner} is
-   * a subtype of {@code Outer<?>.Inner} but not of {@code Outer<Integer>.Inner}.
+   * a member class, the enclosing types are compared by subtyping: {@code Outer<String>.Inner} is a
+   * subtype of {@code Outer<?>.Inner} but not of {@code Outer<Integer>.Inner}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
