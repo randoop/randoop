@@ -152,7 +152,7 @@ class LazyParameterBound extends ParameterBound {
       Class<?> rawType = (Class<?>) parameterizedType.getRawType();
       // The enclosing type of the result:  the substituted owner type of a member class, such as
       // Outer<String> for Outer<U>.Inner<Integer> and the substitution of String for U.  It is null
-      // unless the type is a member class with a parameterized owner type.
+      // unless the type is a member class (not a static nested class).
       ClassOrInterfaceType enclosingType = null;
       ParameterizedType ownerType = ClassOrInterfaceType.memberClassOwnerType(parameterizedType);
       if (ownerType != null) {
@@ -165,6 +165,12 @@ class LazyParameterBound extends ParameterBound {
         if (rawType.getTypeParameters().length == 0) {
           return TypeArgument.forType(ClassOrInterfaceType.forMemberClass(rawType, enclosingType));
         }
+      } else if (parameterizedType.getOwnerType() instanceof Class<?>
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+        // The owner type supplies no type arguments, as for NonGenericOuter.Base<T>.  Retain the
+        // enclosing type, as ClassOrInterfaceType.forType does, so that the two representations of
+        // the type are equal.
+        enclosingType = ClassOrInterfaceType.forClass((Class<?>) parameterizedType.getOwnerType());
       }
       java.lang.reflect.Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
