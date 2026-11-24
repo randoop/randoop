@@ -1017,11 +1017,10 @@ public class ParameterBoundTest {
 
   @Test
   public void testCompareWithFixedOwnerMemberClassBound() {
+    // ParameterBound.forType makes an eager bound for this type, which has no type variable, so
+    // construct a lazy bound directly to test comparisons with it.
     ParameterBound memberBound =
-        ParameterBound.forType(
-            Collections.emptySet(),
-            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
-    assertTrue(memberBound instanceof LazyParameterBound);
+        new LazyParameterBound(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType stringOuter =
         ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType integerOuter =
@@ -1045,8 +1044,11 @@ public class ParameterBoundTest {
     List<TypeVariable> parameters =
         GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
     TypeVariable x = parameters.get(0);
-    ParameterBound memberBound = parameters.get(1).getUpperTypeBound();
-    assertTrue(memberBound instanceof LazyParameterBound);
+    // The upper bound of T is eager, because X is not recursive, so construct a lazy bound
+    // directly to test comparisons with it.
+    ParameterBound memberBound =
+        new LazyParameterBound(
+            OwnerVariableMemberBound.class.getTypeParameters()[1].getBounds()[0]);
     ReferenceBound stringOuterBound =
         new EagerReferenceBound(
             ReferenceType.forType(
@@ -1054,10 +1056,11 @@ public class ParameterBoundTest {
     Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
     Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
 
-    assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
-    assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
-    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
-    assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
+    // The substitution applies to the receiver, memberBound, so X becomes String or Integer.
+    assertTrue(memberBound.isUpperBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isUpperBound(stringOuterBound, integerSubstitution));
+    assertTrue(memberBound.isLowerBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isLowerBound(stringOuterBound, integerSubstitution));
   }
 
   @Test
