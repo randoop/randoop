@@ -1021,7 +1021,9 @@ public class ParameterBoundTest {
         ParameterBound.forType(
             Collections.emptySet(),
             fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
-    assertTrue(memberBound instanceof LazyParameterBound);
+    // The type contains no type variable, so the bound is eager.  The lazy case is tested by
+    // testCompareWithVariableOwnerMemberClassBound.
+    assertTrue(memberBound instanceof EagerReferenceBound);
     ReferenceType stringOuter =
         ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType integerOuter =
