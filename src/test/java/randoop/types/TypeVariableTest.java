@@ -1123,6 +1123,41 @@ public class TypeVariableTest {
     assertFalse(t.isSubtypeOfOrEqualTo(ownFieldType("numberCollectionField")));
   }
 
+  /** A field of type {@code List<List<?>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<List<?>> unboundedListListField;
+
+  /** A field of type {@code List<List<? super Integer>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<List<? super Integer>> superIntegerListListField;
+
+  /** A field of type {@code List<? extends List<? super Integer>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends List<? super Integer>> extendsSuperIntegerListListField;
+
+  /** A field of type {@code List<? extends List<?>>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  List<? extends List<?>> extendsUnboundedListListField;
+
+  /**
+   * Tests that a wildcard nested in the bound of a wildcard type argument is compared by
+   * containment (JLS section 4.5.1): {@code ? super Integer} does not contain {@code ?}, but {@code
+   * ?} contains {@code ? super Integer}.
+   */
+  @Test
+  public void testSubtypeOfNestedWildcard() throws NoSuchFieldException {
+    ClassOrInterfaceType unboundedListList = ownFieldType("unboundedListListField");
+    ClassOrInterfaceType superIntegerListList = ownFieldType("superIntegerListListField");
+    ClassOrInterfaceType extendsSuperIntegerListList =
+        ownFieldType("extendsSuperIntegerListListField");
+    ClassOrInterfaceType extendsUnboundedListList = ownFieldType("extendsUnboundedListListField");
+
+    assertFalse(unboundedListList.isSubtypeOfOrEqualTo(extendsSuperIntegerListList));
+    assertTrue(superIntegerListList.isSubtypeOfOrEqualTo(extendsUnboundedListList));
+    assertTrue(superIntegerListList.isSubtypeOfOrEqualTo(extendsSuperIntegerListList));
+    assertTrue(unboundedListList.isSubtypeOfOrEqualTo(extendsUnboundedListList));
+  }
+
   /**
    * Fields whose types have nested wildcards with a bound that mentions a type variable with a
    * recursive bound. Such a wildcard bound is a {@link LazyParameterBound}.
