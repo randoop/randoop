@@ -205,26 +205,90 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Creates a type substitution using the given type arguments and applies it to this type.
    *
-   * @param typeArguments the type arguments
+   * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
+   *     the same order, so the arguments for the type parameters of enclosing classes come first.
+   *     For example, for {@code Outer<T>.Inner<U>}, the arguments {@code String, Integer} yield
+   *     {@code Outer<String>.Inner<Integer>}.
    * @return a type which is this type parameterized by the given type arguments
+   * @throws IllegalArgumentException if the number of type arguments differs from the number of
+   *     type parameters, or if a type argument is not within the bound of its type parameter
    * @see #substitute(Substitution)
+   * @see #areWithinBounds(List)
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
     return instantiate(Arrays.asList(typeArguments));
   }
 
   /**
-   * Checks that each type argument is within the upper bound of the corresponding type parameter.
-   * The type parameters include those of enclosing classes, as returned by {@link
-   * #getTypeParameters()}, so that the type arguments of an enclosing type, as in {@code Outer<T
-   * extends Number>.Inner<U>}, are checked too.
+   * Creates a type substitution using the given type arguments and applies it to this type.
    *
-   * @param typeParameters the type parameters, including those of enclosing classes
+   * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
+   *     the same order, so the arguments for the type parameters of enclosing classes come first.
+   *     For example, for {@code Outer<T>.Inner<U>}, the arguments {@code [String, Integer]} yield
+   *     {@code Outer<String>.Inner<Integer>}.
+   * @return the type that is this type instantiated by the given type arguments
+   * @throws IllegalArgumentException if the number of type arguments differs from the number of
+   *     type parameters, or if a type argument is not within the bound of its type parameter
+   * @see #substitute(Substitution)
+   * @see #areWithinBounds(List)
+   */
+  public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    int violation = indexOfBoundViolation(typeParameters, typeArguments, substitution);
+    if (violation != -1) {
+      throw new IllegalArgumentException(
+          "type argument "
+              + typeArguments.get(violation)
+              + " does not match parameter bound "
+              + typeParameters.get(violation).getUpperTypeBound());
+    }
+    return this.substitute(substitution);
+  }
+
+  /**
+   * Returns true if each of the given type arguments is within the bound of its type parameter, so
+   * that {@link #instantiate(List)} accepts them.
+   *
+   * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
+   *     the same order, as for {@link #instantiate(List)}
+   * @return true if each type argument is within the bound of its type parameter
+   * @throws IllegalArgumentException if the number of type arguments differs from the number of
+   *     type parameters
+   */
+  public boolean areWithinBounds(List<ReferenceType> typeArguments) {
+    List<TypeVariable> typeParameters = this.getTypeParameters();
+    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    return indexOfBoundViolation(typeParameters, typeArguments, substitution) == -1;
+  }
+
+  /**
+   * Returns the substitution of the given type arguments for the given type parameters.
+   *
+   * @param typeParameters a list of type parameters
+   * @param typeArguments the type arguments, corresponding to {@code typeParameters}
+   * @return the substitution of {@code typeArguments} for {@code typeParameters}
+   * @throws IllegalArgumentException if the lists have different lengths
+   */
+  private static Substitution substitutionFor(
+      List<TypeVariable> typeParameters, List<ReferenceType> typeArguments) {
+    if (typeArguments.size() != typeParameters.size()) {
+      throw new IllegalArgumentException("number of arguments and parameters must match");
+    }
+    return new Substitution(typeParameters, typeArguments);
+  }
+
+  /**
+   * Returns the index of the first type argument that is not within the upper bound of its type
+   * parameter, or -1 if every type argument is within its bound.
+   *
+   * @param typeParameters the type parameters of a generic class, as returned by {@link
+   *     #getTypeParameters()}
    * @param typeArguments the type arguments, corresponding to {@code typeParameters}
    * @param substitution the substitution of {@code typeArguments} for {@code typeParameters}
-   * @throws IllegalArgumentException if a type argument is not within the bound of its parameter
+   * @return the index of the first type argument that is not within its bound, or -1 if none
    */
-  private static void checkBounds(
+  private static int indexOfBoundViolation(
       List<TypeVariable> typeParameters,
       List<ReferenceType> typeArguments,
       Substitution substitution) {
@@ -232,33 +296,12 @@ public class GenericClassType extends ParameterizedType {
     // such as [T, U] for Outer<T>.Inner<U>, so each type argument is checked against the type
     // parameter at the same index.
     for (int i = 0; i < typeParameters.size(); i++) {
-      ParameterBound upperBound = typeParameters.get(i).getUpperTypeBound();
-      if (!upperBound.isUpperBound(typeArguments.get(i), substitution)) {
-        throw new IllegalArgumentException(
-            "type argument "
-                + typeArguments.get(i)
-                + " does not match parameter bound "
-                + upperBound);
+      ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
+      if (!bound.isUpperBound(typeArguments.get(i), substitution)) {
+        return i;
       }
     }
-  }
-
-  /**
-   * Creates a type substitution using the given type arguments and applies it to this type.
-   *
-   * @param typeArguments the type arguments
-   * @return the type that is this type instantiated by the given type arguments
-   * @see #substitute(Substitution)
-   */
-  public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
-    List<TypeVariable> typeParameters = this.getTypeParameters();
-    if (typeArguments.size() != typeParameters.size()) {
-      throw new IllegalArgumentException("number of arguments and parameters must match");
-    }
-
-    Substitution substitution = new Substitution(typeParameters, typeArguments);
-    checkBounds(typeParameters, typeArguments, substitution);
-    return this.substitute(substitution);
+    return -1;
   }
 
   @Override
