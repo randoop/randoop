@@ -939,8 +939,8 @@ public class TypeInstantiatorTest {
 
   /**
    * Tests that instantiating an operation for a goal type infers the type of a type variable
-   * through a member of an intersection bound, when that type is not among the types related to
-   * the goal type. For the goal type {@code List<SerializableListRanked>}, {@code <T extends
+   * through a member of an intersection bound, when that type is not among the types related to the
+   * goal type. For the goal type {@code List<SerializableListRanked>}, {@code <T extends
    * Comparable<List<U>> & Serializable, U> List<T> serializableListComparableList()} is
    * instantiated with {@code String} for {@code U}. The types related to {@code
    * SerializableListRanked} include {@code List<String>} but not {@code String}.
