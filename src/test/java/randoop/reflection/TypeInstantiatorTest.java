@@ -915,6 +915,63 @@ public class TypeInstantiatorTest {
     }
   }
 
+  /** A serializable class that is comparable to lists of strings. */
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
+  static class SerializableListRanked implements Comparable<List<String>>, Serializable {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261123;
+
+    @Override
+    public int compareTo(List<String> other) {
+      return 0;
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable with an intersection bound, one of
+   * whose members mentions another type variable, nested in a type argument, which occurs nowhere
+   * else.
+   *
+   * @param <T> the result element type
+   * @param <U> the element type of the lists that the elements are comparable to
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Comparable<List<U>> & Serializable, U>
+      List<T> serializableListComparableList() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type infers the type of a type variable
+   * through a member of an intersection bound, when that type is not among the types related to the
+   * goal type. For the goal type {@code List<SerializableListRanked>}, {@code <T extends
+   * Comparable<List<U>> & Serializable, U> List<T> serializableListComparableList()} is
+   * instantiated with {@code String} for {@code U}. The types related to {@code
+   * SerializableListRanked} include {@code List<String>} but not {@code String}.
+   */
+  @Test
+  public void testGoalTypeInfersVariableThroughIntersectionBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation serializableListComparableList =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("serializableListComparableList"));
+    InstantiatedType listOfSerializableListRanked =
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(SerializableListRanked.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation =
+          instantiator.instantiate(serializableListComparableList, listOfSerializableListRanked);
+      assertNotNull(operation);
+      assertEquals(listOfSerializableListRanked, operation.getOutputType());
+    }
+  }
+
   /**
    * A method whose return type mentions only a type variable whose bound mentions two other type
    * variables, which occur nowhere else.

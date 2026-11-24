@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -258,11 +259,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (!isMemberClass()) {
       return enclosingType;
     }
-    if (enclosingType instanceof GenericClassType
-        && !mapsToOtherType(enclosingType.getTypeParameters(), substitution)) {
-      return enclosingType;
+    ClassOrInterfaceType enclosing = enclosingType;
+    if (enclosing instanceof GenericClassType
+        && !mapsToOtherType(enclosing.getTypeParameters(), substitution)) {
+      return enclosing;
     }
-    return enclosingType.substitute(substitution);
+    return enclosing.substitute(substitution);
   }
 
   /**
@@ -489,7 +491,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         // then the enclosing type of Outer<Integer>.Derived<Long> instantiates the enclosing type
         // of Outer<T>.Base<U> as Outer<String>.  A supertype whose enclosing type is not given
         // explicitly, as when Derived extends Base<V>, has the enclosing type of this type.
-        @Nullable ClassOrInterfaceType thisEnclosingType = enclosingType;
+        ClassOrInterfaceType thisEnclosingType = enclosingType;
         if (!this.runtimeClassIs(goalClassType.getRuntimeClass())) {
           thisEnclosingType = null;
           for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
@@ -540,7 +542,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the superclass of this type, or null
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract @Nullable ClassOrInterfaceType getSuperclass();
 
   /**
    * Returns the immediate supertypes of this type.
@@ -665,6 +667,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return true if this class is a member class, false otherwise
    */
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
+  @Pure
   public final boolean isMemberClass() {
     return isNestedClass() && !isStatic();
   }

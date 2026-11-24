@@ -84,22 +84,23 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // substitution.  For a member class such as Outer<String>.Middle<Integer>, keep the owner type
     // as written.
     java.lang.reflect.ParameterizedType ownerType = ClassOrInterfaceType.getPreservedOwnerType(t);
+    Type owner = t.getOwnerType();
     if (ownerType != null) {
       result.enclosingType = ClassOrInterfaceType.forType(ownerType);
-    } else if (t.getOwnerType() instanceof java.lang.reflect.ParameterizedType
+    } else if (owner instanceof java.lang.reflect.ParameterizedType
         && !java.lang.reflect.Modifier.isStatic(((Class<?>) rawType).getModifiers())) {
       // For a member class whose owner type is the type that the declaration of the enclosing
       // class denotes, such as Outer<E>.Inner<Integer> within Outer, use that declaration, as
       // ClassOrInterfaceType.forType does.  Its type parameters, such as E, are those of the type.
       Class<?> enclosingClass =
-          (Class<?>) ((java.lang.reflect.ParameterizedType) t.getOwnerType()).getRawType();
+          (Class<?>) ((java.lang.reflect.ParameterizedType) owner).getRawType();
       result.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
-    } else if (t.getOwnerType() instanceof Class<?>
+    } else if (owner instanceof Class<?>
         && !java.lang.reflect.Modifier.isStatic(((Class<?>) rawType).getModifiers())) {
       // The owner type supplies no type arguments, as for NonGenericOuter.Base<String> or
       // Plain.Inner<String>.  Set the enclosing type as GenericClassType#substitute does for a
       // member class, so that the two representations of the type are equal.
-      result.enclosingType = ClassOrInterfaceType.forClass((Class<?>) t.getOwnerType());
+      result.enclosingType = ClassOrInterfaceType.forClass((Class<?>) owner);
     }
     return result;
   }
