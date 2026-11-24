@@ -93,17 +93,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
           return forClass(rawType);
         }
-        ClassOrInterfaceType enclosing = forType(ownerType);
-        if (enclosing.isGenericForm()) {
-          // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
-          // Use forClass, whose enclosing type is the GenericClassType, so that the result is
-          // equal to forClass(rawType).
-          return forClass(rawType);
-        }
-        // Do not side-effect the cached result of forClass.
-        NonParameterizedType result = new NonParameterizedType(rawType);
-        result.enclosingType = enclosing;
-        return result;
+        return forMemberClass(rawType, forType(ownerType));
       }
       return ParameterizedType.forType(t);
     }
@@ -119,6 +109,28 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns the type for a non-generic member class of a generic class, as in {@code
+   * Outer<String>.Inner}, whose enclosing type is the given owner type.
+   *
+   * @param rawType the member class, which has no type parameters
+   * @param enclosing the owner type, such as {@code Outer<String>}
+   * @return the type for {@code rawType} whose enclosing type is {@code enclosing}
+   */
+  /*package*/ static ClassOrInterfaceType forMemberClass(
+      Class<?> rawType, ClassOrInterfaceType enclosing) {
+    if (enclosing.isGenericForm()) {
+      // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
+      // Use forClass, whose enclosing type is the GenericClassType, so that the result is
+      // equal to forClass(rawType).
+      return forClass(rawType);
+    }
+    // Do not side-effect the cached result of forClass.
+    NonParameterizedType result = new NonParameterizedType(rawType);
+    result.enclosingType = enclosing;
+    return result;
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
@@ -179,6 +191,30 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
       Substitution substitution) {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
+  }
+
+  /**
+   * Returns a substitution that maps the type parameters of the generic classes that enclose this
+   * type to the type arguments of its enclosing types. For example, for {@code
+   * Outer<String>.Inner}, returns {@code [T := String]}, where {@code T} is the type parameter of
+   * {@code Outer}. Only the enclosing types of a member class contribute, because a static nested
+   * class cannot refer to the type parameters of its enclosing class.
+   *
+   * @return a substitution for the type parameters of the classes that enclose this type
+   */
+  /*package*/ final Substitution getEnclosingTypeSubstitution() {
+    Substitution result = new Substitution();
+    for (ClassOrInterfaceType t = this; t.isMemberClass(); t = t.enclosingType) {
+      ClassOrInterfaceType enclosing = t.enclosingType;
+      if (enclosing instanceof InstantiatedType) {
+        InstantiatedType instantiated = (InstantiatedType) enclosing;
+        result =
+            result.extend(
+                instantiated.getGenericClassType().parameters(),
+                instantiated.getReferenceArguments());
+      }
+    }
+    return result;
   }
 
   @Override

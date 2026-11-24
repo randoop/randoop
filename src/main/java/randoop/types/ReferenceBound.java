@@ -155,8 +155,8 @@ public abstract class ReferenceBound extends ParameterBound {
    * Returns the type of the given bound, with the given substitution applied, if it is a {@link
    * ReferenceBound}. If it is a {@link LazyParameterBound}, returns its type with the given
    * substitution applied, in which a type variable that the substitution does not instantiate
-   * stands for an unknown type; but if it is a non-generic member class of a generic class, as in
-   * {@code Outer<String>.Inner}, which has no type variable, returns its type. Otherwise, or if the
+   * stands for an unknown type; but if it is a non-generic member class of a generic class that has
+   * no type variable, as in {@code Outer<String>.Inner}, returns its type. Otherwise, or if the
    * {@link LazyParameterBound} cannot be converted to a {@link ReferenceBound}, returns null.
    *
    * @param bound a bound
@@ -168,7 +168,7 @@ public abstract class ReferenceBound extends ParameterBound {
     if (bound instanceof LazyParameterBound) {
       LazyParameterBound lazyBound = (LazyParameterBound) bound;
       ParameterBound converted;
-      if (lazyBound.isNonGenericMemberClass()) {
+      if (lazyBound.isMemberClassWithoutTypeVariable()) {
         // A non-generic member class, as in Outer<String>.Inner, has no type variable to
         // substitute.  Convert it to its type, so that its supertypes can be compared.
         converted = lazyBound.toReferenceBound();

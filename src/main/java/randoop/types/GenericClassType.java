@@ -41,7 +41,7 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the type parameters that this generic class declares
    */
-  private List<TypeVariable> parameters() {
+  /*package*/ List<TypeVariable> parameters() {
     if (parameters == null) {
       parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
     }
