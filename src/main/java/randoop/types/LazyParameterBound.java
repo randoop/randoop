@@ -226,8 +226,7 @@ class LazyParameterBound extends ParameterBound {
           // isGenericForm can return true) but must be kept.
           if (preserved
               || !ownerClassType.isGenericForm()
-              || !TypeVariable.areIdentical(
-                  ownerClassType, ClassOrInterfaceType.forType(owner))) {
+              || !TypeVariable.areIdentical(ownerClassType, ClassOrInterfaceType.forType(owner))) {
             instantiatedType.enclosingType = ownerClassType;
           }
         }
