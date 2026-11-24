@@ -215,7 +215,9 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    // The type parameters of enclosing classes precede those of this class, as do their arguments.
+    // The type parameters include those of enclosing classes, such as [T, U] for
+    // Outer<T>.Inner<U>, in the order of the type arguments, so check each argument against the
+    // bound of its own type parameter.
     for (int i = 0; i < typeParameters.size(); i++) {
       ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
       if (!bound.isUpperBound(typeArguments[i], substitution)) {
@@ -240,7 +242,8 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    // The type parameters of enclosing classes precede those of this class, as do their arguments.
+    // As above, the type parameters include those of enclosing classes, in the order of the type
+    // arguments, so check each argument against the bound of its own type parameter.
     for (int i = 0; i < typeParameters.size(); i++) {
       ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
       if (!bound.isUpperBound(typeArguments.get(i), substitution)) {
