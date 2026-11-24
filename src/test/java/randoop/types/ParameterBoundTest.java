@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -570,6 +571,49 @@ public class ParameterBoundTest {
         NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
     assertTrue(t.canBeInstantiatedBy(ReferenceType.forType(declaredBound)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /** A field of type {@code GenericOuter<Integer>.NonGenericInner}. */
+  @SuppressWarnings("unused")
+  private static GenericOuter<Integer>.NonGenericInner integerOwnerInner;
+
+  /**
+   * A class whose type parameter has a recursive bound that contains a non-generic member class of
+   * a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class RecursiveMemberClassBound<
+      T extends Map<T, GenericOuter<String>.NonGenericInner>> {}
+
+  /** A map whose value type has the same owner type as the bound of RecursiveMemberClassBound. */
+  @SuppressWarnings("serial")
+  private static class SameOwnerMap
+      extends HashMap<SameOwnerMap, GenericOuter<String>.NonGenericInner> {}
+
+  /** A map whose value type has another owner type than the bound of RecursiveMemberClassBound. */
+  @SuppressWarnings("serial")
+  private static class OtherOwnerMap
+      extends HashMap<OtherOwnerMap, GenericOuter<Integer>.NonGenericInner> {}
+
+  /**
+   * Tests that a non-generic member class of a generic class keeps the type arguments of its owner
+   * type, so that {@code GenericOuter<String>.NonGenericInner} and {@code
+   * GenericOuter<Integer>.NonGenericInner} are different types.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundWithOtherOwner() {
+    ReferenceType integerOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    assertFalse(t.canBeInstantiatedBy(integerOwner));
+
+    TypeVariable recursive =
+        GenericClassType.forClass(RecursiveMemberClassBound.class).getTypeParameters().get(0);
+    assertTrue(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SameOwnerMap.class)));
+    assertFalse(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(OtherOwnerMap.class)));
   }
 
   /**
