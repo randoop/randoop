@@ -152,7 +152,7 @@ public class InstantiatedTypeTest {
   }
 
   /** A field whose type is a reflected member type. */
-  @SuppressWarnings("UnusedVariable")
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"})
   private Outer<String>.Inner<Integer> reflectedInner;
 
   @Test
