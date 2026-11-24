@@ -155,6 +155,11 @@ class EagerReferenceBound extends ReferenceBound {
           (ReferenceType) argType, thisBoundType, completeSubstitution);
     }
     if (thisBoundType instanceof InstantiatedType) {
+      if (argType.isVariable()) {
+        // A type variable is within this bound if its upper bound is, as for
+        // `S extends Comparable<String>` and the bound Comparable<String>.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      }
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
