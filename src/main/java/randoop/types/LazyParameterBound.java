@@ -233,9 +233,12 @@ class LazyParameterBound extends ParameterBound {
         // Outer<A>.Middle<B>.Leaf<C>, substituting String for A changes only the enclosing type of
         // Middle<B>.
         if (isDeclarationFormOwner
-            && Subtyping.isIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
+            && TypeVariable.areIdentical(ownerType, ClassOrInterfaceType.forType(owner))) {
           // The substitution leaves a declaration-form owner unchanged.  Represent it as
-          // ParameterizedType.forType does, by the declaration of the enclosing class.
+          // ParameterizedType.forType does, by the declaration of the enclosing class.  The
+          // comparison is sensitive to the bounds of type variables:  the substitution can map a
+          // type parameter of the owner to a copy with other bounds, which is equal to it but must
+          // be kept.
           instantiatedType.enclosingType =
               ClassOrInterfaceType.forClass((Class<?>) owner.getRawType());
         } else {
