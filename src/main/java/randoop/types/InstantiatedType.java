@@ -145,7 +145,7 @@ public class InstantiatedType extends ParameterizedType {
     // Convert the enclosing type first, because the bounds of the type parameters of this class
     // may refer to the type parameters of the enclosing classes, as in
     // Outer<T>.Inner<U extends T>.
-    ClassOrInterfaceType convertedEnclosingType =
+    @Nullable ClassOrInterfaceType convertedEnclosingType =
         isMemberClass() ? enclosingType.applyCaptureConversion() : enclosingType;
 
     // Pair the type arguments with the type parameters that this class declares.  The type
@@ -200,12 +200,20 @@ public class InstantiatedType extends ParameterizedType {
    * <p>The type parameters of {@link #genericType} are not used, because they include those of its
    * enclosing types if it is a member class, but {@link #argumentList} does not.
    *
+   * <p>A type parameter of an enclosing class is mapped to a type, not to a wildcard: the
+   * supertypes of a type with wildcard arguments are those of its capture conversion. So, as in
+   * {@link NonParameterizedType}, the enclosing type is capture converted first. Capture conversion
+   * returns a type without wildcard arguments unchanged.
+   *
    * @return the substitution to apply to the declared supertypes of the generic class of this type
    */
   private Substitution getSupertypeSubstitution() {
-    return extendWithEnclosingArguments(
-        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments()),
-        isMemberClass() ? enclosingType : null);
+    Substitution substitution =
+        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
+    if (!isMemberClass()) {
+      return substitution;
+    }
+    return extendWithEnclosingArguments(substitution, enclosingType.applyCaptureConversion());
   }
 
   /**
@@ -570,10 +578,10 @@ public class InstantiatedType extends ParameterizedType {
     // search does not report that a subclass of `Outer<Integer>.Inner` is a subtype of
     // `Outer<? extends Number>.Inner`.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -597,9 +605,8 @@ public class InstantiatedType extends ParameterizedType {
       // first clause, combined with the second:  the supertype with the same rawtype as otherType
       // is a subtype of otherType if the type arguments of otherType contain its type arguments,
       // as List<String> is a subtype of Collection<?> because Collection<String> is.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {
         // getMatchingSupertype returns an instantiation of otherType's generic class, so the
         // recursive call uses the second clause above and does not recurse further.

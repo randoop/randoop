@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -294,6 +295,49 @@ public class ParameterBoundTest {
         NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
     assertTrue(t.canBeInstantiatedBy(ReferenceType.forType(declaredBound)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+  }
+
+  /** A field of type {@code GenericOuter<Integer>.NonGenericInner}. */
+  @SuppressWarnings("unused")
+  private static GenericOuter<Integer>.NonGenericInner integerOwnerInner;
+
+  /**
+   * A class whose type parameter has a recursive bound that contains a non-generic member class of
+   * a generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class RecursiveMemberClassBound<
+      T extends Map<T, GenericOuter<String>.NonGenericInner>> {}
+
+  /** A map whose value type has the same owner type as the bound of RecursiveMemberClassBound. */
+  @SuppressWarnings("serial")
+  private static class SameOwnerMap
+      extends HashMap<SameOwnerMap, GenericOuter<String>.NonGenericInner> {}
+
+  /** A map whose value type has another owner type than the bound of RecursiveMemberClassBound. */
+  @SuppressWarnings("serial")
+  private static class OtherOwnerMap
+      extends HashMap<OtherOwnerMap, GenericOuter<Integer>.NonGenericInner> {}
+
+  /**
+   * Tests that a non-generic member class of a generic class keeps the type arguments of its owner
+   * type, so that {@code GenericOuter<String>.NonGenericInner} and {@code
+   * GenericOuter<Integer>.NonGenericInner} are different types.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundWithOtherOwner() {
+    ReferenceType integerOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericMemberClassBound.class).getTypeParameters().get(0);
+    assertFalse(t.canBeInstantiatedBy(integerOwner));
+
+    TypeVariable recursive =
+        GenericClassType.forClass(RecursiveMemberClassBound.class).getTypeParameters().get(0);
+    assertTrue(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(SameOwnerMap.class)));
+    assertFalse(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(OtherOwnerMap.class)));
   }
 
   /**
@@ -586,6 +630,51 @@ public class ParameterBoundTest {
     ReferenceType integerType = ReferenceType.forClass(Integer.class);
     assertTrue(bound.isUpperBound(stringOuter, new Substitution(x, JavaTypes.STRING_TYPE)));
     assertFalse(bound.isUpperBound(stringOuter, new Substitution(x, integerType)));
+  }
+
+  @Test
+  public void testCompareWithFixedOwnerMemberClassBound() {
+    ParameterBound memberBound =
+        ParameterBound.forType(
+            Collections.emptySet(),
+            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceType stringOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    ReferenceType integerOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+    ReferenceBound objectBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
+    ReferenceBound stringOuterBound = new EagerReferenceBound(stringOuter);
+    ReferenceBound integerOuterBound = new EagerReferenceBound(integerOuter);
+    Substitution empty = new Substitution();
+
+    assertTrue(objectBound.isUpperBound(memberBound, empty));
+    assertTrue(stringOuterBound.isUpperBound(memberBound, empty));
+    assertFalse(integerOuterBound.isUpperBound(memberBound, empty));
+
+    assertFalse(objectBound.isLowerBound(memberBound, empty));
+    assertTrue(stringOuterBound.isLowerBound(memberBound, empty));
+    assertFalse(integerOuterBound.isLowerBound(memberBound, empty));
+  }
+
+  @Test
+  public void testCompareWithVariableOwnerMemberClassBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
+    TypeVariable x = parameters.get(0);
+    ParameterBound memberBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceBound stringOuterBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(
+                fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter")));
+    Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
+    Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
+
+    assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
+    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
   }
 
   @Test
