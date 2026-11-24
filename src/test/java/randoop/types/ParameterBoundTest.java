@@ -884,6 +884,27 @@ public class ParameterBoundTest {
   }
 
   /**
+   * Tests that a reference bound is compared with a lazy bound for a non-generic member class of a
+   * generic class, through the overloads of isLowerBound and isUpperBound that take a bound.
+   */
+  @Test
+  public void testReferenceBoundComparedWithNonGenericMemberClassBound() {
+    java.lang.reflect.Type innerType = fieldType(ParameterBoundTest.class, "stringOwnerInner");
+    ParameterBound lazyBound = ParameterBound.forType(Collections.emptySet(), innerType);
+    assertTrue(lazyBound instanceof LazyParameterBound);
+    ReferenceBound sameBound = new EagerReferenceBound(ReferenceType.forType(innerType));
+    Substitution empty = new Substitution();
+    assertTrue(sameBound.isLowerBound(lazyBound, empty));
+    assertTrue(sameBound.isUpperBound(lazyBound, empty));
+
+    ReferenceBound otherOwnerBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner")));
+    assertFalse(otherOwnerBound.isLowerBound(lazyBound, empty));
+    assertFalse(otherOwnerBound.isUpperBound(lazyBound, empty));
+  }
+
+  /**
    * A class whose type parameter has a self-referential bound that contains, as a type argument, a
    * non-generic member class of a generic class.
    *
@@ -1188,7 +1209,14 @@ public class ParameterBoundTest {
 
   @Test
   public void testCompareWithFixedOwnerMemberClassBound() {
-    // ParameterBound.forType would return an eager bound, because the type has no type variable.
+    ParameterBound forTypeBound =
+        ParameterBound.forType(
+            Collections.emptySet(),
+            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    // The type contains no type variable, so the bound is eager.
+    assertTrue(forTypeBound instanceof EagerReferenceBound);
+    // ParameterBound.forType makes an eager bound for this type, which has no type variable, so
+    // construct a lazy bound directly to test comparisons with it.
     ParameterBound memberBound =
         new LazyParameterBound(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
     ReferenceType stringOuter =
@@ -1214,7 +1242,8 @@ public class ParameterBoundTest {
     List<TypeVariable> parameters =
         GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
     TypeVariable x = parameters.get(0);
-    // The upper bound of T is eager, because X is not in its variable set.
+    // The upper bound of T is eager, because X is not in its variable set (X is not recursive),
+    // so construct a lazy bound directly to test comparisons with it.
     ParameterBound memberBound =
         new LazyParameterBound(
             OwnerVariableMemberBound.class.getTypeParameters()[1].getBounds()[0]);
@@ -1231,6 +1260,12 @@ public class ParameterBoundTest {
     assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
     assertFalse(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
+
+    // The substitution applies to the receiver, memberBound, so X becomes String or Integer.
+    assertTrue(memberBound.isUpperBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isUpperBound(stringOuterBound, integerSubstitution));
+    assertTrue(memberBound.isLowerBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isLowerBound(stringOuterBound, integerSubstitution));
   }
 
   @Test
