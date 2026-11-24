@@ -523,12 +523,14 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      // The runtime class check ensures that the recursive call uses the second clause above, and
-      // so terminates.
-      if (superType != null
-          && superType.runtimeClassIs(otherType.getRuntimeClass())
-          && superType.isSubtypeOfOrEqualTo(otherType)) {
-        return true;
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
+        // recursive call uses the second clause above and does not recurse further.
+        assert superType.runtimeClassIs(otherType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
