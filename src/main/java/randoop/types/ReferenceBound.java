@@ -190,7 +190,8 @@ public abstract class ReferenceBound extends ParameterBound {
 
   /**
    * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
-   * LazyParameterBound} that can be converted to a {@link ReferenceBound}. Otherwise, returns null.
+   * LazyParameterBound} that can be converted to a {@link ReferenceBound}, in which each type
+   * variable remains a type variable. Otherwise, returns null.
    *
    * @param bound a bound
    * @return the type of {@code bound}, or null
