@@ -169,8 +169,9 @@ class LazyParameterBound extends ParameterBound {
     if (isNonGenericMemberClass(type)) {
       // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
       // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
-      // isUpperBound and isLowerBound do:  the result has the owner type from the class
-      // declaration, as does any argument type that it is compared with.
+      // isUpperBound and isLowerBound do, and as any argument type that it is compared with is
+      // converted:  the result keeps an owner type that mentions no type variable, such as
+      // Outer<String>, and otherwise has the owner type from the class declaration.
       return TypeArgument.forType(type);
     }
 

@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -1571,7 +1572,35 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, OuterWithMember<String>.Inner>> {}
 
-  /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
+  /** Fields whose types are non-generic member classes of parameterized types. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  abstract static class MemberClassFields {
+    /** A member class whose owner has argument {@code String}. */
+    OuterWithMember<String>.Inner stringInner;
+
+    /** A member class whose owner has argument {@code Integer}. */
+    OuterWithMember<Integer>.Inner integerInner;
+  }
+
+  /**
+   * Returns the type of the given field of {@link MemberClassFields}.
+   *
+   * @param fieldName a field name of {@link MemberClassFields}
+   * @return the type of the field
+   */
+  private static ReferenceType memberClassFieldType(String fieldName) {
+    try {
+      return ReferenceType.forType(
+          MemberClassFields.class.getDeclaredField(fieldName).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  /**
+   * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}, and
+   * preserves its owner type.
+   */
   @Test
   public void testSubstitutionReachesBoundWithMemberClass() {
     List<TypeVariable> parameters =
@@ -1581,9 +1610,11 @@ public class TypeVariableTest {
         (TypeVariable) t.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
-    assertEquals(
-        ClassOrInterfaceType.forClass(OuterWithMember.Inner.class),
-        ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
+    ReferenceType memberType =
+        ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType();
+    assertEquals(memberClassFieldType("stringInner"), memberType);
+    assertNotEquals(memberClassFieldType("integerInner"), memberType);
+    assertNotEquals(ClassOrInterfaceType.forClass(OuterWithMember.Inner.class), memberType);
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */
@@ -1709,6 +1740,30 @@ public class TypeVariableTest {
     assertTrue(v.canBeInstantiatedBy(subOfX));
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
+
+  /**
+   * A generic class that is comparable to any instantiation of itself.
+   *
+   * @param <X> a type parameter
+   */
+  abstract static class ComparableToWildcard<X> implements Comparable<ComparableToWildcard<?>> {}
+
+  /**
+   * A wildcard-widened form of a parameterized type can instantiate a type variable that is a
+   * bound, though the type itself and its declared supertypes cannot.
+   */
+  @Test
+  public void testVariableBoundIsWildcardWidening() {
+    TypeVariable k = typeParameter(BoundedBySelfComparable.class, 0);
+    TypeVariable v = typeParameter(BoundedBySelfComparable.class, 1);
+    GenericClassType generic = GenericClassType.forClass(ComparableToWildcard.class);
+    InstantiatedType ofString = generic.instantiate(JavaTypes.STRING_TYPE);
+    // K cannot be ComparableToWildcard<String>, but it can be ComparableToWildcard<?>.
+    assertFalse(k.canBeInstantiatedBy(ofString));
+    assertTrue(v.canBeInstantiatedBy(ofString));
+    assertTrue(new EagerReferenceBound(k).isUpperBound(ofString, new Substitution()));
+    assertTrue(new LazyReferenceBound(k).isUpperBound(ofString, new Substitution()));
   }
 
   /**

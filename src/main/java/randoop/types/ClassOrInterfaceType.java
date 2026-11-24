@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,8 +75,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Creates a {@code ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
    * reference. If type is a {@code java.lang.reflect.ParameterizedType}, then calls {@link
-   * ParameterizedType#forType(java.lang.reflect.Type)}. Otherwise, if type is a {@code Class}
-   * object, calls {@link #forClass(Class)}.
+   * ParameterizedType#forType(java.lang.reflect.Type)}; but for a non-generic member class of a
+   * generic class, as in {@code Outer<String>.Inner}, creates a {@link NonParameterizedType} whose
+   * enclosing type is the owner type if the owner type mentions no type variable. Otherwise, if
+   * type is a {@code Class} object, creates a {@link NonParameterizedType}.
    *
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
@@ -84,11 +87,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // non-generic member classes of a generic class show up as ParameterizedType
-      // treat these as Class<?>
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, shows up as a
+      // ParameterizedType whose raw type has no type parameters.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        return forClass(rawType);
+        return forNonGenericMemberClass(rawType, t.getOwnerType());
       }
       return ParameterizedType.forType(t);
     }
@@ -104,6 +107,66 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns the type for a non-generic member class of a generic class, with the given owner type.
+   * The owner type gives the type arguments of the enclosing class, as {@code Outer<String>} does
+   * for {@code Outer<String>.Inner}, so that {@code Outer<String>.Inner} and {@code
+   * Outer<Integer>.Inner} are different types.
+   *
+   * <p>The owner type is preserved only if it is parameterized and mentions no type variable. If
+   * the owner type mentions a type variable, as for {@code Inner} written within {@code Outer<T>},
+   * the result is the type that {@link #forClass(Class)} returns, whose enclosing type is the
+   * generic class. So, a type variable in the owner type is never substituted for, and code that
+   * converts bounds, such as {@link ParameterBound#forType}, need not examine owner types.
+   *
+   * @param memberClass a non-generic member class
+   * @param ownerType the reflected owner type of the member class, or null
+   * @return the type for {@code memberClass} with the given owner type
+   */
+  private static ClassOrInterfaceType forNonGenericMemberClass(
+      Class<?> memberClass, java.lang.reflect.@Nullable Type ownerType) {
+    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || mentionsTypeVariable(ownerType)) {
+      return forClass(memberClass);
+    }
+    NonParameterizedType result = new NonParameterizedType(memberClass);
+    result.enclosingType = forType(ownerType);
+    return result;
+  }
+
+  /**
+   * Returns true if the given reflection type mentions a type variable, including in its owner
+   * type, its type arguments, its component type, or the bounds of a wildcard.
+   *
+   * @param type a reflection type
+   * @return true if {@code type} mentions a type variable
+   */
+  private static boolean mentionsTypeVariable(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return true;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && mentionsTypeVariable(ownerType)) {
+        return true;
+      }
+      return Arrays.stream(pt.getActualTypeArguments())
+          .anyMatch(ClassOrInterfaceType::mentionsTypeVariable);
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return mentionsTypeVariable(
+          ((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      return Arrays.stream(wt.getUpperBounds()).anyMatch(ClassOrInterfaceType::mentionsTypeVariable)
+          || Arrays.stream(wt.getLowerBounds())
+              .anyMatch(ClassOrInterfaceType::mentionsTypeVariable);
+    }
+    return false;
   }
 
   // This implementation is for an abstract class; subclasses do the real work.

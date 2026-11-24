@@ -84,8 +84,9 @@ public abstract class ParameterBound {
    * non-generic member class of a generic class, as in {@code Outer<String>.Inner}, whose
    * conversion to a {@link ReferenceType} is a non-parameterized type, which an eager bound
    * compares by the subtype relation. It also includes a generic array type of such a class, as in
-   * {@code Outer<String>.Inner[]}: the conversion gives its element type the owner type from the
-   * class declaration, as in {@code Outer<T>.Inner}, as it does for any argument type, so the bound
+   * {@code Outer<String>.Inner[]}: the conversion, by {@link ClassOrInterfaceType#forType}, keeps
+   * an owner type such as {@code Outer<String>} that mentions no type variable, and otherwise
+   * replaces the owner type by the generic class, as it does for any argument type, so the bound
    * and argument types are compared consistently. Otherwise, the result is a {@link
    * LazyParameterBound}.
    *
@@ -152,9 +153,11 @@ public abstract class ParameterBound {
    * such a type variable. Either would make an eager bound recursive.
    *
    * <p>Owner types are not examined, because the conversion of a reflection type to a {@link
-   * ReferenceType} does not use them. It gives each member class the owner type from its class
-   * declaration, as in {@code Outer<T>} for {@code Outer<String>.Inner<Integer>}, not the owner
-   * type as written.
+   * ReferenceType} does not use the type variables in them. It gives a generic member class the
+   * owner type from its class declaration, as in {@code Outer<T>} for {@code
+   * Outer<String>.Inner<Integer>}, not the owner type as written. It keeps the owner type of a
+   * non-generic member class only if that owner type mentions no type variable, as for {@code
+   * Outer<String>.Inner}.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type

@@ -1,6 +1,7 @@
 package randoop.types;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public class MemberClassOfParameterizedTypeTest {
   @SuppressWarnings("unused")
   abstract static class TypeHolder {
     abstract Outer<String>.Inner innerType();
+
+    abstract Outer<Integer>.Inner integerInnerType();
 
     abstract Outer<String>.Other otherType();
 
@@ -102,15 +105,30 @@ public class MemberClassOfParameterizedTypeTest {
     TypeArgument inner = TypeArgument.forType(returnType("innerType"));
     TypeArgument sub = TypeArgument.forType(returnType("subType"));
     TypeArgument other = TypeArgument.forType(returnType("otherType"));
+    TypeArgument integerInner = TypeArgument.forType(returnType("integerInnerType"));
 
     TypeArgument upper = typeArgument("innerUpperWildcardList");
     assertTrue(upper.contains(inner));
     assertTrue(upper.contains(sub));
     assertFalse(upper.contains(other));
+    assertFalse(upper.contains(integerInner));
 
     TypeArgument lower = typeArgument("innerLowerWildcardList");
     assertTrue(lower.contains(inner));
     assertFalse(lower.contains(sub));
     assertFalse(lower.contains(other));
+    assertFalse(lower.contains(integerInner));
+  }
+
+  /** The conversion of a member class of a parameterized type preserves the owner type. */
+  @Test
+  public void testOwnerTypeIsPreserved() throws NoSuchMethodException {
+    ReferenceType inner = returnType("innerType");
+    ReferenceType integerInner = returnType("integerInnerType");
+    assertNotEquals(inner, integerInner);
+    assertFalse(inner.isSubtypeOfOrEqualTo(integerInner));
+    assertFalse(integerInner.isSubtypeOfOrEqualTo(inner));
+    assertFalse(returnType("subType").isSubtypeOfOrEqualTo(integerInner));
+    assertTrue(returnType("subType").isSubtypeOfOrEqualTo(inner));
   }
 }

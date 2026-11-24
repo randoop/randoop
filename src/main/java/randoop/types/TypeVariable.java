@@ -406,7 +406,9 @@ public abstract class TypeVariable extends ParameterType {
    * <ul>
    *   <li>For a class or interface type, its strict supertypes, as computed by {@link
    *       ClassOrInterfaceType#getSupertypesStrict()}, and {@code Object}, which that method omits
-   *       for an interface.
+   *       for an interface. For the type and each of those supertypes that is a parameterized type
+   *       {@code C<T1, ..., Tn>}, also {@code C<?, ..., ?>}. Other wildcard-widened types, such as
+   *       {@code C<? extends T1>}, are omitted.
    *   <li>For an array type {@code C[]}, {@code Object}, {@code Cloneable}, {@code Serializable},
    *       and, if {@code C} is a reference type, {@code S[]} for each strict supertype {@code S} of
    *       {@code C} that this method returns.
@@ -439,9 +441,11 @@ public abstract class TypeVariable extends ParameterType {
         // capture conversion that mention a capture variable are omitted by the test below.
         classType = classType.applyCaptureConversion();
       }
+      addWildcardWidening(type, result);
       for (ClassOrInterfaceType supertype : classType.getSupertypesStrict()) {
         if (typeParameters.containsAll(supertype.getTypeParameters())) {
           result.add(supertype);
+          addWildcardWidening(supertype, result);
         }
       }
     } else if (type instanceof ArrayType) {
@@ -466,6 +470,59 @@ public abstract class TypeVariable extends ParameterType {
     result.add(JavaTypes.OBJECT_TYPE);
     result.remove(type);
     return result;
+  }
+
+  /**
+   * If the given type is a parameterized type {@code C<T1, ..., Tn>} whose type arguments are not
+   * all {@code ?}, adds {@code C<?, ..., ?>}, which is a supertype of it, to the given set. For
+   * example, for {@code C<X> implements Comparable<C<?>>}, {@code C<?>} is a supertype of {@code
+   * C<String>} that is comparable to itself, though {@code C<String>} is not.
+   *
+   * @param type a reference type
+   * @param result the set to which to add the widened type; side-effected
+   */
+  private static void addWildcardWidening(ReferenceType type, Set<ReferenceType> result) {
+    if (!(type instanceof InstantiatedType)) {
+      return;
+    }
+    InstantiatedType instantiatedType = (InstantiatedType) type;
+    List<TypeArgument> wildcards = new ArrayList<>();
+    boolean changed = false;
+    for (TypeArgument argument : instantiatedType.getTypeArguments()) {
+      if (!isUnboundedWildcard(argument)) {
+        changed = true;
+      }
+      wildcards.add(
+          new WildcardArgument(
+              new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true)));
+    }
+    if (!changed) {
+      return;
+    }
+    InstantiatedType widened =
+        new InstantiatedType(instantiatedType.getGenericClassType(), wildcards);
+    if (instantiatedType.isMemberClass()) {
+      widened.enclosingType = instantiatedType.enclosingType;
+    }
+    result.add(widened);
+  }
+
+  /**
+   * Returns true if the given type argument is the unbounded wildcard {@code ?}.
+   *
+   * @param argument a type argument
+   * @return true if {@code argument} is {@code ?}
+   */
+  private static boolean isUnboundedWildcard(TypeArgument argument) {
+    if (!(argument instanceof WildcardArgument)) {
+      return false;
+    }
+    WildcardArgument wildcard = (WildcardArgument) argument;
+    if (!wildcard.hasUpperBound()) {
+      return false;
+    }
+    ReferenceType boundType = ReferenceBound.asReferenceType(wildcard.getTypeBound());
+    return boundType != null && boundType.isObject();
   }
 
   /**
