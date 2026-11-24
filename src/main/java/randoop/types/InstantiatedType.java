@@ -216,7 +216,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the superclass type for this parameterized type
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     Substitution substitution = getSupertypeSubstitution();
     return this.getGenericClassType().getSuperclass(substitution);
   }
