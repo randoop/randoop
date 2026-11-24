@@ -2783,9 +2783,16 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, NonGenericInnerOuter<String>.Inner>> {}
 
-  /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
+  /** A field of type {@code NonGenericInnerOuter<String>.Inner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  NonGenericInnerOuter<String>.Inner stringInnerField;
+
+  /**
+   * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. The
+   * member class keeps its owner type, {@code NonGenericInnerOuter<String>}.
+   */
   @Test
-  public void testSubstitutionReachesBoundWithMemberClass() {
+  public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundWithMemberClass.class).getTypeParameters();
     TypeVariable t = parameters.get(2);
@@ -2803,6 +2810,7 @@ public class TypeVariableTest {
         GenericClassType.forClass(NonGenericInnerOuter.class).instantiate(JavaTypes.STRING_TYPE),
         inner.enclosingType);
     assertFalse(inner.isGeneric());
+    assertEquals(ownFieldType("stringInnerField"), inner);
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */
