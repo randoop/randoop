@@ -274,6 +274,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasWildcard() {
+    if (super.hasWildcard()) { // an enclosing type has a wildcard
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
         return true;
