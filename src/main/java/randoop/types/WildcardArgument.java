@@ -116,7 +116,7 @@ public class WildcardArgument extends TypeArgument {
       return thisResolved.contains(otherResolved);
     }
     ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
-    ReferenceType boundType = WildcardType.boundType(argumentType.getTypeBound());
+    ReferenceType boundType = ReferenceBound.asReferenceType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }

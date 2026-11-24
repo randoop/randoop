@@ -35,7 +35,7 @@ public class MemberClassOfParameterizedTypeTest {
     /**
      * Creates a Sub.
      *
-     * @param outer the enclosing instance of the superclass
+     * @param outer an enclosing instance for the superclass
      */
     Sub(Outer<String> outer) {
       outer.super();
@@ -61,7 +61,7 @@ public class MemberClassOfParameterizedTypeTest {
   /**
    * Returns the Randoop type for the return type of the given method of {@link TypeHolder}.
    *
-   * @param methodName the method name
+   * @param methodName a method name of {@link TypeHolder}, such as {@code "innerType"}
    * @return the return type of the method
    * @throws NoSuchMethodException if {@link TypeHolder} has no method named {@code methodName}
    */
