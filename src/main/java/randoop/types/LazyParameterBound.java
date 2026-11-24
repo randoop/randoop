@@ -222,14 +222,19 @@ class LazyParameterBound extends ParameterBound {
   private static @Nullable ClassOrInterfaceType substituteParameterized(
       ParameterizedType type, Substitution substitution) {
     Class<?> rawType = (Class<?>) type.getRawType();
-    // The enclosing type of the result, or null if the owner type supplies no type arguments.
+    // The enclosing type of the result, or null if the raw type is not a member class.
     @Nullable ClassOrInterfaceType ownerClassType = null;
     java.lang.reflect.Type ownerType = type.getOwnerType();
-    if (ownerType instanceof ParameterizedType
-        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-      ownerClassType = substituteParameterized((ParameterizedType) ownerType, substitution);
-      if (ownerClassType == null) {
-        return null;
+    if (!java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+      if (ownerType instanceof ParameterizedType) {
+        ownerClassType = substituteParameterized((ParameterizedType) ownerType, substitution);
+        if (ownerClassType == null) {
+          return null;
+        }
+      } else if (ownerType instanceof Class<?>) {
+        // Match ParameterizedType.forType, which attaches a non-generic owner class, as in
+        // Plain.Inner<T>.
+        ownerClassType = ClassOrInterfaceType.forType(ownerType);
       }
     }
 

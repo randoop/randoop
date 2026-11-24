@@ -118,4 +118,36 @@ public class LazyParameterBoundTest {
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
   }
+
+  /** A non-generic class with a generic member class. */
+  static class Plain {
+    /**
+     * A generic member class of a non-generic class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+  }
+
+  /**
+   * A type parameter whose bound is a generic member class of a non-generic class.
+   *
+   * @param <T> the type parameter
+   */
+  static class MemberOfPlainBound<T extends Plain.Inner<T>> {}
+
+  /** A field whose type is the bound of {@link MemberOfPlainBound}, instantiated with String. */
+  Plain.Inner<String> plainInnerString;
+
+  @Test
+  public void testSubstituteMemberClassOfNonGenericClass() throws NoSuchFieldException {
+    TypeVariable t = GenericClassType.forClass(MemberOfPlainBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ParameterBound substituted = bound.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    ClassOrInterfaceType expected =
+        ClassOrInterfaceType.forType(
+            LazyParameterBoundTest.class.getDeclaredField("plainInnerString").getGenericType());
+    assertEquals(expected, ((ReferenceBound) substituted).getBoundType());
+  }
 }
