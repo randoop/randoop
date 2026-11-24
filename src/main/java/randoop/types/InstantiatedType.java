@@ -142,20 +142,39 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // Convert the enclosing type first, because the bounds of the type parameters of this class
+    // may refer to the type parameters of the enclosing classes, as in
+    // Outer<T>.Inner<U extends T>.
+    ClassOrInterfaceType convertedEnclosingType =
+        isMemberClass() ? enclosingType.applyCaptureConversion() : enclosingType;
+
+    // Pair the type arguments with the type parameters that this class declares.  The type
+    // parameters of genericType also include those of the enclosing classes if genericType has an
+    // enclosing type, as the cached object from ClassOrInterfaceType.forClass does.  The type
+    // parameters of the enclosing classes map to the type arguments of the converted enclosing
+    // type.
+    List<TypeVariable> parameters = declaredTypeParameters(getRuntimeClass());
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        extendWithEnclosingArguments(
+            new Substitution(parameters, convertedTypeList), convertedEnclosingType);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(parameters.get(i), substitution);
       }
     }
 
     List<TypeArgument> convertedArgumentList =
         CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    InstantiatedType result = new InstantiatedType(genericType, convertedArgumentList);
+    // Use the enclosing type that was converted above, rather than converting it again, which
+    // would create different capture variables than those in the bounds of the converted
+    // arguments.
+    if (isMemberClass()) {
+      result.enclosingType = convertedEnclosingType;
+    }
+    return result;
   }
 
   /**
@@ -184,18 +203,30 @@ public class InstantiatedType extends ParameterizedType {
    * @return the substitution to apply to the declared supertypes of the generic class of this type
    */
   private Substitution getSupertypeSubstitution() {
-    Substitution substitution =
-        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
-    ClassOrInterfaceType type = this;
-    while (type.isMemberClass()) {
-      ClassOrInterfaceType enclosing = type.enclosingType;
+    return extendWithEnclosingArguments(
+        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments()),
+        isMemberClass() ? enclosingType : null);
+  }
+
+  /**
+   * Extends the given substitution to map the type parameters declared by each parameterized class
+   * among the given enclosing type and its own enclosing types to the type arguments of that type.
+   *
+   * @param substitution a substitution
+   * @param enclosing the enclosing type of a member class, or null
+   * @return {@code substitution} extended with the mappings for the type parameters of the
+   *     enclosing classes
+   */
+  private static Substitution extendWithEnclosingArguments(
+      Substitution substitution, @Nullable ClassOrInterfaceType enclosing) {
+    while (enclosing != null) {
       if (enclosing instanceof InstantiatedType) {
         substitution =
             substitution.extend(
                 declaredTypeParameters(enclosing.getRuntimeClass()),
                 ((InstantiatedType) enclosing).getReferenceArguments());
       }
-      type = enclosing;
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
     }
     return substitution;
   }

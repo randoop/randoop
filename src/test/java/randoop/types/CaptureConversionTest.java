@@ -401,6 +401,78 @@ public class CaptureConversionTest {
   }
 
   /**
+   * A generic class with generic member classes, used only by {@link
+   * #wildcardOwnerAfterForClassTest}, so that the test controls when {@link
+   * ClassOrInterfaceType#forClass} first creates the types of its member classes.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class WildcardOwner<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U> {}
+
+    /**
+     * A generic member class whose type parameter is bounded by that of the outer class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Bounded<U extends T> {}
+  }
+
+  /** A field whose type has a wildcard only in the enclosing type. */
+  public WildcardOwner<?>.Inner<String> wildcardOwnerField;
+
+  /** A field whose type has wildcards in the enclosing type and the member type. */
+  public WildcardOwner<? extends Number>.Bounded<?> wildcardOwnerBoundedField;
+
+  /**
+   * Tests capture conversion of a member class whose enclosing type has a wildcard, after {@link
+   * ClassOrInterfaceType#forClass} has given the cached generic class of the member class an
+   * enclosing type, so that its type parameters include those of the enclosing class.
+   */
+  @Test
+  public void wildcardOwnerAfterForClassTest() throws NoSuchFieldException {
+    // Prime the cache.
+    ClassOrInterfaceType.forClass(WildcardOwner.Inner.class);
+    ClassOrInterfaceType.forClass(WildcardOwner.Bounded.class);
+
+    InstantiatedType innerType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardOwnerField").getGenericType());
+    assertTrue(innerType.hasWildcardArgument());
+    InstantiatedType capturedInner = innerType.applyCaptureConversion();
+    assertFalse(capturedInner.hasWildcardArgument());
+    assertEquals(innerType.getTypeArguments(), capturedInner.getTypeArguments());
+    assertTrue(((InstantiatedType) capturedInner.enclosingType).hasCaptureVariable());
+
+    InstantiatedType boundedType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class
+                    .getField("wildcardOwnerBoundedField")
+                    .getGenericType());
+    InstantiatedType capturedBounded = boundedType.applyCaptureConversion();
+    assertFalse(capturedBounded.hasWildcardArgument());
+    // The upper bound of the captured type argument is the upper bound of U, T, with T replaced by
+    // the captured type argument of the enclosing type.
+    ReferenceType capturedOwnerArgument =
+        ((InstantiatedType) capturedBounded.enclosingType).getReferenceArguments().get(0);
+    ReferenceType capturedArgument = capturedBounded.getReferenceArguments().get(0);
+    assertTrue(capturedOwnerArgument.isCaptureVariable());
+    assertTrue(capturedArgument.isCaptureVariable());
+    assertTrue(
+        ((CaptureTypeVariable) capturedArgument)
+            .getUpperTypeBound()
+            .getTypeParameters()
+            .contains(capturedOwnerArgument));
+  }
+
+  /**
    * Checks the capture conversion by calling {@link #checkCapture(GenericClassType, ReferenceType,
    * ReferenceType, List)} where the bound type is substituted into the final type. The wildcard
    * types are carried as input types to the generic operation.
