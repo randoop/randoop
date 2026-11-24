@@ -120,7 +120,9 @@ public final class ReferenceArgument extends TypeArgument {
   public boolean hasCaptureVariable() {
     return referenceType instanceof CaptureTypeVariable
         || (referenceType.isParameterized()
-            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable());
+            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable())
+        // A capture variable can be in an array type argument, as in Holder<CAP[]>.
+        || (referenceType instanceof ArrayType && referenceType.hasCaptureVariable());
   }
 
   /**

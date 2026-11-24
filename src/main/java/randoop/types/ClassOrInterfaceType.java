@@ -522,9 +522,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
-      // No supertype instantiates the goal type, as for a class that extends the raw type of the
-      // goal type's class, so no substitution binds the goal type's type parameters.
       if (supertype == null) {
+        // This type can be the goal type itself, such as List<E> for the goal List<E>, which
+        // getMatchingSupertype does not consider, since it searches only strict supertypes.  The
+        // type parameters of this type are those of the goal type, so they need no substitution.
+        if (this.runtimeClassIs(goalType.getRuntimeClass()) && this.isGenericForm()) {
+          return substitution;
+        }
+        // No supertype instantiates the goal type, as for a class that extends the raw type of
+        // the goal type's class, so no substitution binds the goal type's type parameters.
         return null;
       }
       Substitution supertypeSubstitution = supertype.getTypeSubstitution();

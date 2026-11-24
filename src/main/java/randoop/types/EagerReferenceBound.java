@@ -180,9 +180,13 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
-      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  Each type
-      // variable that remains in the bound stands for an unknown, as in the InstantiatedType case
-      // above:  for the bound Outer<U>.Inner, Outer<String>.Inner is within the bound.
+      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  A type
+      // variable that remains in the bound stands for an unknown only if the substitution makes it
+      // one (see Substitution.isUnknown), as when it instantiates a sibling type parameter of the
+      // type variable; then, for the bound Outer<U>.Inner, Outer<String>.Inner is within the bound.
+      // Otherwise, such as with an empty substitution, the type variable stands for itself.  This
+      // differs from the InstantiatedType case above, whose isInstantiationOf test treats every
+      // type variable in the bound as an unknown.
       return Subtyping.isSubtypeOrEqual(
           (ReferenceType) argType,
           thisBoundType,

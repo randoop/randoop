@@ -157,12 +157,15 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of rawtypes for the direct interfaces for this type.
+   * Returns the list of rawtypes for the direct interfaces for this type. These are the erasures of
+   * the direct interfaces (JLS section 4.8): a member interface of a generic class is a member of
+   * the raw type of that class.
    *
    * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    return CollectionsPlume.mapList(NonParameterizedType::forClass, runtimeType.getInterfaces());
+    return CollectionsPlume.mapList(
+        (Class<?> c) -> NonParameterizedType.forClass(c).getRawtype(), runtimeType.getInterfaces());
   }
 
   @Pure
@@ -174,8 +177,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   @Override
   public @Nullable ClassOrInterfaceType getSuperclass() {
     if (this.isRawtype()) {
+      // The superclass of a raw type is the erasure of its declared superclass (JLS section 4.8).
+      // If that is a member class of a generic class, such as Outer<String>.Inner, then the erasure
+      // is a member of the raw type Outer, whose supertypes are erased too.
       Class<?> superclass = this.runtimeType.getSuperclass();
-      return superclass == null ? null : forClass(superclass);
+      return superclass == null ? null : forClass(superclass).getRawtype();
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
       // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
@@ -257,9 +263,17 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return runtimeType.isInterface();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A class that declares type parameters is raw. So is a member class (not a static nested
+   * class) of a raw type, such as {@code Inner} in raw {@code Outer}, which {@link #getRawtype()}
+   * returns for {@code Outer<T>.Inner} (JLS section 4.8). The supertypes of a raw type are erased.
+   */
   @Override
   public boolean isRawtype() {
-    return runtimeType.getTypeParameters().length > 0;
+    return runtimeType.getTypeParameters().length > 0
+        || (isMemberClass() && enclosingType.isRawtype());
   }
 
   @Override

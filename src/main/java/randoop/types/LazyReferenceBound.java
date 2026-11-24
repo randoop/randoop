@@ -74,12 +74,24 @@ class LazyReferenceBound extends ReferenceBound {
    * <p>The bound type can still contain type variables after the substitution is applied. It is
    * compared as an {@link EagerReferenceBound} would be, except as described in {@link
    * #getUnknownTypeVariable(Type, Substitution)}. For an upper bound, the unknown type variable can
-   * be {@code argType} or any of its supertypes.
+   * be {@code argType} or any of its supertypes, if it is the type variable of this bound. If the
+   * substitution replaced that type variable by another one, then {@code argType} is compared with
+   * the replacement by {@link Subtyping#isSubtypeOrEqual(ReferenceType, ReferenceType,
+   * Substitution)}, which chooses a type for the replacement only if the substitution makes it an
+   * unknown (see {@link Substitution#isUnknown(ReferenceType)}).
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
+      if (!unknown.equals(getBoundType())) {
+        // The substitution replaced the type variable of this bound by another type variable,
+        // such as a type parameter of another declaration.  As in
+        // TypeVariable.variableBoundAllows, that type variable stands for itself, unless the
+        // substitution makes it an unknown:  no supertype of argType is chosen for it.  A copy of
+        // the type variable of this bound, with other bounds, is not such a replacement.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, unknown, substitution);
+      }
       // The unknown type variable can be argType itself, one of its supertypes, or its lower
       // bound.  Its bounds are checked with the mappings of the substitution, because they can
       // mention type variables that it instantiates.

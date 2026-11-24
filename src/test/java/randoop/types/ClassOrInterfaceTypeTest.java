@@ -1524,6 +1524,9 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(argument instanceof ArrayType);
     assertTrue(((ArrayType) argument).getComponentType() instanceof CaptureTypeVariable);
     assertCaptureOfNumberArray(argument);
+    // The capture variable is in an array type argument.
+    assertTrue(superclass.hasCaptureVariable());
+    assertTrue(new TypeTuple(Collections.<Type>singletonList(superclass)).hasCaptureVariable());
     List<ClassOrInterfaceType> interfaces = inner.getInterfaces();
     assertEquals(1, interfaces.size());
     assertTrue(interfaces.get(0).runtimeClassIs(Comparable.class));
@@ -1807,5 +1810,119 @@ public class ClassOrInterfaceTypeTest {
         ((GenericClassType) ClassOrInterfaceType.forClass(List.class)).getRawtype();
     assertTrue(rawArrayList.isSubtypeOfOrEqualTo(rawList));
     assertFalse(rawArrayList.isSubtypeOfOrEqualTo(fieldType("listOfWildcard")));
+  }
+
+  /**
+   * A generic class whose member classes implement parameterized interfaces.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({
+    "UnusedTypeParameter", // the type parameter makes this class generic, so it has a rawtype
+    "ClassCanBeStatic" // the member classes are inner classes, to test their enclosing types
+  })
+  static class RawOwner<T> {
+    /** A member class that implements a parameterized interface. */
+    class Supplying implements Supplier<String> {
+      @Override
+      public String get() {
+        return "";
+      }
+    }
+
+    /** A member class that is comparable to strings. */
+    @SuppressWarnings({
+      "ComparableType", // comparable to another type, to test subtyping
+      "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests subtyping, not equality or ordering
+    })
+    class Comparing implements Comparable<String> {
+      @Override
+      public int compareTo(String other) {
+        return 0;
+      }
+    }
+  }
+
+  /**
+   * A generic class that extends a member class of a parameterized type.
+   *
+   * @param <X> the type parameter
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameter makes this class generic
+  static class RawComparingChild<X> extends RawOwner<String>.Comparing {
+    /**
+     * Creates a RawComparingChild.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    RawComparingChild(RawOwner<String> owner) {
+      owner.super();
+    }
+  }
+
+  /** A non-generic class that implements a parameterized interface. */
+  static class SupplyingBase implements Supplier<String> {
+    @Override
+    public String get() {
+      return "";
+    }
+  }
+
+  /**
+   * A generic class whose superclass is not generic.
+   *
+   * @param <X> the type parameter
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameter makes this class generic
+  static class GenericSupplyingChild<X> extends SupplyingBase {}
+
+  /** A field whose type is {@code Supplier<?>}. */
+  public Supplier<?> supplierOfWildcard;
+
+  /** A field whose type is {@code Comparable<? super String>}. */
+  public Comparable<? super String> comparableOfSuperString;
+
+  /**
+   * A field whose type is a member class of a parameterized type that implements {@code
+   * Supplier<String>}.
+   */
+  public RawOwner<Integer>.Supplying integerSupplying;
+
+  /**
+   * The supertypes of a rawtype are erased (JLS section 4.8), but only along the edges from a
+   * rawtype. A supertype of a non-generic supertype of a rawtype is not erased: raw {@code
+   * GenericSupplyingChild} extends {@code SupplyingBase}, which implements {@code
+   * Supplier<String>}, so raw {@code GenericSupplyingChild} is a subtype of {@code Supplier<?>}. By
+   * contrast, raw {@code ArrayList} is not a subtype of {@code List<?>}; see {@link
+   * #rawtypeIsNotSubtypeOfWildcardParameterizationTest}.
+   *
+   * <p>A member class of a raw type is raw, so its supertypes are erased too. That includes the
+   * superclass of a rawtype that is a member class of a parameterized type: the superclass of raw
+   * {@code RawComparingChild} is {@code Comparing}, a member of raw {@code RawOwner}, not {@code
+   * RawOwner<String>.Comparing}.
+   */
+  @Test
+  public void rawtypeSupertypesAreErasedTest() throws NoSuchFieldException {
+    NonParameterizedType rawSupplyingChild =
+        ((GenericClassType) ClassOrInterfaceType.forClass(GenericSupplyingChild.class))
+            .getRawtype();
+    assertTrue(rawSupplyingChild.isSubtypeOfOrEqualTo(fieldType("supplierOfWildcard")));
+
+    NonParameterizedType rawComparingChild =
+        ((GenericClassType) ClassOrInterfaceType.forClass(RawComparingChild.class)).getRawtype();
+    ClassOrInterfaceType comparing = rawComparingChild.getSuperclass();
+    assertNotNull(comparing);
+    assertTrue(comparing.isRawtype());
+    assertFalse(rawComparingChild.isSubtypeOfOrEqualTo(fieldType("comparableOfSuperString")));
+
+    NonParameterizedType rawSupplying =
+        ClassOrInterfaceType.forClass(RawOwner.Supplying.class).getRawtype();
+    assertTrue(rawSupplying.isRawtype());
+    assertFalse(rawSupplying.isSubtypeOfOrEqualTo(fieldType("supplierOfWildcard")));
+    ClassOrInterfaceType integerSupplying =
+        ClassOrInterfaceType.forType(
+            ClassOrInterfaceTypeTest.class.getField("integerSupplying").getGenericType());
+    assertFalse(integerSupplying.isRawtype());
+    assertTrue(integerSupplying.isSubtypeOfOrEqualTo(fieldType("supplierOfWildcard")));
   }
 }

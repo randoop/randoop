@@ -450,6 +450,13 @@ public class TypeInstantiatorTest {
     List<TypeVariable> independent = parameters.subList(2, parameters.size());
     TypeInstantiator instantiator = new TypeInstantiator(inputTypes());
 
+    // Among the input types, String and Comparable<String> are the subtypes of Comparable<U> for
+    // some U, and U must be String for both.
+    Set<List<ReferenceType>> expectedRelatedTypes = new HashSet<>();
+    expectedRelatedTypes.add(Arrays.asList(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE));
+    expectedRelatedTypes.add(
+        Arrays.asList(comparableOf(JavaTypes.STRING_TYPE), JavaTypes.STRING_TYPE));
+
     // Only T and U enter the joint enumeration:  every substitution has the same types for the
     // independent variables, and a distinct pair of types for T and U.
     List<Substitution> substitutions =
@@ -472,6 +479,8 @@ public class TypeInstantiatorTest {
           "duplicate types for T and U: " + substitution,
           relatedTypes.add(Arrays.asList(tType, uType)));
     }
+    // The joint enumeration finds every pair of types for T and U, not just some valid pairs.
+    assertEquals(expectedRelatedTypes, relatedTypes);
 
     TypedClassOperation constructor =
         TypedOperation.forConstructor(UnrelatedClassVariables.class.getDeclaredConstructor());
@@ -486,6 +495,9 @@ public class TypeInstantiatorTest {
       ReferenceType uType = typeArgument(instantiated.getOutputType(), 1);
       assertTrue(
           "bad instantiation: " + instantiated, tType.isSubtypeOfOrEqualTo(comparableOf(uType)));
+      assertTrue(
+          "unexpected instantiation: " + instantiated,
+          expectedRelatedTypes.contains(Arrays.asList(tType, uType)));
     }
     assertTrue("no instantiation found", instantiations > 0);
   }
@@ -1085,15 +1097,25 @@ public class TypeInstantiatorTest {
   public void testConflictingMatchIsRejected()
       throws NoSuchMethodException, RandoopSpecificationError {
     GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
-    Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(INTEGER_TYPE, inputTypes);
-    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE), inputTypes);
-    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE), inputTypes);
-    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
     TypedClassOperation sameKeyAndValue =
         TypedOperation.forMethod(
             TypeInstantiatorTest.class.getDeclaredMethod("sameKeyAndValue", Map.class));
+
+    // With only the conflicting map, there is no instantiation.  Otherwise, a match that kept only
+    // one of the bindings of T, such as T := String, would yield sameKeyAndValue(Map<String,
+    // String>), which the test below cannot distinguish from a match of the valid alternative.
+    Set<Type> conflictingInputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, conflictingInputTypes);
+    addTypes(INTEGER_TYPE, conflictingInputTypes);
+    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE), conflictingInputTypes);
+    TypeInstantiator conflictingInstantiator = new TypeInstantiator(conflictingInputTypes);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(conflictingInstantiator.instantiate(sameKeyAndValue));
+    }
+
+    Set<Type> inputTypes = new LinkedHashSet<>(conflictingInputTypes);
+    addTypes(hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
 
     for (int i = 0; i < ATTEMPTS; i++) {
       TypedClassOperation operation = instantiator.instantiate(sameKeyAndValue);

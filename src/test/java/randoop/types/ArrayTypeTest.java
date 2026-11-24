@@ -163,6 +163,8 @@ public class ArrayTypeTest {
     TypeVariable t = (TypeVariable) arrayType.getComponentType();
     ArrayType nullArray = arrayType.substitute(new Substitution(t, JavaTypes.NULL_TYPE));
     assertEquals(JavaTypes.NULL_TYPE, nullArray.getComponentType());
+    // There is no array class of the null type, so the runtime class is Object[].
+    assertEquals(Object[].class, nullArray.getRuntimeClass());
     ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
     assertTrue(nullArray.isSubtypeOfOrEqualTo(stringArray));
     assertFalse(stringArray.isSubtypeOfOrEqualTo(nullArray));
