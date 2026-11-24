@@ -120,12 +120,12 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+    Substitution substitution = getSubstitution(convertedTypeList);
+    List<TypeVariable> declaredParameters = genericType.getDeclaredTypeParameters();
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(declaredParameters.get(i), substitution);
       }
     }
 
@@ -145,8 +145,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+    Substitution substitution = getSubstitution(getReferenceArguments());
     return genericType.getInterfaces(substitution);
   }
 
@@ -208,8 +207,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+    Substitution substitution = getSubstitution(getReferenceArguments());
     return this.getGenericClassType().getSuperclass(substitution);
   }
 
@@ -236,24 +234,38 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Creates the type substitution of the type arguments of this type for the type variables of the
    * instantiated class, if the type arguments are reference types. If any type argument is a
-   * wildcard, then null is returned.
+   * wildcard, then null is returned. For a member class, the substitution also maps the type
+   * parameters of the enclosing classes to the type arguments of the enclosing types, and null is
+   * returned if any type argument of an enclosing type is a wildcard.
    *
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
   public @Nullable Substitution getTypeSubstitution() {
-    List<TypeArgument> typeArgs = this.getTypeArguments();
-    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
-    for (TypeArgument arg : typeArgs) {
-      if (!arg.isWildcard()) {
-        arguments.add(((ReferenceArgument) arg).getReferenceType());
-      }
+    if (this.hasWildcardArgument()) {
+      return null;
     }
-    Substitution substitution = null;
-    if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
-    }
-    return substitution;
+    return getSubstitution(getReferenceArguments());
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters declared by the generic class of this
+   * type to the given arguments, and maps the type parameters of the enclosing classes to the type
+   * arguments of the enclosing types of this type. For example, for {@code
+   * Outer<String>.Inner<Integer>} and the arguments {@code [Integer]}, the result maps the type
+   * parameter {@code T} of {@code Outer} to {@code String} and the type parameter {@code U} of
+   * {@code Inner} to {@code Integer}.
+   *
+   * <p>Does not use {@code genericType.getTypeParameters()}, which may or may not include the type
+   * parameters of the enclosing classes, depending on how {@code genericType} was constructed.
+   *
+   * @param arguments the arguments for the type parameters declared by the generic class of this
+   *     type, in order
+   * @return the substitution for the own and enclosing type parameters of this type
+   */
+  private Substitution getSubstitution(List<ReferenceType> arguments) {
+    return getEnclosingTypeSubstitution()
+        .extend(genericType.getDeclaredTypeParameters(), arguments);
   }
 
   @Override

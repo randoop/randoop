@@ -195,6 +195,34 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
   }
 
+  /**
+   * Returns the substitution that maps the type parameters of the enclosing classes of this member
+   * class to the type arguments of its enclosing types. For example, for {@code
+   * Outer<String>.Inner} the result maps the type parameter {@code T} of {@code Outer} to {@code
+   * String}. Applying the result to a supertype in the declaration of {@code Inner}, such as {@code
+   * Parent<T>}, yields the corresponding supertype of this type, such as {@code Parent<String>}.
+   *
+   * @return the substitution for the type parameters of the enclosing classes of this type; empty
+   *     if this is not a member class
+   */
+  /*package*/ final Substitution getEnclosingTypeSubstitution() {
+    Substitution substitution = new Substitution();
+    ClassOrInterfaceType type = this;
+    while (type.isMemberClass()) {
+      type = type.enclosingType;
+      if (type instanceof InstantiatedType) {
+        InstantiatedType instantiatedType = (InstantiatedType) type;
+        // Use only the owner's own type parameters.  getTypeParameters() would also include the
+        // parameters of the owner's enclosing classes, which are bound at later loop iterations.
+        substitution =
+            substitution.extend(
+                instantiatedType.getGenericClassType().getDeclaredTypeParameters(),
+                instantiatedType.getReferenceArguments());
+      }
+    }
+    return substitution;
+  }
+
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
