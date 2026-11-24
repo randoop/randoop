@@ -227,7 +227,7 @@ public class ArrayTypeTest {
   /**
    * Returns the Randoop type for the return type of the given method of {@link TypeHolder}.
    *
-   * @param methodName the method name
+   * @param methodName a method name of {@link TypeHolder}
    * @return the return type of the method
    */
   private static Type returnType(String methodName) throws NoSuchMethodException {
