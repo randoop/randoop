@@ -81,7 +81,7 @@ final class HelperSequenceCreator {
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
-      if (componentType.isParameterized()) {
+      if (componentType instanceof InstantiatedType) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType =
             getImplementingTypeForCollection((InstantiatedType) componentType);
