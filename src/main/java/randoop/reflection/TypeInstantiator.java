@@ -949,11 +949,11 @@ public class TypeInstantiator {
       }
     } else if (!nongenericParameters.isEmpty()) {
       // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectSubstitutionIndependently(nongenericParameters, substitution);
-      if (substitution == null) {
+      Substitution extended = selectSubstitutionIndependently(nongenericParameters, substitution);
+      if (extended == null) {
         return Collections.emptyList();
       }
-      result.add(substitution);
+      result.add(extended);
     }
 
     // Can always select captured wildcards independently.  Augment each existing candidate.
