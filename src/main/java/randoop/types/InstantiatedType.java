@@ -491,13 +491,14 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // A member class with a parameterized enclosing type, such as Outer<String>.Inner, is
-    // parameterized even if it is not an InstantiatedType.  The supertype search below
-    // (super.isSubtypeOfOrEqualTo) handles such a type.
+    // parameterized even if it is not an InstantiatedType.  The clauses below need an
+    // InstantiatedType; the supertype search below (super.isSubtypeOfOrEqualTo) handles other
+    // types.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         // The enclosing type is part of the parameterization:  for example,
         // `Outer<String>.Inner<Integer>` is not a subtype of `Outer<Number>.Inner<Integer>`.
         if (!this.enclosingTypeIsSubtypeOf(otherInstantiatedType)) {
@@ -520,9 +521,8 @@ public class InstantiatedType extends ParameterizedType {
 
       // first clause, combined with the second:  the supertype of this type that has the same
       // rawtype as otherType must be a subtype of otherType by type argument containment.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {
         // getMatchingSupertype returns an instantiation of otherType's generic class, so the
         // recursive call uses the second clause above and does not recurse further.
