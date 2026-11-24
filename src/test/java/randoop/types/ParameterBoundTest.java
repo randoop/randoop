@@ -737,6 +737,47 @@ public class ParameterBoundTest {
     assertFalse(recursive.canBeInstantiatedBy(ClassOrInterfaceType.forClass(OtherOwnerMap.class)));
   }
 
+  /** A field of type {@code GenericOuter<String>.NonGenericInner}. */
+  @SuppressWarnings("unused")
+  private static GenericOuter<String>.NonGenericInner stringOwnerInner;
+
+  /**
+   * A class whose second type parameter is bounded by a non-generic member class of a generic
+   * class, whose owner type contains the first type parameter.
+   *
+   * @param <X> the type argument of the owner type in the bound of {@code T}
+   * @param <T> the type parameter whose bound is {@code GenericOuter<X>.NonGenericInner}
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerVariableBound<X, T extends GenericOuter<X>.NonGenericInner> {}
+
+  /**
+   * Tests that a substitution is applied to the owner type of a non-generic member class in a
+   * bound, as in {@code GenericOuter<X>.NonGenericInner}.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundWithOwnerVariable() {
+    java.lang.reflect.Type declaredBound =
+        OwnerVariableBound.class.getTypeParameters()[1].getBounds()[0];
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), declaredBound);
+    TypeVariable x = TypeVariable.forType(OwnerVariableBound.class.getTypeParameters()[0]);
+    Substitution substitution = new Substitution(x, JavaTypes.STRING_TYPE);
+
+    ReferenceType stringOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "stringOwnerInner"));
+    ReferenceType integerOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+
+    assertTrue(bound.isUpperBound(stringOwner, substitution));
+    assertFalse(bound.isUpperBound(integerOwner, substitution));
+    assertTrue(bound.isLowerBound(stringOwner, substitution));
+    assertFalse(bound.isLowerBound(integerOwner, substitution));
+
+    ParameterBound substituted = bound.substitute(substitution);
+    assertTrue(substituted instanceof ReferenceBound);
+    assertEquals(stringOwner, ((ReferenceBound) substituted).getBoundType());
+  }
+
   /**
    * A class whose type parameter has a self-referential bound that contains, as a type argument, a
    * non-generic member class of a generic class.
