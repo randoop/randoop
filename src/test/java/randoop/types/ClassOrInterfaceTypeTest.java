@@ -1741,6 +1741,9 @@ public class ClassOrInterfaceTypeTest {
   /** A field whose type is {@code List<Integer>}. */
   public List<Integer> listOfInteger;
 
+  /** A field whose type is {@code List<?>}. */
+  public List<?> listOfWildcard;
+
   /**
    * A non-generic class is a subtype of a parameterized supertype whose type arguments contain
    * those of the supertype that the class declares, as {@code Integer} is a subtype of {@code
@@ -1765,5 +1768,20 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(
         fieldType("listOfInteger")
             .isSubtypeOfOrEqualTo(fieldType("listOfExtendsComparableOfSuperInteger")));
+  }
+
+  /**
+   * A rawtype is not a subtype of a parameterization of another class, even one whose type
+   * arguments are all unbounded wildcards. A rawtype is assignable to such a type only by unchecked
+   * conversion.
+   */
+  @Test
+  public void rawtypeIsNotSubtypeOfWildcardParameterizationTest() {
+    NonParameterizedType rawArrayList =
+        ((GenericClassType) ClassOrInterfaceType.forClass(ArrayList.class)).getRawtype();
+    NonParameterizedType rawList =
+        ((GenericClassType) ClassOrInterfaceType.forClass(List.class)).getRawtype();
+    assertTrue(rawArrayList.isSubtypeOfOrEqualTo(rawList));
+    assertFalse(rawArrayList.isSubtypeOfOrEqualTo(fieldType("listOfWildcard")));
   }
 }
