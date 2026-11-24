@@ -259,7 +259,7 @@ public class InstantiatedType extends ParameterizedType {
         return true;
       }
     }
-    return false;
+    return super.hasWildcard();
   }
 
   @Override
