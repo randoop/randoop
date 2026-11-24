@@ -199,6 +199,7 @@ public abstract class ParameterBound {
           return true;
         }
       }
+      // The owner type of a member class can mention a variable, as in Outer<T>.Inner<String>.
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(pt);
       if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
         return true;

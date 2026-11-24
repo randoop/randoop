@@ -499,17 +499,15 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the supertype search below, which requires
-    // the enclosing type of the matching supertype to equal that of `otherType` (or `otherType` to
-    // be the generic form of its class), rather than to be contained in it.  For example, the
-    // search does not report that a subclass of `Outer<Integer>.Inner` is a subtype of
-    // `Outer<? extends Number>.Inner`.
+    // A member class with a parameterized enclosing type, such as Outer<String>.Inner, is
+    // parameterized even if it is not an InstantiatedType.  The clauses below need an
+    // InstantiatedType; the supertype search below (super.isSubtypeOfOrEqualTo) handles other
+    // types.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         // The enclosing type is part of the parameterization:  for example,
         // `Outer<String>.Inner<Integer>` is not a subtype of `Outer<Number>.Inner<Integer>`.
         if (!this.enclosingTypeIsSubtypeOf(otherInstantiatedType)) {
@@ -533,13 +531,12 @@ public class InstantiatedType extends ParameterizedType {
       // first clause, combined with the second:  the supertype with the same rawtype as otherType
       // is a subtype of otherType if the type arguments of otherType contain its type arguments,
       // as List<String> is a subtype of Collection<?> because Collection<String> is.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       // As in Subtyping.isSubtypeOrEqual, a type with wildcard arguments is captured before its
       // supertype is found:  if C<T> implements Supplier<List<T>>, then the supertype of C<?> is
       // Supplier<List<CAP>>, not Supplier<List<?>>, which substituting the wildcard would give.
       InstantiatedType source = this.hasWildcardArgument() ? this.applyCaptureConversion() : this;
       InstantiatedType superType =
-          source.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          source.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {
         // getMatchingSupertype returns an instantiation of otherType's generic class, so this
         // applies type argument containment, as for Collection<Integer> and
