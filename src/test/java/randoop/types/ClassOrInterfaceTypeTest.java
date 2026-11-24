@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.junit.Test;
@@ -1720,5 +1721,49 @@ public class ClassOrInterfaceTypeTest {
         GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE),
         type.getSuperclass());
     assertEquals(Collections.singletonList(supplierOfInteger), type.getInterfaces());
+  }
+
+  /** A field whose type is {@code Comparable<? super Integer>}. */
+  public Comparable<? super Integer> comparableOfSuperInteger;
+
+  /** A field whose type is {@code Comparable<? super Number>}. */
+  public Comparable<? super Number> comparableOfSuperNumber;
+
+  /** A field whose type is {@code Comparable<?>}. */
+  public Comparable<?> comparableOfWildcard;
+
+  /** A field whose type is {@code Enum<? extends Enum<?>>}. */
+  public Enum<? extends Enum<?>> enumOfExtendsEnumOfWildcard;
+
+  /** A field whose type is {@code List<? extends Comparable<? super Integer>>}. */
+  public List<? extends Comparable<? super Integer>> listOfExtendsComparableOfSuperInteger;
+
+  /** A field whose type is {@code List<Integer>}. */
+  public List<Integer> listOfInteger;
+
+  /**
+   * A non-generic class is a subtype of a parameterized supertype whose type arguments contain
+   * those of the supertype that the class declares, as {@code Integer} is a subtype of {@code
+   * Comparable<? super Integer>}.
+   */
+  @Test
+  public void nonGenericClassSubtypeOfWildcardParameterizationTest() {
+    ClassOrInterfaceType integerType = ClassOrInterfaceType.forClass(Integer.class);
+    assertTrue(integerType instanceof NonParameterizedType);
+    assertTrue(integerType.isSubtypeOfOrEqualTo(fieldType("comparableOfSuperInteger")));
+    assertTrue(integerType.isSubtypeOfOrEqualTo(fieldType("comparableOfWildcard")));
+    assertFalse(integerType.isSubtypeOfOrEqualTo(fieldType("comparableOfSuperNumber")));
+    assertFalse(
+        integerType.isSubtypeOfOrEqualTo(
+            GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)));
+
+    ClassOrInterfaceType timeUnitType = ClassOrInterfaceType.forClass(TimeUnit.class);
+    assertTrue(timeUnitType.isSubtypeOfOrEqualTo(fieldType("enumOfExtendsEnumOfWildcard")));
+    assertTrue(timeUnitType.isSubtypeOfOrEqualTo(fieldType("comparableOfWildcard")));
+    assertFalse(timeUnitType.isSubtypeOfOrEqualTo(fieldType("comparableOfSuperInteger")));
+
+    assertTrue(
+        fieldType("listOfInteger")
+            .isSubtypeOfOrEqualTo(fieldType("listOfExtendsComparableOfSuperInteger")));
   }
 }
