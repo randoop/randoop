@@ -221,7 +221,12 @@ class LazyParameterBound extends ParameterBound {
             return null;
           }
           ClassOrInterfaceType ownerClassType = (ClassOrInterfaceType) ownerType;
-          if (preserved || !ownerClassType.isGenericForm()) {
+          // The comparison is sensitive to the bounds of type variables:  the substitution can map
+          // a type parameter of the owner to a copy with other bounds, which is equal to it (so
+          // isGenericForm can return true) but must be kept.
+          if (preserved
+              || !ownerClassType.isGenericForm()
+              || !TypeVariable.areIdentical(ownerClassType, ClassOrInterfaceType.forType(owner))) {
             instantiatedType.enclosingType = ownerClassType;
           }
         }

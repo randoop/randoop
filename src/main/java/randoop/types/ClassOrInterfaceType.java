@@ -513,7 +513,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           thisView instanceof InstantiatedType
               ? (InstantiatedType) thisView
               : this.getMatchingSupertype((GenericClassType) goalType);
-      if (supertype != null) {
+      if (supertype == null) {
+        // A proper subclass of the goal's class whose supertype is raw, as for
+        // `class RawChild extends Base`, does not instantiate Base<T>.  Returning the (possibly
+        // empty) substitution would report success without binding the goal's type parameters.
+        if (!this.runtimeClassIs(goalType.getRuntimeClass())) {
+          return null;
+        }
+      } else {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
             || !substitution.isConsistentWith(supertypeSubstitution)) {
@@ -958,7 +965,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Returns the capture conversion of the given enclosing type of this type. Each call for the same
    * enclosing type returns the same result, so that the supertypes of this type that are found
    * through different paths, such as through the superclass and through an interface, share the
-   * same capture variables and can be recognized as the same type.
+   * same capture variables and can be recognized as the same type. This holds even if several
+   * threads make the first call concurrently.
    *
    * @param enclosing the enclosing type of this type
    * @return the capture conversion of {@code enclosing}
@@ -966,11 +974,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @SuppressWarnings("ReferenceEquality") // the cached result is for the same enclosing type object
   private ClassOrInterfaceType getCapturedEnclosingType(ClassOrInterfaceType enclosing) {
     CapturedEnclosingType cached = capturedEnclosingType;
-    if (cached == null || cached.enclosing != enclosing) {
-      cached = new CapturedEnclosingType(enclosing, enclosing.applyCaptureConversion());
-      capturedEnclosingType = cached;
+    if (cached != null && cached.enclosing == enclosing) {
+      return cached.captured;
     }
-    return cached.captured;
+    synchronized (this) {
+      // Another thread may have published the capture while this one waited.
+      cached = capturedEnclosingType;
+      if (cached == null || cached.enclosing != enclosing) {
+        cached = new CapturedEnclosingType(enclosing, enclosing.applyCaptureConversion());
+        capturedEnclosingType = cached;
+      }
+      return cached.captured;
+    }
   }
 
   @Override
