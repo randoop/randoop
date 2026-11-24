@@ -104,6 +104,60 @@ public class LazyParameterBoundTest {
     assertFalse(Subtyping.isIdentical(uConverted.getBoundType(), vConverted.getBoundType()));
   }
 
+  /**
+   * A generic class with a member class, and a member class whose type parameter's bound contains
+   * the first member class with a declaration-form owner.
+   *
+   * @param <A> the type parameter
+   */
+  static class DeclarationOwner<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Inner<B> {}
+
+    /**
+     * A member class whose type parameter's bound is {@code List<DeclarationOwner<A>.Inner<T>>}.
+     *
+     * @param <T> the type parameter
+     */
+    class Holder<T extends List<Inner<T>>> {}
+  }
+
+  /**
+   * Substituting a copy of a type parameter with other bounds into a declaration-form owner keeps
+   * the copy, rather than restoring the declaration.
+   */
+  @Test
+  public void testDeclarationFormOwnerKeepsSubstitutedCopy() {
+    TypeVariable a = GenericClassType.forClass(DeclarationOwner.class).getTypeParameters().get(0);
+    TypeVariable t =
+        GenericClassType.forClass(DeclarationOwner.Holder.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    TypeVariable aCopy =
+        a.createCopyWithBounds(
+            a.getLowerTypeBound(), new EagerReferenceBound(ReferenceType.forClass(Number.class)));
+    List<TypeVariable> variables = new ArrayList<>();
+    variables.add(t);
+    variables.add(a);
+    List<ReferenceType> types = new ArrayList<>();
+    types.add(JavaTypes.STRING_TYPE);
+    types.add(aCopy);
+    ParameterBound substituted = bound.substitute(new Substitution(variables, types));
+    InstantiatedType list = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType owner = inner.enclosingType;
+    assertTrue(owner instanceof InstantiatedType);
+    ReferenceType ownerArgument =
+        ((ReferenceArgument) owner.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(TypeVariable.areIdentical(aCopy, ownerArgument));
+  }
+
   @Test
   public void testObjectIsUpperBoundOfLazyBound() {
     TypeVariable t =
