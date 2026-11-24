@@ -1570,9 +1570,16 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, OuterWithMember<String>.Inner>> {}
 
-  /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
+  /** A field of type {@code OuterWithMember<String>.Inner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  OuterWithMember<String>.Inner stringInnerField;
+
+  /**
+   * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. The
+   * member class keeps its owner type, {@code OuterWithMember<String>}.
+   */
   @Test
-  public void testSubstitutionReachesBoundWithMemberClass() {
+  public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
     List<TypeVariable> parameters =
         GenericClassType.forClass(BoundWithMemberClass.class).getTypeParameters();
     TypeVariable t = parameters.get(2);
@@ -1581,7 +1588,7 @@ public class TypeVariableTest {
     InstantiatedType bound =
         (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
     assertEquals(
-        ClassOrInterfaceType.forClass(OuterWithMember.Inner.class),
+        ownFieldType("stringInnerField"),
         ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
   }
 
