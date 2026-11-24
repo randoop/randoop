@@ -21,6 +21,7 @@ java7.util7.Collections.eq(java.lang.Object, java.lang.Object) ignore
 java7.util7.Collections.fill(java7.util7.List, java.lang.Object) ignore17+
 java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
+java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) include25
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
 java7.util7.Collections.max(java7.util7.Collection) ignore17+ # called by max(Collection, Comparator) when the comparator is null
