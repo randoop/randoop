@@ -490,13 +490,14 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     // A parameterized type need not be an InstantiatedType:  a NonParameterizedType member class,
-    // such as Outer<String>.Inner, is parameterized through its enclosing type.  The class and
-    // interface subtype check below handles such a type.
+    // such as Outer<String>.Inner, is parameterized through its enclosing type.  The clauses below
+    // need an InstantiatedType; the class and interface subtype check below, in
+    // super.isSubtypeOfOrEqualTo, handles other types.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -518,9 +519,8 @@ public class InstantiatedType extends ParameterizedType {
       }
 
       // first clause.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null && superType.equals(otherType)) {
         return true;
       }
