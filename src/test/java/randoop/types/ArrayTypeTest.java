@@ -7,6 +7,7 @@ import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -209,12 +210,24 @@ public class ArrayTypeTest {
     abstract List<String> stringList();
 
     abstract List<String>[] stringListArray();
+
+    abstract List<?> unboundedList();
+
+    abstract Collection<? super String> superStringCollection();
+
+    abstract <T> List<? extends T[]> extendsVariableArrayList();
+
+    abstract Collection<? extends Object[]> extendsObjectArrayCollection();
+
+    abstract List<? super String> superStringList();
+
+    abstract Collection<?> unboundedCollection();
   }
 
   /**
    * Returns the Randoop type for the return type of the given method of {@link TypeHolder}.
    *
-   * @param methodName the method name
+   * @param methodName a method name of {@link TypeHolder}
    * @return the return type of the method
    */
   private static Type returnType(String methodName) throws NoSuchMethodException {
@@ -249,5 +262,25 @@ public class ArrayTypeTest {
     Type extendsNumberListArray = returnType("extendsNumberListArray");
     assertTrue(returnType("integerListArray").isSubtypeOfOrEqualTo(extendsNumberListArray));
     assertFalse(returnType("stringListArray").isSubtypeOfOrEqualTo(extendsNumberListArray));
+  }
+
+  @Test
+  public void testSubtypeOfLowerBoundedWildcardInheritedSupertype() throws NoSuchMethodException {
+    Type superStringCollection = returnType("superStringCollection");
+    assertTrue(returnType("stringList").isSubtypeOfOrEqualTo(superStringCollection));
+    // JLS 4.5.1: `? super String` does not contain `?`.
+    assertFalse(returnType("unboundedList").isSubtypeOfOrEqualTo(superStringCollection));
+    Type superStringList = returnType("superStringList");
+    assertTrue(superStringList.isSubtypeOfOrEqualTo(superStringCollection));
+    // JLS 4.5.1: `?` contains `? super String`.
+    assertTrue(superStringList.isSubtypeOfOrEqualTo(returnType("unboundedCollection")));
+  }
+
+  @Test
+  public void testSubtypeOfWildcardWithVariableArrayBound() throws NoSuchMethodException {
+    Type extendsObjectArrayCollection = returnType("extendsObjectArrayCollection");
+    assertTrue(
+        returnType("extendsVariableArrayList").isSubtypeOfOrEqualTo(extendsObjectArrayCollection));
+    assertFalse(returnType("unboundedList").isSubtypeOfOrEqualTo(extendsObjectArrayCollection));
   }
 }
