@@ -725,8 +725,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
     // Subtyping compares the type arguments of a parameterized type by containment, not equality:
     // Integer is a subtype of Comparable<? super Integer>.  The supertypes of a rawtype are
-    // erasures, so a rawtype is not a subtype of an InstantiatedType of another class.
-    boolean comparesTypeArguments = otherRefType instanceof InstantiatedType && !this.isRawtype();
+    // erasures, so Subtyping finds no parameterized supertype of a rawtype to compare.
+    boolean comparesTypeArguments = otherRefType instanceof InstantiatedType;
     // For a member class that declares no type parameters, of a parameterized type, Subtyping
     // compares each enclosing type:  O<String>.Plain is a subtype of O<?>.Plain.
     boolean comparesEnclosingTypes =
