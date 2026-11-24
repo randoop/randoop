@@ -536,13 +536,16 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType source = this.hasWildcardArgument() ? this.applyCaptureConversion() : this;
       InstantiatedType superType =
           source.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      // The supertype has the class of `otherType`, so this applies type argument containment, as
-      // for Collection<Integer> and Collection<? extends Number>.  The runtime class check ensures
-      // that the recursive call uses the second clause above, and so terminates.
-      if (superType != null
-          && superType.runtimeClassIs(otherType.getRuntimeClass())
-          && superType.isSubtypeOfOrEqualTo(otherType)) {
-        return true;
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so this
+        // applies type argument containment, as for Collection<Integer> and
+        // Collection<? extends Number>, and the recursive call uses the second clause above and
+        // does not recurse further.
+        assert superType.runtimeClassIs(otherType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
