@@ -885,9 +885,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>For a member class, this includes wildcards in the enclosing type, as in {@code
+   * Outer<?>.Inner}.
+   */
   @Override
   public boolean hasWildcard() {
-    return false;
+    return isMemberClass() && enclosingType.hasWildcard();
   }
 
   /**
