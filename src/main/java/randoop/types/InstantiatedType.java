@@ -549,7 +549,8 @@ public class InstantiatedType extends ParameterizedType {
     // arguments of its own.  The clauses below need an InstantiatedType; such a type is handled by
     // ClassOrInterfaceType.isSubtypeOfOrEqualTo, called below, through the supertype search and the
     // class and enclosing type subtyping, which compares the enclosing types by containment.  For
-    // example, a subclass of `Outer<Integer>.Inner` is a subtype of `Outer<? extends Number>.Inner`,
+    // example, a subclass of `Outer<Integer>.Inner` is a subtype of `Outer<? extends
+    // Number>.Inner`,
     // but not of `Outer<Long>.Inner`.
     if (otherType instanceof InstantiatedType) {
       InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
