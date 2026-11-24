@@ -1091,7 +1091,7 @@ public class TypeVariableTest {
   /**
    * Returns the type of the given field of this class.
    *
-   * @param fieldName the name of a field of this class
+   * @param fieldName a field name of this class
    * @return the type of the field
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
@@ -1317,7 +1317,7 @@ public class TypeVariableTest {
   /**
    * Returns the first type argument of the type of the given field of this class.
    *
-   * @param fieldName the name of a field of this class, whose type is parameterized
+   * @param fieldName a field name of this class, for a field whose type is parameterized
    * @return the first type argument of the type of the field
    * @throws NoSuchFieldException if this class has no field named {@code fieldName}
    */
@@ -1673,5 +1673,29 @@ public class TypeVariableTest {
     assertTrue(v.canBeInstantiatedBy(subOfX));
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
+
+  /**
+   * A class with a field whose wildcard bound mentions the class's type parameter.
+   *
+   * @param <T> a type parameter that the wildcard bound mentions
+   */
+  static class ComparableListHolder<T extends Comparable<? super T>> {
+    /** A field of type {@code List<? extends Comparable<? super T>>}. */
+    @SuppressWarnings("UnusedVariable") // the field is read reflectively
+    List<? extends Comparable<? super T>> comparableListField;
+  }
+
+  @Test
+  public void testCaptureWithBoundThatMentionsOtherVariable() throws NoSuchFieldException {
+    InstantiatedType comparableList =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                ComparableListHolder.class
+                    .getDeclaredField("comparableListField")
+                    .getGenericType());
+    // The upper bound of the capture variable, Comparable<? super T>, mentions T, which the
+    // subtype test does not substitute.
+    assertTrue(comparableList.applyCaptureConversion().isSubtypeOfOrEqualTo(comparableList));
   }
 }
