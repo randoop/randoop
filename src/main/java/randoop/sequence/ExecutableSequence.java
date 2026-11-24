@@ -521,9 +521,9 @@ public class ExecutableSequence {
           elemType = g.instantiate(objectArguments);
         } else {
           // Object is not within the bound of some type parameter (possibly one of an enclosing
-          // class, as in Outer<T extends Number>.Inner<U>), so use the raw type instead.  The
-          // enclosing type of g.getRawtype() can still be generic, as in Outer<T>.Inner, so erase
-          // the enclosing types as well.
+          // class, as in Outer<T extends Number>.Inner<U>), so use the raw type instead.
+          // GenericClassType.getRawtype() keeps the generic enclosing type, such as Outer<T>;
+          // NonParameterizedType.getRawtype() erases the enclosing types too, giving Outer.Inner.
           elemType = g.getRawtype().getRawtype();
         }
       } else if (elemType.isGeneric()) {
