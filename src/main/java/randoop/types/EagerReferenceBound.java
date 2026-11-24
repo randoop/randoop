@@ -74,11 +74,15 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not map the variable, so the variable can still be chosen.  argType
-      // is within this bound if it is within the variable's upper bound, which the variable can be.
+      // The substitution does not instantiate the variable with a non-variable type, so the
+      // variable can still be chosen, within its upper bound.
       TypeVariable boundVariable = (TypeVariable) thisBoundType;
       ParameterBound variableBound = boundVariable.getUpperTypeBound();
       if (subst.get(boundVariable) != null || !(argType instanceof ReferenceType)) {
+        // The substitution maps `boundVariable` (for example, to itself), so it cannot be extended
+        // with a choice for `boundVariable`, or `argType` cannot instantiate a type variable.
+        // `argType` is within this bound if it is within the variable's upper bound, which the
+        // variable can be.
         return variableBound.isUpperBound(argType, subst);
       }
       // The bound of `boundVariable` can mention `boundVariable` itself, as in `<T extends
