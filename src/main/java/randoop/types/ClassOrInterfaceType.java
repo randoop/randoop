@@ -714,6 +714,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (current.equals(otherClass)) {
         return true;
       }
+      // A strict superclass of the same class as otherClass can be a subtype of otherClass without
+      // being equal to it, as Outer<String>.Inner is a subtype of Outer<?>.Inner.  The recursive
+      // call does not recurse further, because the strict superclasses of current are of other
+      // classes.
+      if (current != this && current.runtimeClassIs(otherClass.getRuntimeClass())) {
+        return current.isSubtypeOfOrEqualTo(otherClass);
+      }
     }
     return false;
   }
