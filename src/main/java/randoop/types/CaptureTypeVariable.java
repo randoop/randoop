@@ -88,15 +88,6 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   /**
-   * Returns the wildcard.
-   *
-   * @return the wildcard
-   */
-  /*package*/ WildcardArgument getWildcard() {
-    return wildcard;
-  }
-
-  /**
    * {@inheritDoc}
    *
    * <p>Two capture variables are equal if they are the same capture variable, even if their bounds

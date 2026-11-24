@@ -375,6 +375,13 @@ public class TypeInstantiator {
     if (operation.isGeneric(/* ignoreWildcards= */ true)) {
       return null;
     }
+    // isGeneric(true) ignores capture variables.  A capture variable that the substitution did not
+    // replace would appear in the generated test, as in `Comparator<Capture0> c = null;`, which
+    // does not compile.
+    if (operation.getInputTypes().hasCaptureVariable()
+        || operation.getOutputType().hasCaptureVariable()) {
+      return null;
+    }
     return operation;
   }
 

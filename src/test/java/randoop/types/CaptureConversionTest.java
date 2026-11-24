@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -458,5 +459,26 @@ public class CaptureConversionTest {
     TypeTuple inputTypes = op.getInputTypes();
     assertEquals(inputTypes.size(), 2);
     return (InstantiatedType) inputTypes.get(1);
+  }
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private static List<? super String> superStringList;
+
+  /**
+   * Tests that a type with a wildcard argument does not instantiate its own capture conversion. A
+   * capture variable stands for an unknown type, and the wildcard type {@code List<? super String>}
+   * is not a {@code List} of that unknown type.
+   */
+  @Test
+  public void testWildcardTypeIsNotInstantiationOfCapture() throws NoSuchFieldException {
+    InstantiatedType superStringListType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getDeclaredField("superStringList").getGenericType());
+    InstantiatedType captured = superStringListType.applyCaptureConversion();
+    assertTrue(captured.hasCaptureVariable());
+    assertFalse(superStringListType.isInstantiationOf(captured));
+    assertNull(superStringListType.getInstantiatingSubstitution(captured));
   }
 }

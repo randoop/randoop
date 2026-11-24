@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
@@ -103,6 +105,49 @@ public class TypeInstantiatorTest {
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
     assertTrue("no instantiation of " + thenComparing, instantiated > 0);
+  }
+
+  /** A field of type {@code Comparator<? super String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private static Comparator<? super String> superStringComparator;
+
+  /**
+   * Tests that an instantiation contains no capture variable. Capture conversion turns {@code new
+   * TreeMap<K, V>(Comparator<? super K>)} into an operation whose parameter type is {@code
+   * Comparator<CaptureN>}. An input type {@code Comparator<? super String>} must not instantiate
+   * that parameter type, because the result would declare a variable of type {@code
+   * Comparator<CaptureN>}, which cannot be written in Java source code.
+   */
+  @Test
+  public void testWildcardInputTypeDoesNotInstantiateCaptureVariable()
+      throws NoSuchMethodException, NoSuchFieldException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(
+        GenericClassType.forClass(TreeMap.class).instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE),
+        inputTypes);
+    addTypes(
+        (ClassOrInterfaceType)
+            Type.forType(
+                TypeInstantiatorTest.class
+                    .getDeclaredField("superStringComparator")
+                    .getGenericType()),
+        inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(TreeMap.class.getConstructor(Comparator.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(constructor);
+      if (operation == null) {
+        continue;
+      }
+      assertFalse(
+          "capture variable in instantiation " + operation,
+          operation.getInputTypes().hasCaptureVariable()
+              || operation.getOutputType().hasCaptureVariable());
+    }
   }
 
   /**
