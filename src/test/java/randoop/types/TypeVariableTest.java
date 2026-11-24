@@ -765,6 +765,20 @@ public class TypeVariableTest {
     assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
   }
 
+  /**
+   * A class whose type parameter occurs more than once in its own bound.
+   *
+   * @param <T> a type parameter bounded by {@code Map<T, T>}
+   */
+  static class RepeatedSelfBound<T extends Map<T, T>> {}
+
+  @Test
+  public void testSubtypeOfVariableRepeatedInOwnBound() {
+    TypeVariable t = typeParameter(RepeatedSelfBound.class, 0);
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
   /** A field whose type has wildcard arguments for a type parameter and its sibling bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   SiblingBound<?, ?> siblingBoundField;
