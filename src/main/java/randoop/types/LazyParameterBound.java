@@ -303,8 +303,13 @@ class LazyParameterBound extends ParameterBound {
       ClassOrInterfaceType result = declared.substitute(substitution);
       // Substitution converts a declaration owner, which is a GenericClassType, to an
       // InstantiatedType, even if the substitution does not change its type arguments.  Keep the
-      // declaration owner in that case, as ClassOrInterfaceType.forType does.
-      if (result.isMemberClass() && result.enclosingType.isGenericForm()) {
+      // declaration owner in that case, as ClassOrInterfaceType.forType does.  As in substitute(),
+      // the comparison is sensitive to the bounds of type variables:  the substitution can map a
+      // type parameter of the owner to a copy with other bounds, which is equal to it but must be
+      // kept.
+      if (result.isMemberClass()
+          && result.enclosingType.isGenericForm()
+          && isDeclaredOwner(result.enclosingType, type, declared)) {
         result = declared;
       }
       return TypeArgument.forType(result);
@@ -324,6 +329,27 @@ class LazyParameterBound extends ParameterBound {
     NonParameterizedType result = new NonParameterizedType(rawType);
     result.enclosingType = (ClassOrInterfaceType) owner;
     return TypeArgument.forType(result);
+  }
+
+  /**
+   * Returns true if {@code owner} is identical to the owner type of {@code type}, including the
+   * bounds of its type variables.
+   *
+   * @param owner the owner type of a substituted member class
+   * @param type a reflection type that is a non-generic member class of a generic class
+   * @param declared the conversion of {@code type}, before substitution
+   * @return true if {@code owner} is identical to the owner type of {@code type}
+   */
+  private static boolean isDeclaredOwner(
+      ClassOrInterfaceType owner, ParameterizedType type, ClassOrInterfaceType declared) {
+    if (declared.isMemberClass() && TypeVariable.areIdentical(owner, declared.enclosingType)) {
+      return true;
+    }
+    // The owner of `declared` can be a GenericClassType, which is never identical to an
+    // InstantiatedType, so also compare with the owner type as written.
+    java.lang.reflect.Type reflectOwner = type.getOwnerType();
+    return reflectOwner instanceof ParameterizedType
+        && TypeVariable.areIdentical(owner, ClassOrInterfaceType.forType(reflectOwner));
   }
 
   /**
