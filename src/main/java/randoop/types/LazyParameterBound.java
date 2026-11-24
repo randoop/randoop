@@ -171,7 +171,8 @@ class LazyParameterBound extends ParameterBound {
       // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
       // isUpperBound and isLowerBound do, and as any argument type that it is compared with is
       // converted:  the result keeps an owner type that mentions no type variable, such as
-      // Outer<String>, and otherwise has the owner type from the class declaration.
+      // Outer<String>, so the result is not equal to Outer<Integer>.Inner; and otherwise it has
+      // the owner type from the class declaration.
       return TypeArgument.forType(type);
     }
 
@@ -385,7 +386,8 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType)) {
-      // The bound has no type variable, so no substitution changes it.
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.
       return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
     }
     ParameterBound b = substituteWithUnknowns(substitution);
@@ -415,7 +417,8 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType)) {
-      // The bound has no type variable, so no substitution changes it.
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.
       return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
     }
     ParameterBound b = substituteWithUnknowns(substitution);

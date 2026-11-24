@@ -460,6 +460,9 @@ public class InstantiatedType extends ParameterizedType {
     if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
+      // TODO: For a generic member class, as in `Outer<String>.Inner<String>`, also compare the
+      // enclosing types.  This requires ParameterizedType.forType to keep the owner type, and the
+      // supertypes of an InstantiatedType to substitute for the enclosing type's type parameters.
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
         InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
