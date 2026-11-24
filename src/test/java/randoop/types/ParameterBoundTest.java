@@ -1042,6 +1042,51 @@ public class ParameterBoundTest {
   }
 
   @Test
+  public void testCompareWithFixedOwnerMemberClassBound() {
+    ParameterBound memberBound =
+        ParameterBound.forType(
+            Collections.emptySet(),
+            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceType stringOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    ReferenceType integerOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+    ReferenceBound objectBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
+    ReferenceBound stringOuterBound = new EagerReferenceBound(stringOuter);
+    ReferenceBound integerOuterBound = new EagerReferenceBound(integerOuter);
+    Substitution empty = new Substitution();
+
+    assertTrue(objectBound.isUpperBound(memberBound, empty));
+    assertTrue(stringOuterBound.isUpperBound(memberBound, empty));
+    assertFalse(integerOuterBound.isUpperBound(memberBound, empty));
+
+    assertFalse(objectBound.isLowerBound(memberBound, empty));
+    assertTrue(stringOuterBound.isLowerBound(memberBound, empty));
+    assertFalse(integerOuterBound.isLowerBound(memberBound, empty));
+  }
+
+  @Test
+  public void testCompareWithVariableOwnerMemberClassBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
+    TypeVariable x = parameters.get(0);
+    ParameterBound memberBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceBound stringOuterBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(
+                fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter")));
+    Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
+    Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
+
+    assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
+    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
+  }
+
+  @Test
   public void testWildcardBoundedByNonGenericMemberClass() {
     InstantiatedType list =
         (InstantiatedType)
