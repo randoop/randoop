@@ -351,8 +351,12 @@ public class TypeInstantiator {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.
+      // not be parameterized.  Such an instantiation has the class of the pattern type.
+      // isInstantiationOf does not check that:  a non-generic nested class Holder.Noise is an
+      // "instantiation" of its sibling Holder.Target<T>, but instantiates no type variable of it.
       if (inputType.isClassOrInterfaceType()
+          && (inputType.isParameterized()
+              || inputType.runtimeClassIs(patternType.getRuntimeClass()))
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }

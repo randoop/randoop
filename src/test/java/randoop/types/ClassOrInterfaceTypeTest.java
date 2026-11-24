@@ -772,4 +772,133 @@ public class ClassOrInterfaceTypeTest {
         type.getSuperclass());
     assertEquals(Collections.singletonList(supplierOfInteger), type.getInterfaces());
   }
+
+  /** A non-generic class that implements a parameterized interface. */
+  static class StringSupplier implements Supplier<String> {
+    @Override
+    public String get() {
+      return "";
+    }
+  }
+
+  /**
+   * A generic interface.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedTypeParameter") // only the type is of interest
+  interface Wrapper<T> {}
+
+  /**
+   * A generic class whose supertype mentions the class itself in a lower-bounded wildcard.
+   *
+   * @param <T> a type parameter
+   */
+  static class SelfSuper<T> implements Wrapper<Wrapper<? super SelfSuper<T>>> {}
+
+  /** Declares a method whose parameter types are used in subtype tests. */
+  static class SubtypeHolder {
+    /**
+     * A method whose parameter types are used in subtype tests.
+     *
+     * @param suppliers a list of suppliers
+     * @param inner an {@code Outer<String>.Inner}
+     * @param wildcardInner an {@code Outer<?>.Inner}
+     * @param integerInner an {@code Outer<Integer>.Inner}
+     * @param wrappers a list of {@code Wrapper<? super SelfSuper<String>>}
+     * @param supers a list of supertypes of {@code SelfSuper<String>}
+     */
+    static void m(
+        List<? extends Supplier<?>> suppliers,
+        Outer<String>.Inner inner,
+        Outer<?>.Inner wildcardInner,
+        Outer<Integer>.Inner integerInner,
+        List<Wrapper<? super SelfSuper<String>>> wrappers,
+        List<? super SelfSuper<String>> supers) {}
+  }
+
+  /**
+   * Returns the parameter types of {@link SubtypeHolder#m}.
+   *
+   * @return the parameter types of {@link SubtypeHolder#m}
+   */
+  private static ClassOrInterfaceType[] subtypeHolderParameterTypes() throws NoSuchMethodException {
+    java.lang.reflect.Type[] types =
+        SubtypeHolder.class
+            .getDeclaredMethod(
+                "m",
+                List.class,
+                Outer.Inner.class,
+                Outer.Inner.class,
+                Outer.Inner.class,
+                List.class,
+                List.class)
+            .getGenericParameterTypes();
+    ClassOrInterfaceType[] result = new ClassOrInterfaceType[types.length];
+    for (int i = 0; i < types.length; i++) {
+      result[i] = ClassOrInterfaceType.forType(types[i]);
+    }
+    return result;
+  }
+
+  /**
+   * A non-generic class is a subtype of a parameterized type whose type arguments contain those of
+   * its matching supertype: {@code StringSupplier} is a subtype of {@code Supplier<?>}.
+   */
+  @Test
+  public void nonGenericImplementationOfWildcardTypeTest() throws NoSuchMethodException {
+    InstantiatedType suppliers = (InstantiatedType) subtypeHolderParameterTypes()[0];
+    TypeArgument wildcard = suppliers.getTypeArguments().get(0);
+    ReferenceType supplierOfWildcard =
+        ReferenceBound.asReferenceType(((WildcardArgument) wildcard).getTypeBound());
+    ClassOrInterfaceType stringSupplier = ClassOrInterfaceType.forClass(StringSupplier.class);
+    assertTrue(stringSupplier.isSubtypeOfOrEqualTo(supplierOfWildcard));
+    assertTrue(wildcard.contains(TypeArgument.forType(stringSupplier)));
+    assertTrue(JDKTypes.LIST_TYPE.instantiate(stringSupplier).isSubtypeOfOrEqualTo(suppliers));
+    // A class that does not implement Supplier.
+    ClassOrInterfaceType unrelated = ClassOrInterfaceType.forClass(I.class);
+    assertFalse(unrelated.isSubtypeOfOrEqualTo(supplierOfWildcard));
+    assertFalse(wildcard.contains(TypeArgument.forType(unrelated)));
+    assertFalse(JDKTypes.LIST_TYPE.instantiate(unrelated).isSubtypeOfOrEqualTo(suppliers));
+    // The supertype Supplier<String> is not a subtype of Supplier<Integer>.
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    InstantiatedType supplierOfInteger =
+        GenericClassType.forClass(Supplier.class).instantiate(integerType);
+    assertFalse(stringSupplier.isSubtypeOfOrEqualTo(supplierOfInteger));
+  }
+
+  /**
+   * A non-generic member class of a parameterized type is a subtype of the same member class of a
+   * parameterized type whose type arguments contain those of its enclosing type.
+   */
+  @Test
+  public void memberClassEnclosingSubtypeTest() throws NoSuchMethodException {
+    ClassOrInterfaceType[] types = subtypeHolderParameterTypes();
+    ClassOrInterfaceType inner = types[1];
+    ClassOrInterfaceType wildcardInner = types[2];
+    ClassOrInterfaceType integerInner = types[3];
+    assertTrue(inner.isSubtypeOfOrEqualTo(wildcardInner));
+    assertTrue(integerInner.isSubtypeOfOrEqualTo(wildcardInner));
+    assertFalse(inner.isSubtypeOfOrEqualTo(integerInner));
+    assertFalse(integerInner.isSubtypeOfOrEqualTo(inner));
+    assertFalse(wildcardInner.isSubtypeOfOrEqualTo(inner));
+  }
+
+  /**
+   * A containment check that depends on itself terminates. Checking that {@code ? super
+   * SelfSuper<String>} contains {@code Wrapper<? super SelfSuper<String>>} checks that {@code
+   * SelfSuper<String>} is a subtype of {@code Wrapper<? super SelfSuper<String>>}, which repeats
+   * the containment check, because {@code SelfSuper<String>} implements {@code Wrapper<Wrapper<?
+   * super SelfSuper<String>>>}.
+   */
+  @Test
+  public void recursiveContainmentTest() throws NoSuchMethodException {
+    ClassOrInterfaceType[] types = subtypeHolderParameterTypes();
+    ClassOrInterfaceType wrappers = types[4];
+    ClassOrInterfaceType supers = types[5];
+    assertTrue(wrappers.isSubtypeOfOrEqualTo(supers));
+    // A check that does not depend on itself still fails, after the recursive check.
+    assertFalse(
+        JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(supers));
+  }
 }

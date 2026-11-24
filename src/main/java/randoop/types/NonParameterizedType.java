@@ -311,11 +311,42 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
    * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
    * only by unchecked conversion.
+   *
+   * <p>A supertype of this type that is a parameterized type, such as {@code Supplier<String>} for
+   * a class that implements {@code Supplier<String>}, is compared to {@code otherType} by
+   * containment of type arguments, so the class is a subtype of {@code Supplier<?>}. Likewise, for
+   * a member class, the enclosing types are compared by subtyping: {@code Outer<String>.Inner} is
+   * a subtype of {@code Outer<?>.Inner} but not of {@code Outer<Integer>.Inner}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
+    }
+    if (!isRawtype() && otherType instanceof InstantiatedType) {
+      // The superclass and interface search in super.isSubtypeOfOrEqualTo compares parameterized
+      // supertypes by equality.
+      InstantiatedType superType =
+          getMatchingSupertype(((InstantiatedType) otherType).getGenericClassType());
+      if (superType != null && superType.isSubtypeOfOrEqualTo(otherType)) {
+        return true;
+      }
+    }
+    if (!isRawtype() && otherType instanceof NonParameterizedType) {
+      NonParameterizedType otherClassType = (NonParameterizedType) otherType;
+      ClassOrInterfaceType otherEnclosingType =
+          otherClassType.isMemberClass() ? otherClassType.enclosingType : null;
+      if (otherEnclosingType != null) {
+        for (ClassOrInterfaceType supertype : getSupertypesInclusive()) {
+          if (supertype.runtimeClassIs(otherClassType.getRuntimeClass())) {
+            if (supertype.isMemberClass()
+                && supertype.enclosingType.isSubtypeOfOrEqualTo(otherEnclosingType)) {
+              return true;
+            }
+            break;
+          }
+        }
+      }
     }
     return otherType instanceof ClassOrInterfaceType
         && otherType.runtimeClassIs(runtimeType)

@@ -342,7 +342,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          // A non-generic member interface of a parameterized type, such as Outer<String>.Iface,
+          // is parameterized but is not an InstantiatedType.
+          if (interfaceType instanceof InstantiatedType) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.runtimeClassIs(goalType.getRuntimeClass())
                 && type.isInstantiationOf(goalType)) {
@@ -366,7 +368,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
       // isInstantiationOf can be true for a member class of another class, if the enclosing types
       // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
+      if (superclass instanceof InstantiatedType
+          && superclass.runtimeClassIs(goalType.getRuntimeClass())
           && superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }

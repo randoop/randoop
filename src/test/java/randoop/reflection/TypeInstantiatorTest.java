@@ -277,6 +277,53 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A generic static nested class.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedTypeParameter") // only the type is of interest
+  private static class Target<T> {}
+
+  /** A non-generic static nested class, whose enclosing class is that of {@link Target}. */
+  private static class Noise {}
+
+  /**
+   * Does nothing.
+   *
+   * @param <T> the type argument of the parameter type
+   * @param target a target
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T> void useTarget(Target<T> target) {}
+
+  /**
+   * Tests that a non-generic nested class does not instantiate a generic nested class of the same
+   * enclosing class. In {@code <T> void useTarget(Target<T>)}, the parameter type must be
+   * instantiated as the input type {@code Target<String>}, not by way of the input type {@code
+   * Noise}.
+   */
+  @Test
+  public void testNonGenericSiblingDoesNotInstantiate()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    InstantiatedType targetType =
+        GenericClassType.forClass(Target.class).instantiate(JavaTypes.STRING_TYPE);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(targetType, inputTypes);
+    addTypes(ClassOrInterfaceType.forClass(Noise.class), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation useTarget =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("useTarget", Target.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(useTarget);
+      assertNotNull("no instantiation of " + useTarget, operation);
+      assertEquals(targetType, operation.getInputTypes().get(0));
+    }
+  }
+
+  /**
    * Returns the given type argument of the given parameterized type.
    *
    * @param type a parameterized type, such as {@code List<String>}

@@ -184,7 +184,15 @@ class LazyParameterBound extends ParameterBound {
       // arguments.
       ParameterizedType parameterizedType = (ParameterizedType) type;
       ParameterizedType ownerType = getPreservedOwnerType(parameterizedType);
-      if (ownerType == null || ClassOrInterfaceType.isDeclarationForm(ownerType)) {
+      // An owner type in declaration form, as in `Outer<T, U>.Inner`, is converted by
+      // ClassOrInterfaceType.forType, unless the substitution instantiates a type variable in it or
+      // in the bounds of its type variables.  ClassOrInterfaceType.substitute does not apply the
+      // substitution to the bounds of a type variable that it does not instantiate:  for `Outer<T
+      // extends Comparable<U>, U>.Inner` and a substitution that maps U to String, T would keep the
+      // bound Comparable<U>.  The code below applies it, as for type arguments.
+      if (ownerType == null
+          || (ClassOrInterfaceType.isDeclarationForm(ownerType)
+              && !instantiatesAny(ownerType, substitution))) {
         return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
       }
       TypeArgument ownerArgument = substitute(ownerType, substitution);

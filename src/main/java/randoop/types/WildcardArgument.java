@@ -1,7 +1,10 @@
 package randoop.types;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Represents a wildcard type argument to a parameterized type. */
@@ -9,6 +12,20 @@ public class WildcardArgument extends TypeArgument {
 
   /** The wildcard type. */
   private final WildcardType argumentType;
+
+  /**
+   * The (wildcard type, type) pairs whose {@link #contains(TypeArgument)} check of a non-wildcard
+   * argument is executing on the current thread. The subtype test of the check can lead back to the
+   * same check. For example, where {@code C<T>} implements {@code G<G<? super C<T>>>}, checking
+   * that {@code ? super C<String>} contains {@code G<? super C<String>>} tests whether {@code
+   * C<String>} is a subtype of {@code G<? super C<String>>}. That test compares the supertype
+   * {@code G<G<? super C<String>>>} of {@code C<String>}, which repeats the check. As in {@link
+   * EagerReferenceBound}, the repeated check returns true: it succeeds if the rest of the original
+   * check succeeds.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<Set<List<Type>>> containsChecksInProgress =
+      ThreadLocal.withInitial(HashSet::new);
 
   /**
    * Creates a WildcardArgument.
@@ -120,10 +137,24 @@ public class WildcardArgument extends TypeArgument {
     if (boundType == null) {
       return false;
     }
-    if (argumentType.hasUpperBound()) {
-      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
-    } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
+    if (argumentType.hasUpperBound() && boundType.isObject()) {
+      return true;
+    }
+    List<Type> check = Arrays.asList(argumentType, otherType);
+    Set<List<Type>> inProgress = containsChecksInProgress.get();
+    if (!inProgress.add(check)) {
+      // This check depends on itself, so assume it holds. Any other condition still holds or fails
+      // on its own.
+      return true;
+    }
+    try {
+      if (argumentType.hasUpperBound()) {
+        return otherType.isSubtypeOfOrEqualTo(boundType);
+      } else {
+        return boundType.isSubtypeOfOrEqualTo(otherType);
+      }
+    } finally {
+      inProgress.remove(check);
     }
   }
 

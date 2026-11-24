@@ -34,9 +34,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  // This method is synchronized so that concurrent calls do not corrupt the cache, and so that an
-  // uninitialized generic class type in the cache is visible only to the thread that is
-  // initializing it.  The lock is reentrant, so recursive calls from that thread find it.
+  // This method is synchronized so that concurrent calls do not corrupt the cache, and so that each
+  // class has a single GenericClassType.  The lock does not cover the type parameters of the
+  // GenericClassType, which it computes lazily, outside this lock; GenericClassType.parameters()
+  // publishes them safely by itself.
   public static synchronized GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
