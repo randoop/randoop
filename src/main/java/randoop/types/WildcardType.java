@@ -190,7 +190,8 @@ class WildcardType extends ParameterType {
    * converted to the equivalent {@link ReferenceBound}.
    *
    * @param bound a bound of a wildcard
-   * @return the type of the bound, or null if it cannot be determined
+   * @return the type of the bound, or null if the bound is neither a {@link ReferenceBound} nor a
+   *     {@link LazyParameterBound} that can be converted to a {@link ReferenceBound}
    */
   /*package*/ static @Nullable ReferenceType boundType(ParameterBound bound) {
     if (bound instanceof LazyParameterBound) {
