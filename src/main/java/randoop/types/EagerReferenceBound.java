@@ -61,7 +61,10 @@ class EagerReferenceBound extends ReferenceBound {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
+    // enclosing type to equal that of the other member class (or that member class to be the
+    // generic form of its class), rather than to be contained in it.  For example, the test does
+    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
@@ -114,7 +117,10 @@ class EagerReferenceBound extends ReferenceBound {
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below.
+    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
+    // enclosing type to equal that of the other member class (or that member class to be the
+    // generic form of its class), rather than to be contained in it.  For example, the test does
+    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
