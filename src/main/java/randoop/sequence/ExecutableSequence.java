@@ -515,14 +515,14 @@ public class ExecutableSequence {
       ReferenceType elemType = lastValues.get(1).getType();
       if (elemType instanceof GenericClassType) {
         GenericClassType g = (GenericClassType) elemType;
-        try {
-          elemType =
-              g.instantiate(
-                  Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE));
-        } catch (IllegalArgumentException e) {
+        List<ReferenceType> objectArguments =
+            Collections.nCopies(g.getTypeParameters().size(), JavaTypes.OBJECT_TYPE);
+        if (g.areWithinBounds(objectArguments)) {
+          elemType = g.instantiate(objectArguments);
+        } else {
           // Object is not within the bound of some type parameter (possibly one of an enclosing
           // class, as in Outer<T extends Number>.Inner<U>), so use the raw type instead.
-          elemType = (ReferenceType) g.getRawtype();
+          elemType = g.getRawtype();
         }
       } else if (elemType.isGeneric()) {
         // Special case: a member class can be non-parameterized itself but still generic via

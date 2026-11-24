@@ -1,7 +1,9 @@
 package randoop.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import org.junit.Test;
@@ -47,6 +49,8 @@ public class GenericClassTypeTest {
     assertEquals(2, numberInner.getTypeParameters().size());
     InstantiatedType instantiated = numberInner.instantiate(stringType, integerType);
     assertEquals(Arrays.asList(TypeArgument.forType(integerType)), instantiated.getTypeArguments());
+    GenericClassType outer = (GenericClassType) ClassOrInterfaceType.forClass(Outer.class);
+    assertEquals(outer.instantiate(stringType), instantiated.enclosingType);
     numberInner.instantiate(Arrays.asList(stringType, integerType));
     assertThrows(
         IllegalArgumentException.class, () -> numberInner.instantiate(integerType, stringType));
@@ -57,7 +61,31 @@ public class GenericClassTypeTest {
     // The bound of a type parameter of the enclosing class is checked too.
     GenericClassType inner =
         (GenericClassType) ClassOrInterfaceType.forClass(NumberOuter.Inner.class);
-    inner.instantiate(integerType, stringType);
+    InstantiatedType instantiatedInner = inner.instantiate(integerType, stringType);
+    assertEquals(
+        Arrays.asList(TypeArgument.forType(stringType)), instantiatedInner.getTypeArguments());
+    GenericClassType numberOuter =
+        (GenericClassType) ClassOrInterfaceType.forClass(NumberOuter.class);
+    assertEquals(numberOuter.instantiate(integerType), instantiatedInner.enclosingType);
     assertThrows(IllegalArgumentException.class, () -> inner.instantiate(stringType, integerType));
+  }
+
+  @Test
+  public void areWithinBoundsMemberClassTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ReferenceType stringType = JavaTypes.STRING_TYPE;
+
+    GenericClassType numberInner =
+        (GenericClassType) ClassOrInterfaceType.forClass(Outer.NumberInner.class);
+    assertTrue(numberInner.areWithinBounds(Arrays.asList(stringType, integerType)));
+    assertFalse(numberInner.areWithinBounds(Arrays.asList(integerType, stringType)));
+
+    GenericClassType inner =
+        (GenericClassType) ClassOrInterfaceType.forClass(NumberOuter.Inner.class);
+    assertTrue(inner.areWithinBounds(Arrays.asList(integerType, stringType)));
+    assertFalse(inner.areWithinBounds(Arrays.asList(JavaTypes.OBJECT_TYPE, stringType)));
+
+    assertThrows(
+        IllegalArgumentException.class, () -> inner.areWithinBounds(Arrays.asList(integerType)));
   }
 }
