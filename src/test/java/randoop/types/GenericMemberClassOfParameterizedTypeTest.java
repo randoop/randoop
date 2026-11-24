@@ -41,7 +41,9 @@ public class GenericMemberClassOfParameterizedTypeTest {
   abstract static class TypeHolder {
     abstract Outer<? extends Number>.Inner<String> wildcardOwnerInner();
 
-    abstract Outer<?>.Middle<Integer> wildcardOwnerMiddle();
+    // The owner's wildcard has a lower bound, so that Integer is within the bound of U, which is
+    // the capture of the wildcard.
+    abstract Outer<? super Integer>.Middle<Integer> wildcardOwnerMiddle();
 
     abstract Outer<String>.Middle<?> wildcardArgumentMiddle();
   }

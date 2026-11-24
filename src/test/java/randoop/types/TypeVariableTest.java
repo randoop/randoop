@@ -2835,7 +2835,10 @@ public class TypeVariableTest {
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   NonGenericInnerOuter<String>.Inner stringInnerField;
 
-  /** A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. */
+  /**
+   * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. The
+   * member class keeps its owner type, {@code NonGenericInnerOuter<String>}.
+   */
   @Test
   public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
     List<TypeVariable> parameters =
@@ -2858,10 +2861,7 @@ public class TypeVariableTest {
     // The expected type is NonGenericInnerOuter<String>.Inner, whose owner is instantiated.
     // ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class) would have the generic class
     // as its owner, which is not equal.
-    assertEquals(
-        ClassOrInterfaceType.forType(
-            TypeVariableTest.class.getDeclaredField("stringInnerField").getGenericType()),
-        inner);
+    assertEquals(ownFieldType("stringInnerField"), inner);
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */
