@@ -96,6 +96,8 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
+      // The substitution does not instantiate the variable with a non-variable type, so the
+      // variable can still be chosen, within its upper bound.
       TypeVariable variable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
         // The type variable can be argType itself or one of its supertypes, as in
@@ -106,8 +108,9 @@ class EagerReferenceBound extends ReferenceBound {
         // `subst`, because they can mention other type variables that `subst` instantiates.
         return variable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
-      // The substitution does not map the variable, so the variable can still be chosen.  argType
-      // is within this bound if it is within the variable's upper bound, which the variable can be.
+      // `argType` is not a reference type, or is a type variable, so it is not tried as a choice
+      // for the variable.  `argType` is within this bound if it is within the variable's upper
+      // bound, which the variable can be.
       return variable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
