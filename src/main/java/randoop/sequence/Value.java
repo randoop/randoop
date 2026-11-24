@@ -189,8 +189,8 @@ public final class Value {
   }
 
   /**
-   * Used to increase performance of stringLengthOk method. Valid only for the value of {@link
-   * GenInputsAbstract#string_maxlen} stored in {@link #escapedStringLengthOkCachedMaxlen}.
+   * Used to increase performance of {@link #escapedStringLengthOk}. Valid only for the value of
+   * {@link GenInputsAbstract#string_maxlen} stored in {@link #escapedStringLengthOkCachedMaxlen}.
    */
   private static Map<String, Boolean> escapedStringLengthOkCached = new WeakHashMap<>();
 
