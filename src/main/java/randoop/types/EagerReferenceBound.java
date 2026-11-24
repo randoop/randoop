@@ -158,18 +158,6 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      // As for a type variable bound above, a type parameter in the bound that is fixed, such as a
-      // type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
-      // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
-      // would accept String as an instantiation of E.
-      if (subst.instantiatesTypeParameters()) {
-        Substitution completeSubstitution =
-            subst.extendWithIdentity(thisBoundType.getTypeParameters());
-        if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
-          return Subtyping.isSubtypeOrEqual(
-              (ReferenceType) argType, thisBoundType, completeSubstitution);
-        }
-      }
       List<Type> check = Arrays.asList(thisBoundType, argType);
       Set<List<Type>> inProgress = upperBoundChecksInProgress.get();
       if (!inProgress.add(check)) {
@@ -178,6 +166,18 @@ class EagerReferenceBound extends ReferenceBound {
         return true;
       }
       try {
+        // As for a type variable bound above, a type parameter in the bound that is fixed, such as
+        // a type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
+        // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
+        // would accept String as an instantiation of E.
+        if (subst.instantiatesTypeParameters()) {
+          Substitution completeSubstitution =
+              subst.extendWithIdentity(thisBoundType.getTypeParameters());
+          if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
+            return Subtyping.isSubtypeOrEqual(
+                (ReferenceType) argType, thisBoundType, completeSubstitution);
+          }
+        }
         InstantiatedType boundClassType =
             ((InstantiatedType) thisBoundType).applyCaptureConversion();
         InstantiatedType argSuperType =

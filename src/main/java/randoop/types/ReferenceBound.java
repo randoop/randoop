@@ -187,4 +187,22 @@ public abstract class ReferenceBound extends ParameterBound {
   boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
     return Subtyping.isSubtypeOrEqual(boundType, upperBound, substitution);
   }
+
+  /**
+   * Returns the type of the given bound, if it is a {@link ReferenceBound} or a {@link
+   * LazyParameterBound} that can be converted to a {@link ReferenceBound}. Otherwise, returns null.
+   *
+   * @param bound a bound
+   * @return the type of {@code bound}, or null
+   */
+  /*package*/ static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
+    if (bound instanceof LazyParameterBound) {
+      ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
+      return converted == null ? null : converted.getBoundType();
+    }
+    if (bound instanceof ReferenceBound) {
+      return ((ReferenceBound) bound).getBoundType();
+    }
+    return null;
+  }
 }

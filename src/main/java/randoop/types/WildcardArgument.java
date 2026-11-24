@@ -119,16 +119,17 @@ public class WildcardArgument extends TypeArgument {
     if (argument.isWildcard() && argumentType.equals(((WildcardArgument) argument).argumentType)) {
       return true;
     }
-    ReferenceType boundType = WildcardType.boundType(argumentType.getTypeBound());
+    ReferenceType boundType = ReferenceBound.asReferenceType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }
     if (argument.isWildcard()) {
+      // `?`, which is `? extends Object`, contains every wildcard, including every `? super S`.
       if (argumentType.hasUpperBound() && boundType.isObject()) {
         return true;
       }
       WildcardArgument otherWildcard = (WildcardArgument) argument;
-      ReferenceType otherBoundType = WildcardType.boundType(otherWildcard.getTypeBound());
+      ReferenceType otherBoundType = ReferenceBound.asReferenceType(otherWildcard.getTypeBound());
       if (otherBoundType == null) {
         return false;
       }

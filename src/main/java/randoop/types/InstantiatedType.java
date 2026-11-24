@@ -588,16 +588,17 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      // The supertype has the same class as `otherType`, so this uses the second clause, which
-      // checks type-argument containment.  For example, List<String> is a subtype of
-      // Collection<? extends CharSequence> because its supertype Collection<String> is, and
-      // Collection<Integer> is a subtype of Collection<? extends Number>.  The runtime class test
-      // prevents infinite recursion:  for a superType with the same runtime class as otherType,
-      // the recursive call uses the second clause above.
-      if (superType != null
-          && otherType.runtimeClassIs(superType.getRuntimeClass())
-          && superType.isSubtypeOfOrEqualTo(otherType)) {
-        return true;
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
+        // recursive call uses the second clause above, which checks type-argument containment, and
+        // does not recurse further.  For example, List<String> is a subtype of
+        // Collection<? extends CharSequence> because its supertype Collection<String> is, and
+        // Collection<Integer> is a subtype of Collection<? extends Number>.
+        assert otherType.runtimeClassIs(superType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
