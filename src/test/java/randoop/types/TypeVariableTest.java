@@ -3411,7 +3411,10 @@ public class TypeVariableTest {
   static class BoundWithMemberClass<
       K, V extends Map<K, V>, T extends Map<V, NonGenericInnerOuter<String>.Inner>> {}
 
-  /** A field whose type is {@code NonGenericInnerOuter<String>.Inner}. */
+  /**
+   * A field whose type, {@code NonGenericInnerOuter<String>.Inner}, is a non-generic member class of
+   * an instantiated generic class.
+   */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   NonGenericInnerOuter<String>.Inner stringInnerField;
 
@@ -3439,17 +3442,13 @@ public class TypeVariableTest {
         ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class)
             .substitute(new Substitution(z, JavaTypes.STRING_TYPE)),
         inner);
-    // The expected type is NonGenericInnerOuter<String>.Inner, whose owner is instantiated.
-    // ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class) would have the generic class
-    // as its owner, which is not equal.
-    assertEquals(
-        ClassOrInterfaceType.forType(
-            TypeVariableTest.class.getDeclaredField("stringInnerField").getGenericType()),
-        inner);
     assertEquals(
         GenericClassType.forClass(NonGenericInnerOuter.class).instantiate(JavaTypes.STRING_TYPE),
         inner.enclosingType);
     assertFalse(inner.isGeneric());
+    // The expected type is NonGenericInnerOuter<String>.Inner, whose owner is instantiated.
+    // ClassOrInterfaceType.forClass(NonGenericInnerOuter.Inner.class) would have the generic class
+    // as its owner, which is not equal.
     assertEquals(ownFieldType("stringInnerField"), inner);
   }
 
