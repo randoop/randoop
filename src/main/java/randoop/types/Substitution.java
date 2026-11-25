@@ -76,26 +76,31 @@ public class Substitution {
    * Create a substitution from the type parameters to the corresponding type arguments.
    *
    * @param parameters the type parameters
-   * @param arguments the type arguments
+   * @param arguments the type arguments, corresponding to {@code parameters}
+   * @throws IllegalArgumentException if the number of arguments differs from the number of
+   *     parameters
    */
   public Substitution(List<TypeVariable> parameters, ReferenceType... arguments) {
-    this();
-    assert parameters.size() == arguments.length
-        : "parameters=" + parameters + "  arguments=" + Arrays.toString(arguments);
-    for (int i = 0; i < parameters.size(); i++) {
-      put(parameters.get(i), arguments[i]);
-    }
+    this(parameters, Arrays.asList(arguments));
   }
 
   /**
    * Create a substitution from the type parameters to the corresponding type arguments.
    *
    * @param parameters the type parameters
-   * @param arguments the type arguments
+   * @param arguments the type arguments, corresponding to {@code parameters}
+   * @throws IllegalArgumentException if the number of arguments differs from the number of
+   *     parameters
    */
   public Substitution(List<TypeVariable> parameters, List<ReferenceType> arguments) {
     this();
-    assert parameters.size() == arguments.size();
+    if (parameters.size() != arguments.size()) {
+      throw new IllegalArgumentException(
+          "number of parameters and arguments must match: parameters="
+              + parameters
+              + " arguments="
+              + arguments);
+    }
     for (int i = 0; i < parameters.size(); i++) {
       put(parameters.get(i), arguments.get(i));
     }
