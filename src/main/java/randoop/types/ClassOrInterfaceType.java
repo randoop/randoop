@@ -502,7 +502,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
             }
           }
         }
-        if (enclosingGoalType.isGeneric() && thisEnclosingType != null) {
+        if (thisEnclosingType instanceof GenericClassType
+            && thisEnclosingType.equals(enclosingGoalType)) {
+          // The enclosing type is the generic form of the goal's enclosing class, as for
+          // Outer<T>.Inner<String> and the goal Outer<T>.Inner<U>.  A generic type matches itself
+          // and binds no type variable.  getInstantiatingSubstitution would fail, because
+          // getMatchingSupertype searches only the strict supertypes of a GenericClassType.
+        } else if (enclosingGoalType.isGeneric() && thisEnclosingType != null) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
             return null;

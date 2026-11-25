@@ -589,6 +589,28 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(Subtyping.isSubtypeOrEqual(declarationForm, stringInteger, empty));
   }
 
+  /**
+   * A member class whose enclosing type is the generic form of its class, as in {@code
+   * Outer<T>.GenericInner<String>}, instantiates the generic member class: the generic enclosing
+   * type matches itself and binds no type variable.
+   */
+  @Test
+  public void declarationFormOwnerInstantiatingSubstitutionTest() throws NoSuchFieldException {
+    ClassOrInterfaceType declarationForm =
+        ClassOrInterfaceType.forType(
+            Outer.class.getDeclaredField("ownGenericInnerOfString").getGenericType());
+    assertTrue(declarationForm.isMemberClass());
+    GenericClassType goal = GenericClassType.forClass(Outer.GenericInner.class);
+    assertTrue(goal.isMemberClass());
+    Substitution substitution = declarationForm.getInstantiatingSubstitution(goal);
+    assertNotNull(substitution);
+    List<TypeVariable> goalParameters = goal.getTypeParameters();
+    // The type parameter of Outer stands for itself, and that of GenericInner is String.
+    assertNull(substitution.get(goalParameters.get(0)));
+    assertEquals(
+        JavaTypes.STRING_TYPE, substitution.get(goalParameters.get(goalParameters.size() - 1)));
+  }
+
   /** A subclass of {@code Outer<Integer>.StringInner}. */
   abstract static class StringInnerSubclass extends Outer<Integer>.StringInner {
     /**
