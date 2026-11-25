@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.StringJoiner;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
@@ -19,38 +16,20 @@ public class MinimizerTests {
   /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
   private static final String testDir = "test" + File.separator + "minimizer" + File.separator;
 
-  /** The junit.jar file. */
+  /** The classpath of JUnit: junit.jar and the jar files that it depends on. */
   private static final String JUNIT_JAR = getJunitJar();
 
+  /**
+   * Returns the classpath of JUnit, which the build passes to the tests as a system property.
+   *
+   * @return the classpath of JUnit
+   */
   private static String getJunitJar() {
-    Path dir = Paths.get(System.getProperty("user.dir")).getParent().getParent();
-    boolean WINDOWS = System.getProperty("os.name").startsWith("Windows");
-    String GRADLEW_COMMAND = WINDOWS ? "gradlew.bat" : "./gradlew";
-    List<String> command = Arrays.asList(GRADLEW_COMMAND, "-q", "printJunitJarPath");
-    // This sometimes fails with timeout, sometimes with out of memory.  Why?
-    // A 5-second timeout is not enough locally, a 10-second timeout is not enough on Travis-CI (!).
-    for (int i = 0; i < 3; i++) {
-      Minimize.Outputs outputs = Minimize.runProcess(command, dir, 15);
-      if (outputs.isSuccess()) {
-        // Remove the line terminator, which is not part of the classpath.
-        return outputs.stdout.trim();
-      }
-      System.out.printf("Attempt %d failed:%n", i + 1);
-      System.out.println(outputs.diagnostics());
-      try {
-        TimeUnit.SECONDS.sleep(1);
-      } catch (InterruptedException e) {
-        // nothing to do
-      }
+    String result = System.getProperty("junit.classpath");
+    if (result == null) {
+      throw new Error("Set system property junit.classpath to the classpath of JUnit");
     }
-    System.out.println("Failed to run: " + command);
-    System.out.println("Working directory: " + dir);
-    for (File f : dir.toFile().listFiles()) {
-      System.out.println("  " + f);
-    }
-    System.out.println("user.dir: " + System.getProperty("user.dir"));
-    System.exit(1);
-    throw new Error("This can't happen");
+    return result;
   }
 
   /**
