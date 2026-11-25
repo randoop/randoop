@@ -1,5 +1,6 @@
 package randoop.reflection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeVariable;
 
 /** Tests {@link TypeInstantiator}. */
 public class TypeInstantiatorTest {
@@ -103,6 +106,44 @@ public class TypeInstantiatorTest {
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
     assertTrue("no instantiation of " + thenComparing, instantiated > 0);
+  }
+
+  /** A field whose type has a wildcard; used to obtain a capture variable. */
+  @SuppressWarnings("unused")
+  private static List<? extends Integer> integers;
+
+  /**
+   * Tests that {@link TypeInstantiator#allExtendingSubstitutions} returns the empty list, not a
+   * list that contains null, when a capture variable has no candidate types. The capture variable
+   * of {@code List<? extends Integer>} has no candidates when {@code Integer} is not an input type.
+   */
+  @Test
+  public void testCaptureVariableWithoutCandidates() throws NoSuchFieldException {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(
+                    TypeInstantiatorTest.class.getDeclaredField("integers").getGenericType()))
+            .applyCaptureConversion();
+    List<TypeVariable> captureVariables = capturedType.getTypeParameters();
+    assertEquals(1, captureVariables.size());
+    assertTrue(captureVariables.get(0).isCaptureVariable());
+
+    // The capture variable is the only type parameter.
+    assertEquals(
+        Collections.emptyList(),
+        instantiator.allExtendingSubstitutions(captureVariables, new Substitution()));
+
+    // A type variable with candidates precedes the capture variable.
+    List<TypeVariable> typeParameters =
+        new ArrayList<>(GenericClassType.forClass(ArrayList.class).getTypeParameters());
+    typeParameters.addAll(captureVariables);
+    assertEquals(
+        Collections.emptyList(),
+        instantiator.allExtendingSubstitutions(typeParameters, new Substitution()));
   }
 
   /**
