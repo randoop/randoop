@@ -1,6 +1,13 @@
 package randoop.reflection.accessibilitytest;
 
-@SuppressWarnings({"UnusedMethod", "UnusedNestedClass", "UnusedVariable"})
+@SuppressWarnings({
+  "UnusedMethod",
+  "UnusedNestedClass",
+  "UnusedVariable",
+  "PMD.UnusedFormalParameter",
+  "PMD.UnusedPrivateField",
+  "PMD.UnusedPrivateMethod"
+}) // test input for accessibility
 class PackagePrivateClass {
   public PackagePrivateClass(int i) {}
 

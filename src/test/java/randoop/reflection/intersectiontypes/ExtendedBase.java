@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ExtendedBase<T, F extends Interval & RandomAccessible<T>>
     implements BaseInterface<T, F> {
-  @SuppressWarnings("UnusedVariable")
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // test input
   private final Bumble bumble;
 
   public static enum Bumble {

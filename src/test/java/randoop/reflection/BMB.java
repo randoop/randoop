@@ -6,7 +6,7 @@ package randoop.reflection;
  */
 interface IT<T extends IT<T>> {}
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "PMD.AbstractClassWithoutAbstractMethod"}) // test input
 abstract class II<T extends II> {}
 
 class AT implements IT<AT> {}

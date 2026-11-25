@@ -1,10 +1,11 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** A generic class for testing type and operation harvesting. */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "PMD.MethodReturnsInternalArray"}) // test input
 public class GenericClass<T> {
   public T theField;
   public List<T> theGenericList;
@@ -45,9 +46,7 @@ public class GenericClass<T> {
   }
 
   public void addAll(T[] a) {
-    for (T t : a) {
-      theGenericList.add(t);
-    }
+    theGenericList.addAll(Arrays.asList(a));
   }
 
   public void addAll(List<? extends T> l) {
