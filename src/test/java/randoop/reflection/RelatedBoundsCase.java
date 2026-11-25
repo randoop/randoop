@@ -94,4 +94,15 @@ public class RelatedBoundsCase {
 
   /** A subclass of a comparable class. It is comparable only to {@link Base}, not to itself. */
   public static class Derived extends Base {}
+
+  /**
+   * Returns the size of the given map.
+   *
+   * @param <X> the key and value type
+   * @param map a map whose keys and values have the same type
+   * @return the size of {@code map}
+   */
+  public static <X> int sameKeyAndValue(java.util.Map<X, X> map) {
+    return map.size();
+  }
 }
