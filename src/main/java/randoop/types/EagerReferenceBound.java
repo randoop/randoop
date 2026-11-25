@@ -163,22 +163,26 @@ class EagerReferenceBound extends ReferenceBound {
       if (thisBoundType.isVariable()
           && getBoundType().isVariable()
           && ((TypeVariable) getBoundType()).getSubstitutedType(subst) == null) {
-        // The substitution does not replace the type variable.  Mapping it to itself makes it an
-        // unknown if it is a type parameter of a declaration that the substitution instantiates,
-        // such as a sibling of the type parameter whose bound this is.  A substitution that
-        // instantiates no type parameter, such as an empty one or one that maps only a capture
-        // variable, does not say which type variables are fixed, so the type variable is an
-        // unknown then too.
+        // This bound is a type variable, which the substitution does not replace.  Mapping it to
+        // itself makes it an unknown if it is a type parameter of a declaration that the
+        // substitution instantiates, such as a sibling of the type parameter whose bound this is.
+        // A substitution that instantiates no type parameter, such as an empty one or one that maps
+        // only a capture variable, does not say which type variables are fixed, so the type
+        // variable is an unknown then too.
+        TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
         Substitution completeSubstitution = subst.extendWithIdentity(getTypeParameters());
-        if (!subst.instantiatesTypeParameters() || completeSubstitution.isUnknown(thisBoundType)) {
-          // Checking argType against the upper bound of the type variable instead would leave the
-          // type variable unknown within that bound:  for `T extends Comparable<? super T>`, it
-          // would accept Comparable<String>, which no choice of T is a supertype of.  The bounds of
-          // the type variable are checked with the mappings of `subst`, because they can mention
-          // other type variables that `subst` instantiates.
-          return ((TypeVariable) thisBoundType).canBeSupertypeOf(argReferenceType, subst);
+        if (!subst.instantiatesTypeParameters()
+            || completeSubstitution.isUnknown(thisBoundVariable)) {
+          // `thisBoundVariable` can be argType itself or one of its supertypes, as in
+          // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of
+          // `thisBoundVariable` instead would leave `thisBoundVariable` unknown within that bound:
+          // for `T extends Comparable<? super T>`, it would accept Comparable<String>, which no
+          // choice of T is a supertype of.  The bounds of `thisBoundVariable` are checked with the
+          // mappings of `subst`, because they can mention other type variables that `subst`
+          // instantiates.
+          return thisBoundVariable.canBeSupertypeOf(argReferenceType, subst);
         }
-        // The type variable stands for itself, such as a type parameter of an enclosing class.
+        // `thisBoundVariable` stands for itself, such as a type parameter of an enclosing class.
         return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, completeSubstitution);
       }
       // A type variable that the substitution put in the bound stands for itself.  A type variable
