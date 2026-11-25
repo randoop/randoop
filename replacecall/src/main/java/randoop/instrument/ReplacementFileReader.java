@@ -539,11 +539,6 @@ public final class ReplacementFileReader {
    * @param originalPackage the name of the package containing the original class
    * @param replacementPackage the name of the package containing the replacement class
    * @param classname the class's simple name
-   * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a non-private replacement method is not public and static,
-   *     cannot replace its matching original, or has none, if the replacement class has a
-   *     non-private method but is not public or is an interface, or if the replacement class cannot
-   *     be found
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -563,7 +558,7 @@ public final class ReplacementFileReader {
    * <p>For each non-private method in the replacement class, other than constructors and static
    * initializers, the method is checked to be callable as a replacement, and the original class is
    * checked for a corresponding method with the same return type. This original method may either
-   * be non-static, where the receiver is translated to the first argument of the replacement, or
+   * be non-static, where the receiver is translated to the first argument of the replacement, or be
    * static, having the same arguments as the replacement.
    *
    * <p>Note: This method will not overwrite an existing replacement method.
@@ -572,10 +567,15 @@ public final class ReplacementFileReader {
    * @param originalClassname the name of the original class
    * @param replacementClassname the name of the replacement class
    * @throws ClassNotFoundException if either the original or replacement class cannot be loaded
-   * @throws ReplacementException if a non-private replacement method is not public and static,
-   *     cannot replace its matching original, or has none, if the replacement class has a
-   *     non-private method but is not public or is an interface, or if the replacement class cannot
-   *     be found
+   * @throws ReplacementException if any of the following holds:
+   *     <ul>
+   *       <li>the replacement class cannot be found;
+   *       <li>the replacement class has a non-private method (other than a constructor or static
+   *           initializer), but the class is not public or is an interface;
+   *       <li>such a method is not public and static;
+   *       <li>such a method has no corresponding method in the original class; or
+   *       <li>such a method's corresponding method has a different return type.
+   *     </ul>
    */
   private static void addReplacementsForClass(
       Map<MethodSignature, MethodSignature> replacementMap,
@@ -627,17 +627,16 @@ public final class ReplacementFileReader {
   }
 
   /**
-   * Returns true if the given original method exists and is static or not, as specified. The caller
-   * has already checked that the parameter types of the original correspond to those of the
-   * replacement.
+   * Returns true if the given original method exists. The caller has already checked that the
+   * parameter types of the original correspond to those of the replacement.
    *
    * @param original a candidate original method
    * @param isStatic whether {@code original} must be static
    * @param replacementMethod the replacement method
    * @param replacement the signature of the replacement method
    * @return true if {@code original} exists and is static if and only if {@code isStatic} is true
-   * @throws ReplacementException if {@code original} exists and is static or not, as specified, but
-   *     its return type differs from that of the replacement
+   * @throws ReplacementException if {@code original}'s return type differs from that of the
+   *     replacement
    */
   private static boolean isReplacedBy(
       MethodSignature original,
