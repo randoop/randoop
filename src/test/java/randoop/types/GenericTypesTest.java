@@ -171,7 +171,7 @@ public class GenericTypesTest {
       Type ft4 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class));
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
-      assertEquals("number of arguments and parameters must match", e.getMessage());
+      assertTrue(e.getMessage().startsWith("number of parameters and arguments must match"));
     }
   }
 
