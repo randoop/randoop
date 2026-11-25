@@ -172,13 +172,13 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Creates a type substitution using the given type arguments and applies it to this type.
+   * Returns this generic class type, instantiated by the given type arguments.
    *
    * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
    *     the same order, so the arguments for the type parameters of enclosing classes come first.
    *     For example, for {@code Outer<T>.Inner<U>}, the arguments {@code String, Integer} yield
    *     {@code Outer<String>.Inner<Integer>}.
-   * @return a type which is this type parameterized by the given type arguments
+   * @return the type that is this type instantiated by the given type arguments
    * @throws IllegalArgumentException if the number of type arguments differs from the number of
    *     type parameters, or if a type argument is not within the bound of its type parameter
    * @see #substitute(Substitution)
@@ -189,7 +189,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Creates a type substitution using the given type arguments and applies it to this type.
+   * Returns this generic class type, instantiated by the given type arguments.
    *
    * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
    *     the same order, so the arguments for the type parameters of enclosing classes come first.
@@ -203,7 +203,7 @@ public class GenericClassType extends ParameterizedType {
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
     List<TypeVariable> typeParameters = this.getTypeParameters();
-    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     int violation = indexOfBoundViolation(typeParameters, typeArguments, substitution);
     if (violation != -1) {
       throw new IllegalArgumentException(
@@ -227,24 +227,8 @@ public class GenericClassType extends ParameterizedType {
    */
   public boolean areWithinBounds(List<ReferenceType> typeArguments) {
     List<TypeVariable> typeParameters = this.getTypeParameters();
-    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     return indexOfBoundViolation(typeParameters, typeArguments, substitution) == -1;
-  }
-
-  /**
-   * Returns the substitution of the given type arguments for the given type parameters.
-   *
-   * @param typeParameters a list of type parameters
-   * @param typeArguments the type arguments, corresponding to {@code typeParameters}
-   * @return the substitution of {@code typeArguments} for {@code typeParameters}
-   * @throws IllegalArgumentException if the lists have different lengths
-   */
-  private static Substitution substitutionFor(
-      List<TypeVariable> typeParameters, List<ReferenceType> typeArguments) {
-    if (typeArguments.size() != typeParameters.size()) {
-      throw new IllegalArgumentException("number of arguments and parameters must match");
-    }
-    return new Substitution(typeParameters, typeArguments);
   }
 
   /**
