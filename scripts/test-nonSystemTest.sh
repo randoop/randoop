@@ -39,8 +39,6 @@ PIDFILE=/tmp/xvfb_${DISPLAY:1}.pid
 /sbin/start-stop-daemon --start --quiet --pidfile "$PIDFILE" --make-pidfile --background --exec "$XVFB" -- $XVFBARGS
 sleep 3 # give xvfb some time to start
 
-./gradlew printJunitJarPath
-
 # `gradle build` == `gradle check assemble`.
 # The coverageGoalsTest task is not run here, because the systemTest task depends on it.
 ./gradlew --info test replacecallAgentTest
