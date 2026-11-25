@@ -154,7 +154,7 @@ public abstract class ReferenceBound extends ParameterBound {
    * @param bound a bound
    * @return the type of {@code bound}, or null
    */
-  private static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
+  /*package*/ static @Nullable ReferenceType asReferenceType(ParameterBound bound) {
     if (bound instanceof LazyParameterBound) {
       ReferenceBound converted = ((LazyParameterBound) bound).toReferenceBound();
       return converted == null ? null : converted.getBoundType();
