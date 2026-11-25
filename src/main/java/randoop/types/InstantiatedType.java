@@ -418,10 +418,17 @@ public class InstantiatedType extends ParameterizedType {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          if (!otherTArg.isGeneric()) {
+            // A type argument with no type variables binds none, so it must match exactly.
+            if (!thisTArg.equals(otherTArg)) {
+              return null;
+            }
+            continue;
+          }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
           // The substitution from the enclosing type, or from an earlier type argument, can map a
           // type variable to a different type, as for Outer<String>.Inner<Integer> and
-          // Outer<E>.Inner<E>.
+          // Outer<E>.Inner<E>, or for Map<String, Integer> and Map<X, X>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }

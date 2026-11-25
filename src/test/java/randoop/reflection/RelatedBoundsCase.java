@@ -28,4 +28,15 @@ public class RelatedBoundsCase {
   public static <A, B extends A, C extends B> A chain(B b, C c) {
     return b;
   }
+
+  /**
+   * Returns the size of the given map.
+   *
+   * @param <X> the key and value type
+   * @param map a map whose keys and values have the same type
+   * @return the size of {@code map}
+   */
+  public static <X> int sameKeyAndValue(java.util.Map<X, X> map) {
+    return map.size();
+  }
 }
