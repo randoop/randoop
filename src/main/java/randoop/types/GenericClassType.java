@@ -20,10 +20,10 @@ public class GenericClassType extends ParameterizedType {
    * The type parameters that the generic class declares, not including those of an enclosing class.
    * Null until first needed: computing them computes their bounds, which may refer to this class,
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
-   * infinitely for such a class. Use {@link #parameters()} instead of reading this field.
+   * infinitely for such a class. Use {@link #directTypeParameters()} instead of reading this field.
    */
   // Volatile so that a thread that reads a non-null value also sees the contents of the list.
-  private volatile @Nullable List<TypeVariable> parameters = null;
+  private volatile @Nullable List<TypeVariable> directTypeParameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -50,11 +50,11 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the type parameters that this generic class declares
    */
-  private List<TypeVariable> parameters() {
-    List<TypeVariable> result = parameters;
+  private List<TypeVariable> directTypeParameters() {
+    List<TypeVariable> result = directTypeParameters;
     if (result == null) {
       result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
-      parameters = result;
+      directTypeParameters = result;
     }
     return result;
   }
@@ -97,7 +97,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters());
+            directTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -187,7 +187,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters());
+    return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
   }
 
   /**
@@ -199,7 +199,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters();
+    return directTypeParameters();
   }
 
   /**
@@ -209,17 +209,17 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters());
+    return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
   }
 
   /**
-   * Creates a type substitution using the given type arguments and applies it to this type.
+   * Returns this generic class type, instantiated by the given type arguments.
    *
    * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
    *     the same order, so the arguments for the type parameters of enclosing classes come first.
    *     For example, for {@code Outer<T>.Inner<U>}, the arguments {@code String, Integer} yield
    *     {@code Outer<String>.Inner<Integer>}.
-   * @return a type which is this type parameterized by the given type arguments
+   * @return the type that is this type instantiated by the given type arguments
    * @throws IllegalArgumentException if the number of type arguments differs from the number of
    *     type parameters, or if a type argument is not within the bound of its type parameter
    * @see #substitute(Substitution)
@@ -230,7 +230,7 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Creates a type substitution using the given type arguments and applies it to this type.
+   * Returns this generic class type, instantiated by the given type arguments.
    *
    * @param typeArguments the type arguments, one per element of {@link #getTypeParameters()} and in
    *     the same order, so the arguments for the type parameters of enclosing classes come first.
@@ -244,7 +244,7 @@ public class GenericClassType extends ParameterizedType {
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
     List<TypeVariable> typeParameters = this.getTypeParameters();
-    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     int violation = indexOfBoundViolation(typeParameters, typeArguments, substitution);
     if (violation != -1) {
       throw new IllegalArgumentException(
@@ -268,24 +268,8 @@ public class GenericClassType extends ParameterizedType {
    */
   public boolean areWithinBounds(List<ReferenceType> typeArguments) {
     List<TypeVariable> typeParameters = this.getTypeParameters();
-    Substitution substitution = substitutionFor(typeParameters, typeArguments);
+    Substitution substitution = new Substitution(typeParameters, typeArguments);
     return indexOfBoundViolation(typeParameters, typeArguments, substitution) == -1;
-  }
-
-  /**
-   * Returns the substitution of the given type arguments for the given type parameters.
-   *
-   * @param typeParameters a list of type parameters
-   * @param typeArguments the type arguments, corresponding to {@code typeParameters}
-   * @return the substitution of {@code typeArguments} for {@code typeParameters}
-   * @throws IllegalArgumentException if the lists have different lengths
-   */
-  private static Substitution substitutionFor(
-      List<TypeVariable> typeParameters, List<ReferenceType> typeArguments) {
-    if (typeArguments.size() != typeParameters.size()) {
-      throw new IllegalArgumentException("number of arguments and parameters must match");
-    }
-    return new Substitution(typeParameters, typeArguments);
   }
 
   /**
