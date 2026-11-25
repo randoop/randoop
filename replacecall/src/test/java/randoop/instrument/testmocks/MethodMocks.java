@@ -1,6 +1,8 @@
 package randoop.instrument.testmocks;
 
 /** Replacement methods that are not valid replacements, for testing the replacement file reader. */
+@SuppressWarnings(
+    "PMD.MissingStaticMethodInNonInstantiatableClass") // replacement files use its methods
 public final class MethodMocks {
 
   /** Do not instantiate. */
