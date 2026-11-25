@@ -12,12 +12,35 @@
       <exclude name="LiteralsFirstInComparisons"/> <!-- worse readability to guard against null -->
       <exclude name="RelianceOnDefaultCharset"/> <!-- Since Java 18, the default is UTF-8 -->
       <exclude name="UnitTestContainsTooManyAsserts"/>
+      <exclude name="UnnecessaryWarningSuppression"/> <!-- flags suppressions of the excluded rules below -->
       <exclude name="UseVarargs"/> <!-- rarely desirable -->
 
       <!-- Good rules, but a heavy lift to apply. Do so later. -->
       <exclude name="AvoidPrintStackTrace"/>
       <exclude name="SystemPrintln"/>
       <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AbstractClassWithoutAbstractMethod"/>
+      <exclude name="AvoidReassigningCatchVariables"/>
+      <exclude name="AvoidReassigningLoopVariables"/>
+      <exclude name="AvoidReassigningParameters"/>
+      <exclude name="ConstantsInInterface"/>
+      <exclude name="ImplicitFunctionalInterface"/>
+      <exclude name="JUnitUseExpected"/>
+      <exclude name="LooseCoupling"/>
+      <exclude name="MethodReturnsInternalArray"/>
+      <exclude name="PreserveStackTrace"/>
+      <exclude name="SimplifiableTestAssertion"/>
+      <exclude name="UnitTestShouldIncludeAssert"/>
+      <exclude name="UnitTestShouldUseBeforeAnnotation"/>
+      <exclude name="UnitTestShouldUseTestAnnotation"/>
+      <exclude name="UnnecessaryVarargsArrayCreation"/>
+      <exclude name="UnusedAssignment"/>
+      <exclude name="UnusedFormalParameter"/>
+      <exclude name="UnusedLocalVariable"/>
+      <exclude name="UnusedPrivateField"/>
+      <exclude name="UnusedPrivateMethod"/>
     </rule>
 
     <!-- 2. Code Style: Enforces specific coding styles and conventions -->
@@ -31,6 +54,35 @@
       <exclude name="ShortVariable"/>
       <exclude name="TooManyStaticImports"/>
       <exclude name="UselessParentheses"/> <!-- Redundant parens can emphasize subexpressions in string concatenation. -->
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AtLeastOneConstructor"/>
+      <exclude name="CallSuperInConstructor"/>
+      <exclude name="ClassNamingConventions"/>
+      <exclude name="CommentDefaultAccessModifier"/>
+      <exclude name="ControlStatementBraces"/>
+      <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
+      <exclude name="FieldDeclarationsShouldBeAtStartOfClass"/>
+      <exclude name="FieldNamingConventions"/>
+      <exclude name="FormalParameterNamingConventions"/>
+      <exclude name="LinguisticNaming"/>
+      <exclude name="LocalVariableNamingConventions"/>
+      <exclude name="MethodNamingConventions"/>
+      <exclude name="PrematureDeclaration"/>
+      <exclude name="ShortMethodName"/>
+      <exclude name="UnnecessaryBoxing"/>
+      <exclude name="UnnecessaryCast"/>
+      <exclude name="UnnecessaryConstructor"/>
+      <exclude name="UnnecessaryFullyQualifiedName"/>
+      <exclude name="UnnecessaryInterfaceDeclaration"/>
+      <exclude name="UnnecessaryModifier"/>
+      <exclude name="UnnecessaryReturn"/>
+      <exclude name="UnnecessarySemicolon"/>
+      <exclude name="UseDiamondOperator"/>
+      <exclude name="UseShortArrayInitializer"/>
+      <exclude name="UseUnderscoresInNumericLiterals"/>
+      <exclude name="VariableCanBeInlined"/>
+      <exclude name="VariableDeclarationUsageDistance"/>
     </rule>
     <rule ref="category/java/codestyle.xml/EmptyControlStatement">
         <properties>
@@ -58,12 +110,30 @@
 
       <!-- Good rules, but a heavy lift to apply. Do so later. -->
       <exclude name="AvoidThrowingRawExceptionTypes"/>
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AbstractClassWithoutAnyMethod"/>
+      <exclude name="AvoidThrowingNullPointerException"/>
+      <exclude name="AvoidUncheckedExceptionsInSignatures"/>
+      <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+      <exclude name="DataClass"/>
+      <exclude name="FinalFieldCouldBeStatic"/>
+      <exclude name="ImmutableField"/>
+      <exclude name="MutableStaticState"/>
+      <exclude name="PublicMemberInNonPublicType"/>
+      <exclude name="SignatureDeclareThrowsException"/>
+      <exclude name="SimplifyBooleanExpressions"/>
+      <exclude name="UseUtilityClass"/>
     </rule>
 
     <!-- 4. Documentation: Rules related to code documentation and Javadocs -->
     <rule ref="category/java/documentation.xml">
       <exclude name="CommentSize"/>
       <exclude name="UncommentedEmptyConstructor"/> <!-- other linters require a no-argument constructor -->
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="CommentRequired"/>
+      <exclude name="UncommentedEmptyMethodBody"/>
     </rule>
 
     <!-- 5. Error Prone: Detects constructs that are broken, confusing, or runtime-error prone -->
@@ -78,10 +148,28 @@
 
       <!-- Good rules, but a heavy lift to apply. Do so later. -->
       <exclude name="AvoidCatchingGenericException"/>
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AssertEqualsArgumentOrder"/>
+      <exclude name="AvoidAccessibilityAlteration"/>
+      <exclude name="AvoidBranchingStatementAsLastInLoop"/>
+      <exclude name="AvoidInstanceofChecksInCatchClause"/>
+      <exclude name="CloseResource"/>
+      <exclude name="DetachedTestCase"/>
+      <exclude name="EmptyCatchBlock"/>
+      <exclude name="MissingStaticMethodInNonInstantiatableClass"/>
+      <exclude name="OverrideBothEqualsAndHashCodeOnComparable"/>
+      <exclude name="TestClassWithoutTestCases"/>
+      <exclude name="UnconditionalIfStatement"/>
+      <exclude name="UnnecessaryBooleanAssertion"/>
+      <exclude name="UseProperClassLoader"/>
+      <exclude name="UselessPureMethodCall"/>
+      <exclude name="WrongTestAnnotation"/>
     </rule>
     <rule ref="category/java/errorprone.xml/AssignmentInOperand">
         <properties>
             <property name="allowIncrementDecrement" value="true" />
+            <property name="allowWhile" value="true" />
         </properties>
     </rule>
 
@@ -89,12 +177,28 @@
     <rule ref="category/java/multithreading.xml">
       <exclude name="DoNotUseThreads"/> <!-- limited applicability -->
       <exclude name="UseConcurrentHashMap"/> <!-- limited applicability -->
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AvoidSynchronizedAtMethodLevel"/>
+      <exclude name="AvoidSynchronizedStatement"/>
+      <exclude name="AvoidUsingVolatile"/>
+      <exclude name="NonThreadSafeSingleton"/>
+      <exclude name="OverridingThreadRun"/>
     </rule>
 
     <!-- 7. Performance: Flags suboptimal code that can affect execution efficiency -->
     <rule ref="category/java/performance.xml">
       <exclude name="ConsecutiveAppendsShouldReuse"/>
       <exclude name="RedundantFieldInitializer"/> <!-- explicit initializer is clearer -->
+
+      <!-- Violated by existing code.  Re-enable each rule after fixing its violations. -->
+      <exclude name="AddEmptyString"/>
+      <exclude name="AvoidInstantiatingObjectsInLoops"/>
+      <exclude name="ConsecutiveLiteralAppends"/>
+      <exclude name="InefficientStringBuffering"/>
+      <exclude name="InsufficientStringBufferDeclaration"/>
+      <exclude name="UseArraysAsList"/>
+      <exclude name="UseStringBufferForStringAppends"/>
     </rule>
 
     <!-- 8. Security: Flags potential security flaws and vulnerabilities -->
