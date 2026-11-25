@@ -24,7 +24,7 @@ public class GenericClassType extends ParameterizedType {
    * field.
    */
   // Volatile so that a thread that reads a non-null value also sees the contents of the list.
-  private volatile @Nullable List<TypeVariable> parameters = null;
+  private volatile @Nullable List<TypeVariable> directTypeParameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -53,10 +53,10 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    List<TypeVariable> result = parameters;
+    List<TypeVariable> result = directTypeParameters;
     if (result == null) {
       result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
-      parameters = result;
+      directTypeParameters = result;
     }
     return result;
   }
