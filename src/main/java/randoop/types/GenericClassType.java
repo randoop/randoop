@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
@@ -16,8 +17,13 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private final Class<?> rawType;
 
-  /** The type parameters of the generic class. */
-  private final List<TypeVariable> parameters;
+  /**
+   * The type parameters that the generic class declares, not including those of an enclosing class.
+   * Null until first needed: computing them computes their bounds, which may refer to this class,
+   * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
+   * infinitely for such a class.
+   */
+  private @MonotonicNonNull List<TypeVariable> directTypeParameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -27,7 +33,21 @@ public class GenericClassType extends ParameterizedType {
   /*package*/ GenericClassType(Class<?> rawType) {
     super();
     this.rawType = rawType;
-    this.parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+  }
+
+  /**
+   * Returns the type parameters that this generic class declares, computing them if necessary.
+   * Unlike {@link #getTypeParameters()}, the result omits the type parameters of enclosing classes.
+   * For example, for {@code Outer<T>.Inner<U>}, the result is {@code [U]}.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  private List<TypeVariable> directTypeParameters() {
+    if (directTypeParameters == null) {
+      directTypeParameters =
+          CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+    }
+    return directTypeParameters;
   }
 
   /**
@@ -68,7 +88,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters);
+            directTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -158,7 +178,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters);
+    return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
   }
 
   /**
@@ -168,7 +188,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters);
+    return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
   }
 
   /**
