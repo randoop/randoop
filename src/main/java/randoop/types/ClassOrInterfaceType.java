@@ -276,7 +276,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param substitution a substitution
    * @return true if {@code substitution} maps some element of {@code variables} to another type
    */
-  private static boolean mapsToOtherType(List<TypeVariable> variables, Substitution substitution) {
+  /*package*/ static boolean mapsToOtherType(
+      List<TypeVariable> variables, Substitution substitution) {
     for (TypeVariable variable : variables) {
       ReferenceType type = substitution.get(variable);
       if (type != null && !sameType(type, variable)) {
@@ -485,29 +486,16 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
-        // The enclosing type to match is that of this type's view of the goal type's class, which
-        // differs from this type's own enclosing type if, for example, Outer<String>.Child
-        // extends Outer<Integer>.Parent:  if Outer<T>.Derived<V> extends Outer<String>.Base<V>,
-        // then the enclosing type of Outer<Integer>.Derived<Long> instantiates the enclosing type
-        // of Outer<T>.Base<U> as Outer<String>.  A supertype whose enclosing type is not given
-        // explicitly, as when Derived extends Base<V>, has the enclosing type of this type.
-        ClassOrInterfaceType thisEnclosingType = enclosingType;
-        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())) {
-          thisEnclosingType = null;
-          for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
-            if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
-              thisEnclosingType =
-                  supertype.isMemberClass() ? supertype.enclosingType : enclosingType;
-              break;
-            }
-          }
-        }
+        ClassOrInterfaceType thisEnclosingType = getEnclosingTypeFor(goalClassType);
         if (thisEnclosingType instanceof GenericClassType
             && thisEnclosingType.equals(enclosingGoalType)) {
           // The enclosing type is the generic form of the goal's enclosing class, as for
           // Outer<T>.Inner<String> and the goal Outer<T>.Inner<U>.  A generic type matches itself
           // and binds no type variable.  getInstantiatingSubstitution would fail, because
           // getMatchingSupertype searches only the strict supertypes of a GenericClassType.
+          // InstantiatedType#getInstantiatingSubstitution rejects a binding, by a type argument,
+          // of a type variable that this enclosing type fixes; see
+          // getFixedEnclosingTypeParameters.
         } else if (enclosingGoalType.isGeneric() && thisEnclosingType != null) {
           substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
@@ -540,6 +528,60 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       substitution = substitution.extend(supertypeSubstitution);
     }
     return substitution;
+  }
+
+  /**
+   * Returns the enclosing type of this type's view of the class of the given member class type. It
+   * differs from this type's own enclosing type if a supertype is a member of another instantiation
+   * of the enclosing class: if {@code Outer<T>.Derived<V>} extends {@code Outer<String>.Base<V>},
+   * then for {@code Outer<Integer>.Derived<Long>} and the class of {@code Outer<T>.Base<U>}, the
+   * result is {@code Outer<String>}. A supertype whose enclosing type is not given explicitly, as
+   * when Derived extends {@code Base<V>}, has the enclosing type of this type.
+   *
+   * @param goalClassType a member class type whose class is that of this type or of a supertype
+   * @return the enclosing type of this type's view of the class of {@code goalClassType}, or null
+   *     if no supertype of this type is of that class
+   */
+  private @Nullable ClassOrInterfaceType getEnclosingTypeFor(ClassOrInterfaceType goalClassType) {
+    if (this.runtimeClassIs(goalClassType.getRuntimeClass())) {
+      return enclosingType;
+    }
+    for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
+      if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
+        return supertype.isMemberClass() ? supertype.enclosingType : enclosingType;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the type variables that a match of this type against the given goal type must leave
+   * unchanged. These are the type parameters of the enclosing type of {@code goalType}, if that
+   * enclosing type is the generic form of its class and this type's view of the goal type's class
+   * has the same enclosing type, as for {@code Outer<T>.Inner<String>} and the goal {@code
+   * Outer<T>.Inner<U>}. {@link #getInstantiatingSubstitution(ReferenceType)} matches such an
+   * enclosing type to itself, so a type argument may not bind its type variables to another type:
+   * {@code Outer<T>.Inner<String>} does not instantiate {@code Outer<T>.Inner<T>}. Otherwise,
+   * returns the empty list.
+   *
+   * @param goalType the goal type of a match
+   * @return the type variables that the match must not map to another type
+   */
+  /*package*/ final List<TypeVariable> getFixedEnclosingTypeParameters(ReferenceType goalType) {
+    if (!(goalType instanceof ClassOrInterfaceType)) {
+      return Collections.emptyList();
+    }
+    ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+    if (!goalClassType.isMemberClass()
+        || !(goalClassType.enclosingType instanceof GenericClassType)
+        || !goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+      return Collections.emptyList();
+    }
+    ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+    if (!enclosingGoalType.equals(getEnclosingTypeFor(goalClassType))) {
+      return Collections.emptyList();
+    }
+    return enclosingGoalType.getTypeParameters();
   }
 
   /**

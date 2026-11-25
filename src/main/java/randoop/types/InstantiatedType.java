@@ -448,6 +448,12 @@ public class InstantiatedType extends ParameterizedType {
             return null;
           }
         }
+        // A type argument may not bind a type variable that a generic-form enclosing type fixes,
+        // as for Outer<T>.GenericInner<String> and Outer<T>.GenericInner<T>:  the substitution
+        // would change the enclosing type of goalType to Outer<String>.
+        if (mapsToOtherType(getFixedEnclosingTypeParameters(goalType), substitution)) {
+          return null;
+        }
         return substitution;
       }
       return null;

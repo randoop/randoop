@@ -464,6 +464,9 @@ public class ClassOrInterfaceTypeTest {
     @SuppressWarnings("UnusedVariable") // the field is read reflectively
     GenericInner<Integer> declarationFormOwner;
 
+    /** A field of type {@code Outer<T>.GenericInner<T>}. */
+    public GenericInner<T> ownGenericInnerOfOwnParameter;
+
     /**
      * A generic inner class whose superclass mentions {@code T}.
      *
@@ -600,7 +603,8 @@ public class ClassOrInterfaceTypeTest {
         ClassOrInterfaceType.forType(
             Outer.class.getDeclaredField("ownGenericInnerOfString").getGenericType());
     assertTrue(declarationForm.isMemberClass());
-    GenericClassType goal = GenericClassType.forClass(Outer.GenericInner.class);
+    GenericClassType goal =
+        (GenericClassType) ClassOrInterfaceType.forClass(Outer.GenericInner.class);
     assertTrue(goal.isMemberClass());
     Substitution substitution = declarationForm.getInstantiatingSubstitution(goal);
     assertNotNull(substitution);
@@ -609,6 +613,23 @@ public class ClassOrInterfaceTypeTest {
     assertNull(substitution.get(goalParameters.get(0)));
     assertEquals(
         JavaTypes.STRING_TYPE, substitution.get(goalParameters.get(goalParameters.size() - 1)));
+  }
+
+  /**
+   * {@code Outer<T>.GenericInner<String>} does not instantiate {@code Outer<T>.GenericInner<T>}:
+   * binding {@code T} to {@code String} would change the enclosing type of the goal.
+   */
+  @Test
+  public void declarationFormOwnerFixesTypeVariableTest() throws NoSuchFieldException {
+    ClassOrInterfaceType declarationForm =
+        ClassOrInterfaceType.forType(
+            Outer.class.getDeclaredField("ownGenericInnerOfString").getGenericType());
+    ClassOrInterfaceType goal =
+        ClassOrInterfaceType.forType(
+            Outer.class.getDeclaredField("ownGenericInnerOfOwnParameter").getGenericType());
+    assertTrue(goal.isMemberClass());
+    assertTrue(goal.isGeneric());
+    assertNull(declarationForm.getInstantiatingSubstitution(goal));
   }
 
   /** A subclass of {@code Outer<Integer>.StringInner}. */
