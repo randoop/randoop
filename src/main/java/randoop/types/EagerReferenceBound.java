@@ -99,22 +99,23 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not instantiate the variable with a non-variable type, so the
-      // variable can still be chosen, within its upper bound.
-      TypeVariable variable = (TypeVariable) thisBoundType;
+      // This bound is a type variable, which the substitution does not instantiate with a
+      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
-        // The type variable can be argType itself or one of its supertypes, as in
-        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of the type
-        // variable instead would leave the type variable unknown within that bound:  for
-        // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
-        // T is a supertype of.  The bounds of the type variable are checked with the mappings of
-        // `subst`, because they can mention other type variables that `subst` instantiates.
-        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
+        // `thisBoundVariable` can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of
+        // `thisBoundVariable` instead would leave `thisBoundVariable` unknown within that bound:
+        // for `T extends Comparable<? super T>`, it would accept Comparable<String>, which no
+        // choice of T is a supertype of.  The bounds of `thisBoundVariable` are checked with the
+        // mappings of `subst`, because they can mention other type variables that `subst`
+        // instantiates.
+        return thisBoundVariable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       // `argType` is not a reference type, or is a type variable, so it is not tried as a choice
-      // for the variable.  `argType` is within this bound if it is within the variable's upper
-      // bound, which the variable can be.
-      return variable.getUpperTypeBound().isUpperBound(argType, subst);
+      // for `thisBoundVariable`.  `argType` is within this bound if it is within the upper bound
+      // of `thisBoundVariable`, which `thisBoundVariable` can be.
+      return thisBoundVariable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
     // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
