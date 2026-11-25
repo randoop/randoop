@@ -691,11 +691,35 @@ tasks.jar {
   from(sourceSets["main"].output)
 }
 
+/** Gives a task action access to file operations, without referring to the project. */
+interface InjectedFileSystemOperations {
+  @get:Inject val fs: FileSystemOperations
+}
+
+/*
+ * Copies the subprojects' jar files into build/libs.  This is not a `Copy` task, because a
+ * `Copy` task's output would be all of build/libs, including the root project's own jar files.
+ * Then, Gradle would reject every task that reads the root project's jar files (such as the
+ * tasks of covered-class, which depends on the root project) and that does not depend on
+ * `copyJars`.  Instead, this task's outputs are only the files that it copies.
+ */
 val copyJars =
-  tasks.register<Copy>("copyJars") {
-    dependsOn(":covered-class:jar", ":replacecall:jar")
-    from(subprojects.map { it.tasks.withType<Jar>() })
-    into(layout.buildDirectory.dir("libs"))
+  tasks.register("copyJars") {
+    val subprojectJars = files(subprojects.map { it.tasks.withType<Jar>() })
+    val destinationDir = layout.buildDirectory.dir("libs")
+    val injected = objects.newInstance<InjectedFileSystemOperations>()
+    inputs.files(subprojectJars).withPropertyName("subprojectJars")
+    outputs.files(
+      subprojectJars.elements.map { jars ->
+        jars.map { destinationDir.get().file(it.asFile.name) }
+      },
+    )
+    doLast {
+      injected.fs.copy {
+        from(subprojectJars)
+        into(destinationDir)
+      }
+    }
   }
 
 tasks.assemble { dependsOn(copyJars) }
@@ -746,6 +770,7 @@ tasks.register<Zip>("distributionZip") {
   description = "Assemble a zip file with jar files and user documentation"
   val dirName = "${base.archivesName.get()}-$version"
   from(copyJars)
+  from(tasks.shadowJar)
   from(jacocoAgentJar)
   from("src/docs/manual/index.html") {
     into("doc/manual")
