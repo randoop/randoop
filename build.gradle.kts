@@ -479,6 +479,12 @@ tasks.compileTestJava {
 tasks.test {
   dependsOn(":replacecall:shadowJar")
 
+  // MinimizerTests compiles and runs JUnit tests, whose classpath must include JUnit.
+  val junitClasspath: FileCollection = configurations["junit"]
+  jvmArgumentProviders.add(
+    CommandLineArgumentProvider { listOf("-Djunit.classpath=${junitClasspath.asPath}") },
+  )
+
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
@@ -674,11 +680,6 @@ tasks.register<TestReport>("testReport") {
 
   // The Callable defers realizing the Test tasks, so tasks registered after this one are included.
   testResults.from(Callable { tasks.withType<Test>().map { it.binaryResultsDirectory } })
-}
-
-tasks.register("printJunitJarPath") {
-  description = "Print the path to junit.jar"
-  doFirst { println(configurations["junit"].asPath) }
 }
 
 // ****************** Building distribution *****************
