@@ -23,7 +23,7 @@ public class GenericClassType extends ParameterizedType {
    * infinitely for such a class. The lazy initialization is not synchronized, because Randoop uses
    * the type model from a single thread.
    */
-  private @MonotonicNonNull List<TypeVariable> parameters;
+  private @MonotonicNonNull List<TypeVariable> directTypeParameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -42,11 +42,12 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the type parameters that this generic class declares
    */
-  private List<TypeVariable> parameters() {
-    if (parameters == null) {
-      parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+  private List<TypeVariable> directTypeParameters() {
+    if (directTypeParameters == null) {
+      directTypeParameters =
+          CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
     }
-    return parameters;
+    return directTypeParameters;
   }
 
   /**
@@ -87,7 +88,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters());
+            directTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -177,7 +178,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters());
+    return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
   }
 
   /**
@@ -189,7 +190,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters();
+    return directTypeParameters();
   }
 
   /**
@@ -199,7 +200,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters());
+    return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
   }
 
   /**
@@ -216,7 +217,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
     // The type arguments for the type parameters of enclosing classes come first.
     int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
@@ -246,7 +247,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
     // The type arguments for the type parameters of enclosing classes come first.
     int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
