@@ -301,6 +301,30 @@ public class InstantiationTest {
     Randomness.setSeed(0);
   }
 
+  /**
+   * Tests that a parameter type that would map a type variable to two different types does not
+   * cause an exception.
+   */
+  @Test
+  public void testConflictingInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(
+        GenericClassType.forClass(java.util.Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive()),
+        inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation sameKeyAndValue =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("sameKeyAndValue", java.util.Map.class));
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      // Map<String, Integer> is the only Map in the input types, and it is not a Map<X, X>.
+      assertNull(instantiator.instantiate(sameKeyAndValue));
+    }
+    Randomness.setSeed(0);
+  }
+
   /* disabled until fix type parameter management
   @Test
   public void testLazyConversionInstantiation() {
