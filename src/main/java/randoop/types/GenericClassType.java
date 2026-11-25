@@ -188,7 +188,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters declared by this generic class
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters;
+    return directTypeParameters();
   }
 
   /**
