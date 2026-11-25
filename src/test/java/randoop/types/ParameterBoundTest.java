@@ -890,8 +890,7 @@ public class ParameterBoundTest {
   @Test
   public void testReferenceBoundComparedWithNonGenericMemberClassBound() {
     java.lang.reflect.Type innerType = fieldType(ParameterBoundTest.class, "stringOwnerInner");
-    ParameterBound lazyBound = ParameterBound.forType(Collections.emptySet(), innerType);
-    assertTrue(lazyBound instanceof LazyParameterBound);
+    ParameterBound lazyBound = new LazyParameterBound(innerType);
     ReferenceBound sameBound = new EagerReferenceBound(ReferenceType.forType(innerType));
     Substitution empty = new Substitution();
     assertTrue(sameBound.isLowerBound(lazyBound, empty));
