@@ -768,8 +768,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // A member class that declares no type parameters, of a parameterized type, such as
     // Outer<? extends Number>.Inner:  its enclosing type can contain the enclosing type of a
     // supertype of this type, as Outer<? extends Number> contains Outer<Integer>.  The supertype
-    // search below compares enclosing types by equality instead.
-    if (otherType instanceof NonParameterizedType && otherType.isParameterized()) {
+    // search below compares enclosing types by equality instead.  A raw type is excluded:  its
+    // supertypes are erased, so raw Sub, where Sub<U> extends Outer<String>.Inner, has the
+    // supertype Outer<T>.Inner, but raw Sub is assignable to Outer<?>.Inner only by unchecked
+    // conversion.
+    if (!this.isRawtype()
+        && otherType instanceof NonParameterizedType
+        && otherType.isParameterized()) {
       return Subtyping.isSubtypeOrEqual(this, (ReferenceType) otherType);
     }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;

@@ -180,6 +180,11 @@ public class MemberClassOfParameterizedTypeTest {
     assertTrue(sub.isSubtypeOfOrEqualTo(charSequenceInner));
     assertFalse(sub.isSubtypeOfOrEqualTo(longInner));
     assertFalse(inner.isSubtypeOfOrEqualTo(longInner));
+
+    // Raw Sub is assignable to Outer<?>.Inner only by unchecked conversion, not by subtyping.
+    ReferenceType rawSub = NonParameterizedType.forClass(Sub.class);
+    assertTrue(rawSub.isRawtype());
+    assertFalse(rawSub.isSubtypeOfOrEqualTo(wildcardInner));
   }
 
   @Test
