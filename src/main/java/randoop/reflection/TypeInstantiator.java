@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static org.plumelib.util.CollectionsPlume.iteratorToIterable;
 
+import java.lang.reflect.AccessibleObject;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +16,9 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CombinationIterator;
 import org.plumelib.util.StringsPlume;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.types.BoundsCheck;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -136,6 +139,27 @@ public class TypeInstantiator {
 
     // if operation == null failed to build instantiation
     return operation;
+  }
+
+  /**
+   * Handles an exception that {@link #instantiate(TypedClassOperation)} threw. If {@code
+   * --fail-on-generation-error} is set, throws a {@link RandoopInstantiationError}. Otherwise,
+   * reports the operation and the exception's type and message on standard output, logs the
+   * exception's stack trace, and returns normally so that the caller can skip the operation.
+   *
+   * @param operation an operation that {@link #instantiate(TypedClassOperation)} was instantiating
+   * @param e the exception that {@link #instantiate(TypedClassOperation)} threw
+   * @throws RandoopInstantiationError if {@code --fail-on-generation-error} is set
+   */
+  public static void handleInstantiationException(TypedOperation operation, Throwable e) {
+    if (GenInputsAbstract.fail_on_generation_error) {
+      AccessibleObject reflectionObject = operation.getOperation().getReflectionObject();
+      String opName = reflectionObject != null ? reflectionObject.toString() : operation.toString();
+      throw new RandoopInstantiationError(opName, e);
+    }
+    Log.logPrintf("Instantiation error for operation%n %s%n", operation);
+    Log.logStackTrace(e);
+    System.out.printf("Instantiation error for operation%n %s%n %s%n", operation, e);
   }
 
   /**
@@ -857,7 +881,7 @@ public class TypeInstantiator {
    *     instantiating types
    * @see #selectSubstitution(List, Substitution)
    */
-  private Substitution selectSubstitution(List<TypeVariable> typeParameters) {
+  private @Nullable Substitution selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution substitution = new Substitution();
     return selectSubstitution(typeParameters, substitution);
   }
@@ -870,7 +894,7 @@ public class TypeInstantiator {
    * @return the substitution extended by instantiating type variables; null if any of the variables
    *     has no instantiating types
    */
-  private Substitution selectSubstitution(
+  private @Nullable Substitution selectSubstitution(
       List<TypeVariable> typeParameters, Substitution substitution) {
     List<Substitution> substitutionList = allExtendingSubstitutions(typeParameters, substitution);
     if (substitutionList.isEmpty()) {
@@ -887,7 +911,7 @@ public class TypeInstantiator {
    * @return the list of possible substitutions, empty if none is found
    */
   @SuppressWarnings("MixedMutabilityReturnType")
-  private List<Substitution> allExtendingSubstitutions(
+  /*package*/ List<Substitution> allExtendingSubstitutions(
       List<TypeVariable> typeParameters, Substitution substitution) {
 
     // Partition parameters based on whether they might have independent bounds:
@@ -962,19 +986,26 @@ public class TypeInstantiator {
       }
     } else if (!nongenericParameters.isEmpty()) {
       // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectSubstitutionIndependently(nongenericParameters, substitution);
-      if (substitution == null) {
+      Substitution extended = selectSubstitutionIndependently(nongenericParameters, substitution);
+      if (extended == null) {
         return Collections.emptyList();
       }
-      result.add(substitution);
+      result.add(extended);
     }
 
     // Can always select captured wildcards independently.  Extend each substitution in `result`.
     if (!captureParameters.isEmpty()) {
       if (result.isEmpty()) {
-        result.add(selectSubstitutionIndependently(captureParameters, substitution));
-      } else {
-        result.replaceAll(s -> selectSubstitutionIndependently(captureParameters, s));
+        result.add(substitution);
+      }
+      for (int i = 0; i < result.size(); i++) {
+        Substitution extended = selectSubstitutionIndependently(captureParameters, result.get(i));
+        if (extended == null) {
+          // The candidate types of a capture variable do not depend on the substitution, so
+          // extending any other element of `result` would fail too.
+          return Collections.emptyList();
+        }
+        result.set(i, extended);
       }
     }
 
@@ -992,15 +1023,15 @@ public class TypeInstantiator {
    * @return the substitution extended by mapping given parameters to selected types; null, if there
    *     are no candidate types for some parameter
    */
-  private Substitution selectSubstitutionIndependently(
+  private @Nullable Substitution selectSubstitutionIndependently(
       List<TypeVariable> parameters, Substitution substitution) {
     List<ReferenceType> selectedTypes = new ArrayList<>(parameters.size());
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = candidateTypes(typeArgument);
+    for (TypeVariable parameter : parameters) {
+      List<ReferenceType> candidates = candidateTypes(parameter);
       if (candidates.isEmpty()) {
         Log.logPrintf(
             "TypeInstantiator.selectSubstitutionIndependently: No candidate types for %s%n",
-            typeArgument);
+            parameter);
         return null;
       }
       selectedTypes.add(Randomness.randomMember(candidates));
