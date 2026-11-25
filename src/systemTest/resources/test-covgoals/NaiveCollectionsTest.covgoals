@@ -23,9 +23,6 @@ java7.util7.Collections.get(java7.util7.ListIterator, int) exclude
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude17+
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
-java7.util7.Collections.max(java7.util7.Collection) exclude17+
-java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude11-
-java7.util7.Collections.min(java7.util7.Collection) exclude
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
 java7.util7.Collections.shuffle(java7.util7.List) ignore
