@@ -177,6 +177,10 @@ public class OmitMethodsTest {
   @Test
   public void testStaticMethodOfNonPublicClass() throws Exception {
     // SChild inherits s from SBase, which is not public.
+    assertHasMethod(
+        "s",
+        createModel(Collections.singletonList("randoop.reflection.omitinputs.p.SChild"), null)
+            .getOperations());
     Collection<TypedOperation> operations =
         createModel(
                 Collections.singletonList("randoop.reflection.omitinputs.p.SChild"),
