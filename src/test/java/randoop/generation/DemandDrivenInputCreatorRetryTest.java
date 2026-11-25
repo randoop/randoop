@@ -30,6 +30,8 @@ public class DemandDrivenInputCreatorRetryTest {
   }
 
   /** A class whose only producer is generic. */
+  @SuppressWarnings(
+      "PMD.AbstractClassWithoutAbstractMethod") // abstract, so Randoop cannot call its constructor
   public abstract static class Holder {
     /** Creates a Holder; not accessible to Randoop. */
     protected Holder() {}

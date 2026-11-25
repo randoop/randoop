@@ -90,6 +90,7 @@ public final class ReplaceCallAgent {
    * @param instrumentation the {@code Instrumentation} object
    * @throws IOException if there is an error reading a file
    */
+  @SuppressWarnings("PMD.NonThreadSafeSingleton") // the JVM calls premain once, before main
   public static void premain(String agentArgs, Instrumentation instrumentation) throws IOException {
     try {
       if (agentArgs != null) { // If there are any arguments, parse them

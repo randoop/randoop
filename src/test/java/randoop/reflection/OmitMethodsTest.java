@@ -18,6 +18,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signature.qual.ClassGetName;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
+import randoop.main.RandoopClassNameError;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -177,6 +178,10 @@ public class OmitMethodsTest {
   @Test
   public void testStaticMethodOfNonPublicClass() throws Exception {
     // SChild inherits s from SBase, which is not public.
+    assertHasMethod(
+        "s",
+        createModel(Collections.singletonList("randoop.reflection.omitinputs.p.SChild"), null)
+            .getOperations());
     Collection<TypedOperation> operations =
         createModel(
                 Collections.singletonList("randoop.reflection.omitinputs.p.SChild"),
@@ -313,10 +318,17 @@ public class OmitMethodsTest {
    * @param classnames the classes under test
    * @param omitRegex the omit-methods pattern, or null to omit nothing
    * @return an operation model for the given classes
-   * @throws Exception if the operation model cannot be created
+   * @throws SignatureParseException if a signature cannot be parsed
+   * @throws NoSuchMethodException if a method cannot be found
+   * @throws RandoopClassNameError if a class cannot be loaded
+   * @throws RandoopSpecificationError if a specification is invalid
    */
   private static OperationModel createModel(
-      List<@ClassGetName String> classnames, @Nullable String omitRegex) throws Exception {
+      List<@ClassGetName String> classnames, @Nullable String omitRegex)
+      throws SignatureParseException,
+          NoSuchMethodException,
+          RandoopClassNameError,
+          RandoopSpecificationError {
     List<Pattern> omitMethods =
         omitRegex == null
             ? Collections.emptyList()
