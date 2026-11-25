@@ -498,10 +498,10 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -524,9 +524,8 @@ public class InstantiatedType extends ParameterizedType {
 
       // first clause, combined with the second:  the supertype of this type that has the same
       // rawtype as otherType must be a subtype of otherType by type argument containment.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {
         // getMatchingSupertype returns an instantiation of otherType's generic class, so the
         // recursive call uses the second clause above and does not recurse further.
@@ -539,8 +538,8 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // otherType can be a member class of a parameterized type, such as `Outer<String>.Inner`, which
-    // is parameterized through its enclosing type but is not an InstantiatedType.  The class and
-    // interface subtype check handles such a type.
+    // is parameterized through its enclosing type but is not an InstantiatedType, so the clauses
+    // above do not apply to it.  The class and interface subtype check handles such a type.
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
