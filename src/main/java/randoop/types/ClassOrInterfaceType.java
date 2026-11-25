@@ -691,8 +691,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // type's supertype of that class by containment of the enclosing type, as
     // NonParameterizedType.isSubtypeOfOrEqualTo does.  The supertype search below compares with
     // equals, so it would not report that a subclass of Outer<String>.Inner is a subtype of
-    // Outer<?>.Inner.
-    if (otherRefType instanceof NonParameterizedType
+    // Outer<?>.Inner.  A raw type is excluded:  its supertypes are erased, so raw Sub, where
+    // Sub<U> extends Outer<String>.Inner, has the supertype Outer<T>.Inner, but raw Sub is
+    // assignable to Outer<?>.Inner only by unchecked conversion.
+    if (!this.isRawtype()
+        && otherRefType instanceof NonParameterizedType
         && otherRefType.isMemberClass()
         && !this.runtimeClassIs(otherRefType.getRuntimeClass())) {
       ClassOrInterfaceType supertype = getSupertypeOfClass(otherRefType.getRuntimeClass());

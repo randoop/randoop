@@ -955,7 +955,10 @@ public class ParameterBoundTest {
 
     assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
-    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    // The substitution applies to the possible lower bound but not to memberBound, so
+    // GenericOuter<String>.NonGenericInner is compared with GenericOuter<X>.NonGenericInner, for
+    // X standing for itself.
+    assertFalse(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
   }
 
