@@ -107,11 +107,6 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
-    // enclosing type to equal that of the other member class (or that member class to be the
-    // generic form of its class), rather than to be contained in it.  For example, the test does
-    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
@@ -126,6 +121,7 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
+    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
     if (isMemberOfParameterizedType(argType)) {
       // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  The type
       // variables in argType, which the substitution does not apply to, stand for themselves.
@@ -151,28 +147,24 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not instantiate the variable with a non-variable type, so the
-      // variable can still be chosen, within its upper bound.
-      TypeVariable variable = (TypeVariable) thisBoundType;
+      // This bound is a type variable, which the substitution does not instantiate with a
+      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
-        // The type variable can be argType itself or one of its supertypes, as in
-        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of the type
-        // variable instead would leave the type variable unknown within that bound:  for
-        // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
-        // T is a supertype of.  The bounds of the type variable are checked with the mappings of
-        // `subst`, because they can mention other type variables that `subst` instantiates.
-        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
+        // `thisBoundVariable` can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of
+        // `thisBoundVariable` instead would leave `thisBoundVariable` unknown within that bound:
+        // for `T extends Comparable<? super T>`, it would accept Comparable<String>, which no
+        // choice of T is a supertype of.  The bounds of `thisBoundVariable` are checked with the
+        // mappings of `subst`, because they can mention other type variables that `subst`
+        // instantiates.
+        return thisBoundVariable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       // `argType` is not a reference type, or is a type variable, so it is not tried as a choice
-      // for the variable.  `argType` is within this bound if it is within the variable's upper
-      // bound, which the variable can be.
-      return variable.getUpperTypeBound().isUpperBound(argType, subst);
+      // for `thisBoundVariable`.  `argType` is within this bound if it is within the upper bound
+      // of `thisBoundVariable`, which `thisBoundVariable` can be.
+      return thisBoundVariable.getUpperTypeBound().isUpperBound(argType, subst);
     }
-    // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is parameterized
-    // but is not an InstantiatedType.  It is compared by the subtype test below, which requires its
-    // enclosing type to equal that of the other member class (or that member class to be the
-    // generic form of its class), rather than to be contained in it.  For example, the test does
-    // not report that `Outer<Integer>.Inner` is within the bound `Outer<? extends Number>.Inner`.
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
@@ -199,6 +191,7 @@ class EagerReferenceBound extends ReferenceBound {
         inProgress.remove(check);
       }
     }
+    // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
       // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.
       return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
