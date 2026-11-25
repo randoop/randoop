@@ -166,10 +166,10 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>The owner type of a member class is examined (see {@link #getPreservedOwnerType}), because
-   * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
-   * Outer<T>} for {@code Outer<T>.Inner}. Converting such an owner type eagerly can recursively
-   * convert a type variable that is being converted, so an eager bound such as {@code
+   * <p>The owner type of a member class is examined (see {@link #getParameterizedOwnerType}),
+   * because the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in
+   * {@code Outer<T>} for {@code Outer<T>.Inner}. Converting such an owner type eagerly can
+   * recursively convert a type variable that is being converted, so an eager bound such as {@code
    * List<Outer<T>.Inner>} or {@code Outer<T>.Inner<String>}, in the bound of {@code T}, would be
    * recursive.
    *
@@ -199,7 +199,8 @@ public abstract class ParameterBound {
           return true;
         }
       }
-      java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(pt);
+      // The owner type of a member class can mention a variable, as in Outer<T>.Inner<String>.
+      java.lang.reflect.ParameterizedType ownerType = getParameterizedOwnerType(pt);
       if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
         return true;
       }
@@ -227,14 +228,19 @@ public abstract class ParameterBound {
   /**
    * Returns the owner type of the given parameterized type, if it is a parameterized type and the
    * given type is a member class (an inner class, not a static nested class). The type arguments of
-   * such an owner type are part of the type, as in {@code Outer<String>.Inner}, and {@link
-   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} preserves it.
+   * such an owner type are part of the type, as in {@code Outer<String>.Inner}.
+   *
+   * <p>Unlike {@link ClassOrInterfaceType#getPreservedOwnerType}, the result includes an owner type
+   * in declaration form, such as {@code Outer<T>} where {@code T} is the type parameter of {@code
+   * Outer}. {@link ClassOrInterfaceType#forType(java.lang.reflect.Type)} does not preserve such an
+   * owner type, but uses the declaration of the enclosing class, which mentions the same type
+   * variables.
    *
    * @param type a parameterized type
    * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
    *     class of a parameterized type
    */
-  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getParameterizedOwnerType(
       java.lang.reflect.ParameterizedType type) {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType

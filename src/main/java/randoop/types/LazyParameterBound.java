@@ -171,7 +171,7 @@ class LazyParameterBound extends ParameterBound {
       // ClassOrInterfaceType.forType, so that type variables in it are treated as in type
       // arguments.
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      ParameterizedType owner = getPreservedOwnerType(parameterizedType);
+      ParameterizedType owner = getParameterizedOwnerType(parameterizedType);
       if (owner == null || ClassOrInterfaceType.isDeclarationForm(owner)) {
         return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
       }

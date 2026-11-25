@@ -962,6 +962,27 @@ public class ParameterBoundTest {
   }
 
   /**
+   * Tests that a reference bound is compared with a lazy bound for a non-generic member class of a
+   * generic class, through the overloads of isLowerBound and isUpperBound that take a bound.
+   */
+  @Test
+  public void testReferenceBoundComparedWithNonGenericMemberClassBound() {
+    java.lang.reflect.Type innerType = fieldType(ParameterBoundTest.class, "stringOwnerInner");
+    ParameterBound lazyBound = ParameterBound.forType(Collections.emptySet(), innerType);
+    assertTrue(lazyBound instanceof LazyParameterBound);
+    ReferenceBound sameBound = new EagerReferenceBound(ReferenceType.forType(innerType));
+    Substitution empty = new Substitution();
+    assertTrue(sameBound.isLowerBound(lazyBound, empty));
+    assertTrue(sameBound.isUpperBound(lazyBound, empty));
+
+    ReferenceBound otherOwnerBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner")));
+    assertFalse(otherOwnerBound.isLowerBound(lazyBound, empty));
+    assertFalse(otherOwnerBound.isUpperBound(lazyBound, empty));
+  }
+
+  /**
    * A class whose type parameter has a self-referential bound that contains, as a type argument, a
    * non-generic member class of a generic class.
    *
@@ -1251,6 +1272,59 @@ public class ParameterBoundTest {
     ReferenceType integerType = ReferenceType.forClass(Integer.class);
     assertTrue(bound.isUpperBound(stringOuter, new Substitution(x, JavaTypes.STRING_TYPE)));
     assertFalse(bound.isUpperBound(stringOuter, new Substitution(x, integerType)));
+  }
+
+  @Test
+  public void testCompareWithFixedOwnerMemberClassBound() {
+    ParameterBound memberBound =
+        ParameterBound.forType(
+            Collections.emptySet(),
+            fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceType stringOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter"));
+    ReferenceType integerOuter =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+    ReferenceBound objectBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
+    ReferenceBound stringOuterBound = new EagerReferenceBound(stringOuter);
+    ReferenceBound integerOuterBound = new EagerReferenceBound(integerOuter);
+    Substitution empty = new Substitution();
+
+    assertTrue(objectBound.isUpperBound(memberBound, empty));
+    assertTrue(stringOuterBound.isUpperBound(memberBound, empty));
+    assertFalse(integerOuterBound.isUpperBound(memberBound, empty));
+
+    assertFalse(objectBound.isLowerBound(memberBound, empty));
+    assertTrue(stringOuterBound.isLowerBound(memberBound, empty));
+    assertFalse(integerOuterBound.isLowerBound(memberBound, empty));
+  }
+
+  @Test
+  public void testCompareWithVariableOwnerMemberClassBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerVariableMemberBound.class).getTypeParameters();
+    TypeVariable x = parameters.get(0);
+    ParameterBound memberBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(memberBound instanceof LazyParameterBound);
+    ReferenceBound stringOuterBound =
+        new EagerReferenceBound(
+            ReferenceType.forType(
+                fieldType(ParameterBoundTest.class, "nonGenericInnerOfStringOuter")));
+    Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
+    Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
+
+    // The substitution is applied to the receiver, memberBound, so its owner type is instantiated.
+    assertTrue(memberBound.isUpperBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isUpperBound(stringOuterBound, integerSubstitution));
+    assertTrue(memberBound.isLowerBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isLowerBound(stringOuterBound, integerSubstitution));
+
+    // The substitution is not applied to memberBound when it is the argument, so X stands for
+    // itself and the owner type GenericOuter<X> differs from GenericOuter<String>.
+    assertFalse(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
   }
 
   @Test
