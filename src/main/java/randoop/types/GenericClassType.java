@@ -22,7 +22,7 @@ public class GenericClassType extends ParameterizedType {
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
    * infinitely for such a class.
    */
-  private @MonotonicNonNull List<TypeVariable> parameters;
+  private @MonotonicNonNull List<TypeVariable> directTypeParameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -41,11 +41,12 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the type parameters that this generic class declares
    */
-  private List<TypeVariable> parameters() {
-    if (parameters == null) {
-      parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+  private List<TypeVariable> directTypeParameters() {
+    if (directTypeParameters == null) {
+      directTypeParameters =
+          CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
     }
-    return parameters;
+    return directTypeParameters;
   }
 
   /**
@@ -86,7 +87,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters());
+            directTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -176,7 +177,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters());
+    return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
   }
 
   /**
@@ -188,7 +189,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters();
+    return directTypeParameters();
   }
 
   /**
@@ -198,7 +199,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters());
+    return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
   }
 
   /**
@@ -215,7 +216,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
     for (int i = 0; i < params.size(); i++) {
       if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
@@ -242,7 +243,7 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
     for (int i = 0; i < params.size(); i++) {
       if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
         throw new IllegalArgumentException(
