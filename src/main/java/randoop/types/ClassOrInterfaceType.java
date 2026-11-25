@@ -522,6 +522,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (supertype == null) {
         return null;
       }
+      // The type substitution of the supertype maps the type parameters of the goal type,
+      // including those of its enclosing classes.  The enclosing type of the supertype can differ
+      // from that of this type, as for Outer<String>.Sub that extends Outer<Integer>.Inner; the
+      // substitution above is from the enclosing type of this type's view of the goal type's
+      // class, which is the supertype, so it is consistent with the supertype's substitution.
       Substitution supertypeSubstitution = supertype.getTypeSubstitution();
       if (supertypeSubstitution == null || !substitution.isConsistentWith(supertypeSubstitution)) {
         return null;
