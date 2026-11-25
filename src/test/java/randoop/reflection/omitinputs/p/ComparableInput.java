@@ -1,6 +1,7 @@
 package randoop.reflection.omitinputs.p;
 
 /** Input for testing omitmethod patterns: a class that implements a generic interface. */
+@SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // test input
 public class ComparableInput implements Comparable<ComparableInput> {
   @Override
   public int compareTo(ComparableInput other) {
