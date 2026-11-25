@@ -19,8 +19,7 @@ public class GenericClassType extends ParameterizedType {
    * The type parameters that the generic class declares, not including those of an enclosing class.
    * Null until first needed: computing them computes their bounds, which may refer to this class,
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
-   * infinitely for such a class. Use {@link #directTypeParameters()} instead of reading this
-   * field.
+   * infinitely for such a class. Use {@link #directTypeParameters()} instead of reading this field.
    */
   // Volatile so that a thread that reads a non-null value also sees the contents of the list.
   private volatile @Nullable List<TypeVariable> directTypeParameters = null;
