@@ -1,8 +1,8 @@
 package randoop.types;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -13,12 +13,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 class EagerReferenceBound extends ReferenceBound {
 
   /**
-   * The (bound type, argument type) pairs whose {@link #isUpperBound(Type, Substitution)} check of
-   * a parameterized bound is executing on the current thread. The check captures the bound, and a
-   * capture variable's upper bound can be the bound itself, as for {@code T extends Builder<?>} in
-   * {@code Builder<T extends Builder<?>>}. Checking that the argument instantiates the capture
-   * variable then repeats the same check. The repeated check returns true: it succeeds if the rest
-   * of the original check succeeds.
+   * The upper-bound checks of a parameterized bound that are executing on the current thread. The
+   * check captures the bound, and a capture variable's upper bound can be the bound itself, as for
+   * {@code T extends Builder<?>} in {@code Builder<T extends Builder<?>>}. Checking that the
+   * argument instantiates the capture variable then repeats the same check. The repeated check
+   * returns true: it succeeds if the rest of the original check succeeds.
    *
    * <p>Checks are compared by {@code equals}, which ignores the bounds of a type variable. They
    * cannot be compared by identity: when a bound mentions a type variable, as in {@code D<T, S
@@ -26,8 +25,55 @@ class EagerReferenceBound extends ReferenceBound {
    * identity would never repeat.
    */
   @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
-  private static final ThreadLocal<Set<List<Type>>> upperBoundChecksInProgress =
+  private static final ThreadLocal<Set<UpperBoundCheck>> upperBoundChecksInProgress =
       ThreadLocal.withInitial(HashSet::new);
+
+  /**
+   * A check, by {@link #isUpperBound(Type, Substitution)}, that an argument type is within a
+   * parameterized bound type. Two checks are equal if their bound types are equal and their
+   * argument types are equal.
+   */
+  private static final class UpperBoundCheck {
+
+    /** The bound type, after substitution. */
+    private final ReferenceType boundType;
+
+    /** The argument type that must be within {@link #boundType}. */
+    private final Type argType;
+
+    /**
+     * Creates a check that an argument type is within a bound type.
+     *
+     * @param boundType a bound type, after substitution
+     * @param argType the argument type that must be within the bound type
+     */
+    UpperBoundCheck(ReferenceType boundType, Type argType) {
+      this.boundType = boundType;
+      this.argType = argType;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object object) {
+      if (this == object) {
+        return true;
+      }
+      if (!(object instanceof UpperBoundCheck)) {
+        return false;
+      }
+      UpperBoundCheck other = (UpperBoundCheck) object;
+      return boundType.equals(other.boundType) && argType.equals(other.argType);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(boundType, argType);
+    }
+
+    @Override
+    public String toString() {
+      return String.format("UpperBoundCheck{boundType=%s, argType=%s}", boundType, argType);
+    }
+  }
 
   /**
    * Creates a bound for the given reference type.
@@ -126,22 +172,23 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not instantiate the variable with a non-variable type, so the
-      // variable can still be chosen, within its upper bound.
-      TypeVariable variable = (TypeVariable) thisBoundType;
+      // This bound is a type variable, which the substitution does not instantiate with a
+      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
-        // The type variable can be argType itself or one of its supertypes, as in
-        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of the type
-        // variable instead would leave the type variable unknown within that bound:  for
-        // `T extends Comparable<? super T>`, it would accept Comparable<String>, which no choice of
-        // T is a supertype of.  The bounds of the type variable are checked with the mappings of
-        // `subst`, because they can mention other type variables that `subst` instantiates.
-        return variable.canBeSupertypeOf((ReferenceType) argType, subst);
+        // `thisBoundVariable` can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of
+        // `thisBoundVariable` instead would leave `thisBoundVariable` unknown within that bound:
+        // for `T extends Comparable<? super T>`, it would accept Comparable<String>, which no
+        // choice of T is a supertype of.  The bounds of `thisBoundVariable` are checked with the
+        // mappings of `subst`, because they can mention other type variables that `subst`
+        // instantiates.
+        return thisBoundVariable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
       // `argType` is not a reference type, or is a type variable, so it is not tried as a choice
-      // for the variable.  `argType` is within this bound if it is within the variable's upper
-      // bound, which the variable can be.
-      return variable.getUpperTypeBound().isUpperBound(argType, subst);
+      // for `thisBoundVariable`.  `argType` is within this bound if it is within the upper bound
+      // of `thisBoundVariable`, which `thisBoundVariable` can be.
+      return thisBoundVariable.getUpperTypeBound().isUpperBound(argType, subst);
     }
     // A member class whose enclosing type is parameterized, such as Outer<String>.Inner, is
     // parameterized but is not an InstantiatedType.  The tests below handle it.
@@ -149,8 +196,8 @@ class EagerReferenceBound extends ReferenceBound {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      List<Type> check = Arrays.asList(thisBoundType, argType);
-      Set<List<Type>> inProgress = upperBoundChecksInProgress.get();
+      UpperBoundCheck check = new UpperBoundCheck(thisBoundType, argType);
+      Set<UpperBoundCheck> inProgress = upperBoundChecksInProgress.get();
       if (!inProgress.add(check)) {
         // This check depends on itself, so assume it holds. Any other condition still holds or
         // fails on its own.
