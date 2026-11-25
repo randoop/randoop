@@ -331,8 +331,8 @@ public class InstantiatedType extends ParameterizedType {
    * </ol>
    *
    * <p>Furthermore, the matches are consistent: if a variable occurs in several {@code Si}, the
-   * corresponding {@code Ti} bind it to the same type. For example, {@code Map<String, Integer>}
-   * is not an instantiation of {@code Map<X, X>}, but {@code Map<String, String>} is.
+   * corresponding {@code Ti} bind it to the same type. For example, {@code Map<String, Integer>} is
+   * not an instantiation of {@code Map<X, X>}, but {@code Map<String, String>} is.
    *
    * @param otherType the other {@link InstantiatedType}
    * @return true if this type is an instantiation of the other type, false otherwise
