@@ -210,7 +210,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         InstantiatedType instantiated = (InstantiatedType) enclosing;
         result =
             result.extend(
-                instantiated.getGenericClassType().parameters(),
+                instantiated.getGenericClassType().directTypeParameters(),
                 instantiated.getReferenceArguments());
       }
     }
