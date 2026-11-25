@@ -760,10 +760,8 @@ public final class OperationModel {
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
       errorHandler.handle(classname, e);
     } catch (Throwable e) {
-      if (e.getCause() != null) {
-        e = e.getCause();
-      }
-      errorHandler.handle(classname, e);
+      Throwable cause = e.getCause();
+      errorHandler.handle(classname, cause != null ? cause : e);
     }
     return null;
   }

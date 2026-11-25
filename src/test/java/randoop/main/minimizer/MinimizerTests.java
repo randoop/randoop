@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -88,16 +89,16 @@ public class MinimizerTests {
     Path outputFile = Paths.get(outputFilePath);
     Path expectedFile = Paths.get(expectedFilePath);
 
-    String classPath = JUNIT_JAR;
+    StringJoiner classPath = new StringJoiner(File.pathSeparator);
+    classPath.add(JUNIT_JAR);
     if (dependencies != null) {
       for (String s : dependencies) {
-        Path file = Paths.get(s);
-        classPath += (File.pathSeparator + file.toAbsolutePath().toString());
+        classPath.add(Paths.get(s).toAbsolutePath().toString());
       }
     }
 
     // Create the arguments array and invoke the minimizer.
-    Minimize.mainMinimize(inputFile, classPath, timeoutLimit, verboseOutput);
+    Minimize.mainMinimize(inputFile, classPath.toString(), timeoutLimit, verboseOutput);
 
     // Compare obtained and expected output.
     if (!FileUtils.contentEqualsIgnoreEOL(outputFile.toFile(), expectedFile.toFile(), null)) {
