@@ -98,8 +98,16 @@ public abstract class TypeVariable extends ParameterType {
           && ((ReferenceBound) upperBound).getBoundType().equals(otherType)) {
         return true;
       }
-      Substitution substitution = getSubstitution(this, (ReferenceType) otherType);
-      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
+      // The substitution maps each other type variable in the bound to itself, as T in the bound
+      // `Comparable<? super T>` of a capture variable.  A LazyParameterBound requires a
+      // substitution that maps each of its type variables.
+      List<TypeVariable> otherVariables = new ArrayList<>(upperBound.getTypeParameters());
+      // The bound can mention this variable more than once, as in `Pair<T, T>`.
+      otherVariables.removeIf(this::equals);
+      Substitution substitution =
+          getSubstitution(this, (ReferenceType) otherType)
+              .extend(otherVariables, new ArrayList<ReferenceType>(otherVariables));
+      return upperBound.isLowerBound(otherType, substitution);
     }
     return false;
   }

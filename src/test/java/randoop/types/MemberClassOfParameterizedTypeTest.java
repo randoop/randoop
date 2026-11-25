@@ -60,7 +60,7 @@ public class MemberClassOfParameterizedTypeTest {
     /**
      * Creates a Sub.
      *
-     * @param outer the enclosing instance of the superclass
+     * @param outer an enclosing instance for the superclass
      */
     Sub(Outer<String> outer) {
       outer.super();
@@ -94,13 +94,27 @@ public class MemberClassOfParameterizedTypeTest {
   /**
    * Returns the Randoop type for the return type of the given method of {@link TypeHolder}.
    *
-   * @param methodName the method name
+   * @param methodName a method name of {@link TypeHolder}, such as {@code "innerType"}
    * @return the return type of the method
    * @throws NoSuchMethodException if {@link TypeHolder} has no method named {@code methodName}
    */
   private static ReferenceType returnType(String methodName) throws NoSuchMethodException {
     return (ReferenceType)
         Type.forType(TypeHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
+  /**
+   * Returns the type {@code Outer<String>.C} for the given member class {@code C} of {@link Outer}.
+   * The type is constructed by substitution, because {@link Type#forType} discards the type
+   * arguments of the enclosing type of a non-generic member class, yielding {@code Outer<T>.C}.
+   *
+   * @param memberClass a non-generic member class of {@link Outer}
+   * @return the member class, with {@code Outer<String>} as its enclosing type
+   */
+  private static ClassOrInterfaceType memberOfOuterOfString(Class<?> memberClass) {
+    ClassOrInterfaceType genericMember = ClassOrInterfaceType.forClass(memberClass);
+    return genericMember.substitute(
+        new Substitution(genericMember.getTypeParameters(), JavaTypes.STRING_TYPE));
   }
 
   @Test
@@ -191,5 +205,19 @@ public class MemberClassOfParameterizedTypeTest {
     assertTrue(lower.contains(inner));
     assertFalse(lower.contains(sub));
     assertFalse(lower.contains(other));
+  }
+
+  @Test
+  public void testSubstitutedMemberClassOfParameterizedType() throws NoSuchMethodException {
+    ClassOrInterfaceType inner = memberOfOuterOfString(Outer.Inner.class);
+    assertTrue(inner.isParameterized());
+    assertFalse(inner instanceof InstantiatedType);
+
+    ReferenceType integerList = returnType("integerList");
+    Substitution empty = new Substitution();
+
+    assertFalse(new EagerReferenceBound(integerList).isLowerBound(inner, empty));
+    assertFalse(new EagerReferenceBound(inner).isUpperBound(integerList, empty));
+    assertFalse(integerList.isSubtypeOfOrEqualTo(inner));
   }
 }

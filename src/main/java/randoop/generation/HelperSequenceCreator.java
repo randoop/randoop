@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
@@ -91,6 +92,12 @@ final class HelperSequenceCreator {
           // XXX being incautious, argument type might be parameterized
           componentType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+          if (componentType.equals(JavaTypes.NULL_TYPE)
+              || (componentType.isArray()
+                  && ((ArrayType) componentType).getElementType().equals(JavaTypes.NULL_TYPE))) {
+            // Java has no syntax for an array of the null type, so no code can create one.
+            return SIList.empty();
+          }
         }
       }
       candidates = components.getSequencesForType(componentType);
@@ -145,9 +152,10 @@ final class HelperSequenceCreator {
    *
    * @param componentManager the component manager for selecting values
    * @param collectionType the type for collection
-   * @return a sequence that creates a collection of type {@code collectionType}
+   * @return a sequence that creates a collection of type {@code collectionType}, or null if the
+   *     element type is the null type or an array of it
    */
-  /*package*/ static Sequence createCollection(
+  /*package*/ static @Nullable Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);

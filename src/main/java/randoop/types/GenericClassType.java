@@ -17,11 +17,13 @@ public class GenericClassType extends ParameterizedType {
   private final Class<?> rawType;
 
   /**
-   * The type parameters of the generic class. Null until first needed: computing them computes
-   * their bounds, which may refer to this class, as in {@code Builder<T extends Builder<?>>}.
-   * Computing them in the constructor would recurse infinitely for such a class.
+   * The type parameters that the generic class declares, not including those of an enclosing class.
+   * Null until first needed: computing them computes their bounds, which may refer to this class,
+   * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
+   * infinitely for such a class. The lazy initialization is not synchronized, because Randoop uses
+   * the type model from a single thread.
    */
-  private @MonotonicNonNull List<TypeVariable> parameters;
+  private @MonotonicNonNull List<TypeVariable> directTypeParameters;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -34,15 +36,18 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the type parameters of this generic class, computing them if necessary.
+   * Returns the type parameters that this generic class declares, computing them if necessary.
+   * Unlike {@link #getTypeParameters()}, the result omits the type parameters of enclosing classes.
+   * For example, for {@code Outer<T>.Inner<U>}, the result is {@code [U]}.
    *
-   * @return the type parameters of this generic class
+   * @return the type parameters that this generic class declares
    */
-  private List<TypeVariable> parameters() {
-    if (parameters == null) {
-      parameters = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+  private List<TypeVariable> directTypeParameters() {
+    if (directTypeParameters == null) {
+      directTypeParameters =
+          CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
     }
-    return parameters;
+    return directTypeParameters;
   }
 
   /**
@@ -83,7 +88,7 @@ public class GenericClassType extends ParameterizedType {
         CollectionsPlume.mapList(
             (TypeVariable variable) ->
                 TypeArgument.forType(substitution.getOrDefault(variable, variable)),
-            parameters());
+            directTypeParameters());
     return (InstantiatedType)
         substitute(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
   }
@@ -173,7 +178,7 @@ public class GenericClassType extends ParameterizedType {
   // ParameterizedType to InstantiatedType?
   @Override
   public List<TypeArgument> getTypeArguments() {
-    return CollectionsPlume.mapList(TypeArgument::forType, parameters());
+    return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
   }
 
   /**
@@ -185,7 +190,7 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return parameters();
+    return directTypeParameters();
   }
 
   /**
@@ -195,7 +200,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return CollectionsPlume.concatenate(super.getTypeParameters(), parameters());
+    return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
   }
 
   /**
@@ -212,12 +217,15 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
+    // The type arguments for the type parameters of enclosing classes come first.
+    int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
+      ReferenceType typeArgument = typeArguments[offset + i];
+      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArgument, substitution)) {
         throw new IllegalArgumentException(
             "type argument "
-                + typeArguments[i]
+                + typeArgument
                 + " does not match parameter bound "
                 + params.get(i).getUpperTypeBound());
       }
@@ -239,12 +247,15 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution substitution = new Substitution(typeParameters, typeArguments);
-    List<TypeVariable> params = parameters();
+    List<TypeVariable> params = directTypeParameters();
+    // The type arguments for the type parameters of enclosing classes come first.
+    int offset = typeParameters.size() - params.size();
     for (int i = 0; i < params.size(); i++) {
-      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+      ReferenceType typeArgument = typeArguments.get(offset + i);
+      if (!params.get(i).getUpperTypeBound().isUpperBound(typeArgument, substitution)) {
         throw new IllegalArgumentException(
             "type argument "
-                + typeArguments.get(i)
+                + typeArgument
                 + " does not match parameter bound "
                 + params.get(i).getUpperTypeBound());
       }

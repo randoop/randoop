@@ -149,38 +149,41 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * If this type has an upper bound, checks for containment cases:
+   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1):
    *
    * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S.isSubtypeOfOrEqualTo(T)}
-   *   <li>{@code ? extends T} contains {@code ?}
+   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S} is a subtype of {@code T}.
+   *       This includes {@code ?}, which is {@code ? extends Object}.
+   *   <li>{@code ?} contains {@code ? super S}
+   *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * Both of which are technically the same because from a reflection perspective {@code ?} is just
-   * {@code ? extends Object}. Otherwise, checks for the case
-   *
-   * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code T.isSubtypeOfOrEqualTo(S)}
-   * </ul>
-   *
-   * A wildcard {@code ? super T} does not contain a wildcard with an upper bound, including {@code
-   * ?}.
+   * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
-    if (this.hasUpperBound) {
-      if (otherType.hasUpperBound
-          && otherType.getUpperTypeBound().isSubtypeOfOrEqualTo(this.getUpperTypeBound())) {
-        return true;
-      }
-    } else {
-      if (!otherType.hasUpperBound) {
-        return this.getLowerTypeBound().isSubtypeOfOrEqualTo(otherType.getLowerTypeBound());
-      }
+    ReferenceType thisBound = ReferenceBound.asReferenceType(this.getTypeBound());
+    if (thisBound == null) {
+      return false;
     }
-    return false;
+    // `?`, which is `? extends Object`, contains every wildcard, including every `? super S`.
+    if (this.hasUpperBound && thisBound.isObject()) {
+      return true;
+    }
+    if (this.hasUpperBound != otherType.hasUpperBound) {
+      return false;
+    }
+    ReferenceType otherBound = ReferenceBound.asReferenceType(otherType.getTypeBound());
+    if (otherBound == null) {
+      return false;
+    }
+    if (this.hasUpperBound) {
+      return otherBound.isSubtypeOfOrEqualTo(thisBound);
+    } else {
+      return thisBound.isSubtypeOfOrEqualTo(otherBound);
+    }
   }
 
   @Override

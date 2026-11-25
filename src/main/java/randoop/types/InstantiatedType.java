@@ -418,8 +418,16 @@ public class InstantiatedType extends ParameterizedType {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          if (!otherTArg.isGeneric()) {
+            // A type argument with no type variables binds none, so it must match exactly.
+            if (!thisTArg.equals(otherTArg)) {
+              return null;
+            }
+            continue;
+          }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // A type argument can conflict with the enclosing type, or with another type argument, as
+          // The arguments can map a type variable to different types, as for Map<X, X> and
+          // Map<String, Integer>.  A type argument can also conflict with the enclosing type, as
           // Outer<String>.GenericInner<Integer> does for Outer<X>.GenericInner<X>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
@@ -488,14 +496,11 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    // A parameterized type need not be an InstantiatedType:  a NonParameterizedType member class,
-    // such as Outer<String>.Inner, is parameterized through its enclosing type.  The class and
-    // interface subtype check below handles such a type.
     if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
         List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
         List<TypeArgument> thisTypeArguments = this.getTypeArguments();
         assert otherTypeArguments.size() == thisTypeArguments.size();
@@ -518,18 +523,22 @@ public class InstantiatedType extends ParameterizedType {
 
       // first clause, combined with the second:  the supertype of this type that has the same
       // rawtype as otherType must be a subtype of otherType by type argument containment.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      // The runtime class test prevents infinite recursion:  for a superType with the same
-      // runtime class as otherType, the recursive call uses the second clause above.
-      if (superType != null
-          && otherType.runtimeClassIs(superType.getRuntimeClass())
-          && superType.isSubtypeOfOrEqualTo(otherType)) {
-        return true;
+          this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
+        // recursive call uses the second clause above and does not recurse further.
+        assert otherType.runtimeClassIs(superType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
+    // otherType can be a member class of a parameterized type, such as `Outer<String>.Inner`, which
+    // is parameterized through its enclosing type but is not an InstantiatedType, so the clauses
+    // above do not apply to it.  The class and interface subtype check handles such a type.
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
