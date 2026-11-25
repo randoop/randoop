@@ -77,34 +77,40 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not map the variable, so the variable can still be chosen.  argType
-      // is within this bound if it is within the variable's upper bound, which the variable can be.
-      TypeVariable boundVariable = (TypeVariable) thisBoundType;
-      ParameterBound variableBound = boundVariable.getUpperTypeBound();
-      if (subst.get(boundVariable) != null || !(argType instanceof ReferenceType)) {
-        return variableBound.isUpperBound(argType, subst);
+      // This bound is a type variable, which the substitution does not instantiate with a
+      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
+      ParameterBound variableUpperBound = thisBoundVariable.getUpperTypeBound();
+      if (subst.get(thisBoundVariable) != null || !(argType instanceof ReferenceType)) {
+        // One of two cases holds:
+        //  * The substitution maps `thisBoundVariable` (for example, to itself), so the
+        //    substitution cannot be extended with a choice for `thisBoundVariable`.
+        //  * `argType` is not a reference type, so `argType` cannot instantiate a type variable.
+        // In either case, `argType` is within this bound if it is within `variableUpperBound`,
+        // which `thisBoundVariable` can be.
+        return variableUpperBound.isUpperBound(argType, subst);
       }
-      // The bound of `boundVariable` can mention `boundVariable` itself, as in `<T extends
-      // Comparable<? super T>>`, so checking it requires a choice for `boundVariable`.  `argType`
-      // is within this bound if `boundVariable` can be some supertype S of `argType` that is
-      // within the bound of `boundVariable` when `boundVariable` is S.  Try `argType` itself
+      // `variableUpperBound` can mention `thisBoundVariable` itself, as in `<T extends
+      // Comparable<? super T>>`, so checking it requires a choice for `thisBoundVariable`.
+      // `argType` is within this bound if `thisBoundVariable` can be some supertype S of `argType`
+      // that is within `variableUpperBound` when `thisBoundVariable` is S.  Try `argType` itself
       // first.  If it fails, try its other supertypes:  for `<T extends Marker<T>>`, if Child
       // extends Base and Base implements Marker<Base>, then T can be Base though not Child.
       ReferenceType argRefType = (ReferenceType) argType;
-      if (variableBound.isUpperBound(
-          argRefType, subst.extend(new Substitution(boundVariable, argRefType)))) {
+      if (variableUpperBound.isUpperBound(
+          argRefType, subst.extend(new Substitution(thisBoundVariable, argRefType)))) {
         return true;
       }
-      // If the bound does not mention `boundVariable`, then no supertype of `argType` satisfies the
-      // bound, because `argType` does not.
+      // If `variableUpperBound` does not mention `thisBoundVariable`, then no supertype of
+      // `argType` is within `variableUpperBound`, because `argType` is not.
       if (!(argRefType instanceof ClassOrInterfaceType)
-          || !variableBound.getTypeParameters().contains(boundVariable)) {
+          || !variableUpperBound.getTypeParameters().contains(thisBoundVariable)) {
         return false;
       }
       for (ClassOrInterfaceType supertype :
           ((ClassOrInterfaceType) argRefType).getSupertypesStrict()) {
-        if (variableBound.isUpperBound(
-            supertype, subst.extend(new Substitution(boundVariable, supertype)))) {
+        if (variableUpperBound.isUpperBound(
+            supertype, subst.extend(new Substitution(thisBoundVariable, supertype)))) {
           return true;
         }
       }

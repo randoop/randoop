@@ -458,9 +458,10 @@ public class InstantiatedType extends ParameterizedType {
             continue;
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // A type variable can occur more than once, as in Outer<T>.Inner<T>; its bindings must
-          // agree.  So the type arguments can conflict with the enclosing type, as for
-          // Outer<String>.Inner<Integer> and Outer<U>.Inner<U>.
+          // A type variable can occur more than once, as in Map<X, X> or Outer<T>.Inner<T>; its
+          // bindings must agree.  So the arguments can map a type variable to different types, as
+          // for Map<X, X> and Map<String, Integer>.  The type arguments can also conflict with the
+          // enclosing type, as for Outer<String>.Inner<Integer> and Outer<U>.Inner<U>.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
@@ -551,11 +552,18 @@ public class InstantiatedType extends ParameterizedType {
             || otherInstantiatedType.isGenericForm();
       }
 
-      // first clause.
+      // first clause, combined with the second:  the supertype of this type that has the same
+      // rawtype as otherType must be a subtype of otherType by type argument containment.
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
-      if (superType != null && superType.equals(otherType)) {
-        return true;
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
+        // recursive call uses the second clause above and does not recurse further.
+        assert otherType.runtimeClassIs(superType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
