@@ -38,6 +38,23 @@ public class GenericClassTypeTest {
     class Inner<U> {}
   }
 
+  /**
+   * A generic class whose type parameter has a self-referential bound, with a generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  static class SelfOuter<T extends SelfOuter<T>> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Inner<U> {}
+  }
+
+  /** A class that satisfies the bound of {@link SelfOuter}. */
+  static class ConcreteSelfOuter extends SelfOuter<ConcreteSelfOuter> {}
+
   @Test
   public void instantiateMemberClassTest() {
     ReferenceType integerType = ReferenceType.forClass(Integer.class);
@@ -68,6 +85,29 @@ public class GenericClassTypeTest {
         (GenericClassType) ClassOrInterfaceType.forClass(NumberOuter.class);
     assertEquals(numberOuter.instantiate(integerType), instantiatedInner.enclosingType);
     assertThrows(IllegalArgumentException.class, () -> inner.instantiate(stringType, integerType));
+    inner.instantiate(Arrays.asList(integerType, stringType));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(Arrays.asList(stringType, integerType)));
+  }
+
+  @Test
+  public void instantiateSelfReferentialOwnerTest() {
+    ReferenceType concreteType = ReferenceType.forClass(ConcreteSelfOuter.class);
+    ReferenceType stringType = JavaTypes.STRING_TYPE;
+
+    GenericClassType inner =
+        (GenericClassType) ClassOrInterfaceType.forClass(SelfOuter.Inner.class);
+    assertEquals(2, inner.getTypeParameters().size());
+    InstantiatedType instantiated = inner.instantiate(concreteType, stringType);
+    assertEquals(Arrays.asList(TypeArgument.forType(stringType)), instantiated.getTypeArguments());
+    inner.instantiate(Arrays.asList(concreteType, stringType));
+    assertThrows(IllegalArgumentException.class, () -> inner.instantiate(stringType, stringType));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(Arrays.asList(stringType, stringType)));
+    assertTrue(inner.areWithinBounds(Arrays.asList(concreteType, stringType)));
+    assertFalse(inner.areWithinBounds(Arrays.asList(stringType, stringType)));
   }
 
   @Test
