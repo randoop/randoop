@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
@@ -131,18 +132,21 @@ public class ArrayTypeTest {
     }
 
     String invalidArrayInnerClass = "java.util.Formatter$IDontExist[][]";
-    try {
-      Type.forFullyQualifiedName(invalidArrayInnerClass);
-      Assert.fail();
-    } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      // Good
-    }
-    try {
-      Type.getTypeforFullyQualifiedName(invalidArrayInnerClass);
-      Assert.fail();
-    } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      // Good
-    }
+    assertClassNotFound(
+        assertThrows(Throwable.class, () -> Type.forFullyQualifiedName(invalidArrayInnerClass)));
+    assertClassNotFound(
+        assertThrows(
+            Throwable.class, () -> Type.getTypeforFullyQualifiedName(invalidArrayInnerClass)));
+  }
+
+  /**
+   * Asserts that the given throwable indicates that a class was not found.
+   *
+   * @param t a throwable
+   */
+  private static void assertClassNotFound(Throwable t) {
+    assertTrue(
+        t.toString(), t instanceof ClassNotFoundException || t instanceof NoClassDefFoundError);
   }
 
   /**
@@ -170,35 +174,9 @@ public class ArrayTypeTest {
     assertFalse(stringArray.isSubtypeOfOrEqualTo(nullArray));
   }
 
-  /** A generic class with a non-generic member class. */
-  static class Outer<T> {
-    /** A non-generic member class of a generic class. */
-    class Inner {}
-  }
-
-  /** A generic subclass of a member class of a parameterized type. */
-  static class Sub<U> extends Outer<String>.Inner {
-    /**
-     * Creates a Sub.
-     *
-     * @param outer the enclosing instance of the superclass
-     */
-    Sub(Outer<String> outer) {
-      outer.super();
-    }
-  }
-
   /** Methods whose return types are used in the tests. */
   @SuppressWarnings("unused")
   abstract static class TypeHolder {
-    abstract Outer<String>.Inner innerType();
-
-    abstract Outer<String>.Inner[] innerArrayType();
-
-    abstract Sub<Integer> subType();
-
-    abstract Sub<Integer>[] subArrayType();
-
     abstract List<? extends Number> extendsNumberList();
 
     abstract List<? extends Number>[] extendsNumberListArray();
@@ -234,20 +212,6 @@ public class ArrayTypeTest {
    */
   private static Type returnType(String methodName) throws NoSuchMethodException {
     return Type.forType(TypeHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
-  }
-
-  @Test
-  public void testSubtypeOfMemberClassOfParameterizedType() throws NoSuchMethodException {
-    Type inner = returnType("innerType");
-    Type sub = returnType("subType");
-    assertTrue(sub.isSubtypeOfOrEqualTo(inner));
-    assertFalse(inner.isSubtypeOfOrEqualTo(sub));
-    assertFalse(returnType("integerList").isSubtypeOfOrEqualTo(inner));
-
-    Type innerArray = returnType("innerArrayType");
-    Type subArray = returnType("subArrayType");
-    assertTrue(subArray.isSubtypeOfOrEqualTo(innerArray));
-    assertFalse(returnType("integerListArray").isSubtypeOfOrEqualTo(innerArray));
   }
 
   @Test

@@ -5,6 +5,7 @@ import java.util.Map;
 import randoop.reflection.OperationExtractorTest;
 
 /** Input class for {@link OperationExtractorTest#inaccessibleArgumentTest()} */
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") // test input
 public class InaccessibleArgumentInput {
   private InaccessibleArgumentInput() {}
 
