@@ -736,9 +736,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns true if {@code otherType} is a non-generic member class of a parameterized type, such as
-   * {@code Outer<?>.Inner}, and this type has a supertype of the same class whose enclosing type is
-   * a subtype of the enclosing type of {@code otherType}. For example, a subclass of {@code
+   * Returns true if {@code otherType} is a non-generic member class of a parameterized type, such
+   * as {@code Outer<?>.Inner}, and this type has a supertype of the same class whose enclosing type
+   * is a subtype of the enclosing type of {@code otherType}. For example, a subclass of {@code
    * Outer<String>.Inner} is a subtype of {@code Outer<?>.Inner} but not of {@code
    * Outer<Integer>.Inner}.
    *
@@ -746,7 +746,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * supertypes by equality, so it does not handle this case.
    *
    * @param otherType the possible supertype
-   * @return true if this type is a subtype of {@code otherType}, which is a non-generic member class
+   * @return true if this type is a subtype of {@code otherType}, which is a non-generic member
+   *     class
    */
   /*package*/ boolean isSubtypeOfMemberClass(Type otherType) {
     if (!(otherType instanceof NonParameterizedType)) {
