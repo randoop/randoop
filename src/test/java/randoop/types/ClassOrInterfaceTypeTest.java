@@ -541,30 +541,6 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(instantiated.hashCode(), reflected.hashCode());
   }
 
-  /** Each type argument is checked against the bound of its own type parameter. */
-  @Test
-  public void instantiateMemberClassChecksBoundsTest() {
-    GenericClassType numberInner =
-        (GenericClassType) ClassOrInterfaceType.forClass(Outer.NumberInner.class);
-    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
-    // Outer<String>.NumberInner<Integer> is valid.
-    numberInner.instantiate(JavaTypes.STRING_TYPE, integerType);
-    numberInner.instantiate(Arrays.asList(JavaTypes.STRING_TYPE, integerType));
-    // Outer<Integer>.NumberInner<String> is not.
-    try {
-      numberInner.instantiate(integerType, JavaTypes.STRING_TYPE);
-      throw new AssertionError("expected IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
-      // expected
-    }
-    try {
-      numberInner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE));
-      throw new AssertionError("expected IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
-      // expected
-    }
-  }
-
   /** The supertypes of a type with a wildcard argument are those of its capture conversion. */
   @Test
   public void captureBeforeSupertypeTest() {
@@ -1671,6 +1647,23 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(substituted, fromField);
     assertEquals(fromField.hashCode(), substituted.hashCode());
     assertFalse(fromField.equals(genericInnerType(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)));
+    // The two representations are identical too, so substitutions that map a type variable to
+    // them are consistent.
+    assertTrue(TypeVariable.areIdentical(fromField, substituted));
+    assertTrue(TypeVariable.areIdentical(substituted, fromField));
+    TypeVariable key = TypeVariable.forType(List.class.getTypeParameters()[0]);
+    assertTrue(
+        new Substitution(key, fromField).isConsistentWith(new Substitution(key, substituted)));
+    // A copy of T with other bounds is not identical to T.
+    TypeVariable t = parameters.get(0);
+    TypeVariable copy =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.STRING_TYPE));
+    ClassOrInterfaceType substitutedCopy =
+        genericForm.substitute(
+            new Substitution(parameters, Arrays.asList(copy, JavaTypes.STRING_TYPE)));
+    assertEquals(fromField, substitutedCopy);
+    assertFalse(TypeVariable.areIdentical(fromField, substitutedCopy));
   }
 
   /**
@@ -1912,6 +1905,8 @@ public class ClassOrInterfaceTypeTest {
     GenericClassType numberInner =
         (GenericClassType) ClassOrInterfaceType.forClass(Outer.NumberInner.class);
     ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    // Outer<String>.NumberInner<Integer> is valid; Outer<Integer>.NumberInner<String> is not,
+    // because of the bound of NumberInner's type parameter.
     ClassOrInterfaceType expected = classFieldType("stringNumberInnerOfInteger");
     assertEquals(expected, numberInner.instantiate(JavaTypes.STRING_TYPE, integerType));
     assertEquals(
@@ -1922,6 +1917,20 @@ public class ClassOrInterfaceTypeTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> numberInner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE)));
+
+    // NumberOuter<T extends Number>.Inner<U>:  U is unbounded, so NumberOuter<String>.Inner<String>
+    // is rejected only because of the bound of the enclosing class's type parameter.
+    GenericClassType inner =
+        (GenericClassType)
+            ClassOrInterfaceType.forClass(GenericClassTypeTest.NumberOuter.Inner.class);
+    inner.instantiate(integerType, JavaTypes.STRING_TYPE);
+    inner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(Arrays.asList(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE)));
   }
 
   /** Tests that a member class has a wildcard if its enclosing type does. */

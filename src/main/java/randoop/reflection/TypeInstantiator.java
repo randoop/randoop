@@ -748,7 +748,9 @@ public class TypeInstantiator {
    *       variables), or a supertype of that type or a type argument of such a supertype; see
    *       {@link #relatedTypes(ReferenceType)}; or it is a type for {@code X} that the type of such
    *       a variable implies; see {@link #boundWitnesses(TypeVariable, TypeVariable,
-   *       Substitution)}.
+   *       Substitution)}; or it is a type for {@code X} that a candidate type of another of {@code
+   *       parameters}, whose bounds mention {@code X}, implies; see {@link
+   *       #addProvisionalBoundWitnesses(Map, Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -807,6 +809,14 @@ public class TypeInstantiator {
           }
         }
       }
+      result.put(parameter, candidates);
+    }
+    addProvisionalBoundWitnesses(result, substitution);
+    for (TypeVariable parameter : parameters) {
+      List<TypeVariable> constrained =
+          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
+      List<ReferenceType> candidates = result.get(parameter);
+      assert candidates != null : "@AssumeAssertion(nullness): every parameter is a key";
       // Only the bounds of the constrained type variables can be checked with `parameter` alone
       // instantiated.  The others are checked when the substitution is completed.
       if (!constrained.isEmpty()) {
@@ -819,9 +829,64 @@ public class TypeInstantiator {
         Log.logPrintf("No candidate types for %s consistent with %s%n", parameter, substitution);
         return null;
       }
-      result.put(parameter, candidates);
     }
     return result;
+  }
+
+  /**
+   * Adds to the candidate types of each type variable the types that a candidate type of another
+   * of the type variables implies, through the bounds of that other type variable; see {@link
+   * #boundWitnesses(TypeVariable, TypeVariable, Substitution)}. Repeats until no candidate type is
+   * added, so that a chain of bounds propagates the types. For example, for {@code <V, U extends
+   * Comparable<V>, T extends Comparable<U>>}, if {@code substitution} maps {@code T} to {@code
+   * Top}, which implements {@code Comparable<Middle>}, then {@code Middle} is a candidate for
+   * {@code U}; and if {@code Middle} implements {@code Comparable<String>}, then this adds {@code
+   * String} to the candidates for {@code V}.
+   *
+   * <p>A candidate type is only provisional: the bounds are checked when the substitution is
+   * completed, so that conflicting candidate types are rejected.
+   *
+   * @param candidatesByVariable a map from each type variable that {@code substitution} does not
+   *     instantiate to its candidate types; this method adds to the values
+   * @param substitution a substitution
+   */
+  private static void addProvisionalBoundWitnesses(
+      Map<TypeVariable, List<ReferenceType>> candidatesByVariable, Substitution substitution) {
+    Set<TypeVariable> parameters = candidatesByVariable.keySet();
+    // Each round propagates candidate types one step along a chain of bounds, and a chain visits
+    // each type variable at most once, so there are at most as many useful rounds as variables.
+    boolean changed = true;
+    for (int round = 0; changed && round < parameters.size(); round++) {
+      changed = false;
+      for (TypeVariable variable : parameters) {
+        Set<TypeVariable> boundVariables =
+            new LinkedHashSet<>(variable.getLowerTypeBound().getTypeParameters());
+        boundVariables.addAll(variable.getUpperTypeBound().getTypeParameters());
+        boundVariables.remove(variable);
+        boundVariables.retainAll(parameters);
+        if (boundVariables.isEmpty()) {
+          continue;
+        }
+        List<ReferenceType> variableCandidates = candidatesByVariable.get(variable);
+        assert variableCandidates != null : "@AssumeAssertion(nullness): variable is a key";
+        for (ReferenceType candidate : new ArrayList<>(variableCandidates)) {
+          if (candidate.isGeneric()) {
+            continue;
+          }
+          Substitution provisional = substitution.extend(new Substitution(variable, candidate));
+          for (TypeVariable boundVariable : boundVariables) {
+            List<ReferenceType> boundCandidates = candidatesByVariable.get(boundVariable);
+            assert boundCandidates != null : "@AssumeAssertion(nullness): retained in the keys";
+            for (ReferenceType witness : boundWitnesses(boundVariable, variable, provisional)) {
+              if (!boundCandidates.contains(witness)) {
+                boundCandidates.add(witness);
+                changed = true;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /**

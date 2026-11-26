@@ -517,9 +517,10 @@ public abstract class TypeVariable extends ParameterType {
    * Substitution)}.
    *
    * <ul>
-   *   <li>For a class or interface type, the result is its strict supertypes that mention only its
-   *       type variables. For every class or interface type other than {@code Object}, the result
-   *       also includes {@code Object}.
+   *   <li>For a class or interface type, the result is the strict supertypes of its capture
+   *       conversion that mention only the type variables of that capture conversion. For every
+   *       class or interface type other than {@code Object}, the result also includes {@code
+   *       Object}.
    *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
    *       if the component type is a reference type other than {@code Object}, {@code Object[]};
    *       and the arrays whose component types are the strict supertypes of the array's component
@@ -537,13 +538,17 @@ public abstract class TypeVariable extends ParameterType {
   private static List<ReferenceType> strictSupertypes(ReferenceType type) {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof ClassOrInterfaceType) {
-      List<TypeVariable> typeParameters = type.getTypeParameters();
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
-        // A supertype that mentions a type variable that `type` does not is not a supertype of
-        // `type`.  It arises when `type` is a GenericClassType, whose supertypes are those of its
-        // raw class and do not preserve the relationship between their type parameters.  A
-        // supertype that mentions only the type variables of `type`, such as List<E> for
-        // ArrayList<E>, is a supertype of `type`.
+      // The supertypes of a type with a wildcard argument are those of its capture conversion:
+      // for Nested<T> extends ArrayList<List<T>>, a supertype of Nested<?> is List<List<CAP>>, not
+      // List<List<?>>.
+      ClassOrInterfaceType captured = ((ClassOrInterfaceType) type).applyCaptureConversion();
+      List<TypeVariable> typeParameters = captured.getTypeParameters();
+      for (ClassOrInterfaceType supertype : captured.getSupertypesStrict()) {
+        // A supertype that mentions a type variable that `captured` does not is not a supertype of
+        // it.  It arises when `type` is a GenericClassType, whose supertypes are those of its raw
+        // class and do not preserve the relationship between their type parameters.  A supertype
+        // that mentions only the type variables of `captured`, such as List<E> for ArrayList<E>,
+        // or List<List<CAP>> for the capture of Nested<?>, is a supertype of it.
         if (typeParameters.containsAll(supertype.getTypeParameters())) {
           result.add(supertype);
         }
@@ -661,6 +666,11 @@ public abstract class TypeVariable extends ParameterType {
    * other, as for {@code List<? extends Outer<String>.Inner>} before and after a substitution; such
    * bounds are not equal, but they are identical.
    *
+   * <p>The generic form of a class can be a {@link GenericClassType} or an equivalent {@link
+   * InstantiatedType}, and a generic-form enclosing type can be present or omitted; see {@link
+   * ClassOrInterfaceType#isGenericForm()}. Such equivalent representations are identical if the
+   * type variables in them are.
+   *
    * @param type1 a type
    * @param type2 a type
    * @return true if the types are equal and the type variables in them are identical
@@ -684,15 +694,33 @@ public abstract class TypeVariable extends ParameterType {
     if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
       ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
-      if (type1.getClass() != type2.getClass()
-          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())
-          || classType1.isMemberClass() != classType2.isMemberClass()) {
+      // The generic form of a class can be a GenericClassType or an InstantiatedType whose type
+      // arguments are the type parameters, as for the owner Outer<T> of Outer<T>.Inner<String>
+      // from reflection and from substitution.  Their type arguments, compared below, are the same.
+      boolean sameRepresentation =
+          type1.getClass() == type2.getClass()
+              || (type1 instanceof ParameterizedType
+                  && type2 instanceof ParameterizedType
+                  && classType1.isGenericForm()
+                  && classType2.isGenericForm());
+      if (!sameRepresentation
+          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())) {
         return false;
       }
-      if (classType1.isMemberClass()
-          && classType2.isMemberClass()
-          && !areIdentical(classType1.enclosingType, classType2.enclosingType)) {
-        return false;
+      if (classType1.isMemberClass() && classType2.isMemberClass()) {
+        if (!areIdentical(classType1.enclosingType, classType2.enclosingType)) {
+          return false;
+        }
+      } else if (classType1.isMemberClass()) {
+        // Some construction paths omit a generic-form enclosing type; see
+        // ClassOrInterfaceType#constrainingEnclosingType.
+        if (!isDeclaredGenericForm(classType1.enclosingType)) {
+          return false;
+        }
+      } else if (classType2.isMemberClass()) {
+        if (!isDeclaredGenericForm(classType2.enclosingType)) {
+          return false;
+        }
       }
       List<TypeArgument> arguments1 = classType1.getTypeArguments();
       List<TypeArgument> arguments2 = classType2.getTypeArguments();
@@ -715,6 +743,18 @@ public abstract class TypeVariable extends ParameterType {
     }
     return type1.equals(type2)
         && areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns true if the given type is the generic form of its class, with the type parameters as
+   * declared, not copies of them with other bounds. Such an enclosing type is equivalent to none.
+   *
+   * @param type a class or interface type
+   * @return true if {@code type} is identical to the generic form of its class
+   */
+  private static boolean isDeclaredGenericForm(ClassOrInterfaceType type) {
+    return type.isGenericForm()
+        && areIdentical(type, ClassOrInterfaceType.forClass(type.getRuntimeClass()));
   }
 
   /**

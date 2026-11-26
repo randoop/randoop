@@ -470,6 +470,20 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     assert goalType.isGeneric() : "goal type must be generic";
 
+    // For a generic class goal type, the supertype of this type that instantiates it.  It is
+    // computed once, because each computation of a supertype of a type with a wildcard argument
+    // captures the wildcard anew:  the enclosing type matched below and the type substitution of
+    // the supertype must come from the same capture.
+    InstantiatedType supertype = null;
+    if (goalType instanceof GenericClassType) {
+      supertype = this.getMatchingSupertype((GenericClassType) goalType);
+      // No supertype instantiates the goal type, as for a class that extends the raw type of the
+      // goal type's class, so no substitution binds the goal type's type parameters.
+      if (supertype == null) {
+        return null;
+      }
+    }
+
     Substitution substitution = new Substitution();
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
@@ -486,7 +500,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
           return null;
         }
-        ClassOrInterfaceType thisEnclosingType = getEnclosingTypeFor(goalClassType);
+        ClassOrInterfaceType thisEnclosingType =
+            supertype == null
+                ? getEnclosingTypeFor(goalClassType)
+                : (supertype.isMemberClass() ? supertype.enclosingType : enclosingType);
         if (thisEnclosingType instanceof GenericClassType
             && thisEnclosingType.equals(enclosingGoalType)) {
           // The enclosing type is the generic form of the goal's enclosing class, as for
@@ -514,19 +531,31 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
 
-    if (goalType instanceof GenericClassType) {
-      InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
-      // No supertype instantiates the goal type, as for a class that extends the raw type of the
-      // goal type's class, so no substitution binds the goal type's type parameters.
-      if (supertype == null) {
-        return null;
-      }
+    if (supertype != null) {
       // The type substitution of the supertype maps the type parameters of the goal type,
       // including those of its enclosing classes.  The enclosing type of the supertype can differ
       // from that of this type, as for Outer<String>.Sub that extends Outer<Integer>.Inner; the
-      // substitution above is from the enclosing type of this type's view of the goal type's
-      // class, which is the supertype, so it is consistent with the supertype's substitution.
+      // substitution above is from the enclosing type of the supertype, so it is consistent with
+      // the supertype's substitution.
       Substitution supertypeSubstitution = supertype.getTypeSubstitution();
+      if (supertypeSubstitution == null || !substitution.isConsistentWith(supertypeSubstitution)) {
+        return null;
+      }
+      substitution = substitution.extend(supertypeSubstitution);
+    } else if (goalType instanceof InstantiatedType && this instanceof NonParameterizedType) {
+      // The goal type has type arguments of its own, which this type, such as a class Owner.Child
+      // that extends Owner.Base<String>, does not bind directly.  Its supertype of the goal type's
+      // class binds them.  A raw type, such as Owner.Base, has no such supertype.
+      // InstantiatedType#getInstantiatingSubstitution handles the type arguments of an
+      // InstantiatedType receiver.
+      InstantiatedType goalInstantiatedType = (InstantiatedType) goalType;
+      InstantiatedType matchingSupertype =
+          this.getMatchingSupertype(goalInstantiatedType.getGenericClassType());
+      if (matchingSupertype == null) {
+        return null;
+      }
+      Substitution supertypeSubstitution =
+          matchingSupertype.getInstantiatingSubstitution(goalInstantiatedType);
       if (supertypeSubstitution == null || !substitution.isConsistentWith(supertypeSubstitution)) {
         return null;
       }

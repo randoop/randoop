@@ -857,6 +857,69 @@ public class TypeInstantiatorTest {
     }
   }
 
+  /** A class that is comparable to strings, and to which {@link Top} is comparable. */
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
+  static class Middle implements Comparable<String> {
+    @Override
+    public int compareTo(String other) {
+      return 0;
+    }
+  }
+
+  /** A class that is comparable to {@link Middle}. */
+  @SuppressWarnings({
+    "ComparableType", // comparable to another type, to test bounds
+    "PMD.OverrideBothEqualsAndHashCodeOnComparable" // tests bounds, not equality or ordering
+  })
+  static class Top implements Comparable<Middle> {
+    @Override
+    public int compareTo(Middle other) {
+      return 0;
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable whose bound mentions another type
+   * variable, whose own bound mentions a third.
+   *
+   * @param <V> the type that {@code U} is comparable to
+   * @param <U> the type that the elements are comparable to
+   * @param <T> the result element type
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <V, U extends Comparable<V>, T extends Comparable<U>>
+      List<T> chainedComparableList() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that the types that the goal type implies propagate along a chain of bounds. For the goal
+   * type {@code List<Top>}, {@code <V, U extends Comparable<V>, T extends Comparable<U>> List<T>
+   * chainedComparableList()} is instantiated with {@code Middle} for {@code U}, because {@code Top}
+   * is a {@code Comparable<Middle>}, and with {@code String} for {@code V}, because {@code Middle}
+   * is a {@code Comparable<String>}. Neither is an input type.
+   */
+  @Test
+  public void testGoalTypeImpliesVariablesThroughChainedBounds()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation chainedComparableList =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("chainedComparableList"));
+    InstantiatedType listOfTop =
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Top.class));
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(chainedComparableList, listOfTop);
+      assertNotNull(operation);
+      assertEquals(listOfTop, operation.getOutputType());
+    }
+  }
+
   /** A serializable class that is comparable to strings. */
   @SuppressWarnings({
     "ComparableType", // comparable to another type, to test bounds

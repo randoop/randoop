@@ -978,6 +978,25 @@ public class TypeVariableTest {
   }
 
   /**
+   * {@link Substitution#withIdentityFor} replaces an entry that maps a type variable {@code t} to a
+   * copy {@code c} of it by one that maps {@code c} to itself, and reuses an entry that already
+   * does.
+   */
+  @Test
+  public void testWithIdentityForRekeysCopy() {
+    TypeVariable t = typeParameter(SelfComparableBound.class, 0);
+    TypeVariable c =
+        t.createCopyWithBounds(
+            t.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution replacement = new Substitution(t, c);
+    assertFalse(replacement.mapsToItself(c));
+    Substitution result = replacement.withIdentityFor(Collections.singletonList(c));
+    assertTrue(result.mapsToItself(c));
+    assertSame(c, result.keySet().iterator().next());
+    assertSame(result, result.withIdentityFor(Collections.singletonList(c)));
+  }
+
+  /**
    * Extending a substitution that maps a type variable {@code t} to itself by one that maps it to a
    * distinct copy {@code c} with identical bounds, in either order, keeps the key and value of the
    * entry that maps {@code t} to {@code c} together.
@@ -3151,6 +3170,121 @@ public class TypeVariableTest {
     ClassOrInterfaceType rawChild = ClassOrInterfaceType.forClass(RawHolder.RawChild.class);
     GenericClassType box = GenericClassType.forClass(RawHolder.Box.class);
     assertNull(rawChild.getMatchingSupertype(box));
+  }
+
+  /** A non-generic class with member classes, one of which extends the other. */
+  static class NonGenericOwner {
+    /**
+     * A generic member class.
+     *
+     * @param <X> the type parameter
+     */
+    class Base<X> {}
+
+    /** A member class that extends an instantiation of {@link Base}. */
+    class Child extends Base<String> {}
+  }
+
+  /**
+   * A method whose parameter is an instantiation of a member class of a non-generic class.
+   *
+   * @param <T> the type argument of the parameter type
+   * @param value a value
+   */
+  @SuppressWarnings({"UnusedMethod", "UnusedVariable"}) // used via reflection
+  private static <T> void useBase(NonGenericOwner.Base<T> value) {}
+
+  /**
+   * A subclass of a member class of a non-generic class binds the type arguments of a goal type
+   * that is an instantiation of that member class, through its supertype.
+   */
+  @Test
+  public void testMemberSubclassBindsGoalTypeArguments() throws NoSuchMethodException {
+    Method useBase =
+        TypeVariableTest.class.getDeclaredMethod("useBase", NonGenericOwner.Base.class);
+    ClassOrInterfaceType goal =
+        ClassOrInterfaceType.forType(useBase.getGenericParameterTypes()[0]);
+    assertTrue(goal instanceof InstantiatedType);
+    TypeVariable t = TypeVariable.forType(useBase.getTypeParameters()[0]);
+    ClassOrInterfaceType child = ClassOrInterfaceType.forClass(NonGenericOwner.Child.class);
+    Substitution substitution = child.getInstantiatingSubstitution(goal);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(t));
+    // A raw type of the member class binds nothing.
+    NonParameterizedType rawBase = new NonParameterizedType(NonGenericOwner.Base.class);
+    rawBase.enclosingType = ClassOrInterfaceType.forClass(NonGenericOwner.class);
+    assertNull(rawBase.getInstantiatingSubstitution(goal));
+  }
+
+  /**
+   * A generic class with generic member classes, one of which extends the other.
+   *
+   * @param <T> the type parameter
+   */
+  static class WildcardOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class Base<U> {}
+
+    /**
+     * A generic member class that extends {@link Base}.
+     *
+     * @param <V> the type parameter
+     */
+    class Derived<V> extends Base<V> {}
+  }
+
+  /** A field of type {@code WildcardOuter<?>.Derived<Integer>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  WildcardOuter<?>.Derived<Integer> wildcardOuterDerivedField;
+
+  /**
+   * Matching a member class whose enclosing type has a wildcard against the generic form of its
+   * superclass uses one capture of the wildcard for both the enclosing type and the type arguments.
+   */
+  @Test
+  public void testWildcardEnclosingTypeMatchesSupertypeOnce() throws NoSuchFieldException {
+    ClassOrInterfaceType derived = (ClassOrInterfaceType) ownFieldType("wildcardOuterDerivedField");
+    GenericClassType base =
+        (GenericClassType) ClassOrInterfaceType.forClass(WildcardOuter.Base.class);
+    Substitution substitution = derived.getInstantiatingSubstitution(base);
+    assertNotNull(substitution);
+    TypeVariable u = TypeVariable.forType(WildcardOuter.Base.class.getTypeParameters()[0]);
+    assertEquals(JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(u));
+  }
+
+  /**
+   * A class whose type argument for its superclass is a parameterized type.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("serial") // not serialized
+  static class Nested<T> extends ArrayList<List<T>> {}
+
+  /**
+   * A class whose type parameter's bound has a wildcard within a type argument.
+   *
+   * @param <K> the type parameter
+   */
+  static class ListOfWildcardListBound<K extends List<List<?>>> {}
+
+  /** A field of type {@code Nested<?>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Nested<?> nestedOfWildcardField;
+
+  /**
+   * The supertypes that {@link TypeVariable#canBeSupertypeOf} considers are those of the capture
+   * conversion: {@code List<List<?>>} is not a supertype of {@code Nested<?>}, whose capture has
+   * the supertype {@code List<List<CAP>>}.
+   */
+  @Test
+  public void testCanBeSupertypeOfCapturesWildcards() throws NoSuchFieldException {
+    TypeVariable k = typeParameter(ListOfWildcardListBound.class, 0);
+    ReferenceType nestedOfWildcard = ownFieldType("nestedOfWildcardField");
+    assertFalse(k.canBeSupertypeOf(nestedOfWildcard, new Substitution()));
   }
 
   /** A field of type {@code List<? extends List<String>[]>}. */
