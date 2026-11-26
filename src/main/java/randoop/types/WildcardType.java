@@ -158,7 +158,11 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * A {@code ? super T} wildcard contains no upper-bounded wildcard.
+   * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}, which can
+   * stand for a type that is not a supertype of {@code T}.
+   *
+   * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
+   * equivalent {@link ReferenceBound}.
    *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise

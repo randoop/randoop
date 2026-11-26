@@ -4,7 +4,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
@@ -21,9 +20,10 @@ public class GenericClassType extends ParameterizedType {
    * The type parameters that the generic class declares, not including those of an enclosing class.
    * Null until first needed: computing them computes their bounds, which may refer to this class,
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
-   * infinitely for such a class.
+   * infinitely for such a class. Use {@link #directTypeParameters()} instead of reading this field.
    */
-  private @MonotonicNonNull List<TypeVariable> directTypeParameters;
+  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
+  private volatile @Nullable List<TypeVariable> directTypeParameters = null;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -43,11 +43,12 @@ public class GenericClassType extends ParameterizedType {
    * @return the type parameters that this generic class declares
    */
   private List<TypeVariable> directTypeParameters() {
-    if (directTypeParameters == null) {
-      directTypeParameters =
-          CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+    List<TypeVariable> result = directTypeParameters;
+    if (result == null) {
+      result = CollectionsPlume.mapList(TypeVariable::forType, rawType.getTypeParameters());
+      directTypeParameters = result;
     }
-    return directTypeParameters;
+    return result;
   }
 
   /**
@@ -182,6 +183,18 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
+   * Returns the type parameters that this generic class declares. Unlike {@link
+   * #getTypeParameters()}, the result omits the type parameters of enclosing classes. For example,
+   * for {@code Outer<T>.Inner<U>}, the result is {@code [U]}. The result corresponds to the type
+   * arguments of an instantiation of this class.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
+    return directTypeParameters();
+  }
+
+  /**
    * Returns the list of type parameters of this generic class.
    *
    * @return the list of type parameters of this generic class
@@ -266,7 +279,8 @@ public class GenericClassType extends ParameterizedType {
       List<ReferenceType> typeArguments,
       Substitution substitution) {
     // For a member class, the type parameters of the enclosing types precede those of this class,
-    // so each type argument is checked against the type parameter at the same index.
+    // such as [T, U] for Outer<T>.Inner<U>, so each type argument is checked against the type
+    // parameter at the same index.
     for (int i = 0; i < typeParameters.size(); i++) {
       ParameterBound bound = typeParameters.get(i).getUpperTypeBound();
       if (!bound.isUpperBound(typeArguments.get(i), substitution)) {

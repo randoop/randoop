@@ -208,7 +208,9 @@ public final class ContractCheckingGenerator extends TestCheckGenerator {
             return false;
           }
           Substitution subst = superType.getTypeSubstitution();
-          if (!substitution.isConsistentWith(subst)) {
+          // The substitution is null if a type argument of superType, or of an enclosing type, is
+          // a wildcard.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return false;
           }
           substitution = substitution.extend(subst);

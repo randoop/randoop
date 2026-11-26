@@ -103,48 +103,33 @@ public abstract class ReferenceBound extends ParameterBound {
     return boundType.isVariable();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is a lower bound
-   * on every one of its members, since a type is a subtype of the intersection if and only if it is
-   * a subtype of each member. Returns false if {@code bound} is a {@link LazyParameterBound} that
-   * contains a kind of type that it cannot convert to a {@link ReferenceBound}.
-   */
+  /*package*/
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (!isLowerBound(member, substitution)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    ReferenceType type = asReferenceType(bound);
-    return type != null && isLowerBound(type, substitution);
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    // Mapping each type variable that the substitution does not replace to itself makes it an
+    // unknown.
+    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameters());
+    return bound.hasUpperBound(boundType.substitute(completeSubstitution), completeSubstitution);
   }
 
   /**
    * {@inheritDoc}
    *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
-   * on any of its members, since the intersection is a subtype of each member. Returns false if
-   * {@code bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot
-   * convert to a {@link ReferenceBound}.
+   * <p>As specified, the substitution is applied to {@code lowerBound} but not to the type of this
+   * bound, even if that type contains type variables, as in {@code T[]}. So, with {@code T :=
+   * String}, the bound {@code String[]} is not a lower bound of {@code T[]}, but {@code T[]} is a
+   * lower bound of {@code String[]}.
    */
   @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (isUpperBound(member, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    ReferenceType type = asReferenceType(bound);
-    return type != null && isUpperBound(type, substitution);
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
+    // type variables, as in T[], where T is not recursive; they stand for themselves.
+    return lowerBound.isLowerBound(boundType, substitution);
+  }
+
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    return Subtyping.isSubtypeOrEqual(boundType, upperBound, substitution);
   }
 
   /**
