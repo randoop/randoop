@@ -366,7 +366,7 @@ public class CaptureConversionTest {
     InstantiatedType memberType =
         (InstantiatedType)
             Type.forType(CaptureConversionTest.class.getField("memberField").getGenericType());
-    // Type.forType does not record the type arguments of an enclosing type, so set it directly.
+    // Replace the enclosing type, Outer<String>, by one that has a wildcard type argument.
     memberType.enclosingType =
         (ClassOrInterfaceType)
             Type.forType(
@@ -458,5 +458,33 @@ public class CaptureConversionTest {
     TypeTuple inputTypes = op.getInputTypes();
     assertEquals(inputTypes.size(), 2);
     return (InstantiatedType) inputTypes.get(1);
+  }
+
+  /**
+   * A class whose second type parameter is bounded by the first.
+   *
+   * @param <B> a type parameter with a self-referential bound
+   * @param <A> a type parameter bounded by {@code B}
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class DependentBound<B extends Comparable<B>, A extends B> {
+    /** A field whose type has a bounded wildcard for B and an unbounded one for A. */
+    DependentBound<? extends Number, ?> field;
+  }
+
+  @Test
+  public void testCaptureOfDependentBoundKeepsWildcardBound() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType)
+                ClassOrInterfaceType.forType(
+                    DependentBound.class.getDeclaredField("field").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable captureB =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    TypeVariable captureA =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(1)).getReferenceType();
+    // The capture of B is bounded by Number, so String can instantiate neither capture.
+    assertFalse(captureB.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertFalse(captureA.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 }

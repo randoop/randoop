@@ -30,9 +30,11 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
+import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
+import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 import randoop.util.Randomness;
 
@@ -307,7 +309,9 @@ public class InstantiationTest {
       // <K, V extends K> K widen(V)
       TypedClassOperation widenInstance = instantiator.instantiate(widen);
       assertNotNull("instantiation failed for " + widen, widenInstance);
-      assertFalse(widenInstance + " should not be generic", widenInstance.isGeneric());
+      assertFalse(
+          widenInstance + " should not be generic",
+          widenInstance.isGeneric(/* ignoreWildcards= */ true));
       Type k = widenInstance.getOutputType();
       Type v = widenInstance.getInputTypes().get(0);
       assertTrue(v + " should be a subtype of " + k, v.isSubtypeOfOrEqualTo(k));
@@ -315,7 +319,9 @@ public class InstantiationTest {
       // <A, B extends A, C extends B> A chain(B, C)
       TypedClassOperation chainInstance = instantiator.instantiate(chain);
       assertNotNull("instantiation failed for " + chain, chainInstance);
-      assertFalse(chainInstance + " should not be generic", chainInstance.isGeneric());
+      assertFalse(
+          chainInstance + " should not be generic",
+          chainInstance.isGeneric(/* ignoreWildcards= */ true));
       Type a = chainInstance.getOutputType();
       Type b = chainInstance.getInputTypes().get(0);
       Type c = chainInstance.getInputTypes().get(1);
@@ -326,23 +332,29 @@ public class InstantiationTest {
   }
 
   /**
-   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
-   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
-   * variable whose bound mentions that type variable.
+   * Tests that a type variable that occurs only in wildcard bounds can be instantiated by a type
+   * argument of an input type, even if that type argument is not itself an input type.
    */
   @Test
-  public void testRecursivelyBoundedCaptureInstantiation()
+  public void testInferredTypeArgumentInstantiation()
       throws NoSuchMethodException, RandoopSpecificationError {
     Set<Type> inputTypes = new LinkedHashSet<>();
-    addTypes(JavaTypes.STRING_TYPE, inputTypes);
-    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    // The input types include List<Integer>, but not Integer.
+    addTypes(
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive()),
+        inputTypes);
+    assertFalse(inputTypes.contains(JavaTypes.INT_TYPE.toBoxedPrimitive()));
     TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
-    TypedClassOperation max =
-        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
-
-    TypedClassOperation instance = instantiator.instantiate(max);
-    assertNotNull("instantiation failed for " + max, instance);
-    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    // <T> void copy(List<? super T>, List<? extends T>)
+    TypedClassOperation copy =
+        TypedOperation.forMethod(Collections.class.getMethod("copy", List.class, List.class));
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation copyInstance = instantiator.instantiate(copy);
+      assertNotNull("instantiation failed for " + copy, copyInstance);
+      assertFalse(copyInstance.isGeneric(/* ignoreWildcards= */ true));
+    }
+    Randomness.setSeed(0);
   }
 
   /**
@@ -367,6 +379,125 @@ public class InstantiationTest {
       assertNull(instantiator.instantiate(sameKeyAndValue));
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable that is instantiated by matching a parameterized
+   * parameter type, and whose bound mentions two type variables that remain to be instantiated: the
+   * instantiation satisfies that bound, whatever the random choices.
+   */
+  @Test
+  public void testMatchedVariableBoundInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    InstantiatedType mapType =
+        JDKTypes.HASH_MAP_TYPE.instantiate(
+            JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
+    InstantiatedType listOfMaps = JDKTypes.ARRAY_LIST_TYPE.instantiate(mapType);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(listOfMaps, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <K, V, M extends Map<K, V>> Map<K, V> someMap(Collection<M>)
+    TypedClassOperation someMap =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("someMap", Collection.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(someMap);
+      assertNotNull("instantiation failed for " + someMap, instance);
+      // M := HashMap<String, Integer> satisfies M extends Map<K, V> only if K := String and
+      // V := Integer.
+      assertEquals(JDKTypes.COLLECTION_TYPE.instantiate(mapType), instance.getInputTypes().get(0));
+      assertEquals(
+          JDKTypes.MAP_TYPE.instantiate(
+              JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive()),
+          instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable that occurs only in the bound of a type variable
+   * that is instantiated by matching a parameterized parameter type, when the only suitable type is
+   * a type argument of a supertype of the matched type, and is not an input type.
+   */
+  @Test
+  public void testBoundArgumentInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType nodeType = ClassOrInterfaceType.forClass(RelatedBoundsCase.Node.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(nodeType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <K, V extends Map<K, V>> K selfMapKey(List<V>)
+    TypedClassOperation selfMapKey =
+        TypedOperation.forMethod(RelatedBoundsCase.class.getMethod("selfMapKey", List.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(selfMapKey);
+      assertNotNull("instantiation failed for " + selfMapKey, instance);
+      // V := Node satisfies V extends Map<K, V> only if K := Key.
+      assertEquals(JDKTypes.LIST_TYPE.instantiate(nodeType), instance.getInputTypes().get(0));
+      assertEquals(
+          ClassOrInterfaceType.forClass(RelatedBoundsCase.Key.class), instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of a type variable whose upper bound is a type variable that must be
+   * instantiated by a proper supertype of the type of the first type variable.
+   */
+  @Test
+  public void testSupertypeBoundInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType derivedType =
+        ClassOrInterfaceType.forClass(RelatedBoundsCase.Derived.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(derivedType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    // <T extends Comparable<T>, V extends T> T comparableSupertype(List<V>)
+    TypedClassOperation comparableSupertype =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("comparableSupertype", List.class));
+
+    for (int seed = 0; seed < 20; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(comparableSupertype);
+      assertNotNull("instantiation failed for " + comparableSupertype, instance);
+      // Derived is not Comparable<Derived>, so T := Base.
+      assertEquals(JDKTypes.LIST_TYPE.instantiate(derivedType), instance.getInputTypes().get(0));
+      assertEquals(
+          ClassOrInterfaceType.forClass(RelatedBoundsCase.Base.class), instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
+   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
+   * variable whose bound mentions that type variable.
+   */
+  @Test
+  public void testRecursivelyBoundedCaptureInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation max =
+        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
+
+    TypedClassOperation instance = instantiator.instantiate(max);
+    assertNotNull("instantiation failed for " + max, instance);
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    // The capture variable for the wildcard is instantiated, too.
+    assertEquals(
+        GenericClassType.forClass(Collection.class).instantiate(JavaTypes.STRING_TYPE),
+        instance.getInputTypes().get(0));
   }
 
   /* disabled until fix type parameter management
@@ -485,6 +616,381 @@ public class InstantiationTest {
         typeSet.addAll(classType.getSupertypesInclusive());
       }
     }
+  }
+
+  /**
+   * A generic class with a member class.
+   *
+   * @param <E> the type parameter
+   */
+  private static class Outer<E> {
+    /** A member class with no type parameters of its own. */
+    class Inner {}
+
+    /** Another member class with no type parameters of its own, unrelated to {@link Inner}. */
+    class Other {}
+
+    /** A member class whose superclass mentions the type parameter of the enclosing class. */
+    abstract class ListInner extends java.util.AbstractList<E> {}
+
+    /**
+     * A method whose parameter type is the generic form of a member class.
+     *
+     * @param inner an inner object
+     */
+    @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+    void take(Inner inner) {}
+  }
+
+  /**
+   * A method whose parameter type is generic only through its enclosing type.
+   *
+   * @param <E> the type parameter of the enclosing type
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void innerParameter(Outer<E>.Inner inner) {}
+
+  /**
+   * In {@code <E> void innerParameter(Outer<E>.Inner inner)}, the parameter type is a member class
+   * with no type parameters of its own, which is generic only through its enclosing type.
+   */
+  @Test
+  public void testNonParameterizedMemberClassParameter() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("innerParameter", Outer.Inner.class);
+    TypedClassOperation operation = TypedOperation.forMethod(m);
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    assertTrue(genericInner.isGeneric());
+    assertFalse(genericInner instanceof ParameterizedType);
+    // Outer<String>.Inner.
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
+    inputTypes.add(stringInner);
+    TypedClassOperation instantiated = new TypeInstantiator(inputTypes).instantiate(operation);
+    assertNotNull("no instantiation found", instantiated);
+    assertEquals(stringInner, instantiated.getInputTypes().get(0));
+
+    // The parameter types of `<E> void pair(Outer<E>.Inner inner, List<E> values)` share the
+    // method's type parameter `E`, so `Outer<String>.Inner` is paired with `List<String>`, never
+    // with `List<Integer>`.
+    Method pairMethod =
+        InstantiationTest.class.getDeclaredMethod("pair", Outer.Inner.class, List.class);
+    TypedClassOperation pairOperation = TypedOperation.forMethod(pairMethod);
+    Type innerParameterType = pairOperation.getInputTypes().get(0);
+    Type listParameterType = pairOperation.getInputTypes().get(1);
+    assertEquals(
+        ((ClassOrInterfaceType) innerParameterType).getTypeParameters(),
+        ((ClassOrInterfaceType) listParameterType).getTypeParameters());
+    InstantiatedType integerList =
+        JDKTypes.LIST_TYPE.instantiate(ReferenceType.forClass(Integer.class));
+    InstantiatedType stringList = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+
+    // The input type `Outer<String>.Inner` of the first parameter determines `E`.  TypeInstantiator
+    // does not require an input type for the resulting non-generic parameter type `List<String>`.
+    Set<Type> integerListInputTypes = new LinkedHashSet<>();
+    integerListInputTypes.add(JavaTypes.OBJECT_TYPE);
+    integerListInputTypes.add(stringInner);
+    integerListInputTypes.add(integerList);
+    TypedClassOperation integerListInstantiated =
+        new TypeInstantiator(integerListInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", integerListInstantiated);
+    assertEquals(stringInner, integerListInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, integerListInstantiated.getInputTypes().get(1));
+
+    Set<Type> matchingInputTypes = new LinkedHashSet<>();
+    matchingInputTypes.add(JavaTypes.OBJECT_TYPE);
+    matchingInputTypes.add(stringInner);
+    matchingInputTypes.add(stringList);
+    TypedClassOperation pairInstantiated =
+        new TypeInstantiator(matchingInputTypes).instantiate(pairOperation);
+    assertNotNull("no instantiation found", pairInstantiated);
+    assertEquals(stringInner, pairInstantiated.getInputTypes().get(0));
+    assertEquals(stringList, pairInstantiated.getInputTypes().get(1));
+  }
+
+  /**
+   * A method whose parameter types share a type parameter, one of them only through an enclosing
+   * type.
+   *
+   * @param <E> the type parameter
+   * @param inner an inner object
+   * @param values a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E> void pair(Outer<E>.Inner inner, List<E> values) {}
+
+  /**
+   * The parameter type of {@code void take(Inner inner)} in {@code Outer<E>} is {@code
+   * Outer<E>.Inner}, where {@code E} is the type parameter of {@code Outer}, which is the generic
+   * form of {@code Outer.Inner}.
+   */
+  @Test
+  public void testGenericFormMemberClassParameter() throws Exception {
+    Method take = Outer.class.getDeclaredMethod("take", Outer.Inner.class);
+    java.lang.reflect.Type parameterType = take.getGenericParameterTypes()[0];
+    assertTrue(parameterType instanceof java.lang.reflect.ParameterizedType);
+    ClassOrInterfaceType takeParameterType = ClassOrInterfaceType.forType(parameterType);
+    assertEquals(ClassOrInterfaceType.forClass(Outer.Inner.class), takeParameterType);
+    assertTrue(takeParameterType.isGenericForm());
+  }
+
+  /**
+   * Matching enclosing types does not make {@code Outer<String>.Inner} an instantiation of the
+   * unrelated member class {@code Outer<E>.Other}.
+   */
+  @Test
+  public void testUnrelatedMemberClassSubstitution() {
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        genericInner.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    ClassOrInterfaceType genericOther = ClassOrInterfaceType.forClass(Outer.Other.class);
+    assertNotNull(stringInner.getInstantiatingSubstitution(genericInner));
+    assertNull(stringInner.getInstantiatingSubstitution(genericOther));
+  }
+
+  /**
+   * A method whose type parameter is bounded by an instantiation of a generic class.
+   *
+   * @param <T> the type parameter
+   * @param outer an outer object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Outer<String>> void boundedByOuter(T outer) {}
+
+  /**
+   * {@code Outer<String>.Inner} does not instantiate {@code T extends Outer<String>}, even though
+   * its enclosing type does.
+   */
+  @Test
+  public void testMemberClassDoesNotInstantiateTypeVariableOfEnclosingType() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("boundedByOuter", Outer.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(m).getInputTypes().get(0);
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringInner =
+        ClassOrInterfaceType.forClass(Outer.Inner.class)
+            .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    assertNull(stringInner.getInstantiatingSubstitution(t));
+  }
+
+  /**
+   * The superclass of {@code Outer<String>.ListInner} is {@code AbstractList<String>}: the type
+   * argument of the enclosing type is applied to the superclass in the declaration.
+   */
+  @Test
+  public void testMemberClassSuperclassUsesEnclosingTypeArguments() {
+    TypeVariable outerParameter = GenericClassType.forClass(Outer.class).getTypeParameters().get(0);
+    ClassOrInterfaceType stringListInner =
+        ClassOrInterfaceType.forClass(Outer.ListInner.class)
+            .substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    assertEquals(
+        GenericClassType.forClass(java.util.AbstractList.class).instantiate(JavaTypes.STRING_TYPE),
+        stringListInner.getSuperclass());
+  }
+
+  /**
+   * A class whose type parameter's bound mentions the type parameter only in the owner type of a
+   * member class.
+   *
+   * @param <T> the type parameter
+   */
+  private static class OwnerBound<T extends List<Outer<T>.Inner>> {}
+
+  /** Converting a type variable whose bound mentions it only in an owner type terminates. */
+  @Test
+  public void testTypeVariableInOwnerTypeOfBound() {
+    TypeVariable t = TypeVariable.forType(OwnerBound.class.getTypeParameters()[0]);
+    assertNotNull(t.getUpperTypeBound());
+  }
+
+  /**
+   * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
+    return ClassOrInterfaceType.forClass(MemberTypeOuter.Inner.class)
+        .substitute(
+            new Substitution(
+                GenericClassType.forClass(MemberTypeOuter.class).getTypeParameters(),
+                typeArgument));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U extends Number> void
+   * useBounded(MemberTypeOuter<U>.Inner)} respects the bound of {@code U}: it rejects {@code
+   * MemberTypeOuter<String>.Inner} and accepts {@code MemberTypeOuter<Integer>.Inner}.
+   */
+  @Test
+  public void testBoundedMemberTypeInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation useBounded =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("useBounded", MemberTypeOuter.Inner.class));
+
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNull("instantiation should fail for " + useBounded, instance);
+
+    ClassOrInterfaceType integerInner =
+        memberInnerType((ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive());
+    inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(integerInner.getSupertypesInclusive());
+    instance = new TypeInstantiator(inputTypes).instantiate(useBounded);
+    assertNotNull("instantiation failed for " + useBounded, instance);
+    assertEquals(integerInner, instance.getInputTypes().get(0));
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U get(MemberTypeOuter<U>.Inner)} instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testMemberTypeReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    ClassOrInterfaceType stringInner = memberInnerType(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringInner.getSupertypesInclusive());
+    TypedClassOperation get =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("get", MemberTypeOuter.Inner.class));
+
+    TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(get);
+    assertNotNull("instantiation failed for " + get, instance);
+    assertEquals(stringInner, instance.getInputTypes().get(0));
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+  }
+
+  /**
+   * Tests that the instantiation of {@code <U> U
+   * getInner2Leaf(MemberTypeOuter<U>.Inner2<Integer>.Leaf)}, whose parameter type has an owner type
+   * {@code MemberTypeOuter<U>.Inner2<Integer>} with a type argument of its own, instantiates the
+   * return type consistently with the parameter type.
+   */
+  @Test
+  public void testParameterizedOwnerReturnInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypedClassOperation getInner2Leaf =
+        TypedOperation.forMethod(
+            MemberTypeCase.class.getMethod("getInner2Leaf", MemberTypeOuter.Inner2.Leaf.class));
+    // The conversion of the parameter type retains the owner MemberTypeOuter<U> of Inner2<Integer>.
+    ClassOrInterfaceType parameterType =
+        (ClassOrInterfaceType) getInner2Leaf.getInputTypes().get(0);
+    assertEquals(
+        Collections.singletonList(getInner2Leaf.getOutputType()),
+        parameterType.getTypeParameters());
+
+    // The type parameters of MemberTypeOuter<T>.Inner2<V>.Leaf are T and V, in that order.
+    ClassOrInterfaceType genericLeaf =
+        ClassOrInterfaceType.forClass(MemberTypeOuter.Inner2.Leaf.class);
+    ClassOrInterfaceType stringIntegerLeaf =
+        genericLeaf.substitute(
+            new Substitution(
+                genericLeaf.getTypeParameters(),
+                JavaTypes.STRING_TYPE,
+                (ReferenceType) JavaTypes.INT_TYPE.toBoxedPrimitive()));
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    inputTypes.addAll(stringIntegerLeaf.getSupertypesInclusive());
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = new TypeInstantiator(inputTypes).instantiate(getInner2Leaf);
+      assertNotNull("instantiation failed for " + getInner2Leaf, instance);
+      assertEquals(stringIntegerLeaf, instance.getInputTypes().get(0));
+      assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    }
+    Randomness.setSeed(0);
+  }
+
+  /** A class with a generic member class. */
+  private static class OwnerA {
+    /**
+     * A generic member class.
+     *
+     * @param <T> a type parameter
+     */
+    class Base<T> {}
+  }
+
+  /** A class with a member class that extends a member class of another class. */
+  private static class OwnerB {
+    /** A member class that extends a member class of another class. */
+    class Sub extends OwnerA.Base<String> {
+      /**
+       * Creates a Sub.
+       *
+       * @param a the enclosing instance of the superclass
+       */
+      Sub(OwnerA a) {
+        a.super();
+      }
+    }
+  }
+
+  /**
+   * {@code OwnerB.Sub}, which extends {@code OwnerA.Base<String>}, instantiates {@code
+   * OwnerA.Base<T>}, though the enclosing classes differ.
+   */
+  @Test
+  public void testMemberSubclassOfMemberClassOfAnotherClass() {
+    ClassOrInterfaceType sub = ClassOrInterfaceType.forClass(OwnerB.Sub.class);
+    ClassOrInterfaceType base = ClassOrInterfaceType.forClass(OwnerA.Base.class);
+    Substitution substitution = sub.getInstantiatingSubstitution(base);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(base.getTypeParameters().get(0)));
+  }
+
+  /**
+   * Returns {@code Outer<typeArgument>.Inner}.
+   *
+   * @param typeArgument the type argument of the enclosing type
+   * @return the member type {@code Outer<typeArgument>.Inner}
+   */
+  private static ClassOrInterfaceType outerInnerType(ReferenceType typeArgument) {
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    return genericInner.substitute(
+        new Substitution(genericInner.getTypeParameters(), typeArgument));
+  }
+
+  /**
+   * A method whose parameter type is a member type whose enclosing type has a wildcard.
+   *
+   * @param inner an inner object
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static void wildcardOwner(Outer<?>.Inner inner) {}
+
+  /**
+   * Capture conversion of {@code Outer<?>.Inner} does not change that type, and its result has a
+   * capture variable.
+   */
+  @Test
+  public void testMemberTypeCaptureConversion() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("wildcardOwner", Outer.Inner.class);
+    ClassOrInterfaceType wildcardInner =
+        ClassOrInterfaceType.forType(m.getGenericParameterTypes()[0]);
+    assertTrue(wildcardInner.hasWildcardArgument());
+    ClassOrInterfaceType captured = wildcardInner.applyCaptureConversion();
+    assertTrue(wildcardInner.hasWildcardArgument());
+    assertFalse(captured.hasWildcardArgument());
+    assertTrue(captured.hasCaptureVariable());
+    assertTrue(new TypeTuple(Collections.<Type>singletonList(captured)).hasCaptureVariable());
+    assertFalse(
+        new TypeTuple(Collections.<Type>singletonList(outerInnerType(JavaTypes.STRING_TYPE)))
+            .hasCaptureVariable());
   }
 
   /**

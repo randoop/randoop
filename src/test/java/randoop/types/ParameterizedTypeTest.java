@@ -405,4 +405,108 @@ public class ParameterizedTypeTest {
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(keyParameter));
   }
+
+  /** A field of type {@code List<List<?>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<?>> listOfUnboundedLists;
+
+  /** A field of type {@code List<List<String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<List<String>> listOfStringLists;
+
+  /** A field of type {@code List<? extends List<? super String>>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? extends List<? super String>> listOfSuperStringLists;
+
+  /** A field of type {@code List<?>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<?> unboundedList;
+
+  /** A field of type {@code List<? super String>}. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private List<? super String> superStringList;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param name the name of a field of this class
+   * @return the type of the field
+   */
+  private static Type fieldType(String name) throws NoSuchFieldException {
+    return Type.forType(ParameterizedTypeTest.class.getDeclaredField(name).getGenericType());
+  }
+
+  /** {@code ? super String} does not contain {@code ?}, but {@code ?} contains it (JLS 4.5.1). */
+  @Test
+  public void testLowerBoundedWildcardDoesNotContainUnbounded() throws NoSuchFieldException {
+    Type unbounded = fieldType("unboundedList");
+    Type superString = fieldType("superStringList");
+    assertFalse(unbounded.isSubtypeOfOrEqualTo(superString));
+    assertTrue(superString.isSubtypeOfOrEqualTo(unbounded));
+
+    Type target = fieldType("listOfSuperStringLists");
+    assertFalse(fieldType("listOfUnboundedLists").isSubtypeOfOrEqualTo(target));
+    assertTrue(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(target));
+  }
+
+  /** Fields whose types have wildcard type arguments with different bound directions. */
+  @SuppressWarnings("unused")
+  private static class WildcardFields {
+    /** A list with an unbounded wildcard. */
+    List<?> unbounded;
+
+    /** A list with a lower-bounded wildcard. */
+    List<? super String> superString;
+
+    /** A list with an upper-bounded wildcard. */
+    List<? extends Number> extendsNumber;
+  }
+
+  /**
+   * Returns the type of the given field of {@link WildcardFields}.
+   *
+   * @param name the field name
+   * @return the type of the field
+   */
+  private static ParameterizedType wildcardFieldType(String name) {
+    try {
+      return ParameterizedType.forType(
+          WildcardFields.class.getDeclaredField(name).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Returns the type argument of the type of the given field of {@link WildcardFields}.
+   *
+   * @param name the field name
+   * @return the type argument of the type of the field
+   */
+  private static TypeArgument wildcardFieldArgument(String name) {
+    return wildcardFieldType(name).getTypeArguments().get(0);
+  }
+
+  /** Tests containment between upper-bounded and lower-bounded wildcards (JLS 4.5.1). */
+  @Test
+  public void testMixedDirectionWildcardContainment() {
+    TypeArgument unbounded = wildcardFieldArgument("unbounded");
+    TypeArgument superString = wildcardFieldArgument("superString");
+    TypeArgument extendsNumber = wildcardFieldArgument("extendsNumber");
+    Substitution substitution = new Substitution();
+
+    // Every wildcard contains itself.
+    assertTrue(Subtyping.contains(unbounded, unbounded, substitution));
+    assertTrue(Subtyping.contains(superString, superString, substitution));
+    assertTrue(Subtyping.contains(extendsNumber, extendsNumber, substitution));
+    // `?` contains `? super String` and `? extends Number`.
+    assertTrue(Subtyping.contains(unbounded, superString, substitution));
+    assertTrue(Subtyping.contains(unbounded, extendsNumber, substitution));
+    // `? super String` does not contain `?` or `? extends Number`.
+    assertFalse(Subtyping.contains(superString, unbounded, substitution));
+    assertFalse(Subtyping.contains(superString, extendsNumber, substitution));
+    // `? extends Number` does not contain `?` or `? super String`.
+    assertFalse(Subtyping.contains(extendsNumber, unbounded, substitution));
+    assertFalse(Subtyping.contains(extendsNumber, superString, substitution));
+  }
 }

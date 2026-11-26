@@ -1,8 +1,10 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.CollectionsPlume;
 
 /**
@@ -22,8 +24,9 @@ import org.plumelib.util.CollectionsPlume;
  * Type bounds for wildcards may be any reference type, which includes type variables, so the {@link
  * ParameterBound} class hierarchy is simplified to use these {@link ReferenceType} objects as
  * bounds. Intersection types (which include the greatest lower bound construction used in capture
- * conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
- * {@code java.lang.reflect.Type} with variables as a {@link LazyParameterBound}.
+ * conversion) are explicitly represented. And, recursive type bounds are avoided by holding as a
+ * {@link LazyParameterBound} any {@code java.lang.reflect.Type} that has a type variable that would
+ * make the bound recursive.
  *
  * <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
  * have lower bounds. This class and its subclasses can represent both, with the default lower bound
@@ -77,9 +80,11 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Creates a {@code ParameterBound} object from a single {@code java.lang.reflect.Type}. Tests for
-   * types that are represented by {@code Class} objects, or {@code
-   * java.lang.reflect.ParameterizedType} objects.
+   * Returns a {@code ParameterBound} for a single {@code java.lang.reflect.Type}. The result is an
+   * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
+   * array type that has no type variable in the sense of {@link #hasTypeVariable}. Otherwise, the
+   * result is a {@link LazyParameterBound}, which converts a non-generic member class of a generic
+   * class, as in {@code Outer<T>.Inner}, together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -87,21 +92,34 @@ public abstract class ParameterBound {
    */
   /*package*/ static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
-      }
+    if (isTypeVariable(type)) {
+      return new EagerReferenceBound(TypeVariable.forType(type));
+    }
+    if (!(type instanceof Class<?>
+        || type instanceof java.lang.reflect.ParameterizedType
+        || type instanceof java.lang.reflect.GenericArrayType)) {
       return new LazyParameterBound(type);
     }
-    if (type instanceof Class<?>) {
-      // The class can be an array class, as in `? extends String[]`.
-      return new EagerReferenceBound(ReferenceType.forType(type));
+    if (hasTypeVariable(type, variableSet)) {
+      return new LazyParameterBound(type);
     }
-    if (isTypeVariable(type)) {
-      TypeVariable eagerBound = TypeVariable.forType(type);
-      return new EagerReferenceBound(eagerBound);
-    }
-    return new LazyParameterBound(type);
+    return new EagerReferenceBound(ReferenceType.forType(type));
+  }
+
+  /**
+   * Returns true if the given (reflection) type is a non-generic member class of a generic class,
+   * as in {@code Outer<String>.Inner}. Reflection represents such a type as a parameterized type
+   * whose raw type has no type parameters.
+   *
+   * @param type a reflection type
+   * @return true if {@code type} is a non-generic member class of a generic class
+   */
+  /*package*/ static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
+    return type instanceof java.lang.reflect.ParameterizedType
+        && ((Class<?>) ((java.lang.reflect.ParameterizedType) type).getRawType())
+                .getTypeParameters()
+                .length
+            == 0;
   }
 
   /**
@@ -126,12 +144,19 @@ public abstract class ParameterBound {
   public abstract List<TypeVariable> getTypeParameters();
 
   /**
-   * Returns true if the given (reflection) type reference represents a type in which a type
-   * variable occurs.
+   * Returns true if the given (reflection) type has a type variable that requires a lazy bound.
+   * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
+   * such a type variable. Either would make an eager bound recursive.
    *
-   * @param type the reflection type
-   * @param variableSet the set of variables
-   * @return true if the type has a type variable, and false otherwise
+   * <p>The owner type of a member class is examined (see {@link #getPreservedOwnerType}), because
+   * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
+   * Outer<T>} for {@code Outer<T>.Inner}. So a type variable in it, as in {@code T extends
+   * Outer<T>.Inner<String>}, would also make an eager bound recursive: converting such an owner
+   * type eagerly can recursively convert a type variable that is being converted.
+   *
+   * @param type a reflection type
+   * @param variableSet the type variables bound by the type
+   * @return true if the type has a type variable that requires a lazy bound
    */
   private static boolean hasTypeVariable(
       java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {
@@ -155,6 +180,10 @@ public abstract class ParameterBound {
           return true;
         }
       }
+      java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(pt);
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
+      }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return hasTypeVariable(
@@ -174,6 +203,26 @@ public abstract class ParameterBound {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns the owner type of the given parameterized type, if it is a parameterized type and the
+   * given type is a member class (an inner class, not a static nested class). The type arguments of
+   * such an owner type are part of the type, as in {@code Outer<String>.Inner}, and {@link
+   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} preserves it.
+   *
+   * @param type a parameterized type
+   * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
+   *     class of a parameterized type
+   */
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
+        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+      return (java.lang.reflect.ParameterizedType) ownerType;
+    }
+    return null;
   }
 
   /**
@@ -221,18 +270,39 @@ public abstract class ParameterBound {
   public abstract boolean isLowerBound(Type argType, Substitution subst);
 
   /**
-   * Returns true if this is a lower bound on the type of a given bound with respect to a type
-   * substitution. The body is approximately:
-   *
-   * <pre>{@code return this.substitute(substitution).isLowerBound(bound.substitute(substitution);}
-   * </pre>
+   * Returns true if this bound, after applying the substitution to it, is a lower bound on the type
+   * of the given bound. The substitution is not applied to the given bound.
    *
    * @param bound the other bound
-   * @param substitution the type substitution
+   * @param substitution the type substitution to apply to this bound
    * @return true iff this bound is a lower bound on the type of the given bound
    */
   /*package*/ boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    return false;
+    return bound.hasLowerBound(this, substitution);
+  }
+
+  /**
+   * Returns true if the given bound, after applying the substitution to it, is a lower bound on the
+   * type of this bound. The substitution is not applied to this bound. {@code
+   * b.hasLowerBound(lowerBound, substitution)} is equivalent to {@code lowerBound.isLowerBound(b,
+   * substitution)}.
+   *
+   * @param lowerBound the possible lower bound
+   * @param substitution the type substitution to apply to {@code lowerBound}
+   * @return true if {@code lowerBound} is a lower bound on the type of this bound
+   */
+  abstract boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution);
+
+  /**
+   * Returns true if this bound, after applying the substitution to it, is the null type.
+   *
+   * @param substitution the type substitution to apply to this bound
+   * @return true if this bound is the null type
+   */
+  final boolean isNullType(Substitution substitution) {
+    ParameterBound b = this.substitute(substitution);
+    return b instanceof ReferenceBound
+        && ((ReferenceBound) b).getBoundType().equals(JavaTypes.NULL_TYPE);
   }
 
   /**
@@ -264,11 +334,27 @@ public abstract class ParameterBound {
    * Returns true if this bound is an upper bound on the type of the given bound with respect to the
    * type substitution.
    *
+   * <p>Some type variables in this bound stand for unknown types, which may be any types that
+   * satisfy their bounds; see {@link Substitution#isUnknown(ReferenceType)}. An example is another
+   * type parameter of the declaration of the variable whose bound this is. Every other type
+   * variable, such as one in the given bound, stands for itself.
+   *
    * @param bound the other bound
    * @param substitution the type substitution
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
   /*package*/ abstract boolean isUpperBound(ParameterBound bound, Substitution substitution);
+
+  /**
+   * Returns true if the given type is an upper bound on every type that has this bound as an upper
+   * bound.
+   *
+   * @param upperBound the possible upper bound, to which {@code substitution} has been applied
+   * @param substitution the type substitution, which determines which type variables in {@code
+   *     upperBound} stand for unknown types (see {@link Substitution#isUnknown(ReferenceType)})
+   * @return true if {@code upperBound} is an upper bound on every type whose upper bound is this
+   */
+  abstract boolean hasUpperBound(ReferenceType upperBound, Substitution substitution);
 
   /**
    * Returns true if this bound is a type variable.

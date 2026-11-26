@@ -184,7 +184,8 @@ public abstract class ReferenceType extends Type {
    */
   public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
-    if (instantiatedType.equals(goalType)) {
+    // Copies of a type variable with different bounds are equal, but not identical.
+    if (Subtyping.isIdentical(instantiatedType, goalType)) {
       return new Substitution();
     }
     if (goalType.isVariable()) {

@@ -160,6 +160,10 @@ class WildcardType extends ParameterType {
    *
    * A {@code ? super T} wildcard contains no upper-bounded wildcard.
    *
+   * <p>A {@link LazyParameterBound}, such as {@code Comparable<T>} in {@code ? extends
+   * Comparable<T>}, cannot be compared directly, so it is converted to the equivalent {@link
+   * ReferenceBound} before the bounds are compared.
+   *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
@@ -179,10 +183,25 @@ class WildcardType extends ParameterType {
       return false;
     }
     if (this.hasUpperBound) {
-      return otherBound.isSubtypeOfOrEqualTo(thisBound);
+      return isSubtypeOfOrEqualTo(otherBound, thisBound);
     } else {
-      return thisBound.isSubtypeOfOrEqualTo(otherBound);
+      return isSubtypeOfOrEqualTo(thisBound, otherBound);
     }
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. Besides {@link
+   * ReferenceType#isSubtypeOfOrEqualTo(Type)}, uses {@link Subtyping}, which compares the type
+   * arguments of enclosing types by containment: {@code Outer<String>.Plain} is a subtype of {@code
+   * Outer<?>.Plain}.
+   *
+   * @param type the type of a wildcard bound
+   * @param otherType the type of a wildcard bound
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ReferenceType type, ReferenceType otherType) {
+    return type.isSubtypeOfOrEqualTo(otherType)
+        || Subtyping.isSubtypeOrEqual(type, otherType, new Substitution());
   }
 
   @Override
