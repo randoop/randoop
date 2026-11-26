@@ -160,8 +160,7 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * A wildcard {@code ? super T} does not contain {@code ?}, nor any other wildcard with an upper
-   * bound.
+   * A wildcard {@code ? super T} does not contain any wildcard with an upper bound.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
@@ -174,7 +173,6 @@ class WildcardType extends ParameterType {
     if (thisBound == null) {
       return false;
     }
-    // `?`, which is `? extends Object`, contains every wildcard, including every `? super S`.
     if (this.hasUpperBound && thisBound.isObject()) {
       return true;
     }

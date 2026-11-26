@@ -1,7 +1,6 @@
 package randoop.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class ListOfListsSelectorTest {
   private static SIList<Integer> l3l3l1l2;
 
   @BeforeClass
-  public static void setUp() throws Exception {
+  public static void setUpClass() throws Exception {
 
     SIList<Integer> l1List = SIList.empty();
     SIList<Integer> l2List = SIList.from(Arrays.asList(1));
@@ -69,7 +68,7 @@ public class ListOfListsSelectorTest {
       s.get(i);
       fail("Should raise an IllegalArgumentException");
     } catch (IllegalArgumentException | IndexOutOfBoundsException expected) {
-      assertTrue(true);
+      // Good.
     }
   }
 

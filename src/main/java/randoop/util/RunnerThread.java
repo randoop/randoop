@@ -73,6 +73,7 @@ public class RunnerThread extends Thread {
   }
 
   @Override
+  @SuppressWarnings("PMD.OverridingThreadRun") // clients manage a RunnerThread as a Thread
   public final void run() {
     if (state != NextCallMustBe.RUN) {
       throw new IllegalStateException();
