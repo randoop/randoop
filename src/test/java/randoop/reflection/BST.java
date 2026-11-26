@@ -16,8 +16,6 @@ class D_BST implements C_BST<String> {
 }
 
 public class BST<E extends Comparable<E>> {
-  public BST() {}
-
   public <T extends C_BST<E>> T m(T c) {
     return null;
   }
