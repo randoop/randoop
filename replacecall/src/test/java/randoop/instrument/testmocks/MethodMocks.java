@@ -1,6 +1,8 @@
 package randoop.instrument.testmocks;
 
 /** Replacement methods that are not valid replacements, for testing the replacement file reader. */
+@SuppressWarnings(
+    "PMD.MissingStaticMethodInNonInstantiatableClass") // replacement files use its methods
 public final class MethodMocks {
 
   /** Do not instantiate. */
@@ -17,5 +19,14 @@ public final class MethodMocks {
   @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used by replacement files
   private static int abs(int x) {
     return x;
+  }
+
+  /**
+   * A replacement for {@code Object()} that has the wrong return type.
+   *
+   * @return the empty string
+   */
+  public static String newObject() {
+    return "";
   }
 }
