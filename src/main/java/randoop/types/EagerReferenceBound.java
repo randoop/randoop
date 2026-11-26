@@ -190,8 +190,7 @@ class EagerReferenceBound extends ReferenceBound {
       return isUpperBound(new EagerReferenceBound(argReferenceType), subst);
     }
     // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
-    // Outer<String>.Inner, is compared by a subtype test.  The subtype test also handles an argType
-    // that is a type variable, through its upper bound.  A type variable in the enclosing type of
+    // Outer<String>.Inner, is compared by a subtype test.  A type variable in the enclosing type of
     // the bound, such as U in Outer<U>.Inner, can be an unknown, such as a sibling of the type
     // parameter whose bound this is, so the substitution is completed with identity mappings.
     // The subtype test compares the enclosing types by containment;
@@ -206,11 +205,6 @@ class EagerReferenceBound extends ReferenceBound {
           (ReferenceType) argType, thisBoundType, completeSubstitution);
     }
     if (thisBoundType instanceof InstantiatedType) {
-      if (argType.isVariable()) {
-        // A type variable is within this bound if its upper bound is, as for
-        // `S extends Comparable<String>` and the bound Comparable<String>.
-        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
-      }
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

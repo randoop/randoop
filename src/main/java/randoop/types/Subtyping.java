@@ -206,7 +206,12 @@ final class Subtyping {
         && type instanceof ClassOrInterfaceType) {
       // A member class that declares no type parameters, of a parameterized type, such as
       // Outer<String>.Inner.  isSubtypeOfOrEqualTo would cast it to InstantiatedType, which it is
-      // not, so compare the enclosing types here.
+      // not, so compare the enclosing types here.  A raw type is not a subtype:  its supertypes are
+      // erased, so raw Sub, where Sub<U> extends Outer<String>.Inner, is assignable to
+      // Outer<?>.Inner only by unchecked conversion.
+      if (type.isRawtype()) {
+        return false;
+      }
       ClassOrInterfaceType capturedType = captureWildcardArguments((ClassOrInterfaceType) type);
       ClassOrInterfaceType supertype =
           findSupertypeOfClass(capturedType, otherType.getRuntimeClass());

@@ -175,7 +175,14 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   public ClassOrInterfaceType getSuperclass() {
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
-      return superclass == null ? null : forClass(superclass);
+      if (superclass == null) {
+        return null;
+      }
+      // The superclass of a raw type is erased.  For a member class, such as Inner in
+      // `class Sub<U> extends Outer<String>.Inner`, the erasure has a raw enclosing type, Outer.
+      // forClass gives it the generic form Outer<T> instead, which Outer<?> contains, so raw Sub
+      // would be a subtype of Outer<?>.Inner.  getRawtype() erases the enclosing types.
+      return forClass(superclass).getRawtype();
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
       // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,

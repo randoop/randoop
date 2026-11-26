@@ -1770,6 +1770,70 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(parent.instantiate(JavaTypes.STRING_TYPE), supertype);
   }
 
+  /** A class with a generic member class. */
+  @SuppressWarnings("ClassCanBeStatic")
+  static class ArrayOwner {
+    /**
+     * A generic member class.
+     *
+     * @param <X> the type parameter
+     */
+    class Base<X> {}
+  }
+
+  /**
+   * A class whose superclass is a member class whose type argument is an array of this class's
+   * type parameter.
+   *
+   * @param <U> the type parameter
+   */
+  static class ArrayChild<U> extends ArrayOwner.Base<U[]> {
+    /**
+     * Creates an ArrayChild.
+     *
+     * @param owner the enclosing instance of the superclass
+     */
+    ArrayChild(ArrayOwner owner) {
+      owner.super();
+    }
+  }
+
+  /** Fields whose types are used in the tests. */
+  @SuppressWarnings("unused")
+  static class ArrayChildHolder {
+    /** A field whose type has a wildcard type argument. */
+    ArrayChild<?> wildcardChild;
+
+    /** A field whose type has no wildcard type argument. */
+    ArrayChild<String> stringChild;
+  }
+
+  /**
+   * The search for the supertype of a type with a wildcard argument whose class is that of a member
+   * class goal type captures the wildcard, rather than creating an array of a wildcard.
+   */
+  @Test
+  public void memberSupertypeOfWildcardTypeTest() throws NoSuchFieldException {
+    ClassOrInterfaceType base = ClassOrInterfaceType.forClass(ArrayOwner.Base.class);
+    TypeVariable x = base.getTypeParameters().get(0);
+
+    ClassOrInterfaceType stringChild =
+        ClassOrInterfaceType.forType(
+            ArrayChildHolder.class.getDeclaredField("stringChild").getGenericType());
+    Substitution stringSubstitution = stringChild.getInstantiatingSubstitution(base);
+    assertNotNull(stringSubstitution);
+    assertEquals(ArrayType.ofComponentType(JavaTypes.STRING_TYPE), stringSubstitution.get(x));
+
+    ClassOrInterfaceType wildcardChild =
+        ClassOrInterfaceType.forType(
+            ArrayChildHolder.class.getDeclaredField("wildcardChild").getGenericType());
+    Substitution wildcardSubstitution = wildcardChild.getInstantiatingSubstitution(base);
+    assertNotNull(wildcardSubstitution);
+    ReferenceType xType = wildcardSubstitution.get(x);
+    assertTrue(xType.isArray());
+    assertTrue(((ArrayType) xType).getComponentType() instanceof CaptureTypeVariable);
+  }
+
   /**
    * A generic class whose type parameter has a bound, with a generic member class.
    *
@@ -2080,9 +2144,6 @@ public class ClassOrInterfaceTypeTest {
    */
   @Test
   public void genericMemberClassSupertypesTest() throws NoSuchMethodException {
-    // This gives the cached generic class an enclosing type, so its type parameters include those
-    // of the enclosing class.
-    ClassOrInterfaceType.forClass(Outer.GenericListOfT.class);
     ClassOrInterfaceType type =
         ClassOrInterfaceType.forType(
             GenericMemberHolder.class.getDeclaredMethod("m", Outer.GenericListOfT.class)

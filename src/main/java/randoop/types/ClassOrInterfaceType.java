@@ -417,22 +417,34 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * this type itself. Returns this type if it is not a member class, or if it is neither an {@link
    * InstantiatedType} nor a {@link NonParameterizedType}.
    *
+   * <p>The capture conversion of the enclosing type is the one that {@link #getSuperclass()} and
+   * {@link #getInterfaces()} use (see {@link #getCapturedEnclosingType(ClassOrInterfaceType)}), so
+   * the supertypes found through the result have the same capture variables as those found through
+   * this type.
+   *
    * @return this type with capture conversion applied to its enclosing type
    */
+  @SuppressWarnings("ReferenceEquality") // test whether capture conversion created a new type
   private ClassOrInterfaceType withCapturedEnclosingType() {
     if (!isMemberClass()) {
       return this;
     }
+    ClassOrInterfaceType capturedEnclosingType = getCapturedEnclosingType(enclosingType);
+    if (capturedEnclosingType == enclosingType) {
+      return this;
+    }
     if (this instanceof NonParameterizedType) {
       // A NonParameterizedType has no type arguments of its own to convert.
-      return applyCaptureConversion();
+      NonParameterizedType result = new NonParameterizedType(getRuntimeClass());
+      result.enclosingType = capturedEnclosingType;
+      return result;
     }
     if (this instanceof InstantiatedType) {
       InstantiatedType instantiatedType = (InstantiatedType) this;
       InstantiatedType result =
           new InstantiatedType(
               instantiatedType.getGenericClassType(), instantiatedType.getTypeArguments());
-      result.enclosingType = enclosingType.applyCaptureConversion();
+      result.enclosingType = capturedEnclosingType;
       return result;
     }
     return this;
@@ -559,9 +571,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *     if there is none
    */
   private @Nullable ClassOrInterfaceType getSupertypeOfClass(Class<?> runtimeClass) {
+    // The supertypes of a type with wildcard type arguments of its own are those of its capture
+    // conversion.  Substituting a wildcard into a supertype can create an invalid type:  for
+    // `class Child<U> extends Owner.Base<U[]>`, the superclass of Child<?> would be an array of a
+    // wildcard.  The wildcards of an enclosing type are already captured by getSuperclass() and
+    // getInterfaces(); see getSupertypeSubstitution().
+    ClassOrInterfaceType start = hasOwnWildcardArgument() ? applyCaptureConversion() : this;
     // Unlike getSupertypesStrict, this does not compute the supertypes of the result.
     Set<ClassOrInterfaceType> visited = new LinkedHashSet<>();
-    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>(getImmediateSupertypes());
+    Queue<ClassOrInterfaceType> worklist = new ArrayDeque<>(start.getImmediateSupertypes());
     while (!worklist.isEmpty()) {
       ClassOrInterfaceType supertype = worklist.remove();
       if (supertype.runtimeClassIs(runtimeClass)) {
@@ -572,6 +590,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
     return null;
+  }
+
+  /**
+   * Returns true if some type argument of this type itself, not of an enclosing type, is a
+   * wildcard.
+   *
+   * @return true if some type argument of this type itself is a wildcard
+   */
+  private boolean hasOwnWildcardArgument() {
+    for (TypeArgument argument : getTypeArguments()) {
+      if (argument.isWildcard()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

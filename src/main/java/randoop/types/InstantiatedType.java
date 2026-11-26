@@ -411,9 +411,21 @@ public class InstantiatedType extends ParameterizedType {
           && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
         return false;
       }
-      // The substitution that the type arguments so far induce.  The type arguments must induce
-      // consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>.
+      // The substitution that the enclosing type and the type arguments so far induce.  They must
+      // induce consistent substitutions:  Map<String, Integer> is not an instantiation of
+      // Map<X, X>, and Outer<String>.Inner<Integer> is not an instantiation of Outer<X>.Inner<X>.
       Substitution substitution = new Substitution();
+      if (this.isMemberClass()
+          && otherInstType.isMemberClass()
+          && otherInstType.enclosingType.isGeneric()) {
+        Substitution enclosingSubstitution =
+            this.enclosingType.getInstantiatingSubstitution(otherInstType.enclosingType);
+        // If no substitution is found, then the enclosing type is an instantiation by the test
+        // above, though its bindings are not known; the type arguments are checked as before.
+        if (enclosingSubstitution != null) {
+          substitution = enclosingSubstitution;
+        }
+      }
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);

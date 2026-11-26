@@ -271,6 +271,27 @@ public class ParameterBoundTest {
   }
 
   /**
+   * The substitution is applied once to a lazy bound that is a possible lower bound: a type
+   * variable that it puts in the bound is not replaced again, even if the substitution also maps
+   * it.
+   */
+  @Test
+  public void testLazyArrayBoundAsLowerBoundSubstitutesOnce() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ParameterBound numberArrayBound =
+        ParameterBound.forType(ArrayType.ofComponentType(ReferenceType.forClass(Number.class)));
+    // With T := E and E := Integer, T[] becomes E[], which is not known to be a subtype of
+    // Number[].
+    Substitution chained =
+        new Substitution(Arrays.asList(arrayHolderVariable, e), Arrays.asList(e, integerType));
+    assertFalse(arrayBound.isLowerBound(numberArrayBound, chained));
+    // With T := Integer, T[] becomes Integer[], which is a subtype of Number[].
+    Substitution direct = new Substitution(arrayHolderVariable, integerType);
+    assertTrue(arrayBound.isLowerBound(numberArrayBound, direct));
+  }
+
+  /**
    * The substitution is applied to the possible lower bound, but not to a lazy bound that it is
    * compared with.
    */
@@ -654,7 +675,8 @@ public class ParameterBoundTest {
         (ClassOrInterfaceType)
             ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
     assertTrue(inner.isMemberClass());
-    assertEquals(Outer.class, inner.enclosingType.getRuntimeClass());
+    // The owner is the declaration Outer<T>, not some instantiation of Outer.
+    assertEquals(GenericClassType.forClass(Outer.class), inner.enclosingType);
   }
 
   @Test

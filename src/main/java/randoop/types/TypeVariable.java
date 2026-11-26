@@ -491,10 +491,19 @@ public abstract class TypeVariable extends ParameterType {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
     } else {
-      // The substitution instantiates the type variable, so the bound is a known type.
+      // The substitution instantiates the type variable, so the bound is a known type.  The
+      // substitution has already been applied to it, so a type variable that the substitution put
+      // in it stands for itself:  for `<K, V extends K>` with `K := List<E>` and `E := Integer`,
+      // the bound is List<E>, not List<Integer>.
+      List<TypeVariable> boundVariables =
+          substituted instanceof ReferenceBound
+              ? new LazyReferenceBound(((ReferenceBound) substituted).getBoundType())
+                  .getTypeParameters()
+              : Collections.emptyList();
+      Substitution comparisonSubstitution = withoutReplacing(boundVariables, substitution);
       return isUpperBound
-          ? substituted.isUpperBound(otherType, substitution)
-          : substituted.isLowerBound(otherType, substitution);
+          ? substituted.isUpperBound(otherType, comparisonSubstitution)
+          : substituted.isLowerBound(otherType, comparisonSubstitution);
     }
     // As in EagerReferenceBound.isUpperBound, a type variable stands for an unknown type only if it
     // is not fixed.  A fixed type variable, such as one that the substitution put in the bound or a
@@ -504,15 +513,49 @@ public abstract class TypeVariable extends ParameterType {
         substitution.extendWithIdentity(Collections.singletonList(variable));
     if (substitution.instantiatesTypeParameters() && !completeSubstitution.isUnknown(variable)) {
       ParameterBound fixedBound = new EagerReferenceBound(variable);
+      // The substitution has already been applied, so it must not replace the fixed variable
+      // again:  for `<K, V extends K>` with `K := E` and `E := Integer`, Integer is not known to be
+      // a subtype of E.
+      Substitution comparisonSubstitution =
+          withoutReplacing(Collections.singletonList(variable), substitution);
       return isUpperBound
-          ? fixedBound.isUpperBound(otherType, substitution)
-          : fixedBound.isLowerBound(otherType, substitution);
+          ? fixedBound.isUpperBound(otherType, comparisonSubstitution)
+          : fixedBound.isLowerBound(otherType, comparisonSubstitution);
     }
     if (isUpperBound) {
       return variable.canBeSupertypeOf(otherType, substitution);
     }
     return variable.canBeInstantiatedBy(otherType, substitution)
         || variable.getUpperTypeBound().isLowerBound(otherType, substitution);
+  }
+
+  /**
+   * Returns a substitution that is like the given one, but that maps to itself each of the given
+   * type variables, other than this variable, that the given substitution maps to a type other than
+   * a copy of the type variable. Each such type variable occurs in a bound to which the given
+   * substitution has already been applied, so it came from a type that the substitution maps
+   * another type variable to; applying the result to the bound does not substitute for it again.
+   * This variable keeps its mapping, which is the type that might instantiate it.
+   *
+   * @param variables type variables that occur in a bound to which {@code substitution} has been
+   *     applied
+   * @param substitution a type substitution
+   * @return a substitution that does not replace the given type variables
+   */
+  private Substitution withoutReplacing(List<TypeVariable> variables, Substitution substitution) {
+    Substitution result = substitution;
+    for (TypeVariable variable : variables) {
+      if (variable.equals(this)) {
+        continue;
+      }
+      ReferenceType replacement = result.get(variable);
+      // As in LazyParameterBound.withoutReplacingTypeVariablesOf, a mapping to a copy of the type
+      // variable, with other bounds, is kept.
+      if (replacement != null && !replacement.equals(variable)) {
+        result = result.withMapping(variable, variable);
+      }
+    }
+    return result;
   }
 
   /**

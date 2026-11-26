@@ -711,7 +711,10 @@ class LazyParameterBound extends ParameterBound {
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
     ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(bound, substitution);
+    // As in isUpperBound(Type, Substitution), comparing b with the substitution would apply the
+    // substitution to b again:  for `T[]` with `T := E` and `E := Integer`, it would compare
+    // Integer[], not E[].
+    return b != null && b.isLowerBound(bound, withoutReplacingTypeVariablesOf(b, substitution));
   }
 
   /**

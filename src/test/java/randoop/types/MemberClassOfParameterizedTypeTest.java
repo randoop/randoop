@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -49,6 +50,19 @@ public class MemberClassOfParameterizedTypeTest {
     }
   }
 
+  /** A subclass of the raw type {@link Sub}, whose supertypes are erased. */
+  @SuppressWarnings("rawtypes")
+  static class ViaRaw extends Sub {
+    /**
+     * Creates a ViaRaw.
+     *
+     * @param outer an enclosing instance for the superclass
+     */
+    ViaRaw(Outer<String> outer) {
+      super(outer);
+    }
+  }
+
   /** Methods whose return types are used in the tests. */
   @SuppressWarnings("unused")
   abstract static class TypeHolder {
@@ -75,6 +89,10 @@ public class MemberClassOfParameterizedTypeTest {
     abstract List<? super Outer<String>.Inner> innerLowerWildcardList();
 
     abstract Outer<?>.Inner wildcardInnerType();
+
+    abstract List<? extends Outer<?>.Inner> wildcardInnerUpperWildcardList();
+
+    abstract Outer<?>.ComparableInner wildcardComparableInnerType();
 
     abstract Outer<? extends CharSequence>.Inner charSequenceInnerType();
 
@@ -185,6 +203,34 @@ public class MemberClassOfParameterizedTypeTest {
     ReferenceType rawSub = NonParameterizedType.forClass(Sub.class);
     assertTrue(rawSub.isRawtype());
     assertFalse(rawSub.isSubtypeOfOrEqualTo(wildcardInner));
+
+    // ViaRaw is not raw, but its superclass is raw Sub, whose superclass is erased to Outer.Inner.
+    ReferenceType viaRaw = ClassOrInterfaceType.forClass(ViaRaw.class);
+    assertFalse(viaRaw.isRawtype());
+    assertFalse(viaRaw.isSubtypeOfOrEqualTo(wildcardInner));
+    assertFalse(viaRaw.isSubtypeOfOrEqualTo(inner));
+
+    // `? extends Outer<?>.Inner` contains Sub<Integer>, but not raw Sub or ViaRaw.
+    TypeArgument upper = typeArgument("wildcardInnerUpperWildcardList");
+    assertTrue(upper.contains(TypeArgument.forType(sub)));
+    assertFalse(upper.contains(TypeArgument.forType(rawSub)));
+    assertFalse(upper.contains(TypeArgument.forType(viaRaw)));
+  }
+
+  /**
+   * The matching supertype of a member class whose enclosing type has a wildcard has the same
+   * capture variables as the supertypes that {@link ClassOrInterfaceType#getInterfaces()} returns.
+   */
+  @Test
+  public void testMatchingSupertypeReusesEnclosingCapture() throws NoSuchMethodException {
+    ClassOrInterfaceType comparableInner =
+        (ClassOrInterfaceType) returnType("wildcardComparableInnerType");
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    ClassOrInterfaceType fromInterfaces = comparableInner.getInterfaces().get(0);
+    InstantiatedType fromMatching = comparableInner.getMatchingSupertype(comparable);
+    assertTrue(fromInterfaces.hasCaptureVariable());
+    assertEquals(fromInterfaces, fromMatching);
+    assertEquals(fromMatching, comparableInner.getMatchingSupertype(comparable));
   }
 
   @Test

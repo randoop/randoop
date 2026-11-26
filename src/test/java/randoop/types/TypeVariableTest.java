@@ -4202,6 +4202,33 @@ public class TypeVariableTest {
   }
 
   /**
+   * The substitution is applied once to a bound that is a type variable: a type variable that it
+   * puts in the bound is not replaced again, even if the substitution also maps it.
+   */
+  @Test
+  public void testReplacementVariableIsNotSubstitutedAgain() {
+    TypeVariable k = typeParameter(TwoChainedBound.class, 0);
+    TypeVariable v = typeParameter(TwoChainedBound.class, 1);
+    TypeVariable x = typeParameter(SelfComparableHolder.class, 0);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    // With K := X and X := Integer, the bound of V is X, and Integer is not known to be a subtype
+    // of X.
+    Substitution chained = new Substitution(Arrays.asList(k, x), Arrays.asList(x, integerType));
+    assertFalse(v.canBeInstantiatedBy(integerType, chained));
+    // Likewise, with K := List<X> and X := Integer, the bound of V is List<X>, not List<Integer>.
+    ReferenceType integerList = JDKTypes.ARRAY_LIST_TYPE.instantiate(integerType);
+    Substitution compound =
+        new Substitution(
+            Arrays.asList(k, x), Arrays.asList(JDKTypes.LIST_TYPE.instantiate(x), integerType));
+    assertFalse(v.canBeInstantiatedBy(integerList, compound));
+    // A direct mapping is still applied.
+    assertTrue(v.canBeInstantiatedBy(integerType, new Substitution(k, integerType)));
+    assertTrue(
+        v.canBeInstantiatedBy(
+            integerList, new Substitution(k, JDKTypes.LIST_TYPE.instantiate(integerType))));
+  }
+
+  /**
    * A class whose second type parameter is bounded by the first, which has a bound.
    *
    * @param <K> a type parameter

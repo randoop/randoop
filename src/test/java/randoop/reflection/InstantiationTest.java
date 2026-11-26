@@ -215,9 +215,11 @@ public class InstantiationTest {
               == WildcardBoundBuilder.class) {
         // The operation is an instantiation of the generic create, not the generic one itself.
         assertFalse(operation + " should be instantiated", operation.isGeneric());
-        assertTrue(
-            operation + " should use ConcreteWildcardBoundBuilder",
-            operation.getOutputType().toString().contains("ConcreteWildcardBoundBuilder"));
+        assertEquals(
+            operation + " should return WildcardBoundBuilder<ConcreteWildcardBoundBuilder>",
+            GenericClassType.forClass(WildcardBoundBuilder.class)
+                .instantiate(ClassOrInterfaceType.forClass(ConcreteWildcardBoundBuilder.class)),
+            operation.getOutputType());
         foundCreate = true;
       }
     }

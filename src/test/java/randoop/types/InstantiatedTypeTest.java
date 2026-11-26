@@ -190,4 +190,55 @@ public class InstantiatedTypeTest {
         inner.substitute(new Substitution(outerParameter, JavaTypes.OBJECT_TYPE));
     assertNull(innerOfStringOuter.getInstantiatingSubstitution(innerOfObjectOuterGeneric));
   }
+
+  /**
+   * A type variable that occurs in both the enclosing type and a type argument must be instantiated
+   * by the same type in both.
+   */
+  @Test
+  public void isInstantiationOfRequiresConsistentEnclosingTypeTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    List<TypeVariable> innerParameters = inner.getTypeParameters();
+    TypeVariable outerParameter = innerParameters.get(0);
+    // Outer<T>.Inner<T>
+    InstantiatedType sameArguments =
+        inner.substitute(new Substitution(innerParameters.get(1), outerParameter));
+
+    InstantiatedType stringInteger = inner.instantiate(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType stringString = inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertFalse(stringInteger.isInstantiationOf(sameArguments));
+    assertNull(stringInteger.getInstantiatingSubstitution(sameArguments));
+    assertTrue(stringString.isInstantiationOf(sameArguments));
+  }
+
+  /**
+   * A type argument contains the same type, even if the enclosing types are represented
+   * differently, but not a type with a different enclosing type.
+   */
+  @Test
+  public void referenceArgumentContainsEquivalentEnclosingTypeTest() throws NoSuchFieldException {
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable t = inner.getTypeParameters().get(0);
+    // Outer<T>.Inner<String>, whose enclosing type is the GenericClassType for Outer.
+    java.lang.reflect.Type reflectionType =
+        Outer.class.getDeclaredField("innerOfString").getGenericType();
+    ReferenceType fromReflection = (ReferenceType) Type.forType(reflectionType);
+    // Outer<T>.Inner<String>, whose enclosing type is an InstantiatedType.
+    InstantiatedType fromInstantiation = inner.instantiate(t, JavaTypes.STRING_TYPE);
+    TypeArgument reflectionArgument = TypeArgument.forType(fromReflection);
+    TypeArgument instantiationArgument = TypeArgument.forType(fromInstantiation);
+    assertTrue(reflectionArgument.contains(instantiationArgument));
+    assertTrue(instantiationArgument.contains(reflectionArgument));
+
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    TypeArgument stringOuter =
+        TypeArgument.forType(inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE));
+    TypeArgument integerOuter =
+        TypeArgument.forType(inner.instantiate(integerType, JavaTypes.STRING_TYPE));
+    assertTrue(stringOuter.contains(stringOuter));
+    assertFalse(stringOuter.contains(integerOuter));
+    assertFalse(integerOuter.contains(stringOuter));
+    assertFalse(stringOuter.contains(instantiationArgument));
+  }
 }
