@@ -477,7 +477,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
+    if (otherType instanceof InstantiatedType) {
 
       // second clause: rawtype same and parameters S_i of otherType contains T_i of this
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
@@ -511,6 +511,10 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // otherType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
+    // TODO: This test does not check whether one enclosing type's type arguments contain the
+    // other's, so it does not report that a generic subclass of `Outer<Integer>.Inner` is a subtype
+    // of `Outer<? extends Number>.Inner`.
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
