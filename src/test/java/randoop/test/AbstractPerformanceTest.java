@@ -30,7 +30,7 @@ public abstract class AbstractPerformanceTest {
 
   abstract void execute() throws RandoopSpecificationError;
 
-  private final double DIVIDE_FACTOR = 1700;
+  private static final double DIVIDE_FACTOR = 1700;
 
   private final double EXPECTED_MIN = 0.7 / computeFactor();
 
@@ -65,17 +65,14 @@ public abstract class AbstractPerformanceTest {
     System.out.println("Actual time:   " + time);
 
     if (time > expected) {
-      StringBuilder b = new StringBuilder();
-      b.append(
-          "Failure: performance test actual time was greater than expected time."
-              + Globals.lineSep);
-      b.append("This failure could have two causes:");
-      b.append(Globals.lineSep);
-      b.append(" (1) Randoop mis-estimated your machine speed.");
-      b.append(Globals.lineSep);
-      b.append(
-          " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep);
-      fail(b.toString());
+      fail(
+          String.join(
+              Globals.lineSep,
+              "Failure: performance test actual time was greater than expected time.",
+              "This failure could have two causes:",
+              " (1) Randoop mis-estimated your machine speed.",
+              " (2) You made a change to Randoop that slows down its performance.",
+              ""));
     }
   }
 }
