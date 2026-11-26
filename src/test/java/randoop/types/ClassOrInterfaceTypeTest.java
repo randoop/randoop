@@ -1782,8 +1782,8 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
-   * A class whose superclass is a member class whose type argument is an array of this class's
-   * type parameter.
+   * A class whose superclass is a member class whose type argument is an array of this class's type
+   * parameter.
    *
    * @param <U> the type parameter
    */
