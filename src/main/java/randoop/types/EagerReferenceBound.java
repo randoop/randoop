@@ -143,9 +143,44 @@ class EagerReferenceBound extends ReferenceBound {
       return true;
     }
     if (thisBoundType.isVariable()) {
-      // The substitution does not map the variable, so the variable can still be chosen.  argType
-      // is within this bound if it is within the variable's upper bound, which the variable can be.
-      return ((TypeVariable) thisBoundType).getUpperTypeBound().isUpperBound(argType, subst);
+      // This bound is a type variable, which the substitution does not instantiate with a
+      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
+      ParameterBound variableUpperBound = thisBoundVariable.getUpperTypeBound();
+      if (subst.get(thisBoundVariable) != null || !(argType instanceof ReferenceType)) {
+        // One of two cases holds:
+        //  * The substitution maps `thisBoundVariable` (for example, to itself), so the
+        //    substitution cannot be extended with a choice for `thisBoundVariable`.
+        //  * `argType` is not a reference type, so `argType` cannot instantiate a type variable.
+        // In either case, `argType` is within this bound if it is within `variableUpperBound`,
+        // which `thisBoundVariable` can be.
+        return variableUpperBound.isUpperBound(argType, subst);
+      }
+      // `variableUpperBound` can mention `thisBoundVariable` itself, as in `<T extends
+      // Comparable<? super T>>`, so checking it requires a choice for `thisBoundVariable`.
+      // `argType` is within this bound if `thisBoundVariable` can be some supertype S of `argType`
+      // that is within `variableUpperBound` when `thisBoundVariable` is S.  Try `argType` itself
+      // first.  If it fails, try its other supertypes:  for `<T extends Marker<T>>`, if Child
+      // extends Base and Base implements Marker<Base>, then T can be Base though not Child.
+      ReferenceType argRefType = (ReferenceType) argType;
+      if (variableUpperBound.isUpperBound(
+          argRefType, subst.extend(new Substitution(thisBoundVariable, argRefType)))) {
+        return true;
+      }
+      // If `variableUpperBound` does not mention `thisBoundVariable`, then no supertype of
+      // `argType` is within `variableUpperBound`, because `argType` is not.
+      if (!(argRefType instanceof ClassOrInterfaceType)
+          || !variableUpperBound.getTypeParameters().contains(thisBoundVariable)) {
+        return false;
+      }
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) argRefType).getSupertypesStrict()) {
+        if (variableUpperBound.isUpperBound(
+            supertype, subst.extend(new Substitution(thisBoundVariable, supertype)))) {
+          return true;
+        }
+      }
+      return false;
     }
     // A member class whose enclosing type is parameterized, such as Outer<String>.Inner, is
     // parameterized but is not an InstantiatedType.  The subtype test below handles it.
