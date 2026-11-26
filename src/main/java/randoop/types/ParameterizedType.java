@@ -17,7 +17,10 @@ import org.plumelib.util.CollectionsPlume;
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
-  /** A cache of all ParameterizedTypes that have been created. */
+  /**
+   * A cache of all ParameterizedTypes that have been created. Accessed only while holding the lock
+   * on {@code ParameterizedType.class}; see {@link #forClass}.
+   */
   private static final Map<Class<?>, GenericClassType> cache = new HashMap<>();
 
   /** Creates a ParameterizedType. */
@@ -31,7 +34,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  // This method is synchronized so that concurrent calls do not corrupt the cache, and so that an
+  // uninitialized generic class type in the cache is visible only to the thread that is
+  // initializing it.  The lock is reentrant, so recursive calls from that thread find it.
+  public static synchronized GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
@@ -72,7 +78,31 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
     GenericClassType genericClass = forClass((Class<?>) rawType);
-    return new InstantiatedType(genericClass, typeArguments);
+    InstantiatedType result = new InstantiatedType(genericClass, typeArguments);
+    // For a member class such as Outer<String>.Middle<Integer>, keep the owner type as written.
+    java.lang.reflect.ParameterizedType ownerType = ClassOrInterfaceType.getPreservedOwnerType(t);
+    if (ownerType != null) {
+      result.enclosingType = ClassOrInterfaceType.forType(ownerType);
+    } else if (t.getOwnerType() != null
+        && !java.lang.reflect.Modifier.isStatic(((Class<?>) rawType).getModifiers())) {
+      // For a member class whose owner type is the type that the declaration of the enclosing
+      // class denotes, such as Outer<E>.Inner<Integer> within Outer, use that declaration, as
+      // ClassOrInterfaceType.forType does.  Its type parameters, such as E, are those of the type.
+      // The owner type of a member class of a non-generic class, such as Plain.Inner<String>, is
+      // a Class; use its declaration too, as GenericClassType.substitute does.
+      Type owner = t.getOwnerType();
+      Class<?> enclosingClass =
+          owner instanceof java.lang.reflect.ParameterizedType
+              ? (Class<?>) ((java.lang.reflect.ParameterizedType) owner).getRawType()
+              : (Class<?>) owner;
+      result.enclosingType = ClassOrInterfaceType.forClass(enclosingClass);
+    } else if (t.getOwnerType() instanceof Class<?>
+        && !java.lang.reflect.Modifier.isStatic(((Class<?>) rawType).getModifiers())) {
+      // For a member class of a non-generic class, such as Outer.Inner<String>, the owner type is
+      // a Class.  Use it as the enclosing type, as GenericClassType.substitute does.
+      result.enclosingType = ClassOrInterfaceType.forClass((Class<?>) t.getOwnerType());
+    }
+    return result;
   }
 
   @Override
