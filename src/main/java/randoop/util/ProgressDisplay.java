@@ -107,6 +107,7 @@ public class ProgressDisplay extends Thread {
   public boolean shouldStop = false;
 
   @Override
+  @SuppressWarnings("PMD.OverridingThreadRun") // clients manage a ProgressDisplay as a Thread
   public void run() {
     long progressInterval = GenInputsAbstract.progressintervalmillis;
     // When to display the next progress message.  The first one is displayed immediately.

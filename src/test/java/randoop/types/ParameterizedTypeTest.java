@@ -467,6 +467,29 @@ public class ParameterizedTypeTest {
   }
 
   /**
+   * The type arguments of an instantiation must bind each type variable consistently: {@code
+   * Map<String, Integer>} is not an instantiation of {@code Map<T, T>}, but {@code Map<String,
+   * String>} is.
+   */
+  @Test
+  public void testConflictingIsInstantiationOf() throws NoSuchFieldException {
+    ReferenceType sameKeyAndValue =
+        (ReferenceType)
+            Type.forType(SameKeyAndValue.class.getDeclaredField("map").getGenericType());
+    ReferenceType stringToIntegerType =
+        (ReferenceType)
+            Type.forType(
+                ParameterizedTypeTest.class.getDeclaredField("stringToInteger").getGenericType());
+    // T cannot be both String and Integer.
+    assertFalse(stringToIntegerType.isInstantiationOf(sameKeyAndValue));
+    // T can be String.
+    InstantiatedType stringToString =
+        GenericClassType.forClass(Map.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertTrue(stringToString.isInstantiationOf(sameKeyAndValue));
+  }
+
+  /**
    * A fixed type argument of a goal type must equal the corresponding type argument: {@code
    * Map<String, Integer>} does not instantiate {@code Map<K, Long>}, but {@code Map<String, Long>}
    * does.

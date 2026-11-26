@@ -28,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * point. Randoop should add the result of {@link #getSignatureList()} to the {@code --omit-methods}
  * patterns before starting generation.
  */
+@SuppressWarnings("PMD.DataClass") // its state is static and shared with the agent
 public final class MethodReplacements {
 
   /** Do not create a MethodReplacements. */
