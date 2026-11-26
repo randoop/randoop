@@ -1,7 +1,7 @@
 package randoop.operation;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -48,16 +48,14 @@ public class OperationParserTests {
         JavaTypes.OBJECT_TYPE,
         new TypeTuple(),
         JavaTypes.OBJECT_TYPE);
-    try {
-      checkParse(
-          new NonreceiverTerm(JavaTypes.OBJECT_TYPE, new Object()),
-          JavaTypes.OBJECT_TYPE,
-          new TypeTuple(),
-          JavaTypes.OBJECT_TYPE);
-      fail("did not throw exception");
-    } catch (IllegalArgumentException e) {
-      // Good.
-    }
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            checkParse(
+                new NonreceiverTerm(JavaTypes.OBJECT_TYPE, new Object()),
+                JavaTypes.OBJECT_TYPE,
+                new TypeTuple(),
+                JavaTypes.OBJECT_TYPE));
 
     // Array.
     Type arrayType = Type.forClass(new Object[][] {}.getClass());

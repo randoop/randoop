@@ -830,9 +830,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && this.enclosingType.isSubtypeOfOrEqualTo(otherType.enclosingType);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A member class has a wildcard if its enclosing type does, as {@code Outer<?>.Inner} does.
+   */
   @Override
   public boolean hasWildcard() {
-    return false;
+    return isMemberClass() && enclosingType.hasWildcard();
   }
 
   /**
