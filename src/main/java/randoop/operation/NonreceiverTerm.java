@@ -84,7 +84,51 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     this.type = type;
-    this.value = value;
+    this.value = (type.isPrimitive() ? convertToBoxedPrimitive(value, type) : value);
+  }
+
+  /**
+   * Returns the given boxed value, converted to the boxed type of the given primitive type. A
+   * primitive initialization may be given a value of a narrower type than the one it declares (for
+   * example, a {@code Byte} for a {@code short} variable). The run-time value of such a variable
+   * has the declared type, so this converts the value to that type. Otherwise, executing the term
+   * would yield a value of the wrong class, and terms that represent the same value would not be
+   * equal.
+   *
+   * @param value a boxed primitive whose type is assignable to {@code type}
+   * @param type a primitive type
+   * @return the value, converted to the boxed type of {@code type}
+   */
+  @SuppressWarnings({
+    "signedness:method.invocation" // Randoop's primitive values are Java's signed values
+  })
+  private static Object convertToBoxedPrimitive(Object value, Type type) {
+    Class<?> cls = type.getRuntimeClass();
+    if (cls == boolean.class || cls == char.class) {
+      // No other primitive type widens to boolean or char.
+      return value;
+    }
+    Number n;
+    if (value instanceof Character) {
+      n = Integer.valueOf((Character) value);
+    } else {
+      n = (Number) value;
+    }
+    if (cls == byte.class) {
+      return n.byteValue();
+    } else if (cls == short.class) {
+      return n.shortValue();
+    } else if (cls == int.class) {
+      return n.intValue();
+    } else if (cls == long.class) {
+      return n.longValue();
+    } else if (cls == float.class) {
+      return n.floatValue();
+    } else if (cls == double.class) {
+      return n.doubleValue();
+    } else {
+      throw new RandoopBug("Unexpected primitive type " + type);
+    }
   }
 
   /**
