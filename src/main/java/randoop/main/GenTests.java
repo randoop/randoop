@@ -367,12 +367,23 @@ public class GenTests extends GenInputsAbstract {
       omit_classes.addAll(readPatterns(omitClassesFile));
     }
 
-    if (!GenInputsAbstract.dont_omit_replaced_methods) {
-      omit_methods.addAll(createPatternsFromSignatures(MethodReplacements.getSignatureList()));
+    // Patterns for the default omissions.  They do not omit an operation whose signature matches a
+    // pattern in `exemptFromDefaultOmitMethods`.
+    List<Pattern> defaultOmitMethods = new ArrayList<>();
+    // Patterns for the signatures of operations that `defaultOmitMethods` does not omit.
+    List<Pattern> exemptFromDefaultOmitMethods = new ArrayList<>();
+    List<Pattern> replacedMethodPatterns =
+        createPatternsFromSignatures(MethodReplacements.getSignatureList());
+    if (GenInputsAbstract.dont_omit_replaced_methods) {
+      // A replacement can make a nondeterministic method deterministic.  Stop omitting the
+      // replaced methods, but continue to omit other methods that a default pattern matches.
+      exemptFromDefaultOmitMethods.addAll(replacedMethodPatterns);
+    } else {
+      omit_methods.addAll(replacedMethodPatterns);
     }
     if (!GenInputsAbstract.omit_methods_no_defaults) {
-      omit_methods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
-      omit_methods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
+      defaultOmitMethods.addAll(readPatternsFromResource("/omitmethods-defaults.txt"));
+      defaultOmitMethods.addAll(readPatternsFromResource("/JDK-nondet-methods.txt"));
     }
 
     if (!GenInputsAbstract.omit_classes_no_defaults) {
@@ -414,6 +425,8 @@ public class GenTests extends GenInputsAbstract {
                 accessibility,
                 reflectionPredicate,
                 omit_methods,
+                defaultOmitMethods,
+                exemptFromDefaultOmitMethods,
                 classnames,
                 coveredClassnames,
                 classNameErrorHandler,
@@ -452,6 +465,8 @@ public class GenTests extends GenInputsAbstract {
           System.out.println("  accessibility = " + accessibility);
           System.out.println("  reflectionPredicate = " + reflectionPredicate);
           System.out.println("  omit_methods = " + omit_methods);
+          System.out.println("  defaultOmitMethods = " + defaultOmitMethods);
+          System.out.println("  exemptFromDefaultOmitMethods = " + exemptFromDefaultOmitMethods);
           System.out.println("  classnames = " + classnames);
           System.out.println("  coveredClassnames = " + coveredClassnames);
           System.out.println("  classNameErrorHandler = " + classNameErrorHandler);

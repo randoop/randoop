@@ -707,6 +707,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true iff this class is a nested class
    */
+  @Pure
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isNestedClass() {
     return enclosingType != null;
@@ -719,8 +720,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true if this class is a member class, false otherwise
    */
-  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   @Pure
+  @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isMemberClass() {
     return !isStatic() && isNestedClass();
   }
