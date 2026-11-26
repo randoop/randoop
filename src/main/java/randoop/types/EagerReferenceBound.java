@@ -205,7 +205,9 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
-      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.
+      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  A type
+      // variable in the owner type that the substitution does not map, as in `Outer<X>.Inner`,
+      // stands for an unknown type if Substitution.isUnknown says so.
       return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);

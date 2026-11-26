@@ -170,8 +170,8 @@ public abstract class ParameterBound {
    * the conversion of a reflection type to a {@link ReferenceType} can preserve it, as in {@code
    * Outer<T>} for {@code Outer<T>.Inner}. Converting such an owner type eagerly can recursively
    * convert a type variable that is being converted, so an eager bound such as {@code
-   * List<Outer<T>.Inner>} or {@code Outer<T>.Inner<String>}, in the bound of {@code T}, would be
-   * recursive.
+   * List<Outer<T>.Inner>}, {@code Comparable<Outer<T>.Inner>}, or {@code Outer<T>.Inner<String>},
+   * in the bound of {@code T}, would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
