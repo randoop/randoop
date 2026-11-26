@@ -1363,6 +1363,50 @@ public class RandoopSystemTest {
         tests.contains("new java.util.Random()"));
   }
 
+  /**
+   * Tests that, with {@code --dont-omit-replaced-methods}, Randoop calls a replaced method ({@code
+   * java.util.Random()}) even though a default omit pattern matches it.
+   */
+  @Test
+  public void runDontOmitReplacedMethodsTest() throws IOException {
+    String classpath =
+        systemTestEnvironmentManager.classpath
+            + java.io.File.pathSeparator
+            + systemTestEnvironmentManager.replacecallAgentPath;
+    SystemTestEnvironment testEnvironment =
+        systemTestEnvironmentManager.createTestEnvironment(
+            "dont-omit-replaced-methods-test",
+            classpath,
+            systemTestEnvironmentManager.replacecallAgentPath.toString());
+    testEnvironment.addJavaAgent(
+        systemTestEnvironmentManager.replacecallAgentPath,
+        "--dont-transform=resources/systemTest/replacecall-exclusions.txt");
+    RandoopOptions options = createRandoopOptions(testEnvironment);
+    // The agent's default replacements include the java.util.Random() constructor.
+    options.addTestClass("java.util.Random");
+    // Use the default omit patterns, which match java.util.Random().
+    options.setFlag("dont-omit-replaced-methods");
+    options.setFlag("no-error-revealing-tests");
+    options.setOption("generated_limit", "100");
+
+    generateAndCompile(testEnvironment, options, false);
+
+    String packageString = options.getPackageName();
+    String packagePathString = packageString == null ? "" : packageString.replace('.', '/');
+    Path srcDir = testEnvironment.sourceDir.resolve(packagePathString);
+    StringBuilder testsBuilder = new StringBuilder();
+    try (DirectoryStream<Path> testFiles =
+        Files.newDirectoryStream(srcDir, options.getRegressionBasename() + "*.java")) {
+      for (Path path : testFiles) {
+        testsBuilder.append(FileUtils.readFileToString(path.toFile(), (String) null));
+      }
+    }
+    String tests = testsBuilder.toString();
+    assertTrue(
+        "Randoop should call the replaced java.util.Random()",
+        tests.contains("new java.util.Random()"));
+  }
+
   @Test
   public void runJDKSpecificationsTest() {
     SystemTestEnvironment testEnvironment =
