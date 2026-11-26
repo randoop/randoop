@@ -259,7 +259,7 @@ public class InstantiatedType extends ParameterizedType {
         return true;
       }
     }
-    return false;
+    return super.hasWildcard();
   }
 
   @Override
@@ -330,6 +330,10 @@ public class InstantiatedType extends ParameterizedType {
    *   <li>{@code Si} is identical to {@code Ti}
    * </ol>
    *
+   * <p>Furthermore, the matches are consistent: if a variable occurs in several {@code Si}, the
+   * corresponding {@code Ti} bind it to the same type. For example, {@code Map<String, Integer>} is
+   * not an instantiation of {@code Map<X, X>}, but {@code Map<String, String>} is.
+   *
    * @param otherType the other {@link InstantiatedType}
    * @return true if this type is an instantiation of the other type, false otherwise
    * @see ReferenceType#isInstantiationOf(ReferenceType)
@@ -347,11 +351,21 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // The substitution that the type arguments so far induce.  The type arguments must induce
+      // consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>.
+      Substitution substitution = new Substitution();
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
         if (!thisTypeArg.isInstantiationOfTypeArgument(otherTypeArg)) {
           return false;
+        }
+        if (otherTypeArg.isGeneric()) {
+          Substitution subst = thisTypeArg.getInstantiatingSubstitution(otherTypeArg);
+          if (subst == null || !substitution.isConsistentWith(subst)) {
+            return false;
+          }
+          substitution = substitution.extend(subst);
         }
       }
       return true;
@@ -382,14 +396,26 @@ public class InstantiatedType extends ParameterizedType {
 
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
+    if (substitution == null) {
+      return null;
+    }
     if (goalType instanceof InstantiatedType) {
       InstantiatedType otherInstType = (InstantiatedType) goalType;
       if (this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         for (int i = 0; i < this.argumentList.size(); i++) {
           TypeArgument thisTArg = this.argumentList.get(i);
           TypeArgument otherTArg = otherInstType.argumentList.get(i);
+          if (!otherTArg.isGeneric()) {
+            // A type argument with no type variables binds none, so it must match exactly.
+            if (!thisTArg.equals(otherTArg)) {
+              return null;
+            }
+            continue;
+          }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          if (subst == null) {
+          // The arguments can map a type variable to different types, as for Map<X, X> and
+          // Map<String, Integer>.
+          if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
           substitution = substitution.extend(subst);
@@ -469,12 +495,19 @@ public class InstantiatedType extends ParameterizedType {
         return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
       }
 
-      // first clause.
+      // first clause, combined with the second:  the supertype of this type that has the same
+      // rawtype as otherType must be a subtype of otherType by type argument containment.
       InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null && superType.equals(otherType)) {
-        return true;
+      if (superType != null) {
+        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
+        // recursive call uses the second clause above and does not recurse further.
+        assert otherType.runtimeClassIs(superType.getRuntimeClass())
+            : "superType " + superType + " does not match " + otherType;
+        if (superType.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
       }
     }
 
