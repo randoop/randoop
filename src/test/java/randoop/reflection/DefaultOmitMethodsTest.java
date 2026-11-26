@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
+import randoop.main.GenTests;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 
@@ -345,6 +347,38 @@ public class DefaultOmitMethodsTest {
       }
     }
     return false;
+  }
+
+  /**
+   * An exempt operation, such as a method that the replacecall agent replaces when {@code
+   * --dont-omit-replaced-methods} is set, is not omitted by the default patterns. Other omit
+   * patterns still omit it.
+   */
+  @Test
+  public void testExemptFromDefaults() throws IOException, RandoopSpecificationError {
+    List<Pattern> defaultPatterns = new ArrayList<>();
+    for (String filename : DEFAULT_FILES) {
+      for (String line : readLines(filename)) {
+        defaultPatterns.add(Pattern.compile(line));
+      }
+    }
+    String stringHashCode = "java.lang.String.hashCode()";
+    List<Pattern> exempt = Collections.singletonList(GenTests.signatureToPattern(stringHashCode));
+
+    // By default, java.lang.String.hashCode() is omitted.
+    assertOmitted(String.class, stringHashCode);
+
+    OmitMethodsPredicate exemptingPredicate =
+        new OmitMethodsPredicate(Collections.emptyList(), defaultPatterns, exempt);
+    assertTrue(signatures(String.class, exemptingPredicate).contains(stringHashCode));
+    // Other operations are still omitted.
+    assertFalse(
+        signatures(java.util.Random.class, exemptingPredicate).contains("java.util.Random()"));
+
+    // A non-default omit pattern still omits an exempt operation.
+    assertFalse(
+        signatures(String.class, new OmitMethodsPredicate(exempt, defaultPatterns, exempt))
+            .contains(stringHashCode));
   }
 
   /**
