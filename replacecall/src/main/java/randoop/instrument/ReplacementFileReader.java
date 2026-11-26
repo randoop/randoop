@@ -213,6 +213,7 @@ public final class ReplacementFileReader {
    * @throws IllegalClassFormatException if a class cannot be read
    * @throws NoSuchMethodException if the method or constructor does not exist
    */
+  @SuppressWarnings("PMD.AvoidInstanceofChecksInCatchClause") // one handler for several exceptions
   private static MethodSignature resolveOriginal(String signatureString)
       throws ReplacementException,
           ClassNotFoundException,
@@ -652,7 +653,6 @@ public final class ReplacementFileReader {
       try (JarFile jarFile = new JarFile(file.toFile())) {
         addReplacementsFromAllClassesOfPackage(
             replacementMap, originalPackage, replacementPackage, jarFile);
-        return;
       } catch (IOException e) {
         // This agent has no access to randoop.util.Util.pathAndAbsolute().
         throw new ReplacementException("Error reading jar file " + file, e);
@@ -672,7 +672,6 @@ public final class ReplacementFileReader {
       }
       if (Files.exists(path) && Files.isDirectory(path)) {
         addReplacementsForPackage(replacementMap, originalPackage, replacementPackage, path);
-        return;
       }
     } else {
       throw new ReplacementException("URL protocol not 'file' or 'jar'");

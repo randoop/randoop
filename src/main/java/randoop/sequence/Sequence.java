@@ -53,6 +53,13 @@ public final class Sequence {
   /** The types of elements of {@link #lastStatementVariables}. */
   private final transient List<Type> lastStatementTypes = new ArrayList<>();
 
+  /**
+   * True if {@link #checkRep} has checked every statement of this sequence. False if this sequence
+   * was created while {@link GenInputsAbstract#debug_checks} was false, in which case some
+   * statements might not have been checked.
+   */
+  private final boolean allStatementsChecked;
+
   /** If true, inline primitive values rather than creating and using a variable. */
   private transient boolean shouldInlineLiterals = true;
 
@@ -85,6 +92,7 @@ public final class Sequence {
     this.activeFlags = new BitSet(statements.size());
     this.setAllActiveFlags();
     this.checkRep(numCheckedStatements);
+    this.allStatementsChecked = GenInputsAbstract.debug_checks;
   }
 
   /**
@@ -180,9 +188,12 @@ public final class Sequence {
         CollectionsPlume.mapList(v -> getRelativeIndexForVariable(size, v), inputVariables);
     Statement statement = new Statement(operation, indexList);
     int newNetSize = operation.isNonreceivingValue() ? this.netSize : this.netSize + 1;
-    // This sequence's statements were checked when it was created.
+    // If this sequence's statements were checked when it was created, check only the new one.
     return new Sequence(
-        this.statements.add(statement), this.hashCode + statement.hashCode(), newNetSize, size);
+        this.statements.add(statement),
+        this.hashCode + statement.hashCode(),
+        newNetSize,
+        this.allStatementsChecked ? size : 0);
   }
 
   /**
@@ -220,15 +231,23 @@ public final class Sequence {
     List<SIList<Statement>> statements1 = new ArrayList<>(sequences.size());
     int newHashCode = 0;
     int newNetSize = 0;
+    // The number of leading statements that come from sequences whose statements were all checked.
+    // A statement's inputs are given by relative indices, so they still refer to statements of the
+    // same sequence, and a checked statement need not be re-checked.
+    int numCheckedStatements = 0;
+    boolean prefixChecked = true;
     for (Sequence c : sequences) {
       newHashCode += c.hashCode;
       newNetSize += c.netSize;
       statements1.add(c.statements);
+      if (prefixChecked && c.allStatementsChecked) {
+        numCheckedStatements += c.size();
+      } else {
+        prefixChecked = false;
+      }
     }
     SIList<Statement> newStatements = SIList.concat(statements1);
-    // Each of the sequences was checked when it was created.  A statement's inputs are given by
-    // relative indices, so they still refer to statements of the same sequence.
-    return new Sequence(newStatements, newHashCode, newNetSize, newStatements.size());
+    return new Sequence(newStatements, newHashCode, newNetSize, numCheckedStatements);
   }
 
   /**
