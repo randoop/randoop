@@ -402,8 +402,7 @@ public class ParameterBoundTest {
    * @param <T> the type parameter
    */
   @SuppressWarnings("unused")
-  private static class OwnerRecursiveBound<
-      T extends Comparable<GenericOuter<T>.NonGenericInner>> {}
+  private static class OwnerRecursiveBound<T extends Comparable<GenericOuter<T>.NonGenericInner>> {}
 
   /**
    * Tests that a bound that refers to its type variable only through the owner type of a

@@ -138,8 +138,7 @@ public class TypeInstantiator {
         // the type variables that `fixed` maps, and try another.  For example, if `fixed` maps T to
         // String in `Box<U>.<T extends Comparable<U>> List<T> make()`, then the selection rejects
         // Box<Integer> and can choose Box<String>.
-        substitution =
-            selectSubstitution(declaringType, matchingInputTypes(declaringType), fixed);
+        substitution = selectSubstitution(declaringType, matchingInputTypes(declaringType), fixed);
       }
       if (debug) {
         Log.logPrintf("instantiate(%s), substitution=%s%n", operation, substitution);
