@@ -121,10 +121,8 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
-    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    // TODO: This test does not check whether one enclosing type's type arguments contain the
-    // other's, so it does not report that `Outer<Integer>.Inner` is a lower bound for
-    // `Outer<? extends Number>.Inner`.
+    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`, which
+    // is parameterized but is not an InstantiatedType.  This subtype test compares such types.
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
@@ -210,10 +208,9 @@ class EagerReferenceBound extends ReferenceBound {
         inProgress.remove(check);
       }
     }
-    // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    // TODO: This test does not check whether one enclosing type's type arguments contain the
-    // other's, so it does not report that `Outer<Integer>.Inner` is within the upper bound
-    // `Outer<? extends Number>.Inner`.
+    // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`,
+    // which is parameterized but is not an InstantiatedType.  This subtype test compares such
+    // types.
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
 }

@@ -21,7 +21,8 @@ public class GenericClassType extends ParameterizedType {
    * The type parameters that the generic class declares, not including those of an enclosing class.
    * Null until first needed: computing them computes their bounds, which may refer to this class,
    * as in {@code Builder<T extends Builder<?>>}. Computing them in the constructor would recurse
-   * infinitely for such a class.
+   * infinitely for such a class. The lazy initialization is not synchronized, because Randoop uses
+   * the type model from a single thread.
    */
   private @MonotonicNonNull List<TypeVariable> directTypeParameters;
 
@@ -179,6 +180,18 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeArgument> getTypeArguments() {
     return CollectionsPlume.mapList(TypeArgument::forType, directTypeParameters());
+  }
+
+  /**
+   * Returns the type parameters that this generic class declares. Unlike {@link
+   * #getTypeParameters()}, the result omits the type parameters of enclosing classes. For example,
+   * for {@code Outer<T>.Inner<U>}, the result is {@code [U]}. The result corresponds to the type
+   * arguments of an instantiation of this class.
+   *
+   * @return the type parameters that this generic class declares
+   */
+  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
+    return directTypeParameters();
   }
 
   /**

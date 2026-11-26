@@ -599,6 +599,12 @@ public class TypeVariableTest {
     assertFalse(u.isInstantiationOf(t));
   }
 
+  @Test
+  public void testVariableWithNumberBoundIsNotSubtypeOfGenericClass() {
+    TypeVariable u = typeParameter(NumberBound.class, 0);
+    assertFalse(u.isSubtypeOfOrEqualTo(GenericClassType.forClass(List.class)));
+  }
+
   /**
    * A class whose type parameter's bound is the type parameter's own interface.
    *
@@ -1177,5 +1183,20 @@ public class TypeVariableTest {
     // The upper bound of the capture variable, Comparable<? super T>, mentions T, which the
     // subtype test does not substitute.
     assertTrue(comparableList.applyCaptureConversion().isSubtypeOfOrEqualTo(comparableList));
+  }
+
+  /**
+   * A class whose type parameter occurs more than once in its bound.
+   *
+   * @param <T> a type parameter whose bound mentions it twice
+   */
+  static class RepeatedVariableBound<T extends Map<T, T>> {}
+
+  @Test
+  public void testSubtypeWithBoundThatMentionsVariableTwice() {
+    TypeVariable t = typeParameter(RepeatedVariableBound.class, 0);
+    // The subtype test substitutes the other type for each occurrence of T in the bound.
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
   }
 }
