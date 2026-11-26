@@ -100,7 +100,7 @@ public class SeedSequencesTests {
   }
 }
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "PMD.DataClass"}) // test input
 class TestValueExamples {
   @TestValue public static int x1 = 0;
   @TestValue public static boolean b = false;
