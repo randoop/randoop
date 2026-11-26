@@ -171,6 +171,11 @@ class EagerReferenceBound extends ReferenceBound {
     // A member class whose enclosing type is parameterized, such as Outer<String>.Inner, is
     // parameterized but is not an InstantiatedType.  The tests below handle it.
     if (thisBoundType instanceof InstantiatedType) {
+      if (argType.isVariable()) {
+        // A type variable is within this bound if its upper bound is, as for U extends
+        // Comparable<String> and the bound Comparable<String>.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      }
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }

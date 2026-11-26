@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,16 +35,36 @@ public class Substitution {
 
   /**
    * The type variables that occur in a type that this substitution maps a different type variable
-   * to; null if not yet computed. Use {@link #getReplacementVariables()} instead of reading this
-   * field.
+   * to, and those in {@link #fixedVariables}; null if not yet computed. Use {@link
+   * #getReplacementVariables()} instead of reading this field.
    */
   private @Nullable Set<TypeVariable> replacementVariables = null;
 
   /**
-   * The declarations of the type parameters that this substitution maps to a different type; null
-   * if not yet computed. Use {@link #getInstantiatedDeclarations()} instead of reading this field.
+   * The declarations of the type parameters that this substitution maps to a different type, and
+   * those in {@link #retainedInstantiatedDeclarations}; null if not yet computed. Use {@link
+   * #getInstantiatedDeclarations()} instead of reading this field.
    */
   private @Nullable Set<GenericDeclaration> instantiatedDeclarations = null;
+
+  /**
+   * Type variables that stand for themselves, in addition to those that occur in a replacement. Set
+   * by {@link #withIdentityFor(Collection)}, which maps to themselves type variables that this
+   * substitution may have introduced by a replacement. Unlike {@link #replacementVariables}, this
+   * is not a cache: it is copied with the substitution, and is not recomputed from {@link #map}.
+   * Must not be modified.
+   */
+  private Set<TypeVariable> fixedVariables = Collections.emptySet();
+
+  /**
+   * Declarations whose type parameters are being instantiated, in addition to those of the type
+   * parameters that {@link #map} maps to a different type. Set by {@link
+   * #withIdentityFor(Collection)}, so that mapping a type parameter to itself does not change which
+   * of its siblings stand for unknown types. Unlike {@link #instantiatedDeclarations}, this is not
+   * a cache: it is copied with the substitution, and is not recomputed from {@link #map}. Must not
+   * be modified.
+   */
+  private Set<GenericDeclaration> retainedInstantiatedDeclarations = Collections.emptySet();
 
   /** Create an empty substitution. */
   public Substitution() {
@@ -59,6 +80,8 @@ public class Substitution {
   public Substitution(Substitution substitution) {
     map = new LinkedHashMap<>(substitution.map);
     rawMap = new LinkedHashMap<>(substitution.rawMap);
+    fixedVariables = substitution.fixedVariables;
+    retainedInstantiatedDeclarations = substitution.retainedInstantiatedDeclarations;
   }
 
   /**
@@ -120,12 +143,14 @@ public class Substitution {
       return false;
     }
     Substitution s = (Substitution) obj;
-    return map.equals(s.map);
+    return map.equals(s.map)
+        && fixedVariables.equals(s.fixedVariables)
+        && retainedInstantiatedDeclarations.equals(s.retainedInstantiatedDeclarations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(map);
+    return Objects.hash(map, fixedVariables, retainedInstantiatedDeclarations);
   }
 
   @Override
@@ -209,7 +234,30 @@ public class Substitution {
     for (Map.Entry<Type, ReferenceType> entry : other.rawMap.entrySet()) {
       result.rawMap.merge(entry.getKey(), entry.getValue(), requireSameEntry);
     }
+    result.fixedVariables = union(fixedVariables, other.fixedVariables);
+    result.retainedInstantiatedDeclarations =
+        union(retainedInstantiatedDeclarations, other.retainedInstantiatedDeclarations);
     return result;
+  }
+
+  /**
+   * Returns the union of two sets. Neither the arguments nor the result may be modified.
+   *
+   * @param <E> the type of the set elements
+   * @param set1 a set
+   * @param set2 a set
+   * @return the union of the two sets; may be one of them
+   */
+  private static <E> Set<E> union(Set<E> set1, Set<E> set2) {
+    if (set2.isEmpty()) {
+      return set1;
+    }
+    if (set1.isEmpty()) {
+      return set2;
+    }
+    Set<E> result = new HashSet<>(set1);
+    result.addAll(set2);
+    return Collections.unmodifiableSet(result);
   }
 
   /**
@@ -297,21 +345,47 @@ public class Substitution {
    * mapped to itself instead. Applying the result to a type in which only those type variables
    * occur does not change the type. This is useful for comparing a type to which this substitution
    * has already been applied, without applying it a second time to the type variables that came
-   * from its replacements. The mappings of other type variables are unchanged, so they still
-   * determine which type variables are unknowns.
+   * from its replacements.
+   *
+   * <p>The result classifies each type variable as an unknown or not (see {@link
+   * #isUnknown(ReferenceType)}) as this substitution does. In particular, each type variable that
+   * the result maps to itself instead, and that is not an unknown for this substitution, stands
+   * for itself, and the declarations whose type parameters this substitution instantiates are
+   * still instantiated. For example, from {@code [T := U, U := T, S := String]} for sibling type
+   * parameters {@code S}, {@code T}, and {@code U}, the result for {@code [T, U]} maps {@code T}
+   * and {@code U} to themselves, but they stand for themselves rather than for unknowns.
    *
    * @param variables type variables
    * @return this substitution, modified to map each of {@code variables} to itself
    */
   @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
   Substitution withIdentityFor(Collection<TypeVariable> variables) {
-    Substitution result = this;
+    Set<TypeVariable> reset = new LinkedHashSet<>();
     for (TypeVariable variable : variables) {
-      ReferenceType type = result.get(variable);
+      ReferenceType type = get(variable);
       if (type != null && type != variable) {
-        result = result.replace(variable, variable);
+        reset.add(variable);
       }
     }
+    if (reset.isEmpty()) {
+      return this;
+    }
+    // Determine the classification before changing the mappings, which changes it.
+    Set<TypeVariable> newFixedVariables = new HashSet<>(getReplacementVariables());
+    for (TypeVariable variable : reset) {
+      if (!isUnknown(variable)) {
+        newFixedVariables.add(variable);
+      }
+    }
+    Set<GenericDeclaration> newInstantiatedDeclarations =
+        new HashSet<>(getInstantiatedDeclarations());
+    Substitution result = new Substitution(this);
+    for (TypeVariable variable : reset) {
+      result.put(variable, variable);
+    }
+    result.fixedVariables = Collections.unmodifiableSet(newFixedVariables);
+    result.retainedInstantiatedDeclarations =
+        Collections.unmodifiableSet(newInstantiatedDeclarations);
     return result;
   }
 
@@ -319,10 +393,11 @@ public class Substitution {
    * Returns true if the given type is a type variable that stands for an unknown type when types
    * are compared. That is the case if this substitution maps the type variable to itself (not to a
    * copy of it with other bounds; see {@link #mapsToItself(TypeVariable)}), the type variable does
-   * not occur in the type that this substitution maps a different type variable to, and the type
-   * variable is a type parameter of a declaration whose type parameters this substitution
-   * instantiates, such as a sibling of a type parameter that is being instantiated. Every other
-   * type variable, such as a type parameter of an enclosing class, stands for itself.
+   * not occur in the type that this substitution maps a different type variable to (nor did, before
+   * {@link #withIdentityFor(Collection)} changed this substitution), and the type variable is a
+   * type parameter of a declaration whose type parameters this substitution instantiates, such as a
+   * sibling of a type parameter that is being instantiated. Every other type variable, such as a
+   * type parameter of an enclosing class, stands for itself.
    *
    * @param type a type
    * @return true if {@code type} stands for an unknown type
@@ -355,14 +430,14 @@ public class Substitution {
 
   /**
    * Returns the type variables that occur in a type that this substitution maps a different type
-   * variable to.
+   * variable to, and the type variables in {@link #fixedVariables}.
    *
-   * @return the type variables that occur in a replacement
+   * @return the type variables that occur in a replacement, and the fixed type variables
    */
   private Set<TypeVariable> getReplacementVariables() {
     Set<TypeVariable> result = replacementVariables;
     if (result == null) {
-      result = new HashSet<>();
+      result = new HashSet<>(fixedVariables);
       for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
         if (!entry.getKey().equals(entry.getValue())) {
           result.addAll(entry.getValue().getTypeParameters());
@@ -375,14 +450,14 @@ public class Substitution {
 
   /**
    * Returns the declarations of the type parameters that this substitution maps to a different
-   * type.
+   * type, and the declarations in {@link #retainedInstantiatedDeclarations}.
    *
    * @return the declarations of the type parameters that this substitution instantiates
    */
   private Set<GenericDeclaration> getInstantiatedDeclarations() {
     Set<GenericDeclaration> result = instantiatedDeclarations;
     if (result == null) {
-      result = new HashSet<>();
+      result = new HashSet<>(retainedInstantiatedDeclarations);
       for (Map.Entry<TypeVariable, ReferenceType> entry : map.entrySet()) {
         GenericDeclaration declaration = getDeclaration(entry.getKey());
         if (declaration != null && !entry.getKey().equals(entry.getValue())) {
