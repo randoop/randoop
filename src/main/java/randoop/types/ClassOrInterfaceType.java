@@ -371,10 +371,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         return captured.getMatchingSupertype(goalType);
       }
     }
+    // A supertype that is not an InstantiatedType, such as the raw or generic form of the goal
+    // type's class (as for a raw type whose class extends the goal type's class), does not
+    // instantiate the goal type.
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          if (interfaceType instanceof InstantiatedType) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.runtimeClassIs(goalType.getRuntimeClass())
                 && type.isInstantiationOf(goalType)) {
@@ -398,7 +401,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
       // isInstantiationOf can be true for a member class of another class, if the enclosing types
       // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
+      if (superclass instanceof InstantiatedType
+          && superclass.runtimeClassIs(goalType.getRuntimeClass())
           && superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
@@ -450,6 +454,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
+    // This type, or its supertype whose class is the goal type's class, if the goal type is a
+    // member class; otherwise null.
+    @Nullable ClassOrInterfaceType memberSupertype = null;
     // For a member class goal type such as Outer<E>.Inner, the enclosing type of this type, or of
     // its supertype whose class is the goal's class, instantiates the enclosing type of the goal
     // type.  For example, it is Outer<String> for Outer<String>.Inner, and also for
@@ -466,8 +473,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
         return null;
       }
-      ClassOrInterfaceType memberSupertype =
-          this.getMemberSupertype(goalClassType.getRuntimeClass());
+      memberSupertype = this.getMemberSupertype(goalClassType.getRuntimeClass());
       if (memberSupertype == null) {
         return null;
       }
@@ -489,7 +495,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     if (goalType instanceof GenericClassType) {
-      InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
+      // Use the supertype whose enclosing type gave the substitution above, if it is an
+      // instantiation.  Finding the supertype again would apply capture conversion to a wildcard
+      // in the enclosing type again, as for Outer<? extends Number>.Child<String>, where `class
+      // Child<V> extends Base<V>` is declared in Outer<T>.  The new capture variable would differ
+      // from the one that the substitution maps T to, so the substitutions would conflict.
+      InstantiatedType supertype =
+          memberSupertype instanceof InstantiatedType
+              ? (InstantiatedType) memberSupertype
+              : this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null

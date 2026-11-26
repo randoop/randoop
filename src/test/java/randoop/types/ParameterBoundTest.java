@@ -1284,6 +1284,9 @@ public class ParameterBoundTest {
 
     /** A field whose type is a parameterized member class of a non-generic class. */
     GenericInner<String> stringInner;
+
+    /** A field whose type is a list of a parameterized member class of a non-generic class. */
+    List<GenericInner<String>> stringInnerList;
   }
 
   /** A member class of a non-generic class keeps its enclosing type when converted. */
@@ -1294,5 +1297,166 @@ public class ParameterBoundTest {
     GenericClassType inner =
         (GenericClassType) ClassOrInterfaceType.forClass(PlainOuter.GenericInner.class);
     assertEquals(inner.instantiate(JavaTypes.STRING_TYPE), converted);
+    // InstantiatedType.equals treats an enclosing type in declaration form, such as PlainOuter, the
+    // same as no enclosing type, so check the enclosing type directly.
+    assertTrue(converted.isMemberClass());
+    assertEquals(PlainOuter.class, converted.enclosingType.getRuntimeClass());
+  }
+
+  /**
+   * A class whose type parameter has a self-referential bound that contains a member class of a
+   * non-generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class NonGenericOwnerBound<T extends List<PlainOuter.GenericInner<T>>> {}
+
+  /** Converting a lazy bound keeps a non-generic owner type of a member class in it. */
+  @Test
+  public void testLazyBoundKeepsNonGenericOwner() {
+    TypeVariable t =
+        GenericClassType.forClass(NonGenericOwnerBound.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    Substitution substitution = new Substitution(t, JavaTypes.STRING_TYPE);
+    ParameterBound substituted = bound.substitute(substitution);
+    assertTrue(substituted instanceof ReferenceBound);
+    InstantiatedType listType = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(inner.isMemberClass());
+    assertEquals(PlainOuter.class, inner.enclosingType.getRuntimeClass());
+    // The same type, converted from reflection, is within the bound.
+    ReferenceType stringInnerList =
+        ReferenceType.forType(fieldType(PlainOuter.class, "stringInnerList"));
+    assertTrue(bound.isUpperBound(new EagerReferenceBound(stringInnerList), substitution));
+  }
+
+  /** The upper-bound and bound-to-bound lower-bound checks apply the substitution only once. */
+  @Test
+  public void testLazyBoundSubstitutedOnce() {
+    TypeVariable e = GenericClassType.forClass(List.class).getTypeParameters().get(0);
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    ArrayType integerArray = ArrayType.ofComponentType(integerType);
+    ParameterBound numberArrayBound =
+        new EagerReferenceBound(ArrayType.ofComponentType(ReferenceType.forClass(Number.class)));
+    // T[] with T := E is E[], whose type variable E stands for itself, not for Integer.
+    Substitution viaVariable =
+        new Substitution(Arrays.asList(arrayHolderVariable, e), e, integerType);
+    Substitution direct = new Substitution(arrayHolderVariable, integerType);
+    assertFalse(arrayBound.isUpperBound(integerArray, viaVariable));
+    assertTrue(arrayBound.isUpperBound(integerArray, direct));
+    assertFalse(arrayBound.isLowerBound(numberArrayBound, viaVariable));
+    assertTrue(arrayBound.isLowerBound(numberArrayBound, direct));
+  }
+
+  /**
+   * A class whose second type parameter is bounded by the first.
+   *
+   * @param <K> the bound of {@code V}
+   * @param <V> a type parameter bounded by {@code K}
+   * @param <W> a type parameter that {@code K} can be mapped to
+   */
+  @SuppressWarnings("unused")
+  private static class VariableBoundSiblings<K, V extends K, W> {}
+
+  /**
+   * A type variable bound is compared with the type variable that the substitution replaces it by,
+   * which stands for itself, not with the type that the substitution maps that type variable to.
+   */
+  @Test
+  public void testVariableBoundSubstitutedOnce() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(VariableBoundSiblings.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    TypeVariable w = parameters.get(2);
+    // V extends K with K := W is V extends W; String is not known to be a subtype of W.
+    Substitution viaVariable = new Substitution(Arrays.asList(k, w), w, JavaTypes.OBJECT_TYPE);
+    assertFalse(v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, viaVariable));
+    assertTrue(
+        v.canBeInstantiatedBy(JavaTypes.STRING_TYPE, new Substitution(k, JavaTypes.OBJECT_TYPE)));
+  }
+
+  /**
+   * A class whose second type parameter has a parameterized bound that mentions the first.
+   *
+   * @param <K> the type argument of the bound of {@code V}
+   * @param <V> a type parameter bounded by {@code List<K>}
+   */
+  @SuppressWarnings("unused")
+  private static class ListOfSiblingBound<K, V extends List<K>> {}
+
+  /** A field whose type is a list of a lower-bounded wildcard. */
+  @SuppressWarnings("unused")
+  private static List<? super Number> superNumberList;
+
+  /**
+   * A capture variable that the substitution puts in a parameterized bound stands for itself: it is
+   * not instantiated by a type that is within its bounds.
+   */
+  @Test
+  public void testCaptureFromSubstitutionIsFixedInParameterizedBound() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ListOfSiblingBound.class).getTypeParameters();
+    InstantiatedType capturedList =
+        ((InstantiatedType)
+                ReferenceType.forType(fieldType(ParameterBoundTest.class, "superNumberList")))
+            .applyCaptureConversion();
+    ReferenceType capture =
+        ((ReferenceArgument) capturedList.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(capture instanceof CaptureTypeVariable);
+    ParameterBound bound = parameters.get(1).getUpperTypeBound();
+    assertTrue(bound instanceof EagerReferenceBound);
+    Substitution substitution = new Substitution(parameters.get(0), capture);
+    ReferenceType numberList =
+        GenericClassType.forClass(List.class).instantiate(ReferenceType.forClass(Number.class));
+    assertTrue(bound.isUpperBound(capturedList, substitution));
+    assertFalse(bound.isUpperBound(numberList, substitution));
+  }
+
+  /**
+   * A class with a field whose type is a member class of a wildcard-parameterized type, with a type
+   * argument of its own.
+   *
+   * @param <U> the type argument of the member class
+   */
+  @SuppressWarnings("unused")
+  private static class WildcardOwnerHolder<U> {
+    /** A field whose enclosing type has a wildcard. */
+    Outer<?>.Inner<U> inner;
+  }
+
+  /** A field whose type is a list of an upper-bounded wildcard. */
+  @SuppressWarnings("unused")
+  private static List<? extends String> extendsStringList;
+
+  /**
+   * Capture conversion converts only the capture variables that it creates. A capture variable that
+   * is already a type argument keeps its bounds.
+   */
+  @Test
+  public void testCaptureConversionKeepsExistingCapture() {
+    InstantiatedType capturedList =
+        ((InstantiatedType)
+                ReferenceType.forType(fieldType(ParameterBoundTest.class, "extendsStringList")))
+            .applyCaptureConversion();
+    TypeVariable capture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedList.getTypeArguments().get(0)).getReferenceType();
+    ParameterBound upperBound = capture.getUpperTypeBound();
+    TypeVariable u = TypeVariable.forType(WildcardOwnerHolder.class.getTypeParameters()[0]);
+    InstantiatedType innerType =
+        (InstantiatedType)
+            ReferenceType.forType(fieldType(WildcardOwnerHolder.class, "inner"))
+                .substitute(new Substitution(u, capture));
+    assertTrue(innerType.hasWildcardArgument());
+    InstantiatedType converted = innerType.applyCaptureConversion();
+    innerType.applyCaptureConversion();
+    assertSame(upperBound, capture.getUpperTypeBound());
+    assertSame(
+        capture, ((ReferenceArgument) converted.getTypeArguments().get(0)).getReferenceType());
   }
 }

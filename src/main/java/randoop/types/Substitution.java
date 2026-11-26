@@ -369,6 +369,18 @@ public class Substitution {
   }
 
   /**
+   * Returns true if the given type variable occurs in a type that this substitution maps a
+   * different type variable to. For example, this is true for {@code W} in {@code {K := W}} and in
+   * {@code {K := List<W>}}.
+   *
+   * @param variable a type variable
+   * @return true if {@code variable} occurs in a replacement
+   */
+  boolean isReplacementVariable(TypeVariable variable) {
+    return getReplacementVariables().contains(variable);
+  }
+
+  /**
    * Returns true if this substitution maps some type parameter to a different type. A type
    * parameter is a type variable declared by a class or method, such as {@code T} in {@code
    * List<T>}, as opposed to a capture variable.

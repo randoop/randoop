@@ -199,11 +199,15 @@ class EagerReferenceBound extends ReferenceBound {
         // As for a type variable bound above, a type parameter in the bound that is fixed, such as
         // a type parameter of an enclosing class, stands for itself:  for `<T extends List<E>>`
         // declared in `Outer<E>`, List<String> is not known to be a List<E>.  The comparison below
-        // would accept String as an instantiation of E.
+        // would accept String as an instantiation of E.  Likewise, a capture variable that the
+        // substitution put in the bound stands for itself:  for `<K, V extends List<K>>` with K
+        // mapped to the capture of `? super Number`, List<Number> is not known to be List<CAP>.
+        // Capture variables that the comparison below creates from wildcards in the bound are not
+        // in the substitution, so they are still matched against the argument's type arguments.
         if (subst.instantiatesTypeParameters()) {
           Substitution completeSubstitution =
               subst.extendWithIdentity(thisBoundType.getTypeParameters());
-          if (hasFixedTypeParameter(thisBoundType, completeSubstitution)) {
+          if (hasFixedTypeVariable(thisBoundType, subst, completeSubstitution)) {
             return Subtyping.isSubtypeOrEqual(
                 (ReferenceType) argType, thisBoundType, completeSubstitution);
           }
@@ -237,17 +241,25 @@ class EagerReferenceBound extends ReferenceBound {
   }
 
   /**
-   * Returns true if the given type contains a type parameter that stands for itself rather than for
-   * an unknown type, as determined by {@link Substitution#isUnknown(ReferenceType)}. Capture
-   * variables are not considered.
+   * Returns true if the given type contains a type variable that stands for itself rather than for
+   * an unknown type. That is a type parameter that is not an unknown, as determined by {@link
+   * Substitution#isUnknown(ReferenceType)}, or a capture variable that the substitution put in the
+   * type. Any other capture variable is not considered.
    *
-   * @param type a type
-   * @param substitution a substitution that maps each type variable in {@code type}
-   * @return true if {@code type} contains a type parameter that stands for itself
+   * @param type a type, to which {@code substitution} has been applied
+   * @param substitution the substitution that was applied to the type
+   * @param completeSubstitution {@code substitution}, extended to map each type variable in {@code
+   *     type}
+   * @return true if {@code type} contains a type variable that stands for itself
    */
-  private static boolean hasFixedTypeParameter(ReferenceType type, Substitution substitution) {
+  private static boolean hasFixedTypeVariable(
+      ReferenceType type, Substitution substitution, Substitution completeSubstitution) {
     for (TypeVariable variable : type.getTypeParameters()) {
-      if (variable instanceof ExplicitTypeVariable && !substitution.isUnknown(variable)) {
+      if (variable instanceof ExplicitTypeVariable) {
+        if (!completeSubstitution.isUnknown(variable)) {
+          return true;
+        }
+      } else if (substitution.isReplacementVariable(variable)) {
         return true;
       }
     }

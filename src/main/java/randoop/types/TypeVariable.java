@@ -460,10 +460,13 @@ public abstract class TypeVariable extends ParameterType {
     Substitution completeSubstitution =
         substitution.extendWithIdentity(Collections.singletonList(variable));
     if (substitution.instantiatesTypeParameters() && !completeSubstitution.isUnknown(variable)) {
-      ParameterBound fixedBound = new EagerReferenceBound(variable);
+      // Compare with `bound`, not with `variable`, which is `bound` after substitution, so that the
+      // comparison applies the substitution exactly once.  Applying it to `variable` too would
+      // replace a type variable that the substitution put in the bound:  for `<K, V extends K, W>`
+      // with `K := W` and `W := Object`, it would compare `String` with Object, not with W.
       return isLower
-          ? fixedBound.isLowerBound(otherType, substitution)
-          : fixedBound.isUpperBound(otherType, substitution);
+          ? bound.isLowerBound(otherType, substitution)
+          : bound.isUpperBound(otherType, substitution);
     }
     return isLower
         ? variable.canBeInstantiatedBy(otherType, substitution)

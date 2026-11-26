@@ -244,6 +244,13 @@ class LazyParameterBound extends ParameterBound {
         } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
+      } else if (reflectiveOwner instanceof Class<?>
+          && !java.lang.reflect.Modifier.isStatic(
+              ((Class<?>) parameterizedType.getRawType()).getModifiers())) {
+        // For a member class of a non-generic class, such as Plain.Inner<T>, the owner type is a
+        // Class.  Use it as the enclosing type, as ParameterizedType.forType does, so that the
+        // result is a member class, like the conversion of the same type from reflection.
+        instantiatedType.enclosingType = ClassOrInterfaceType.forClass((Class<?>) reflectiveOwner);
       }
       return TypeArgument.forType(instantiatedType);
     }
@@ -496,8 +503,14 @@ class LazyParameterBound extends ParameterBound {
       // The bound has no type variable, so no substitution changes it.
       return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
     }
-    ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isUpperBound(argType, substitution);
+    // As in isLowerBound, compare the converted bound, so that the comparison applies the
+    // substitution exactly once.  Applying the substitution first, and then again in the
+    // comparison, would replace a type variable that the substitution put in the bound:  for `T[]`
+    // with `T := W` and `W := Integer`, it would compare Integer[], not W[].  The comparison treats
+    // a type variable that the substitution does not replace as an unknown, as substituting it for
+    // itself would.
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.isUpperBound(argType, substitution);
   }
 
   /**
@@ -575,8 +588,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    ParameterBound b = substituteWithUnknowns(substitution);
-    return b != null && b.isLowerBound(bound, substitution);
+    // As in isLowerBound(Type, Substitution), compare the converted bound, so that the comparison
+    // applies the substitution exactly once.
+    ReferenceBound converted = toReferenceBound();
+    return converted != null && converted.isLowerBound(bound, substitution);
   }
 
   /**

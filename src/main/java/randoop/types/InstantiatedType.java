@@ -154,7 +154,11 @@ public class InstantiatedType extends ParameterizedType {
       substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
     }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables that this call created.  A type argument can already be
+      // a capture variable, as in Outer<?>.Inner<CAP>, which this conversion captures because of
+      // the wildcard in the enclosing type.  Converting it would change its bounds in place, which
+      // would also change every other type that contains it.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
@@ -586,9 +590,8 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // otherType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    // TODO: This test does not check whether one enclosing type's type arguments contain the
-    // other's, so it does not report that a generic subclass of `Outer<Integer>.Inner` is a subtype
-    // of `Outer<? extends Number>.Inner`.
+    // This test compares the enclosing types by equality; the test after the wildcard clause below
+    // compares them by containment.
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
@@ -597,6 +600,24 @@ public class InstantiatedType extends ParameterizedType {
     if (this.hasWildcardArgument()) { // JLS 4.10.2
       // old note says this has to be tested first
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
+    }
+
+    // otherType can be a member class that declares no type parameters, of a parameterized type,
+    // such as `Outer<? extends CharSequence>.Inner`, whose class differs from this type's class.
+    // The supertype of this type with that class, such as `Outer<String>.Inner` for a generic
+    // subclass of it, compares the enclosing types by containment.  The rawtype test below cannot,
+    // because the supertypes of a rawtype are erasures.
+    if (otherType instanceof NonParameterizedType
+        && ((NonParameterizedType) otherType).isMemberClass()
+        && !otherType.runtimeClassIs(this.getRuntimeClass())) {
+      for (ClassOrInterfaceType supertype : getSupertypesStrict()) {
+        if (supertype.runtimeClassIs(otherType.getRuntimeClass())) {
+          if (supertype.isSubtypeOfOrEqualTo(otherType)) {
+            return true;
+          }
+          break;
+        }
+      }
     }
 
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`

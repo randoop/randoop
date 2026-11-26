@@ -1587,4 +1587,103 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(ArrayType.ofComponentType(wildcardInner).hasWildcard());
     assertFalse(ArrayType.ofComponentType(stringInner).hasWildcard());
   }
+
+  /**
+   * A generic class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class MatchBox<T> {}
+
+  /** A class whose superclass is the raw type {@link MatchBox}. */
+  @SuppressWarnings({"rawtypes", "unused"})
+  private static class RawMatchBox extends MatchBox {}
+
+  /** A class whose superclass is a parameterized type of {@link MatchBox}. */
+  @SuppressWarnings("unused")
+  private static class StringMatchBox extends MatchBox<String> {}
+
+  /**
+   * A raw supertype does not instantiate the generic class; a parameterized one does. The raw
+   * supertype and the generic class have the same enclosing type, so the raw supertype is an
+   * instantiation of the generic class by {@link ClassOrInterfaceType#isInstantiationOf}, but it is
+   * not an {@link InstantiatedType}.
+   */
+  @Test
+  public void testMatchingSupertypeOfRawSubclass() {
+    GenericClassType box = (GenericClassType) ClassOrInterfaceType.forClass(MatchBox.class);
+    assertNull(ClassOrInterfaceType.forClass(RawMatchBox.class).getMatchingSupertype(box));
+    InstantiatedType stringBox =
+        ClassOrInterfaceType.forClass(StringMatchBox.class).getMatchingSupertype(box);
+    assertEquals(box.instantiate(JavaTypes.STRING_TYPE), stringBox);
+  }
+
+  /**
+   * A generic class with generic member classes, one of which extends the other.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic"})
+  private static class MemberOwner<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter
+     */
+    class MemberBase<U> {}
+
+    /**
+     * A generic member class that extends another.
+     *
+     * @param <V> the type parameter
+     */
+    class MemberChild<V> extends MemberBase<V> {}
+  }
+
+  /** Methods whose return types are used in the tests. */
+  @SuppressWarnings("unused")
+  private abstract static class MemberOwnerHolder {
+    abstract MemberOwner<? extends Number>.MemberChild<String> wildcardOwnerChild();
+
+    abstract MemberOwner<Integer>.MemberChild<String> integerOwnerChild();
+  }
+
+  /**
+   * Returns the return type of the given method of {@link MemberOwnerHolder}.
+   *
+   * @param methodName the name of a method of {@link MemberOwnerHolder}
+   * @return the return type of the method
+   * @throws NoSuchMethodException if there is no such method
+   */
+  private static ReferenceType memberOwnerHolderReturnType(String methodName)
+      throws NoSuchMethodException {
+    return ReferenceType.forType(
+        MemberOwnerHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
+  /**
+   * The substitution that instantiates an inherited generic member class takes the bindings of the
+   * enclosing type's type parameters and of the member class's own type parameters from the same
+   * supertype, so a wildcard in the enclosing type is captured once.
+   */
+  @Test
+  public void testInstantiatingSubstitutionForInheritedMemberClass() throws NoSuchMethodException {
+    GenericClassType base =
+        (GenericClassType) ClassOrInterfaceType.forClass(MemberOwner.MemberBase.class);
+    TypeVariable t = TypeVariable.forType(MemberOwner.class.getTypeParameters()[0]);
+    TypeVariable u = TypeVariable.forType(MemberOwner.MemberBase.class.getTypeParameters()[0]);
+
+    Substitution wildcardOwner =
+        memberOwnerHolderReturnType("wildcardOwnerChild").getInstantiatingSubstitution(base);
+    assertNotNull(wildcardOwner);
+    assertTrue(wildcardOwner.get(t) instanceof CaptureTypeVariable);
+    assertEquals(JavaTypes.STRING_TYPE, wildcardOwner.get(u));
+
+    Substitution integerOwner =
+        memberOwnerHolderReturnType("integerOwnerChild").getInstantiatingSubstitution(base);
+    assertNotNull(integerOwner);
+    assertEquals(ReferenceType.forClass(Integer.class), integerOwner.get(t));
+    assertEquals(JavaTypes.STRING_TYPE, integerOwner.get(u));
+  }
 }

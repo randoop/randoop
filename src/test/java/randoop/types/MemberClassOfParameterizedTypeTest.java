@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -56,6 +57,10 @@ public class MemberClassOfParameterizedTypeTest {
     abstract List<? extends Outer<String>.Inner> innerUpperWildcardList();
 
     abstract List<? super Outer<String>.Inner> innerLowerWildcardList();
+
+    abstract Outer<? extends CharSequence>.Inner charSequenceInnerType();
+
+    abstract Outer<? extends Number>.Inner numberInnerType();
   }
 
   /**
@@ -72,8 +77,9 @@ public class MemberClassOfParameterizedTypeTest {
 
   /**
    * Returns the type {@code Outer<String>.C} for the given member class {@code C} of {@link Outer}.
-   * The type is constructed by substitution, because {@link Type#forType} discards the type
-   * arguments of the enclosing type of a non-generic member class, yielding {@code Outer<T>.C}.
+   * {@link Type#forType} preserves the parameterized owner type {@code Outer<String>} when it
+   * converts the reflection type {@code Outer<String>.C}; this method instead constructs the same
+   * type by substitution into {@code Outer<T>.C}, so that tests can exercise that path separately.
    *
    * @param memberClass a non-generic member class of {@link Outer}
    * @return the member class, with {@code Outer<String>} as its enclosing type
@@ -98,6 +104,28 @@ public class MemberClassOfParameterizedTypeTest {
     EagerReferenceBound subBound = new EagerReferenceBound(sub);
     assertTrue(subBound.isLowerBound(inner, empty));
     assertFalse(subBound.isLowerBound(returnType("otherType"), empty));
+  }
+
+  /**
+   * A generic subclass of a member class of a parameterized type is a subtype of that member class
+   * of each type whose type arguments contain those of the enclosing type, and so is an array of
+   * it.
+   */
+  @Test
+  public void testGenericSubclassSubtypeOfMemberClassWithWildcardOwner()
+      throws NoSuchMethodException {
+    ReferenceType sub = returnType("subType");
+    ReferenceType charSequenceInner = returnType("charSequenceInnerType");
+    ReferenceType numberInner = returnType("numberInnerType");
+    assertTrue(sub.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertTrue(sub.isSubtypeOfOrEqualTo(charSequenceInner));
+    assertFalse(sub.isSubtypeOfOrEqualTo(numberInner));
+    assertTrue(
+        ArrayType.ofComponentType(sub)
+            .isSubtypeOfOrEqualTo(ArrayType.ofComponentType(charSequenceInner)));
+    assertFalse(
+        ArrayType.ofComponentType(sub)
+            .isSubtypeOfOrEqualTo(ArrayType.ofComponentType(numberInner)));
   }
 
   /**
@@ -133,6 +161,9 @@ public class MemberClassOfParameterizedTypeTest {
     ClassOrInterfaceType inner = memberOfOuterOfString(Outer.Inner.class);
     assertTrue(inner.isParameterized());
     assertFalse(inner instanceof InstantiatedType);
+    assertEquals(
+        GenericClassType.forClass(Outer.class).instantiate(JavaTypes.STRING_TYPE),
+        inner.enclosingType);
 
     ReferenceType integerList = returnType("integerList");
     Substitution empty = new Substitution();
