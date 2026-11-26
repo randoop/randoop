@@ -94,8 +94,7 @@ public final class ReferenceArgument extends TypeArgument {
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
-    return otherArgument instanceof ReferenceArgument
-        && referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
+    return Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**
@@ -121,7 +120,9 @@ public final class ReferenceArgument extends TypeArgument {
   public boolean hasCaptureVariable() {
     return referenceType instanceof CaptureTypeVariable
         || (referenceType.isParameterized()
-            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable());
+            && ((ClassOrInterfaceType) referenceType).hasCaptureVariable())
+        // A capture variable can be in an array type argument, as in Holder<CAP[]>.
+        || (referenceType instanceof ArrayType && referenceType.hasCaptureVariable());
   }
 
   /**

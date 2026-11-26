@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
@@ -70,13 +71,19 @@ final class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
+    if (arrayType.getElementType().equals(JavaTypes.NULL_TYPE)) {
+      // Java has no syntax for an array of the null type, so no code can create one.
+      return SIList.empty();
+    }
     Type componentType = arrayType.getComponentType();
 
     SIList<Sequence> candidates;
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
-      if (componentType.isParameterized()) {
+      // Not `isParameterized()`:  a non-generic member class of a parameterized type, such as
+      // `Outer<String>.Inner`, is parameterized but is not an InstantiatedType.
+      if (componentType instanceof InstantiatedType) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType =
             getImplementingTypeForCollection((InstantiatedType) componentType);
@@ -85,6 +92,12 @@ final class HelperSequenceCreator {
           // XXX being incautious, argument type might be parameterized
           componentType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+          if (componentType.equals(JavaTypes.NULL_TYPE)
+              || (componentType.isArray()
+                  && ((ArrayType) componentType).getElementType().equals(JavaTypes.NULL_TYPE))) {
+            // Java has no syntax for an array of the null type, so no code can create one.
+            return SIList.empty();
+          }
         }
       }
       candidates = components.getSequencesForType(componentType);
@@ -139,12 +152,20 @@ final class HelperSequenceCreator {
    *
    * @param componentManager the component manager for selecting values
    * @param collectionType the type for collection
-   * @return a sequence that creates a collection of type {@code collectionType}
+   * @return a sequence that creates a collection of type {@code collectionType}, or null if the
+   *     element type is the null type or an array of it
    */
-  /*package*/ static Sequence createCollection(
+  /*package*/ static @Nullable Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);
+    if (elementType.equals(JavaTypes.NULL_TYPE)
+        || (elementType.isArray()
+            && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))) {
+      // Java has no syntax for the null type or an array of it, so no code can create such an
+      // array of elements.
+      return null;
+    }
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
@@ -286,12 +307,17 @@ final class HelperSequenceCreator {
    * given list of candidates.
    *
    * @param elementsSequence the sequence creating element values
-   * @param elementType the type of elements for the array
+   * @param elementType the type of elements for the array; neither the null type nor an array whose
+   *     element type is the null type, which Java has no syntax for
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(
       TupleSequence elementsSequence, Type elementType, int length) {
+    assert !elementType.equals(JavaTypes.NULL_TYPE)
+            && !(elementType.isArray()
+                && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))
+        : "cannot create an array of the null type: " + elementType;
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()

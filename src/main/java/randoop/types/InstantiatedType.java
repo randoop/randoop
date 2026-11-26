@@ -46,7 +46,7 @@ public class InstantiatedType extends ParameterizedType {
    * {@inheritDoc}
    *
    * <p>Test if the given object is equal to this parameterized type. Two parameterized types are
-   * equal if they have the same raw type and the same type arguments.
+   * equal if they have the same raw type, the same type arguments, and the same enclosing type.
    */
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -57,13 +57,15 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType other = (InstantiatedType) obj;
+    // super.equals compares the enclosing types, as for Outer<String>.Inner<Integer>.
     return genericType.equals(other.getGenericClassType())
-        && argumentList.equals(other.argumentList);
+        && argumentList.equals(other.argumentList)
+        && super.equals(obj);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(genericType, argumentList);
+    return Objects.hash(genericType, argumentList, super.hashCode());
   }
 
   @Override
@@ -119,19 +121,29 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), convertedTypeList);
+        new Substitution(genericType.getDeclaredTypeParameters(), convertedTypeList);
+    // A bound of a type parameter can mention a type parameter of an enclosing class.
+    ClassOrInterfaceType convertedEnclosingType = null;
+    if (isMemberClass()) {
+      convertedEnclosingType = enclosingType.applyCaptureConversion();
+      substitution = convertedEnclosingType.getReferenceArgumentSubstitution().extend(substitution);
+    }
     for (int i = 0; i < convertedTypeList.size(); i++) {
-      if (convertedTypeList.get(i).isCaptureVariable()) {
+      // Convert only the capture variables created above.  A type argument that is not a wildcard
+      // can itself be a capture variable, created by an earlier capture conversion; converting it
+      // again would add another member to its upper bound.
+      if (argumentList.get(i).isWildcard()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(genericType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(genericType.getDeclaredTypeParameters().get(i), substitution);
       }
     }
 
     List<TypeArgument> convertedArgumentList =
         CollectionsPlume.mapList(TypeArgument::forType, convertedTypeList);
 
-    return (InstantiatedType)
-        applyCaptureConversion(new InstantiatedType(genericType, convertedArgumentList));
+    InstantiatedType result = new InstantiatedType(genericType, convertedArgumentList);
+    result.enclosingType = convertedEnclosingType;
+    return result;
   }
 
   /**
@@ -143,8 +155,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+    Substitution substitution = getSupertypeSubstitution();
     return genericType.getInterfaces(substitution);
   }
 
@@ -166,7 +177,9 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
     */
-    if (this.isInstantiationOf(goalType)) {
+    // isInstantiationOf can be true for a member class of another class, if the enclosing types
+    // match, so also check the class.
+    if (this.runtimeClassIs(goalType.getRuntimeClass()) && this.isInstantiationOf(goalType)) {
       return this;
     }
     return super.getMatchingSupertype(goalType);
@@ -203,9 +216,8 @@ public class InstantiatedType extends ParameterizedType {
    * @return the superclass type for this parameterized type
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution =
-        new Substitution(genericType.getTypeParameters(), getReferenceArguments());
+  public @Nullable ClassOrInterfaceType getSuperclass() {
+    Substitution substitution = getSupertypeSubstitution();
     return this.getGenericClassType().getSuperclass(substitution);
   }
 
@@ -229,37 +241,48 @@ public class InstantiatedType extends ParameterizedType {
     return new ArrayList<>(paramSet);
   }
 
+  @Override
+  /*package*/ Substitution getReferenceArgumentSubstitution() {
+    return super.getReferenceArgumentSubstitution()
+        .extend(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+  }
+
+  @Override
+  /*package*/ Substitution getSupertypeSubstitution() {
+    return super.getSupertypeSubstitution()
+        .extend(genericType.getDeclaredTypeParameters(), getReferenceArguments());
+  }
+
   /**
-   * Creates the type substitution of the type arguments of this type for the type variables of the
-   * instantiated class, if the type arguments are reference types. If any type argument is a
-   * wildcard, then null is returned.
+   * Returns the type substitution of the type arguments of this type for the type variables of the
+   * instantiated class and of the classes that enclose it as a member class, if the type arguments
+   * are reference types. For example, for {@code Outer<String>.Inner<Integer>}, where {@code
+   * Inner<U>} is a member class of {@code Outer<T>}, the result maps {@code T} to {@code String}
+   * and {@code U} to {@code Integer}. If any of those type arguments is a wildcard, then null is
+   * returned.
    *
-   * @return the type substitution of the type arguments of this class for the type variables of the
-   *     instantiated type
+   * @return the type substitution of the type arguments of this type for the type variables of the
+   *     instantiated class and its enclosing classes, or null if any of the type arguments is a
+   *     wildcard
    */
   public @Nullable Substitution getTypeSubstitution() {
-    List<TypeArgument> typeArgs = this.getTypeArguments();
-    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
-    for (TypeArgument arg : typeArgs) {
-      if (!arg.isWildcard()) {
-        arguments.add(((ReferenceArgument) arg).getReferenceType());
-      }
+    if (hasWildcardArgument()) {
+      return null;
     }
-    Substitution substitution = null;
-    if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
-    }
-    return substitution;
+    return getReferenceArgumentSubstitution();
   }
 
   @Override
   public boolean hasWildcard() {
+    if (super.hasWildcard()) { // an enclosing type has a wildcard
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.hasWildcard()) {
         return true;
       }
     }
-    return super.hasWildcard();
+    return false;
   }
 
   @Override
@@ -277,6 +300,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean hasCaptureVariable() {
+    if (super.hasCaptureVariable()) { // an enclosing type has a capture variable
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.hasCaptureVariable()) {
         return true;
@@ -351,6 +377,13 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
+      // an instantiation.
+      if (this.isMemberClass()
+          && otherInstType.isMemberClass()
+          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
+        return false;
+      }
       // The substitution that the type arguments so far induce.  The type arguments must induce
       // consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>.
       Substitution substitution = new Substitution();
@@ -397,6 +430,7 @@ public class InstantiatedType extends ParameterizedType {
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
+      // The enclosing type of this member class does not instantiate that of the goal type.
       return null;
     }
     if (goalType instanceof InstantiatedType) {
@@ -413,12 +447,26 @@ public class InstantiatedType extends ParameterizedType {
             continue;
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // The substitution from the enclosing type, or for another argument, can map a type
+          // variable to a different type, as for Map<String, Integer> and Map<T, T>, or for
+          // Outer<String>.Inner<Integer> and Outer<E>.Inner<E>.  Then this type does not
+          // instantiate goalType.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
-          substitution = substitution.extend(subst);
+          try {
+            substitution = substitution.extend(subst);
+          } catch (IllegalArgumentException e) {
+            // The bindings map a type variable to distinct types, as for
+            // Outer<String>.GenericInner<Integer> and Outer<X>.GenericInner<X>.
+            return null;
+          }
+        }
+        // A type argument may not bind a type variable that a generic-form enclosing type fixes,
+        // as for Outer<T>.GenericInner<String> and Outer<T>.GenericInner<T>:  the substitution
+        // would change the enclosing type of goalType to Outer<String>.
+        if (mapsToOtherType(getFixedEnclosingTypeParameters(goalType), substitution)) {
+          return null;
         }
         return substitution;
       }
@@ -477,48 +525,41 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
-    if (otherType.isParameterized()) {
-
-      // second clause: rawtype same and parameters S_i of otherType contains T_i of this
+    // first and second clauses
+    // A member class with a parameterized enclosing type, such as Outer<String>.Inner, is
+    // parameterized even if it is not an InstantiatedType.  The clauses below need an
+    // InstantiatedType; the supertype search below (super.isSubtypeOfOrEqualTo) handles other
+    // types.
+    if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
+      if (Subtyping.isSubtypeOrEqual(this, otherInstantiatedType, new Substitution())) {
+        return true;
+      }
+      // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
+      // is also a subtype of the generic form of its class, and of the generic form of the class
+      // of each of its parameterized supertypes.
+      if (otherInstantiatedType.isGenericForm()
+          && (otherType.runtimeClassIs(this.getRuntimeClass())
+              || this.getMatchingSupertype(otherInstantiatedType.getGenericClassType()) != null)) {
+        return true;
+      }
+      // No other rule below applies to another instantiation of the same class.
       if (otherType.runtimeClassIs(this.getRuntimeClass())) {
-        InstantiatedType otherInstantiatedType = (InstantiatedType) otherType;
-        List<TypeArgument> otherTypeArguments = otherInstantiatedType.getTypeArguments();
-        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
-        assert otherTypeArguments.size() == thisTypeArguments.size();
-        int i = 0;
-        while (i < thisTypeArguments.size()
-            && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
-          i++;
-        }
-        // As for the rawtype (see NonParameterizedType.isSubtypeOfOrEqualTo), a parameterized type
-        // is also a subtype of the generic form of its class.
-        return i == thisTypeArguments.size() || otherInstantiatedType.isGenericForm();
+        return false;
       }
-
-      // first clause, combined with the second:  the supertype of this type that has the same
-      // rawtype as otherType must be a subtype of otherType by type argument containment.
-      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
-      InstantiatedType superType =
-          this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
-      if (superType != null) {
-        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
-        // recursive call uses the second clause above and does not recurse further.
-        assert otherType.runtimeClassIs(superType.getRuntimeClass())
-            : "superType " + superType + " does not match " + otherType;
-        if (superType.isSubtypeOfOrEqualTo(otherType)) {
-          return true;
-        }
-      }
-    }
-
-    if (super.isSubtypeOfOrEqualTo(otherType)) {
-      return true;
     }
 
     // wildcard clause
     if (this.hasWildcardArgument()) { // JLS 4.10.2
-      // old note says this has to be tested first
+      // A type with wildcard arguments is a subtype of whatever its capture is a subtype of.  The
+      // supertypes of this type itself would have wildcards as nested type arguments:  for
+      // `Nested<T> extends ArrayList<List<T>>`, the superclass of `Nested<?>` would be
+      // `ArrayList<List<?>>`, but `Nested<?>` is not a subtype of `List<List<?>>`.
       return this.applyCaptureConversion().isSubtypeOfOrEqualTo(otherType);
+    }
+
+    if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
     }
 
     // The supertypes of a rawtype are erasures, so this is true for a parameterized `otherType`

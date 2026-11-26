@@ -149,6 +149,31 @@ public class ArrayTypeTest {
         t.toString(), t instanceof ClassNotFoundException || t instanceof NoClassDefFoundError);
   }
 
+  /**
+   * A class whose field has an array of the type parameter as its type.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class ArrayOfTypeParameter<T> {
+    /** A field whose type is an array of the type parameter. */
+    T[] array;
+  }
+
+  @Test
+  public void testSubstituteNullTypeForComponent() throws NoSuchFieldException {
+    ArrayType arrayType =
+        ArrayType.forType(ArrayOfTypeParameter.class.getDeclaredField("array").getGenericType());
+    TypeVariable t = (TypeVariable) arrayType.getComponentType();
+    ArrayType nullArray = arrayType.substitute(new Substitution(t, JavaTypes.NULL_TYPE));
+    assertEquals(JavaTypes.NULL_TYPE, nullArray.getComponentType());
+    // There is no array class of the null type, so the runtime class is Object[].
+    assertEquals(Object[].class, nullArray.getRuntimeClass());
+    ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    assertTrue(nullArray.isSubtypeOfOrEqualTo(stringArray));
+    assertFalse(stringArray.isSubtypeOfOrEqualTo(nullArray));
+  }
+
   /** Methods whose return types are used in the tests. */
   @SuppressWarnings("unused")
   abstract static class TypeHolder {
