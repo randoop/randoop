@@ -349,9 +349,9 @@ public class Substitution {
    *
    * <p>The result classifies each type variable as an unknown or not (see {@link
    * #isUnknown(ReferenceType)}) as this substitution does. In particular, each type variable that
-   * the result maps to itself instead, and that is not an unknown for this substitution, stands
-   * for itself, and the declarations whose type parameters this substitution instantiates are
-   * still instantiated. For example, from {@code [T := U, U := T, S := String]} for sibling type
+   * the result maps to itself instead, and that is not an unknown for this substitution, stands for
+   * itself, and the declarations whose type parameters this substitution instantiates are still
+   * instantiated. For example, from {@code [T := U, U := T, S := String]} for sibling type
    * parameters {@code S}, {@code T}, and {@code U}, the result for {@code [T, U]} maps {@code T}
    * and {@code U} to themselves, but they stand for themselves rather than for unknowns.
    *

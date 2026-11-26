@@ -536,8 +536,8 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Returns the substitution with which to compare the given instantiated bound, which is this
-   * bound with {@link #substituteWithUnknowns(Substitution)} applied. The result maps to itself each type
-   * variable in this bound that {@code substitution} does not map, as {@link
+   * bound with {@link #substituteWithUnknowns(Substitution)} applied. The result maps to itself
+   * each type variable in this bound that {@code substitution} does not map, as {@link
    * #substituteWithUnknowns(Substitution)} does, so that each such type variable that remains in
    * {@code instantiated} stands for an unknown type. The result also maps each type variable of
    * {@code instantiated} to itself, so that the comparison does not apply the substitution to it a

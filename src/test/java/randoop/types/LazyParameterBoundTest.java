@@ -382,8 +382,8 @@ public class LazyParameterBoundTest {
   }
 
   /**
-   * Applying a substitution to a bound once does not make the siblings of a type parameter that
-   * the substitution instantiates stand for themselves.
+   * Applying a substitution to a bound once does not make the siblings of a type parameter that the
+   * substitution instantiates stand for themselves.
    */
   @Test
   public void testSiblingStaysUnknownAfterReplacement() throws ReflectiveOperationException {

@@ -766,8 +766,8 @@ public class TypeInstantiator {
    *       variables), or a supertype of that type or a type argument of such a supertype; see
    *       {@link #relatedTypes(ReferenceType)}; or, if {@code X} is the upper bound of that type
    *       variable, a non-generic supertype of that type; see {@link
-   *       #nonGenericSupertypes(ReferenceType)}; or it is a type for {@code X} that the type of such
-   *       a variable implies; see {@link #boundWitnesses(TypeVariable, TypeVariable,
+   *       #nonGenericSupertypes(ReferenceType)}; or it is a type for {@code X} that the type of
+   *       such a variable implies; see {@link #boundWitnesses(TypeVariable, TypeVariable,
    *       Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
