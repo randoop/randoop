@@ -201,8 +201,27 @@ class EagerReferenceBound extends ReferenceBound {
       }
       Substitution completeSubstitution =
           subst.extendWithIdentity(thisBoundType.getTypeParameters());
-      return Subtyping.isSubtypeOrEqual(
-          (ReferenceType) argType, thisBoundType, completeSubstitution);
+      if (Subtyping.isSubtypeOrEqual(
+          (ReferenceType) argType, thisBoundType, completeSubstitution)) {
+        return true;
+      }
+      // If the owner type still contains a type variable, as in `Outer<X>.Inner` when the
+      // substitution does not map X, and the substitution instantiates no type parameter, then, as
+      // for a type variable bound above, that type variable stands for an unknown type.  An
+      // argument type, such as `Outer<String>.Inner`, is within the bound if it, or one of its
+      // supertypes, instantiates the bound.
+      if (!subst.instantiatesTypeParameters()
+          && thisBoundType.isGeneric()
+          && argType instanceof ClassOrInterfaceType) {
+        for (ClassOrInterfaceType supertype :
+            ((ClassOrInterfaceType) argType).getSupertypesInclusive()) {
+          if (supertype.getRuntimeClass().equals(thisBoundType.getRuntimeClass())
+              && supertype.isInstantiationOf(thisBoundType)) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
     if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {

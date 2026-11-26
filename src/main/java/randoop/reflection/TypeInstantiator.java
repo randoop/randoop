@@ -537,10 +537,12 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the class or interface input types that instantiate the given type.
+   * Returns the class or interface input types that instantiate the given type and have an
+   * instantiating substitution for it.
    *
    * @param patternType a type
-   * @return the class or interface input types that are instantiations of {@code patternType}
+   * @return the class or interface input types that are instantiations of {@code patternType} and
+   *     have an instantiating substitution for it
    */
   private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
@@ -552,7 +554,11 @@ public class TypeInstantiator {
       if (inputType.isClassOrInterfaceType()
           && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
-        matches.add((ReferenceType) inputType);
+        // isInstantiationOf checks each type argument separately, so it accepts
+        // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
+        if (((ReferenceType) inputType).getInstantiatingSubstitution(patternType) != null) {
+          matches.add((ReferenceType) inputType);
+        }
       }
     }
     return matches;
@@ -809,9 +815,11 @@ public class TypeInstantiator {
    *       {@code X} (such a type need not be an input type: it can be a type argument of one); or
    *       it is the non-generic type that {@code substitution} gives to a type variable constrained
    *       by {@code X}, or a supertype of that type or a type argument of such a supertype; see
-   *       {@link #relatedTypes(ReferenceType)}; or it is a type for {@code X} that the type of the
-   *       constrained variable implies; see {@link #boundWitnesses(TypeVariable, TypeVariable,
-   *       Substitution)}.
+   *       {@link #relatedTypes(ReferenceType)}; or it is a non-generic supertype of that type if
+   *       {@code X} is the upper bound of that type variable; or it is a type for {@code X} that
+   *       the type of an instantiated type variable whose bounds mention {@code X} implies, even if
+   *       those bounds also mention other uninstantiated type variables; see {@link
+   *       #boundWitnesses(TypeVariable, TypeVariable, Substitution)}.
    *   <li>When {@code substitution} is extended by mapping {@code X} to the type, each type
    *       variable constrained by {@code X} is within its bounds.
    * </ul>
@@ -846,6 +854,17 @@ public class TypeInstantiator {
       // consume(List<? super T>)`, if the substitution maps the capture of `? super T` to MyEnum,
       // then MyEnum is a candidate for E, even if MyEnum is not an input type.
       candidates.addAll(candidateTypes(parameter, inferredTypes));
+      // A type argument of a supertype of the type of an instantiated type variable whose bounds
+      // mention `parameter` is a candidate, even if it is not an input type.  This holds even if
+      // those bounds mention other uninstantiated type variables, as for `T extends Map<K, V>`.
+      for (TypeVariable variable :
+          mentioningVariables.getOrDefault(parameter, Collections.emptyList())) {
+        for (ReferenceType witness : boundWitnesses(parameter, variable, substitution)) {
+          if (!candidates.contains(witness)) {
+            candidates.add(witness);
+          }
+        }
+      }
       if (!constrained.isEmpty()) {
         // The types of the constrained type variables are also candidates, even if they are not
         // input types.  For example, an input type can be List<Foo> though Foo is not an input
@@ -863,11 +882,15 @@ public class TypeInstantiator {
               }
             }
           }
-          // Likewise, a type argument of a supertype of the type of a constrained type variable is
-          // a candidate, even if it is not an input type.
-          for (ReferenceType witness : boundWitnesses(parameter, variable, substitution)) {
-            if (!candidates.contains(witness)) {
-              candidates.add(witness);
+          // If `parameter` is the upper bound of the constrained type variable, as for `T extends
+          // U`, then the supertypes of the type are candidates too.  For example, for `<U, T
+          // extends U, S extends U>`, if T is String and S is Integer, then only a common
+          // supertype, such as Object, satisfies both bounds.
+          if (type != null && !type.isGeneric() && isUpperBoundVariable(parameter, variable)) {
+            for (ReferenceType supertype : nonGenericSupertypes(type)) {
+              if (!candidates.contains(supertype)) {
+                candidates.add(supertype);
+              }
             }
           }
         }
@@ -992,7 +1015,8 @@ public class TypeInstantiator {
    *
    * @param parameter a type variable that {@code substitution} does not instantiate
    * @param constrained a type variable that {@code substitution} instantiates, whose bounds mention
-   *     {@code parameter} and no other type variable that {@code substitution} does not instantiate
+   *     {@code parameter} and possibly other type variables that {@code substitution} does not
+   *     instantiate
    * @param substitution a substitution
    * @return the non-generic types for {@code parameter} that make the substitution's type for
    *     {@code constrained} a subtype of a member of its upper bound, as determined by a supertype
@@ -1051,6 +1075,52 @@ public class TypeInstantiator {
     }
     ReferenceType witness = matching.get(parameter);
     return witness == null || witness.isGeneric() ? null : witness;
+  }
+
+  /**
+   * Returns true if the upper bound of {@code variable}, or a member of it if it is an
+   * intersection, is the type variable {@code parameter}, as in {@code T extends U}.
+   *
+   * @param parameter a type variable
+   * @param variable a type variable
+   * @return true if {@code parameter} is the upper bound of {@code variable} or a member of it
+   */
+  private static boolean isUpperBoundVariable(TypeVariable parameter, TypeVariable variable) {
+    for (ParameterBound member : variable.getUpperTypeBound().getMembers()) {
+      if (member.isVariable()) {
+        // The bound's type variable comes first, followed by the type variables in its bounds.
+        List<TypeVariable> memberVariables = member.getTypeParameters();
+        if (!memberVariables.isEmpty() && memberVariables.get(0).equals(parameter)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns the non-generic strict supertypes of the given type. The result includes {@code Object}
+   * for every type other than {@code Object}.
+   *
+   * @param type a non-generic reference type
+   * @return the non-generic strict supertypes of {@code type}
+   */
+  private static List<ReferenceType> nonGenericSupertypes(ReferenceType type) {
+    List<ReferenceType> result = new ArrayList<>();
+    if (type instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+        if (!supertype.isGeneric()) {
+          result.add(supertype);
+        }
+      }
+    } else if (type.isArray()) {
+      result.add(JavaTypes.CLONEABLE_TYPE);
+      result.add(JavaTypes.SERIALIZABLE_TYPE);
+    }
+    if (!type.isObject() && !result.contains(JavaTypes.OBJECT_TYPE)) {
+      result.add(JavaTypes.OBJECT_TYPE);
+    }
+    return result;
   }
 
   /**
@@ -1431,21 +1501,25 @@ public class TypeInstantiator {
         if (nongenericCandidates == null) {
           return Collections.emptyList();
         }
+        Map<TypeVariable, List<ReferenceType>> genericCandidates =
+            candidatesByVariable(genericParameters);
+        if (genericCandidates == null) {
+          return Collections.emptyList();
+        }
         List<TypeVariable> nongenericVariables = new ArrayList<>(nongenericCandidates.keySet());
         for (List<ReferenceType> tuple :
             iteratorToIterable(new CombinationIterator<>(nongenericCandidates.values()))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericVariables, tuple);
-          // apply selected substitution to all generic-bounded parameters
-          List<TypeVariable> parameters = new ArrayList<>(genericParameters.size());
-          for (TypeVariable variable : genericParameters) {
-            ReferenceType paramType = variable.substitute(initialSubstitution);
-            if (paramType.isVariable()) {
-              parameters.add(variable);
+          // the generic-bounded parameters that the selected substitution leaves uninstantiated
+          Map<TypeVariable, List<ReferenceType>> uninstantiatedCandidates = new LinkedHashMap<>();
+          for (Map.Entry<TypeVariable, List<ReferenceType>> entry : genericCandidates.entrySet()) {
+            if (entry.getKey().substitute(initialSubstitution).isVariable()) {
+              uninstantiatedCandidates.put(entry.getKey(), entry.getValue());
             }
           }
           // choose instantiation for parameters with generic bounds
-          result.addAll(allExtendingSubstitutions(parameters, initialSubstitution));
+          result.addAll(allSubstitutions(uninstantiatedCandidates, initialSubstitution));
         }
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
@@ -1623,8 +1697,7 @@ public class TypeInstantiator {
   private static ParameterBound getUpperBound(TypeVariable parameter) {
     ParameterBound upperBound = parameter.getUpperTypeBound();
     List<TypeVariable> boundVariables = upperBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return upperBound;
     }
     return ParameterBound.forType(JavaTypes.OBJECT_TYPE);
@@ -1642,8 +1715,7 @@ public class TypeInstantiator {
   private static ParameterBound getLowerBound(TypeVariable parameter) {
     ParameterBound lowerBound = parameter.getLowerTypeBound();
     List<TypeVariable> boundVariables = lowerBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return lowerBound;
     }
     return ParameterBound.forType(JavaTypes.NULL_TYPE);

@@ -2214,6 +2214,20 @@ public class TypeVariableTest {
     assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
   }
 
+  /**
+   * A class whose type parameter occurs more than once in its own bound.
+   *
+   * @param <T> a type parameter bounded by {@code Map<T, T>}
+   */
+  static class RepeatedSelfBound<T extends Map<T, T>> {}
+
+  @Test
+  public void testSubtypeOfVariableRepeatedInOwnBound() {
+    TypeVariable t = typeParameter(RepeatedSelfBound.class, 0);
+    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
+  }
+
   /** A field whose type has wildcard arguments for a type parameter and its sibling bound. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   SiblingBound<?, ?> siblingBoundField;
@@ -3485,25 +3499,26 @@ public class TypeVariableTest {
 
   /** A field whose type has a wildcard bounded below by an array type and above by another. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
+  SecondBoundedByFirst<Number[], ? super Integer[]> numberArraySuperIntegerArrayField;
 
   /**
    * An array type whose component type is a type variable is not within a bound that is a capture
-   * variable merely because an array of a supertype of the type variable's bound, such as {@code
-   * Object[]}, can instantiate the capture variable. A capture variable stands for a particular
-   * unknown type, so its strict supertypes are not searched.
+   * variable merely because an array of the type variable's bound, such as {@code Number[]}, can
+   * instantiate the capture variable. A capture variable stands for a particular unknown type, so
+   * its strict supertypes are not searched.
    */
   @Test
   public void testVariableComponentArraySupertypeCannotInstantiateCaptureVariable()
       throws NoSuchFieldException {
     // U extends Number
     ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
-    InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
+    InstantiatedType capturedType = capturedFieldType("numberArraySuperIntegerArrayField");
     TypeVariable capture = typeArgument(capturedType, 1);
     assertFalse(capture.canBeInstantiatedBy(uArray));
-    // U[] <: Object[], which is within both bounds of the capture variable, but the capture
-    // variable
-    // could be String[], and U[] is not known to be a subtype of it.
+    assertFalse(capture.canBeInstantiatedBy(ArrayType.forClass(Object[].class)));
+    assertTrue(capture.canBeInstantiatedBy(ArrayType.forClass(Number[].class)));
+    // U[] <: Number[], which is within both bounds of the capture variable, but the capture
+    // variable could be Integer[], and U[] is not known to be a subtype of it.
     assertFalse(capture.canBeSupertypeOf(uArray, new Substitution()));
   }
 
