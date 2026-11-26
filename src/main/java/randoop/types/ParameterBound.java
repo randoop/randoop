@@ -132,7 +132,8 @@ public abstract class ParameterBound {
    * Returns the owner type of the given parameterized type, if {@link
    * ClassOrInterfaceType#forType(java.lang.reflect.Type)} uses it as the enclosing type of the
    * result: that is, if the owner type is itself a parameterized type, as in {@code Outer<T>} for
-   * {@code Outer<T>.Inner<String>}, and the class is not static. Otherwise, returns null.
+   * {@code Outer<T>.Inner<String>}, and the class has an enclosing class and is not static.
+   * Otherwise, returns null.
    *
    * @param type a reflection parameterized type
    * @return the owner type of {@code type} that its conversion uses, or null
@@ -140,8 +141,10 @@ public abstract class ParameterBound {
   /*package*/ static java.lang.reflect.@Nullable Type getConvertedOwnerType(
       java.lang.reflect.ParameterizedType type) {
     java.lang.reflect.Type ownerType = type.getOwnerType();
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+        && rawType.getEnclosingClass() != null
+        && !Modifier.isStatic(rawType.getModifiers())) {
       return ownerType;
     }
     return null;
