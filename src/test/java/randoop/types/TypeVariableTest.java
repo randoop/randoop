@@ -1730,22 +1730,25 @@ public class TypeVariableTest {
 
   /** A field whose type has a wildcard bounded below by an array type and above by another. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
+  SecondBoundedByFirst<Number[], ? super Integer[]> numberArraySuperIntegerArrayField;
 
   /**
    * An array type whose component type is a type variable is within a bound that is a capture
-   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]}, can
-   * instantiate the capture variable.
+   * variable if an array of the type variable's bound, such as {@code Number[]}, can instantiate
+   * the capture variable. {@code Object[]} cannot, so this requires examining the component type's
+   * bound.
    */
   @Test
   public void testVariableComponentArraySupertypeCanInstantiateCaptureVariable()
       throws NoSuchFieldException {
     // U extends Number
     ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
-    InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
+    InstantiatedType capturedType = capturedFieldType("numberArraySuperIntegerArrayField");
     TypeVariable capture = typeArgument(capturedType, 1);
     assertFalse(capture.canBeInstantiatedBy(uArray));
-    // U[] <: Object[], which is within both bounds of the capture variable.
+    assertFalse(capture.canBeInstantiatedBy(ArrayType.forClass(Object[].class)));
+    assertTrue(capture.canBeInstantiatedBy(ArrayType.forClass(Number[].class)));
+    // U[] <: Number[], which is within both bounds of the capture variable.
     assertTrue(capture.canBeSupertypeOf(uArray, new Substitution()));
   }
 
