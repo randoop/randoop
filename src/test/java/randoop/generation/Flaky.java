@@ -1,5 +1,6 @@
 package randoop.generation;
 
+@SuppressWarnings("PMD.AvoidThrowingNullPointerException") // test input that throws NPE
 public class Flaky {
 
   public Flaky() {}
