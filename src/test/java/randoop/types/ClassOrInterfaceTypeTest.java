@@ -407,6 +407,29 @@ public class ClassOrInterfaceTypeTest {
     abstract class GenericListOfT<V> extends ArrayList<T> implements Supplier<V> {}
   }
 
+  /** Methods whose return types {@link #memberOfWildcardTypeHasWildcardTest} uses. */
+  @SuppressWarnings("unused")
+  abstract static class WildcardHolder {
+    abstract Outer<?> wildcardOuter();
+
+    abstract Outer<String> stringOuter();
+
+    abstract Outer<String>.GenericInner<String> genericInner();
+  }
+
+  /**
+   * Returns the Randoop type for the return type of the given method of {@link WildcardHolder}.
+   *
+   * @param methodName a method name of {@link WildcardHolder}, such as {@code "wildcardOuter"}
+   * @return the return type of the method
+   * @throws NoSuchMethodException if {@link WildcardHolder} has no method named {@code methodName}
+   */
+  private static ClassOrInterfaceType wildcardHolderReturnType(String methodName)
+      throws NoSuchMethodException {
+    return (ClassOrInterfaceType)
+        Type.forType(WildcardHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
   /** Declares a method whose parameter type is a generic member class of a parameterized type. */
   static class GenericMemberHolder {
     /**
@@ -1758,5 +1781,41 @@ public class ClassOrInterfaceTypeTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> numberInner.instantiate(Arrays.asList(integerType, JavaTypes.STRING_TYPE)));
+  }
+
+  /** Tests that a member class has a wildcard if its enclosing type does. */
+  @Test
+  public void memberOfWildcardTypeHasWildcardTest() throws NoSuchMethodException {
+    ClassOrInterfaceType wildcardOuter = wildcardHolderReturnType("wildcardOuter");
+    ClassOrInterfaceType stringOuter = wildcardHolderReturnType("stringOuter");
+    assertTrue(wildcardOuter.hasWildcard());
+    assertFalse(stringOuter.hasWildcard());
+
+    // Type.forType does not record the type arguments of an enclosing type, so set them directly.
+
+    // Outer<?>.Inner and Outer<String>.Inner
+    NonParameterizedType wildcardInner = new NonParameterizedType(Outer.Inner.class);
+    wildcardInner.enclosingType = wildcardOuter;
+    assertTrue(wildcardInner.hasWildcard());
+    NonParameterizedType stringInner = new NonParameterizedType(Outer.Inner.class);
+    stringInner.enclosingType = stringOuter;
+    assertFalse(stringInner.hasWildcard());
+
+    // Outer<?>.GenericInner<String> and Outer<String>.GenericInner<String>
+    InstantiatedType wildcardGenericInner =
+        (InstantiatedType) wildcardHolderReturnType("genericInner");
+    wildcardGenericInner.enclosingType = wildcardOuter;
+    assertTrue(wildcardGenericInner.hasWildcard());
+    InstantiatedType stringGenericInner =
+        (InstantiatedType) wildcardHolderReturnType("genericInner");
+    stringGenericInner.enclosingType = stringOuter;
+    assertFalse(stringGenericInner.hasWildcard());
+
+    // A type that contains Outer<?>.Inner:  List<Outer<?>.Inner> and Outer<?>.Inner[]
+    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
+    assertTrue(listType.instantiate(wildcardInner).hasWildcard());
+    assertFalse(listType.instantiate(stringInner).hasWildcard());
+    assertTrue(ArrayType.ofComponentType(wildcardInner).hasWildcard());
+    assertFalse(ArrayType.ofComponentType(stringInner).hasWildcard());
   }
 }
