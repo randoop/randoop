@@ -76,19 +76,12 @@ class LazyParameterBound extends ParameterBound {
       }
       // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
-      java.lang.reflect.Type[] actualTypeArgs =
-          ((ParameterizedType) boundType).getActualTypeArguments();
-      List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
-      for (java.lang.reflect.Type parameter : actualTypeArgs) {
-        TypeArgument typeArgument = substitute(parameter, substitution);
-        if (typeArgument == null) {
-          return this;
-        }
-        argumentList.add(typeArgument);
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
       }
-      GenericClassType classType =
-          GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
-      return ReferenceBound.forTypeLazyIfGeneric(new InstantiatedType(classType, argumentList));
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
     }
 
     if (boundType instanceof GenericArrayType) {
@@ -100,9 +93,6 @@ class LazyParameterBound extends ParameterBound {
         return this;
       }
       ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
-      // If the element type is a type variable, a later substitution might map it to the null
-      // type.  The LazyReferenceBound that forTypeLazyIfGeneric returns for a generic array type
-      // leaves the bound unresolved in that case.
       return ReferenceBound.forTypeLazyIfGeneric(arrayType);
     }
 
@@ -144,15 +134,8 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if any of the following holds:
-   *     <ul>
-   *       <li>{@code type} contains an array type whose component type {@code substitution} maps to
-   *           the null type, or
-   *       <li>{@code type} is not a type variable, parameterized type, class, generic array type,
-   *           or wildcard.
-   *     </ul>
-   *     The first condition does not apply within the bound of a wildcard; such a bound remains
-   *     lazy instead.
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -165,7 +148,31 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+      // The enclosing type of the result:  the substituted owner type of a member class, such as
+      // Outer<String> for Outer<U>.Inner<Integer> and the substitution of String for U.  It is null
+      // unless the type is a member class (not a static nested class).
+      ClassOrInterfaceType enclosingType = null;
+      ParameterizedType ownerType = ClassOrInterfaceType.memberClassOwnerType(parameterizedType);
+      if (ownerType != null) {
+        TypeArgument ownerArgument = substitute(ownerType, substitution);
+        if (ownerArgument == null) {
+          return null;
+        }
+        enclosingType =
+            (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
+        if (rawType.getTypeParameters().length == 0) {
+          return TypeArgument.forType(ClassOrInterfaceType.forMemberClass(rawType, enclosingType));
+        }
+      } else if (parameterizedType.getOwnerType() instanceof Class<?>
+          && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
+        // The owner type supplies no type arguments, as for NonGenericOuter.Base<T>.  Retain the
+        // enclosing type, as ClassOrInterfaceType.forType does, so that the two representations of
+        // the type are equal.
+        enclosingType = ClassOrInterfaceType.forClass((Class<?>) parameterizedType.getOwnerType());
+      }
+      java.lang.reflect.Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
       for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
@@ -175,9 +182,11 @@ class LazyParameterBound extends ParameterBound {
         argumentList.add(typeArgument);
       }
 
-      GenericClassType classType =
-          GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
+      GenericClassType classType = GenericClassType.forClass(rawType);
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      // A generic member class, as in Outer<T>.GenericInner<T>, keeps the substituted owner type
+      // as its enclosing type, as ClassOrInterfaceType.forType does.
+      instantiatedType.enclosingType = enclosingType;
       return TypeArgument.forType(instantiatedType);
     }
 
@@ -194,10 +203,6 @@ class LazyParameterBound extends ParameterBound {
         return null;
       }
       ReferenceType componentType = ((ReferenceArgument) componentArgument).getReferenceType();
-      // There is no array of the null type.
-      if (componentType.equals(JavaTypes.NULL_TYPE)) {
-        return null;
-      }
       return TypeArgument.forType(ArrayType.ofComponentType(componentType));
     }
 
@@ -245,6 +250,11 @@ class LazyParameterBound extends ParameterBound {
       return substitution.get(type) != null;
     }
     if (type instanceof ParameterizedType) {
+      ParameterizedType ownerType =
+          ClassOrInterfaceType.enclosingOwnerType((ParameterizedType) type);
+      if (ownerType != null && instantiatesAny(ownerType, substitution)) {
+        return true;
+      }
       for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution)) {
           return true;
@@ -289,6 +299,10 @@ class LazyParameterBound extends ParameterBound {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
+      ParameterizedType ownerType = ClassOrInterfaceType.enclosingOwnerType(pt);
+      if (ownerType != null) {
+        variableList.addAll(getTypeParameters(ownerType));
+      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
       }
@@ -327,16 +341,14 @@ class LazyParameterBound extends ParameterBound {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
-      // The substitution maps an array component type to the null type, so no type satisfies it.
+      // The substitution does not instantiate this bound, so no type satisfies it.
       return false;
     }
     return b.isLowerBound(argType, substitution);
   }
 
   /**
-   * Throws an exception if the substitution does not map every type parameter of this bound. If the
-   * substitution maps every type parameter but does not instantiate this bound, then it maps the
-   * component type of an array type to the null type, for which there is no array type.
+   * Throws an exception if the substitution does not map every type parameter of this bound.
    *
    * @param substitution the substitution
    * @throws IllegalArgumentException if the substitution does not map a type parameter of this
@@ -374,7 +386,7 @@ class LazyParameterBound extends ParameterBound {
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
-      // The substitution maps an array component type to the null type, so no type satisfies it.
+      // The substitution does not instantiate this bound, so no type satisfies it.
       return false;
     }
     return b.isUpperBound(argType, substitution);

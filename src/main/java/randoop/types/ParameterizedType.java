@@ -31,7 +31,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param typeClass the class type
    * @return a generic class type for the given type
    */
-  public static GenericClassType forClass(Class<?> typeClass) {
+  public static synchronized GenericClassType forClass(Class<?> typeClass) {
+    // This method is synchronized only to protect the cache.  The lock does not make the
+    // GenericClassType thread-safe:  GenericClassType computes its type parameters lazily, without
+    // synchronization, because Randoop uses the type model from a single thread.
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
           "class must be a generic type, have " + typeClass.getName());
@@ -72,7 +75,17 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
     GenericClassType genericClass = forClass((Class<?>) rawType);
-    return new InstantiatedType(genericClass, typeArguments);
+    InstantiatedType result = new InstantiatedType(genericClass, typeArguments);
+    // For a member class, such as Outer<String>.Inner<Integer>, record the enclosing type, as
+    // GenericClassType.substitute does.  Otherwise, a reflected member type would not equal the
+    // same type constructed by substitution.
+    Type ownerType = t.getOwnerType();
+    if (ownerType != null
+        && ((Class<?>) rawType).getEnclosingClass() != null
+        && !genericClass.isStatic()) {
+      result.enclosingType = ClassOrInterfaceType.forType(ownerType);
+    }
+    return result;
   }
 
   @Override

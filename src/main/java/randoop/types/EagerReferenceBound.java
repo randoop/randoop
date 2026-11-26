@@ -107,11 +107,11 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
-    if (argType.isParameterized()) {
+    if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType argClassType = ((InstantiatedType) argType).applyCaptureConversion();
       InstantiatedType boundSuperType =
           ((ClassOrInterfaceType) thisBoundType)
               .getMatchingSupertype(argClassType.getGenericClassType());
@@ -121,6 +121,8 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
+    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`, which
+    // is parameterized but is not an InstantiatedType.  This subtype test compares such types.
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
@@ -180,7 +182,7 @@ class EagerReferenceBound extends ReferenceBound {
       }
       return false;
     }
-    if (thisBoundType.isParameterized()) {
+    if (thisBoundType instanceof InstantiatedType) {
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -192,7 +194,8 @@ class EagerReferenceBound extends ReferenceBound {
         return true;
       }
       try {
-        InstantiatedType boundClassType = (InstantiatedType) thisBoundType.applyCaptureConversion();
+        InstantiatedType boundClassType =
+            ((InstantiatedType) thisBoundType).applyCaptureConversion();
         InstantiatedType argSuperType =
             ((ClassOrInterfaceType) argType)
                 .getMatchingSupertype(boundClassType.getGenericClassType());
@@ -205,6 +208,9 @@ class EagerReferenceBound extends ReferenceBound {
         inProgress.remove(check);
       }
     }
+    // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`,
+    // which is parameterized but is not an InstantiatedType.  This subtype test compares such
+    // types.
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
 }
