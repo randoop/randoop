@@ -91,13 +91,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
         // For a member class such as Outer<String>.Middle, preserve the reflected owner type
-        // rather than reconstructing the generic Outer<T>.
+        // rather than reconstructing the generic Outer<T>.  If the owner type is the generic form,
+        // as in Outer<T>.Middle, then forClass constructs the same type.
         if (ownerType instanceof java.lang.reflect.ParameterizedType
             && rawType.getEnclosingClass() != null
             && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-          NonParameterizedType result = new NonParameterizedType(rawType);
-          result.enclosingType = forType(ownerType);
-          return result;
+          ClassOrInterfaceType enclosingType = forType(ownerType);
+          if (!enclosingType.isGenericForm()) {
+            NonParameterizedType result = new NonParameterizedType(rawType);
+            result.enclosingType = enclosingType;
+            return result;
+          }
         }
         return forClass(rawType);
       }
@@ -489,12 +493,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
       // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
       // Outer<String>.A and Outer<T>.B.
-      return otherClassType.isNestedClass()
+      return otherEnclosingType != null
           && otherClassType.runtimeClassIs(this.getRuntimeClass())
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }
