@@ -325,25 +325,24 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Creates the type substitution of the type arguments of this type for the type variables of the
-   * instantiated class, if the type arguments are reference types. If any type argument is a
-   * wildcard, then null is returned.
+   * instantiated class, if the type arguments are reference types. For a member class, the
+   * substitution also maps the type parameters of each parameterized enclosing class to the type
+   * arguments of the corresponding enclosing type. If any type argument, including one of an
+   * enclosing type, is a wildcard, then null is returned.
    *
    * @return the type substitution of the type arguments of this class for the type variables of the
    *     instantiated type
    */
   public @Nullable Substitution getTypeSubstitution() {
-    List<TypeArgument> typeArgs = this.getTypeArguments();
-    List<ReferenceType> arguments = new ArrayList<>(typeArgs.size());
-    for (TypeArgument arg : typeArgs) {
-      if (!arg.isWildcard()) {
-        arguments.add(((ReferenceArgument) arg).getReferenceType());
-      }
+    if (hasWildcardArgument()) {
+      return null;
     }
-    Substitution substitution = null;
-    if (arguments.size() == this.getTypeArguments().size()) {
-      substitution = new Substitution(genericType.getTypeParameters(), arguments);
-    }
-    return substitution;
+    // As in getSupertypeSubstitution, pair the type parameters that the class of this type declares
+    // with the type arguments of this type, since the type parameters of genericType can also
+    // include those of its enclosing classes.
+    Substitution substitution =
+        new Substitution(declaredTypeParameters(getRuntimeClass()), getReferenceArguments());
+    return extendWithEnclosingTypes(substitution, isMemberClass() ? enclosingType : null);
   }
 
   @Override
