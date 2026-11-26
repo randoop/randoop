@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static randoop.types.ExampleClassesForTests.ArrayHarvest;
 
@@ -131,18 +132,21 @@ public class ArrayTypeTest {
     }
 
     String invalidArrayInnerClass = "java.util.Formatter$IDontExist[][]";
-    try {
-      Type.forFullyQualifiedName(invalidArrayInnerClass);
-      Assert.fail();
-    } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      // Good
-    }
-    try {
-      Type.getTypeforFullyQualifiedName(invalidArrayInnerClass);
-      Assert.fail();
-    } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      // Good
-    }
+    assertClassNotFound(
+        assertThrows(Throwable.class, () -> Type.forFullyQualifiedName(invalidArrayInnerClass)));
+    assertClassNotFound(
+        assertThrows(
+            Throwable.class, () -> Type.getTypeforFullyQualifiedName(invalidArrayInnerClass)));
+  }
+
+  /**
+   * Asserts that the given throwable indicates that a class was not found.
+   *
+   * @param t a throwable
+   */
+  private static void assertClassNotFound(Throwable t) {
+    assertTrue(
+        t.toString(), t instanceof ClassNotFoundException || t instanceof NoClassDefFoundError);
   }
 
   /** Methods whose return types are used in the tests. */

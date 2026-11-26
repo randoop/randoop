@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -193,6 +195,30 @@ public class InstantiationTest {
   }
   */
 
+  /** Based on issue #1889: a type parameter bounded by its declaring type applied to a wildcard. */
+  @Test
+  public void testWildcardBoundInstantiation() {
+    Set<@ClassGetName String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.WildcardBoundBuilder");
+    classnames.add("randoop.reflection.ConcreteWildcardBoundBuilder");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    getOperations(model, classOperations, inputTypes);
+
+    boolean foundCreate = false;
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().endsWith(".create")
+          && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
+              == WildcardBoundBuilder.class) {
+        foundCreate = true;
+      }
+    }
+    assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
+  }
+
   /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
@@ -299,6 +325,26 @@ public class InstantiationTest {
       assertTrue(c + " should be a subtype of " + b, c.isSubtypeOfOrEqualTo(b));
     }
     Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests the instantiation of {@code <T extends Object & Comparable<? super T>> T max(Collection<?
+   * extends T>)}, in which the upper bound of the capture variable of the wildcard is a type
+   * variable whose bound mentions that type variable.
+   */
+  @Test
+  public void testRecursivelyBoundedCaptureInstantiation()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation max =
+        TypedOperation.forMethod(Collections.class.getMethod("max", Collection.class));
+
+    TypedClassOperation instance = instantiator.instantiate(max);
+    assertNotNull("instantiation failed for " + max, instance);
+    assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
   }
 
   /**
@@ -786,5 +832,43 @@ public class InstantiationTest {
     assertFalse(
         new TypeTuple(Collections.<Type>singletonList(outerInnerType(JavaTypes.STRING_TYPE)))
             .hasCaptureVariable());
+  }
+
+  /**
+   * An interface whose type argument is a type that implements it.
+   *
+   * @param <T> the type parameter
+   */
+  private interface Marker<T> {}
+
+  /** A class that implements {@link Marker} for itself. */
+  private static class MarkerBase implements Marker<MarkerBase> {}
+
+  /** A subclass of {@link MarkerBase}, which is a {@code Marker<MarkerBase>}. */
+  private static class MarkerChild extends MarkerBase {}
+
+  /**
+   * A method whose type parameter has a bound that mentions it.
+   *
+   * @param <T> the type parameter
+   * @param t a value
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Marker<T>> void marked(T t) {}
+
+  /**
+   * {@code MarkerChild} is within the bound {@code T} of {@code <T extends Marker<T>>}, because
+   * {@code T} can be its supertype {@code MarkerBase}, though not {@code MarkerChild} itself.
+   */
+  @Test
+  public void testSelfBoundedVariableBound() throws Exception {
+    Method m = InstantiationTest.class.getDeclaredMethod("marked", Marker.class);
+    TypeVariable t = (TypeVariable) TypedOperation.forMethod(m).getInputTypes().get(0);
+    ParameterBound bound = ParameterBound.forType(t);
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerBase.class), new Substitution()));
+    assertTrue(
+        bound.isUpperBound(ClassOrInterfaceType.forClass(MarkerChild.class), new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 }
