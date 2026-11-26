@@ -438,6 +438,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
             }
           }
         }
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())
+            && thisView instanceof InstantiatedType) {
+          // Match the goal type against the view as a whole, so that its own type arguments, as
+          // well as those of its enclosing type, bind the type variables of the goal type:  for
+          // Child extends Outer<Integer>.Parent<String> and Outer<X>.Parent<Y>, Y is bound to
+          // String.  The view is also computed only once, so that both parts of the match use the
+          // same capture variables of any wildcard in the enclosing type of this type.
+          return thisView.getInstantiatingSubstitution(goalType);
+        }
         if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {

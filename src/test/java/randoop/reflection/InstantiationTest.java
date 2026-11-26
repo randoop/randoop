@@ -848,6 +848,28 @@ public class InstantiationTest {
   }
 
   /**
+   * Tests that {@code MemberTypeOuter<String>.Inner2<Integer>} is not an instantiation of {@code
+   * MemberTypeOuter<T>.Inner2<T>}, because the enclosing type and the type argument bind {@code T}
+   * to different types, but {@code MemberTypeOuter<Integer>.Inner2<Integer>} is.
+   */
+  @Test
+  public void testMemberTypeInstantiationIsConsistent() {
+    GenericClassType genericInner2 =
+        (GenericClassType) ClassOrInterfaceType.forClass(MemberTypeOuter.Inner2.class);
+    // The type parameters of MemberTypeOuter<T>.Inner2<V> are T and V, in that order.
+    List<TypeVariable> parameters = genericInner2.getTypeParameters();
+    TypeVariable t = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    InstantiatedType sameArgument = genericInner2.substitute(new Substitution(v, t));
+    assertTrue(sameArgument.isGeneric());
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType stringInteger = genericInner2.instantiate(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType integerInteger = genericInner2.instantiate(integerType, integerType);
+    assertFalse(stringInteger.isInstantiationOf(sameArgument));
+    assertTrue(integerInteger.isInstantiationOf(sameArgument));
+  }
+
+  /**
    * Tests that the instantiation of {@code <U> U get(MemberTypeOuter<U>.Inner)} instantiates the
    * return type consistently with the parameter type.
    */

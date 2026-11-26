@@ -193,8 +193,16 @@ class EagerReferenceBound extends ReferenceBound {
     }
     // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
+      ReferenceType argReferenceType = (ReferenceType) argType;
+      if (argReferenceType instanceof GenericClassType) {
+        // The supertypes of a GenericClassType are those of its erased class, which lose the type
+        // arguments of the enclosing types in the declared supertypes:  for
+        // `Child<U> extends Outer<String>.Inner`, the superclass would be `Outer<T>.Inner`.  The
+        // instantiation of the class by its own type parameters has the declared supertypes.
+        argReferenceType = ((GenericClassType) argReferenceType).substitute(new Substitution());
+      }
       // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.
-      return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, subst);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
   }
