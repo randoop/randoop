@@ -1,0 +1,2 @@
+// replacement file for testing: the receiver becomes the first argument
+java.lang.String.length() java.lang.Integer.parseInt(java.lang.String)

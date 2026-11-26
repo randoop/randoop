@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Comparator;
 import org.junit.Test;
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.types.JavaTypes;
 
 /** Test for Term operations. */
@@ -26,5 +28,23 @@ public class TermTests {
     NonreceiverTerm term = NonreceiverTerm.createNullOrZeroTerm(JavaTypes.CLASS_TYPE);
     NonreceiverTerm nullClassTerm = new NonreceiverTerm(JavaTypes.CLASS_TYPE, null);
     assertEquals(nullClassTerm, term);
+  }
+
+  @Test
+  public void testPrimitiveValueHasDeclaredType() {
+    NonreceiverTerm fromByte = new NonreceiverTerm(JavaTypes.SHORT_TYPE, (byte) 7);
+    assertEquals(Short.valueOf((short) 7), fromByte.getValue());
+    ExecutionOutcome outcome = fromByte.execute(new Object[0]);
+    assertEquals(Short.valueOf((short) 7), ((NormalExecution) outcome).getRuntimeValue());
+
+    NonreceiverTerm fromShort = new NonreceiverTerm(JavaTypes.SHORT_TYPE, (short) 7);
+    assertEquals(fromShort, fromByte);
+    assertEquals(fromShort.hashCode(), fromByte.hashCode());
+
+    NonreceiverTerm fromChar = new NonreceiverTerm(JavaTypes.INT_TYPE, 'a');
+    assertEquals(Integer.valueOf(97), fromChar.getValue());
+
+    NonreceiverTerm fromInt = new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, 3);
+    assertEquals(Double.valueOf(3.0), fromInt.getValue());
   }
 }

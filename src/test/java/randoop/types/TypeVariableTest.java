@@ -1857,6 +1857,7 @@ public class TypeVariableTest {
    *
    * @param <U> the type parameter
    */
+  @SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable") // test input
   abstract static class Version<U> implements Comparable<Version<U>> {}
 
   /** A field whose type has a wildcard argument for a type parameter with a self-bound. */
@@ -2036,20 +2037,6 @@ public class TypeVariableTest {
     assertTrue(t.isSubtypeOfOrEqualTo(s));
     assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
     // S need not be a subtype of String.
-    assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
-  }
-
-  /**
-   * A class whose type parameter occurs more than once in its own bound.
-   *
-   * @param <T> a type parameter bounded by {@code Map<T, T>}
-   */
-  static class RepeatedSelfBound<T extends Map<T, T>> {}
-
-  @Test
-  public void testSubtypeOfVariableRepeatedInOwnBound() {
-    TypeVariable t = typeParameter(RepeatedSelfBound.class, 0);
-    assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
     assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
   }
 

@@ -200,7 +200,8 @@ public class DemandDrivenInputCreatorParameterizedTargetTest {
    *
    * @param fieldName the name of a field of this class
    */
-  private static void assertCreatable(String fieldName) throws Exception {
+  private static void assertCreatable(String fieldName)
+      throws NoSuchMethodException, NoSuchFieldException {
     DemandDrivenInputCreator creator = newCreator();
     Type type = fieldType(fieldName);
     assertFalse(creator.createSequencesForType(type, false, false).isEmpty());
