@@ -413,9 +413,11 @@ public class DemandDrivenInputCreator {
    * @see TypeInstantiator#instantiate(TypedClassOperation, Type)
    */
   private @Nullable TypedOperation instantiateToProduce(TypedClassOperation op, Type type) {
-    // Instantiate an operation whose types contain a type variable, even if its output type
-    // does not, as in `static <T> Foo of(T x)`:  no sequence produces a value of type `T`, so
-    // skip the operation if it cannot be instantiated.
+    // A generic operation, such as `static <T> Foo of(T x)`, is usable only after
+    // instantiation, even if its output type (here, `Foo`) contains no type variable and is
+    // already assignable to `type`:  no sequence has an input type such as `T`, so
+    // `getInputsAndGenSeq` could never supply the operation's inputs.  If instantiation fails,
+    // skip the operation.
     //
     // Also instantiate an operation whose types contain wildcards but no type variable, as in
     // `static Foo of(Box<?> b)`.  Instantiation replaces `Box<?>` by a `Box` type that is
