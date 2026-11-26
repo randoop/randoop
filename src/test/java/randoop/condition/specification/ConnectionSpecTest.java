@@ -12,6 +12,7 @@ import org.junit.Test;
 public class ConnectionSpecTest {
 
   @Test
+  @SuppressWarnings("PMD.UselessPureMethodCall") // calls getConstructor() to see whether it throws
   public void testSerialization() {
     Class<?> c = net.Connection.class;
 

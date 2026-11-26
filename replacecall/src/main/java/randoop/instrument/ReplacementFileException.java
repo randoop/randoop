@@ -98,7 +98,7 @@ class ReplacementFileException extends Exception {
       if (result == null) {
         result = message;
       } else if (!result.contains(message)) {
-        result = result + separator + message;
+        result = String.join(separator, result, message);
       }
       separator = ": ";
       suppressed.addAll(Arrays.asList(t.getSuppressed()));
