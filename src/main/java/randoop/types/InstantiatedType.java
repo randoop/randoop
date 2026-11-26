@@ -357,8 +357,8 @@ public class InstantiatedType extends ParameterizedType {
         return false;
       }
       // The substitution that the enclosing type and the type arguments so far induce.  They must
-      // induce consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>,
-      // and Outer<String>.Inner<Integer> is not an instantiation of Outer<X>.Inner<X>.
+      // induce consistent substitutions:  Map<String, Integer> is not an instantiation of
+      // Map<X, X>, and Outer<String>.Inner<Integer> is not an instantiation of Outer<X>.Inner<X>.
       Substitution substitution = new Substitution();
       // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
       // an instantiation.
