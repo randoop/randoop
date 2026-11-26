@@ -37,6 +37,29 @@ public class InstantiatedTypeTest {
         return 0;
       }
     }
+
+    /**
+     * Another generic member class, unrelated to {@link Inner}.
+     *
+     * @param <V> the type parameter
+     */
+    class Other<V> {}
+
+    /** A non-generic member class. */
+    class A {}
+
+    /** A non-generic member class, unrelated to {@link A}. */
+    class B {}
+
+    /** A non-generic member class that has a generic member class. */
+    class Middle {
+      /**
+       * A generic member class of a non-generic member class.
+       *
+       * @param <W> the type parameter
+       */
+      class Deep<W> {}
+    }
   }
 
   /**
@@ -95,6 +118,90 @@ public class InstantiatedTypeTest {
     InstantiatedType captured = member.applyCaptureConversion();
     assertTrue(captured.hasCaptureVariable());
     assertEquals(member.getRuntimeClass(), captured.getRuntimeClass());
+  }
+
+  @Test
+  public void isInstantiationOfSharesEnclosingBindingsTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    List<TypeVariable> innerParameters = inner.getTypeParameters();
+    // Outer<T>.Inner<T>
+    InstantiatedType innerSharedVariable =
+        inner.substitute(new Substitution(innerParameters.get(1), innerParameters.get(0)));
+
+    InstantiatedType innerOfStringString =
+        inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    InstantiatedType innerOfStringInteger = inner.instantiate(JavaTypes.STRING_TYPE, integerType);
+    assertTrue(innerOfStringString.isInstantiationOf(innerSharedVariable));
+    assertFalse(innerOfStringInteger.isInstantiationOf(innerSharedVariable));
+  }
+
+  /** A field whose type is a reflected member type, with an owner that has a wildcard. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<?>.Inner<Integer> reflectedWildcardOwner;
+
+  @Test
+  public void captureConversionOfWildcardOwnerTest() throws NoSuchFieldException {
+    // Sets the enclosing type of the cached generic class.
+    ClassOrInterfaceType.forClass(Outer.Inner.class);
+    ClassOrInterfaceType reflected =
+        ClassOrInterfaceType.forType(
+            InstantiatedTypeTest.class.getDeclaredField("reflectedWildcardOwner").getGenericType());
+    assertTrue(reflected.hasWildcardArgument());
+    ClassOrInterfaceType converted = reflected.applyCaptureConversion();
+    assertFalse(converted.hasWildcardArgument());
+    assertEquals(
+        ReferenceType.forClass(Integer.class),
+        ((ReferenceArgument) converted.getTypeArguments().get(0)).getReferenceType());
+  }
+
+  /** A field whose type is a reflected member type of a different member class. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.Other<Integer> reflectedOther;
+
+  @Test
+  public void isInstantiationOfChecksMemberClassTest() throws NoSuchFieldException {
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    ClassOrInterfaceType reflected =
+        ClassOrInterfaceType.forType(
+            InstantiatedTypeTest.class.getDeclaredField("reflectedOther").getGenericType());
+    assertFalse(reflected.isInstantiationOf(inner));
+    assertNull(reflected.getMatchingSupertype(inner));
+  }
+
+  @Test
+  public void getInstantiatingSubstitutionRejectsUnrelatedMemberTest() {
+    ClassOrInterfaceType a = ClassOrInterfaceType.forClass(Outer.A.class);
+    ClassOrInterfaceType b = ClassOrInterfaceType.forClass(Outer.B.class);
+    TypeVariable outerParameter =
+        ((GenericClassType) ClassOrInterfaceType.forClass(Outer.class)).getTypeParameters().get(0);
+    // Outer<String>.A
+    ClassOrInterfaceType aOfString =
+        a.substitute(new Substitution(outerParameter, JavaTypes.STRING_TYPE));
+    // b is Outer<T>.B
+    assertTrue(b.isGeneric());
+    assertNull(aOfString.getInstantiatingSubstitution(b));
+    // a is Outer<T>.A
+    Substitution substitution = aOfString.getInstantiatingSubstitution(a);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerParameter));
+  }
+
+  /** A field whose type is a reflected member type, with an owner that has no type parameters. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.Middle.Deep<Integer> reflectedDeep;
+
+  @Test
+  public void reflectedOwnerWithoutTypeParametersTest() throws NoSuchFieldException {
+    ClassOrInterfaceType reflected =
+        ClassOrInterfaceType.forType(
+            InstantiatedTypeTest.class.getDeclaredField("reflectedDeep").getGenericType());
+    GenericClassType deep =
+        (GenericClassType) ClassOrInterfaceType.forClass(Outer.Middle.Deep.class);
+    InstantiatedType constructed =
+        deep.instantiate(JavaTypes.STRING_TYPE, ReferenceType.forClass(Integer.class));
+    assertEquals(constructed, reflected);
+    assertEquals(constructed.hashCode(), reflected.hashCode());
   }
 
   @Test
