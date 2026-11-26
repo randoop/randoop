@@ -336,8 +336,7 @@ public class TypeInstantiator {
     if (matches.isEmpty()) {
       return null;
     }
-    ReferenceType selectedType = Randomness.randomSetMember(matches.keySet());
-    return matches.get(selectedType);
+    return Randomness.randomSetMember(matches.values());
   }
 
   /**
@@ -468,8 +467,7 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            ReferenceType selectedType = Randomness.randomSetMember(matches.keySet());
-            substitution = substitution.extend(matches.get(selectedType));
+            substitution = substitution.extend(Randomness.randomSetMember(matches.values()));
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
