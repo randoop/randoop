@@ -149,21 +149,35 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1):
+   * Returns true if this wildcard contains the given wildcard, as defined in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
+   * 4.5.1</a>:
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S} is a subtype of {@code T}.
    *       This includes {@code ?}, which is {@code ? extends Object}.
-   *   <li>{@code ?} contains {@code ? super S}
+   *   <li>{@code ? extends Object}, which is {@code ?}, contains {@code ? super S}
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
    * A {@code ? super T} wildcard contains no upper-bounded wildcard.
    *
-   * @param otherType the type to check for
-   * @return true if this type contains the other type, false otherwise
+   * <p>A {@link LazyParameterBound} is converted to the equivalent {@link ReferenceBound} before
+   * the bounds are compared. If a bound cannot be converted to a single reference type, this method
+   * checks only the cases that do not require subtyping: {@code ?} contains every wildcard, and
+   * every wildcard contains itself. Otherwise it conservatively returns false.
+   *
+   * @param otherType the wildcard to check for
+   * @return true if this wildcard contains the other wildcard, false otherwise
    */
   public boolean contains(WildcardType otherType) {
+    if (this.hasUpperBound && this.getUpperTypeBound().isObject()) {
+      return true;
+    }
+    if (this.hasUpperBound == otherType.hasUpperBound
+        && this.getTypeBound().equals(otherType.getTypeBound())) {
+      return true;
+    }
     ReferenceType thisBound = ReferenceBound.asReferenceType(this.getTypeBound());
     if (thisBound == null) {
       return false;
@@ -182,6 +196,30 @@ class WildcardType extends ParameterType {
       return otherBound.isSubtypeOfOrEqualTo(thisBound);
     } else {
       return thisBound.isSubtypeOfOrEqualTo(otherBound);
+    }
+  }
+
+  /**
+   * Returns true if this wildcard contains the given type, as defined in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
+   * 4.5.1</a>: {@code ? extends T} contains the subtypes of {@code T}, and {@code ? super T}
+   * contains the supertypes of {@code T}.
+   *
+   * <p>A {@link LazyParameterBound} is converted to the equivalent {@link ReferenceBound}. Returns
+   * false if the bound of this wildcard is not a single reference type.
+   *
+   * @param type the type to check for
+   * @return true if this wildcard contains the type, false otherwise
+   */
+  public boolean containsType(ReferenceType type) {
+    ReferenceType boundType = ReferenceBound.asReferenceType(getTypeBound());
+    if (boundType == null) {
+      return false;
+    }
+    if (hasUpperBound) {
+      return boundType.isObject() || type.isSubtypeOfOrEqualTo(boundType);
+    } else {
+      return boundType.isSubtypeOfOrEqualTo(type);
     }
   }
 

@@ -372,15 +372,20 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the parameterized input types that instantiate the given type.
+   * Returns the class or interface input types that instantiate the given type.
    *
    * @param patternType a type
-   * @return the parameterized input types that are instantiations of {@code patternType}
+   * @return the class or interface input types that are instantiations of {@code patternType}
    */
   private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
     List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
     for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
+      // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
+      // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
+      // types, so it is true for an unrelated member class such as Outer<String>.Other.  The
+      // runtime class check excludes such types but admits subclasses of the pattern's class.
+      if (inputType.isClassOrInterfaceType()
+          && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         matches.add((ReferenceType) inputType);
       }
@@ -480,8 +485,10 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type need not be a ParameterizedType:  for a member class with no type
+            // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ParameterizedType) paramType);
+            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -492,10 +499,21 @@ public class TypeInstantiator {
             choseAmongSeveral |= matches.size() > 1;
             ReferenceType selectedType = Randomness.randomSetMember(matches);
             Substitution subst =
-                selectedType.getInstantiatingSubstitution((ParameterizedType) origParamType);
+                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
             if (subst == null) {
               if (Log.isLoggingOn()) {
                 failure = "no substitution instantiates " + origParamType + " as " + selectedType;
+              }
+              allMatched = false;
+              break;
+            }
+            // The selected type need not be consistent with the type variables instantiated for
+            // earlier parameters, as for an enclosing type:  for parameters List<U> and
+            // Outer<U>.Inner, U might already be String while the selected type is
+            // Outer<Integer>.Inner.
+            if (!substitution.isConsistentWith(subst)) {
+              if (Log.isLoggingOn()) {
+                failure = selectedType + " is inconsistent with " + substitution;
               }
               allMatched = false;
               break;
