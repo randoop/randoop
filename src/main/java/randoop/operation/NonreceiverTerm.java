@@ -84,24 +84,25 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     this.type = type;
-    this.value = (type.isPrimitive() ? convertToPrimitiveType(value, type) : value);
+    this.value = (type.isPrimitive() ? convertToBoxedPrimitive(value, type) : value);
   }
 
   /**
-   * Converts a value to the wrapper class of the given primitive type. A primitive initialization
-   * may be given a value of a narrower type than the one it declares (for example, a {@code Byte}
-   * for a {@code short} variable). The runtime value of such a variable has the declared type, so
-   * this converts the value to that type. Otherwise, executing the term would yield a value of the
-   * wrong class, and terms that represent the same value would not be equal.
+   * Returns the given boxed value, converted to the boxed type of the given primitive type. A
+   * primitive initialization may be given a value of a narrower type than the one it declares (for
+   * example, a {@code Byte} for a {@code short} variable). The run-time value of such a variable
+   * has the declared type, so this converts the value to that type. Otherwise, executing the term
+   * would yield a value of the wrong class, and terms that represent the same value would not be
+   * equal.
    *
-   * @param value a primitive wrapper whose type is assignable to {@code type}
+   * @param value a boxed primitive whose type is assignable to {@code type}
    * @param type a primitive type
-   * @return the value, converted to the wrapper class of {@code type}
+   * @return the value, converted to the boxed type of {@code type}
    */
   @SuppressWarnings({
     "signedness:method.invocation" // Randoop's primitive values are Java's signed values
   })
-  private static Object convertToPrimitiveType(Object value, Type type) {
+  private static Object convertToBoxedPrimitive(Object value, Type type) {
     Class<?> cls = type.getRuntimeClass();
     if (cls == boolean.class || cls == char.class) {
       // No other primitive type widens to boolean or char.
