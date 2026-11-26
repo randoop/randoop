@@ -1584,8 +1584,8 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the given types that are candidate types for the given type variable, as in {@link
-   * #candidateTypes(TypeVariable)}.
+   * Returns the elements of the given types that are within the bounds of the given type variable,
+   * as in {@link #candidateTypes(TypeVariable)}.
    *
    * @param parameter a type variable
    * @param types the types to choose from

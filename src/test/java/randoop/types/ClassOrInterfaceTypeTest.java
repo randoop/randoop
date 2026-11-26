@@ -716,29 +716,6 @@ public class ClassOrInterfaceTypeTest {
     abstract class GenericListOfT<V> extends ArrayList<T> implements Supplier<V> {}
   }
 
-  /** Methods whose return types {@link #memberOfWildcardTypeHasWildcardTest} uses. */
-  @SuppressWarnings("unused")
-  abstract static class WildcardHolder {
-    abstract Outer<?> wildcardOuter();
-
-    abstract Outer<String> stringOuter();
-
-    abstract Outer<String>.GenericInner<String> genericInner();
-  }
-
-  /**
-   * Returns the Randoop type for the return type of the given method of {@link WildcardHolder}.
-   *
-   * @param methodName a method name of {@link WildcardHolder}, such as {@code "wildcardOuter"}
-   * @return the return type of the method
-   * @throws NoSuchMethodException if {@link WildcardHolder} has no method named {@code methodName}
-   */
-  private static ClassOrInterfaceType wildcardHolderReturnType(String methodName)
-      throws NoSuchMethodException {
-    return (ClassOrInterfaceType)
-        Type.forType(WildcardHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
-  }
-
   /** Declares a method whose parameter type is a generic member class of a parameterized type. */
   static class GenericMemberHolder {
     /**
@@ -853,6 +830,29 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(Subtyping.isSubtypeOrEqual(declarationForm, declarationForm, empty));
     assertFalse(Subtyping.isSubtypeOrEqual(stringInteger, declarationForm, empty));
     assertFalse(Subtyping.isSubtypeOrEqual(declarationForm, stringInteger, empty));
+  }
+
+  /** Methods whose return types {@link #memberOfWildcardTypeHasWildcardTest} uses. */
+  @SuppressWarnings("unused")
+  abstract static class WildcardHolder {
+    abstract Outer<?> wildcardOuter();
+
+    abstract Outer<String> stringOuter();
+
+    abstract Outer<String>.GenericInner<String> genericInner();
+  }
+
+  /**
+   * Returns the Randoop type for the return type of the given method of {@link WildcardHolder}.
+   *
+   * @param methodName a method name of {@link WildcardHolder}, such as {@code "wildcardOuter"}
+   * @return the return type of the method
+   * @throws NoSuchMethodException if {@link WildcardHolder} has no method named {@code methodName}
+   */
+  private static ClassOrInterfaceType wildcardHolderReturnType(String methodName)
+      throws NoSuchMethodException {
+    return (ClassOrInterfaceType)
+        Type.forType(WildcardHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
   }
 
   /** A subclass of {@code Outer<Integer>.StringInner}. */
