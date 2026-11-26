@@ -955,8 +955,6 @@ public class TypeInstantiator {
         if (nongenericCandidates == null) {
           return Collections.emptyList();
         }
-        // The candidate types of a type variable do not depend on the substitution, so compute
-        // them once rather than once per tuple.
         Map<TypeVariable, List<ReferenceType>> genericCandidates =
             candidatesByVariable(genericParameters);
         if (genericCandidates == null) {
