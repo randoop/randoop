@@ -1932,7 +1932,7 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(wildcardOuter.hasWildcard());
     assertFalse(stringOuter.hasWildcard());
 
-    // Type.forType does not record the type arguments of an enclosing type, so set them directly.
+    // Set the enclosing types directly, to test hasWildcard independently of Type.forType.
 
     // Outer<?>.Inner and Outer<String>.Inner
     NonParameterizedType wildcardInner = new NonParameterizedType(Outer.Inner.class);
