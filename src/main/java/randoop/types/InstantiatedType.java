@@ -398,16 +398,26 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // The substitution that the enclosing type and the type arguments so far induce.  They must
+      // induce consistent substitutions:  Map<String, Integer> is not an instantiation of
+      // Map<X, X>, and Outer<String>.Inner<Integer> is not an instantiation of Outer<X>.Inner<X>.
+      Substitution substitution = new Substitution();
       // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
       // an instantiation.
-      if (this.isMemberClass()
-          && otherInstType.isMemberClass()
-          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
-        return false;
+      if (this.isMemberClass() && otherInstType.isMemberClass()) {
+        if (!this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
+          return false;
+        }
+        if (otherInstType.enclosingType.isGeneric()) {
+          Substitution enclosingSubstitution =
+              this.enclosingType.getInstantiatingSubstitution(otherInstType.enclosingType);
+          // The substitution can be null though the enclosing type is an instantiation, as for an
+          // enclosing type with a wildcard argument.  Then only the type arguments are checked.
+          if (enclosingSubstitution != null) {
+            substitution = enclosingSubstitution;
+          }
+        }
       }
-      // The substitution that the type arguments so far induce.  The type arguments must induce
-      // consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>.
-      Substitution substitution = new Substitution();
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);
@@ -493,7 +503,10 @@ public class InstantiatedType extends ParameterizedType {
       return null;
     }
     // TODO: Why is this test so late, after expensive computation?
-    if (goalType instanceof GenericClassType) {
+    // A goal type that is a NonParameterizedType is a member class of a generic type, such as
+    // Outer<X>.Inner, since it is generic.  The superclass computed the substitution from this
+    // type's view of that class, such as Outer<String>.Inner for Outer<String>.Child<Integer>.
+    if (goalType instanceof GenericClassType || goalType instanceof NonParameterizedType) {
       return substitution;
     }
     return null;
@@ -595,6 +608,23 @@ public class InstantiatedType extends ParameterizedType {
     // of `Outer<? extends Number>.Inner`.
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
+    }
+
+    // The superclass check above compares types for equality, so it does not find a supertype of
+    // the same member class whose enclosing type is contained in that of `otherType`:  for
+    // `class Sub<U> extends Outer<String>.Inner`, Sub<Integer> is a subtype of Outer<?>.Inner but
+    // not of Outer<Integer>.Inner.  NonParameterizedType.isSubtypeOfOrEqualTo compares the
+    // enclosing types of two types of the same member class.
+    if (otherType instanceof NonParameterizedType
+        && ((NonParameterizedType) otherType).isMemberClass()
+        && !otherType.runtimeClassIs(this.getRuntimeClass())
+        && otherType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+      for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
+        if (supertype.runtimeClassIs(otherType.getRuntimeClass())
+            && supertype.isSubtypeOfOrEqualTo(otherType)) {
+          return true;
+        }
+      }
     }
 
     // wildcard clause

@@ -109,12 +109,14 @@ class EagerReferenceBound extends ReferenceBound {
     }
     // A member class that declares no type parameters, of a parameterized type, such as
     // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
-    // capture conversion.  It is compared by a subtype test.
-    if (argType instanceof NonParameterizedType && argType.isParameterized()) {
+    // capture conversion.  It is compared by a subtype test, which compares the enclosing types by
+    // containment, as isSubtypeOfOrEqualTo does not.  The substitution has already been applied to
+    // this bound, and it does not apply to argType, whose type variables stand for themselves.
+    if (isMemberOfParameterizedType(argType)) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
       }
-      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, subst);
+      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, new Substitution());
     }
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
@@ -129,12 +131,6 @@ class EagerReferenceBound extends ReferenceBound {
       }
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
-    }
-    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    if (isMemberOfParameterizedType(argType)) {
-      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  The type
-      // variables in argType, which the substitution does not apply to, stand for themselves.
-      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, new Substitution());
     }
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
@@ -155,9 +151,20 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
+    if (getBoundType().isVariable()) {
+      // If the substitution replaces this bound, a type variable, by a type variable (a different
+      // one, or a distinct copy of it), then that replacement is fixed:  it is not chosen to suit
+      // argType.  For example, for `<S, T extends S>` with S := X, where X extends Number, Integer
+      // is not known to be a subtype of X.  This is as in TypeVariable.variableBoundAllows.
+      ReferenceType replacement = ((TypeVariable) getBoundType()).getSubstitutedType(subst);
+      if (replacement != null && replacement.isVariable()) {
+        return argType.isReferenceType()
+            && Subtyping.isSubtypeOrEqual((ReferenceType) argType, replacement, subst);
+      }
+    }
     if (thisBoundType.isVariable()) {
-      // This bound is a type variable, which the substitution does not instantiate with a
-      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      // This bound is a type variable, which the substitution does not replace, or maps to itself,
+      // so the variable can still be chosen, within its own upper bound.
       TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
       if (argType.isReferenceType() && !argType.isVariable()) {
         // `thisBoundVariable` can be argType itself or one of its supertypes, as in

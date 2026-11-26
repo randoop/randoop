@@ -435,7 +435,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (this.runtimeClassIs(goalClassType.getRuntimeClass())) {
           thisView = this;
         } else {
-          for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
+          for (ClassOrInterfaceType supertype : this.getSignatureSupertypesStrict()) {
             if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
               thisView = supertype;
               break;
@@ -478,6 +478,31 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
     }
     return substitution;
+  }
+
+  /**
+   * Returns the strict supertypes of this type, as {@link #getSupertypesStrict()} does, but with
+   * the type arguments that the declaration of this type's class gives its supertypes, if this type
+   * is a {@link GenericClassType}. The supertypes of a {@link GenericClassType} are otherwise those of
+   * its raw class: for {@code class Sub<U> extends Outer<String>.Inner}, the superclass would be
+   * {@code Outer<T>.Inner} rather than {@code Outer<String>.Inner}.
+   *
+   * @return the strict supertypes of this type, with the type arguments of their declarations
+   */
+  private Set<ClassOrInterfaceType> getSignatureSupertypesStrict() {
+    if (!(this instanceof GenericClassType)) {
+      return getSupertypesStrict();
+    }
+    GenericClassType genericType = (GenericClassType) this;
+    Substitution empty = new Substitution();
+    List<ClassOrInterfaceType> directSupertypes = new ArrayList<>(genericType.getInterfaces(empty));
+    directSupertypes.add(genericType.getSuperclass(empty));
+    Set<ClassOrInterfaceType> result = new LinkedHashSet<>();
+    for (ClassOrInterfaceType directSupertype : directSupertypes) {
+      result.addAll(directSupertype.getSupertypesInclusive());
+    }
+    result.remove(this);
+    return result;
   }
 
   /**
@@ -591,6 +616,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
     }
     return false;
+  }
+
+  /**
+   * Returns the enclosing type of this type, if it is a nested class. For example, the enclosing
+   * type of {@code Outer<String>.Inner} is {@code Outer<String>}.
+   *
+   * @return the enclosing type of this type, or null if this type is not a nested class
+   */
+  @Pure
+  public @Nullable ClassOrInterfaceType getEnclosingType() {
+    return enclosingType;
   }
 
   /**

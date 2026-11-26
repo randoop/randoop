@@ -845,7 +845,9 @@ public class ParameterBoundTest {
   @Test
   public void testReferenceBoundComparedWithNonGenericMemberClassBound() {
     java.lang.reflect.Type innerType = fieldType(ParameterBoundTest.class, "stringOwnerInner");
-    ParameterBound lazyBound = ParameterBound.forType(Collections.emptySet(), innerType);
+    // ParameterBound.forType makes an eager bound for this type, which has no type variable, so
+    // construct a lazy bound directly.
+    ParameterBound lazyBound = new LazyParameterBound(innerType);
     assertTrue(lazyBound instanceof LazyParameterBound);
     ReferenceBound sameBound = new EagerReferenceBound(ReferenceType.forType(innerType));
     Substitution empty = new Substitution();

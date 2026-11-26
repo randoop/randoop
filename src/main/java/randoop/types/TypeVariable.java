@@ -422,9 +422,9 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if {@code otherType} is within the given bound of this variable, which is a type
    * variable. If the substitution instantiates that type variable with a type that is not a
    * variable, compares {@code otherType} with that type. If the substitution replaces that type
-   * variable by a different type variable, that replacement is fixed, and {@code otherType} must be
-   * a subtype (for an upper bound) or supertype (for a lower bound) of it. Otherwise, that type
-   * variable stands for an unknown type. For a lower bound, the result is true if {@code otherType}
+   * variable by a type variable, even a distinct copy of it, that replacement is fixed, and {@code
+   * otherType} must be a subtype (for an upper bound) or supertype (for a lower bound) of it.
+   * Otherwise, that type variable stands for an unknown type. For a lower bound, the result is true if {@code otherType}
    * can instantiate it; for an upper bound, the result is true if it can be a supertype of {@code
    * otherType}, as determined by {@link #canBeSupertypeOf}.
    *
@@ -437,9 +437,11 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean variableBoundAllows(
       ParameterBound bound, boolean isLower, Substitution substitution, ReferenceType otherType) {
-    // If the substitution replaces the bound's type variable by a different type variable, as for
+    // If the substitution replaces the bound's type variable by a type variable, as for
     // `<S, T extends S>` with S := X, then X is fixed:  it is not chosen to suit otherType.  For
-    // example, with `X extends Number`, Integer is not known to be a subtype of X.
+    // example, with `X extends Number`, Integer is not known to be a subtype of X.  This holds
+    // also for a distinct copy of the bound's type variable, with other bounds, which equals it;
+    // getSubstitutedType returns null if the substitution maps the type variable to itself.
     TypeVariable boundVariable = null;
     if (bound instanceof ReferenceBound) {
       boundVariable = (TypeVariable) ((ReferenceBound) bound).getBoundType();
@@ -448,7 +450,7 @@ public abstract class TypeVariable extends ParameterType {
     }
     ReferenceType replacement =
         boundVariable == null ? null : boundVariable.getSubstitutedType(substitution);
-    if (replacement != null && replacement.isVariable() && !replacement.equals(boundVariable)) {
+    if (replacement != null && replacement.isVariable()) {
       return isLower
           ? Subtyping.isSubtypeOrEqual(replacement, otherType, substitution)
           : Subtyping.isSubtypeOrEqual(otherType, replacement, substitution);
