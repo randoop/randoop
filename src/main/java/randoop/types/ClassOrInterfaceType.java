@@ -347,7 +347,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null) {
+        if (supertypeSubstitution == null
+            || !substitution.isConsistentWith(supertypeSubstitution)) {
           return null;
         }
         substitution = substitution.extend(supertypeSubstitution);
@@ -637,9 +638,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A member class has a wildcard if its enclosing type does, as {@code Outer<?>.Inner} does.
+   */
   @Override
   public boolean hasWildcard() {
-    return false;
+    return isMemberClass() && enclosingType.hasWildcard();
   }
 
   /**

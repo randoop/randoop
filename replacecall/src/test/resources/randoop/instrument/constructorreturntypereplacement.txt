@@ -1,0 +1,2 @@
+// bad replacement file for testing: the replacement for a constructor has the wrong return type
+java.lang.Object.<init>() randoop.instrument.testmocks.MethodMocks.newObject()
