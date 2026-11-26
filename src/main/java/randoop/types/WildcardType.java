@@ -172,6 +172,7 @@ class WildcardType extends ParameterType {
     if (thisBound == null) {
       return false;
     }
+    // `?`, which is `? extends Object`, contains every wildcard, including every `? super S`.
     if (this.hasUpperBound && thisBound.isObject()) {
       return true;
     }
