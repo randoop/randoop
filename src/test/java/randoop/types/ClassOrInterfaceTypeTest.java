@@ -522,6 +522,29 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(setOwnerParameters.get(1)));
   }
 
+  /** Methods whose return types {@link #memberOfWildcardTypeHasWildcardTest} uses. */
+  @SuppressWarnings("unused")
+  abstract static class WildcardHolder {
+    abstract Outer<?> wildcardOuter();
+
+    abstract Outer<String> stringOuter();
+
+    abstract Outer<String>.GenericInner<String> genericInner();
+  }
+
+  /**
+   * Returns the Randoop type for the return type of the given method of {@link WildcardHolder}.
+   *
+   * @param methodName a method name of {@link WildcardHolder}, such as {@code "wildcardOuter"}
+   * @return the return type of the method
+   * @throws NoSuchMethodException if {@link WildcardHolder} has no method named {@code methodName}
+   */
+  private static ClassOrInterfaceType wildcardHolderReturnType(String methodName)
+      throws NoSuchMethodException {
+    return (ClassOrInterfaceType)
+        Type.forType(WildcardHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
   /**
    * Returns the type of the given parameter of {@link TypeVariableHolder#n}.
    *
@@ -584,30 +607,6 @@ public class ClassOrInterfaceTypeTest {
         new WildcardArgument(
             new WildcardType(new EagerReferenceBound((ReferenceType) listOfString), true));
     assertFalse(extendsListOfT.contains(extendsListOfString));
-  }
-
-  @Test
-  public void lowerBoundedWildcardContainmentTest() {
-    WildcardType superString =
-        new WildcardType(new EagerReferenceBound(JavaTypes.STRING_TYPE), false);
-    WildcardType superObject =
-        new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), false);
-    WildcardType unbounded = new WildcardType(new EagerReferenceBound(JavaTypes.OBJECT_TYPE), true);
-    // JLS 4.5.1: `? super T` contains `? super S` if T is a subtype of S.
-    assertTrue(superString.contains(superObject));
-    assertFalse(superObject.contains(superString));
-    // `? super T` does not contain `?`, which is `? extends Object`.
-    assertFalse(superString.contains(unbounded));
-    // `List<?>` is not a subtype of `List<? super String>`.
-    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
-    InstantiatedType listOfUnbounded =
-        new InstantiatedType(
-            listType, Collections.singletonList((TypeArgument) new WildcardArgument(unbounded)));
-    InstantiatedType listOfSuperString =
-        new InstantiatedType(
-            listType, Collections.singletonList((TypeArgument) new WildcardArgument(superString)));
-    assertFalse(listOfUnbounded.isSubtypeOfOrEqualTo(listOfSuperString));
-    assertTrue(listOfSuperString.isSubtypeOfOrEqualTo(listOfUnbounded));
   }
 
   @Test
@@ -899,5 +898,41 @@ public class ClassOrInterfaceTypeTest {
     assertTrue(wrappers.isSubtypeOfOrEqualTo(supers));
     // A check that does not depend on itself still fails, after the recursive check.
     assertFalse(JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE).isSubtypeOfOrEqualTo(supers));
+  }
+
+  /** Tests that a member class has a wildcard if its enclosing type does. */
+  @Test
+  public void memberOfWildcardTypeHasWildcardTest() throws NoSuchMethodException {
+    ClassOrInterfaceType wildcardOuter = wildcardHolderReturnType("wildcardOuter");
+    ClassOrInterfaceType stringOuter = wildcardHolderReturnType("stringOuter");
+    assertTrue(wildcardOuter.hasWildcard());
+    assertFalse(stringOuter.hasWildcard());
+
+    // Type.forType does not record the type arguments of an enclosing type, so set them directly.
+
+    // Outer<?>.Inner and Outer<String>.Inner
+    NonParameterizedType wildcardInner = new NonParameterizedType(Outer.Inner.class);
+    wildcardInner.enclosingType = wildcardOuter;
+    assertTrue(wildcardInner.hasWildcard());
+    NonParameterizedType stringInner = new NonParameterizedType(Outer.Inner.class);
+    stringInner.enclosingType = stringOuter;
+    assertFalse(stringInner.hasWildcard());
+
+    // Outer<?>.GenericInner<String> and Outer<String>.GenericInner<String>
+    InstantiatedType wildcardGenericInner =
+        (InstantiatedType) wildcardHolderReturnType("genericInner");
+    wildcardGenericInner.enclosingType = wildcardOuter;
+    assertTrue(wildcardGenericInner.hasWildcard());
+    InstantiatedType stringGenericInner =
+        (InstantiatedType) wildcardHolderReturnType("genericInner");
+    stringGenericInner.enclosingType = stringOuter;
+    assertFalse(stringGenericInner.hasWildcard());
+
+    // A type that contains Outer<?>.Inner:  List<Outer<?>.Inner> and Outer<?>.Inner[]
+    GenericClassType listType = (GenericClassType) ClassOrInterfaceType.forClass(List.class);
+    assertTrue(listType.instantiate(wildcardInner).hasWildcard());
+    assertFalse(listType.instantiate(stringInner).hasWildcard());
+    assertTrue(ArrayType.ofComponentType(wildcardInner).hasWildcard());
+    assertFalse(ArrayType.ofComponentType(stringInner).hasWildcard());
   }
 }

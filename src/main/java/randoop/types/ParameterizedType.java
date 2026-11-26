@@ -36,8 +36,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   // This method is synchronized so that concurrent calls do not corrupt the cache, and so that each
   // class has a single GenericClassType.  The lock does not cover the type parameters of the
-  // GenericClassType, which it computes lazily, outside this lock; GenericClassType.parameters()
-  // publishes them safely by itself.
+  // GenericClassType, which it computes lazily, outside this lock;
+  // GenericClassType.directTypeParameters() publishes them safely by itself.
   public static synchronized GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException(
