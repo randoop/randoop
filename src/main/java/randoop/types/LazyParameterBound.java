@@ -141,8 +141,8 @@ class LazyParameterBound extends ParameterBound {
    * @param type the reflection type
    * @param substitution the type substitution
    * @return the type argument that results from applying {@code substitution} to {@code type}, or
-   *     null if {@code type} is not a type variable, parameterized type, class, generic array type,
-   *     or wildcard
+   *     null if {@code type} is not a type variable, parameterized type (including a non-generic
+   *     member class of a generic class), class, generic array type, or wildcard
    */
   private static @Nullable TypeArgument substitute(
       java.lang.reflect.Type type, Substitution substitution) {
@@ -152,6 +152,14 @@ class LazyParameterBound extends ParameterBound {
         return TypeArgument.forType(referenceType);
       }
       return TypeArgument.forType(TypeVariable.forType(type));
+    }
+
+    if (isNonGenericMemberClass(type)) {
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
+      // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
+      // isUpperBound and isLowerBound do:  the result has the owner type from the class
+      // declaration, as does any argument type that it is compared with.
+      return TypeArgument.forType(type);
     }
 
     if (type instanceof ParameterizedType) {
@@ -310,6 +318,10 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
+    }
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
@@ -355,6 +367,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
+    if (isNonGenericMemberClass(boundType)) {
+      // The bound has no type variable, so no substitution changes it.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
+    }
     ParameterBound b = this.substitute(substitution);
     if (b.equals(this)) {
       checkSubstitutionMapsAllTypeParameters(substitution);
