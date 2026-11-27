@@ -476,7 +476,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the superclass of this type, or null
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract @Nullable ClassOrInterfaceType getSuperclass();
 
   /**
    * Returns the immediate supertypes of this type.
