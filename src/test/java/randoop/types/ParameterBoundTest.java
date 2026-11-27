@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
@@ -13,8 +14,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
 
 /** Tests {@link ParameterBound} and the construction of type parameters and their bounds. */
@@ -655,6 +658,8 @@ public class ParameterBoundTest {
             ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
     assertTrue(inner.isMemberClass());
     assertEquals(Outer.class, inner.enclosingType.getRuntimeClass());
+    // The owner type is Outer<T>, not raw Outer.
+    assertTrue(inner.enclosingType.isGenericForm());
   }
 
   @Test
@@ -668,7 +673,29 @@ public class ParameterBoundTest {
     Substitution empty = new Substitution();
     assertTrue(bound.isUpperBound(argType, empty));
     assertTrue(bound.isLowerBound(argType, empty));
+
+    // The owner type, Outer<T>, is kept and substituted:  with T := String, the bound is
+    // Outer<String>.Inner<String>[], which is independent of the field that the bound came from.
+    Substitution tIsString = new Substitution(t, JavaTypes.STRING_TYPE);
+    Type stringOwnerArray = Type.forType(fieldType(ParameterBoundTest.class, "stringOwnerArray"));
+    Type integerOwnerArray = Type.forType(fieldType(ParameterBoundTest.class, "integerOwnerArray"));
+    ReferenceType substituted = ((ReferenceBound) bound.substitute(tIsString)).getBoundType();
+    assertEquals(stringOwnerArray, substituted);
+    assertNotEquals(integerOwnerArray, substituted);
+    assertTrue(bound.isUpperBound(stringOwnerArray, tIsString));
   }
+
+  /**
+   * A field of a generic array type whose element type has the owner type {@code Outer<String>}.
+   */
+  @SuppressWarnings("unused")
+  private static Outer<String>.Inner<String>[] stringOwnerArray;
+
+  /**
+   * A field of a generic array type whose element type has the owner type {@code Outer<Integer>}.
+   */
+  @SuppressWarnings("unused")
+  private static Outer<Integer>.Inner<String>[] integerOwnerArray;
 
   /**
    * A generic class with a non-generic inner class.
@@ -762,6 +789,9 @@ public class ParameterBoundTest {
     Type argType = Type.forType(type);
     Substitution empty = new Substitution();
     ArrayType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    // The same member class with another owner type is a different type.
+    Type otherOwnerArray =
+        Type.forType(fieldType(ParameterBoundTest.class, "integerOwnerNonGenericInnerArray"));
     // ParameterBound.forType creates an eager bound, so also test a lazy bound directly:  an empty
     // substitution materializes it.
     for (ParameterBound bound :
@@ -772,9 +802,18 @@ public class ParameterBoundTest {
       assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
       assertFalse(bound.isUpperBound(stringArray, empty));
       assertFalse(bound.isLowerBound(stringArray, empty));
+      assertFalse(bound.isUpperBound(otherOwnerArray, empty));
+      assertFalse(bound.isLowerBound(otherOwnerArray, empty));
     }
     assertTrue(new LazyParameterBound(type).substitute(empty) instanceof ReferenceBound);
   }
+
+  /**
+   * A field of a generic array type of a member class whose owner type is {@code
+   * GenericOuter<Integer>}.
+   */
+  @SuppressWarnings("unused")
+  private static GenericOuter<Integer>.NonGenericInner[] integerOwnerNonGenericInnerArray;
 
   /**
    * A generic class with a generic member class that has a non-generic member class.
@@ -1082,6 +1121,76 @@ public class ParameterBoundTest {
     assertTrue(substituted instanceof ReferenceBound);
     assertEquals(stringOwner, ((ReferenceBound) substituted).getBoundType());
   }
+
+  /**
+   * Tests that, when a substitution does not map the type variable in the owner type of a
+   * non-generic member class in a bound, as in {@code GenericOuter<X>.NonGenericInner}, that type
+   * variable stands for an unknown type. A substitution that maps it still determines the owner
+   * type.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundWithUnmappedOwnerVariable() {
+    java.lang.reflect.Type declaredBound =
+        OwnerVariableMemberBound.class.getTypeParameters()[1].getBounds()[0];
+    ParameterBound bound = ParameterBound.forType(Collections.emptySet(), declaredBound);
+    TypeVariable x = TypeVariable.forType(OwnerVariableMemberBound.class.getTypeParameters()[0]);
+    ReferenceType stringOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "stringOwnerInner"));
+    ReferenceType integerOwner =
+        ReferenceType.forType(fieldType(ParameterBoundTest.class, "integerOwnerInner"));
+
+    Substitution empty = new Substitution();
+    assertTrue(bound.isUpperBound(stringOwner, empty));
+    assertTrue(bound.isUpperBound(integerOwner, empty));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, empty));
+
+    Substitution integerSubstitution =
+        new Substitution(x, ClassOrInterfaceType.forClass(Integer.class));
+    assertFalse(bound.isUpperBound(stringOwner, integerSubstitution));
+    assertTrue(bound.isUpperBound(integerOwner, integerSubstitution));
+  }
+
+  /**
+   * A class whose type parameter has a bound that refers to the type parameter only through the
+   * owner type of a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings("unused")
+  private static class OwnerComparableRecursiveBound<
+      T extends Comparable<GenericOuter<T>.NonGenericInner>> {}
+
+  /**
+   * Tests that a bound that refers to its type variable only through the owner type of a
+   * non-generic member class is lazy, so that converting the type variable terminates.
+   */
+  @Test
+  public void testBoundRecursiveThroughMemberClassOwner() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerComparableRecursiveBound.class).getTypeParameters();
+    assertEquals(1, parameters.size());
+    java.lang.reflect.TypeVariable<?> t =
+        OwnerComparableRecursiveBound.class.getTypeParameters()[0];
+    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    variableSet.add(t);
+    assertTrue(ParameterBound.forType(variableSet, t.getBounds()[0]) instanceof LazyParameterBound);
+
+    // A bound whose owner type has no type variable is still eager.
+    java.lang.reflect.Type concreteBound =
+        NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
+    java.lang.reflect.Type comparableOfConcrete =
+        fieldType(ParameterBoundTest.class, "comparableOfStringOwnerInner");
+    assertTrue(
+        ParameterBound.forType(Collections.emptySet(), comparableOfConcrete)
+            instanceof EagerReferenceBound);
+    assertTrue(
+        ParameterBound.forType(Collections.emptySet(), concreteBound)
+            instanceof LazyParameterBound);
+  }
+
+  /** A field of type {@code Comparable<GenericOuter<String>.NonGenericInner>}. */
+  @SuppressWarnings("unused")
+  private static Comparable<GenericOuter<String>.NonGenericInner> comparableOfStringOwnerInner;
 
   /**
    * Tests that a reference bound is compared with a lazy bound for a non-generic member class of a

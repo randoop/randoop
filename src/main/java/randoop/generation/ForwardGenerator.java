@@ -31,6 +31,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -504,6 +505,9 @@ public class ForwardGenerator extends AbstractGenerator {
     InputsAndSuccessFlag inputs;
     try {
       inputs = selectInputs(operation);
+    } catch (RandoopInstantiationError e) {
+      // Demand-driven input creation failed to instantiate a producer of an input.
+      throw e;
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
         throw new RandoopGenerationError(operation, e);

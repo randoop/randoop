@@ -131,10 +131,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns the owner type of the given parameterized type, if the conversion of the type to a
    * {@link ClassOrInterfaceType} uses that owner type as the enclosing type. This is so if the type
-   * is a member class (not a static nested class) and the owner type is a parameterized type that
-   * is not the type that the declaration of the enclosing class denotes. For example, the result
-   * for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise, returns null, and the
-   * conversion uses the enclosing type of the class declaration.
+   * is a member class (not a static nested class) that has an enclosing class and the owner type is
+   * a parameterized type that is not the type that the declaration of the enclosing class denotes.
+   * For example, the result for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise,
+   * returns null, and the conversion uses the enclosing type of the class declaration.
    *
    * @param type a parameterized type
    * @return the owner type to use as the enclosing type, or null
@@ -144,8 +144,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     // If the type arguments of the owner type, and of its own owner types, are the type parameters
     // of the declarations of the enclosing classes, the class declaration gives the enclosing type.
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())
+        && rawType.getEnclosingClass() != null
+        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
         && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
@@ -722,11 +724,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }

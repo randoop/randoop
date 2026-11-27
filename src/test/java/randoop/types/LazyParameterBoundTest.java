@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -351,5 +352,110 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(ConcreteArrayArgumentBound.class).getTypeParameters().get(0);
     assertTrue(
         t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(ConcreteArrayArgumentList.class)));
+  }
+
+  /** A non-generic class with a generic inner class. */
+  static class PlainOwner {
+    /**
+     * A generic inner class.
+     *
+     * @param <T> the type parameter
+     */
+    class Inner<T> {}
+  }
+
+  /**
+   * A type parameter whose bound is a generic inner class of a non-generic class.
+   *
+   * @param <U> the type parameter
+   */
+  static class PlainOwnerInnerBound<U extends PlainOwner.Inner<U>> {}
+
+  /** Fields whose types are used in {@link #testNonGenericOwnerOfGenericMemberBound}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class PlainOwnerFields {
+    /** An instantiation of a generic inner class of a non-generic class. */
+    PlainOwner.Inner<String> innerOfString;
+  }
+
+  /**
+   * A generic class with an inner class that declares no type parameters.
+   *
+   * @param <A> a type parameter
+   * @param <B> a type parameter
+   */
+  static class Box<A, B> {
+    /** An inner class that declares no type parameters. */
+    class Inner {}
+  }
+
+  /**
+   * A generic class with a generic method whose type parameter has a bound that mentions a type
+   * parameter of this class.
+   *
+   * @param <V> a type parameter
+   * @param <S> a type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  abstract static class Host<V, S> {
+    /** A type whose enclosing type has type arguments {@code V} and {@code Integer}. */
+    Box<V, Integer>.Inner vInteger;
+
+    /** A type whose enclosing type has type arguments {@code String} and {@code Integer}. */
+    Box<String, Integer>.Inner stringInteger;
+
+    /**
+     * A generic method.
+     *
+     * @param <T> a type parameter
+     * @param <U> a type parameter bounded by {@code Box<T, S>.Inner}
+     */
+    abstract <T, U extends Box<T, S>.Inner> void m();
+  }
+
+  /**
+   * Applying a substitution to a bound once does not make the siblings of a type parameter that the
+   * substitution instantiates stand for themselves.
+   */
+  @Test
+  public void testSiblingStaysUnknownAfterReplacement() throws ReflectiveOperationException {
+    List<TypeVariable> hostParameters = GenericClassType.forClass(Host.class).getTypeParameters();
+    TypeVariable v = hostParameters.get(0);
+    java.lang.reflect.TypeVariable<?>[] methodParameters =
+        Host.class.getDeclaredMethod("m").getTypeParameters();
+    TypeVariable t = TypeVariable.forType(methodParameters[0]);
+    TypeVariable u = TypeVariable.forType(methodParameters[1]);
+    ParameterBound bound = u.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    Substitution substitution =
+        new Substitution(Arrays.asList(t, v), Arrays.asList(v, JavaTypes.STRING_TYPE));
+    // The bound becomes Box<V, S>.Inner.  V stands for itself, but S, a sibling of V, which the
+    // substitution instantiates, can be Integer.
+    ReferenceType vInteger =
+        ReferenceType.forType(Host.class.getDeclaredField("vInteger").getGenericType());
+    assertTrue(bound.isUpperBound(vInteger, substitution));
+    // V is not substituted a second time.
+    ReferenceType stringInteger =
+        ReferenceType.forType(Host.class.getDeclaredField("stringInteger").getGenericType());
+    assertFalse(bound.isUpperBound(stringInteger, substitution));
+  }
+
+  /** Substituting into a bound keeps a non-generic owner of a generic member class. */
+  @Test
+  public void testNonGenericOwnerOfGenericMemberBound() throws NoSuchFieldException {
+    TypeVariable u =
+        GenericClassType.forClass(PlainOwnerInnerBound.class).getTypeParameters().get(0);
+    ParameterBound bound = u.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    ReferenceType substituted =
+        ((ReferenceBound) bound.substitute(new Substitution(u, JavaTypes.STRING_TYPE)))
+            .getBoundType();
+    ReferenceType reflected =
+        ReferenceType.forType(
+            PlainOwnerFields.class.getDeclaredField("innerOfString").getGenericType());
+    assertTrue(((ClassOrInterfaceType) substituted).isMemberClass());
+    assertEquals(reflected, substituted);
+    assertTrue(Subtyping.isSubtypeOrEqual(reflected, substituted, new Substitution()));
+    assertTrue(Subtyping.isSubtypeOrEqual(substituted, reflected, new Substitution()));
   }
 }

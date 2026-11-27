@@ -193,6 +193,11 @@ class EagerReferenceBound extends ReferenceBound {
     // A member class whose enclosing type is parameterized, such as Outer<String>.Inner, is
     // parameterized but is not an InstantiatedType.  The tests below handle it.
     if (thisBoundType instanceof InstantiatedType) {
+      if (argType.isVariable()) {
+        // A type variable is within this bound if its upper bound is, as for U extends
+        // Comparable<String> and the bound Comparable<String>.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      }
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -221,11 +226,19 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
+      ReferenceType argReferenceType = (ReferenceType) argType;
+      if (argReferenceType instanceof GenericClassType) {
+        // The supertypes of a GenericClassType are those of its erased class, which lose the type
+        // arguments of the enclosing types in the declared supertypes:  for
+        // `Child<U> extends Outer<String>.Inner`, the superclass would be `Outer<T>.Inner`.  The
+        // instantiation of the class by its own type parameters has the declared supertypes.
+        argReferenceType = ((GenericClassType) argReferenceType).substitute(new Substitution());
+      }
       // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  Each type
       // variable that remains in the bound stands for an unknown, as in the InstantiatedType case
       // above:  for the bound Outer<U>.Inner, Outer<String>.Inner is within the bound.
       return Subtyping.isSubtypeOrEqual(
-          (ReferenceType) argType,
+          argReferenceType,
           thisBoundType,
           subst.extendWithIdentity(thisBoundType.getTypeParameters()));
     }

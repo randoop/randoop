@@ -541,6 +541,50 @@ public class ClassOrInterfaceTypeTest {
     assertEquals(instantiated.hashCode(), reflected.hashCode());
   }
 
+  /**
+   * A generic class whose type parameter has a parameterized bound.
+   *
+   * @param <X> the type parameter
+   */
+  static class ComparableOuter<X extends Comparable<String>> {
+    /**
+     * A generic inner class.
+     *
+     * @param <Y> the type parameter
+     */
+    class Inner<Y> {}
+  }
+
+  /**
+   * Declares type parameters to use as type arguments.
+   *
+   * @param <U> a type parameter that is within the bound of {@link ComparableOuter}
+   * @param <W> a type parameter that is not within the bound of {@link ComparableOuter}
+   */
+  abstract static class ComparableVariables<
+      U extends Comparable<String>, W extends Comparable<Integer>> {}
+
+  /** A type variable is within a parameterized bound of an enclosing class if its bound is. */
+  @Test
+  public void instantiateMemberClassWithTypeVariableArgumentTest() {
+    GenericClassType inner =
+        (GenericClassType) ClassOrInterfaceType.forClass(ComparableOuter.Inner.class);
+    List<TypeVariable> variables =
+        GenericClassType.forClass(ComparableVariables.class).getTypeParameters();
+    TypeVariable u = variables.get(0);
+    TypeVariable w = variables.get(1);
+    // ComparableOuter<U>.Inner<String> is valid.
+    inner.instantiate(u, JavaTypes.STRING_TYPE);
+    inner.instantiate(Arrays.asList(u, JavaTypes.STRING_TYPE));
+    assertTrue(inner.areWithinBounds(Arrays.asList(u, JavaTypes.STRING_TYPE)));
+    // ComparableOuter<W>.Inner<String> is not.
+    assertThrows(IllegalArgumentException.class, () -> inner.instantiate(w, JavaTypes.STRING_TYPE));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> inner.instantiate(Arrays.asList(w, JavaTypes.STRING_TYPE)));
+    assertFalse(inner.areWithinBounds(Arrays.asList(w, JavaTypes.STRING_TYPE)));
+  }
+
   /** The supertypes of a type with a wildcard argument are those of its capture conversion. */
   @Test
   public void captureBeforeSupertypeTest() {

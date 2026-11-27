@@ -104,8 +104,9 @@ public class MemberClassOfParameterizedTypeTest {
 
   /**
    * Returns the type {@code Outer<String>.C} for the given member class {@code C} of {@link Outer}.
-   * The type is constructed by substitution, because {@link Type#forType} discards the type
-   * arguments of the enclosing type of a non-generic member class, yielding {@code Outer<T>.C}.
+   * The type is constructed by substitution into the generic form {@code Outer<T>.C}. This
+   * exercises a different construction path than {@link Type#forType}, which also preserves the
+   * type arguments of the owner type of a reflected type such as {@code Outer<String>.Inner}.
    *
    * @param memberClass a non-generic member class of {@link Outer}
    * @return the member class, with {@code Outer<String>} as its enclosing type
@@ -130,6 +131,24 @@ public class MemberClassOfParameterizedTypeTest {
     EagerReferenceBound subBound = new EagerReferenceBound(sub);
     assertTrue(subBound.isLowerBound(inner, empty));
     assertFalse(subBound.isLowerBound(returnType("otherType"), empty));
+  }
+
+  /**
+   * The generic form {@code Sub<U>} of a class that extends {@code Outer<String>.Inner} is within
+   * the bound {@code Outer<String>.Inner}, but not within {@code Outer<Integer>.Inner}.
+   */
+  @Test
+  public void testEagerBoundOfGenericSubclassOfMemberClass() throws NoSuchMethodException {
+    ClassOrInterfaceType genericSub = ClassOrInterfaceType.forClass(Sub.class);
+    assertTrue(genericSub instanceof GenericClassType);
+    Substitution empty = new Substitution();
+    assertTrue(new EagerReferenceBound(returnType("innerType")).isUpperBound(genericSub, empty));
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    ClassOrInterfaceType integerInner =
+        genericInner.substitute(
+            new Substitution(
+                genericInner.getTypeParameters(), ReferenceType.forClass(Integer.class)));
+    assertFalse(new EagerReferenceBound(integerInner).isUpperBound(genericSub, empty));
   }
 
   /**

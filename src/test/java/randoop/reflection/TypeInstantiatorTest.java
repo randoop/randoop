@@ -911,8 +911,7 @@ public class TypeInstantiatorTest {
         TypedOperation.forMethod(
             TypeInstantiatorTest.class.getDeclaredMethod("chainedComparableList"));
     InstantiatedType listOfTop =
-        GenericClassType.forClass(List.class)
-            .instantiate(ClassOrInterfaceType.forClass(Top.class));
+        GenericClassType.forClass(List.class).instantiate(ClassOrInterfaceType.forClass(Top.class));
     for (int i = 0; i < ATTEMPTS; i++) {
       TypedClassOperation operation = instantiator.instantiate(chainedComparableList, listOfTop);
       assertNotNull(operation);
@@ -1130,6 +1129,136 @@ public class TypeInstantiatorTest {
   }
 
   /**
+   * A method whose return type mentions only type variables that are bounded by another type
+   * variable, which occurs nowhere else.
+   *
+   * @param <U> a type variable that occurs only in bounds
+   * @param <T> the key type
+   * @param <S> the value type
+   * @return a map
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <U, T extends U, S extends U> Map<T, S> commonUpperBound() {
+    return Collections.emptyMap();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type considers a common supertype of the types
+   * that the goal type determines, for a type variable that is their upper bound. For the goal type
+   * {@code Map<String, Integer>}, {@code <U, T extends U, S extends U> Map<T, S>
+   * commonUpperBound()} is instantiated, with a common supertype such as {@code Object} for {@code
+   * U}, even though there are no input types.
+   */
+  @Test
+  public void testGoalTypeImpliesCommonUpperBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation commonUpperBound =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("commonUpperBound"));
+    GenericClassType mapType = GenericClassType.forClass(Map.class);
+    InstantiatedType stringToInteger = mapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE);
+    InstantiatedType stringToString =
+        mapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(commonUpperBound, stringToInteger);
+      assertNotNull(operation);
+      assertEquals(stringToInteger, operation.getOutputType());
+
+      operation = instantiator.instantiate(commonUpperBound, stringToString);
+      assertNotNull(operation);
+      assertEquals(stringToString, operation.getOutputType());
+    }
+  }
+
+  /**
+   * A method whose return type mentions only a type variable whose bound mentions two other type
+   * variables, which occur nowhere else.
+   *
+   * @param <T> the element type
+   * @param <K> the key type of the elements
+   * @param <V> the value type of the elements
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T extends Map<K, V>, K, V> List<T> listOfMapsBoundFirst() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type derives the types of several type
+   * variables that occur only in the same bound, even if they are not input types. For the goal
+   * type {@code List<HashMap<String, Integer>>}, {@code <T extends Map<K, V>, K, V> List<T>
+   * listOfMapsBoundFirst()} is instantiated with {@code String} for {@code K} and {@code Integer}
+   * for {@code V}.
+   */
+  @Test
+  public void testGoalTypeImpliesSeveralVariablesInBound()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    TypeInstantiator instantiator = new TypeInstantiator(new LinkedHashSet<>());
+    TypedClassOperation listOfMaps =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("listOfMapsBoundFirst"));
+    InstantiatedType goal =
+        GenericClassType.forClass(List.class)
+            .instantiate(
+                GenericClassType.forClass(HashMap.class)
+                    .instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(listOfMaps, goal);
+      assertNotNull(operation);
+      assertEquals(goal, operation.getOutputType());
+    }
+  }
+
+  /**
+   * A generic class with a method whose type parameter has a bound that mentions the type parameter
+   * of the class.
+   *
+   * @param <U> the type parameter
+   */
+  static class Box<U> {
+    /**
+     * Returns a list.
+     *
+     * @param <T> the element type
+     * @return a list
+     */
+    <T extends Comparable<U>> List<T> make() {
+      return Collections.emptyList();
+    }
+  }
+
+  /**
+   * Tests that instantiating an operation for a goal type chooses a receiver type that satisfies
+   * the bounds of the type variables that the goal type determines. For the goal type {@code
+   * List<String>}, {@code Box<U>.<T extends Comparable<U>> List<T> make()} is instantiated only
+   * with the receiver type {@code Box<String>}, not {@code Box<Integer>}, because {@code String} is
+   * not a {@code Comparable<Integer>}.
+   */
+  @Test
+  public void testGoalTypeConstrainsReceiverType()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    GenericClassType boxType = GenericClassType.forClass(Box.class);
+    InstantiatedType boxOfString = boxType.instantiate(JavaTypes.STRING_TYPE);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(boxType.instantiate(INTEGER_TYPE), inputTypes);
+    addTypes(boxOfString, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation make = TypedOperation.forMethod(Box.class.getDeclaredMethod("make"));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(make, listOfString);
+      assertNotNull(operation);
+      assertEquals(listOfString, operation.getOutputType());
+      assertEquals(boxOfString, operation.getInputTypes().get(0));
+    }
+  }
+
+  /**
    * A method whose parameter type mentions a type variable twice.
    *
    * @param <T> the key and value type
@@ -1163,6 +1292,58 @@ public class TypeInstantiatorTest {
       assertNotNull(operation);
       assertEquals(JavaTypes.STRING_TYPE, typeArgument(operation.getInputTypes().get(0), 0));
       assertEquals(JavaTypes.STRING_TYPE, typeArgument(operation.getInputTypes().get(0), 1));
+    }
+  }
+
+  /**
+   * A method whose type parameter {@code T} occurs only in the bound of the type parameter of its
+   * return type.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of the value type of {@code S}
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<S, Map<T, T>>, T> List<S> make() {
+    return new ArrayList<>();
+  }
+
+  /** A map whose value type has different key and value types, so it is not a {@code Map<T, T>}. */
+  private static class Mixed extends HashMap<Mixed, Map<String, Integer>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /** A map whose value type has the same key and value types, {@code Map<String, String>}. */
+  private static class Same extends HashMap<Same, Map<String, String>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /**
+   * Tests that goal-directed instantiation chooses a type for a type variable that occurs only in
+   * the bound of a type variable that the goal type instantiates. In {@code <S extends Map<S,
+   * Map<T, T>>, T> List<S> make()}, no type for {@code T} makes {@code Mixed} satisfy the bound of
+   * {@code S}, but {@code String} makes {@code Same} satisfy it.
+   */
+  @Test
+  public void testGoalBoundMentionsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation make =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("make"));
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType mixedList = listType.instantiate(ClassOrInterfaceType.forClass(Mixed.class));
+    InstantiatedType sameList = listType.instantiate(ClassOrInterfaceType.forClass(Same.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(instantiator.instantiate(make, mixedList));
+      TypedClassOperation operation = instantiator.instantiate(make, sameList);
+      assertNotNull("no instantiation of " + make + " for " + sameList, operation);
+      assertEquals(sameList, operation.getOutputType());
     }
   }
 

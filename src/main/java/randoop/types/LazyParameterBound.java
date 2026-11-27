@@ -22,9 +22,9 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
-   * instead of reading this field.
+   * instead of reading this field. Volatile so that a thread that reads a non-null value also sees
+   * the contents of the list, because a bound can be shared among threads.
    */
-  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
   private volatile @Nullable List<TypeVariable> typeParameters = null;
 
   /**
@@ -169,7 +169,7 @@ class LazyParameterBound extends ParameterBound {
       // ClassOrInterfaceType.forType preserves the owner type, such as `Outer<String>`, whose type
       // arguments the substitution may change.  The owner type is converted here, rather than by
       // ClassOrInterfaceType.forType, so that type variables in it are treated as in type
-      // arguments.
+      // arguments.  The result is unchanged if the owner type has no type variable.
       ParameterizedType parameterizedType = (ParameterizedType) type;
       ParameterizedType owner = getParameterizedOwnerType(parameterizedType);
       if (owner == null || ClassOrInterfaceType.isDeclarationForm(owner)) {
@@ -243,6 +243,13 @@ class LazyParameterBound extends ParameterBound {
         } else {
           instantiatedType.enclosingType = (ClassOrInterfaceType) ownerType;
         }
+      } else if (reflectiveOwner instanceof Class<?>
+          && !java.lang.reflect.Modifier.isStatic(
+              ((Class<?>) parameterizedType.getRawType()).getModifiers())) {
+        // The owner type supplies no type arguments, as for Plain.Inner<U>, so no substitution
+        // changes it.  Keep it, as ParameterizedType.forType does, so that the result equals the
+        // reflected type.
+        instantiatedType.enclosingType = ClassOrInterfaceType.forClass((Class<?>) reflectiveOwner);
       }
       return TypeArgument.forType(instantiatedType);
     }
@@ -488,8 +495,7 @@ class LazyParameterBound extends ParameterBound {
     ParameterBound b = substituteWithUnknowns(substitution);
     // As in isLowerBound(ParameterBound, Substitution), compare the instantiated bound without
     // applying the substitution to it again.
-    return b != null
-        && b.isLowerBound(argType, substitution.withIdentityFor(b.getTypeParameters()));
+    return b != null && b.isLowerBound(argType, comparisonSubstitution(substitution, b));
   }
 
   @Override
@@ -516,7 +522,8 @@ class LazyParameterBound extends ParameterBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
       // The bound has no type variable, so no substitution changes it.  As in isLowerBound,
-      // Subtyping compares the whole chain of enclosing types.
+      // Subtyping compares the whole chain of enclosing types.  If the owner type has a type
+      // variable, as in Outer<K>.Inner, then the substitution is applied to it below.
       return argType.isReferenceType()
           && Subtyping.isSubtypeOrEqual(
               (ReferenceType) argType, ReferenceType.forType(boundType), new Substitution());
@@ -525,8 +532,31 @@ class LazyParameterBound extends ParameterBound {
     // As in isLowerBound(ParameterBound, Substitution), compare the instantiated bound without
     // applying the substitution to it again.  For the bound T[] and the substitution
     // [T := U, U := String], the instantiated bound is U[], not String[].
-    return b != null
-        && b.isUpperBound(argType, substitution.withIdentityFor(b.getTypeParameters()));
+    return b != null && b.isUpperBound(argType, comparisonSubstitution(substitution, b));
+  }
+
+  /**
+   * Returns the substitution with which to compare the given instantiated bound, which is this
+   * bound with {@link #substituteWithUnknowns(Substitution)} applied. The result maps to itself
+   * each type variable in this bound that {@code substitution} does not map, as {@link
+   * #substituteWithUnknowns(Substitution)} does, so that each such type variable that remains in
+   * {@code instantiated} stands for an unknown type. The result also maps each type variable of
+   * {@code instantiated} to itself, so that the comparison does not apply the substitution to it a
+   * second time. Each type variable is an unknown for the result if and only if it is one for the
+   * completed substitution; see {@link Substitution#withIdentityFor(java.util.Collection)}.
+   *
+   * <p>For example, for {@code Host<V, S>}, a method type parameter {@code U extends Box<T,
+   * S>.Inner}, and the substitution {@code [T := V, V := String]}, the instantiated bound is {@code
+   * Box<V, S>.Inner}. {@code V} stands for itself, but {@code S} is an unknown, because the
+   * substitution instantiates its sibling {@code V}.
+   *
+   * @param substitution a type substitution
+   * @param instantiated this bound with {@code substitution} applied
+   * @return the substitution with which to compare {@code instantiated}
+   */
+  private Substitution comparisonSubstitution(
+      Substitution substitution, ParameterBound instantiated) {
+    return completeSubstitution(substitution).withIdentityFor(instantiated.getTypeParameters());
   }
 
   /**
@@ -611,7 +641,7 @@ class LazyParameterBound extends ParameterBound {
     // Map<T, String> and the substitution [T := U, U := String]; it stands for itself in b.
     // Each type variable of b is mapped to itself, even if the substitution maps it to a copy of
     // it with other bounds.
-    return b != null && b.isLowerBound(bound, substitution.withIdentityFor(b.getTypeParameters()));
+    return b != null && b.isLowerBound(bound, comparisonSubstitution(substitution, b));
   }
 
   /**
