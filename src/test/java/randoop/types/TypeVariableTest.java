@@ -703,6 +703,25 @@ public class TypeVariableTest {
   }
 
   /**
+   * Mapping a copy of a type variable to itself makes the substitution map it to itself, even if
+   * the substitution already maps the original variable to that copy.
+   */
+  @Test
+  public void testWithMappingOfCopyToItself() {
+    java.lang.reflect.Type reflectionVariable = SelfComparableBound.class.getTypeParameters()[0];
+    TypeVariable t1 = TypeVariable.forType(reflectionVariable);
+    TypeVariable t2 =
+        t1.createCopyWithBounds(
+            t1.getLowerTypeBound(), new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
+    Substitution substitution = new Substitution(t1, t2);
+    assertFalse(substitution.mapsToItself(t2));
+    assertTrue(substitution.withMapping(t2, t2).mapsToItself(t2));
+    // A mapping that is already present, with the same key, is reused.
+    Substitution identity = new Substitution(t2, t2);
+    assertSame(identity, identity.withMapping(t2, t2));
+  }
+
+  /**
    * A class whose type parameter T has a bound with a sibling in a nested type argument, before T.
    *
    * @param <S> a type parameter
@@ -1140,6 +1159,7 @@ public class TypeVariableTest {
   @Test
   public void testSubtypeOfVariableRepeatedInOwnBound() {
     TypeVariable t = typeParameter(RepeatedSelfBound.class, 0);
+    assertTrue(t.isSubtypeOfOrEqualTo(GenericClassType.forClass(Map.class).instantiate(t, t)));
     assertTrue(t.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
     assertFalse(t.isSubtypeOfOrEqualTo(JavaTypes.STRING_TYPE));
   }
@@ -1765,6 +1785,132 @@ public class TypeVariableTest {
         inner.enclosingType);
     assertFalse(inner.isGeneric());
     assertEquals(ownFieldType("stringInnerField"), inner);
+  }
+
+  /**
+   * Type parameters, one of which has a bound that mentions a non-generic member class whose owner
+   * type mentions another type parameter.
+   *
+   * @param <K> a type parameter
+   * @param <V> a type parameter whose bound mentions {@code K}
+   * @param <T> a type parameter whose bound mentions {@code V} and {@code
+   *     NonGenericInnerOuter<K>.Inner}
+   */
+  static class BoundWithMemberClassOfVariable<
+      K, V extends Map<K, V>, T extends Map<V, NonGenericInnerOuter<K>.Inner>> {}
+
+  /**
+   * A substitution for {@code K} applies to the owner type of a non-generic member class in the
+   * bound of {@code T}, giving {@code NonGenericInnerOuter<String>.Inner}.
+   */
+  @Test
+  public void testSubstitutionReachesOwnerOfMemberClass() throws NoSuchFieldException {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(BoundWithMemberClassOfVariable.class).getTypeParameters();
+    TypeVariable t = parameters.get(2);
+    TypeVariable substituted =
+        (TypeVariable) t.substitute(new Substitution(parameters.get(0), JavaTypes.STRING_TYPE));
+    InstantiatedType bound =
+        (InstantiatedType) ((ReferenceBound) substituted.getUpperTypeBound()).getBoundType();
+    assertEquals(
+        ownFieldType("stringInnerField"),
+        ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
+  }
+
+  /**
+   * A field whose type arguments are wildcards bounded below by {@code String}. (javac rejects
+   * {@code SecondBoundedByFirst<?, ? super String>}.)
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super String, ? super String> superStringSecondField;
+
+  /**
+   * The lower bound {@code String} of the capture variable for the second argument makes it a
+   * supertype of {@code String} only if {@code String} is within its upper bound, the capture
+   * variable for the first argument.
+   */
+  @Test
+  public void testLowerBoundWitnessIsWithinUpperBound() throws NoSuchFieldException {
+    InstantiatedType capturedType = capturedFieldType("superStringSecondField");
+    TypeVariable first = typeArgument(capturedType, 0);
+    TypeVariable second = typeArgument(capturedType, 1);
+    assertTrue(
+        second.canBeSupertypeOf(
+            JavaTypes.STRING_TYPE, new Substitution(first, JavaTypes.OBJECT_TYPE)));
+    assertFalse(
+        second.canBeSupertypeOf(
+            JavaTypes.STRING_TYPE,
+            new Substitution(first, ClassOrInterfaceType.forClass(Integer.class))));
+  }
+
+  /**
+   * A class that is comparable to its own instantiations.
+   *
+   * @param <P> a type parameter
+   */
+  static class ComparableParent<P> implements Comparable<ComparableParent<P>> {
+    @Override
+    public int compareTo(ComparableParent<P> other) {
+      return 0;
+    }
+  }
+
+  /**
+   * A generic class whose superclass is a specialized instantiation of a generic class.
+   *
+   * @param <X> a type parameter that does not occur in the superclass
+   */
+  static class SpecializingChild<X> extends ComparableParent<String> {}
+
+  /**
+   * A type parameter bounded by a self-bounded type parameter.
+   *
+   * @param <T> a self-bounded type parameter
+   * @param <V> a type parameter bounded by {@code T}
+   */
+  static class ComparableChain<T extends Comparable<T>, V extends T> {}
+
+  /**
+   * {@code SpecializingChild<X>} can instantiate {@code V}, because its supertype {@code
+   * ComparableParent<String>} can instantiate {@code T}. The supertypes of the generic class are
+   * computed as declared, not from its raw class, which would give {@code ComparableParent<P>}.
+   */
+  @Test
+  public void testSpecializedSupertypeOfGenericClassCanInstantiateBound() {
+    TypeVariable v = typeParameter(ComparableChain.class, 1);
+    assertTrue(v.canBeInstantiatedBy(GenericClassType.forClass(SpecializingChild.class)));
+  }
+
+  /**
+   * Type parameters, one of which is bounded by a non-generic member class whose owner type
+   * mentions the other.
+   *
+   * @param <K> a type parameter
+   * @param <T> a type parameter bounded by {@code NonGenericInnerOuter<K>.Inner}
+   */
+  static class MemberClassOfVariableBound<K, T extends NonGenericInnerOuter<K>.Inner> {}
+
+  /** A field of type {@code NonGenericInnerOuter<Integer>.Inner}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  NonGenericInnerOuter<Integer>.Inner integerInnerField;
+
+  /**
+   * The bound {@code NonGenericInnerOuter<K>.Inner} depends on {@code K}, and it is checked with
+   * the type for {@code K}.
+   */
+  @Test
+  public void testMemberClassBoundWithVariableInOwner() throws NoSuchFieldException {
+    TypeVariable k = typeParameter(MemberClassOfVariableBound.class, 0);
+    TypeVariable t = typeParameter(MemberClassOfVariableBound.class, 1);
+    assertTrue(t.getUpperTypeBound().getTypeParameters().contains(k));
+    ReferenceType stringInner = ownFieldType("stringInnerField");
+    ReferenceType integerInner = ownFieldType("integerInnerField");
+    Substitution kIsString = new Substitution(k, JavaTypes.STRING_TYPE);
+    assertTrue(t.canBeInstantiatedBy(stringInner, kIsString));
+    assertFalse(t.canBeInstantiatedBy(integerInner, kIsString));
+    Substitution kIsInteger = new Substitution(k, ClassOrInterfaceType.forClass(Integer.class));
+    assertFalse(t.canBeInstantiatedBy(stringInner, kIsInteger));
+    assertTrue(t.canBeInstantiatedBy(integerInner, kIsInteger));
   }
 
   /** A field whose type has a wildcard bounded below by an array type. */

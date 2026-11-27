@@ -22,9 +22,10 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
-   * instead of reading this field.
+   * instead of reading this field. Volatile so that a thread that reads a non-null value also sees
+   * the contents of the list, because a bound can be shared among threads.
    */
-  private @Nullable List<TypeVariable> typeParameters = null;
+  private volatile @Nullable List<TypeVariable> typeParameters = null;
 
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
@@ -82,7 +83,9 @@ class LazyParameterBound extends ParameterBound {
           TypeVariable.forType(boundType).substitute(substitution));
     }
 
-    if (boundType instanceof ParameterizedType) {
+    // A parameterized type includes a non-generic member class of a generic class, in whose owner
+    // type a type variable can occur, as in Outer<K>.Inner.
+    if (boundType instanceof ParameterizedType || boundType instanceof GenericArrayType) {
       if (!instantiatesAny(boundType, substitution)) {
         return this;
       }
@@ -94,18 +97,6 @@ class LazyParameterBound extends ParameterBound {
       }
       return ReferenceBound.forTypeLazyIfGeneric(
           ((ReferenceArgument) typeArgument).getReferenceType());
-    }
-
-    if (boundType instanceof GenericArrayType) {
-      if (!instantiatesAny(boundType, substitution)) {
-        return this;
-      }
-      TypeArgument typeArgument = substitute(boundType, substitution);
-      if (typeArgument == null) {
-        return this;
-      }
-      ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
-      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
     }
 
     throw new RandoopBug(
@@ -396,10 +387,10 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
-    if (isNonGenericMemberClass(boundType)) {
-      // The owner type can have type variables, as in Outer<X>.Inner.
-      ReferenceType type = ReferenceType.forType(boundType).substitute(substitution);
-      return type.isSubtypeOfOrEqualTo(argType);
+    if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.
+      return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
     }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isLowerBound(argType, substitution);
@@ -427,10 +418,11 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
-    if (isNonGenericMemberClass(boundType)) {
-      // The owner type can have type variables, as in Outer<X>.Inner.
-      ReferenceType type = ReferenceType.forType(boundType).substitute(substitution);
-      return argType.isSubtypeOfOrEqualTo(type);
+    if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.  If the owner type has a type variable, as in
+      // Outer<K>.Inner, then the substitution is applied to it below.
+      return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
     }
     ParameterBound b = substituteWithUnknowns(substitution);
     return b != null && b.isUpperBound(argType, substitution);
@@ -442,10 +434,11 @@ class LazyParameterBound extends ParameterBound {
    * stands for an unknown type in the result.
    *
    * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
-   * member class of a generic class, as in {@code Outer<String>.Inner}, which {@link
-   * #substitute(Substitution)} cannot convert. Otherwise, the result is still this bound only for a
-   * kind of type that {@link #substitute(Substitution)} does not handle; then this method also
-   * fails an assertion. Comparing the unchanged bound would recurse forever.
+   * member class of a generic class whose owner type has no type variable, as in {@code
+   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged. Otherwise, the
+   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
+   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
+   * recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null
