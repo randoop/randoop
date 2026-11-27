@@ -402,15 +402,18 @@ public class InstantiatedType extends ParameterizedType {
       // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
       // an instantiation.
       if (this.isMemberClass() && otherInstType.isMemberClass()) {
-        if (!this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
+        ClassOrInterfaceType thisEnclosingType = this.enclosingType;
+        ClassOrInterfaceType otherEnclosingType = otherInstType.enclosingType;
+        if (!thisEnclosingType.isInstantiationOf(otherEnclosingType)) {
           return false;
         }
-        if (otherInstType.enclosingType.isGeneric()) {
+        if (otherEnclosingType.isGeneric()) {
           Substitution enclosingSubstitution =
-              this.enclosingType.getInstantiatingSubstitution(otherInstType.enclosingType);
-          if (enclosingSubstitution != null) {
-            substitution = enclosingSubstitution;
+              thisEnclosingType.getInstantiatingSubstitution(otherEnclosingType);
+          if (enclosingSubstitution == null) {
+            return false;
           }
+          substitution = enclosingSubstitution;
         }
       }
       for (int i = 0; i < this.argumentList.size(); i++) {

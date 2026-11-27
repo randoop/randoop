@@ -85,13 +85,13 @@ public abstract class ParameterBound {
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
    * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}: its
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
-   * type, which an eager bound cannot compare with a parameterized type. The lazy bound for such a
-   * class has no type variable, and {@link LazyParameterBound} compares it with an argument type by
-   * subtyping. A generic array type of such a class, as in {@code Outer<String>.Inner[]}, is eager:
-   * the conversion keeps the owner type as written, as in {@code Outer<String>.Inner}, as it does
-   * for any argument type, so the bound and argument types are compared consistently. Otherwise,
-   * the result is a {@link LazyParameterBound}, which converts such a member class together with
-   * its owner type.
+   * type, which an eager bound cannot compare with a parameterized type. {@link LazyParameterBound}
+   * compares such a class with an argument type by subtyping, after applying the substitution to
+   * any type variable in its owner type, as in {@code Outer<K>.Inner}. A generic array type of such
+   * a class, as in {@code Outer<String>.Inner[]}, is eager: the conversion keeps the owner type as
+   * written, as in {@code Outer<String>.Inner}, as it does for any argument type, so the bound and
+   * argument types are compared consistently. Otherwise, the result is a {@link
+   * LazyParameterBound}, which converts such a member class together with its owner type.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -214,9 +214,10 @@ public abstract class ParameterBound {
 
   /**
    * Returns the owner type of the given parameterized type, if it is a parameterized type and the
-   * given type is a member class (an inner class, not a static nested class). The type arguments of
-   * such an owner type are part of the type, as in {@code Outer<String>.Inner}, and {@link
-   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} preserves it.
+   * given type is a member class (an inner class, not a static nested class) that has an enclosing
+   * class. The type arguments of such an owner type are part of the type, as in {@code
+   * Outer<String>.Inner}, and {@link ClassOrInterfaceType#forType(java.lang.reflect.Type)}
+   * preserves it.
    *
    * @param type a parameterized type
    * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
@@ -225,8 +226,10 @@ public abstract class ParameterBound {
   /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
       java.lang.reflect.ParameterizedType type) {
     java.lang.reflect.Type ownerType = type.getOwnerType();
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+        && rawType.getEnclosingClass() != null
+        && !Modifier.isStatic(rawType.getModifiers())) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
     return null;

@@ -130,10 +130,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns the owner type of the given parameterized type, if the conversion of the type to a
    * {@link ClassOrInterfaceType} uses that owner type as the enclosing type. This is so if the type
-   * is a member class (not a static nested class) and the owner type is a parameterized type that
-   * is not the type that the declaration of the enclosing class denotes. For example, the result
-   * for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise, returns null, and the
-   * conversion uses the enclosing type of the class declaration.
+   * is a member class (not a static nested class) that has an enclosing class and the owner type is
+   * a parameterized type that is not the type that the declaration of the enclosing class denotes.
+   * For example, the result for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise,
+   * returns null, and the conversion uses the enclosing type of the class declaration.
    *
    * @param type a parameterized type
    * @return the owner type to use as the enclosing type, or null
@@ -143,8 +143,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     // If the type arguments of the owner type, and of its own owner types, are the type parameters
     // of the declarations of the enclosing classes, the class declaration gives the enclosing type.
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())
+        && rawType.getEnclosingClass() != null
+        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
         && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
@@ -410,6 +412,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
+    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
+    // substitution unifies them.
+    boolean matched =
+        goalType instanceof ClassOrInterfaceType && goalType.runtimeClassIs(this.getRuntimeClass());
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
     // type.  This type need not itself be a member class:  for a top-level class that extends
@@ -434,6 +440,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
             if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
               thisView = supertype;
+              matched = true;
               break;
             }
           }
@@ -467,6 +474,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
+        matched = true;
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
             || !substitution.isConsistentWith(supertypeSubstitution)) {
@@ -475,7 +483,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         substitution = substitution.extend(supertypeSubstitution);
       }
     }
-    return substitution;
+    return matched ? substitution : null;
   }
 
   /**
@@ -582,11 +590,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }
