@@ -120,6 +120,8 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
+    // Pair the type arguments with the type parameters that this class declares, not including
+    // those of an enclosing class.
     Substitution substitution =
         new Substitution(genericType.getDeclaredTypeParameters(), convertedTypeList);
     // A bound of a type parameter can mention a type parameter of an enclosing class.
@@ -371,16 +373,27 @@ public class InstantiatedType extends ParameterizedType {
       if (!this.getGenericClassType().equals(otherInstType.getGenericClassType())) {
         return false;
       }
+      // The substitution that the enclosing type and the type arguments so far induce.  They must
+      // induce consistent substitutions:  Map<String, Integer> is not an instantiation of
+      // Map<X, X>, and Outer<String>.Inner<Integer> is not an instantiation of Outer<X>.Inner<X>.
+      Substitution substitution = new Substitution();
       // For a member class, such as Outer<String>.Inner<Integer>, the enclosing type must also be
       // an instantiation.
-      if (this.isMemberClass()
-          && otherInstType.isMemberClass()
-          && !this.enclosingType.isInstantiationOf(otherInstType.enclosingType)) {
-        return false;
+      if (this.isMemberClass() && otherInstType.isMemberClass()) {
+        ClassOrInterfaceType thisEnclosingType = this.enclosingType;
+        ClassOrInterfaceType otherEnclosingType = otherInstType.enclosingType;
+        if (!thisEnclosingType.isInstantiationOf(otherEnclosingType)) {
+          return false;
+        }
+        if (otherEnclosingType.isGeneric()) {
+          Substitution enclosingSubstitution =
+              thisEnclosingType.getInstantiatingSubstitution(otherEnclosingType);
+          if (enclosingSubstitution == null) {
+            return false;
+          }
+          substitution = enclosingSubstitution;
+        }
       }
-      // The substitution that the type arguments so far induce.  The type arguments must induce
-      // consistent substitutions:  Map<String, Integer> is not an instantiation of Map<X, X>.
-      Substitution substitution = new Substitution();
       for (int i = 0; i < this.argumentList.size(); i++) {
         TypeArgument thisTypeArg = this.argumentList.get(i);
         TypeArgument otherTypeArg = otherInstType.argumentList.get(i);

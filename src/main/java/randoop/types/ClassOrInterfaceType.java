@@ -469,6 +469,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
+    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
+    // substitution unifies them.
+    boolean matched = false;
     // For a member class such as Outer<String>.Inner and a member class goal type such as
     // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
     // type.  This type need not itself be a member class:  for a top-level class that extends
@@ -477,6 +480,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // variable.
     if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (goalClassType.runtimeClassIs(this.getRuntimeClass())) {
+        matched = true;
+      }
       if (goalClassType.isMemberClass()) {
         ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
         // Matching enclosing types do not make unrelated member classes, such as
@@ -496,6 +502,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
               break;
             }
           }
+        }
+        if (thisView != null) {
+          matched = true;
         }
         if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
@@ -523,6 +532,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (supertype == null) {
         return null;
       }
+      matched = true;
       // The type substitution of the supertype maps the type parameters of the goal type,
       // including those of its enclosing classes.  The enclosing type of the supertype can differ
       // from that of this type, as for Outer<String>.Sub that extends Outer<Integer>.Inner; the
@@ -534,7 +544,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       }
       substitution = substitution.extend(supertypeSubstitution);
     }
-    return substitution;
+    return matched ? substitution : null;
   }
 
   /**
@@ -641,11 +651,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }
