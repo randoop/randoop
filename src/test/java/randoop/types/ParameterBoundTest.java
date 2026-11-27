@@ -1033,9 +1033,17 @@ public class ParameterBoundTest {
     Substitution stringSubstitution = new Substitution(x, JavaTypes.STRING_TYPE);
     Substitution integerSubstitution = new Substitution(x, ReferenceType.forClass(Integer.class));
 
-    assertTrue(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
+    // The substitution is applied to the receiver, memberBound, so its owner type is instantiated.
+    assertTrue(memberBound.isUpperBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isUpperBound(stringOuterBound, integerSubstitution));
+    assertTrue(memberBound.isLowerBound(stringOuterBound, stringSubstitution));
+    assertFalse(memberBound.isLowerBound(stringOuterBound, integerSubstitution));
+
+    // The substitution is not applied to memberBound when it is the argument, so X stands for
+    // itself and the owner type GenericOuter<X> differs from GenericOuter<String>.
+    assertFalse(stringOuterBound.isUpperBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isUpperBound(memberBound, integerSubstitution));
-    assertTrue(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
+    assertFalse(stringOuterBound.isLowerBound(memberBound, stringSubstitution));
     assertFalse(stringOuterBound.isLowerBound(memberBound, integerSubstitution));
   }
 
