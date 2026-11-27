@@ -832,7 +832,7 @@ public class ForwardGenerator extends AbstractGenerator {
         candidates = SIList.concat(l1, l2);
         Log.logPrintf("Array creation heuristic: " + candidates.size() + " candidates%n");
 
-      } else if (inputType.isParameterized()
+      } else if (inputType instanceof InstantiatedType
           && ((InstantiatedType) inputType)
               .getGenericClassType()
               .isSubtypeOfOrEqualTo(JDKTypes.COLLECTION_TYPE)) {
