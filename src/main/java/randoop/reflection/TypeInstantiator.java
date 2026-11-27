@@ -363,22 +363,23 @@ public class TypeInstantiator {
    * @return a substitution instantiating the given type as an existing type; null if no such type
    */
   private @Nullable Substitution selectSubstitution(ClassOrInterfaceType type) {
-    List<ReferenceType> matches = matchingInputTypes(type);
+    Map<ReferenceType, Substitution> matches = matchingInputTypes(type);
     if (matches.isEmpty()) {
       return null;
     }
-    ReferenceType selectedType = Randomness.randomSetMember(matches);
-    return selectedType.getInstantiatingSubstitution(type);
+    return Randomness.randomSetMember(matches.values());
   }
 
   /**
-   * Returns the class or interface input types that instantiate the given type.
+   * Returns the class or interface input types that instantiate the given type, each with its
+   * instantiating substitution.
    *
    * @param patternType a type
-   * @return the class or interface input types that are instantiations of {@code patternType}
+   * @return a map from each class or interface input type that is an instantiation of {@code
+   *     patternType} and has an instantiating substitution for it, to that substitution
    */
-  private List<ReferenceType> matchingInputTypes(ClassOrInterfaceType patternType) {
-    List<ReferenceType> matches = new ArrayList<>(inputTypes.size());
+  private Map<ReferenceType, Substitution> matchingInputTypes(ClassOrInterfaceType patternType) {
+    Map<ReferenceType, Substitution> matches = new LinkedHashMap<>();
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
       // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
@@ -387,7 +388,13 @@ public class TypeInstantiator {
       if (inputType.isClassOrInterfaceType()
           && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
-        matches.add((ReferenceType) inputType);
+        // isInstantiationOf checks each type argument separately, so it accepts
+        // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
+        Substitution substitution =
+            ((ReferenceType) inputType).getInstantiatingSubstitution(patternType);
+        if (substitution != null) {
+          matches.put((ReferenceType) inputType, substitution);
+        }
       }
     }
     return matches;
@@ -488,7 +495,8 @@ public class TypeInstantiator {
             // The parameter type need not be a ParameterizedType:  for a member class with no type
             // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
-            List<ReferenceType> matches = matchingInputTypes((ClassOrInterfaceType) paramType);
+            Map<ReferenceType, Substitution> matches =
+                matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
@@ -497,16 +505,10 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            ReferenceType selectedType = Randomness.randomSetMember(matches);
-            Substitution subst =
-                selectedType.getInstantiatingSubstitution((ReferenceType) origParamType);
-            if (subst == null) {
-              if (Log.isLoggingOn()) {
-                failure = "no substitution instantiates " + origParamType + " as " + selectedType;
-              }
-              allMatched = false;
-              break;
-            }
+            Map.Entry<ReferenceType, Substitution> selected =
+                Randomness.randomSetMember(matches.entrySet());
+            ReferenceType selectedType = selected.getKey();
+            Substitution subst = selected.getValue();
             // The selected type need not be consistent with the type variables instantiated for
             // earlier parameters, as for an enclosing type:  for parameters List<U> and
             // Outer<U>.Inner, U might already be String while the selected type is
@@ -973,21 +975,25 @@ public class TypeInstantiator {
         if (nongenericCandidates == null) {
           return Collections.emptyList();
         }
+        Map<TypeVariable, List<ReferenceType>> genericCandidates =
+            candidatesByVariable(genericParameters);
+        if (genericCandidates == null) {
+          return Collections.emptyList();
+        }
         List<TypeVariable> nongenericVariables = new ArrayList<>(nongenericCandidates.keySet());
         for (List<ReferenceType> tuple :
             iteratorToIterable(new CombinationIterator<>(nongenericCandidates.values()))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericVariables, tuple);
-          // apply selected substitution to all generic-bounded parameters
-          List<TypeVariable> parameters = new ArrayList<>(genericParameters.size());
-          for (TypeVariable variable : genericParameters) {
-            ReferenceType paramType = variable.substitute(initialSubstitution);
-            if (paramType.isVariable()) {
-              parameters.add(variable);
+          // the generic-bounded parameters that the selected substitution leaves uninstantiated
+          Map<TypeVariable, List<ReferenceType>> uninstantiatedCandidates = new LinkedHashMap<>();
+          for (Map.Entry<TypeVariable, List<ReferenceType>> entry : genericCandidates.entrySet()) {
+            if (entry.getKey().substitute(initialSubstitution).isVariable()) {
+              uninstantiatedCandidates.put(entry.getKey(), entry.getValue());
             }
           }
           // choose instantiation for parameters with generic bounds
-          result.addAll(allExtendingSubstitutions(parameters, initialSubstitution));
+          result.addAll(allSubstitutions(uninstantiatedCandidates, initialSubstitution));
         }
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
@@ -1145,8 +1151,7 @@ public class TypeInstantiator {
   private ParameterBound getUpperBound(TypeVariable parameter) {
     ParameterBound upperBound = parameter.getUpperTypeBound();
     List<TypeVariable> boundVariables = upperBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return upperBound;
     }
     return ParameterBound.forType(JavaTypes.OBJECT_TYPE);
@@ -1164,8 +1169,7 @@ public class TypeInstantiator {
   private ParameterBound getLowerBound(TypeVariable parameter) {
     ParameterBound lowerBound = parameter.getLowerTypeBound();
     List<TypeVariable> boundVariables = lowerBound.getTypeParameters();
-    if (boundVariables.isEmpty()
-        || (boundVariables.size() == 1 && boundVariables.get(0).equals(parameter))) {
+    if (boundVariables.stream().allMatch(parameter::equals)) {
       return lowerBound;
     }
     return ParameterBound.forType(JavaTypes.NULL_TYPE);
