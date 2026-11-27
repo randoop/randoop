@@ -52,8 +52,9 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
+      // of the substitution, because they can mention type variables that it instantiates.
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -72,14 +73,17 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The bound type can still contain type variables after the substitution is applied. It is
    * compared as an {@link EagerReferenceBound} would be, except as described in {@link
-   * #getUnknownTypeVariable(Type, Substitution)}.
+   * #getUnknownTypeVariable(Type, Substitution)}. For an upper bound, the unknown type variable can
+   * be {@code argType} or any of its supertypes.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself, one of its supertypes, or its lower
+      // bound.  Its bounds are checked with the mappings of the substitution, because they can
+      // mention type variables that it instantiates.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -91,12 +95,16 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
-   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
-   * argType} within this bound. {@link EagerReferenceBound} instead compares {@code argType} with
-   * the upper bound of the type variable, so the two classes can differ. For example, for a type
-   * variable {@code U extends Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code
-   * Number}, because {@code Integer} is a subtype of {@code Number}, but this class does not,
-   * because {@code U} cannot be {@code Number}.
+   * {@code argType}, with the other type variables instantiated as by the substitution, because
+   * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if a supertype of
+   * {@code argType} can instantiate the type variable, or if {@code argType} is a subtype of the
+   * lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For a lower bound,
+   * {@link EagerReferenceBound} instead compares {@code argType} with the upper bound of the type
+   * variable, so the two classes can differ. For example, for a type variable {@code U extends
+   * Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code Number}, because {@code
+   * Integer} is a subtype of {@code Number}, but this class does not, because {@code U} cannot be
+   * {@code Number}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution
@@ -109,5 +117,21 @@ class LazyReferenceBound extends ReferenceBound {
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
+   * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
+   * as for a capture of {@code ? super String}. Otherwise, compares as {@link
+   * #hasLowerBoundWithFixedVariables} does, even if the type of this bound is a type variable.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (getBoundType() instanceof CaptureTypeVariable) {
+      return super.hasLowerBound(lowerBound, substitution);
+    }
+    return hasLowerBoundWithFixedVariables(lowerBound, substitution);
   }
 }

@@ -94,8 +94,7 @@ public final class ReferenceArgument extends TypeArgument {
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
-    return otherArgument instanceof ReferenceArgument
-        && referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
+    return Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**

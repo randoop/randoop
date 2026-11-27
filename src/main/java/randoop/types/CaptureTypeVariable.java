@@ -243,9 +243,9 @@ class CaptureTypeVariable extends TypeVariable {
    * Returns the result of applying the given substitution to this variable. The substitution maps
    * this variable to {@code type}, which can be null. Let the substituted bounds be this variable's
    * bounds with the substitution applied. If the substituted bounds differ from this variable's
-   * bounds, the result is a copy of {@code type} (or of this variable, if {@code type} is null)
-   * whose bounds are the substituted bounds. Otherwise, the result is {@code type}, or this
-   * variable if {@code type} is null.
+   * bounds, including in the bounds of the type variables in them, the result is a copy of {@code
+   * type} (or of this variable, if {@code type} is null) whose bounds are the substituted bounds.
+   * Otherwise, the result is {@code type}, or this variable if {@code type} is null.
    *
    * @param type the type variable, other than a copy of this variable, that {@code substitution}
    *     maps this variable to, or null if {@code substitution} does not map this variable
@@ -256,18 +256,23 @@ class CaptureTypeVariable extends TypeVariable {
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
+    // Copies of a type variable are equal even if their bounds differ, so a substitution can change
+    // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.
+    // Comparing by reference detects that change, because substitute returns its receiver if the
+    // substitution changes nothing in it.
+    boolean boundsUnchanged =
+        sameType(lowerBound, getLowerTypeBound()) && sameType(upperBound, getUpperTypeBound());
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
-      if (!sameType(lowerBound, getLowerTypeBound())
-          || !sameType(upperBound, getUpperTypeBound())) {
+      if (!boundsUnchanged) {
         WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;
     }
 
-    if (!sameType(lowerBound, getLowerTypeBound()) || !sameType(upperBound, getUpperTypeBound())) {
+    if (!boundsUnchanged) {
       // need a new variable based on type with updated bounds
       return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
     }
