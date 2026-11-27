@@ -52,6 +52,10 @@ public class MemberClassOfParameterizedTypeTest {
     abstract Sub<Integer> subType();
 
     abstract List<Integer> integerList();
+
+    abstract List<? extends Outer<String>.Inner> innerUpperWildcardList();
+
+    abstract List<? super Outer<String>.Inner> innerLowerWildcardList();
   }
 
   /**
@@ -94,6 +98,34 @@ public class MemberClassOfParameterizedTypeTest {
     EagerReferenceBound subBound = new EagerReferenceBound(sub);
     assertTrue(subBound.isLowerBound(inner, empty));
     assertFalse(subBound.isLowerBound(returnType("otherType"), empty));
+  }
+
+  /**
+   * Returns the type argument of the return type of the given method of {@link TypeHolder}.
+   *
+   * @param methodName the method name
+   * @return the type argument of the return type of the method
+   * @throws NoSuchMethodException if {@link TypeHolder} has no method named {@code methodName}
+   */
+  private static TypeArgument typeArgument(String methodName) throws NoSuchMethodException {
+    return ((InstantiatedType) returnType(methodName)).getTypeArguments().get(0);
+  }
+
+  @Test
+  public void testWildcardBoundedByMemberClassOfParameterizedType() throws NoSuchMethodException {
+    TypeArgument inner = TypeArgument.forType(returnType("innerType"));
+    TypeArgument sub = TypeArgument.forType(returnType("subType"));
+    TypeArgument other = TypeArgument.forType(returnType("otherType"));
+
+    TypeArgument upper = typeArgument("innerUpperWildcardList");
+    assertTrue(upper.contains(inner));
+    assertTrue(upper.contains(sub));
+    assertFalse(upper.contains(other));
+
+    TypeArgument lower = typeArgument("innerLowerWildcardList");
+    assertTrue(lower.contains(inner));
+    assertFalse(lower.contains(sub));
+    assertFalse(lower.contains(other));
   }
 
   @Test
