@@ -417,6 +417,20 @@ public class Substitution {
   }
 
   /**
+   * Returns true if the given type variable stands for itself because of this substitution: it
+   * occurs in the type that this substitution maps a different type variable to, or {@link
+   * #withIdentityFor(Collection)} fixed it. For example, {@code V} is fixed by {@code [T := V]}. A
+   * type variable that is not fixed can still stand for itself; see {@link
+   * #isUnknown(ReferenceType)}.
+   *
+   * @param variable a type variable
+   * @return true if this substitution fixes {@code variable}
+   */
+  boolean isFixed(TypeVariable variable) {
+    return getReplacementVariables().contains(variable);
+  }
+
+  /**
    * Returns the declaration of the given type variable, if it is a type parameter.
    *
    * @param variable a type variable

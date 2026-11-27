@@ -133,6 +133,27 @@ class EagerReferenceBound extends ReferenceBound {
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
+  /**
+   * Returns the given type, or its strict supertype, whose runtime class is the given class.
+   *
+   * @param type a class or interface type
+   * @param c a class
+   * @return {@code type} or a supertype of it whose runtime class is {@code c}, or null if there is
+   *     none
+   */
+  private static @Nullable ClassOrInterfaceType supertypeOfClass(
+      ClassOrInterfaceType type, Class<?> c) {
+    if (type.runtimeClassIs(c)) {
+      return type;
+    }
+    for (ClassOrInterfaceType supertype : type.getSupertypesStrict()) {
+      if (supertype.runtimeClassIs(c)) {
+        return supertype;
+      }
+    }
+    return null;
+  }
+
   @Override
   public boolean isSubtypeOfOrEqualTo(ParameterBound bound) {
     if (bound instanceof ReferenceBound) {
@@ -213,9 +234,33 @@ class EagerReferenceBound extends ReferenceBound {
         // instantiation of the class by its own type parameters has the declared supertypes.
         argReferenceType = ((GenericClassType) argReferenceType).substitute(new Substitution());
       }
-      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.  A type
-      // variable in the owner type that the substitution does not map, as in `Outer<X>.Inner`,
-      // stands for an unknown type if Substitution.isUnknown says so.
+      if (!thisBoundType.getTypeParameters().isEmpty()
+          && argReferenceType instanceof ClassOrInterfaceType) {
+        // A type variable that remains in this bound stands for an unknown, as in the
+        // InstantiatedType case above, unless the substitution fixes it (see
+        // Substitution#isFixed):  for the bound Outer<X>.Inner, Outer<String>.Inner is within the
+        // bound.  So the supertype of argType is matched with this bound, and the match must map
+        // each fixed type variable to itself.
+        ClassOrInterfaceType argSuperType =
+            supertypeOfClass(
+                ((ClassOrInterfaceType) argReferenceType).applyCaptureConversion(),
+                thisBoundType.getRuntimeClass());
+        if (argSuperType == null) {
+          return false;
+        }
+        Substitution match = argSuperType.getInstantiatingSubstitution(thisBoundType);
+        if (match == null) {
+          return false;
+        }
+        for (TypeVariable variable : thisBoundType.getTypeParameters()) {
+          ReferenceType matched = match.get(variable);
+          if (subst.isFixed(variable) && matched != null && !matched.equals(variable)) {
+            return false;
+          }
+        }
+        return true;
+      }
+      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.
       return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, subst);
     }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
