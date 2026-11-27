@@ -391,57 +391,83 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     assert goalType.isGeneric() : "goal type must be generic";
 
+    if (!(goalType instanceof ClassOrInterfaceType)) {
+      return null;
+    }
+    ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+    // This type, or the supertype of this type, whose class is the goal type's class; or null if
+    // there is none.
+    ClassOrInterfaceType matchingType;
+    if (goalType instanceof GenericClassType) {
+      matchingType = getMatchingSupertype((GenericClassType) goalType);
+      if (matchingType == null && goalType.runtimeClassIs(this.getRuntimeClass())) {
+        // This type is a rawtype of the goal type's class.
+        matchingType = this;
+      }
+    } else if (goalType instanceof NonParameterizedType) {
+      // The goal type is a member class of a generic class, such as Outer<E>.Inner; a
+      // NonParameterizedType is generic only if it is such a type.  A member class is not an
+      // interface, so only a superclass can match it.
+      matchingType = getSuperclassOfClass(goalType.getRuntimeClass());
+    } else {
+      // InstantiatedType.getInstantiatingSubstitution matches the type arguments of an
+      // InstantiatedType goal type, which must be of this type's class.
+      matchingType = goalType.runtimeClassIs(this.getRuntimeClass()) ? this : null;
+    }
+    if (matchingType == null) {
+      return null;
+    }
+
     Substitution substitution = new Substitution();
-    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
-    // substitution unifies them.
-    boolean matched =
-        goalType instanceof ClassOrInterfaceType && goalType.runtimeClassIs(this.getRuntimeClass());
     // For a member class such as Outer<String>.Inner and a member class goal type such as
-    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
-    // type.  The enclosing type of this type is not matched against a goal type that is not a
-    // member class, such as a type variable.
-    if (this.isMemberClass() && goalType instanceof ClassOrInterfaceType) {
-      ClassOrInterfaceType thisEnclosingType = enclosingType;
-      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
-      if (goalClassType.isMemberClass()) {
-        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
-        // Matching enclosing types do not make unrelated member classes, such as
-        // Outer<String>.Inner and Outer<E>.Other, unify.
-        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+    // Outer<E>.Inner, the enclosing type of the matching type instantiates the enclosing type of
+    // the goal type.  If this type's class is a strict subclass of the goal type's class, such as
+    // Sub that extends Outer<String>.Inner, then the matching type is the superclass
+    // Outer<String>.Inner, and the enclosing type of this type, if any, is unrelated.
+    if (matchingType.isMemberClass() && goalClassType.isMemberClass()) {
+      ClassOrInterfaceType matchingEnclosingType = matchingType.enclosingType;
+      ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+      if (enclosingGoalType.isGeneric()) {
+        substitution = matchingEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
+        if (substitution == null) {
           return null;
         }
-        // If this type's class is a strict subclass of the goal type's class, possibly a member of
-        // a different class, as for B.Sub that extends A.Base<String>, then the enclosing types of
-        // this type and the goal type are unrelated, so do not match them.  The supertype
-        // matching below handles that case.
-        if (goalClassType.runtimeClassIs(this.getRuntimeClass())) {
-          if (enclosingGoalType.isGeneric()) {
-            substitution = thisEnclosingType.getInstantiatingSubstitution(enclosingGoalType);
-            if (substitution == null) {
-              return null;
-            }
-          } else if (!thisEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
-            // For example, Outer<Integer>.Inner<String> does not instantiate
-            // Outer<String>.Inner<U>.
-            return null;
-          }
-        }
+      } else if (!matchingEnclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
+        // For example, Outer<Integer>.Inner<String> does not instantiate
+        // Outer<String>.Inner<U>.
+        return null;
       }
     }
 
-    if (goalType instanceof GenericClassType) {
-      InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
-      if (supertype != null) {
-        matched = true;
-        Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null
-            || !substitution.isConsistentWith(supertypeSubstitution)) {
-          return null;
-        }
-        substitution = substitution.extend(supertypeSubstitution);
+    if (goalType instanceof GenericClassType && matchingType instanceof InstantiatedType) {
+      Substitution typeArgumentSubstitution =
+          ((InstantiatedType) matchingType).getTypeSubstitution();
+      if (typeArgumentSubstitution == null
+          || !substitution.isConsistentWith(typeArgumentSubstitution)) {
+        return null;
+      }
+      substitution = substitution.extend(typeArgumentSubstitution);
+    }
+    return substitution;
+  }
+
+  /**
+   * Returns this type, or the direct or indirect superclass of this type, whose class is the given
+   * class.
+   *
+   * @param c a class
+   * @return this type or its superclass whose class is {@code c}, or null if there is none
+   */
+  private @Nullable ClassOrInterfaceType getSuperclassOfClass(Class<?> c) {
+    if (!c.isAssignableFrom(this.getRuntimeClass())) {
+      return null;
+    }
+    for (ClassOrInterfaceType t = this; t != null; t = t.getSuperclass()) {
+      if (t.runtimeClassIs(c)) {
+        return t;
       }
     }
-    return matched ? substitution : null;
+    return null;
   }
 
   /**
