@@ -9,6 +9,7 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.File
 import java.util.concurrent.Callable
+import java.util.regex.Pattern
 import net.ltgt.gradle.errorprone.errorprone
 import org.aim42.htmlsanitycheck.HtmlSanityCheckTask
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -50,12 +51,47 @@ val testJdkVersionString =
   providers.gradleProperty("jdkTestVersion").getOrElse(JavaVersion.current().majorVersion)
 val testJdkVersion = Integer.valueOf(testJdkVersionString)
 
-// The -Werror flag, except when the build runs the Nullness Checker (-PcfNullness) on project `p`.
-// The code does not yet type-check under the Nullness Checker, and -Werror would make javac stop at
-// the first class that has a warning.  Without -Werror, the build reports every warning, so that CI
-// can report the ones on lines that a pull request changes.
+// True if the `errorProneFix` task was requested on the command line.  Then each compilation that
+// runs Error Prone rewrites its source files in place, applying Error Prone's suggested fixes.
+// This must be known when the build is configured, before Gradle builds its task graph, so it
+// examines the task names on the command line.  Gradle accepts not only a task's full name, but
+// also a case-insensitive variant (such as "errorpronefix") and a camel-case abbreviation (such
+// as "ePF" or "errorPr"), so recognize all of those.  An abbreviation that matches another task
+// as well is ambiguous, and Gradle rejects it.
+val errorProneFix =
+  gradle.startParameter.taskNames.any { requested ->
+    val name = requested.removePrefix(":")
+    if (name.isEmpty() || name.startsWith("-") || name.contains(":")) {
+      return@any false
+    }
+    // This mimics Gradle's NameMatcher: each camel-case part of the requested name must be a
+    // prefix of the corresponding part of the task name.
+    val regex = StringBuilder()
+    val boundary = Pattern.compile("""\b|\p{javaUpperCase}|\p{Digit}""").matcher(name)
+    var pos = 0
+    while (boundary.find()) {
+      if (boundary.start() > pos) {
+        regex.append(Pattern.quote(name.substring(pos, boundary.start())))
+        regex.append("""[\p{javaLowerCase}\p{Digit}]*""")
+      }
+      pos = boundary.start()
+    }
+    if (pos < name.length) {
+      regex.append(Pattern.quote(name.substring(pos)))
+      regex.append("""[\p{javaLowerCase}\p{Digit}]*""")
+    }
+    Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE).matcher("errorProneFix").lookingAt()
+  }
+
+// The -Werror flag, except in two cases:
+//  * When the build runs the Nullness Checker (-PcfNullness) on project `p`.  The code does not yet
+//    type-check under the Nullness Checker, and -Werror would make javac stop at the first class
+//    that has a warning.  Without -Werror, the build reports every warning, so that CI can report
+//    the ones on lines that a pull request changes.
+//  * When the build runs the `errorProneFix` task.  With -Werror, a warning stops javac before
+//    Error Prone applies its fixes.
 fun werror(p: Project): List<String> =
-  if (p.hasProperty("cfNullness")) listOf() else listOf("-Werror")
+  if (p.hasProperty("cfNullness") || errorProneFix) listOf() else listOf("-Werror")
 
 /* Common build configuration for Randoop and agents */
 allprojects {
@@ -124,6 +160,10 @@ allprojects {
 
   apply(plugin = "org.checkerframework")
   configure<CheckerFrameworkExtension> {
+    // The `errorProneFix` task needs only Error Prone, and the Checker Framework slows it down.
+    if (errorProneFix) {
+      skipCheckerFramework = true
+    }
     version = rootProject.libs.versions.checker.get()
     if (project.hasProperty("cfNullness")) {
       checkers =
@@ -394,6 +434,10 @@ if (isJava21orHigher) {
 
 // Error Prone linter
 
+// The compilation tasks that do not run Error Prone.
+val errorProneDisabledTasks =
+  listOf("compileTestInputJava", "compileTestJava", "compileSystemTestJava")
+
 allprojects {
   dependencies {
     "errorprone"(rootProject.libs.error.prone.core)
@@ -402,9 +446,7 @@ allprojects {
 
 allprojects {
   tasks.withType<JavaCompile>().configureEach {
-    if (
-      name == "compileTestInputJava" || name == "compileTestJava" || name == "compileSystemTestJava"
-    ) {
+    if (name in errorProneDisabledTasks) {
       options.errorprone.enabled = false
       (options as ExtensionAware)
         .extensions
@@ -425,8 +467,62 @@ allprojects {
         disable("EffectivelyPrivate")
 
         excludedPaths = ".*/testInput/.*"
+
+        if (errorProneFix) {
+          errorproneArgs.add("-XepPatchLocation:IN_PLACE")
+        }
+      }
+      if (errorProneFix) {
+        // Always run Error Prone, even if the compiled classes are up to date or cached.
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+        if (isJava21orHigher) {
+          // Error Prone's fixes are not formatted.  Each compilation, rather than the
+          // `errorProneFix` task, is finalized by formatting:  if one compilation fails after
+          // another has rewritten source files, then `errorProneFix` never runs, but the
+          // compilations that did run still get their fixes formatted.
+          finalizedBy(project.tasks.named("spotlessJavaApply"))
+        }
       }
     }
+  }
+  if (errorProneFix && isJava21orHigher) {
+    // Format only after every compilation in this project has applied its fixes.  This applies to
+    // `spotlessJava` as well as to `spotlessJavaApply`:  `spotlessJava` computes the formatted
+    // content, and `spotlessJavaApply` copies that content over the source files.  If
+    // `spotlessJava` ran before a compilation, then `spotlessJavaApply` would discard that
+    // compilation's fixes.
+    listOf("spotlessJava", "spotlessJavaApply").forEach { spotlessTask ->
+      tasks.named(spotlessTask) {
+        mustRunAfter(tasks.withType<JavaCompile>().matching { it.name !in errorProneDisabledTasks })
+      }
+    }
+  }
+}
+
+tasks.register("errorProneFix") {
+  description = "Applies Error Prone's suggested fixes to the source files"
+  group = "Verification"
+  if (errorProneFix && !isJava21orHigher) {
+    throw GradleException("errorProneFix requires JDK 21 or higher, because Spotless does")
+  }
+  // Each of these compilations is finalized by `spotlessJavaApply`; see above.
+  allprojects.forEach { p ->
+    dependsOn(p.tasks.withType<JavaCompile>().matching { it.name !in errorProneDisabledTasks })
+  }
+}
+
+// The `errorProneFix` variable above only approximates Gradle's task selection.  For example,
+// Gradle resolves "eP" to `eclipseProject` (a complete camel-case match) rather than to
+// `errorProneFix` (a prefix match).  If the approximation is wrong, then either an ordinary build
+// would rewrite source files, or `errorProneFix` would apply no fixes.  So, before any task runs,
+// check the approximation against the task graph that Gradle actually built.
+gradle.taskGraph.whenReady {
+  if (hasTask(":errorProneFix") != errorProneFix) {
+    throw GradleException(
+      "Could not tell whether the errorProneFix task was requested; " +
+        "spell out its full name \"errorProneFix\" on the command line, or omit it.",
+    )
   }
 }
 
