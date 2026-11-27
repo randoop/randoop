@@ -208,12 +208,19 @@ public class InstantiationTest {
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     getOperations(model, classOperations, inputTypes);
 
+    // WildcardBoundBuilder<ConcreteWildcardBoundBuilder>
+    InstantiatedType expectedType =
+        GenericClassType.forClass(WildcardBoundBuilder.class)
+            .instantiate(ClassOrInterfaceType.forClass(ConcreteWildcardBoundBuilder.class));
     boolean foundCreate = false;
     for (TypedOperation operation : classOperations) {
       if (operation.getName().endsWith(".create")
           && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
               == WildcardBoundBuilder.class) {
         foundCreate = true;
+        // The receiver and return types are specialized, not erased.
+        assertEquals(expectedType, operation.getInputTypes().get(0));
+        assertEquals(expectedType, operation.getOutputType());
       }
     }
     assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
@@ -492,6 +499,47 @@ public class InstantiationTest {
       Randomness.setSeed(seed);
       // Map<String, Integer> is the only Map in the input types, and it is not a Map<X, X>.
       assertNull(instantiator.instantiate(sameKeyAndValue));
+    }
+    Randomness.setSeed(0);
+  }
+
+  /**
+   * Tests that an operation is instantiated when one input type instantiates a parameter type
+   * consistently, even if many input types map a type variable of the parameter type to two
+   * different types.
+   */
+  @Test
+  public void testConsistentAmongConflictingInstantiations()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    List<ReferenceType> typeArguments = new ArrayList<>();
+    typeArguments.add(JavaTypes.STRING_TYPE);
+    typeArguments.add(JavaTypes.OBJECT_TYPE);
+    typeArguments.add(JavaTypes.INT_TYPE.toBoxedPrimitive());
+    typeArguments.add(JavaTypes.LONG_TYPE.toBoxedPrimitive());
+    typeArguments.add(JavaTypes.DOUBLE_TYPE.toBoxedPrimitive());
+    typeArguments.add(JavaTypes.BOOLEAN_TYPE.toBoxedPrimitive());
+    GenericClassType mapType = GenericClassType.forClass(java.util.Map.class);
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    // Each Map<K, V> with K != V is not a Map<X, X>.
+    for (ReferenceType keyType : typeArguments) {
+      for (ReferenceType valueType : typeArguments) {
+        if (!keyType.equals(valueType)) {
+          addTypes(mapType.instantiate(keyType, valueType), inputTypes);
+        }
+      }
+    }
+    InstantiatedType stringToString =
+        mapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    addTypes(stringToString, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation sameKeyAndValue =
+        TypedOperation.forMethod(
+            RelatedBoundsCase.class.getMethod("sameKeyAndValue", java.util.Map.class));
+    for (int seed = 0; seed < 10; seed++) {
+      Randomness.setSeed(seed);
+      TypedClassOperation instance = instantiator.instantiate(sameKeyAndValue);
+      assertNotNull("seed " + seed, instance);
+      assertEquals(stringToString, instance.getInputTypes().get(0));
     }
     Randomness.setSeed(0);
   }

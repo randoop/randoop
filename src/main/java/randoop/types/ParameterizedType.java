@@ -79,7 +79,17 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // rawtype, and then instantiate with the arguments collected from the
     // java.lang.reflect.ParameterizedType interface.
     GenericClassType genericClass = forClass((Class<?>) rawType);
-    return new InstantiatedType(genericClass, typeArguments);
+    InstantiatedType result = new InstantiatedType(genericClass, typeArguments);
+    // For a member class, such as Outer<String>.Inner<Integer>, record the enclosing type, as
+    // GenericClassType.substitute does.  Otherwise, a reflected member type would not equal the
+    // same type constructed by substitution.
+    Type ownerType = t.getOwnerType();
+    if (ownerType != null
+        && ((Class<?>) rawType).getEnclosingClass() != null
+        && !genericClass.isStatic()) {
+      result.enclosingType = ClassOrInterfaceType.forType(ownerType);
+    }
+    return result;
   }
 
   @Override

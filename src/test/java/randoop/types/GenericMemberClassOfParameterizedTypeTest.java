@@ -49,6 +49,8 @@ public class GenericMemberClassOfParameterizedTypeTest {
     abstract Outer<String>.Middle<?> wildcardArgumentMiddle();
 
     abstract Outer<String>.Inner<Integer> stringOwnerInner();
+
+    abstract Outer<Number>.Middle<Integer> concreteMiddle();
   }
 
   /**
@@ -113,6 +115,15 @@ public class GenericMemberClassOfParameterizedTypeTest {
     TypeVariable innerParameter = TypeVariable.forType(Outer.Inner.class.getTypeParameters()[0]);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(outerParameter));
     assertEquals(JavaTypes.INT_TYPE.toBoxedPrimitive(), substitution.get(innerParameter));
+
+    Substitution middleSubstitution = returnType("concreteMiddle").getTypeSubstitution();
+    // The substitution maps the type parameters of both Middle and its enclosing class Outer.
+    assertEquals(
+        ClassOrInterfaceType.forClass(Integer.class),
+        middleSubstitution.get(TypeVariable.forType(Outer.Middle.class.getTypeParameters()[0])));
+    assertEquals(
+        ClassOrInterfaceType.forClass(Number.class),
+        middleSubstitution.get(TypeVariable.forType(Outer.class.getTypeParameters()[0])));
 
     // As for a wildcard type argument of the member class, there is no substitution for a wildcard
     // type argument of the enclosing type.
