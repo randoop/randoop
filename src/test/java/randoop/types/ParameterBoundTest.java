@@ -518,6 +518,8 @@ public class ParameterBoundTest {
             ((ReferenceArgument) listType.getTypeArguments().get(0)).getReferenceType();
     assertTrue(inner.isMemberClass());
     assertEquals(Outer.class, inner.enclosingType.getRuntimeClass());
+    // The owner type is Outer<T>, not raw Outer.
+    assertTrue(inner.enclosingType.isGenericForm());
   }
 
   @Test

@@ -713,13 +713,16 @@ public abstract class TypeVariable extends ParameterType {
       ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
       ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
       if (type1.getClass() != type2.getClass()
-          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())
-          || classType1.isMemberClass() != classType2.isMemberClass()) {
+          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())) {
         return false;
       }
-      if (classType1.isMemberClass()
-          && classType2.isMemberClass()
-          && !areIdentical(classType1.enclosingType, classType2.enclosingType)) {
+      ClassOrInterfaceType enclosing1 = getComparedEnclosingType(classType1);
+      ClassOrInterfaceType enclosing2 = getComparedEnclosingType(classType2);
+      if (enclosing1 == null || enclosing2 == null) {
+        if (enclosing1 != enclosing2) {
+          return false;
+        }
+      } else if (!areIdentical(enclosing1, enclosing2)) {
         return false;
       }
       List<TypeArgument> arguments1 = classType1.getTypeArguments();
@@ -743,6 +746,28 @@ public abstract class TypeVariable extends ParameterType {
     }
     return type1.equals(type2)
         && areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns the enclosing type of the given type that {@link #areIdentical(ReferenceType,
+   * ReferenceType)} compares, or null if there is none. As in {@link
+   * InstantiatedType#equals(Object)}, an enclosing type of an {@link InstantiatedType} that is the
+   * generic form of its class, as {@code NonGenericOuter} for {@code
+   * NonGenericOuter.Inner<Integer>}, is equivalent to no enclosing type: some constructions of a
+   * type omit such an enclosing type.
+   *
+   * @param type a class or interface type
+   * @return the enclosing type of {@code type} that distinguishes it, or null
+   */
+  private static @Nullable ClassOrInterfaceType getComparedEnclosingType(
+      ClassOrInterfaceType type) {
+    if (!type.isMemberClass()) {
+      return null;
+    }
+    if (type instanceof InstantiatedType && type.enclosingType.isGenericForm()) {
+      return null;
+    }
+    return type.enclosingType;
   }
 
   /**

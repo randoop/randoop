@@ -131,10 +131,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns the owner type of the given parameterized type, if the conversion of the type to a
    * {@link ClassOrInterfaceType} uses that owner type as the enclosing type. This is so if the type
-   * is a member class (not a static nested class) and the owner type is a parameterized type that
-   * is not the type that the declaration of the enclosing class denotes. For example, the result
-   * for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise, returns null, and the
-   * conversion uses the enclosing type of the class declaration.
+   * is a member class (not a static nested class) that has an enclosing class and the owner type is
+   * a parameterized type that is not the type that the declaration of the enclosing class denotes.
+   * For example, the result for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise,
+   * returns null, and the conversion uses the enclosing type of the class declaration.
    *
    * @param type a parameterized type
    * @return the owner type to use as the enclosing type, or null
@@ -144,8 +144,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     java.lang.reflect.Type ownerType = type.getOwnerType();
     // If the type arguments of the owner type, and of its own owner types, are the type parameters
     // of the declarations of the enclosing classes, the class declaration gives the enclosing type.
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !java.lang.reflect.Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())
+        && rawType.getEnclosingClass() != null
+        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
         && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
@@ -499,12 +501,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
             if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
               thisView = supertype;
+              matched = true;
               break;
             }
           }
         }
-        if (thisView != null) {
-          matched = true;
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())
+            && thisView instanceof InstantiatedType) {
+          // Match the goal type against the view as a whole, so that its own type arguments, as
+          // well as those of its enclosing type, bind the type variables of the goal type:  for
+          // Child extends Outer<Integer>.Parent<String> and Outer<X>.Parent<Y>, Y is bound to
+          // String.  The view is also computed only once, so that both parts of the match use the
+          // same capture variables of any wildcard in the enclosing type of this type.
+          return thisView.getInstantiatingSubstitution(goalType);
         }
         if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
