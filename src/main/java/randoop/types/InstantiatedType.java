@@ -264,8 +264,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the substitution for the own and enclosing type parameters of this type
    */
   private Substitution getSubstitution(List<ReferenceType> arguments) {
-    return getEnclosingTypeSubstitution()
-        .extend(genericType.directTypeParameters(), arguments);
+    return getEnclosingTypeSubstitution().extend(genericType.directTypeParameters(), arguments);
   }
 
   @Override
