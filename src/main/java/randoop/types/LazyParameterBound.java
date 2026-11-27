@@ -22,9 +22,9 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * The type variables in this bound; null if not yet computed. Use {@link #getTypeParameterList()}
-   * instead of reading this field.
+   * instead of reading this field. Volatile so that a thread that reads a non-null value also sees
+   * the contents of the list, because a bound can be shared among threads.
    */
-  // Volatile so that a thread that reads a non-null value also sees the contents of the list.
   private volatile @Nullable List<TypeVariable> typeParameters = null;
 
   /**
@@ -426,7 +426,8 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isLowerBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
-      // The bound has no type variable, so no substitution changes it.
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.
       return ReferenceType.forType(boundType).isSubtypeOfOrEqualTo(argType);
     }
     ParameterBound b = substituteWithUnknowns(substitution);
@@ -456,7 +457,9 @@ class LazyParameterBound extends ParameterBound {
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     if (isNonGenericMemberClass(boundType) && getTypeParameterList().isEmpty()) {
-      // The bound has no type variable, so no substitution changes it.
+      // The bound has no type variable, so no substitution changes it.  Its enclosing type is the
+      // owner type, such as Outer<String>.  If the owner type has a type variable, as in
+      // Outer<K>.Inner, then the substitution is applied to it below.
       return argType.isSubtypeOfOrEqualTo(ReferenceType.forType(boundType));
     }
     ParameterBound b = substituteWithUnknowns(substitution);
