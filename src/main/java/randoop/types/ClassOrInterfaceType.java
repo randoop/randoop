@@ -192,6 +192,36 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
   }
 
+  /**
+   * Returns the substitution that maps the type parameters of the classes that enclose this member
+   * class to the type arguments of the enclosing types of this type. For example, for {@code
+   * Outer<Integer>.Inner<String>}, where {@code Outer} declares type parameter {@code T}, the
+   * result maps {@code T} to {@code Integer}. The result is empty if this type is not a member
+   * class.
+   *
+   * <p>Applying the result to a supertype that {@code Class.getGenericSuperclass()} or {@code
+   * Class.getGenericInterfaces()} returns for this type's class instantiates the uses of those type
+   * parameters in the supertype, including in its enclosing type.
+   *
+   * @return the substitution for the type parameters of the classes that enclose this type's class
+   */
+  /*package*/ final Substitution getEnclosingTypeSubstitution() {
+    return isMemberClass() ? enclosingType.getTypeArgumentSubstitution() : new Substitution();
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of this type's class, and of the classes
+   * that enclose it, to the type arguments of this type and of its enclosing types. For example,
+   * for {@code Outer<Integer>.Inner<String>}, where {@code Outer} declares type parameter {@code T}
+   * and {@code Inner} declares type parameter {@code I}, the result maps {@code T} to {@code
+   * Integer} and {@code I} to {@code String}.
+   *
+   * @return the substitution for the type parameters of this type's class and its enclosing classes
+   */
+  /*package*/ Substitution getTypeArgumentSubstitution() {
+    return getEnclosingTypeSubstitution();
+  }
+
   @Override
   public abstract ClassOrInterfaceType applyCaptureConversion();
 
@@ -323,8 +353,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.runtimeClassIs(goalType.getRuntimeClass())
-                && type.isInstantiationOf(goalType)) {
+            if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -343,10 +372,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      // isInstantiationOf can be true for a member class of another class, if the enclosing types
-      // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
-          && superclass.isInstantiationOf(goalType)) {
+      if (superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
 

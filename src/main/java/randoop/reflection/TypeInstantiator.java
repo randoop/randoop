@@ -382,11 +382,8 @@ public class TypeInstantiator {
     Map<ReferenceType, Substitution> matches = new LinkedHashMap<>();
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
-      // types, so it is true for an unrelated member class such as Outer<String>.Other.  The
-      // runtime class check excludes such types but admits subclasses of the pattern's class.
+      // not be parameterized.
       if (inputType.isClassOrInterfaceType()
-          && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         // isInstantiationOf checks each type argument separately, so it accepts
         // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
@@ -505,21 +502,7 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            Map.Entry<ReferenceType, Substitution> selected =
-                Randomness.randomSetMember(matches.entrySet());
-            Substitution subst = selected.getValue();
-            // The selected type need not be consistent with the type variables instantiated for
-            // earlier parameters, as for an enclosing type:  for parameters List<U> and
-            // Outer<U>.Inner, U might already be String while the selected type is
-            // Outer<Integer>.Inner.
-            if (!substitution.isConsistentWith(subst)) {
-              if (Log.isLoggingOn()) {
-                failure = selected.getKey() + " is inconsistent with " + substitution;
-              }
-              allMatched = false;
-              break;
-            }
-            substitution = substitution.extend(subst);
+            substitution = substitution.extend(Randomness.randomSetMember(matches.values()));
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }

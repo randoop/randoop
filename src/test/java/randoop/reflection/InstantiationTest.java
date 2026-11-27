@@ -691,7 +691,7 @@ public class InstantiationTest {
   /**
    * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
    *
-   * @param typeArgument the type argument of the enclosing type
+   * @param typeArgument a type argument for the enclosing type
    * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
    */
   private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
@@ -838,7 +838,7 @@ public class InstantiationTest {
   /**
    * Returns {@code Outer<typeArgument>.Inner}.
    *
-   * @param typeArgument the type argument of the enclosing type
+   * @param typeArgument a type argument for the enclosing type
    * @return the member type {@code Outer<typeArgument>.Inner}
    */
   private static ClassOrInterfaceType outerInnerType(ReferenceType typeArgument) {
