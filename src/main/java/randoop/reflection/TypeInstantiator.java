@@ -1321,6 +1321,8 @@ public class TypeInstantiator {
         if (nongenericCandidates == null) {
           return Collections.emptyList();
         }
+        // The candidate types of a type variable do not depend on the substitution, so compute
+        // them once rather than once per tuple.
         Map<TypeVariable, List<ReferenceType>> genericCandidates =
             candidatesByVariable(genericParameters);
         if (genericCandidates == null) {
@@ -1331,15 +1333,8 @@ public class TypeInstantiator {
             iteratorToIterable(new CombinationIterator<>(nongenericCandidates.values()))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericVariables, tuple);
-          // the generic-bounded parameters that the selected substitution leaves uninstantiated
-          Map<TypeVariable, List<ReferenceType>> uninstantiatedCandidates = new LinkedHashMap<>();
-          for (Map.Entry<TypeVariable, List<ReferenceType>> entry : genericCandidates.entrySet()) {
-            if (entry.getKey().substitute(initialSubstitution).isVariable()) {
-              uninstantiatedCandidates.put(entry.getKey(), entry.getValue());
-            }
-          }
           // choose instantiation for parameters with generic bounds
-          result.addAll(allSubstitutions(uninstantiatedCandidates, initialSubstitution));
+          result.addAll(allSubstitutions(genericCandidates, initialSubstitution));
         }
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
