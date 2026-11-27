@@ -291,7 +291,11 @@ public class ForwardGenerator extends AbstractGenerator {
     boolean secondaryPoolChanged = componentManager.numSecondarySequences() != 0;
     if (componentsChanged && numComponents >= GenInputsAbstract.clear) {
       clearComponents();
-      if (clearMemoryThreshold > GenInputsAbstract.clear_memory) {
+      // Recompute the threshold if it was previously raised, or if this clear did not reduce memory
+      // use below --clear-memory.  The latter test uses the inexpensive (no garbage collection)
+      // memory measurement, which may overestimate memory use.
+      if (clearMemoryThreshold > GenInputsAbstract.clear_memory
+          || SystemPlume.usedMemory(false) > GenInputsAbstract.clear_memory) {
         clearMemoryThreshold =
             computeClearMemoryThreshold(
                 SystemPlume.usedMemory(true), Runtime.getRuntime().maxMemory());
