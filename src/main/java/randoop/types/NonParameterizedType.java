@@ -127,8 +127,57 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    Substitution substitution = getEnclosingSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> substituteEnclosing(forType(type), substitution),
+        runtimeType.getGenericInterfaces());
+  }
+
+  /**
+   * Returns the substitution of the type arguments of the enclosing types of this member class for
+   * the type parameters of their classes. The declared supertypes of a member class can mention
+   * those type parameters. For example, given {@code class Outer<E> { class Inner extends
+   * ArrayList<E> {} }}, the superclass of {@code Outer<String>.Inner} is {@code ArrayList<String>}.
+   *
+   * <p>Returns null if this is not a member class, if its enclosing type is in generic form (so the
+   * declared supertypes are already correct), or if no enclosing type is parameterized.
+   *
+   * @return the substitution for the type parameters of the enclosing types, or null if none is
+   *     needed
+   */
+  private @Nullable Substitution getEnclosingSubstitution() {
+    if (!isMemberClass() || enclosingType.isGenericForm()) {
+      return null;
+    }
+    Substitution result = new Substitution();
+    // A type parameter is mapped to a type, not to a wildcard: the supertypes of a type with
+    // wildcard arguments are those of its capture conversion.  Capture conversion converts the
+    // enclosing types of the enclosing type too, and returns a type without wildcard arguments
+    // unchanged.
+    @Nullable ClassOrInterfaceType enclosing = enclosingType.applyCaptureConversion();
+    while (enclosing != null) {
+      if (enclosing instanceof InstantiatedType) {
+        List<TypeVariable> parameters =
+            CollectionsPlume.mapList(
+                TypeVariable::forType, enclosing.getRuntimeClass().getTypeParameters());
+        result = result.extend(parameters, ((InstantiatedType) enclosing).getReferenceArguments());
+      }
+      enclosing = enclosing.isMemberClass() ? enclosing.enclosingType : null;
+    }
+    return result.isEmpty() ? null : result;
+  }
+
+  /**
+   * Applies the given substitution, if any, to a declared supertype of this type.
+   *
+   * @param supertype a declared supertype of this type
+   * @param substitution the result of {@link #getEnclosingSubstitution()}
+   * @return {@code supertype} with {@code substitution} applied, or {@code supertype} itself if
+   *     {@code substitution} is null
+   */
+  private static ClassOrInterfaceType substituteEnclosing(
+      ClassOrInterfaceType supertype, @Nullable Substitution substitution) {
+    return substitution == null ? supertype : supertype.substitute(substitution);
   }
 
   @Override
@@ -168,7 +217,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      return supertype == null
+          ? null
+          : substituteEnclosing(forType(supertype), getEnclosingSubstitution());
     }
   }
 
@@ -260,10 +311,28 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
    * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
    * only by unchecked conversion.
+   *
+   * <p>A supertype of this type that is a parameterized type, such as {@code Supplier<String>} for
+   * a class that implements {@code Supplier<String>}, is compared to {@code otherType} by
+   * containment of type arguments, so the class is a subtype of {@code Supplier<?>}. Likewise, for
+   * a member class, the enclosing types are compared by subtyping: {@code Outer<String>.Inner} is a
+   * subtype of {@code Outer<?>.Inner} but not of {@code Outer<Integer>.Inner}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
+      return true;
+    }
+    if (!isRawtype() && otherType instanceof InstantiatedType) {
+      // The superclass and interface search in super.isSubtypeOfOrEqualTo compares parameterized
+      // supertypes by equality.
+      InstantiatedType superType =
+          getMatchingSupertype(((InstantiatedType) otherType).getGenericClassType());
+      if (superType != null && superType.isSubtypeOfOrEqualTo(otherType)) {
+        return true;
+      }
+    }
+    if (!isRawtype() && isSubtypeOfMemberClass(otherType)) {
       return true;
     }
     return otherType instanceof ClassOrInterfaceType

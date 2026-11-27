@@ -1,13 +1,18 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.junit.Test;
@@ -100,12 +105,230 @@ public class TypeInstantiatorTest {
       }
       instantiated++;
       // The input types are the receiver, the key extractor, and the key comparator.
+      ReferenceType receiverElementType = typeArgument(operation.getInputTypes().get(0), 0);
+      ReferenceType extractorInputType = typeArgument(operation.getInputTypes().get(1), 0);
       ReferenceType keyType = typeArgument(operation.getInputTypes().get(1), 1);
       ReferenceType comparedType = typeArgument(operation.getInputTypes().get(2), 0);
+      assertTrue(
+          "ill-typed instantiation " + operation,
+          receiverElementType.isSubtypeOfOrEqualTo(extractorInputType));
       assertTrue(
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
     assertTrue("no instantiation of " + thenComparing, instantiated > 0);
+  }
+
+  /** A map whose values are of the map's own type. */
+  private static class Node extends HashMap<String, Node> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261025;
+  }
+
+  /**
+   * A method whose type parameter {@code K} occurs only in the bound of another type parameter.
+   *
+   * @param <K> the key type of {@code V}
+   * @param <V> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <K, V extends Map<K, V>> void kOnlyInBound(List<V> list) {}
+
+  /**
+   * Tests a type variable that occurs only in the bound of another type variable. In {@code <K, V
+   * extends Map<K, V>> void kOnlyInBound(List<V> list)}, the bound of {@code V} mentions {@code K},
+   * which occurs in no parameter type, so {@code K} is not instantiated when an input type is
+   * matched to {@code List<V>}. Among the input types, only {@code List<Node>} has an element type
+   * that is a {@code Map<K, V>} for some {@code K}.
+   */
+  @Test
+  public void testBoundMentionsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType nodeType = ClassOrInterfaceType.forClass(Node.class);
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    addTypes(
+        GenericClassType.forClass(Collection.class)
+            .instantiate(
+                GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE)),
+        inputTypes);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    for (ClassOrInterfaceType elementType :
+        new ClassOrInterfaceType[] {
+          JavaTypes.STRING_TYPE, INTEGER_TYPE, JavaTypes.OBJECT_TYPE, nodeType
+        }) {
+      addTypes(listType.instantiate(elementType), inputTypes);
+    }
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation kOnlyInBound =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("kOnlyInBound", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(kOnlyInBound);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + kOnlyInBound, instantiated > 0);
+
+    // Without String among the input types, K can still be String, which is a type argument of
+    // HashMap<String, Node>, a supertype of Node.
+    Set<Type> inputTypesWithoutKey = new LinkedHashSet<>();
+    addTypes(listType.instantiate(nodeType), inputTypesWithoutKey);
+    TypeInstantiator instantiatorWithoutKey = new TypeInstantiator(inputTypesWithoutKey);
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiatorWithoutKey.instantiate(kOnlyInBound);
+      assertNotNull("no instantiation of " + kOnlyInBound, operation);
+      assertEquals(nodeType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+  }
+
+  /** An enum that is not an input type in {@link #testBoundVariableFromTypeArgument}. */
+  private enum Color {
+    /** The only constant. */
+    RED
+  }
+
+  /**
+   * A method whose type parameter {@code E} occurs only in the bounds of other type parameters.
+   *
+   * @param <E> an enum type
+   * @param <T> the element type
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <E extends Enum<E>, T extends E> void consumeEnum(List<? super T> list) {}
+
+  /**
+   * Tests a type variable that occurs only in bounds, whose only possible type is a type argument
+   * of an input type rather than an input type itself. {@code <E extends Enum<E>, T extends E> void
+   * consumeEnum(List<? super T>)} can be instantiated with a {@code List<Color>}, by choosing
+   * {@code Color} for {@code E} and {@code T}, though {@code Color} is not an input type.
+   */
+  @Test
+  public void testBoundVariableFromTypeArgument()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    ClassOrInterfaceType colorType = ClassOrInterfaceType.forClass(Color.class);
+    addTypes(GenericClassType.forClass(List.class).instantiate(colorType), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation consumeEnum =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("consumeEnum", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(consumeEnum);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(colorType, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + consumeEnum, instantiated > 0);
+  }
+
+  /**
+   * A method whose type parameter {@code T} occurs only, and twice, in the bound of another type
+   * parameter.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of {@code S}
+   * @param list a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<T, T>, T> void repeatedInBound(List<S> list) {}
+
+  /**
+   * Tests that the occurrences of a type variable that occurs only in the bound of another type
+   * variable are instantiated consistently. In {@code <S extends Map<T, T>, T> void
+   * repeatedInBound(List<S> list)}, {@code S} must not be instantiated as {@code HashMap<String,
+   * Integer>}, for which no single type for {@code T} satisfies the bound.
+   */
+  @Test
+  public void testBoundRepeatsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    GenericClassType hashMapType = GenericClassType.forClass(HashMap.class);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    InstantiatedType consistentMap =
+        hashMapType.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    InstantiatedType inconsistentMap = hashMapType.instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE);
+    addTypes(listType.instantiate(inconsistentMap), inputTypes);
+    addTypes(listType.instantiate(consistentMap), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation repeatedInBound =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("repeatedInBound", List.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(repeatedInBound);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(consistentMap, typeArgument(operation.getInputTypes().get(0), 0));
+    }
+    assertTrue("no instantiation of " + repeatedInBound, instantiated > 0);
+  }
+
+  /**
+   * A method whose type parameter {@code T} occurs only in the bound of the type parameter of its
+   * return type.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of the value type of {@code S}
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<S, Map<T, T>>, T> List<S> make() {
+    return new ArrayList<>();
+  }
+
+  /** A map whose value type has different key and value types, so it is not a {@code Map<T, T>}. */
+  private static class Mixed extends HashMap<Mixed, Map<String, Integer>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /** A map whose value type has the same key and value types, {@code Map<String, String>}. */
+  private static class Same extends HashMap<Same, Map<String, String>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /**
+   * Tests that goal-directed instantiation chooses a type for a type variable that occurs only in
+   * the bound of a type variable that the goal type instantiates. In {@code <S extends Map<S,
+   * Map<T, T>>, T> List<S> make()}, no type for {@code T} makes {@code Mixed} satisfy the bound of
+   * {@code S}, but {@code String} makes {@code Same} satisfy it.
+   */
+  @Test
+  public void testGoalBoundMentionsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation make =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("make"));
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType mixedList = listType.instantiate(ClassOrInterfaceType.forClass(Mixed.class));
+    InstantiatedType sameList = listType.instantiate(ClassOrInterfaceType.forClass(Same.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(instantiator.instantiate(make, mixedList));
+      TypedClassOperation operation = instantiator.instantiate(make, sameList);
+      assertNotNull("no instantiation of " + make + " for " + sameList, operation);
+      assertEquals(sameList, operation.getOutputType());
+    }
   }
 
   /** A field whose type has a wildcard; used to obtain a capture variable. */
@@ -144,6 +367,53 @@ public class TypeInstantiatorTest {
     assertEquals(
         Collections.emptyList(),
         instantiator.allExtendingSubstitutions(typeParameters, new Substitution()));
+  }
+
+  /**
+   * A generic static nested class.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedTypeParameter") // only the type is of interest
+  private static class Target<T> {}
+
+  /** A non-generic static nested class, whose enclosing class is that of {@link Target}. */
+  private static class Noise {}
+
+  /**
+   * Does nothing.
+   *
+   * @param <T> the type argument of the parameter type
+   * @param target a target
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <T> void useTarget(Target<T> target) {}
+
+  /**
+   * Tests that a non-generic nested class does not instantiate a generic nested class of the same
+   * enclosing class. In {@code <T> void useTarget(Target<T>)}, the parameter type must be
+   * instantiated as the input type {@code Target<String>}, not by way of the input type {@code
+   * Noise}.
+   */
+  @Test
+  public void testNonGenericSiblingDoesNotInstantiate()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    InstantiatedType targetType =
+        GenericClassType.forClass(Target.class).instantiate(JavaTypes.STRING_TYPE);
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(targetType, inputTypes);
+    addTypes(ClassOrInterfaceType.forClass(Noise.class), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation useTarget =
+        TypedOperation.forMethod(
+            TypeInstantiatorTest.class.getDeclaredMethod("useTarget", Target.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(useTarget);
+      assertNotNull("no instantiation of " + useTarget, operation);
+      assertEquals(targetType, operation.getInputTypes().get(0));
+    }
   }
 
   /**
