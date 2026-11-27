@@ -134,6 +134,13 @@ public class ClassOrInterfaceTypeTest {
   }
 
   /**
+   * A generic interface with no methods.
+   *
+   * @param <H> the type parameter
+   */
+  interface Holder<H> {}
+
+  /**
    * A generic class with an inner class.
    *
    * @param <T> the type parameter
@@ -174,20 +181,10 @@ public class ClassOrInterfaceTypeTest {
      *
      * @param <S> the type parameter
      */
-    class GenericSub<S> extends GenericInner<S> implements Comparable<T> {
-      @Override
-      public int compareTo(T other) {
-        return 0;
-      }
-    }
+    class GenericSub<S> extends GenericInner<S> implements Holder<T> {}
 
     /** An inner class whose interface is instantiated by the type parameter of {@link Outer}. */
-    class ComparableInner implements Comparable<T> {
-      @Override
-      public int compareTo(T other) {
-        return 0;
-      }
-    }
+    class HolderInner implements Holder<T> {}
   }
 
   /** A subclass of {@code Outer<Integer>.StringInner}. */
@@ -576,17 +573,17 @@ public class ClassOrInterfaceTypeTest {
     ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     ReferenceType longType = JavaTypes.LONG_TYPE.toBoxedPrimitive();
     ClassOrInterfaceType integerStringInner = genericInnerType(integerType, JavaTypes.STRING_TYPE);
-    InstantiatedType comparableOfInteger =
-        GenericClassType.forClass(Comparable.class).instantiate(integerType);
+    InstantiatedType holderOfInteger =
+        GenericClassType.forClass(Holder.class).instantiate(integerType);
 
     // Outer<Integer>.GenericSub<String>, an InstantiatedType
     ClassOrInterfaceType genericSub =
         outerMemberType(Outer.GenericSub.class, integerType, JavaTypes.STRING_TYPE);
     assertEquals(integerStringInner, genericSub.getSuperclass());
-    assertEquals(Collections.singletonList(comparableOfInteger), genericSub.getInterfaces());
+    assertEquals(Collections.singletonList(holderOfInteger), genericSub.getInterfaces());
     assertTrue(genericSub.isSubtypeOfOrEqualTo(integerStringInner));
     assertFalse(genericSub.isSubtypeOfOrEqualTo(genericInnerType(longType, JavaTypes.STRING_TYPE)));
-    assertTrue(genericSub.isSubtypeOfOrEqualTo(comparableOfInteger));
+    assertTrue(genericSub.isSubtypeOfOrEqualTo(holderOfInteger));
 
     // Outer<Integer>.StringInner, a NonParameterizedType
     ClassOrInterfaceType stringInner = outerMemberType(Outer.StringInner.class, integerType);
@@ -595,11 +592,10 @@ public class ClassOrInterfaceTypeTest {
     assertFalse(
         stringInner.isSubtypeOfOrEqualTo(genericInnerType(longType, JavaTypes.STRING_TYPE)));
 
-    // Outer<Integer>.ComparableInner, a NonParameterizedType
-    ClassOrInterfaceType comparableInner =
-        outerMemberType(Outer.ComparableInner.class, integerType);
-    assertEquals(Collections.singletonList(comparableOfInteger), comparableInner.getInterfaces());
-    assertTrue(comparableInner.isSubtypeOfOrEqualTo(comparableOfInteger));
+    // Outer<Integer>.HolderInner, a NonParameterizedType
+    ClassOrInterfaceType holderInner = outerMemberType(Outer.HolderInner.class, integerType);
+    assertEquals(Collections.singletonList(holderOfInteger), holderInner.getInterfaces());
+    assertTrue(holderInner.isSubtypeOfOrEqualTo(holderOfInteger));
   }
 
   /** Tests that a member class has a wildcard if its enclosing type does. */
