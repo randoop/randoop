@@ -84,12 +84,13 @@ public abstract class ParameterBound {
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
    * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}: its
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
-   * type, which an eager bound cannot compare with a parameterized type. The lazy bound for such a
-   * class has no type variable, and {@link LazyParameterBound} compares it with an argument type by
-   * subtyping. A generic array type of such a class, as in {@code Outer<String>.Inner[]}, is eager:
-   * the conversion gives its element type the owner type from the class declaration, as in {@code
-   * Outer<T>.Inner}, as it does for any argument type, so the bound and argument types are compared
-   * consistently. Otherwise, the result is a {@link LazyParameterBound}.
+   * type, which an eager bound cannot compare with a parameterized type. {@link LazyParameterBound}
+   * compares such a class with an argument type by subtyping, after applying the substitution to
+   * any type variable in its owner type, as in {@code Outer<K>.Inner}. A generic array type of such
+   * a class, as in {@code Outer<String>.Inner[]}, is eager: the conversion gives its element type
+   * the owner type from the class declaration, as in {@code Outer<T>.Inner}, as it does for any
+   * argument type, so the bound and argument types are compared consistently. Otherwise, the result
+   * is a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -163,13 +164,9 @@ public abstract class ParameterBound {
    * Such a type variable is a member of {@code variableSet}, or a type variable whose bound has
    * such a type variable. Either would make an eager bound recursive.
    *
-   * <p>The owner types of generic member classes are not examined, because the conversion of a
-   * reflection type to a {@link ReferenceType} does not use them. It gives each generic member
-   * class the owner type from its class declaration, as in {@code Outer<T>} for {@code
-   * Outer<String>.Inner<Integer>}, not the owner type as written. By contrast, the conversion keeps
-   * the owner type as written for a non-generic member class, as in {@code Outer<T>.Inner}, so that
-   * owner type is examined; otherwise, a bound such as {@code T extends Comparable<Outer<T>.Inner>}
-   * would be eager and recursive.
+   * <p>Owner types are examined, because the conversion of a reflection type to a {@link
+   * ReferenceType} keeps the owner type of a member class, as in {@code Outer<T>.Inner}. An eager
+   * bound {@code Comparable<Outer<T>.Inner>} for {@code T} would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -192,16 +189,15 @@ public abstract class ParameterBound {
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      // The owner type is null for a top-level class, and a Class for a static nested class.
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
+      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
-      }
-      // The conversion keeps the owner type as written for a non-generic member class.
-      if (isNonGenericMemberClass(pt)
-          && pt.getOwnerType() != null
-          && hasTypeVariable(pt.getOwnerType(), variableSet)) {
-        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {

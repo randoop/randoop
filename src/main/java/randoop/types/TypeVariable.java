@@ -354,18 +354,19 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, {@code otherType} itself, and each of its strict supertypes, as determined by {@link
-   * #strictSupertypes(ReferenceType)}. For example, for {@code <T extends Comparable<T>, V extends
-   * T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can
-   * instantiate {@code T}. Each instantiation other than the lower bound is checked as by {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)}.
+   * of it, if it is within the upper bound of this variable; {@code otherType} itself; and each of
+   * its strict supertypes, as determined by {@link #strictSupertypes(ReferenceType)}. For example,
+   * for {@code <T extends Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate
+   * {@code V}, because {@code java.util.Date} can instantiate {@code T}. Each instantiation other
+   * than the lower bound is checked as by {@link #canBeInstantiatedBy(ReferenceType,
+   * Substitution)}.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
    * @return true if some instantiation of this variable can be a supertype of {@code otherType}
    */
   boolean canBeSupertypeOf(ReferenceType otherType, Substitution context) {
-    if (getLowerTypeBound().isUpperBound(otherType, context)
+    if ((getLowerTypeBound().isUpperBound(otherType, context) && lowerBoundCanInstantiate(context))
         || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
@@ -378,13 +379,36 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
+   * Returns true unless the lower bound of this variable is a type, not a type variable, that
+   * cannot instantiate this variable when the other type variables are instantiated as by the given
+   * substitution. For example, a capture variable with lower bound {@code String} and upper bound
+   * {@code K} cannot be instantiated by {@code String} if {@code K} is {@code Integer}, so no type
+   * can instantiate it.
+   *
+   * @param context a substitution for other type variables
+   * @return false if the lower bound of this variable is a type that cannot instantiate it
+   */
+  private boolean lowerBoundCanInstantiate(Substitution context) {
+    ParameterBound lowerBound = getLowerTypeBound();
+    if (!(lowerBound instanceof ReferenceBound)) {
+      return true;
+    }
+    ReferenceType lowerType = ((ReferenceBound) lowerBound).getBoundType().substitute(context);
+    if (lowerType.isVariable() || lowerType instanceof NullReferenceType) {
+      return true;
+    }
+    return canBeInstantiatedBy(lowerType, context);
+  }
+
+  /**
    * Returns strict supertypes of the given type, for {@link #canBeSupertypeOf(ReferenceType,
    * Substitution)}.
    *
    * <ul>
    *   <li>For a class or interface type, the result is its strict supertypes that mention only its
-   *       type variables. For every class or interface type other than {@code Object}, the result
-   *       also includes {@code Object}.
+   *       type variables. The supertypes of a generic class type are as declared, as in {@code
+   *       Parent<String>} for {@code Child<X> extends Parent<String>}. For every class or interface
+   *       type other than {@code Object}, the result also includes {@code Object}.
    *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
    *       if the component type is a reference type other than {@code Object}, {@code Object[]};
    *       and the arrays whose component types are the strict supertypes of the array's component
@@ -403,12 +427,27 @@ public abstract class TypeVariable extends ParameterType {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof ClassOrInterfaceType) {
       List<TypeVariable> typeParameters = type.getTypeParameters();
-      for (ClassOrInterfaceType supertype : ((ClassOrInterfaceType) type).getSupertypesStrict()) {
+      Set<ClassOrInterfaceType> supertypes;
+      if (type instanceof GenericClassType) {
+        // The supertypes of a GenericClassType are those of its raw class, as in Parent<P> for
+        // `Child<X> extends Parent<String>`.  The supertypes of the equivalent InstantiatedType,
+        // whose type arguments are the class's own type parameters, are as declared, as in
+        // Parent<String>.
+        GenericClassType genericType = (GenericClassType) type;
+        InstantiatedType instantiated =
+            new InstantiatedType(genericType, genericType.getTypeArguments());
+        instantiated.enclosingType = genericType.enclosingType;
+        supertypes = instantiated.getSupertypesStrict();
+      } else {
+        supertypes = ((ClassOrInterfaceType) type).getSupertypesStrict();
+      }
+      for (ClassOrInterfaceType supertype : supertypes) {
         // A supertype that mentions a type variable that `type` does not is not a supertype of
-        // `type`.  It arises when `type` is a GenericClassType, whose supertypes are those of its
-        // raw class and do not preserve the relationship between their type parameters.  A
-        // supertype that mentions only the type variables of `type`, such as List<E> for
-        // ArrayList<E>, is a supertype of `type`.
+        // `type`.  The supertypes of a GenericClassType are computed above as declared, so they
+        // mention only its type variables, but this check guards against any supertype that does
+        // not preserve the relationship between the type parameters.  A supertype that mentions
+        // only the type variables of `type`, such as List<E> for ArrayList<E> or Parent<String>
+        // for `Child<X> extends Parent<String>`, is a supertype of `type`.
         if (typeParameters.containsAll(supertype.getTypeParameters())) {
           result.add(supertype);
         }

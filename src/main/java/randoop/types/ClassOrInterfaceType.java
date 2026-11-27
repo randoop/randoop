@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.util.StringsPlume;
 
 /**
@@ -90,7 +91,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
         java.lang.reflect.Type ownerType = t.getOwnerType();
-        if (!(ownerType instanceof java.lang.reflect.ParameterizedType)) {
+        if (!(ownerType instanceof java.lang.reflect.ParameterizedType)
+            || rawType.getEnclosingClass() == null
+            || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
           return forClass(rawType);
         }
         return forMemberClass(rawType, forType(ownerType));
@@ -387,16 +390,33 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution substitution = new Substitution();
-    if (this.isMemberClass()) {
-      substitution = enclosingType.getInstantiatingSubstitution(goalType);
-      if (substitution == null) {
-        return null;
+    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
+    // substitution unifies them.
+    boolean matched = false;
+    // For a member class, such as Outer<String>.Inner<Integer>, unify the enclosing types if the
+    // goal type is the same class, such as Outer<T>.Inner<Integer>.
+    if (goalType instanceof ClassOrInterfaceType
+        && goalType.runtimeClassIs(this.getRuntimeClass())) {
+      matched = true;
+      ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
+      if (this.isMemberClass() && goalClassType.isMemberClass()) {
+        ClassOrInterfaceType thisEnclosingType = this.enclosingType;
+        ClassOrInterfaceType goalEnclosingType = goalClassType.enclosingType;
+        if (goalEnclosingType.isGeneric()) {
+          substitution = thisEnclosingType.getInstantiatingSubstitution(goalEnclosingType);
+          if (substitution == null) {
+            return null;
+          }
+        } else if (!thisEnclosingType.equals(goalEnclosingType)) {
+          return null;
+        }
       }
     }
 
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
+        matched = true;
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
             || !substitution.isConsistentWith(supertypeSubstitution)) {
@@ -405,7 +425,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         substitution = substitution.extend(supertypeSubstitution);
       }
     }
-    return substitution;
+    return matched ? substitution : null;
   }
 
   /**
@@ -512,11 +532,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }
@@ -526,6 +549,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true iff this class is a nested class
    */
+  @Pure
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isNestedClass() {
     return enclosingType != null;
@@ -538,6 +562,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true if this class is a member class, false otherwise
    */
+  @Pure
   @EnsuresNonNullIf(expression = "enclosingType", result = true)
   public final boolean isMemberClass() {
     return isNestedClass() && !isStatic();
