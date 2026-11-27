@@ -683,6 +683,8 @@ public class ParameterBoundTest {
     assertEquals(stringOwnerArray, substituted);
     assertNotEquals(integerOwnerArray, substituted);
     assertTrue(bound.isUpperBound(stringOwnerArray, tIsString));
+    // Subtyping compares the enclosing types, so the bound rejects a different owner type.
+    assertFalse(bound.isUpperBound(integerOwnerArray, tIsString));
   }
 
   /**
