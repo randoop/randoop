@@ -103,17 +103,26 @@ public class WildcardArgument extends TypeArgument {
   @Override
   public boolean contains(TypeArgument argument) {
     if (argument.isWildcard()) {
-      return argumentType.contains(((WildcardArgument) argument).argumentType);
+      WildcardType otherWildcard = ((WildcardArgument) argument).argumentType;
+      if (argumentType.equals(otherWildcard)) {
+        return true;
+      }
+      return argumentType.contains(otherWildcard);
     }
     ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
     ReferenceType boundType = ReferenceBound.asReferenceType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }
+    // Subtyping compares the type arguments of enclosing types by containment, so that, for
+    // example, `? extends Outer<?>.Plain` contains Outer<String>.Plain.
     if (argumentType.hasUpperBound()) {
-      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
+      return boundType.isObject()
+          || otherType.isSubtypeOfOrEqualTo(boundType)
+          || Subtyping.isSubtypeOrEqual(otherType, boundType, new Substitution());
     } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
+      return boundType.isSubtypeOfOrEqualTo(otherType)
+          || Subtyping.isSubtypeOrEqual(boundType, otherType, new Substitution());
     }
   }
 

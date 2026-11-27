@@ -107,6 +107,17 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.isVariable()) {
       return thisBoundType.isSubtypeOfOrEqualTo(argType);
     }
+    // A member class that declares no type parameters, of a parameterized type, such as
+    // Outer<String>.Inner, is parameterized but is not an InstantiatedType, and neither is its
+    // capture conversion.  It is compared by a subtype test, which compares the enclosing types by
+    // containment, as isSubtypeOfOrEqualTo does not.  The substitution has already been applied to
+    // this bound, and it does not apply to argType, whose type variables stand for themselves.
+    if (isMemberOfParameterizedType(argType)) {
+      if (!(thisBoundType instanceof ClassOrInterfaceType)) {
+        return false;
+      }
+      return Subtyping.isSubtypeOrEqual(thisBoundType, (ReferenceType) argType, new Substitution());
+    }
     if (argType instanceof InstantiatedType) {
       if (!(thisBoundType instanceof ClassOrInterfaceType)) {
         return false;
@@ -121,10 +132,6 @@ class EagerReferenceBound extends ReferenceBound {
       boundSuperType = boundSuperType.applyCaptureConversion();
       return boundSuperType.isInstantiationOf(argClassType);
     }
-    // argType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    // TODO: This test does not check whether one enclosing type's type arguments contain the
-    // other's, so it does not report that `Outer<Integer>.Inner` is a lower bound for
-    // `Outer<? extends Number>.Inner`.
     return thisBoundType.isSubtypeOfOrEqualTo(argType);
   }
 
@@ -144,47 +151,51 @@ class EagerReferenceBound extends ReferenceBound {
     if (thisBoundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
+    if (getBoundType().isVariable()) {
+      // If the substitution replaces this bound, a type variable, by a type variable (a different
+      // one, or a distinct copy of it), then that replacement is fixed:  it is not chosen to suit
+      // argType.  For example, for `<S, T extends S>` with S := X, where X extends Number, Integer
+      // is not known to be a subtype of X.  This is as in TypeVariable.variableBoundAllows.
+      ReferenceType replacement = ((TypeVariable) getBoundType()).getSubstitutedType(subst);
+      if (replacement != null && replacement.isVariable()) {
+        return argType.isReferenceType()
+            && Subtyping.isSubtypeOrEqual((ReferenceType) argType, replacement, subst);
+      }
+    }
     if (thisBoundType.isVariable()) {
-      // This bound is a type variable, which the substitution does not instantiate with a
-      // non-variable type, so the variable can still be chosen, within its own upper bound.
+      // This bound is a type variable, which the substitution does not replace, or maps to itself,
+      // so the variable can still be chosen, within its own upper bound.
       TypeVariable thisBoundVariable = (TypeVariable) thisBoundType;
-      ParameterBound variableUpperBound = thisBoundVariable.getUpperTypeBound();
-      if (subst.get(thisBoundVariable) != null || !(argType instanceof ReferenceType)) {
-        // One of two cases holds:
-        //  * The substitution maps `thisBoundVariable` (for example, to itself), so the
-        //    substitution cannot be extended with a choice for `thisBoundVariable`.
-        //  * `argType` is not a reference type, so `argType` cannot instantiate a type variable.
-        // In either case, `argType` is within this bound if it is within `variableUpperBound`,
-        // which `thisBoundVariable` can be.
-        return variableUpperBound.isUpperBound(argType, subst);
+      if (argType.isReferenceType() && !argType.isVariable()) {
+        // `thisBoundVariable` can be argType itself or one of its supertypes, as in
+        // LazyReferenceBound.isUpperBound.  Checking argType against the upper bound of
+        // `thisBoundVariable` instead would leave `thisBoundVariable` unknown within that bound:
+        // for `T extends Comparable<? super T>`, it would accept Comparable<String>, which no
+        // choice of T is a supertype of.  The bounds of `thisBoundVariable` are checked with the
+        // mappings of `subst`, because they can mention other type variables that `subst`
+        // instantiates.
+        return thisBoundVariable.canBeSupertypeOf((ReferenceType) argType, subst);
       }
-      // `variableUpperBound` can mention `thisBoundVariable` itself, as in `<T extends
-      // Comparable<? super T>>`, so checking it requires a choice for `thisBoundVariable`.
-      // `argType` is within this bound if `thisBoundVariable` can be some supertype S of `argType`
-      // that is within `variableUpperBound` when `thisBoundVariable` is S.  Try `argType` itself
-      // first.  If it fails, try its other supertypes:  for `<T extends Marker<T>>`, if Child
-      // extends Base and Base implements Marker<Base>, then T can be Base though not Child.
-      ReferenceType argRefType = (ReferenceType) argType;
-      if (variableUpperBound.isUpperBound(
-          argRefType, subst.extend(new Substitution(thisBoundVariable, argRefType)))) {
-        return true;
-      }
-      // If `variableUpperBound` does not mention `thisBoundVariable`, then no supertype of
-      // `argType` is within `variableUpperBound`, because `argType` is not.
-      if (!(argRefType instanceof ClassOrInterfaceType)
-          || !variableUpperBound.getTypeParameters().contains(thisBoundVariable)) {
+      // `argType` is not a reference type, or is a type variable, so it is not tried as a choice
+      // for `thisBoundVariable`.  `argType` is within this bound if it is within the upper bound
+      // of `thisBoundVariable`, which `thisBoundVariable` can be.
+      return thisBoundVariable.getUpperTypeBound().isUpperBound(argType, subst);
+    }
+    // As in isLowerBound, a parameterized type that is not an InstantiatedType, such as
+    // Outer<String>.Inner, is compared by a subtype test.  The subtype test also handles an argType
+    // that is a type variable, through its upper bound.
+    if (thisBoundType instanceof NonParameterizedType && thisBoundType.isParameterized()) {
+      if (!argType.isReferenceType()) {
         return false;
       }
-      for (ClassOrInterfaceType supertype :
-          ((ClassOrInterfaceType) argRefType).getSupertypesStrict()) {
-        if (variableUpperBound.isUpperBound(
-            supertype, subst.extend(new Substitution(thisBoundVariable, supertype)))) {
-          return true;
-        }
-      }
-      return false;
+      return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
     }
     if (thisBoundType instanceof InstantiatedType) {
+      if (argType.isVariable()) {
+        // A type variable is within this bound if its upper bound is, as for
+        // `S extends Comparable<String>` and the bound Comparable<String>.
+        return Subtyping.isSubtypeOrEqual((ReferenceType) argType, thisBoundType, subst);
+      }
       if (!(argType instanceof ClassOrInterfaceType)) {
         return false;
       }
@@ -211,9 +222,30 @@ class EagerReferenceBound extends ReferenceBound {
       }
     }
     // thisBoundType can be a member class of a parameterized type, such as `Outer<String>.Inner`.
-    // TODO: This test does not check whether one enclosing type's type arguments contain the
-    // other's, so it does not report that `Outer<Integer>.Inner` is within the upper bound
-    // `Outer<? extends Number>.Inner`.
+    if (isMemberOfParameterizedType(thisBoundType) && argType.isReferenceType()) {
+      ReferenceType argReferenceType = (ReferenceType) argType;
+      if (argReferenceType instanceof GenericClassType) {
+        // The supertypes of a GenericClassType are those of its erased class, which lose the type
+        // arguments of the enclosing types in the declared supertypes:  for
+        // `Child<U> extends Outer<String>.Inner`, the superclass would be `Outer<T>.Inner`.  The
+        // instantiation of the class by its own type parameters has the declared supertypes.
+        argReferenceType = ((GenericClassType) argReferenceType).substitute(new Substitution());
+      }
+      // Compare the enclosing types by containment, as isSubtypeOfOrEqualTo does not.
+      return Subtyping.isSubtypeOrEqual(argReferenceType, thisBoundType, subst);
+    }
     return argType.isSubtypeOfOrEqualTo(thisBoundType);
+  }
+
+  /**
+   * Returns true if the given type is a member class that declares no type parameters, of a
+   * parameterized type, such as {@code Outer<String>.Inner}. Such a type is parameterized, but is
+   * not an {@link InstantiatedType}.
+   *
+   * @param type a type
+   * @return true if {@code type} is a non-generic member class of a parameterized type
+   */
+  private static boolean isMemberOfParameterizedType(Type type) {
+    return type instanceof NonParameterizedType && type.isParameterized();
   }
 }

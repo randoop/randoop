@@ -23,8 +23,8 @@ class CaptureTypeVariable extends TypeVariable {
 
   /**
    * The ID counter for capture conversion variables. It is atomic so that concurrent capture
-   * conversions give distinct IDs to distinct capture variables, which {@link #equals(Object)}
-   * relies on.
+   * conversions do not give distinct variables the same ID, which would make them equal according
+   * to {@link #equals(Object)}.
    */
   private static final AtomicInteger count = new AtomicInteger();
 
@@ -256,18 +256,23 @@ class CaptureTypeVariable extends TypeVariable {
       @Nullable ReferenceType type, Substitution substitution) {
     ParameterBound lowerBound = getLowerTypeBound().substitute(substitution);
     ParameterBound upperBound = getUpperTypeBound().substitute(substitution);
+    // Copies of a type variable are equal even if their bounds differ, so a substitution can change
+    // a bound into one that is equal to it, as it changes the bound of Y in a lower bound Y.
+    // Comparing by reference detects that change, because substitute returns its receiver if the
+    // substitution changes nothing in it.
+    boolean boundsUnchanged =
+        sameType(lowerBound, getLowerTypeBound()) && sameType(upperBound, getUpperTypeBound());
 
     if (type == null) {
       // if bounds are affected, return a new copy of this variable with new bounds
-      if (!sameType(lowerBound, getLowerTypeBound())
-          || !sameType(upperBound, getUpperTypeBound())) {
+      if (!boundsUnchanged) {
         WildcardArgument updatedWildcard = wildcard.substitute(substitution);
         return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
       }
       return this;
     }
 
-    if (!sameType(lowerBound, getLowerTypeBound()) || !sameType(upperBound, getUpperTypeBound())) {
+    if (!boundsUnchanged) {
       // need a new variable based on type with updated bounds
       return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
     }

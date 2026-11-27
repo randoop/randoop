@@ -82,6 +82,7 @@ java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, 
 java7.util7.Collections.indexedBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) include11
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object) exclude
 java7.util7.Collections.iteratorBinarySearch(java7.util7.List, java.lang.Object, java7.util7.Comparator) exclude
+java7.util7.Collections.max(java7.util7.Collection) ignore # called by max(Collection, Comparator) when the comparator is null
 java7.util7.Collections.max(java7.util7.Collection, java7.util7.Comparator) exclude8
 java7.util7.Collections.newSetFromMap(java7.util7.Map) exclude
 java7.util7.Collections.rotate2(java7.util7.List, int) exclude
@@ -126,11 +127,12 @@ java7.util7.TreeMap.firstKey() exclude11-
 java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.fixAfterInsertion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.get(java.lang.Object) ignore
-java7.util7.TreeMap.get(java.lang.Object) include11
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude11-
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude11-
+java7.util7.TreeMap.headMap(java.lang.Object) ignore17+ # calls headMap(Object, boolean)
 java7.util7.TreeMap.headMap(java.lang.Object, boolean) exclude11
+java7.util7.TreeMap.headMap(java.lang.Object, boolean) ignore17+
 java7.util7.TreeMap.lastKey() ignore
 java7.util7.TreeMap.leftOf(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.parentOf(java7.util7.TreeMap.Entry) exclude
