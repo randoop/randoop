@@ -413,6 +413,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     Substitution substitution = new Substitution();
+    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
+    // substitution unifies them.
+    boolean matched =
+        goalType instanceof ClassOrInterfaceType && goalType.runtimeClassIs(this.getRuntimeClass());
     // The view of the goal type's class from this type, if the goal type is a member class.
     ClassOrInterfaceType thisView = null;
     // For a member class goal type such as Outer<E>.Inner, the enclosing type of this type's view
@@ -438,9 +442,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           for (ClassOrInterfaceType supertype : this.getSignatureSupertypesStrict()) {
             if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
               thisView = supertype;
+              matched = true;
               break;
             }
           }
+        }
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())
+            && thisView instanceof InstantiatedType) {
+          // Match the goal type against the view as a whole, so that its own type arguments, as
+          // well as those of its enclosing type, bind the type variables of the goal type:  for
+          // Child extends Outer<Integer>.Parent<String> and Outer<X>.Parent<Y>, Y is bound to
+          // String.  The view is also computed only once, so that both parts of the match use the
+          // same capture variables of any wildcard in the enclosing type of this type.
+          return thisView.getInstantiatingSubstitution(goalType);
         }
         if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
           substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
@@ -469,6 +483,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
               ? (InstantiatedType) thisView
               : this.getMatchingSupertype((GenericClassType) goalType);
       if (supertype != null) {
+        matched = true;
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
             || !substitution.isConsistentWith(supertypeSubstitution)) {
@@ -477,7 +492,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         substitution = substitution.extend(supertypeSubstitution);
       }
     }
-    return substitution;
+    return matched ? substitution : null;
   }
 
   /**
@@ -609,11 +624,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }

@@ -46,6 +46,8 @@ public class GenericMemberClassOfParameterizedTypeTest {
     abstract Outer<? super Integer>.Middle<Integer> wildcardOwnerMiddle();
 
     abstract Outer<String>.Middle<?> wildcardArgumentMiddle();
+
+    abstract Outer<Number>.Middle<Integer> concreteMiddle();
   }
 
   /**
@@ -101,5 +103,18 @@ public class GenericMemberClassOfParameterizedTypeTest {
         ((CaptureTypeVariable) argument)
             .getUpperTypeBound()
             .isSubtypeOfOrEqualTo(new EagerReferenceBound(JavaTypes.STRING_TYPE)));
+  }
+
+  @Test
+  public void testTypeSubstitutionOfMemberOfParameterizedType() throws NoSuchMethodException {
+    InstantiatedType middle = returnType("concreteMiddle");
+    Substitution substitution = middle.getTypeSubstitution();
+    // The substitution maps the type parameters of both Middle and its enclosing class Outer.
+    assertEquals(
+        ClassOrInterfaceType.forClass(Integer.class),
+        substitution.get(TypeVariable.forType(Outer.Middle.class.getTypeParameters()[0])));
+    assertEquals(
+        ClassOrInterfaceType.forClass(Number.class),
+        substitution.get(TypeVariable.forType(Outer.class.getTypeParameters()[0])));
   }
 }

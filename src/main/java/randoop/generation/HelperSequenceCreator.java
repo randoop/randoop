@@ -71,8 +71,8 @@ final class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
-    if (arrayType.getElementType().equals(JavaTypes.NULL_TYPE)) {
-      // Java has no syntax for an array of the null type, so no code can create one.
+    if (containsNullType(arrayType.getElementType())) {
+      // Java has no syntax for the null type, so no code can create such an array.
       return SIList.empty();
     }
     Type componentType = arrayType.getComponentType();
@@ -81,7 +81,9 @@ final class HelperSequenceCreator {
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
-      if (componentType.isParameterized()) {
+      // A non-generic member class of a generic class, as in Outer<String>.Inner, is parameterized
+      // but is not an InstantiatedType.
+      if (componentType instanceof InstantiatedType) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType =
             getImplementingTypeForCollection((InstantiatedType) componentType);
@@ -90,10 +92,8 @@ final class HelperSequenceCreator {
           // XXX being incautious, argument type might be parameterized
           componentType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
-          if (componentType.equals(JavaTypes.NULL_TYPE)
-              || (componentType.isArray()
-                  && ((ArrayType) componentType).getElementType().equals(JavaTypes.NULL_TYPE))) {
-            // Java has no syntax for an array of the null type, so no code can create one.
+          if (containsNullType(componentType)) {
+            // Java has no syntax for the null type, so no code can create such an array.
             return SIList.empty();
           }
         }
@@ -128,6 +128,38 @@ final class HelperSequenceCreator {
   }
 
   /**
+   * Returns true if the given type is the null type or contains it as an array component, a type
+   * argument, or a wildcard bound. Java has no syntax for such a type.
+   *
+   * @param type the type to test
+   * @return true if {@code type} is or contains the null type
+   */
+  private static boolean containsNullType(Type type) {
+    if (type.equals(JavaTypes.NULL_TYPE)) {
+      return true;
+    }
+    if (type.isArray()) {
+      return containsNullType(((ArrayType) type).getComponentType());
+    }
+    if (type.isClassOrInterfaceType()) {
+      for (TypeArgument argument : ((ClassOrInterfaceType) type).getTypeArguments()) {
+        if (argument instanceof ReferenceArgument) {
+          if (containsNullType(((ReferenceArgument) argument).getReferenceType())) {
+            return true;
+          }
+        } else if (argument instanceof WildcardArgument) {
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound
+              && containsNullType(((ReferenceBound) bound).getBoundType())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Returns the element type of the given collection type.
    *
    * @param collectionType the collection type
@@ -157,11 +189,8 @@ final class HelperSequenceCreator {
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);
-    if (elementType.equals(JavaTypes.NULL_TYPE)
-        || (elementType.isArray()
-            && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))) {
-      // Java has no syntax for the null type or an array of it, so no code can create such an
-      // array of elements.
+    if (containsNullType(elementType)) {
+      // Java has no syntax for the null type, so no code can create such a collection.
       return null;
     }
 

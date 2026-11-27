@@ -431,7 +431,10 @@ public class Substitution {
   /**
    * Returns a substitution that is like this one, but that maps the given type variable to the
    * given type, replacing any mapping of it in this substitution. Returns this substitution if it
-   * already maps the type variable to that type.
+   * already maps the type variable to that type, and if it maps the type variable to itself (as
+   * determined by {@link #mapsToItself}) exactly when {@code type} is {@code variable}. The key of
+   * an existing entry can be a copy of {@code variable} with other bounds, so the latter condition
+   * can fail even if the former holds.
    *
    * @param variable a type variable
    * @param type the type to map {@code variable} to

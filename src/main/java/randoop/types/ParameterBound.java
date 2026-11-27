@@ -207,9 +207,10 @@ public abstract class ParameterBound {
 
   /**
    * Returns the owner type of the given parameterized type, if it is a parameterized type and the
-   * given type is a member class (an inner class, not a static nested class). The type arguments of
-   * such an owner type are part of the type, as in {@code Outer<String>.Inner}, and {@link
-   * ClassOrInterfaceType#forType(java.lang.reflect.Type)} preserves it.
+   * given type is a member class (an inner class, not a static nested class) that has an enclosing
+   * class. The type arguments of such an owner type are part of the type, as in {@code
+   * Outer<String>.Inner}, and {@link ClassOrInterfaceType#forType(java.lang.reflect.Type)}
+   * preserves it.
    *
    * @param type a parameterized type
    * @return the parameterized owner type of {@code type}, or null if {@code type} is not a member
@@ -218,8 +219,10 @@ public abstract class ParameterBound {
   /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
       java.lang.reflect.ParameterizedType type) {
     java.lang.reflect.Type ownerType = type.getOwnerType();
+    Class<?> rawType = (Class<?>) type.getRawType();
     if (ownerType instanceof java.lang.reflect.ParameterizedType
-        && !Modifier.isStatic(((Class<?>) type.getRawType()).getModifiers())) {
+        && rawType.getEnclosingClass() != null
+        && !Modifier.isStatic(rawType.getModifiers())) {
       return (java.lang.reflect.ParameterizedType) ownerType;
     }
     return null;

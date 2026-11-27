@@ -283,13 +283,15 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
-   * Returns true if the given {@code Class<?>} object is the runtime class of this type.
+   * Returns true if the given {@code Class<?>} object is the runtime class of this type. Returns
+   * false for the null type, which has no runtime class.
    *
    * @param c the {@code Class<?>} to check
    * @return true if {@code c} is the runtime {@code Class<?>} of this type, false otherwise
    */
   public boolean runtimeClassIs(Class<?> c) {
-    return this.getRuntimeClass().equals(c);
+    Class<?> runtimeClass = this.getRuntimeClass();
+    return runtimeClass != null && runtimeClass.equals(c);
   }
 
   /**
