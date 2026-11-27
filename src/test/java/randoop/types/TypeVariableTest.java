@@ -3404,7 +3404,7 @@ public class TypeVariableTest {
    */
   @Test
   public void testWildcardEnclosingTypeMatchesSupertypeOnce() throws NoSuchFieldException {
-    ClassOrInterfaceType derived = (ClassOrInterfaceType) ownFieldType("wildcardOuterDerivedField");
+    ClassOrInterfaceType derived = ownFieldType("wildcardOuterDerivedField");
     GenericClassType base =
         (GenericClassType) ClassOrInterfaceType.forClass(WildcardOuter.Base.class);
     Substitution substitution = derived.getInstantiatingSubstitution(base);

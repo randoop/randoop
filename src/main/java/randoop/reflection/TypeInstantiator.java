@@ -787,8 +787,6 @@ public class TypeInstantiator {
     List<ReferenceType> inferredTypes = inferredTypes(substitution);
     Map<TypeVariable, List<ReferenceType>> result = new LinkedHashMap<>();
     for (TypeVariable parameter : parameters) {
-      List<TypeVariable> constrained =
-          constrainedVariables.getOrDefault(parameter, Collections.emptyList());
       List<TypeVariable> mentioning =
           mentioningVariables.getOrDefault(parameter, Collections.emptyList());
       List<ReferenceType> candidates = candidateTypes(parameter);
