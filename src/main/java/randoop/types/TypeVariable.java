@@ -424,9 +424,9 @@ public abstract class TypeVariable extends ParameterType {
    * variable, compares {@code otherType} with that type. If the substitution replaces that type
    * variable by a type variable, even a distinct copy of it, that replacement is fixed, and {@code
    * otherType} must be a subtype (for an upper bound) or supertype (for a lower bound) of it.
-   * Otherwise, that type variable stands for an unknown type. For a lower bound, the result is true if {@code otherType}
-   * can instantiate it; for an upper bound, the result is true if it can be a supertype of {@code
-   * otherType}, as determined by {@link #canBeSupertypeOf}.
+   * Otherwise, that type variable stands for an unknown type. For a lower bound, the result is true
+   * if {@code otherType} can instantiate it; for an upper bound, the result is true if it can be a
+   * supertype of {@code otherType}, as determined by {@link #canBeSupertypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
    * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the

@@ -498,8 +498,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns the strict supertypes of this type, as {@link #getSupertypesStrict()} does, but with
    * the type arguments that the declaration of this type's class gives its supertypes, if this type
-   * is a {@link GenericClassType}. The supertypes of a {@link GenericClassType} are otherwise those of
-   * its raw class: for {@code class Sub<U> extends Outer<String>.Inner}, the superclass would be
+   * is a {@link GenericClassType}. The supertypes of a {@link GenericClassType} are otherwise those
+   * of its raw class: for {@code class Sub<U> extends Outer<String>.Inner}, the superclass would be
    * {@code Outer<T>.Inner} rather than {@code Outer<String>.Inner}.
    *
    * @return the strict supertypes of this type, with the type arguments of their declarations
