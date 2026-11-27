@@ -20,6 +20,7 @@ import randoop.SubTypeSet;
 import randoop.generation.DemandDrivenInputCreator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.RandoopBug;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -406,6 +407,9 @@ public final class SequenceCollection {
           SIList<Sequence> sequencesForTypeTmp =
               demandDrivenInputCreator.createSequencesForType(type, exactMatch, onlyReceivers);
           sequencesForType = sequencesForTypeTmp;
+        } catch (RandoopInstantiationError e) {
+          // Thrown only if --fail-on-generation-error is set; GenTests reports it.
+          throw e;
         } catch (Exception e) {
           String msg =
               String.format(

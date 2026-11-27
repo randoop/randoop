@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import randoop.condition.RandoopSpecificationError;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ParameterizedType;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
@@ -93,9 +92,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * @param type the general type
    */
   private void addIfConcrete(Type type) {
-    if (!type.isVoid()
-        && !type.isGeneric()
-        && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
+    if (!type.isVoid() && !type.isGeneric() && !(type.isParameterized() && type.hasWildcard())) {
       if (!predicate.isAccessible(type.getRuntimeClass())) {
         return;
       }
