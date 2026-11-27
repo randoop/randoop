@@ -22,6 +22,7 @@ import static randoop.types.ExampleClassesForTests.H;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -404,5 +405,47 @@ public class ParameterizedTypeTest {
         mapType.instantiate(JavaTypes.STRING_TYPE, longType).getInstantiatingSubstitution(goalType);
     assertNotNull(substitution);
     assertEquals(JavaTypes.STRING_TYPE, substitution.get(keyParameter));
+  }
+
+  /**
+   * A class with a field whose type has a wildcard whose bound is a type variable.
+   *
+   * @param <T> a type parameter
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class WildcardComparator<T> {
+    /** A comparator of {@code T} or of a supertype of {@code T}. */
+    Comparator<? super T> comparator;
+  }
+
+  /** A field whose type has a wildcard whose bound is a member class. */
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"}) // the field is read reflectively
+  private Comparator<? super Map.Entry<String, String>> entryComparator;
+
+  /**
+   * The fully-qualified name of a type with a wildcard uses the fully-qualified name of the
+   * wildcard's bound, so a member class in the bound is written {@code Map.Entry}, not {@code
+   * Map$Entry}.
+   */
+  @Test
+  public void testWildcardBoundFqName() throws NoSuchFieldException {
+    String expected =
+        "java.util.Comparator<? super java.util.Map.Entry<java.lang.String,java.lang.String>>";
+
+    Type entryComparatorType =
+        Type.forType(
+            ParameterizedTypeTest.class.getDeclaredField("entryComparator").getGenericType());
+    assertEquals(expected, entryComparatorType.getFqName());
+
+    // Comparator<? super T>, with T instantiated as Map.Entry<String, String>.
+    ReferenceType genericComparatorType =
+        (ReferenceType)
+            Type.forType(WildcardComparator.class.getDeclaredField("comparator").getGenericType());
+    InstantiatedType entryType =
+        GenericClassType.forClass(Map.Entry.class)
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    Substitution substitution =
+        new Substitution(genericComparatorType.getTypeParameters(), entryType);
+    assertEquals(expected, genericComparatorType.substitute(substitution).getFqName());
   }
 }
