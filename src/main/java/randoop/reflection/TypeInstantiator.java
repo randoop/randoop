@@ -587,12 +587,15 @@ public class TypeInstantiator {
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             Map<ReferenceType, Substitution> matches =
                 matchingInputTypes((ParameterizedType) paramType);
-            // The parameter type before capture conversion, with the substitution so far applied
-            // to it.  Applying the substitution keeps the inference from a wildcard input type
-            // consistent with the type variables that are already instantiated.
-            ClassOrInterfaceType uncapturedParamType =
-                ((ClassOrInterfaceType) uncaptured.getInputTypes().get(i)).substitute(substitution);
             if (origParamType.hasCaptureVariable()) {
+              // The parameter type before capture conversion, with the substitution so far applied
+              // to it.  Applying the substitution keeps the inference from a wildcard input type
+              // consistent with the type variables that are already instantiated.  It is a class or
+              // interface type, because capture conversion introduces a capture variable only into
+              // a parameterized type with a wildcard.
+              ClassOrInterfaceType uncapturedParamType =
+                  ((ClassOrInterfaceType) uncaptured.getInputTypes().get(i))
+                      .substitute(substitution);
               // Also match input types with a wildcard, which match the parameter type before
               // capture conversion.
               for (Map.Entry<ReferenceType, Substitution> entry :

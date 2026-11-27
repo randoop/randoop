@@ -117,11 +117,12 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Returns an operation that is like this one, but has the given input types. The result has the
-   * same run-time class as this, so it executes the same way.
+   * Returns a copy of this operation, with its input types replaced by the given ones. This
+   * implementation returns a {@code TypedClassOperation}. A subclass must override this method to
+   * return an instance of the subclass, so that the result executes the same way as this does.
    *
-   * @param inputTypes the input types of the result
-   * @return an operation like this one, with the given input types
+   * @param inputTypes a tuple of input types for the result
+   * @return a copy of this operation, with the given input types
    */
   public TypedClassOperation withInputTypes(TypeTuple inputTypes) {
     return new TypedClassOperation(

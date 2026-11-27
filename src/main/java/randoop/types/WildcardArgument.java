@@ -163,10 +163,11 @@ public class WildcardArgument extends TypeArgument {
   /*package*/
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
-    // A wildcard does not instantiate a capture variable, even the capture of an equal wildcard:
-    // the capture variable stands for one unknown type, and no substitution of a type for it
-    // yields a wildcard.
-    return this.equals(otherArgument);
+    // Consistent with getInstantiatingSubstitution:  ? super String instantiates ? super T.  A
+    // wildcard does not instantiate a capture variable, even the capture of an equal wildcard:  the
+    // capture variable stands for one unknown type, and no substitution of a type for it yields a
+    // wildcard.
+    return getInstantiatingSubstitution(otherArgument) != null;
   }
 
   @Override

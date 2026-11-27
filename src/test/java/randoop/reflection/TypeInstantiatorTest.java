@@ -137,16 +137,19 @@ public class TypeInstantiatorTest {
     TypedClassOperation constructor =
         TypedOperation.forConstructor(TreeMap.class.getConstructor(Comparator.class));
 
+    int instantiated = 0;
     for (int i = 0; i < ATTEMPTS; i++) {
       TypedClassOperation operation = instantiator.instantiate(constructor);
       if (operation == null) {
         continue;
       }
+      instantiated++;
       assertFalse(
           "capture variable in instantiation " + operation,
           operation.getInputTypes().hasCaptureVariable()
               || operation.getOutputType().hasCaptureVariable());
     }
+    assertTrue("no instantiation of " + constructor, instantiated > 0);
   }
 
   /**

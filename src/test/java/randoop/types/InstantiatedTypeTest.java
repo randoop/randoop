@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import org.junit.Test;
 
@@ -202,5 +204,51 @@ public class InstantiatedTypeTest {
     InstantiatedType innerOfObjectOuterGeneric =
         inner.substitute(new Substitution(outerParameter, JavaTypes.OBJECT_TYPE));
     assertNull(innerOfStringOuter.getInstantiatingSubstitution(innerOfObjectOuterGeneric));
+  }
+
+  /** A field of type {@code Comparator<? super String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private static Comparator<? super String> superStringComparator;
+
+  /** A field of type {@code Comparator<? extends String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private static Comparator<? extends String> extendsStringComparator;
+
+  /**
+   * Tests that {@code isInstantiationOf} and {@code getInstantiatingSubstitution} agree for a type
+   * argument that is a wildcard whose bound is a type variable: {@code Comparator<? super String>}
+   * instantiates {@code Comparator<? super T>}, but {@code Comparator<? extends String>} does not.
+   */
+  @Test
+  public void wildcardInstantiatesWildcardWithTypeVariableBoundTest()
+      throws NoSuchFieldException, NoSuchMethodException {
+    InstantiatedType superString =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                InstantiatedTypeTest.class
+                    .getDeclaredField("superStringComparator")
+                    .getGenericType());
+    InstantiatedType extendsString =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                InstantiatedTypeTest.class
+                    .getDeclaredField("extendsStringComparator")
+                    .getGenericType());
+    // Comparator<? super T>, the second parameter type of <T> void Arrays.sort(T[], Comparator<?
+    // super T>).
+    InstantiatedType superT =
+        (InstantiatedType)
+            ClassOrInterfaceType.forType(
+                Arrays.class.getMethod("sort", Object[].class, Comparator.class)
+                    .getGenericParameterTypes()[1]);
+    TypeVariable t = superT.getTypeParameters().get(0);
+
+    assertTrue(superString.isInstantiationOf(superT));
+    Substitution substitution = superString.getInstantiatingSubstitution(superT);
+    assertNotNull(substitution);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(t));
+
+    assertFalse(extendsString.isInstantiationOf(superT));
+    assertNull(extendsString.getInstantiatingSubstitution(superT));
   }
 }
