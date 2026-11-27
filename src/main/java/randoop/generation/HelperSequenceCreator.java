@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.plumelib.util.SIList;
 import org.plumelib.util.StringsPlume;
 import randoop.main.GenInputsAbstract;
@@ -70,6 +71,10 @@ final class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
+    if (containsNullType(arrayType.getElementType())) {
+      // Java has no syntax for the null type, so no code can create such an array.
+      return SIList.empty();
+    }
     Type componentType = arrayType.getComponentType();
 
     SIList<Sequence> candidates;
@@ -87,6 +92,10 @@ final class HelperSequenceCreator {
           // XXX being incautious, argument type might be parameterized
           componentType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+          if (containsNullType(componentType)) {
+            // Java has no syntax for the null type, so no code can create such an array.
+            return SIList.empty();
+          }
         }
       }
       candidates = components.getSequencesForType(componentType);
@@ -119,6 +128,38 @@ final class HelperSequenceCreator {
   }
 
   /**
+   * Returns true if the given type is the null type or contains it as an array component, a type
+   * argument, or a wildcard bound. Java has no syntax for such a type.
+   *
+   * @param type the type to test
+   * @return true if {@code type} is or contains the null type
+   */
+  private static boolean containsNullType(Type type) {
+    if (type.equals(JavaTypes.NULL_TYPE)) {
+      return true;
+    }
+    if (type.isArray()) {
+      return containsNullType(((ArrayType) type).getComponentType());
+    }
+    if (type.isClassOrInterfaceType()) {
+      for (TypeArgument argument : ((ClassOrInterfaceType) type).getTypeArguments()) {
+        if (argument instanceof ReferenceArgument) {
+          if (containsNullType(((ReferenceArgument) argument).getReferenceType())) {
+            return true;
+          }
+        } else if (argument instanceof WildcardArgument) {
+          ParameterBound bound = ((WildcardArgument) argument).getTypeBound();
+          if (bound instanceof ReferenceBound
+              && containsNullType(((ReferenceBound) bound).getBoundType())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Returns the element type of the given collection type.
    *
    * @param collectionType the collection type
@@ -141,12 +182,17 @@ final class HelperSequenceCreator {
    *
    * @param componentManager the component manager for selecting values
    * @param collectionType the type for collection
-   * @return a sequence that creates a collection of type {@code collectionType}
+   * @return a sequence that creates a collection of type {@code collectionType}, or null if the
+   *     element type is the null type or an array of it
    */
-  /*package*/ static Sequence createCollection(
+  /*package*/ static @Nullable Sequence createCollection(
       ComponentManager componentManager, InstantiatedType collectionType) {
 
     ReferenceType elementType = getElementType(collectionType);
+    if (containsNullType(elementType)) {
+      // Java has no syntax for the null type, so no code can create such a collection.
+      return null;
+    }
 
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingTypeForCollection(collectionType);
@@ -288,12 +334,17 @@ final class HelperSequenceCreator {
    * given list of candidates.
    *
    * @param elementsSequence the sequence creating element values
-   * @param elementType the type of elements for the array
+   * @param elementType the type of elements for the array; neither the null type nor an array whose
+   *     element type is the null type, which Java has no syntax for
    * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(
       TupleSequence elementsSequence, Type elementType, int length) {
+    assert !elementType.equals(JavaTypes.NULL_TYPE)
+            && !(elementType.isArray()
+                && ((ArrayType) elementType).getElementType().equals(JavaTypes.NULL_TYPE))
+        : "cannot create an array of the null type: " + elementType;
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()
