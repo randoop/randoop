@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -257,15 +258,21 @@ public class ParameterBoundTest {
     Substitution tIsString = new Substitution(t, JavaTypes.STRING_TYPE);
     Type stringOwnerArray = Type.forType(fieldType(ParameterBoundTest.class, "stringOwnerArray"));
     Type integerOwnerArray = Type.forType(fieldType(ParameterBoundTest.class, "integerOwnerArray"));
+    ReferenceType substituted = ((ReferenceBound) bound.substitute(tIsString)).getBoundType();
+    assertEquals(stringOwnerArray, substituted);
+    assertNotEquals(integerOwnerArray, substituted);
     assertTrue(bound.isUpperBound(stringOwnerArray, tIsString));
-    assertFalse(bound.isUpperBound(integerOwnerArray, tIsString));
   }
 
-  /** A field of a generic array type whose element type has the owner type {@code Outer<String>}. */
+  /**
+   * A field of a generic array type whose element type has the owner type {@code Outer<String>}.
+   */
   @SuppressWarnings("unused")
   private static Outer<String>.Inner<String>[] stringOwnerArray;
 
-  /** A field of a generic array type whose element type has the owner type {@code Outer<Integer>}. */
+  /**
+   * A field of a generic array type whose element type has the owner type {@code Outer<Integer>}.
+   */
   @SuppressWarnings("unused")
   private static Outer<Integer>.Inner<String>[] integerOwnerArray;
 
@@ -310,8 +317,7 @@ public class ParameterBoundTest {
   // Converting the bound must not recurse infinitely through the owner type.
   @Test
   public void testOwnerVariableBound() {
-    assertEquals(
-        1, GenericClassType.forClass(OwnerVariableBound.class).getTypeParameters().size());
+    assertEquals(1, GenericClassType.forClass(OwnerVariableBound.class).getTypeParameters().size());
   }
 
   /** A field of type {@code GenericOuter<Integer>.NonGenericInner}. */
@@ -406,7 +412,10 @@ public class ParameterBoundTest {
     assertFalse(bound.isLowerBound(otherOwnerArray, empty));
   }
 
-  /** A field of a generic array type of a member class whose owner type is {@code GenericOuter<Integer>}. */
+  /**
+   * A field of a generic array type of a member class whose owner type is {@code
+   * GenericOuter<Integer>}.
+   */
   @SuppressWarnings("unused")
   private static GenericOuter<Integer>.NonGenericInner[] integerOwnerNonGenericInnerArray;
 

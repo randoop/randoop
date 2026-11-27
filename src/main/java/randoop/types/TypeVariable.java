@@ -345,11 +345,11 @@ public abstract class TypeVariable extends ParameterType {
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, if it is within the upper bound of this variable; {@code otherType} itself; and each of its supertypes as computed by {@link
-   * #getStrictSupertypes}. For example, for {@code <T extends Comparable<T>, V extends T>}, {@code
-   * java.sql.Date} can instantiate {@code V}, because {@code java.util.Date} can instantiate {@code
-   * T}. Each instantiation other than the lower bound is checked as by {@link
-   * #canBeInstantiatedBy(ReferenceType, Substitution)}.
+   * of it, if it is within the upper bound of this variable; {@code otherType} itself; and each of
+   * its supertypes as computed by {@link #getStrictSupertypes}. For example, for {@code <T extends
+   * Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code
+   * java.util.Date} can instantiate {@code T}. Each instantiation other than the lower bound is
+   * checked as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
@@ -378,10 +378,10 @@ public abstract class TypeVariable extends ParameterType {
 
   /**
    * Returns true unless the lower bound of this variable is a type, not a type variable, that
-   * cannot instantiate this variable when the other type variables are instantiated as by the
-   * given substitution. For example, a capture variable with lower bound {@code String} and upper
-   * bound {@code K} cannot be instantiated by {@code String} if {@code K} is {@code Integer}, so no
-   * type can instantiate it.
+   * cannot instantiate this variable when the other type variables are instantiated as by the given
+   * substitution. For example, a capture variable with lower bound {@code String} and upper bound
+   * {@code K} cannot be instantiated by {@code String} if {@code K} is {@code Integer}, so no type
+   * can instantiate it.
    *
    * @param context a substitution for other type variables
    * @return false if the lower bound of this variable is a type that cannot instantiate it
@@ -415,7 +415,8 @@ public abstract class TypeVariable extends ParameterType {
     List<ReferenceType> result = new ArrayList<>();
     if (type instanceof GenericClassType) {
       // The supertypes of a GenericClassType are those of its raw class, as in Parent<P> for
-      // `Child<X> extends Parent<String>`.  The supertypes of the equivalent InstantiatedType, whose
+      // `Child<X> extends Parent<String>`.  The supertypes of the equivalent InstantiatedType,
+      // whose
       // type arguments are the class's own type parameters, are as declared, as in Parent<String>.
       GenericClassType genericType = (GenericClassType) type;
       InstantiatedType instantiated =

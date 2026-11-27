@@ -1656,9 +1656,12 @@ public class TypeVariableTest {
         ((ReferenceArgument) bound.getTypeArguments().get(1)).getReferenceType());
   }
 
-  /** A field whose second type argument is a wildcard bounded below by {@code String}. */
+  /**
+   * A field whose type arguments are wildcards bounded below by {@code String}. (javac rejects
+   * {@code SecondBoundedByFirst<?, ? super String>}.)
+   */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SecondBoundedByFirst<?, ? super String> superStringSecondField;
+  SecondBoundedByFirst<? super String, ? super String> superStringSecondField;
 
   /**
    * The lower bound {@code String} of the capture variable for the second argument makes it a

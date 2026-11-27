@@ -443,9 +443,10 @@ class LazyParameterBound extends ParameterBound {
    *
    * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
    * member class of a generic class whose owner type has no type variable, as in {@code
-   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged. Otherwise, the result is still this bound only for a
-   * kind of type that {@link #substitute(Substitution)} does not handle; then this method also
-   * fails an assertion. Comparing the unchanged bound would recurse forever.
+   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged. Otherwise, the
+   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
+   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
+   * recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null

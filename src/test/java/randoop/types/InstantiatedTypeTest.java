@@ -151,7 +151,9 @@ public class InstantiatedTypeTest {
   @SuppressWarnings("UnusedVariable")
   private Outer<String>.GenericMiddle<Integer>.Leaf stringOuterLeaf2;
 
-  /** A field whose type differs from that of {@link #stringOuterLeaf} only in the outermost type. */
+  /**
+   * A field whose type differs from that of {@link #stringOuterLeaf} only in the outermost type.
+   */
   @SuppressWarnings("UnusedVariable")
   private Outer<Long>.GenericMiddle<Integer>.Leaf longOuterLeaf;
 
