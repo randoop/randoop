@@ -40,6 +40,12 @@ Changed command-line arguments:
   pattern must match the signature in the class that declares a method, not
   in a class that inherits it.
 
+New command-line arguments to the replacecall agent:
+
+* `--disable-default-replacement` disables a default replacement
+* `--disable-default-replacements-file` disables the default replacements
+  listed in a file
+
 The replacecall agent removes single and double quotes from its options.  A
 filename that contains whitespace, a single quote, or a double quote must be
 quoted.  The agent cannot use a filename that contains all three.  See the
