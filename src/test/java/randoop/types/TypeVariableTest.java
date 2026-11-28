@@ -2,6 +2,7 @@ package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -810,7 +811,7 @@ public class TypeVariableTest {
    *
    * @param <T> the type parameter
    */
-  static class IntersectionBound<T extends Number & Runnable> {}
+  static class NumberRunnableBound<T extends Number & Runnable> {}
 
   /**
    * A class whose type parameter is bounded by {@code Number}.
@@ -821,7 +822,7 @@ public class TypeVariableTest {
 
   @Test
   public void testInstantiationByVariableWithIntersectionBound() {
-    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
     TypeVariable u = typeParameter(NumberBound.class, 0);
     assertTrue(t.getUpperTypeBound() instanceof IntersectionTypeBound);
     // Number & Runnable is within the bound Number.
@@ -869,11 +870,74 @@ public class TypeVariableTest {
     InstantiatedType capturedType = capturedFieldType("selfComparableField");
     TypeVariable capture = typeArgument(capturedType, 0);
     // The bound of the capture variable is Comparable<capture>, which refers to the capture
-    // variable.
+    // variable.  The subtype test terminates, and the capture variable is a subtype of its bound.
     ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
     assertTrue(
         capture + " should be a subtype of its bound " + bound,
         capture.isSubtypeOfOrEqualTo(bound));
+  }
+
+  @Test
+  public void testSubtypeTestOfCaptureVariableAgainstWildcardSelfBound()
+      throws NoSuchFieldException {
+    TypeVariable capture = typeArgument(capturedFieldType("wildcardSelfBoundField"), 0);
+    TypeVariable otherCapture = typeArgument(capturedFieldType("wildcardSelfBoundField"), 0);
+    assertNotEquals(capture, otherCapture);
+    // The bound of each capture variable is Comparable<? super capture>, which refers to the
+    // capture variable within a wildcard.  A subtype test of the bound against a type whose type
+    // argument is a wildcard that mentions a capture variable tests that capture variable again.
+    // Each subtype test terminates.
+    ReferenceType bound = ((ReferenceBound) capture.getUpperTypeBound()).getBoundType();
+    ReferenceType otherBound = ((ReferenceBound) otherCapture.getUpperTypeBound()).getBoundType();
+    assertTrue(capture.isSubtypeOfOrEqualTo(bound));
+    assertTrue(otherCapture.isSubtypeOfOrEqualTo(otherBound));
+    assertFalse(capture.isSubtypeOfOrEqualTo(otherBound));
+    assertFalse(otherCapture.isSubtypeOfOrEqualTo(bound));
+    assertFalse(capture.isSubtypeOfOrEqualTo(otherCapture));
+    // Comparable<? super Comparable<? super capture>>
+    ReferenceType comparableToBound =
+        new InstantiatedType(
+            JavaTypes.COMPARABLE_TYPE,
+            Collections.singletonList(
+                new WildcardArgument(new WildcardType(new EagerReferenceBound(bound), false))));
+    assertFalse(capture.isSubtypeOfOrEqualTo(comparableToBound));
+    assertFalse(
+        capture.isSubtypeOfOrEqualTo(JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE)));
+    assertTrue(capture.isSubtypeOfOrEqualTo(JavaTypes.OBJECT_TYPE));
+  }
+
+  /**
+   * A class whose last type parameter is bounded by a type parameter bounded by another.
+   *
+   * @param <X> the first type parameter
+   * @param <Y> the type parameter bounded by {@code X}
+   * @param <Z> the type parameter bounded by {@code Y}
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class ChainedBound<X, Y extends X, Z extends Y> {
+    /** A type whose last argument is a wildcard, whose capture is bounded by {@code Y}. */
+    ChainedBound<X, Y, ?> lastWildcard;
+  }
+
+  @Test
+  public void testSubstitutionChangesBoundOfVariableInCaptureBound() throws NoSuchFieldException {
+    InstantiatedType capturedType =
+        ((InstantiatedType)
+                Type.forType(ChainedBound.class.getDeclaredField("lastWildcard").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable capture = typeArgument(capturedType, 2);
+    TypeVariable x = typeParameter(ChainedBound.class, 0);
+    // Substituting for X changes the bound of Y, which is the bound of the capture variable.  The
+    // result is a copy of the capture variable whose bound is that copy of Y.
+    ReferenceType substituted = capture.substitute(new Substitution(x, JavaTypes.STRING_TYPE));
+    assertTrue(substituted instanceof TypeVariable);
+    TypeVariable copy = (TypeVariable) substituted;
+    assertFalse(
+        copy + " should differ from " + capture + " in its bounds", copy.isIdenticalTo(capture));
+    // Through the bound of Y, the copy is bounded by String.
+    ReferenceType integerType = ClassOrInterfaceType.forClass(Integer.class);
+    assertTrue(capture.canBeInstantiatedBy(integerType));
+    assertFalse(copy.canBeInstantiatedBy(integerType));
   }
 
   @Test
@@ -1028,7 +1092,7 @@ public class TypeVariableTest {
 
   @Test
   public void testSubtypeOfMemberOfIntersectionBound() {
-    TypeVariable t = typeParameter(IntersectionBound.class, 0);
+    TypeVariable t = typeParameter(NumberRunnableBound.class, 0);
     // The bound of T is Number & Runnable.
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Number.class)));
     assertTrue(t.isSubtypeOfOrEqualTo(ClassOrInterfaceType.forClass(Runnable.class)));
@@ -1281,7 +1345,7 @@ public class TypeVariableTest {
 
   @Test
   public void testLowerBoundOfIntersection() {
-    ParameterBound intersection = typeParameter(IntersectionBound.class, 0).getUpperTypeBound();
+    ParameterBound intersection = typeParameter(NumberRunnableBound.class, 0).getUpperTypeBound();
     assertTrue(intersection instanceof IntersectionTypeBound);
     Substitution substitution = new Substitution();
     ReferenceBound runnableNumber =
@@ -1374,6 +1438,37 @@ public class TypeVariableTest {
                 .substitute(new Substitution(v, JavaTypes.STRING_TYPE));
     TypeVariable direct = (TypeVariable) u.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
     assertEquals(direct.getUpperTypeBound(), throughV.getUpperTypeBound());
+  }
+
+  @Test
+  public void testChainedBoundWithInstantiatedEnd() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(ChainedBound.class).getTypeParameters();
+    TypeVariable k = parameters.get(0);
+    TypeVariable v = parameters.get(1);
+    TypeVariable w = parameters.get(2);
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+    ReferenceType numberType = ClassOrInterfaceType.forClass(Number.class);
+    // The parameters are K, V extends K, and W extends V.
+    // With K := Number, W and V can both be Integer.
+    assertTrue(w.canBeInstantiatedBy(integerType, new Substitution(k, numberType)));
+    assertFalse(w.canBeInstantiatedBy(integerType, new Substitution(k, JavaTypes.STRING_TYPE)));
+    // With V := Number, W can be Integer.
+    assertTrue(w.canBeInstantiatedBy(integerType, new Substitution(v, numberType)));
+    assertFalse(w.canBeInstantiatedBy(integerType, new Substitution(v, JavaTypes.STRING_TYPE)));
+  }
+
+  /** A field whose type has a wildcard bounded by an array type with no type variable. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  Collection<? extends List<String>[]> arrayWildcardField;
+
+  @Test
+  public void testVariableFreeArrayWildcardBound() throws NoSuchFieldException {
+    TypeVariable capture = typeArgument(capturedFieldType("arrayWildcardField"), 0);
+    ReferenceType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    assertTrue(capture.canBeInstantiatedBy(ArrayType.ofComponentType(listOfString)));
+    assertFalse(capture.canBeInstantiatedBy(ArrayType.ofComponentType(JavaTypes.STRING_TYPE)));
   }
 
   /** A field of type {@code List<? extends List<String>[]>}. */
@@ -1539,6 +1634,26 @@ public class TypeVariableTest {
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
   Comparable<? super Number> comparableSuperNumberField;
 
+  /** A field whose type has a wildcard bounded below, and an unbounded wildcard bounded by it. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  SecondBoundedByFirst<? super Number, ?> superNumberUnboundedField;
+
+  /**
+   * An array type can be a subtype of a capture variable through a supertype of the array, even
+   * though the array type cannot instantiate the capture variable.
+   */
+  @Test
+  public void testArraySupertypeIsWithinVariableBound() throws NoSuchFieldException {
+    ReferenceType stringArray = ArrayType.ofComponentType(JavaTypes.STRING_TYPE);
+    TypeVariable captureOfSuperNumber =
+        typeArgument(capturedFieldType("superNumberUnboundedField"), 0);
+    assertFalse(captureOfSuperNumber.canBeInstantiatedBy(stringArray));
+    // Object can instantiate the capture variable, and it is a supertype of String[].
+    assertTrue(captureOfSuperNumber.canBeSupertypeOf(stringArray, new Substitution()));
+    TypeVariable second = typeArgument(capturedFieldType("superNumberUnboundedField"), 1);
+    assertTrue(second.canBeInstantiatedBy(stringArray));
+  }
+
   /**
    * A subtype of the lower bound of a capture variable is within a bound that is the capture
    * variable, even though it cannot instantiate the capture variable.
@@ -1588,7 +1703,7 @@ public class TypeVariableTest {
    *
    * @param <Z> a type parameter
    */
-  static class OuterWithMember<Z> {
+  static class OuterWithMemberClass<Z> {
     /** A non-generic member class. */
     class Inner {}
   }
@@ -1600,18 +1715,18 @@ public class TypeVariableTest {
    * @param <K> a type parameter
    * @param <V> a type parameter whose bound mentions {@code K}
    * @param <T> a type parameter whose bound mentions {@code V} and {@code
-   *     OuterWithMember<String>.Inner}
+   *     OuterWithMemberClass<String>.Inner}
    */
   static class BoundWithMemberClass<
-      K, V extends Map<K, V>, T extends Map<V, OuterWithMember<String>.Inner>> {}
+      K, V extends Map<K, V>, T extends Map<V, OuterWithMemberClass<String>.Inner>> {}
 
-  /** A field of type {@code OuterWithMember<String>.Inner}. */
+  /** A field of type {@code OuterWithMemberClass<String>.Inner}. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  OuterWithMember<String>.Inner stringInnerField;
+  OuterWithMemberClass<String>.Inner stringInnerField;
 
   /**
    * A substitution for {@code K} converts a non-generic member class in the bound of {@code T}. The
-   * member class keeps its owner type, {@code OuterWithMember<String>}.
+   * member class keeps its owner type, {@code OuterWithMemberClass<String>}.
    */
   @Test
   public void testSubstitutionReachesBoundWithMemberClass() throws NoSuchFieldException {
@@ -1633,14 +1748,15 @@ public class TypeVariableTest {
    *
    * @param <K> a type parameter
    * @param <V> a type parameter whose bound mentions {@code K}
-   * @param <T> a type parameter whose bound mentions {@code V} and {@code OuterWithMember<K>.Inner}
+   * @param <T> a type parameter whose bound mentions {@code V} and {@code
+   *     OuterWithMemberClass<K>.Inner}
    */
   static class BoundWithMemberClassOfVariable<
-      K, V extends Map<K, V>, T extends Map<V, OuterWithMember<K>.Inner>> {}
+      K, V extends Map<K, V>, T extends Map<V, OuterWithMemberClass<K>.Inner>> {}
 
   /**
    * A substitution for {@code K} applies to the owner type of a non-generic member class in the
-   * bound of {@code T}, giving {@code OuterWithMember<String>.Inner}.
+   * bound of {@code T}, giving {@code OuterWithMemberClass<String>.Inner}.
    */
   @Test
   public void testSubstitutionReachesOwnerOfMemberClass() throws NoSuchFieldException {
@@ -1725,17 +1841,17 @@ public class TypeVariableTest {
    * mentions the other.
    *
    * @param <K> a type parameter
-   * @param <T> a type parameter bounded by {@code OuterWithMember<K>.Inner}
+   * @param <T> a type parameter bounded by {@code OuterWithMemberClass<K>.Inner}
    */
-  static class MemberClassOfVariableBound<K, T extends OuterWithMember<K>.Inner> {}
+  static class MemberClassOfVariableBound<K, T extends OuterWithMemberClass<K>.Inner> {}
 
-  /** A field of type {@code OuterWithMember<Integer>.Inner}. */
+  /** A field of type {@code OuterWithMemberClass<Integer>.Inner}. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  OuterWithMember<Integer>.Inner integerInnerField;
+  OuterWithMemberClass<Integer>.Inner integerInnerField;
 
   /**
-   * The bound {@code OuterWithMember<K>.Inner} depends on {@code K}, and it is checked with the
-   * type for {@code K}.
+   * The bound {@code OuterWithMemberClass<K>.Inner} depends on {@code K}, and it is checked with
+   * the type for {@code K}.
    */
   @Test
   public void testMemberClassBoundWithVariableInOwner() throws NoSuchFieldException {
@@ -1774,22 +1890,25 @@ public class TypeVariableTest {
 
   /** A field whose type has a wildcard bounded below by an array type and above by another. */
   @SuppressWarnings("UnusedVariable") // the field is read reflectively
-  SecondBoundedByFirst<Object[], ? super String[]> objectArraySuperStringArrayField;
+  SecondBoundedByFirst<Number[], ? super Integer[]> numberArraySuperIntegerArrayField;
 
   /**
    * An array type whose component type is a type variable is within a bound that is a capture
-   * variable if an array of a supertype of the type variable's bound, such as {@code Object[]}, can
-   * instantiate the capture variable.
+   * variable if an array of the type variable's bound, such as {@code Number[]}, can instantiate
+   * the capture variable. {@code Object[]} cannot, so this requires examining the component type's
+   * bound.
    */
   @Test
   public void testVariableComponentArraySupertypeCanInstantiateCaptureVariable()
       throws NoSuchFieldException {
     // U extends Number
     ReferenceType uArray = ArrayType.ofComponentType(typeParameter(NumberBound.class, 0));
-    InstantiatedType capturedType = capturedFieldType("objectArraySuperStringArrayField");
+    InstantiatedType capturedType = capturedFieldType("numberArraySuperIntegerArrayField");
     TypeVariable capture = typeArgument(capturedType, 1);
     assertFalse(capture.canBeInstantiatedBy(uArray));
-    // U[] <: Object[], which is within both bounds of the capture variable.
+    assertFalse(capture.canBeInstantiatedBy(ArrayType.forClass(Object[].class)));
+    assertTrue(capture.canBeInstantiatedBy(ArrayType.forClass(Number[].class)));
+    // U[] <: Number[], which is within both bounds of the capture variable.
     assertTrue(capture.canBeSupertypeOf(uArray, new Substitution()));
   }
 
@@ -1875,6 +1994,40 @@ public class TypeVariableTest {
     assertTrue(v.canBeInstantiatedBy(subOfX));
     assertTrue(new EagerReferenceBound(k).isUpperBound(subOfX, new Substitution()));
     assertTrue(new LazyReferenceBound(k).isUpperBound(subOfX, new Substitution()));
+  }
+
+  /**
+   * A generic class with a non-generic member class.
+   *
+   * @param <E> a type parameter
+   */
+  @SuppressWarnings({"ClassCanBeStatic", "UnusedTypeParameter"}) // the member class is an inner
+  static class OuterOfComparable<E> {
+    /** A non-generic member class that is comparable to strings. */
+    @SuppressWarnings("ComparableType") // comparable to another type, to test bounds
+    abstract class ComparableMember implements Comparable<String> {}
+  }
+
+  /**
+   * A class whose type parameters are bounded by a non-generic member class and by an interface
+   * that it implements.
+   *
+   * @param <T> a type parameter bounded by a non-generic member class
+   * @param <U> a type parameter bounded by {@code Comparable<String>}
+   */
+  @SuppressWarnings("UnusedTypeParameter") // the type parameters are used via reflection
+  static class MemberClassBound<
+      T extends OuterOfComparable<String>.ComparableMember, U extends Comparable<String>> {}
+
+  /**
+   * A type variable whose bound is a non-generic member class of a generic class is an
+   * instantiation of a type variable whose bound is an interface that the member class implements.
+   */
+  @Test
+  public void testNonGenericMemberClassBoundIsInstantiation() {
+    TypeVariable t = typeParameter(MemberClassBound.class, 0);
+    TypeVariable u = typeParameter(MemberClassBound.class, 1);
+    assertTrue(t.isInstantiationOf(u));
   }
 
   /**

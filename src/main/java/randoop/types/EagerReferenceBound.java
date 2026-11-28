@@ -193,6 +193,25 @@ class EagerReferenceBound extends ReferenceBound {
     // TODO: This test does not check whether one enclosing type's type arguments contain the
     // other's, so it does not report that `Outer<Integer>.Inner` is within the upper bound
     // `Outer<? extends Number>.Inner`.
-    return argType.isSubtypeOfOrEqualTo(thisBoundType);
+    if (argType.isSubtypeOfOrEqualTo(thisBoundType)) {
+      return true;
+    }
+    // If the owner type still contains a type variable, as in `Outer<X>.Inner` when the
+    // substitution does not map X, then that type variable stands for an unknown type.  An
+    // argument type, such as `Outer<String>.Inner`, is within the bound if it, or one of its
+    // supertypes, instantiates the bound.
+    if (thisBoundType instanceof ClassOrInterfaceType
+        && ((ClassOrInterfaceType) thisBoundType).isMemberClass()
+        && thisBoundType.isGeneric()
+        && argType instanceof ClassOrInterfaceType) {
+      for (ClassOrInterfaceType supertype :
+          ((ClassOrInterfaceType) argType).getSupertypesInclusive()) {
+        if (supertype.getRuntimeClass().equals(thisBoundType.getRuntimeClass())
+            && supertype.isInstantiationOf(thisBoundType)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

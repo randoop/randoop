@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,6 +141,16 @@ public abstract class ParameterBound {
    * @return this bound with the type after the substitution has been applied
    */
   public abstract ParameterBound substitute(Substitution substitution);
+
+  /**
+   * Returns the members of this bound: the member bounds of an intersection bound, or a list
+   * containing only this bound otherwise. The result must not be modified.
+   *
+   * @return the members of this bound
+   */
+  public List<ParameterBound> getMembers() {
+    return Collections.singletonList(this);
+  }
 
   /**
    * Returns any type parameters in the type of this bound.

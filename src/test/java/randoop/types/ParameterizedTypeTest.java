@@ -22,6 +22,7 @@ import static randoop.types.ExampleClassesForTests.H;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -323,6 +324,113 @@ public class ParameterizedTypeTest {
         }
       }
     }
+  }
+
+  /** A field whose type is a list of lists of integers. */
+  @SuppressWarnings("unused")
+  private static List<List<Integer>> listOfIntegerLists;
+
+  /** A field whose type is a list of lists of strings. */
+  @SuppressWarnings("unused")
+  private static List<List<String>> listOfStringLists;
+
+  /** A field whose type is a collection of numbers. */
+  @SuppressWarnings("unused")
+  private static Collection<? extends Number> numberCollection;
+
+  /** A field whose type is a list of collections of numbers. */
+  @SuppressWarnings("unused")
+  private static List<? extends Collection<? extends Number>> listOfNumberCollections;
+
+  /** A field whose type is a collection of supertypes of integers. */
+  @SuppressWarnings("unused")
+  private static Collection<? super Integer> integerSuperCollection;
+
+  /** A field whose type is a list of unknown elements. */
+  @SuppressWarnings("unused")
+  private static List<?> unknownList;
+
+  /** A field whose type is a collection of unknown elements. */
+  @SuppressWarnings("unused")
+  private static Collection<?> unknownCollection;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param fieldName the name of a field declared in this class
+   * @return the type of the field
+   */
+  private static Type fieldType(String fieldName) {
+    try {
+      return Type.forType(ParameterizedTypeTest.class.getDeclaredField(fieldName).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Tests that subtyping applies type argument containment to a supertype of another class: {@code
+   * List<Integer>} is a subtype of {@code Collection<? extends Number>}.
+   */
+  @Test
+  public void testContainmentInMatchingSupertype() {
+    InstantiatedType listOfInteger =
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Integer.class));
+    InstantiatedType listOfString =
+        GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE);
+    Type collectionOfNumbers = fieldType("numberCollection");
+    assertTrue(listOfInteger.isSubtypeOfOrEqualTo(collectionOfNumbers));
+    assertFalse(listOfString.isSubtypeOfOrEqualTo(collectionOfNumbers));
+
+    Type listOfNumberCollections = fieldType("listOfNumberCollections");
+    assertTrue(fieldType("listOfIntegerLists").isSubtypeOfOrEqualTo(listOfNumberCollections));
+    assertFalse(fieldType("listOfStringLists").isSubtypeOfOrEqualTo(listOfNumberCollections));
+  }
+
+  /**
+   * Tests containment of wildcards with different kinds of bounds, in a supertype of another class:
+   * {@code ? super Integer} does not contain {@code ?}, but {@code ?} contains {@code ? super
+   * Integer}. So {@code List<?>} is not a subtype of {@code Collection<? super Integer>}, but
+   * {@code List<Integer>} is.
+   */
+  @Test
+  public void testMixedWildcardContainment() {
+    InstantiatedType listOfInteger =
+        GenericClassType.forClass(List.class)
+            .instantiate(ClassOrInterfaceType.forClass(Integer.class));
+    Type integerSuperCollection = fieldType("integerSuperCollection");
+    assertTrue(listOfInteger.isSubtypeOfOrEqualTo(integerSuperCollection));
+    assertFalse(fieldType("unknownList").isSubtypeOfOrEqualTo(integerSuperCollection));
+    assertTrue(integerSuperCollection.isSubtypeOfOrEqualTo(fieldType("unknownCollection")));
+  }
+
+  /**
+   * A generic class with a non-generic member class.
+   *
+   * @param <T> the type parameter
+   */
+  @SuppressWarnings({"unused", "ClassCanBeStatic", "UnusedTypeParameter"})
+  private static class OuterWithPlain<T> {
+    /** A non-generic member class. */
+    class Plain {}
+  }
+
+  /**
+   * Tests that a parameterized type is not a subtype of a non-generic member class of a
+   * parameterized type, as in {@code Outer<String>.Plain}, which is parameterized but is not an
+   * {@link InstantiatedType}.
+   */
+  @Test
+  public void testSubtypeOfNonGenericMemberOfParameterizedType() {
+    ClassOrInterfaceType plain = ClassOrInterfaceType.forClass(OuterWithPlain.Plain.class);
+    TypeVariable t = GenericClassType.forClass(OuterWithPlain.class).getTypeParameters().get(0);
+    ClassOrInterfaceType plainOfString =
+        plain.substitute(new Substitution(t, JavaTypes.STRING_TYPE));
+    assertTrue(plainOfString.isParameterized());
+    InstantiatedType arrayListOfString =
+        GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE);
+    assertFalse(arrayListOfString.isSubtypeOfOrEqualTo(plainOfString));
   }
 
   /**

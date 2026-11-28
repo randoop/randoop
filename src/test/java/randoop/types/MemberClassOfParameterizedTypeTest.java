@@ -24,6 +24,13 @@ public class MemberClassOfParameterizedTypeTest {
 
     /** Another non-generic member class of a generic class. */
     class Other {}
+
+    /** A non-generic member class that extends another member class of the same generic class. */
+    class SubInner extends Inner {}
+
+    /** A non-generic member class whose interface uses the type parameter of the generic class. */
+    @SuppressWarnings("ComparableType")
+    abstract class ComparableInner implements Comparable<T> {}
   }
 
   /**
@@ -49,6 +56,16 @@ public class MemberClassOfParameterizedTypeTest {
 
     abstract Outer<String>.Other otherType();
 
+    abstract Outer<Integer>.Inner integerInnerType();
+
+    abstract Outer<String>.SubInner subInnerType();
+
+    abstract Outer<String>.ComparableInner comparableInnerType();
+
+    abstract Comparable<String> stringComparable();
+
+    abstract Comparable<Integer> integerComparable();
+
     abstract Sub<Integer> subType();
 
     abstract List<Integer> integerList();
@@ -68,6 +85,21 @@ public class MemberClassOfParameterizedTypeTest {
   private static ReferenceType returnType(String methodName) throws NoSuchMethodException {
     return (ReferenceType)
         Type.forType(TypeHolder.class.getDeclaredMethod(methodName).getGenericReturnType());
+  }
+
+  /**
+   * Tests that the supertypes of a member class of a parameterized type, such as {@code
+   * Outer<String>.SubInner}, have the type arguments of its enclosing type.
+   */
+  @Test
+  public void testSupertypesOfMemberClassOfParameterizedType() throws NoSuchMethodException {
+    ReferenceType subInner = returnType("subInnerType");
+    assertTrue(subInner.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertFalse(subInner.isSubtypeOfOrEqualTo(returnType("integerInnerType")));
+
+    ReferenceType comparableInner = returnType("comparableInnerType");
+    assertTrue(comparableInner.isSubtypeOfOrEqualTo(returnType("stringComparable")));
+    assertFalse(comparableInner.isSubtypeOfOrEqualTo(returnType("integerComparable")));
   }
 
   /**

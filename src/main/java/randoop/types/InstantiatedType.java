@@ -420,6 +420,7 @@ public class InstantiatedType extends ParameterizedType {
     assert goalType.isGeneric();
     Substitution substitution = super.getInstantiatingSubstitution(goalType);
     if (substitution == null) {
+      // The enclosing type of this member class does not instantiate that of the goal type.
       return null;
     }
     if (goalType instanceof InstantiatedType) {
@@ -436,8 +437,8 @@ public class InstantiatedType extends ParameterizedType {
             continue;
           }
           Substitution subst = thisTArg.getInstantiatingSubstitution(otherTArg);
-          // The arguments can map a type variable to different types, as for Map<X, X> and
-          // Map<String, Integer>.
+          // The substitution for another argument can map a type variable to a different type, as
+          // for Map<String, Integer> and Map<T, T>.  Then no substitution instantiates the goal.
           if (subst == null || !substitution.isConsistentWith(subst)) {
             return null;
           }
@@ -528,8 +529,10 @@ public class InstantiatedType extends ParameterizedType {
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstandiatedType.getGenericClassType());
       if (superType != null) {
-        // getMatchingSupertype returns an instantiation of otherType's generic class, so the
-        // recursive call uses the second clause above and does not recurse further.
+        // The supertype has the class of `otherType`, so this applies type argument containment,
+        // as for Collection<Integer> and Collection<? extends Number>.  getMatchingSupertype
+        // returns an instantiation of otherType's generic class, so the recursive call uses the
+        // second clause above and does not recurse further.
         assert otherType.runtimeClassIs(superType.getRuntimeClass())
             : "superType " + superType + " does not match " + otherType;
         if (superType.isSubtypeOfOrEqualTo(otherType)) {
