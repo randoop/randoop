@@ -21,6 +21,14 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of type variables, compared by object identity.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
    * instantiated as by a substitution.
    */
@@ -493,7 +501,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
    */
-  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  @SuppressWarnings("ReferenceEquality") // fast path; pairs are compared by identity
   boolean isIdenticalTo(TypeVariable other) {
     if (this == other) {
       return true;
@@ -501,14 +509,108 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself, so comparing
-      // them deeply would not terminate.
-      return getLowerTypeBound().equals(other.getLowerTypeBound())
-          && getUpperTypeBound().equals(other.getUpperTypeBound());
+    // The bounds of a type variable, such as a capture variable, can refer to the type variable
+    // itself, so the comparison of the bounds can compare the same pair of type variables again.
+    // As for a recursive bound in canBeInstantiatedBy, assume that the inner comparison succeeds:
+    // any difference is found by the comparison of the other parts of the bounds.
+    List<TypeVariable[]> inProgress = identityChecks.get();
+    for (TypeVariable[] pair : inProgress) {
+      if (pair[0] == this && pair[1] == other) {
+        return true;
+      }
     }
-    return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-        && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    inProgress.add(new TypeVariable[] {this, other});
+    try {
+      return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+          && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
+  }
+
+  /**
+   * Returns true if the given types are equal and the type variables in them are identical, as
+   * determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * <p>This compares the types structurally, occurrence by occurrence. Comparing the lists returned
+   * by {@link ReferenceType#getTypeParameters()} would not suffice: those lists contain only one of
+   * several copies of a type variable, because the copies are equal. So, for copies {@code XS} and
+   * {@code XI} of a type variable {@code X} with other bounds, they would not distinguish {@code
+   * Map<X, XS>} from {@code Map<X, XI>}.
+   *
+   * @param type1 a type
+   * @param type2 a type
+   * @return true if the types are equal and the type variables in them are identical
+   */
+  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  static boolean areIdentical(ReferenceType type1, ReferenceType type2) {
+    if (type1 == type2) {
+      return true;
+    }
+    if (!type1.equals(type2)) {
+      return false;
+    }
+    if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
+      return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
+    }
+    if (type1 instanceof ArrayType && type2 instanceof ArrayType) {
+      Type component1 = ((ArrayType) type1).getComponentType();
+      Type component2 = ((ArrayType) type2).getComponentType();
+      return !component1.isReferenceType()
+          || !component2.isReferenceType()
+          || areIdentical((ReferenceType) component1, (ReferenceType) component2);
+    }
+    if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
+      ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
+      if (classType1.isMemberClass()
+          && classType2.isMemberClass()
+          && !areIdentical(classType1.enclosingType, classType2.enclosingType)) {
+        return false;
+      }
+      List<TypeArgument> arguments1 = classType1.getTypeArguments();
+      List<TypeArgument> arguments2 = classType2.getTypeArguments();
+      if (arguments1.size() != arguments2.size()) {
+        return false;
+      }
+      for (int i = 0; i < arguments1.size(); i++) {
+        if (!areIdentical(arguments1.get(i), arguments2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (type1 instanceof ParameterType && type2 instanceof ParameterType) {
+      // For example, a wildcard type.
+      ParameterType parameterType1 = (ParameterType) type1;
+      ParameterType parameterType2 = (ParameterType) type2;
+      return areIdentical(parameterType1.getLowerTypeBound(), parameterType2.getLowerTypeBound())
+          && areIdentical(parameterType1.getUpperTypeBound(), parameterType2.getUpperTypeBound());
+    }
+    return areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns true if the given type arguments are equal and the type variables in them are
+   * identical, as determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * @param argument1 a type argument
+   * @param argument2 a type argument
+   * @return true if the type arguments are equal and the type variables in them are identical
+   */
+  private static boolean areIdentical(TypeArgument argument1, TypeArgument argument2) {
+    if (argument1 instanceof ReferenceArgument && argument2 instanceof ReferenceArgument) {
+      return areIdentical(
+          ((ReferenceArgument) argument1).getReferenceType(),
+          ((ReferenceArgument) argument2).getReferenceType());
+    }
+    if (argument1 instanceof WildcardArgument && argument2 instanceof WildcardArgument) {
+      WildcardArgument wildcard1 = (WildcardArgument) argument1;
+      WildcardArgument wildcard2 = (WildcardArgument) argument2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getTypeBound(), wildcard2.getTypeBound());
+    }
+    return argument1.equals(argument2);
   }
 
   /**
@@ -536,8 +638,30 @@ public abstract class TypeVariable extends ParameterType {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
     }
-    return bound1.equals(bound2)
-        && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
+    if (!bound1.equals(bound2)) {
+      return false;
+    }
+    // As in areIdentical(ReferenceType, ReferenceType), compare the bounds structurally, rather
+    // than comparing their getTypeParameters(), which contain only one of several copies of a type
+    // variable.
+    if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
+      return areIdentical(
+          ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
+    }
+    if (bound1 instanceof IntersectionTypeBound && bound2 instanceof IntersectionTypeBound) {
+      List<ParameterBound> members1 = ((IntersectionTypeBound) bound1).getBounds();
+      List<ParameterBound> members2 = ((IntersectionTypeBound) bound2).getBounds();
+      if (members1.size() != members2.size()) {
+        return false;
+      }
+      for (int i = 0; i < members1.size(); i++) {
+        if (!areIdentical(members1.get(i), members2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());
   }
 
   /**

@@ -82,6 +82,41 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A reference bound is within this bound if its type is, as determined by {@link
+   * #isUpperBound(Type, Substitution)}. An intersection bound is within this bound if one of its
+   * components is, since the intersection is a subtype of each of its components. A {@link
+   * LazyParameterBound} is compared after the substitution is applied to it; a type variable in it
+   * that the substitution does not instantiate stands for an unknown type. Returns false for any
+   * other kind of bound.
+   */
+  /*package*/
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof ReferenceBound) {
+      // An eager bound can also contain type variables, as in T[], where T is not recursive.
+      return isUpperBound(
+          ((ReferenceBound) bound).getBoundType().substitute(substitution), substitution);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isUpperBound(component, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (bound instanceof LazyParameterBound) {
+      // The substitution has already been applied to the type, so do not apply it again by
+      // calling isUpperBound(ParameterBound, Substitution).
+      ReferenceType type = asReferenceType(bound, substitution);
+      return type != null && isUpperBound(type, substitution);
+    }
+    return false;
+  }
+
   /*package*/
   @Override
   public boolean hasCaptureVariable() {
@@ -128,30 +163,6 @@ public abstract class ReferenceBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
-   * on any of its members, since the intersection is a subtype of each member. A {@link
-   * LazyParameterBound} is compared after the substitution is applied to it; a type variable in it
-   * that the substitution does not instantiate stands for an unknown type. Returns false if {@code
-   * bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot convert to a
-   * {@link ReferenceBound}.
-   */
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (isUpperBound(member, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    ReferenceType type = asReferenceType(bound, substitution);
-    return type != null && isUpperBound(type, substitution);
-  }
-
-  /**
    * Returns the type of the given bound, with the given substitution applied, if it is a {@link
    * ReferenceBound}. If it is a {@link LazyParameterBound}, returns its type with the given
    * substitution applied, in which a type variable that the substitution does not instantiate
@@ -170,9 +181,10 @@ public abstract class ReferenceBound extends ParameterBound {
       LazyParameterBound lazyBound = (LazyParameterBound) bound;
       ParameterBound converted = lazyBound.substituteWithUnknowns(substitution);
       if (converted == null) {
-        // The bound is a non-generic member class of a generic class, as in Outer<String>.Inner,
-        // which substitution does not change.  Convert it directly, then apply the substitution
-        // as for an eager bound.
+        // The bound is a non-generic member class of a generic class whose owner type contains no
+        // type variable, as in Outer<String>.Inner, which substituteWithUnknowns cannot convert
+        // and which substitution does not change.  Convert it directly, then apply the
+        // substitution as for an eager bound.
         ReferenceBound referenceBound = lazyBound.toReferenceBound();
         return referenceBound == null
             ? null

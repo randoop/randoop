@@ -92,7 +92,7 @@ class LazyParameterBound extends ParameterBound {
       // Type variables that the substitution does not map to a type remain type variables, so a
       // partial substitution is preserved rather than discarded.
       TypeArgument typeArgument = substitute(boundType, substitution);
-      if (typeArgument == null) {
+      if (!(typeArgument instanceof ReferenceArgument)) {
         return this;
       }
       return ReferenceBound.forTypeLazyIfGeneric(
@@ -153,15 +153,14 @@ class LazyParameterBound extends ParameterBound {
     if (isNonGenericMemberClass(type)) {
       // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
       // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
-      // isUpperBound and isLowerBound do:  the result's enclosing type is the owner type, such as
-      // Outer<String>, so the result is not equal to Outer<Integer>.Inner.  The substitution
-      // applies to the owner type, as in Outer<K>.Inner.  The result is unchanged if the owner type
-      // has no type variable.
-      return TypeArgument.forType(ReferenceType.forType(type).substitute(substitution));
+      // isUpperBound and isLowerBound do:  ClassOrInterfaceType.forType preserves the owner type,
+      // such as Outer<String>, whose type arguments the substitution may change.
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
     }
 
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      java.lang.reflect.Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
       for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
@@ -171,25 +170,22 @@ class LazyParameterBound extends ParameterBound {
         argumentList.add(typeArgument);
       }
 
-      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
-      GenericClassType classType = GenericClassType.forClass(rawType);
+      GenericClassType classType =
+          GenericClassType.forClass((Class<?>) parameterizedType.getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      // For a member class, keep the owner type, with the substitution applied, as
-      // ParameterizedType.forType does.  Otherwise, the result would not equal the same type
-      // converted from reflection, such as Outer<String>.Inner<Integer>.
-      java.lang.reflect.Type ownerType = ((ParameterizedType) type).getOwnerType();
-      if (ownerType != null && rawType.getEnclosingClass() != null && !classType.isStatic()) {
-        ClassOrInterfaceType enclosing;
-        if (ownerType instanceof Class) {
-          enclosing = ClassOrInterfaceType.forType(ownerType);
-        } else {
-          TypeArgument ownerArgument = substitute(ownerType, substitution);
-          if (!(ownerArgument instanceof ReferenceArgument)) {
-            return null;
-          }
-          enclosing = (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
+      // As in ClassOrInterfaceType.forType, keep the owner type as written, as in Owner<String> for
+      // Owner<String>.Member<V>, with the substitution applied.
+      java.lang.reflect.Type ownerType = getConvertedOwnerType(parameterizedType);
+      if (ownerType != null) {
+        TypeArgument ownerArgument = substitute(ownerType, substitution);
+        if (!(ownerArgument instanceof ReferenceArgument)) {
+          return null;
         }
-        instantiatedType.enclosingType = enclosing;
+        ClassOrInterfaceType ownerClassType =
+            (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
+        if (!ownerClassType.isGenericForm()) {
+          instantiatedType.enclosingType = ownerClassType;
+        }
       }
       return TypeArgument.forType(instantiatedType);
     }
@@ -286,16 +282,13 @@ class LazyParameterBound extends ParameterBound {
       return false;
     }
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type ownerType = ((ParameterizedType) type).getOwnerType();
-      if (ownerType != null && instantiatesAny(ownerType, substitution, visited)) {
-        return true;
-      }
       for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution, visited)) {
           return true;
         }
       }
-      return false;
+      java.lang.reflect.Type ownerType = getConvertedOwnerType((ParameterizedType) type);
+      return ownerType != null && instantiatesAny(ownerType, substitution, visited);
     }
     if (type instanceof GenericArrayType) {
       return instantiatesAny(
@@ -349,13 +342,12 @@ class LazyParameterBound extends ParameterBound {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
-      // The type variables of an owner type, as in Outer<K>.Inner, occur in the converted type.
-      java.lang.reflect.Type ownerType = pt.getOwnerType();
-      if (ownerType != null) {
-        variableList.addAll(getTypeParameters(ownerType));
-      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
+      }
+      java.lang.reflect.Type ownerType = getConvertedOwnerType(pt);
+      if (ownerType != null) {
+        variableList.addAll(getTypeParameters(ownerType));
       }
     } else if (type instanceof GenericArrayType) {
       variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
