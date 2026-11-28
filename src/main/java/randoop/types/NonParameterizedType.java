@@ -101,13 +101,14 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public NonParameterizedType applyCaptureConversion() {
-    if (!isMemberClass()) {
+    if (!hasWildcardArgument()) {
       return this;
     }
     ClassOrInterfaceType convertedEnclosingType = enclosingType.applyCaptureConversion();
     if (sameType(convertedEnclosingType, enclosingType)) {
       return this;
     }
+    // Convert into a new object, so that this type, such as Outer<?>.Inner, retains its wildcard.
     NonParameterizedType result = new NonParameterizedType(this.runtimeType);
     result.enclosingType = convertedEnclosingType;
     return result;
@@ -122,13 +123,23 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of direct interfaces for this class.
+   * Returns the list of direct interfaces for this class. For a member class, such as {@code
+   * Outer<Integer>.Inner}, the interfaces are instantiated by the type arguments of the enclosing
+   * types.
    *
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    if (!isMemberClass()) {
+      return CollectionsPlume.mapList(
+          ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+    }
+    // For a member class such as Outer<String>.Inner, substitute the type arguments of the
+    // enclosing types.
+    Substitution substitution = getEnclosingTypeSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
+        runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -162,13 +173,19 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
+      // substitute the type arguments of the enclosing types.
+      if (supertype == null) {
+        return null;
+      }
+      ClassOrInterfaceType result = forType(supertype);
+      return isMemberClass() ? result.substitute(getEnclosingTypeSubstitution()) : result;
     }
   }
 

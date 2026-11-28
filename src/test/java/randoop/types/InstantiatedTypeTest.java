@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -24,6 +25,18 @@ public class InstantiatedTypeTest {
      * @param <U> the type parameter
      */
     class Inner<U> {}
+
+    /**
+     * A generic member class whose supertypes refer to type parameters of both classes.
+     *
+     * @param <U> the type parameter
+     */
+    class Member<U> extends Base<T> implements Comparable<U> {
+      @Override
+      public int compareTo(U other) {
+        return 0;
+      }
+    }
 
     /**
      * Another generic member class, unrelated to {@link Inner}.
@@ -57,6 +70,64 @@ public class InstantiatedTypeTest {
       /** A non-generic member class of a generic member class. */
       class Leaf {}
     }
+  }
+
+  /**
+   * A generic superclass.
+   *
+   * @param <V> the type parameter
+   */
+  static class Base<V> {}
+
+  /** A field whose type is a reflected generic member type with supertypes. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.Member<Integer> reflectedMember;
+
+  /** A field whose type is a reflected generic member type with a wildcard argument. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.Member<?> reflectedWildcardMember;
+
+  /**
+   * Returns the type of the field of this class with the given name.
+   *
+   * @param fieldName the name of a field of this class
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static InstantiatedType fieldType(String fieldName) throws NoSuchFieldException {
+    // Create the generic class type first, which gives the cached generic class type an enclosing
+    // type and so makes its getTypeParameters() include the type parameter of Outer.
+    ClassOrInterfaceType.forClass(Outer.Member.class);
+    return (InstantiatedType)
+        ClassOrInterfaceType.forType(
+            InstantiatedTypeTest.class.getDeclaredField(fieldName).getGenericType());
+  }
+
+  @Test
+  public void reflectedMemberTypeSupertypesTest() throws NoSuchFieldException {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    InstantiatedType member = fieldType("reflectedMember");
+
+    GenericClassType base = (GenericClassType) ClassOrInterfaceType.forClass(Base.class);
+    assertEquals(base.instantiate(JavaTypes.STRING_TYPE), member.getSuperclass());
+    assertEquals(
+        Collections.singletonList(JavaTypes.COMPARABLE_TYPE.instantiate(integerType)),
+        member.getInterfaces());
+    assertTrue(member.isSubtypeOfOrEqualTo(JavaTypes.COMPARABLE_TYPE.instantiate(integerType)));
+
+    Substitution substitution = member.getTypeSubstitution();
+    assertNotNull(substitution);
+    List<TypeVariable> parameters = member.getGenericClassType().getTypeParameters();
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(parameters.get(0)));
+    assertEquals(integerType, substitution.get(parameters.get(1)));
+  }
+
+  @Test
+  public void reflectedMemberTypeCaptureConversionTest() throws NoSuchFieldException {
+    InstantiatedType member = fieldType("reflectedWildcardMember");
+    InstantiatedType captured = member.applyCaptureConversion();
+    assertTrue(captured.hasCaptureVariable());
+    assertEquals(member.getRuntimeClass(), captured.getRuntimeClass());
   }
 
   @Test
@@ -211,7 +282,7 @@ public class InstantiatedTypeTest {
   }
 
   /** A field whose type is a reflected member type. */
-  @SuppressWarnings("UnusedVariable")
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"})
   private Outer<String>.Inner<Integer> reflectedInner;
 
   @Test

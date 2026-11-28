@@ -80,16 +80,13 @@ public abstract class ParameterBound {
   /**
    * Returns a {@code ParameterBound} for a single {@code java.lang.reflect.Type}. The result is an
    * eager bound if the type is a type variable, or if it is a class, parameterized type, or generic
-   * array type that has no type variable in the sense of {@link #hasTypeVariable}. The exception is
-   * a non-generic member class of a generic class, as in {@code Outer<String>.Inner}: its
+   * array type that has no type variable in the sense of {@link #hasTypeVariable}. This includes a
+   * non-generic member class of a generic class, as in {@code Outer<String>.Inner}, whose
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
-   * type, which an eager bound cannot compare with a parameterized type. {@link LazyParameterBound}
-   * compares such a class with an argument type by subtyping, after applying the substitution to
-   * any type variable in its owner type, as in {@code Outer<K>.Inner}. A generic array type of such
-   * a class, as in {@code Outer<String>.Inner[]}, is eager: the conversion gives its element type
-   * the owner type from the class declaration, as in {@code Outer<T>.Inner}, as it does for any
-   * argument type, so the bound and argument types are compared consistently. Otherwise, the result
-   * is a {@link LazyParameterBound}.
+   * type; {@link EagerReferenceBound} compares it with an argument type by subtyping. If the owner
+   * type has a type variable, as in {@code Outer<K>.Inner}, the result is a {@link
+   * LazyParameterBound}, which applies the substitution to the owner type. Otherwise, the result is
+   * a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -105,26 +102,13 @@ public abstract class ParameterBound {
         || type instanceof java.lang.reflect.GenericArrayType)) {
       return new LazyParameterBound(type);
     }
-    if (isNonGenericMemberClass(type) || hasTypeVariable(type, variableSet)) {
+    if (hasTypeVariable(type, variableSet)) {
       return new LazyParameterBound(type);
     }
+    // ReferenceType.forType uses ClassOrInterfaceType.forType.  Not ParameterizedType.forType,
+    // which cannot convert a member class with no type parameters of its own, such as
+    // Outer<String>.Inner.
     return new EagerReferenceBound(ReferenceType.forType(type));
-  }
-
-  /**
-   * Returns true if the given (reflection) type is a non-generic member class of a generic class,
-   * as in {@code Outer<String>.Inner}. Reflection represents such a type as a parameterized type
-   * whose raw type has no type parameters.
-   *
-   * @param type a reflection type
-   * @return true if {@code type} is a non-generic member class of a generic class
-   */
-  /*package*/ static boolean isNonGenericMemberClass(java.lang.reflect.Type type) {
-    return type instanceof java.lang.reflect.ParameterizedType
-        && ((Class<?>) ((java.lang.reflect.ParameterizedType) type).getRawType())
-                .getTypeParameters()
-                .length
-            == 0;
   }
 
   /**
@@ -154,8 +138,9 @@ public abstract class ParameterBound {
    * such a type variable. Either would make an eager bound recursive.
    *
    * <p>Owner types are examined, because the conversion of a reflection type to a {@link
-   * ReferenceType} keeps the owner type of a member class, as in {@code Outer<T>.Inner}. An eager
-   * bound {@code Comparable<Outer<T>.Inner>} for {@code T} would be recursive.
+   * ReferenceType} retains the owner type as written, which can mention a type variable, as in
+   * {@code Outer<T>.Holder<Integer>} or {@code Outer<T>.Inner}. An eager bound {@code
+   * Comparable<Outer<T>.Inner>} for {@code T} would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
