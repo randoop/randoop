@@ -89,6 +89,12 @@ public final class SequenceCollection {
   private int sequenceCount = 0;
 
   /**
+   * The number of calls to {@link #add} that changed this collection since it was created or last
+   * cleared.
+   */
+  private int numSequencesAdded = 0;
+
+  /**
    * SUT-parameter types that are not SUT-returned types. {@link
    * randoop.generation.DemandDrivenInputCreator} will create sequences for these types when no
    * existing instances are available.
@@ -124,6 +130,18 @@ public final class SequenceCollection {
   }
 
   /**
+   * Returns the number of calls to {@link #add} that changed this collection since it was created
+   * or last cleared, including calls by {@code addAll}. A call changes this collection if its
+   * sequence has at least one active output.
+   *
+   * @return the number of calls to {@link #add} that changed this collection since it was created
+   *     or last cleared
+   */
+  public int numSequencesAdded() {
+    return numSequencesAdded;
+  }
+
+  /**
    * Removes all sequences from this collection. Retains the SUT-parameter-only types, the
    * demand-driven input creator, and the type instantiator.
    */
@@ -135,6 +153,7 @@ public final class SequenceCollection {
     this.primitiveValues.clear();
     this.typesModificationCount++;
     this.sequenceCount = 0;
+    this.numSequencesAdded = 0;
     checkRep();
   }
 
@@ -214,9 +233,12 @@ public final class SequenceCollection {
    * That case probably isn't important/common.)
    *
    * @param sequence the sequence to add to this collection
+   * @return true if this collection changed; that is, if {@code sequence} has at least one active
+   *     output
    */
   @RequiresNonNull("this.sequenceMap")
-  public void add(Sequence sequence) {
+  public boolean add(Sequence sequence) {
+    boolean changed = false;
     // Record the value only if the sequence is selectable for it, i.e., its output is active.
     if (sequence.size() == 1 && sequence.isActive(0)) {
       Type outType = sequence.getLastVariable().getType();
@@ -253,9 +275,14 @@ public final class SequenceCollection {
         }
         typeSet.add(formalType);
         updateCompatibleMap(sequence, formalType);
+        changed = true;
       }
     }
+    if (changed) {
+      numSequencesAdded++;
+    }
     checkRep();
+    return changed;
   }
 
   /**

@@ -284,9 +284,17 @@ public class DemandDrivenInputCreator {
 
     // Note: At the beginning of this method, this call to `getSequencesForType()` would
     // return an empty list. It may or may not return a non-empty list at this point.
-    SIList<Sequence> result =
+    // The lookup can return a sequence more than once: once for each of its active outputs whose
+    // type matches, such as a `Base(Child, Child)` sequence for `Base` and twice for `Child`.
+    // Deduplicate, so that each distinct sequence is added to the main collection (and counted by
+    // `numSequencesAdded`) only once.
+    Set<Sequence> distinct = new LinkedHashSet<>();
+    for (Sequence s :
         secondarySequenceCollection.getSequencesForType(
-            targetType, exactTypeMatch, onlyReceivers, false);
+            targetType, exactTypeMatch, onlyReceivers, false)) {
+      distinct.add(s);
+    }
+    SIList<Sequence> result = SIList.from(new ArrayList<>(distinct));
 
     sequenceCollection.addAll(result);
     return result;
