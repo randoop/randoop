@@ -53,7 +53,7 @@ class LazyReferenceBound extends ReferenceBound {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
       // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -78,8 +78,8 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType);
+      // The unknown type variable can be argType itself, one of its supertypes, or its lower bound.
+      return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
   }
@@ -91,12 +91,16 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The substitution does not determine the type that the returned type variable will be. This
    * class treats {@code argType} as within this bound if the type variable can be instantiated by
-   * {@code argType}, because instantiating the type variable by {@code argType} would put {@code
-   * argType} within this bound. {@link EagerReferenceBound} instead compares {@code argType} with
-   * the upper bound of the type variable, so the two classes can differ. For example, for a type
-   * variable {@code U extends Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code
-   * Number}, because {@code Integer} is a subtype of {@code Number}, but this class does not,
-   * because {@code U} cannot be {@code Number}.
+   * {@code argType}, with the other type variables instantiated as by the substitution, because
+   * instantiating the type variable by {@code argType} would put {@code argType} within this bound.
+   * For an upper bound, it also treats {@code argType} as within this bound if a supertype of
+   * {@code argType} can instantiate the type variable, or if {@code argType} is a subtype of the
+   * lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For a lower bound,
+   * {@link EagerReferenceBound} instead compares {@code argType} with the upper bound of the type
+   * variable, so the two classes can differ. For example, for a type variable {@code U extends
+   * Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code Number}, because {@code
+   * Integer} is a subtype of {@code Number}, but this class does not, because {@code U} cannot be
+   * {@code Number}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

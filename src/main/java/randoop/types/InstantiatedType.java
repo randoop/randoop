@@ -546,8 +546,9 @@ public class InstantiatedType extends ParameterizedType {
             || otherInstantiatedType.isGenericForm();
       }
 
-      // first clause, combined with the second:  the supertype of this type that has the same
-      // rawtype as otherType must be a subtype of otherType by type argument containment.
+      // first clause, combined with the second:  the supertype with the same rawtype as otherType
+      // is a subtype of otherType if the type arguments of otherType contain its type arguments,
+      // as List<String> is a subtype of Collection<?> because Collection<String> is.
       InstantiatedType superType =
           this.getMatchingSupertype(otherInstantiatedType.getGenericClassType());
       if (superType != null) {

@@ -60,6 +60,16 @@ public class InstantiatedTypeTest {
        */
       class Deep<W> {}
     }
+
+    /**
+     * A generic member class that has a non-generic member class.
+     *
+     * @param <M> the type parameter
+     */
+    class GenericMiddle<M> {
+      /** A non-generic member class of a generic member class. */
+      class Leaf {}
+    }
   }
 
   /**
@@ -202,6 +212,42 @@ public class InstantiatedTypeTest {
         deep.instantiate(JavaTypes.STRING_TYPE, ReferenceType.forClass(Integer.class));
     assertEquals(constructed, reflected);
     assertEquals(constructed.hashCode(), reflected.hashCode());
+  }
+
+  /** A field whose type is a member class of a generic member class of {@code Outer<String>}. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.GenericMiddle<Integer>.Leaf stringOuterLeaf;
+
+  /** A field of the same type as {@link #stringOuterLeaf}. */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<String>.GenericMiddle<Integer>.Leaf stringOuterLeaf2;
+
+  /**
+   * A field whose type differs from that of {@link #stringOuterLeaf} only in the outermost type.
+   */
+  @SuppressWarnings("UnusedVariable")
+  private Outer<Long>.GenericMiddle<Integer>.Leaf longOuterLeaf;
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param fieldName the name of a field of this class
+   * @return the type of the field
+   * @throws NoSuchFieldException if there is no such field
+   */
+  private static ClassOrInterfaceType fieldType(String fieldName) throws NoSuchFieldException {
+    return ClassOrInterfaceType.forType(
+        InstantiatedTypeTest.class.getDeclaredField(fieldName).getGenericType());
+  }
+
+  @Test
+  public void ownerOfGenericIntermediateOwnerTest() throws NoSuchFieldException {
+    ClassOrInterfaceType stringLeaf = fieldType("stringOuterLeaf");
+    ClassOrInterfaceType stringLeaf2 = fieldType("stringOuterLeaf2");
+    ClassOrInterfaceType longLeaf = fieldType("longOuterLeaf");
+    assertEquals(stringLeaf, stringLeaf2);
+    assertEquals(stringLeaf.hashCode(), stringLeaf2.hashCode());
+    assertNotEquals(stringLeaf, longLeaf);
   }
 
   @Test
