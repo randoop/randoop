@@ -106,6 +106,20 @@ public class ComponentManager {
   }
 
   /**
+   * Returns the number of sequences in the demand-driven input creator's secondary sequence
+   * collection, or 0 if demand-driven input creation is disabled. The secondary collection is empty
+   * immediately after {@link #clearGeneratedSequences}.
+   *
+   * @return the number of sequences in the secondary sequence collection
+   */
+  int numSecondarySequences() {
+    if (!GenInputsAbstract.call_non_sut_methods) {
+      return 0;
+    }
+    return gralComponents.getDemandDrivenInputCreator().numSecondarySequences();
+  }
+
+  /**
    * Register types that are SUT-parameters but not SUT-returned.
    *
    * <p>{@link randoop.generation.DemandDrivenInputCreator} will create sequences for these types
