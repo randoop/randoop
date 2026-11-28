@@ -149,7 +149,7 @@ public class GenericClassType extends ParameterizedType {
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
     return superclass == null ? null : ClassOrInterfaceType.forClass(superclass);
   }

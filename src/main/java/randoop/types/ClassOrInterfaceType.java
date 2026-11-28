@@ -87,6 +87,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
       Class<?> rawType = (Class<?>) t.getRawType();
+      if (rawType.getTypeParameters().length > 0) {
+        // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
+        // ParameterizedType.forType keeps the owner type, whose type arguments its own member
+        // classes and supertypes may use.  It also supplies an enclosing type for an owner type in
+        // declaration form, as in Outer<T>.Middle<Integer>.
+        return ParameterizedType.forType(t);
+      }
       // If the type arguments of the owner type, and of its own owner types, are the type
       // parameters of the declarations of the enclosing classes, then the enclosing type from the
       // declaration of the member class is correct, and getPreservedOwnerType returns null.
@@ -94,24 +101,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
-      if (rawType.getTypeParameters().length == 0) {
-        if (ownerType != null) {
-          // Use the owner type rather than the enclosing class, because the owner type's type
-          // arguments may differ from the enclosing class's type parameters.  For example, in
-          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
-          // method's type parameter, not the type parameter declared by `Outer`.
-          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-          NonParameterizedType result = new NonParameterizedType(rawType);
-          result.enclosingType = forType(ownerType);
-          return result;
-        }
-        return forClass(rawType);
+      if (ownerType != null) {
+        // Use the owner type rather than the enclosing class, because the owner type's type
+        // arguments may differ from the enclosing class's type parameters.  For example, in
+        // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+        // method's type parameter, not the type parameter declared by `Outer`.
+        // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+        NonParameterizedType result = new NonParameterizedType(rawType);
+        result.enclosingType = forType(ownerType);
+        return result;
       }
-      // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
-      // ParameterizedType.forType keeps the owner type, whose type arguments its own member
-      // classes and supertypes may use.  It also supplies an enclosing type for an owner type in
-      // declaration form, as in Outer<T>.Middle<Integer>.
-      return ParameterizedType.forType(t);
+      return forClass(rawType);
     }
 
     if (type instanceof Class<?>) {
@@ -365,8 +365,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.runtimeClassIs(goalType.getRuntimeClass())
-                && type.isInstantiationOf(goalType)) {
+            if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -385,10 +384,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      // isInstantiationOf can be true for a member class of another class, if the enclosing types
-      // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
-          && superclass.isInstantiationOf(goalType)) {
+      if (superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
 
@@ -492,7 +488,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the superclass of this type, or null
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract @Nullable ClassOrInterfaceType getSuperclass();
 
   /**
    * Returns the immediate supertypes of this type.

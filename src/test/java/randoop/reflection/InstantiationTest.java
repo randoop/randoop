@@ -692,7 +692,11 @@ public class InstantiationTest {
    * @param <E> the type parameter of the enclosing type
    * @param inner an inner object
    */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  @SuppressWarnings({
+    "UnusedMethod",
+    "PMD.UnusedPrivateMethod",
+    "PMD.UnusedFormalParameter"
+  }) // used via reflection
   private static <E> void innerParameter(Outer<E>.Inner inner) {}
 
   /**
@@ -763,7 +767,11 @@ public class InstantiationTest {
    * @param inner an inner object
    * @param values a list
    */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  @SuppressWarnings({
+    "UnusedMethod",
+    "PMD.UnusedPrivateMethod",
+    "PMD.UnusedFormalParameter"
+  }) // used via reflection
   private static <E> void pair(Outer<E>.Inner inner, List<E> values) {}
 
   /**
@@ -802,7 +810,11 @@ public class InstantiationTest {
    * @param <T> the type parameter
    * @param outer an outer object
    */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  @SuppressWarnings({
+    "UnusedMethod",
+    "PMD.UnusedPrivateMethod",
+    "PMD.UnusedFormalParameter"
+  }) // used via reflection
   private static <T extends Outer<String>> void boundedByOuter(T outer) {}
 
   /**
@@ -853,7 +865,7 @@ public class InstantiationTest {
   /**
    * Returns {@code MemberTypeOuter<typeArgument>.Inner}.
    *
-   * @param typeArgument the type argument of the enclosing type
+   * @param typeArgument a type argument for the enclosing type
    * @return the member type {@code MemberTypeOuter<typeArgument>.Inner}
    */
   private static ClassOrInterfaceType memberInnerType(ReferenceType typeArgument) {
@@ -1022,7 +1034,7 @@ public class InstantiationTest {
   /**
    * Returns {@code Outer<typeArgument>.Inner}.
    *
-   * @param typeArgument the type argument of the enclosing type
+   * @param typeArgument a type argument for the enclosing type
    * @return the member type {@code Outer<typeArgument>.Inner}
    */
   private static ClassOrInterfaceType outerInnerType(ReferenceType typeArgument) {
@@ -1036,7 +1048,11 @@ public class InstantiationTest {
    *
    * @param inner an inner object
    */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  @SuppressWarnings({
+    "UnusedMethod",
+    "PMD.UnusedPrivateMethod",
+    "PMD.UnusedFormalParameter"
+  }) // used via reflection
   private static void wildcardOwner(Outer<?>.Inner inner) {}
 
   /**
@@ -1078,7 +1094,11 @@ public class InstantiationTest {
    * @param <T> the type parameter
    * @param t a value
    */
-  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  @SuppressWarnings({
+    "UnusedMethod",
+    "PMD.UnusedPrivateMethod",
+    "PMD.UnusedFormalParameter"
+  }) // used via reflection
   private static <T extends Marker<T>> void marked(T t) {}
 
   /**
