@@ -201,7 +201,11 @@ public class TypeInstantiator {
         Substitution classSubstitution = goalInstantiatedType.getTypeSubstitution();
         substitution = classSubstitution == null ? null : substitution.extend(classSubstitution);
       }
-      if (substitution == null || !satisfiesBounds(substitution)) {
+      if (substitution == null) {
+        return null;
+      }
+      substitution = instantiateBoundOnlyVariables(operation, substitution);
+      if (substitution == null) {
         return null;
       }
       TypedClassOperation substituted = operation.substitute(substitution);
@@ -218,6 +222,39 @@ public class TypeInstantiator {
       return null;
     }
     return result;
+  }
+
+  /**
+   * Extends the given substitution to the type variables that occur only in the bounds of the type
+   * variables that it instantiates, and checks the bounds. For example, in {@code <S extends Map<S,
+   * Map<T, T>>, T> List<S> make()}, {@code T} occurs only in the bound of {@code S}, so it does not
+   * occur in the operation once {@code S} is instantiated. Checking the bound of {@code S} without
+   * choosing {@code T} would treat {@code T} as unknown, and would accept a type for {@code S} for
+   * which no single type for {@code T} satisfies the bound.
+   *
+   * <p>A type variable in those bounds that still occurs in {@code operation} after {@code
+   * substitution} is applied is not instantiated here; {@link #instantiate(TypedClassOperation)}
+   * instantiates it.
+   *
+   * @param operation a generic operation
+   * @param substitution a substitution for some of the type variables of {@code operation}
+   * @return an extension of {@code substitution} that satisfies the bounds of the type variables
+   *     that it instantiates, or null if none was found
+   */
+  private @Nullable Substitution instantiateBoundOnlyVariables(
+      TypedClassOperation operation, Substitution substitution) {
+    Set<TypeVariable> boundVariables = new LinkedHashSet<>();
+    addTransitiveBoundTypeVariables(boundVariables, substitution);
+    boundVariables.removeAll(operation.substitute(substitution).getTypeParameters());
+    if (boundVariables.isEmpty()) {
+      return satisfiesBounds(substitution) ? substitution : null;
+    }
+    Map<TypeVariable, List<ReferenceType>> candidatesByVariable =
+        consistentCandidatesByVariable(new ArrayList<>(boundVariables), substitution);
+    if (candidatesByVariable == null) {
+      return null;
+    }
+    return selectSubstitutionSatisfyingBounds(candidatesByVariable, substitution);
   }
 
   /**

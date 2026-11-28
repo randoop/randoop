@@ -182,6 +182,9 @@ class WildcardType extends ParameterType {
    * extends Object}. For example, {@code Comparator<?>} is not a subtype of {@code Comparator<?
    * super String>}.
    *
+   * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
+   * equivalent {@link ReferenceBound}.
+   *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
