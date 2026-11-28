@@ -382,11 +382,8 @@ public class TypeInstantiator {
     Map<ReferenceType, Substitution> matches = new LinkedHashMap<>();
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
-      // types, so it is true for an unrelated member class such as Outer<String>.Other.  The
-      // runtime class check excludes such types but admits subclasses of the pattern's class.
+      // not be parameterized.
       if (inputType.isClassOrInterfaceType()
-          && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         // isInstantiationOf checks each type argument separately, so it accepts
         // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
@@ -505,21 +502,7 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            Map.Entry<ReferenceType, Substitution> selected =
-                Randomness.randomSetMember(matches.entrySet());
-            Substitution subst = selected.getValue();
-            // The selected type need not be consistent with the type variables instantiated for
-            // earlier parameters, as for an enclosing type:  for parameters List<U> and
-            // Outer<U>.Inner, U might already be String while the selected type is
-            // Outer<Integer>.Inner.
-            if (!substitution.isConsistentWith(subst)) {
-              if (Log.isLoggingOn()) {
-                failure = selected.getKey() + " is inconsistent with " + substitution;
-              }
-              allMatched = false;
-              break;
-            }
-            substitution = substitution.extend(subst);
+            substitution = substitution.extend(Randomness.randomSetMember(matches.values()));
           } else {
             typeParameters.addAll(((ReferenceType) paramType).getTypeParameters());
           }
@@ -973,6 +956,8 @@ public class TypeInstantiator {
         if (nongenericCandidates == null) {
           return Collections.emptyList();
         }
+        // The candidate types of a type variable do not depend on the substitution, so compute
+        // them once rather than once per tuple.
         Map<TypeVariable, List<ReferenceType>> genericCandidates =
             candidatesByVariable(genericParameters);
         if (genericCandidates == null) {
@@ -983,15 +968,8 @@ public class TypeInstantiator {
             iteratorToIterable(new CombinationIterator<>(nongenericCandidates.values()))) {
           // choose instantiating substitution for non-generic bounded parameters
           Substitution initialSubstitution = substitution.extend(nongenericVariables, tuple);
-          // the generic-bounded parameters that the selected substitution leaves uninstantiated
-          Map<TypeVariable, List<ReferenceType>> uninstantiatedCandidates = new LinkedHashMap<>();
-          for (Map.Entry<TypeVariable, List<ReferenceType>> entry : genericCandidates.entrySet()) {
-            if (entry.getKey().substitute(initialSubstitution).isVariable()) {
-              uninstantiatedCandidates.put(entry.getKey(), entry.getValue());
-            }
-          }
           // choose instantiation for parameters with generic bounds
-          result.addAll(allSubstitutions(uninstantiatedCandidates, initialSubstitution));
+          result.addAll(allSubstitutions(genericCandidates, initialSubstitution));
         }
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters

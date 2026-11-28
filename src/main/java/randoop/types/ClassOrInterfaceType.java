@@ -88,6 +88,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
       // ParameterizedType whose owner type supplies the type arguments.
       Class<?> rawType = (Class<?>) t.getRawType();
+      if (rawType.getTypeParameters().length > 0) {
+        // ParameterizedType.forType records the owner type as the enclosing type.
+        return ParameterizedType.forType(t);
+      }
       // The enclosing type of the result, converted from the owner type, such as Outer<E> in
       // Outer<E>.Inner or Outer<E>.Middle<String> in Outer<E>.Middle<String>.Inner.  It is null if
       // the owner type supplies no type arguments or is the generic form of its class, which
@@ -107,20 +111,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           ownerClassType = null;
         }
       }
-      if (rawType.getTypeParameters().length == 0) {
-        if (ownerClassType == null) {
-          // The result is the generic form of the member class.
-          return forClass(rawType);
-        }
-        // Do not use NonParameterizedType.forClass, which returns a shared cached object.
-        NonParameterizedType result = new NonParameterizedType(rawType);
-        result.enclosingType = ownerClassType;
-        return result;
+      if (ownerClassType == null) {
+        // The result is the generic form of the member class.
+        return forClass(rawType);
       }
-      ParameterizedType result = ParameterizedType.forType(t);
-      if (ownerClassType != null) {
-        result.enclosingType = ownerClassType;
-      }
+      // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+      NonParameterizedType result = new NonParameterizedType(rawType);
+      result.enclosingType = ownerClassType;
       return result;
     }
 
@@ -198,31 +195,33 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the substitution that maps the type parameters of the enclosing classes of this member
-   * class to the type arguments of its enclosing types. For example, for {@code
-   * Outer<String>.Inner} the result maps the type parameter {@code T} of {@code Outer} to {@code
-   * String}. Applying the result to a supertype in the declaration of {@code Inner}, such as {@code
-   * Parent<T>}, yields the corresponding supertype of this type, such as {@code Parent<String>}.
+   * Returns the substitution that maps the type parameters of the classes that enclose this member
+   * class to the type arguments of the enclosing types of this type. For example, for {@code
+   * Outer<Integer>.Inner<String>}, where {@code Outer} declares type parameter {@code T}, the
+   * result maps {@code T} to {@code Integer}. The result is empty if this type is not a member
+   * class.
    *
-   * @return the substitution for the type parameters of the enclosing classes of this type; empty
-   *     if this is not a member class
+   * <p>Applying the result to a supertype that {@code Class.getGenericSuperclass()} or {@code
+   * Class.getGenericInterfaces()} returns for this type's class instantiates the uses of those type
+   * parameters in the supertype, including in its enclosing type.
+   *
+   * @return the substitution for the type parameters of the classes that enclose this type's class
    */
   /*package*/ final Substitution getEnclosingTypeSubstitution() {
-    Substitution substitution = new Substitution();
-    ClassOrInterfaceType type = this;
-    while (type.isMemberClass()) {
-      type = type.enclosingType;
-      if (type instanceof InstantiatedType) {
-        InstantiatedType instantiatedType = (InstantiatedType) type;
-        // Use only the owner's own type parameters.  getTypeParameters() would also include the
-        // parameters of the owner's enclosing classes, which are bound at later loop iterations.
-        substitution =
-            substitution.extend(
-                instantiatedType.getGenericClassType().directTypeParameters(),
-                instantiatedType.getReferenceArguments());
-      }
-    }
-    return substitution;
+    return isMemberClass() ? enclosingType.getTypeArgumentSubstitution() : new Substitution();
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of this type's class, and of the classes
+   * that enclose it, to the type arguments of this type and of its enclosing types. For example,
+   * for {@code Outer<Integer>.Inner<String>}, where {@code Outer} declares type parameter {@code T}
+   * and {@code Inner} declares type parameter {@code I}, the result maps {@code T} to {@code
+   * Integer} and {@code I} to {@code String}.
+   *
+   * @return the substitution for the type parameters of this type's class and its enclosing classes
+   */
+  /*package*/ Substitution getTypeArgumentSubstitution() {
+    return getEnclosingTypeSubstitution();
   }
 
   @Override
@@ -356,8 +355,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.runtimeClassIs(goalType.getRuntimeClass())
-                && type.isInstantiationOf(goalType)) {
+            if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -376,10 +374,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      // isInstantiationOf can be true for a member class of another class, if the enclosing types
-      // match, so also check the class.
-      if (superclass.runtimeClassIs(goalType.getRuntimeClass())
-          && superclass.isInstantiationOf(goalType)) {
+      if (superclass.isInstantiationOf(goalType)) {
         return (InstantiatedType) superclass;
       }
 
@@ -458,7 +453,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the superclass of this type, or null
    */
-  public abstract ClassOrInterfaceType getSuperclass();
+  public abstract @Nullable ClassOrInterfaceType getSuperclass();
 
   /**
    * Returns the immediate supertypes of this type.

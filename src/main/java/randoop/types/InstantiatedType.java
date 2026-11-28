@@ -145,8 +145,12 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
-    Substitution substitution = getSubstitution(getReferenceArguments());
-    return genericType.getInterfaces(substitution);
+    return genericType.getInterfaces(getTypeArgumentSubstitution());
+  }
+
+  @Override
+  /*package*/ Substitution getTypeArgumentSubstitution() {
+    return getSubstitution(getReferenceArguments());
   }
 
   @Override
@@ -167,9 +171,7 @@ public class InstantiatedType extends ParameterizedType {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
     */
-    // isInstantiationOf can be true for a member class of another class, if the enclosing types
-    // match, so also check the class.
-    if (this.runtimeClassIs(goalType.getRuntimeClass()) && this.isInstantiationOf(goalType)) {
+    if (this.isInstantiationOf(goalType)) {
       return this;
     }
     return super.getMatchingSupertype(goalType);
@@ -201,14 +203,15 @@ public class InstantiatedType extends ParameterizedType {
    * being represented as a generic class {@code A<F1,...,Fk>} with a substitution {@code [ Fi :=
    * Ti]} for all of the type parameters {@code Fi}. So, when we compute a superclass, we first find
    * the supertype of the generic class {@code B<F1,...,Fk>}, and then apply the substitution {@code
-   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}.
+   * [ Fi := Ti]} using the method {@link GenericClassType#getSuperclass(Substitution)}. For a
+   * member class, the substitution also maps the type parameters of the enclosing classes to the
+   * type arguments of the enclosing types of this type.
    *
    * @return the superclass type for this parameterized type
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    Substitution substitution = getSubstitution(getReferenceArguments());
-    return this.getGenericClassType().getSuperclass(substitution);
+    return this.getGenericClassType().getSuperclass(getTypeArgumentSubstitution());
   }
 
   /**
