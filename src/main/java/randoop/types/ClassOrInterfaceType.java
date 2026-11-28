@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -85,29 +86,32 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-      // A non-generic member class of a generic class, as in Outer<String>.Inner, shows up as a
-      // ParameterizedType.  Its enclosing type is the owner type, Outer<String>, rather than the
-      // generic form Outer<T> that forClass would give it.
       Class<?> rawType = (Class<?>) t.getRawType();
+      // If the type arguments of the owner type, and of its own owner types, are the type
+      // parameters of the declarations of the enclosing classes, then the enclosing type from the
+      // declaration of the member class is correct, and getPreservedOwnerType returns null.
+      // Otherwise, the owner type is preserved.
+      java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
+      // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
+      // ParameterizedType whose owner type supplies the type arguments.
       if (rawType.getTypeParameters().length == 0) {
-        java.lang.reflect.Type ownerType = t.getOwnerType();
-        if (!(ownerType instanceof java.lang.reflect.ParameterizedType)
-            || rawType.getEnclosingClass() == null
-            || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-          return forClass(rawType);
+        if (ownerType != null) {
+          // Use the owner type rather than the enclosing class, because the owner type's type
+          // arguments may differ from the enclosing class's type parameters.  For example, in
+          // `<E> void m(Outer<E>.Inner inner)`, the owner type is `Outer<E>` where `E` is the
+          // method's type parameter, not the type parameter declared by `Outer`.
+          // Do not use NonParameterizedType.forClass, which returns a shared cached object.
+          NonParameterizedType result = new NonParameterizedType(rawType);
+          result.enclosingType = forType(ownerType);
+          return result;
         }
-        ClassOrInterfaceType enclosing = forType(ownerType);
-        if (enclosing.isGenericForm()) {
-          // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
-          // Use forClass, whose enclosing type is the GenericClassType, so that the result is
-          // equal to forClass(rawType).
-          return forClass(rawType);
-        }
-        // Do not side-effect the cached result of forClass.
-        NonParameterizedType result = new NonParameterizedType(rawType);
-        result.enclosingType = enclosing;
-        return result;
+        return forClass(rawType);
       }
+      // For a generic member class, such as Middle in Outer<String>.Middle<Integer>,
+      // ParameterizedType.forType keeps the owner type, whose type arguments its own member
+      // classes and supertypes may use.  It also sets the enclosing type of a member of a
+      // non-generic class, such as NonGenericOuter.Base<String>, and supplies an enclosing type
+      // for an owner type in declaration form, as in Outer<T>.Middle<Integer>.
       return ParameterizedType.forType(t);
     }
 
@@ -124,6 +128,53 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
 
+  /**
+   * Returns the owner type of the given parameterized type, if the conversion of the type to a
+   * {@link ClassOrInterfaceType} uses that owner type as the enclosing type. This is so if the type
+   * is a member class (not a static nested class) that has an enclosing class and the owner type is
+   * a parameterized type that is not the type that the declaration of the enclosing class denotes.
+   * For example, the result for {@code Outer<String>.Inner} is {@code Outer<String>}. Otherwise,
+   * returns null, and the conversion uses the enclosing type of the class declaration.
+   *
+   * @param type a parameterized type
+   * @return the owner type to use as the enclosing type, or null
+   */
+  /*package*/ static java.lang.reflect.@Nullable ParameterizedType getPreservedOwnerType(
+      java.lang.reflect.ParameterizedType type) {
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    // If the type arguments of the owner type, and of its own owner types, are the type parameters
+    // of the declarations of the enclosing classes, the class declaration gives the enclosing type.
+    Class<?> rawType = (Class<?>) type.getRawType();
+    if (ownerType instanceof java.lang.reflect.ParameterizedType
+        && rawType.getEnclosingClass() != null
+        && !java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+        && !isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType)) {
+      return (java.lang.reflect.ParameterizedType) ownerType;
+    }
+    return null;
+  }
+
+  /**
+   * Returns true if the given parameterized type is the type that its class declaration denotes:
+   * its type arguments are the type parameters of its class, and, if it is a member class, the same
+   * holds for its owner type. For example, this returns false for {@code Outer<String>.Middle},
+   * where {@code Middle} declares no type parameters, though its own type arguments are the (empty)
+   * type parameters of {@code Middle}.
+   *
+   * @param type a parameterized type
+   * @return true if {@code type} is the type that its class declaration denotes
+   */
+  /*package*/ static boolean isDeclarationForm(java.lang.reflect.ParameterizedType type) {
+    Class<?> rawType = (Class<?>) type.getRawType();
+    if (!Arrays.equals(type.getActualTypeArguments(), rawType.getTypeParameters())) {
+      return false;
+    }
+    java.lang.reflect.Type ownerType = type.getOwnerType();
+    return !(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())
+        || isDeclarationForm((java.lang.reflect.ParameterizedType) ownerType);
+  }
+
   // This implementation is for an abstract class; subclasses do the real work.
   @Override
   public boolean equals(@Nullable Object obj) {
@@ -134,14 +185,34 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherType = (ClassOrInterfaceType) obj;
-    ClassOrInterfaceType enclosingThis = this.enclosingType;
-    ClassOrInterfaceType enclosingOther = otherType.enclosingType;
-    return Objects.equals(enclosingThis, enclosingOther);
+    return Objects.equals(this.constrainingEnclosingType(), otherType.constrainingEnclosingType());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(enclosingType);
+    return Objects.hashCode(constrainingEnclosingType());
+  }
+
+  /**
+   * Returns the enclosing type of this type, or null if this type is not a member class (an inner
+   * class, which is not static), has no enclosing type, or has an enclosing type that is the
+   * generic form of its class. Equality and hashing use this rather than the enclosing type itself.
+   * The enclosing type of a static nested class places no constraint on the type, and neither does
+   * a generic-form enclosing type, such as {@code NonGenericOuter} in {@code
+   * NonGenericOuter.Inner<Integer>} or {@code Outer<T>} in {@code Outer<T>.Inner<String>}, where
+   * {@code T} is the type parameter of {@code Outer}; such an enclosing type is equivalent to no
+   * enclosing type. Different construction paths yield either representation: some omit a
+   * generic-form enclosing type, but others keep it, such as {@link
+   * #forType(java.lang.reflect.Type)} for an owner type in declaration form and {@link
+   * GenericClassType#instantiate(ReferenceType...)}.
+   *
+   * @return the enclosing type of this type, or null if it does not constrain this type
+   */
+  private @Nullable ClassOrInterfaceType constrainingEnclosingType() {
+    if (!isMemberClass() || enclosingType == null || enclosingType.isGenericForm()) {
+      return null;
+    }
+    return enclosingType;
   }
 
   /**
@@ -175,13 +246,45 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * if this type is not nested. The result is the enclosing type itself if the substitution changes
    * nothing in it.
    *
+   * <p>In particular, if the enclosing type is a {@link GenericClassType}, as for a reflected
+   * {@code Outer<T>.Inner<String>}, and the substitution maps none of its type parameters to a
+   * different type, then the result is that {@link GenericClassType}, rather than the equivalent
+   * {@link InstantiatedType} {@code Outer<T>} that {@link GenericClassType#substitute} would
+   * create. The two are not equal, so the substituted member type would not equal this one.
+   *
    * @param substitution a substitution
    * @return the enclosing type of this type, with {@code substitution} applied if this type is a
    *     member class
    */
   /*package*/ final @Nullable ClassOrInterfaceType substituteEnclosingType(
       Substitution substitution) {
-    return isMemberClass() ? enclosingType.substitute(substitution) : enclosingType;
+    if (!isMemberClass()) {
+      return enclosingType;
+    }
+    if (enclosingType instanceof GenericClassType
+        && !mapsToOtherType(enclosingType.getTypeParameters(), substitution)) {
+      return enclosingType;
+    }
+    return enclosingType.substitute(substitution);
+  }
+
+  /**
+   * Returns true if the given substitution maps some of the given type variables to a type other
+   * than that type variable object itself. A copy of a type variable with other bounds is another
+   * type.
+   *
+   * @param variables type variables
+   * @param substitution a substitution
+   * @return true if {@code substitution} maps some element of {@code variables} to another type
+   */
+  private static boolean mapsToOtherType(List<TypeVariable> variables, Substitution substitution) {
+    for (TypeVariable variable : variables) {
+      ReferenceType type = substitution.get(variable);
+      if (type != null && !sameType(type, variable)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -313,9 +416,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (goalType.isInterface()) {
       for (ClassOrInterfaceType interfaceType : this.getInterfaces()) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
+          // A member interface that declares no type parameters, of a parameterized type, is
+          // parameterized but is not an InstantiatedType.
+          if (interfaceType instanceof InstantiatedType) {
             InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.isInstantiationOf(goalType)) {
+            if (type.runtimeClassIs(goalType.getRuntimeClass())
+                && type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
             InstantiatedType result = type.getMatchingSupertype(goalType);
@@ -334,8 +440,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
-      if (superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType) superclass;
+      // isInstantiationOf can be true for a member class of another class, if the enclosing types
+      // match, so also check the class.
+      if (superclass.runtimeClassIs(goalType.getRuntimeClass())) {
+        // A raw superclass, such as Box for `class RawChild extends Box`, is not an
+        // InstantiatedType and does not instantiate the goal type.  Neither do its supertypes,
+        // which are erased.
+        return superclass instanceof InstantiatedType && superclass.isInstantiationOf(goalType)
+            ? (InstantiatedType) superclass
+            : null;
       }
 
       return superclass.getMatchingSupertype(goalType);
@@ -350,6 +463,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (superResult != null) {
       return superResult;
     }
+    if (goalType.isVariable()) {
+      // The bounds of the type variable reject this type.
+      return null;
+    }
 
     assert goalType.isGeneric() : "goal type must be generic";
 
@@ -357,21 +474,61 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     // True if this type or one of its supertypes matches the goal type.  If neither does, then no
     // substitution unifies them.
     boolean matched = false;
-    // For a member class, such as Outer<String>.Inner<Integer>, unify the enclosing types if the
-    // goal type is the same class, such as Outer<T>.Inner<Integer>.
-    if (goalType instanceof ClassOrInterfaceType
-        && goalType.runtimeClassIs(this.getRuntimeClass())) {
-      matched = true;
+    // For a member class such as Outer<String>.Inner and a member class goal type such as
+    // Outer<E>.Inner, the enclosing type of this type instantiates the enclosing type of the goal
+    // type.  This type need not itself be a member class:  for a top-level class that extends
+    // Outer<String>.Inner, the enclosing type of that supertype instantiates the goal's.  No
+    // enclosing type is matched against a goal type that is not a member class, such as a type
+    // variable.
+    if (goalType instanceof ClassOrInterfaceType) {
       ClassOrInterfaceType goalClassType = (ClassOrInterfaceType) goalType;
-      if (this.isMemberClass() && goalClassType.isMemberClass()) {
-        ClassOrInterfaceType thisEnclosingType = this.enclosingType;
-        ClassOrInterfaceType goalEnclosingType = goalClassType.enclosingType;
-        if (goalEnclosingType.isGeneric()) {
-          substitution = thisEnclosingType.getInstantiatingSubstitution(goalEnclosingType);
+      if (goalClassType.runtimeClassIs(this.getRuntimeClass())) {
+        matched = true;
+      }
+      if (goalClassType.isMemberClass()) {
+        ClassOrInterfaceType enclosingGoalType = goalClassType.enclosingType;
+        // Matching enclosing types do not make unrelated member classes, such as
+        // Outer<String>.Inner and Outer<E>.Other, unify.
+        if (!goalClassType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+          return null;
+        }
+        // The enclosing type to match is that of this type's view of the goal type's class, which
+        // differs from this type's own enclosing type if, for example, Outer<String>.Child
+        // extends Outer<Integer>.Parent.
+        ClassOrInterfaceType thisView = this;
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())) {
+          thisView = null;
+          for (ClassOrInterfaceType supertype : this.getSupertypesStrict()) {
+            if (supertype.runtimeClassIs(goalClassType.getRuntimeClass())) {
+              thisView = supertype;
+              matched = true;
+              break;
+            }
+          }
+        }
+        if (!this.runtimeClassIs(goalClassType.getRuntimeClass())
+            && thisView instanceof InstantiatedType) {
+          // Match the goal type against the view as a whole, so that its own type arguments, as
+          // well as those of its enclosing type, bind the type variables of the goal type:  for
+          // Child extends Outer<Integer>.Parent<String> and Outer<X>.Parent<Y>, Y is bound to
+          // String.  The view is also computed only once, so that both parts of the match use the
+          // same capture variables of any wildcard in the enclosing type of this type.
+          return thisView.getInstantiatingSubstitution(goalType);
+        }
+        if (enclosingGoalType.isGeneric() && thisView != null && thisView.isMemberClass()) {
+          substitution = thisView.enclosingType.getInstantiatingSubstitution(enclosingGoalType);
           if (substitution == null) {
             return null;
           }
-        } else if (!thisEnclosingType.equals(goalEnclosingType)) {
+        } else if (enclosingGoalType.isParameterized()
+            && thisView != null
+            && thisView.isMemberClass()
+            && !thisView.enclosingType.isSubtypeOfOrEqualTo(enclosingGoalType)) {
+          // No substitution instantiates a non-generic enclosing type:  the type arguments of the
+          // enclosing goal type are fixed, as in Outer<String>.Inner<X>, and the enclosing type of
+          // this type's view does not match them, as in Outer<Integer>.Inner<String>.  The
+          // enclosing types of the enclosing types are compared too:
+          // Outer<String>.Middle<Integer> is not Outer<Number>.Middle<Integer>.
           return null;
         }
       }
@@ -379,15 +536,22 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (goalType instanceof GenericClassType) {
       InstantiatedType supertype = this.getMatchingSupertype((GenericClassType) goalType);
-      if (supertype != null) {
-        matched = true;
-        Substitution supertypeSubstitution = supertype.getTypeSubstitution();
-        if (supertypeSubstitution == null
-            || !substitution.isConsistentWith(supertypeSubstitution)) {
-          return null;
-        }
-        substitution = substitution.extend(supertypeSubstitution);
+      // No supertype instantiates the goal type, as for a class that extends the raw type of the
+      // goal type's class, so no substitution binds the goal type's type parameters.
+      if (supertype == null) {
+        return null;
       }
+      matched = true;
+      // The type substitution of the supertype maps the type parameters of the goal type,
+      // including those of its enclosing classes.  The enclosing type of the supertype can differ
+      // from that of this type, as for Outer<String>.Sub that extends Outer<Integer>.Inner; the
+      // substitution above is from the enclosing type of this type's view of the goal type's
+      // class, which is the supertype, so it is consistent with the supertype's substitution.
+      Substitution supertypeSubstitution = supertype.getTypeSubstitution();
+      if (supertypeSubstitution == null || !substitution.isConsistentWith(supertypeSubstitution)) {
+        return null;
+      }
+      substitution = substitution.extend(supertypeSubstitution);
     }
     return matched ? substitution : null;
   }
@@ -590,6 +754,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return false;
     }
     ClassOrInterfaceType otherRefType = (ClassOrInterfaceType) otherType;
+    // For a member class that declares no type parameters, of a parameterized type, the type
+    // arguments of the enclosing types are compared by containment, not equality:
+    // O<String>.Plain is a subtype of O<?>.Plain.  Subtyping compares each enclosing type.
+    if (otherRefType instanceof NonParameterizedType
+        && otherRefType.isParameterized()
+        && Subtyping.isSubtypeOrEqual(this, otherRefType, new Substitution())) {
+      return true;
+    }
     if (otherRefType.isInterface()) {
       return this.isSubinterfaceOf(otherRefType);
     } else {
@@ -670,12 +842,83 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    for (ClassOrInterfaceType current = this; current != null; current = current.getSuperclass()) {
-      if (current.equals(otherClass)) {
+    // InstantiatedType.equals ignores enclosing types, so compare them too:  a class that
+    // extends Outer<String>.Inner<Integer> is not a subclass of Outer<Number>.Inner<Integer>.
+    if (isSameWithEnclosingTypes(this, otherClass)) {
+      return true;
+    }
+    for (ClassOrInterfaceType current = this.getSuperclass();
+        current != null;
+        current = current.getSuperclass()) {
+      if (isSameWithEnclosingTypes(current, otherClass)) {
         return true;
+      }
+      // A strict superclass of the same class as otherClass can be a subtype of otherClass without
+      // being equal to it, as Outer<String>.Inner is a subtype of Outer<?>.Inner.  The recursive
+      // call does not recurse further, because the strict superclasses of current are of other
+      // classes.
+      if (current.runtimeClassIs(otherClass.getRuntimeClass())) {
+        return current.isSubtypeOfOrEqualTo(otherClass);
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given types are equal, and so are their enclosing types at each level at
+   * which both are member classes. {@link InstantiatedType#equals(Object)} does not compare
+   * enclosing types, so it treats {@code Outer<String>.Inner<Integer>} and {@code
+   * Outer<Number>.Inner<Integer>} as equal.
+   *
+   * <p>A type that is not a member class matches any enclosing type. A conversion of a reflection
+   * type whose owner type is in declaration form, such as {@code Outer<T>.Inner<Integer>}, records
+   * no enclosing type, but stands for the same class as one that does.
+   *
+   * @param type a type
+   * @param otherType another type
+   * @return true if the types are equal, including their enclosing types where both have one
+   */
+  /*package*/ static boolean isSameWithEnclosingTypes(
+      ClassOrInterfaceType type, ClassOrInterfaceType otherType) {
+    ClassOrInterfaceType current = type;
+    ClassOrInterfaceType otherCurrent = otherType;
+    if (!current.equals(otherCurrent)) {
+      return false;
+    }
+    while (current.isMemberClass() && otherCurrent.isMemberClass()) {
+      current = current.enclosingType;
+      otherCurrent = otherCurrent.enclosingType;
+      if (!current.equals(otherCurrent)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns true if, at each level at which both of the given types are member classes, the
+   * enclosing type of {@code type} instantiates the enclosing type of {@code goalType}, as
+   * determined by {@link #isInstantiationOf(ReferenceType)}. {@link
+   * InstantiatedType#isInstantiationOf(ReferenceType)} compares only the type arguments of the
+   * types themselves, not those of their enclosing types.
+   *
+   * @param type a type
+   * @param goalType a type, which may be generic
+   * @return true if each enclosing type of {@code type} instantiates the corresponding enclosing
+   *     type of {@code goalType}
+   */
+  /*package*/ static boolean enclosingTypesInstantiate(
+      ClassOrInterfaceType type, ClassOrInterfaceType goalType) {
+    ClassOrInterfaceType current = type;
+    ClassOrInterfaceType goalCurrent = goalType;
+    while (current.isMemberClass() && goalCurrent.isMemberClass()) {
+      current = current.enclosingType;
+      goalCurrent = goalCurrent.enclosingType;
+      if (!current.isInstantiationOf(goalCurrent)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -701,7 +944,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   @Override
   public boolean hasCaptureVariable() {
-    return false;
+    return isMemberClass() && enclosingType.hasCaptureVariable();
   }
 
   /**
@@ -719,6 +962,41 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return enclosingType.getTypeParameters();
     }
     return new ArrayList<>(0);
+  }
+
+  /**
+   * Returns the substitution that maps the type parameters of this type's class, and of the classes
+   * that enclose it as a member class, to the corresponding type arguments of this type. For
+   * example, for {@code Outer<String>.Inner<Integer>}, where {@code Inner<U>} is a member class of
+   * {@code Outer<T>}, the result maps {@code T} to {@code String} and {@code U} to {@code Integer}.
+   * The result omits the type parameters of a generic form, such as {@code Outer<T>}. A wildcard
+   * type argument is mapped as in {@link InstantiatedType#getReferenceArguments()}.
+   *
+   * @return the substitution that maps the type parameters of this type's class and of its
+   *     enclosing classes to the type arguments of this type
+   */
+  /*package*/ Substitution getReferenceArgumentSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
+  }
+
+  /**
+   * Returns the substitution to apply to the declared supertypes of this type's class. It is like
+   * {@link #getReferenceArgumentSubstitution()}, but it maps the type parameters of the enclosing
+   * classes to the type arguments of the capture conversion of the enclosing type, because the
+   * supertypes of a type with wildcard arguments are those of its capture conversion. For example,
+   * for {@code Outer<? extends Number>.Inner}, where {@code Inner} is a member class of {@code
+   * Outer<T>}, the result maps {@code T} to a capture variable whose upper bound is {@code Number}.
+   *
+   * @return the substitution to apply to the declared supertypes of this type's class
+   */
+  /*package*/ Substitution getSupertypeSubstitution() {
+    if (this.isMemberClass()) {
+      return enclosingType.applyCaptureConversion().getReferenceArgumentSubstitution();
+    }
+    return new Substitution();
   }
 
   @Override

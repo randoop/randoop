@@ -21,6 +21,15 @@ public abstract class TypeVariable extends ParameterType {
       ThreadLocal.withInitial(ArrayList::new);
 
   /**
+   * The comparisons by {@link #isIdenticalTo(TypeVariable)} that are in progress in the current
+   * thread, outermost first. Each element is a pair of the receiver and the argument, compared by
+   * object identity.
+   */
+  @SuppressWarnings("nullness:type.argument") // withInitial: get() never returns null
+  private static final ThreadLocal<List<TypeVariable[]>> identityChecks =
+      ThreadLocal.withInitial(ArrayList::new);
+
+  /**
    * A check of whether a type variable can be instantiated by a type, with the other type variables
    * instantiated as by a substitution.
    */
@@ -75,6 +84,18 @@ public abstract class TypeVariable extends ParameterType {
    */
   private static final Map<java.lang.reflect.TypeVariable<?>, TypeVariable> declaredTypeVariables =
       new ConcurrentHashMap<>();
+
+  /**
+   * The upper bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedUpperTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedUpperBound = null;
+
+  /**
+   * The lower bound of this variable, with references to type variables resolved; null if not yet
+   * computed. Use {@link #getResolvedLowerTypeBound()} instead of reading this field.
+   */
+  private @Nullable ParameterBound resolvedLowerBound = null;
 
   /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
@@ -148,11 +169,14 @@ public abstract class TypeVariable extends ParameterType {
     if (otherType.isVariable()) {
       TypeVariable otherVariable = (TypeVariable) otherType;
       Substitution substitution = otherVariable.getSubstitution(this);
-      boolean lowerboundOk =
-          otherVariable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
-      boolean upperboundOk =
-          otherVariable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
-      return lowerboundOk && upperboundOk;
+      // Compare this variable, not its bound, so that an unknown in otherVariable's bound can be
+      // this variable.
+      return otherVariable
+              .getUpperTypeBound()
+              .isUpperBound(new EagerReferenceBound(this), substitution)
+          && otherVariable
+              .getLowerTypeBound()
+              .isLowerBound(getResolvedLowerTypeBound(), substitution);
     }
 
     return false;
@@ -168,6 +192,56 @@ public abstract class TypeVariable extends ParameterType {
       return isSubtypeOfOrEqualTo(getUpperTypeBound(), otherType);
     }
     return false;
+  }
+
+  /**
+   * Returns the upper bound of this variable, with each type variable in its lazy parts substituted
+   * for itself. For example, the bound of {@code T extends Comparable<T>} is a {@link
+   * LazyParameterBound}; the result is a {@link ReferenceBound} whose type, {@code Comparable<T>},
+   * can be compared with other types.
+   *
+   * @return the upper bound of this variable, with references to type variables resolved
+   */
+  ParameterBound getResolvedUpperTypeBound() {
+    ParameterBound result = resolvedUpperBound;
+    if (result == null) {
+      result = getUpperTypeBound().substitute(getIdentitySubstitution());
+      resolvedUpperBound = result;
+    }
+    return result;
+  }
+
+  /**
+   * Returns the lower bound of this variable, with each type variable in its lazy parts substituted
+   * for itself.
+   *
+   * @return the lower bound of this variable, with references to type variables resolved
+   * @see #getResolvedUpperTypeBound()
+   */
+  ParameterBound getResolvedLowerTypeBound() {
+    ParameterBound result = resolvedLowerBound;
+    if (result == null) {
+      result = getLowerTypeBound().substitute(getIdentitySubstitution());
+      resolvedLowerBound = result;
+    }
+    return result;
+  }
+
+  /**
+   * Returns a substitution of each type variable in the bounds of this variable, and of this
+   * variable, for itself. Applying it to a bound resolves the bound's lazy parts.
+   *
+   * @return a substitution that replaces this variable and each type variable in its bounds with
+   *     itself
+   */
+  private Substitution getIdentitySubstitution() {
+    // A copy of a type variable equals the original, so it is not a separate entry.
+    Set<TypeVariable> variables = new LinkedHashSet<>();
+    variables.add(this);
+    variables.addAll(getLowerTypeBound().getTypeParameters());
+    variables.addAll(getUpperTypeBound().getTypeParameters());
+    List<TypeVariable> parameters = new ArrayList<>(variables);
+    return new Substitution(parameters, new ArrayList<ReferenceType>(parameters));
   }
 
   /**
@@ -213,6 +287,20 @@ public abstract class TypeVariable extends ParameterType {
    */
   private Substitution getSubstitution(ReferenceType otherType) {
     return new Substitution(this, otherType);
+  }
+
+  @Override
+  void setUpperBound(ParameterBound upperBound) {
+    super.setUpperBound(upperBound);
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
+  }
+
+  @Override
+  void setLowerBound(ParameterBound lowerBound) {
+    super.setLowerBound(lowerBound);
+    resolvedUpperBound = null;
+    resolvedLowerBound = null;
   }
 
   @Override
@@ -283,7 +371,7 @@ public abstract class TypeVariable extends ParameterType {
    */
   private boolean canBeInstantiatedByUnchecked(ReferenceType otherType, Substitution substitution) {
     if (getLowerTypeBound().isVariable()) {
-      if (!variableBoundAllows(getLowerTypeBound(), true, substitution, otherType)) {
+      if (!variableBoundAllows(getLowerTypeBound(), false, substitution, otherType)) {
         return false;
       }
     } else {
@@ -292,7 +380,7 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      if (!variableBoundAllows(getUpperTypeBound(), false, substitution, otherType)) {
+      if (!variableBoundAllows(getUpperTypeBound(), true, substitution, otherType)) {
         return false;
       }
     } else {
@@ -304,22 +392,25 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns true if {@code otherType} is within the given bound of this variable, which is a type
-   * variable. If the substitution instantiates that type variable with a type that is not a
-   * variable, compares {@code otherType} with that type. Otherwise, that type variable stands for
-   * an unknown type. For a lower bound, the result is true if {@code otherType} can instantiate it;
-   * for an upper bound, the result is true if it can be a supertype of {@code otherType}, as
-   * determined by {@link #canBeSupertypeOf}.
+   * Returns true if the given type is within the given bound of this variable, where the bound is a
+   * type variable. If the substitution instantiates that type variable, the instantiated bound is
+   * compared with the given type. Otherwise, that type variable stands for an unknown type: for an
+   * upper bound, the given type is within it if that type variable can be a supertype of the given
+   * type, as determined by {@link #canBeSupertypeOf}; for a lower bound, if that type variable can
+   * be a subtype of the given type, as determined by {@link #canBeSubtypeOf}.
    *
    * @param bound a bound of this variable that is a type variable
-   * @param isLower true if {@code bound} is the lower bound of this variable, false if it is the
-   *     upper bound
+   * @param isUpperBound true if {@code bound} is the upper bound of this variable, false if it is
+   *     the lower bound
    * @param substitution the substitution of {@code otherType} for this variable
    * @param otherType the possibly instantiating type, not a variable
    * @return true if {@code otherType} is within {@code bound}
    */
   private boolean variableBoundAllows(
-      ParameterBound bound, boolean isLower, Substitution substitution, ReferenceType otherType) {
+      ParameterBound bound,
+      boolean isUpperBound,
+      Substitution substitution,
+      ReferenceType otherType) {
     ParameterBound substituted = bound.substitute(substitution);
     TypeVariable variable;
     if (substituted instanceof ReferenceBound
@@ -328,28 +419,65 @@ public abstract class TypeVariable extends ParameterType {
     } else if (substituted instanceof LazyParameterBound) {
       // The substitution does not instantiate the type variable.
       variable = substituted.getTypeParameters().get(0);
-    } else if (substituted instanceof ReferenceBound) {
-      // The substitution instantiates the type variable with a type that is not a variable.
-      return isLower
-          ? substituted.isLowerBound(otherType, substitution)
-          : substituted.isUpperBound(otherType, substitution);
     } else {
+      // The substitution instantiates the type variable, so the bound is a known type.  Compare it
+      // without applying the substitution to it again, as LazyParameterBound does:  for the
+      // substitution [T := List<U>, U := String], the bound T is List<U>, not List<String>.
+      Substitution once = substitution.withIdentityFor(substituted.getTypeParameters());
+      return isUpperBound
+          ? substituted.isUpperBound(otherType, once)
+          : substituted.isLowerBound(otherType, once);
+    }
+    return isUpperBound
+        ? variable.canBeSupertypeOf(otherType, substitution)
+        : variable.canBeSubtypeOf(otherType, substitution);
+  }
+
+  /**
+   * Returns true if some instantiation of this type variable can be a subtype of the given type,
+   * when the other type variables are instantiated as by the given substitution. That is the case
+   * if {@code otherType} can instantiate this variable, if the upper bound of this variable (or, if
+   * it is an intersection, some member of it) is a subtype of {@code otherType}, since every
+   * instantiation of this variable is a subtype of its upper bound, or if the lower bound of this
+   * variable is a subtype of {@code otherType} and can instantiate this variable. For example, for
+   * {@code U extends Integer}, {@code U} can be a subtype of {@code Number}, though {@code Number}
+   * cannot instantiate {@code U}; and for {@code B extends Number & Runnable}, {@code B} can be a
+   * subtype of {@code Runnable}. Like {@link Subtyping}, this does not check that some type is
+   * within an intersection bound.
+   *
+   * @param otherType a type, not a variable
+   * @param context a substitution for other type variables
+   * @return true if some instantiation of this variable can be a subtype of {@code otherType}
+   */
+  boolean canBeSubtypeOf(ReferenceType otherType, Substitution context) {
+    if (canBeInstantiatedBy(otherType, context)) {
+      return true;
+    }
+    if (isSubtypeOfOrEqualTo(getUpperTypeBound().substitute(context), otherType)) {
+      return true;
+    }
+    ParameterBound lowerBound = getLowerTypeBound().substitute(context);
+    if (!(lowerBound instanceof ReferenceBound)) {
       return false;
     }
-    return isLower
-        ? variable.canBeInstantiatedBy(otherType, substitution)
-        : variable.canBeSupertypeOf(otherType, substitution);
+    ReferenceType lowerBoundType = ((ReferenceBound) lowerBound).getBoundType();
+    // A generic type, such as Comparable<T>, or the null type cannot instantiate this variable.
+    return !lowerBoundType.isGeneric()
+        && !lowerBoundType.equals(JavaTypes.NULL_TYPE)
+        && lowerBoundType.isSubtypeOfOrEqualTo(otherType)
+        && canBeInstantiatedBy(lowerBoundType, context);
   }
 
   /**
    * Returns true if some instantiation of this type variable can be a supertype of the given type,
    * when the other type variables are instantiated as by the given substitution. The instantiations
    * that this considers are the lower bound of this variable, which is a supertype of every subtype
-   * of it, if it is within the upper bound of this variable; {@code otherType} itself; and each of
-   * its supertypes as computed by {@link #getStrictSupertypes}. For example, for {@code <T extends
-   * Comparable<T>, V extends T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code
-   * java.util.Date} can instantiate {@code T}. Each instantiation other than the lower bound is
-   * checked as by {@link #canBeInstantiatedBy(ReferenceType, Substitution)}.
+   * of it, if it is within the upper bound of this variable; {@code otherType} itself; and, if this
+   * variable is a type parameter, each strict supertype of {@code otherType}, as determined by
+   * {@link #strictSupertypes(ReferenceType)}. For example, for {@code <T extends Comparable<T>, V
+   * extends T>}, {@code java.sql.Date} can instantiate {@code V}, because {@code java.util.Date}
+   * can instantiate {@code T}. Each instantiation other than the lower bound is checked as by
+   * {@link #canBeInstantiatedBy(ReferenceType, Substitution)}.
    *
    * @param otherType a type, not a variable
    * @param context a substitution for other type variables
@@ -360,16 +488,14 @@ public abstract class TypeVariable extends ParameterType {
         || canBeInstantiatedBy(otherType, context)) {
       return true;
     }
-    List<TypeVariable> otherTypeParameters = otherType.getTypeParameters();
-    for (ReferenceType supertype : getStrictSupertypes(otherType)) {
-      // A supertype that mentions a type variable that otherType does not is not a supertype of
-      // otherType.  getStrictSupertypes computes the supertypes of a GenericClassType as declared,
-      // so they mention only its type variables, but this check guards against any supertype that
-      // does not preserve the relationship between the type parameters.  A supertype that mentions
-      // only the type variables of otherType, such as List<E> for ArrayList<E> or Parent<String>
-      // for `Child<X> extends Parent<String>`, is a supertype of otherType.
-      if (otherTypeParameters.containsAll(supertype.getTypeParameters())
-          && canBeInstantiatedBy(supertype, context)) {
+    // A capture variable stands for a particular type, so it is not searched for among the strict
+    // supertypes of otherType.  For example, the capture of `? super Number` can be Object, a
+    // supertype of String, but String is not known to be a subtype of it.
+    if (!(this instanceof ExplicitTypeVariable)) {
+      return false;
+    }
+    for (ReferenceType supertype : strictSupertypes(otherType)) {
+      if (canBeInstantiatedBy(supertype, context)) {
         return true;
       }
     }
@@ -399,35 +525,57 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Returns the strict supertypes of the given type, if it is a class, interface, array, or type
-   * variable type. The supertypes of every class or interface type other than {@code Object}
-   * include {@code Object}. The supertypes of an array type {@code C[]} are {@code Object}, {@code
-   * Cloneable}, {@code Serializable}, and, if {@code C} is a reference type, {@code S[]} for each
-   * strict supertype {@code S} of {@code C}. The supertypes of a type variable are the types in its
-   * upper bound and their supertypes; this lets an array type such as {@code U[]}, for {@code U
-   * extends Number}, have supertypes such as {@code Number[]} and {@code Object[]}. For any other
-   * type, returns an empty list.
+   * Returns strict supertypes of the given type, for {@link #canBeSupertypeOf(ReferenceType,
+   * Substitution)}.
+   *
+   * <ul>
+   *   <li>For a class or interface type, the result is its strict supertypes that mention only its
+   *       type variables. The supertypes of a generic class type are as declared, as in {@code
+   *       Parent<String>} for {@code Child<X> extends Parent<String>}. For every class or interface
+   *       type other than {@code Object}, the result also includes {@code Object}.
+   *   <li>For an array type, the result is {@code Object}, {@code Cloneable}, {@code Serializable};
+   *       if the component type is a reference type other than {@code Object}, {@code Object[]};
+   *       and the arrays whose component types are the strict supertypes of the array's component
+   *       type, as determined by this method. For example, the result for {@code String[]} includes
+   *       {@code Object[]} and {@code CharSequence[]}, and the result for {@code U[]}, for {@code U
+   *       extends Number}, includes {@code Number[]} and {@code Object[]}.
+   *   <li>For a type variable, the result is the types in its upper bound and their strict
+   *       supertypes, as determined by this method.
+   *   <li>For any other type, the result is empty.
+   * </ul>
    *
    * @param type a type
-   * @return the strict supertypes of {@code type}
+   * @return strict supertypes of {@code type}
    */
-  private static List<ReferenceType> getStrictSupertypes(ReferenceType type) {
+  private static List<ReferenceType> strictSupertypes(ReferenceType type) {
     List<ReferenceType> result = new ArrayList<>();
-    if (type instanceof GenericClassType) {
-      // The supertypes of a GenericClassType are those of its raw class, as in Parent<P> for
-      // `Child<X> extends Parent<String>`.  The supertypes of the equivalent InstantiatedType,
-      // whose
-      // type arguments are the class's own type parameters, are as declared, as in Parent<String>.
-      GenericClassType genericType = (GenericClassType) type;
-      InstantiatedType instantiated =
-          new InstantiatedType(genericType, genericType.getTypeArguments());
-      instantiated.enclosingType = genericType.enclosingType;
-      result.addAll(instantiated.getSupertypesStrict());
-      if (!result.contains(JavaTypes.OBJECT_TYPE)) {
-        result.add(JavaTypes.OBJECT_TYPE);
+    if (type instanceof ClassOrInterfaceType) {
+      List<TypeVariable> typeParameters = type.getTypeParameters();
+      Set<ClassOrInterfaceType> supertypes;
+      if (type instanceof GenericClassType) {
+        // The supertypes of a GenericClassType are those of its raw class, as in Parent<P> for
+        // `Child<X> extends Parent<String>`.  The supertypes of the equivalent InstantiatedType,
+        // whose type arguments are the class's own type parameters, are as declared, as in
+        // Parent<String>.
+        GenericClassType genericType = (GenericClassType) type;
+        InstantiatedType instantiated =
+            new InstantiatedType(genericType, genericType.getTypeArguments());
+        instantiated.enclosingType = genericType.enclosingType;
+        supertypes = instantiated.getSupertypesStrict();
+      } else {
+        supertypes = ((ClassOrInterfaceType) type).getSupertypesStrict();
       }
-    } else if (type instanceof ClassOrInterfaceType) {
-      result.addAll(((ClassOrInterfaceType) type).getSupertypesStrict());
+      for (ClassOrInterfaceType supertype : supertypes) {
+        // A supertype that mentions a type variable that `type` does not is not a supertype of
+        // `type`.  The supertypes of a GenericClassType are computed above as declared, so they
+        // mention only its type variables, but this check guards against any supertype that does
+        // not preserve the relationship between the type parameters.  A supertype that mentions
+        // only the type variables of `type`, such as List<E> for ArrayList<E> or Parent<String>
+        // for `Child<X> extends Parent<String>`, is a supertype of `type`.
+        if (typeParameters.containsAll(supertype.getTypeParameters())) {
+          result.add(supertype);
+        }
+      }
       // An interface has no superclass, so its supertypes as computed above do not include Object.
       if (!type.isObject() && !result.contains(JavaTypes.OBJECT_TYPE)) {
         result.add(JavaTypes.OBJECT_TYPE);
@@ -437,10 +585,15 @@ public abstract class TypeVariable extends ParameterType {
       result.add(JavaTypes.CLONEABLE_TYPE);
       result.add(JavaTypes.SERIALIZABLE_TYPE);
       Type componentType = ((ArrayType) type).getComponentType();
-      if (componentType instanceof ReferenceType) {
-        for (ReferenceType componentSupertype :
-            getStrictSupertypes((ReferenceType) componentType)) {
-          result.add(ArrayType.ofComponentType(componentSupertype));
+      if (componentType.isReferenceType() && !componentType.isObject()) {
+        // Object[] is a supertype even if the component type is a type variable or an interface.
+        ArrayType objectArray = ArrayType.ofComponentType(JavaTypes.OBJECT_TYPE);
+        result.add(objectArray);
+        for (ReferenceType componentSupertype : strictSupertypes((ReferenceType) componentType)) {
+          ArrayType arraySupertype = ArrayType.ofComponentType(componentSupertype);
+          if (!arraySupertype.equals(objectArray)) {
+            result.add(arraySupertype);
+          }
         }
       }
     } else if (type instanceof TypeVariable) {
@@ -449,7 +602,7 @@ public abstract class TypeVariable extends ParameterType {
         if (!result.contains(boundType)) {
           result.add(boundType);
         }
-        for (ReferenceType boundSupertype : getStrictSupertypes(boundType)) {
+        for (ReferenceType boundSupertype : strictSupertypes(boundType)) {
           if (!result.contains(boundSupertype)) {
             result.add(boundSupertype);
           }
@@ -493,7 +646,7 @@ public abstract class TypeVariable extends ParameterType {
    * @param other a type variable
    * @return true if {@code other} is this type variable with identical bounds
    */
-  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  @SuppressWarnings("ReferenceEquality") // fast path; pairs are compared by identity
   boolean isIdenticalTo(TypeVariable other) {
     if (this == other) {
       return true;
@@ -501,14 +654,143 @@ public abstract class TypeVariable extends ParameterType {
     if (!this.equals(other)) {
       return false;
     }
-    if (!(this instanceof ExplicitTypeVariable)) {
-      // The bounds of a capture variable can refer to the capture variable itself, so comparing
-      // them deeply would not terminate.
-      return getLowerTypeBound().equals(other.getLowerTypeBound())
-          && getUpperTypeBound().equals(other.getUpperTypeBound());
+    // The bounds of a type variable, such as a capture variable, can refer to the type variable
+    // itself, so the comparison of the bounds can compare the same pair of type variables again.
+    // As for a recursive bound in canBeInstantiatedBy, assume that the inner comparison succeeds:
+    // any difference is found by the comparison of the other parts of the bounds.
+    List<TypeVariable[]> inProgress = identityChecks.get();
+    for (TypeVariable[] pair : inProgress) {
+      if (pair[0] == this && pair[1] == other) {
+        return true;
+      }
     }
-    return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
-        && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    inProgress.add(new TypeVariable[] {this, other});
+    try {
+      return areIdentical(getLowerTypeBound(), other.getLowerTypeBound())
+          && areIdentical(getUpperTypeBound(), other.getUpperTypeBound());
+    } finally {
+      inProgress.remove(inProgress.size() - 1);
+    }
+  }
+
+  /**
+   * Returns true if the given types are equal and the type variables in them are identical, as
+   * determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * <p>This compares the types structurally, occurrence by occurrence. Comparing the lists returned
+   * by {@link ReferenceType#getTypeParameters()} would not suffice: those lists contain only one of
+   * several copies of a type variable, because the copies are equal. So, for copies {@code XS} and
+   * {@code XI} of a type variable {@code X} with other bounds, they would not distinguish {@code
+   * Map<X, XS>} from {@code Map<X, XI>}.
+   *
+   * <p>Array, class, interface, and wildcard types are compared structurally, without first
+   * comparing them with {@link Object#equals(Object)}. A wildcard bound nested in such a type can
+   * be a {@link LazyParameterBound} in one type and the equivalent {@link ReferenceBound} in the
+   * other, as for {@code List<? extends Outer<String>.Inner>} before and after a substitution; such
+   * bounds are not equal, but they are identical.
+   *
+   * @param type1 a type
+   * @param type2 a type
+   * @return true if the types are equal and the type variables in them are identical
+   */
+  @SuppressWarnings("ReferenceEquality") // fast path for the same object
+  static boolean areIdentical(ReferenceType type1, ReferenceType type2) {
+    if (type1 == type2) {
+      return true;
+    }
+    if (type1 instanceof TypeVariable && type2 instanceof TypeVariable) {
+      return ((TypeVariable) type1).isIdenticalTo((TypeVariable) type2);
+    }
+    if (type1 instanceof ArrayType && type2 instanceof ArrayType) {
+      Type component1 = ((ArrayType) type1).getComponentType();
+      Type component2 = ((ArrayType) type2).getComponentType();
+      if (component1.isReferenceType() && component2.isReferenceType()) {
+        return areIdentical((ReferenceType) component1, (ReferenceType) component2);
+      }
+      return component1.equals(component2);
+    }
+    if (type1 instanceof ClassOrInterfaceType && type2 instanceof ClassOrInterfaceType) {
+      ClassOrInterfaceType classType1 = (ClassOrInterfaceType) type1;
+      ClassOrInterfaceType classType2 = (ClassOrInterfaceType) type2;
+      if (type1.getClass() != type2.getClass()
+          || !classType1.getRuntimeClass().equals(classType2.getRuntimeClass())) {
+        return false;
+      }
+      ClassOrInterfaceType enclosing1 = getComparedEnclosingType(classType1);
+      ClassOrInterfaceType enclosing2 = getComparedEnclosingType(classType2);
+      if (enclosing1 == null || enclosing2 == null) {
+        if (enclosing1 != enclosing2) {
+          return false;
+        }
+      } else if (!areIdentical(enclosing1, enclosing2)) {
+        return false;
+      }
+      List<TypeArgument> arguments1 = classType1.getTypeArguments();
+      List<TypeArgument> arguments2 = classType2.getTypeArguments();
+      if (arguments1.size() != arguments2.size()) {
+        return false;
+      }
+      for (int i = 0; i < arguments1.size(); i++) {
+        if (!areIdentical(arguments1.get(i), arguments2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (type1 instanceof WildcardType && type2 instanceof WildcardType) {
+      WildcardType wildcard1 = (WildcardType) type1;
+      WildcardType wildcard2 = (WildcardType) type2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getLowerTypeBound(), wildcard2.getLowerTypeBound())
+          && areIdentical(wildcard1.getUpperTypeBound(), wildcard2.getUpperTypeBound());
+    }
+    return type1.equals(type2)
+        && areIdentical(type1.getTypeParameters(), type2.getTypeParameters());
+  }
+
+  /**
+   * Returns the enclosing type of the given type that {@link #areIdentical(ReferenceType,
+   * ReferenceType)} compares, or null if there is none. As in {@link
+   * InstantiatedType#equals(Object)}, an enclosing type of an {@link InstantiatedType} that is the
+   * generic form of its class, as {@code NonGenericOuter} for {@code
+   * NonGenericOuter.Inner<Integer>}, is equivalent to no enclosing type: some constructions of a
+   * type omit such an enclosing type.
+   *
+   * @param type a class or interface type
+   * @return the enclosing type of {@code type} that distinguishes it, or null
+   */
+  private static @Nullable ClassOrInterfaceType getComparedEnclosingType(
+      ClassOrInterfaceType type) {
+    if (!type.isMemberClass()) {
+      return null;
+    }
+    if (type instanceof InstantiatedType && type.enclosingType.isGenericForm()) {
+      return null;
+    }
+    return type.enclosingType;
+  }
+
+  /**
+   * Returns true if the given type arguments are equal and the type variables in them are
+   * identical, as determined by {@link #isIdenticalTo(TypeVariable)}.
+   *
+   * @param argument1 a type argument
+   * @param argument2 a type argument
+   * @return true if the type arguments are equal and the type variables in them are identical
+   */
+  private static boolean areIdentical(TypeArgument argument1, TypeArgument argument2) {
+    if (argument1 instanceof ReferenceArgument && argument2 instanceof ReferenceArgument) {
+      return areIdentical(
+          ((ReferenceArgument) argument1).getReferenceType(),
+          ((ReferenceArgument) argument2).getReferenceType());
+    }
+    if (argument1 instanceof WildcardArgument && argument2 instanceof WildcardArgument) {
+      WildcardArgument wildcard1 = (WildcardArgument) argument1;
+      WildcardArgument wildcard2 = (WildcardArgument) argument2;
+      return wildcard1.hasUpperBound() == wildcard2.hasUpperBound()
+          && areIdentical(wildcard1.getTypeBound(), wildcard2.getTypeBound());
+    }
+    return argument1.equals(argument2);
   }
 
   /**
@@ -535,6 +817,27 @@ public abstract class TypeVariable extends ParameterType {
     if (bound2 instanceof LazyParameterBound) {
       ParameterBound converted = ((LazyParameterBound) bound2).toReferenceBound();
       return converted != null && areIdentical(bound1, converted);
+    }
+    // As in areIdentical(ReferenceType, ReferenceType), compare the bounds structurally, rather
+    // than comparing their getTypeParameters(), which contain only one of several copies of a type
+    // variable.  Do not first compare the bounds with equals():  a wildcard bound nested in the
+    // bound type can be a LazyParameterBound in one and the equivalent ReferenceBound in the other.
+    if (bound1 instanceof ReferenceBound && bound2 instanceof ReferenceBound) {
+      return areIdentical(
+          ((ReferenceBound) bound1).getBoundType(), ((ReferenceBound) bound2).getBoundType());
+    }
+    if (bound1 instanceof IntersectionTypeBound && bound2 instanceof IntersectionTypeBound) {
+      List<ParameterBound> members1 = ((IntersectionTypeBound) bound1).getBounds();
+      List<ParameterBound> members2 = ((IntersectionTypeBound) bound2).getBounds();
+      if (members1.size() != members2.size()) {
+        return false;
+      }
+      for (int i = 0; i < members1.size(); i++) {
+        if (!areIdentical(members1.get(i), members2.get(i))) {
+          return false;
+        }
+      }
+      return true;
     }
     return bound1.equals(bound2)
         && areIdentical(bound1.getTypeParameters(), bound2.getTypeParameters());

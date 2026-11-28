@@ -24,6 +24,13 @@ public class MemberClassOfParameterizedTypeTest {
 
     /** Another non-generic member class of a generic class. */
     class Other {}
+
+    /** A non-generic member class that extends another member class of the same generic class. */
+    class SubInner extends Inner {}
+
+    /** A non-generic member class whose interface uses the type parameter of the generic class. */
+    @SuppressWarnings("ComparableType")
+    abstract class ComparableInner implements Comparable<T> {}
   }
 
   /**
@@ -49,6 +56,16 @@ public class MemberClassOfParameterizedTypeTest {
 
     abstract Outer<String>.Other otherType();
 
+    abstract Outer<Integer>.Inner integerInnerType();
+
+    abstract Outer<String>.SubInner subInnerType();
+
+    abstract Outer<String>.ComparableInner comparableInnerType();
+
+    abstract Comparable<String> stringComparable();
+
+    abstract Comparable<Integer> integerComparable();
+
     abstract Sub<Integer> subType();
 
     abstract List<Integer> integerList();
@@ -71,9 +88,25 @@ public class MemberClassOfParameterizedTypeTest {
   }
 
   /**
+   * Tests that the supertypes of a member class of a parameterized type, such as {@code
+   * Outer<String>.SubInner}, have the type arguments of its enclosing type.
+   */
+  @Test
+  public void testSupertypesOfMemberClassOfParameterizedType() throws NoSuchMethodException {
+    ReferenceType subInner = returnType("subInnerType");
+    assertTrue(subInner.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertFalse(subInner.isSubtypeOfOrEqualTo(returnType("integerInnerType")));
+
+    ReferenceType comparableInner = returnType("comparableInnerType");
+    assertTrue(comparableInner.isSubtypeOfOrEqualTo(returnType("stringComparable")));
+    assertFalse(comparableInner.isSubtypeOfOrEqualTo(returnType("integerComparable")));
+  }
+
+  /**
    * Returns the type {@code Outer<String>.C} for the given member class {@code C} of {@link Outer}.
-   * The type is constructed by substitution, because {@link Type#forType} discards the type
-   * arguments of the enclosing type of a non-generic member class, yielding {@code Outer<T>.C}.
+   * The type is constructed by substitution into the generic form {@code Outer<T>.C}. This
+   * exercises a different construction path than {@link Type#forType}, which also preserves the
+   * type arguments of the owner type of a reflected type such as {@code Outer<String>.Inner}.
    *
    * @param memberClass a non-generic member class of {@link Outer}
    * @return the member class, with {@code Outer<String>} as its enclosing type
@@ -98,6 +131,24 @@ public class MemberClassOfParameterizedTypeTest {
     EagerReferenceBound subBound = new EagerReferenceBound(sub);
     assertTrue(subBound.isLowerBound(inner, empty));
     assertFalse(subBound.isLowerBound(returnType("otherType"), empty));
+  }
+
+  /**
+   * The generic form {@code Sub<U>} of a class that extends {@code Outer<String>.Inner} is within
+   * the bound {@code Outer<String>.Inner}, but not within {@code Outer<Integer>.Inner}.
+   */
+  @Test
+  public void testEagerBoundOfGenericSubclassOfMemberClass() throws NoSuchMethodException {
+    ClassOrInterfaceType genericSub = ClassOrInterfaceType.forClass(Sub.class);
+    assertTrue(genericSub instanceof GenericClassType);
+    Substitution empty = new Substitution();
+    assertTrue(new EagerReferenceBound(returnType("innerType")).isUpperBound(genericSub, empty));
+    ClassOrInterfaceType genericInner = ClassOrInterfaceType.forClass(Outer.Inner.class);
+    ClassOrInterfaceType integerInner =
+        genericInner.substitute(
+            new Substitution(
+                genericInner.getTypeParameters(), ReferenceType.forClass(Integer.class)));
+    assertFalse(new EagerReferenceBound(integerInner).isUpperBound(genericSub, empty));
   }
 
   /**
