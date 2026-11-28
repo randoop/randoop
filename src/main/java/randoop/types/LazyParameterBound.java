@@ -153,10 +153,10 @@ class LazyParameterBound extends ParameterBound {
     if (isNonGenericMemberClass(type)) {
       // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
       // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
-      // isUpperBound and isLowerBound do:  the result's enclosing type is the owner type, such as
-      // Outer<String>, so the result is not equal to Outer<Integer>.Inner.  The substitution
-      // applies to the owner type, as in Outer<K>.Inner.  The result is unchanged if the owner type
-      // has no type variable.
+      // isUpperBound and isLowerBound do, and as any argument type that it is compared with is
+      // converted:  the result's enclosing type is the owner type, such as Outer<String>, so the
+      // result is not equal to Outer<Integer>.Inner.  The substitution applies to the owner type,
+      // as in Outer<K>.Inner.  The result is unchanged if the owner type has no type variable.
       return TypeArgument.forType(ReferenceType.forType(type).substitute(substitution));
     }
 
@@ -222,7 +222,7 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            // The substitution can still change the bounds of the type variable.
+            // The substitution can still instantiate a type variable in the bounds of lowerBound.
             bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
@@ -438,21 +438,35 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Returns this bound with the given substitution applied, after the substitution is extended to
-   * map to itself each type variable in this bound that it does not map. Each such type variable
-   * stands for an unknown type in the result.
+   * map each type variable in this bound that it does not map to that type variable, with the
+   * substitution applied to its bounds. Each such type variable stands for an unknown type in the
+   * result. Its bounds reflect the substitution, so that a comparison with the result checks it
+   * under the mappings of the type variables in its bounds. For example, for {@code <X, U extends
+   * X, V extends Map<V, U>>} and a substitution that maps {@code X} to {@code String}, the bound of
+   * {@code U} in the result is {@code String}.
    *
-   * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
-   * member class of a generic class whose owner type has no type variable, as in {@code
-   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged. Otherwise, the
-   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
-   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
-   * recurse forever.
+   * <p>Returns null if the result is still this bound. That would happen if this bound were a
+   * non-generic member class of a generic class whose owner type has no type variable, as in {@code
+   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged; but {@link
+   * ParameterBound#forType(Set, java.lang.reflect.Type)} creates an eager bound for such a type,
+   * and {@link #isLowerBound} and {@link #isUpperBound} compare such a bound without calling this
+   * method. Otherwise, the result is still this bound only for a kind of type that {@link
+   * #substitute(Substitution)} does not handle; then this method also fails an assertion. Comparing
+   * the unchanged bound would recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null
    */
   @Nullable ParameterBound substituteWithUnknowns(Substitution substitution) {
-    Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameterList());
+    Substitution completeSubstitution = substitution;
+    for (TypeVariable variable : getTypeParameterList()) {
+      if (completeSubstitution.get(variable) == null) {
+        // The substitution does not map `variable`, so applying it yields `variable` or a copy of
+        // `variable` whose bounds have the substitution applied.
+        completeSubstitution =
+            completeSubstitution.withMapping(variable, variable.substitute(substitution));
+      }
+    }
     ParameterBound b = this.substitute(completeSubstitution);
     if (b.equals(this)) {
       assert isNonGenericMemberClass(boundType)

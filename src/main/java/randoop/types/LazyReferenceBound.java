@@ -52,8 +52,8 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
-      return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
+      // The unknown type variable can be argType itself, or its upper bound.
+      return unknown.canBeSubtypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
   }
@@ -96,11 +96,13 @@ class LazyReferenceBound extends ReferenceBound {
    * For an upper bound, it also treats {@code argType} as within this bound if a supertype of
    * {@code argType} can instantiate the type variable, or if {@code argType} is a subtype of the
    * lower bound of the type variable; see {@link TypeVariable#canBeSupertypeOf}. For a lower bound,
-   * {@link EagerReferenceBound} instead compares {@code argType} with the upper bound of the type
-   * variable, so the two classes can differ. For example, for a type variable {@code U extends
-   * Integer} as a lower bound, {@link EagerReferenceBound} accepts {@code Number}, because {@code
-   * Integer} is a subtype of {@code Number}, but this class does not, because {@code U} cannot be
-   * {@code Number}.
+   * it also treats {@code argType} as within this bound if the upper bound of the type variable is
+   * a subtype of {@code argType}; see {@link TypeVariable#canBeSubtypeOf}. For a lower bound,
+   * {@link EagerReferenceBound} instead compares {@code argType} only with the upper bound of the
+   * type variable, so the two classes can differ. For example, for a type variable {@code U extends
+   * Number} as a lower bound, {@link EagerReferenceBound} does not accept {@code Integer}, because
+   * {@code Number} is not a subtype of {@code Integer}, but this class does, because {@code U} can
+   * be {@code Integer}.
    *
    * @param argType a type to compare with this bound
    * @param substitution a type substitution

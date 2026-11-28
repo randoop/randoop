@@ -149,7 +149,9 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Returns true if this wildcard contains the other wildcard (JLS section 4.5.1):
+   * Returns true if this wildcard contains the given one, following <a
+   * href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-4.html#jls-4.5.1">JLS section
+   * 4.5.1</a>:
    *
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code S} is a subtype of {@code T}.
@@ -158,7 +160,8 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}.
+   * A wildcard {@code ? super T} does not contain any wildcard with an upper bound, including
+   * {@code ?}.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.

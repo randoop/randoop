@@ -243,6 +243,11 @@ public class ParameterBoundTest {
     Inner<String>[] innerArray;
   }
 
+  /**
+   * A generic array type in which a type variable occurs only in an owner type is within itself as
+   * a bound. The conversion of a reflection type to a {@link ReferenceType} keeps the owner type,
+   * and a substitution applies to it.
+   */
   @Test
   public void testGenericArrayWithVariableInOwnerType() {
     java.lang.reflect.Type arrayType = fieldType(Outer.class, "innerArray");
@@ -295,6 +300,18 @@ public class ParameterBoundTest {
   @SuppressWarnings("unused")
   private static class NonGenericMemberClassBound<T extends GenericOuter<String>.NonGenericInner> {}
 
+  /** A subclass of a non-generic member class of a generic class. */
+  private static class NonGenericInnerSub extends GenericOuter<String>.NonGenericInner {
+    /**
+     * Creates a NonGenericInnerSub.
+     *
+     * @param outer the enclosing instance
+     */
+    NonGenericInnerSub(GenericOuter<String> outer) {
+      outer.super();
+    }
+  }
+
   @Test
   public void testNonGenericMemberClassBound() {
     TypeVariable t =
@@ -303,6 +320,7 @@ public class ParameterBoundTest {
         NonGenericMemberClassBound.class.getTypeParameters()[0].getBounds()[0];
     assertTrue(t.canBeInstantiatedBy(ReferenceType.forType(declaredBound)));
     assertFalse(t.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertTrue(t.canBeInstantiatedBy(ClassOrInterfaceType.forClass(NonGenericInnerSub.class)));
   }
 
   /**

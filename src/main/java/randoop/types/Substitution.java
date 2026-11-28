@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,27 +211,6 @@ public class Substitution {
       }
     }
     return false;
-  }
-
-  /**
-   * Returns a substitution that extends this one by mapping to itself each of the given type
-   * variables that this one does not map. Returns this substitution if it maps all of them.
-   *
-   * @param variables type variables
-   * @return a substitution that maps each of {@code variables}
-   */
-  Substitution extendWithIdentity(Collection<TypeVariable> variables) {
-    // A copy of this substitution, made when the first variable is added.
-    Substitution result = null;
-    for (TypeVariable variable : variables) {
-      if ((result == null ? this : result).get(variable) == null) {
-        if (result == null) {
-          result = new Substitution(this);
-        }
-        result.put(variable, variable);
-      }
-    }
-    return result == null ? this : result;
   }
 
   /**

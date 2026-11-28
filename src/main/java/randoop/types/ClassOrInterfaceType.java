@@ -75,8 +75,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Creates a {@code ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
    * reference. If type is a {@code java.lang.reflect.ParameterizedType}, then calls {@link
-   * ParameterizedType#forType(java.lang.reflect.Type)}. Otherwise, if type is a {@code Class}
-   * object, calls {@link #forClass(Class)}.
+   * ParameterizedType#forType(java.lang.reflect.Type)}; but for a non-generic member class of a
+   * generic class, as in {@code Outer<String>.Inner}, creates a {@link NonParameterizedType} whose
+   * enclosing type is the owner type unless the owner type is the generic form of its class.
+   * Otherwise, if type is a {@code Class} object, creates a {@link NonParameterizedType}.
    *
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
@@ -86,27 +88,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
       // A non-generic member class of a generic class, as in Outer<String>.Inner, shows up as a
-      // ParameterizedType.  Its enclosing type is the owner type, Outer<String>, rather than the
-      // generic form Outer<T> that forClass would give it.
+      // ParameterizedType whose raw type has no type parameters.  Its enclosing type is the owner
+      // type, Outer<String>, rather than the generic form Outer<T> that forClass would give it.
       Class<?> rawType = (Class<?>) t.getRawType();
       if (rawType.getTypeParameters().length == 0) {
-        java.lang.reflect.Type ownerType = t.getOwnerType();
-        if (!(ownerType instanceof java.lang.reflect.ParameterizedType)
-            || rawType.getEnclosingClass() == null
-            || java.lang.reflect.Modifier.isStatic(rawType.getModifiers())) {
-          return forClass(rawType);
-        }
-        ClassOrInterfaceType enclosing = forType(ownerType);
-        if (enclosing.isGenericForm()) {
-          // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
-          // Use forClass, whose enclosing type is the GenericClassType, so that the result is
-          // equal to forClass(rawType).
-          return forClass(rawType);
-        }
-        // Do not side-effect the cached result of forClass.
-        NonParameterizedType result = new NonParameterizedType(rawType);
-        result.enclosingType = enclosing;
-        return result;
+        return forNonGenericMemberClass(rawType, t.getOwnerType());
       }
       return ParameterizedType.forType(t);
     }
@@ -122,6 +108,44 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
+  }
+
+  /**
+   * Returns the type for a non-generic member class of a generic class, with the given owner type.
+   * The owner type gives the type arguments of the enclosing class, as {@code Outer<String>} does
+   * for {@code Outer<String>.Inner}, so that {@code Outer<String>.Inner} and {@code
+   * Outer<Integer>.Inner} are different types.
+   *
+   * <p>The owner type is preserved if it is parameterized and is not the generic form of its class.
+   * It can mention a type variable, as in {@code Outer<K>.Inner}, which a substitution
+   * instantiates; so code that converts bounds, such as {@link ParameterBound#forType}, examines
+   * owner types. If the owner type is the generic form of its class, as for {@code Inner} written
+   * within {@code Outer<T>}, then the result is the type that {@link #forClass(Class)} returns,
+   * whose enclosing type is the generic class. If the class is not an inner class, then the result
+   * is also the type that {@link #forClass(Class)} returns.
+   *
+   * @param memberClass a non-generic member class
+   * @param ownerType the reflected owner type of the member class, or null
+   * @return the type for {@code memberClass} with the given owner type
+   */
+  private static ClassOrInterfaceType forNonGenericMemberClass(
+      Class<?> memberClass, java.lang.reflect.@Nullable Type ownerType) {
+    if (!(ownerType instanceof java.lang.reflect.ParameterizedType)
+        || memberClass.getEnclosingClass() == null
+        || java.lang.reflect.Modifier.isStatic(memberClass.getModifiers())) {
+      return forClass(memberClass);
+    }
+    ClassOrInterfaceType enclosing = forType(ownerType);
+    if (enclosing.isGenericForm()) {
+      // The owner type is the generic form of its class, as in Outer<T>.Inner within Outer.
+      // Use forClass, whose enclosing type is the GenericClassType, so that the result is
+      // equal to forClass(memberClass).
+      return forClass(memberClass);
+    }
+    // Do not side-effect the cached result of forClass.
+    NonParameterizedType result = new NonParameterizedType(memberClass);
+    result.enclosingType = enclosing;
+    return result;
   }
 
   // This implementation is for an abstract class; subclasses do the real work.
