@@ -446,11 +446,11 @@ class LazyParameterBound extends ParameterBound {
    * {@code U} in the result is {@code String}.
    *
    * <p>Returns null if the result is still this bound. That would happen if this bound were a
-   * non-generic member class of a generic class whose owner type has no type variable, as in
-   * {@code Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged; but
-   * {@link ParameterBound#forType(Set, java.lang.reflect.Type)} creates an eager bound for such a
-   * type, and {@link #isLowerBound} and {@link #isUpperBound} compare such a bound without calling
-   * this method. Otherwise, the result is still this bound only for a kind of type that {@link
+   * non-generic member class of a generic class whose owner type has no type variable, as in {@code
+   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged; but {@link
+   * ParameterBound#forType(Set, java.lang.reflect.Type)} creates an eager bound for such a type,
+   * and {@link #isLowerBound} and {@link #isUpperBound} compare such a bound without calling this
+   * method. Otherwise, the result is still this bound only for a kind of type that {@link
    * #substitute(Substitution)} does not handle; then this method also fails an assertion. Comparing
    * the unchanged bound would recurse forever.
    *

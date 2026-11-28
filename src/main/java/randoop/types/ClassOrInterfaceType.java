@@ -116,8 +116,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * for {@code Outer<String>.Inner}, so that {@code Outer<String>.Inner} and {@code
    * Outer<Integer>.Inner} are different types.
    *
-   * <p>The owner type is preserved if it is parameterized and is not the generic form of its
-   * class. It can mention a type variable, as in {@code Outer<K>.Inner}, which a substitution
+   * <p>The owner type is preserved if it is parameterized and is not the generic form of its class.
+   * It can mention a type variable, as in {@code Outer<K>.Inner}, which a substitution
    * instantiates; so code that converts bounds, such as {@link ParameterBound#forType}, examines
    * owner types. If the owner type is the generic form of its class, as for {@code Inner} written
    * within {@code Outer<T>}, then the result is the type that {@link #forClass(Class)} returns,

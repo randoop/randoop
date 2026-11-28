@@ -445,11 +445,11 @@ public abstract class TypeVariable extends ParameterType {
    *
    * <p>A supertype of a class or interface type that mentions a type variable that the class or
    * interface type does not is omitted. The supertypes of a GenericClassType are computed as
-   * declared, as {@code Parent<String>} for {@code Child<X> extends Parent<String>}, so they mention
-   * only its type variables, but this guards against any supertype that does not preserve the
-   * relationship between the type parameters. A supertype that mentions only the type variables of
-   * the type, such as {@code List<E>} for {@code ArrayList<E>}, is a supertype of the type. For a
-   * class or interface type with a wildcard argument, the supertypes are those of its capture
+   * declared, as {@code Parent<String>} for {@code Child<X> extends Parent<String>}, so they
+   * mention only its type variables, but this guards against any supertype that does not preserve
+   * the relationship between the type parameters. A supertype that mentions only the type variables
+   * of the type, such as {@code List<E>} for {@code ArrayList<E>}, is a supertype of the type. For
+   * a class or interface type with a wildcard argument, the supertypes are those of its capture
    * conversion, so the supertypes that mention a capture variable are omitted.
    *
    * @param type a reference type
