@@ -12,7 +12,9 @@ import static org.junit.Assert.fail;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
@@ -21,6 +23,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 
 /**
  * Tests for {@link OperationExtractor} to ensure it is collecting the right types and operations.
@@ -184,5 +187,59 @@ public class OperationExtractorTest {
                       "randoop.reflection.accessibilitytest.InaccessibleArgumentInput.mWildcard")),
               is(equalTo("java.lang.Object.getClass"))));
     }
+  }
+
+  /**
+   * Returns the output type of each method that {@link OperationExtractor} returns for the given
+   * class.
+   *
+   * @param c a class
+   * @return a map from the simple name of each method of {@code c} to its output type
+   */
+  private static Map<String, Type> methodOutputTypes(Class<?> c) throws RandoopSpecificationError {
+    Map<String, Type> result = new HashMap<>();
+    for (TypedOperation operation : OperationExtractor.operations(c)) {
+      if (operation.isMethodCall()) {
+        String name = operation.getName();
+        result.put(name.substring(name.lastIndexOf('.') + 1), operation.getOutputType());
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A class that is not generic and extends a member class of an instantiation of a generic class
+   * inherits operations that are instantiated by the type arguments of that enclosing type.
+   */
+  @Test
+  public void memberSubclassTest() throws RandoopSpecificationError {
+    ReferenceType integerType = JavaTypes.INT_TYPE.toBoxedPrimitive();
+
+    // InnerSubclass extends MemberSubclassOuter<Integer>.Inner.
+    ClassOrInterfaceType genericInner =
+        ClassOrInterfaceType.forClass(MemberSubclassOuter.Inner.class);
+    Substitution substitution =
+        ClassOrInterfaceType.forClass(MemberSubclassOuter.InnerSubclass.class)
+            .getInstantiatingSubstitution(genericInner);
+    assertNotNull(substitution);
+    assertEquals(integerType, substitution.get(genericInner.getTypeParameters().get(0)));
+    assertEquals(
+        integerType, methodOutputTypes(MemberSubclassOuter.InnerSubclass.class).get("getT"));
+
+    // StringInnerSubclass extends MemberSubclassOuter<Integer>.StringInner, which extends
+    // GenericInner<String>.
+    ClassOrInterfaceType genericGenericInner =
+        ClassOrInterfaceType.forClass(MemberSubclassOuter.GenericInner.class);
+    substitution =
+        ClassOrInterfaceType.forClass(MemberSubclassOuter.StringInnerSubclass.class)
+            .getInstantiatingSubstitution(genericGenericInner);
+    assertNotNull(substitution);
+    assertEquals(integerType, substitution.get(genericGenericInner.getTypeParameters().get(0)));
+    assertEquals(
+        JavaTypes.STRING_TYPE, substitution.get(genericGenericInner.getTypeParameters().get(1)));
+    Map<String, Type> outputTypes =
+        methodOutputTypes(MemberSubclassOuter.StringInnerSubclass.class);
+    assertEquals(integerType, outputTypes.get("getT"));
+    assertEquals(JavaTypes.STRING_TYPE, outputTypes.get("getI"));
   }
 }
