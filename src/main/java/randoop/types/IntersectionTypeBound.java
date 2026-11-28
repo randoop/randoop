@@ -201,4 +201,34 @@ class IntersectionTypeBound extends ParameterBound {
     }
     return true;
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given bound is a lower bound on all of the member bounds of this object
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (!b.hasLowerBound(lowerBound, substitution)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given type is an upper bound on some member bound of this object
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (b.hasUpperBound(upperBound, substitution)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

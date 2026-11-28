@@ -52,7 +52,8 @@ class LazyReferenceBound extends ReferenceBound {
   public boolean isLowerBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself.
+      // The unknown type variable can be argType itself.  Its bounds are checked with the mappings
+      // of the substitution, because they can mention type variables that it instantiates.
       return unknown.canBeInstantiatedBy((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isLowerBound(argType, substitution);
@@ -72,13 +73,16 @@ class LazyReferenceBound extends ReferenceBound {
    *
    * <p>The bound type can still contain type variables after the substitution is applied. It is
    * compared as an {@link EagerReferenceBound} would be, except as described in {@link
-   * #getUnknownTypeVariable(Type, Substitution)}.
+   * #getUnknownTypeVariable(Type, Substitution)}. For an upper bound, the unknown type variable can
+   * be {@code argType} or any of its supertypes.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution substitution) {
     TypeVariable unknown = getUnknownTypeVariable(argType, substitution);
     if (unknown != null) {
-      // The unknown type variable can be argType itself, one of its supertypes, or its lower bound.
+      // The unknown type variable can be argType itself, one of its supertypes, or its lower
+      // bound.  Its bounds are checked with the mappings of the substitution, because they can
+      // mention type variables that it instantiates.
       return unknown.canBeSupertypeOf((ReferenceType) argType, substitution);
     }
     return new EagerReferenceBound(getBoundType()).isUpperBound(argType, substitution);
@@ -113,5 +117,45 @@ class LazyReferenceBound extends ReferenceBound {
     }
     ReferenceType boundType = getBoundType().substitute(substitution);
     return boundType.isVariable() ? (TypeVariable) boundType : null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>If the type of this bound is a capture variable, compares {@code lowerBound} with it as an
+   * {@link EagerReferenceBound} would, which accounts for the lower bound of the capture variable,
+   * as for a capture of {@code ? super String}. Otherwise, returns true only if {@code lowerBound}
+   * is the null type; or, after the substitution is applied to it, is the type of this bound or a
+   * subtype of it in which every type variable stands for itself, as {@code ArrayList<T>} and
+   * {@code List<T>} itself are of {@code List<T>}, and {@code NullType[]} is of {@code T[]}. The
+   * type of this bound contains type variables, so it stands for every instantiation of them; a
+   * type such as {@code List<String>} is not a subtype of each instantiation of {@code List<T>}.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (getBoundType() instanceof CaptureTypeVariable) {
+      return super.hasLowerBound(lowerBound, substitution);
+    }
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    // Compare enclosing types too, which InstantiatedType.equals ignores:  Outer<Integer>.Inner<X>
+    // is not Outer<Number>.Inner<X>.
+    if (lowerBound instanceof ReferenceBound
+        && Subtyping.isIdentical(
+            ((ReferenceBound) lowerBound).getBoundType().substitute(substitution),
+            getBoundType())) {
+      return true;
+    }
+    ParameterBound b = lowerBound.substitute(substitution);
+    if (!(b instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceType lowerType = ((ReferenceBound) b).getBoundType();
+    // A substitution with no unknowns makes each type variable stand for itself, so that
+    // ArrayList<T> is a subtype of List<T> but List<String> is not.  The null type is a subtype of
+    // every reference type, including a type variable, so array covariance makes, for example,
+    // `NullType[]` a subtype of `T[]`.
+    return Subtyping.isSubtypeOrEqual(lowerType, getBoundType(), new Substitution());
   }
 }

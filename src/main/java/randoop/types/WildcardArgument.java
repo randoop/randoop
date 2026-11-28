@@ -103,7 +103,11 @@ public class WildcardArgument extends TypeArgument {
   @Override
   public boolean contains(TypeArgument argument) {
     if (argument.isWildcard()) {
-      return argumentType.contains(((WildcardArgument) argument).argumentType);
+      WildcardType otherWildcard = ((WildcardArgument) argument).argumentType;
+      if (argumentType.equals(otherWildcard)) {
+        return true;
+      }
+      return argumentType.contains(otherWildcard);
     }
     ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
     ReferenceType boundType = ReferenceBound.asReferenceType(argumentType.getTypeBound());

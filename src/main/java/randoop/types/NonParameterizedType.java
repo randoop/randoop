@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,13 +124,23 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of direct interfaces for this class.
+   * Returns the list of direct interfaces for this class. For a member class, such as {@code
+   * Outer<Integer>.Inner}, the interfaces are instantiated by the type arguments of the enclosing
+   * types.
    *
    * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
+    if (!isMemberClass()) {
+      return CollectionsPlume.mapList(
+          ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+    }
+    // For a member class such as Outer<String>.Inner, substitute the type arguments of the
+    // enclosing types.
+    Substitution substitution = getSupertypeSubstitution();
     return CollectionsPlume.mapList(
-        ClassOrInterfaceType::forType, runtimeType.getGenericInterfaces());
+        (java.lang.reflect.Type type) -> forType(type).substitute(substitution),
+        runtimeType.getGenericInterfaces());
   }
 
   @Override
@@ -162,13 +174,19 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
       return superclass == null ? null : forClass(superclass);
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
-      return supertype == null ? null : forType(supertype);
+      // For a member class such as Outer<String>.Sub, whose superclass is Outer<T>.Base,
+      // substitute the type arguments of the enclosing types.
+      if (supertype == null) {
+        return null;
+      }
+      ClassOrInterfaceType result = forType(supertype);
+      return isMemberClass() ? result.substitute(getSupertypeSubstitution()) : result;
     }
   }
 
@@ -260,15 +278,90 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * JLS subtyping rule. Raw {@code List} is not a subtype of any other parameterized type, such as
    * {@code List<T>} for a type variable {@code T}; it is assignable to such a parameterized type
    * only by unchecked conversion.
+   *
+   * <p>A member class that declares no type parameters is a subtype of the same member class whose
+   * enclosing type is a supertype of its enclosing type. For example, {@code Outer<String>.Inner}
+   * is a subtype of {@code Outer<?>.Inner}, but not of {@code Outer<Long>.Inner}.
    */
   @Override
   public boolean isSubtypeOfOrEqualTo(Type otherType) {
     if (super.isSubtypeOfOrEqualTo(otherType)) {
       return true;
     }
-    return otherType instanceof ClassOrInterfaceType
-        && otherType.runtimeClassIs(runtimeType)
-        && ((ClassOrInterfaceType) otherType).isGenericForm();
+    if (!(otherType instanceof ClassOrInterfaceType)) {
+      return false;
+    }
+    ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
+    if (!otherType.runtimeClassIs(runtimeType)) {
+      return hasMemberClassSupertype(otherClassType);
+    }
+    if (otherClassType.isGenericForm()) {
+      return true;
+    }
+    // A member class that declares no type parameters, such as Outer<String>.Inner, is a subtype
+    // of the same member class of a supertype of its enclosing type, such as Outer<?>.Inner.
+    return !this.isRawtype()
+        && otherClassType instanceof NonParameterizedType
+        && this.isMemberClass()
+        && otherClassType.isMemberClass()
+        && this.enclosingType.isSubtypeOfOrEqualTo(otherClassType.enclosingType);
+  }
+
+  /**
+   * Returns true if some proper supertype of this type has the same class as {@code memberType}, a
+   * member class that declares no type parameters, and is a subtype of {@code memberType} by {@link
+   * #isSubtypeOfOrEqualTo(Type)}. For example, for {@code class Child extends Outer<String>.Inner},
+   * returns true for {@code Outer<?>.Inner} but false for {@code Outer<Long>.Inner}. The superclass
+   * check in {@link ClassOrInterfaceType#isSubclassOf} compares types for equality, so it does not
+   * find such a supertype.
+   *
+   * @param memberType a class or interface type, whose class differs from this type's class
+   * @return true if a supertype of this type with the class of {@code memberType} is a subtype of
+   *     {@code memberType}
+   */
+  private boolean hasMemberClassSupertype(ClassOrInterfaceType memberType) {
+    if (this.isRawtype()
+        || !(memberType instanceof NonParameterizedType)
+        || !memberType.isMemberClass()) {
+      return false;
+    }
+    Class<?> target = memberType.getRuntimeClass();
+    if (!target.isAssignableFrom(runtimeType)) {
+      return false;
+    }
+    Deque<ClassOrInterfaceType> worklist = new ArrayDeque<>();
+    addDirectSupertypes(this, worklist);
+    while (!worklist.isEmpty()) {
+      ClassOrInterfaceType supertype = worklist.pop();
+      if (!target.isAssignableFrom(supertype.getRuntimeClass())) {
+        continue;
+      }
+      if (supertype.runtimeClassIs(target)) {
+        if (supertype.isSubtypeOfOrEqualTo(memberType)) {
+          return true;
+        }
+      } else {
+        addDirectSupertypes(supertype, worklist);
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Adds the direct superclass and the direct interfaces of the given type to the worklist.
+   *
+   * @param type a class or interface type
+   * @param worklist the worklist; modified by this method
+   */
+  private static void addDirectSupertypes(
+      ClassOrInterfaceType type, Deque<ClassOrInterfaceType> worklist) {
+    ClassOrInterfaceType superclass = type.getSuperclass();
+    if (superclass != null) {
+      worklist.push(superclass);
+    }
+    for (ClassOrInterfaceType iface : type.getInterfaces()) {
+      worklist.push(iface);
+    }
   }
 
   /**

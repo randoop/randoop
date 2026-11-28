@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -43,6 +44,134 @@ public class LazyParameterBoundTest {
   }
 
   /**
+   * A generic class with a generic member class, which has a member class.
+   *
+   * @param <A> the type parameter
+   */
+  static class MemberOuter<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Middle<B> {
+      /** A member class with no type parameters of its own. */
+      class Deep {}
+    }
+  }
+
+  /**
+   * Type parameters whose recursive bounds differ only in the owner type of a generic member class.
+   *
+   * @param <U> a type parameter bounded by {@code List<MemberOuter<String>.Middle<U>.Deep>}
+   * @param <V> a type parameter bounded by {@code List<MemberOuter<Long>.Middle<U>.Deep>}
+   */
+  static class OwnerOfGenericMemberBound<
+      U extends List<MemberOuter<String>.Middle<U>.Deep>,
+      V extends List<MemberOuter<Long>.Middle<U>.Deep>> {}
+
+  /**
+   * Returns the enclosing type of the enclosing type of the type argument of the given bound, whose
+   * type is {@code List<MemberOuter<X>.Middle<U>.Deep>}.
+   *
+   * @param bound the bound
+   * @return the type {@code MemberOuter<X>} in the bound
+   */
+  private static ClassOrInterfaceType getOuterOfDeep(ReferenceBound bound) {
+    InstantiatedType list = (InstantiatedType) bound.getBoundType();
+    ClassOrInterfaceType deep =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType middle = deep.enclosingType;
+    assertTrue(middle != null);
+    return middle.enclosingType;
+  }
+
+  /** Converting a bound preserves the owner type of a generic member class. */
+  @Test
+  public void testOwnerOfGenericMemberClassPreserved() {
+    List<TypeVariable> parameters =
+        GenericClassType.forClass(OwnerOfGenericMemberBound.class).getTypeParameters();
+    ParameterBound uBound = parameters.get(0).getUpperTypeBound();
+    ParameterBound vBound = parameters.get(1).getUpperTypeBound();
+    assertTrue(uBound instanceof LazyParameterBound);
+    assertTrue(vBound instanceof LazyParameterBound);
+    ReferenceBound uConverted = ((LazyParameterBound) uBound).toReferenceBound();
+    ReferenceBound vConverted = ((LazyParameterBound) vBound).toReferenceBound();
+    GenericClassType outer = GenericClassType.forClass(MemberOuter.class);
+    assertEquals(outer.instantiate(JavaTypes.STRING_TYPE), getOuterOfDeep(uConverted));
+    assertEquals(outer.instantiate(ReferenceType.forClass(Long.class)), getOuterOfDeep(vConverted));
+    assertFalse(Subtyping.isIdentical(uConverted.getBoundType(), vConverted.getBoundType()));
+  }
+
+  /**
+   * A generic class with a member class, and a member class whose type parameter's bound contains
+   * the first member class with a declaration-form owner.
+   *
+   * @param <A> the type parameter
+   */
+  static class DeclarationOwner<A> {
+    /**
+     * A generic member class.
+     *
+     * @param <B> the type parameter
+     */
+    class Inner<B> {}
+
+    /**
+     * A member class whose type parameter's bound is {@code List<DeclarationOwner<A>.Inner<T>>}.
+     *
+     * @param <T> the type parameter
+     */
+    class Holder<T extends List<Inner<T>>> {}
+  }
+
+  /**
+   * Substituting a copy of a type parameter with other bounds into a declaration-form owner keeps
+   * the copy, rather than restoring the declaration.
+   */
+  @Test
+  public void testDeclarationFormOwnerKeepsSubstitutedCopy() {
+    TypeVariable a = GenericClassType.forClass(DeclarationOwner.class).getTypeParameters().get(0);
+    TypeVariable t =
+        GenericClassType.forClass(DeclarationOwner.Holder.class).getTypeParameters().get(0);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    TypeVariable aCopy =
+        a.createCopyWithBounds(
+            a.getLowerTypeBound(), new EagerReferenceBound(ReferenceType.forClass(Number.class)));
+    List<TypeVariable> variables = new ArrayList<>();
+    variables.add(t);
+    variables.add(a);
+    List<ReferenceType> types = new ArrayList<>();
+    types.add(JavaTypes.STRING_TYPE);
+    types.add(aCopy);
+    ParameterBound substituted = bound.substitute(new Substitution(variables, types));
+    InstantiatedType list = (InstantiatedType) ((ReferenceBound) substituted).getBoundType();
+    ClassOrInterfaceType inner =
+        (ClassOrInterfaceType)
+            ((ReferenceArgument) list.getTypeArguments().get(0)).getReferenceType();
+    ClassOrInterfaceType owner = inner.enclosingType;
+    assertTrue(owner instanceof InstantiatedType);
+    ReferenceType ownerArgument =
+        ((ReferenceArgument) owner.getTypeArguments().get(0)).getReferenceType();
+    assertTrue(TypeVariable.areIdentical(aCopy, ownerArgument));
+  }
+
+  @Test
+  public void testObjectIsUpperBoundOfLazyBound() {
+    TypeVariable t =
+        GenericClassType.forClass(OtherNestedArgumentBound.class).getTypeParameters().get(1);
+    ParameterBound bound = t.getUpperTypeBound();
+    assertTrue(bound instanceof LazyParameterBound);
+    // Object is an upper bound of every reference type, including the type of a lazy bound.
+    assertTrue(
+        new EagerReferenceBound(JavaTypes.OBJECT_TYPE).isUpperBound(bound, new Substitution()));
+    assertFalse(
+        new EagerReferenceBound(JavaTypes.STRING_TYPE).isUpperBound(bound, new Substitution()));
+  }
+
+  /**
    * A type parameter whose self-referential bound contains an array of the type parameter.
    *
    * @param <T> the type parameter
@@ -59,6 +188,31 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(List.class)
             .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
         ((ReferenceBound) substituted).getBoundType());
+  }
+
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard whose upper bound is a generic array type that contains no type variable. */
+    List<? extends List<String>[]> arrayOfListWildcard;
+  }
+
+  @Test
+  public void testGenericArrayBoundWithoutTypeVariable() throws NoSuchFieldException {
+    java.lang.reflect.ParameterizedType fieldType =
+        (java.lang.reflect.ParameterizedType)
+            FieldTypes.class.getDeclaredField("arrayOfListWildcard").getGenericType();
+    java.lang.reflect.WildcardType wildcard =
+        (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
+    ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
+    // The bound contains no type variable, so it is eager, and a substitution does not change it.
+    assertTrue(bound instanceof EagerReferenceBound);
+    ArrayType arrayOfList =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    assertEquals(new EagerReferenceBound(arrayOfList), bound.substitute(new Substitution()));
+    assertTrue(bound.isUpperBound(arrayOfList, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
   @Test
