@@ -99,8 +99,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       // declaration of the member class is correct, and getPreservedOwnerType returns null.
       // Otherwise, the owner type is preserved.
       java.lang.reflect.ParameterizedType ownerType = getPreservedOwnerType(t);
-      // A member class with no type parameters of its own, such as Outer<E>.Inner, shows up as a
-      // ParameterizedType whose owner type supplies the type arguments.
+      // A member class with no type parameters of its own, such as Outer<String>.Inner, shows up
+      // as a ParameterizedType whose owner type supplies the type arguments.  Its enclosing type is
+      // the owner type, Outer<String>, rather than the generic form Outer<T> that forClass would
+      // give it.
       if (ownerType != null) {
         // Use the owner type rather than the enclosing class, because the owner type's type
         // arguments may differ from the enclosing class's type parameters.  For example, in
@@ -111,6 +113,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         result.enclosingType = forType(ownerType);
         return result;
       }
+      // The result is the generic form of the member class.  Use forClass, whose enclosing type is
+      // the GenericClassType, so that the result is equal to forClass(rawType).
       return forClass(rawType);
     }
 
