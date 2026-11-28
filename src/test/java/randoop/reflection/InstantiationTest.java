@@ -206,12 +206,19 @@ public class InstantiationTest {
     addTypes(JavaTypes.STRING_TYPE, inputTypes);
     getOperations(model, classOperations, inputTypes);
 
+    // WildcardBoundBuilder<ConcreteWildcardBoundBuilder>
+    InstantiatedType expectedType =
+        GenericClassType.forClass(WildcardBoundBuilder.class)
+            .instantiate(ClassOrInterfaceType.forClass(ConcreteWildcardBoundBuilder.class));
     boolean foundCreate = false;
     for (TypedOperation operation : classOperations) {
       if (operation.getName().endsWith(".create")
           && ((TypedClassOperation) operation).getDeclaringType().getRuntimeClass()
               == WildcardBoundBuilder.class) {
         foundCreate = true;
+        // The receiver and return types are specialized, not erased.
+        assertEquals(expectedType, operation.getInputTypes().get(0));
+        assertEquals(expectedType, operation.getOutputType());
       }
     }
     assertTrue("should instantiate WildcardBoundBuilder.create", foundCreate);
@@ -343,6 +350,10 @@ public class InstantiationTest {
     TypedClassOperation instance = instantiator.instantiate(max);
     assertNotNull("instantiation failed for " + max, instance);
     assertEquals(JavaTypes.STRING_TYPE, instance.getOutputType());
+    // The capture variable for the wildcard is instantiated, too.
+    assertEquals(
+        GenericClassType.forClass(Collection.class).instantiate(JavaTypes.STRING_TYPE),
+        instance.getInputTypes().get(0));
   }
 
   /**

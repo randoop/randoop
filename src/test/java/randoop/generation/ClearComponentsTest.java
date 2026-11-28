@@ -1,19 +1,26 @@
 package randoop.generation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.plumelib.util.SIList;
 import randoop.condition.RandoopSpecificationError;
+import randoop.generation.literaltfidf.ScopeToLiteralStatistics;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
@@ -98,6 +105,106 @@ public class ClearComponentsTest {
     assertFalse(primitivesAfterClear.isEmpty());
   }
 
+  /** Clearing the component set keeps Orienteering's details of the retained sequences only. */
+  @Test
+  public void orienteeringRetainsDetailsOfRetainedSequences() {
+    Sequence seed = Sequence.createSequenceForPrimitive(1);
+    Sequence generated = Sequence.createSequenceForPrimitive(2);
+    OrienteeringSelection selector = new OrienteeringSelection(Collections.singleton(seed));
+    selector.createdExecutableSequence(new ExecutableSequence(generated));
+    // Selecting the seed changes its weight.
+    selector.selectInputSequence(SIList.from(Collections.singletonList(seed)));
+    Double seedWeight = selector.getWeight(seed);
+    assertNotNull(seedWeight);
+
+    selector.componentsCleared(Collections.singleton(seed));
+    assertEquals(seedWeight, selector.getWeight(seed));
+    assertNull(selector.getWeight(generated));
+  }
+
+  /** Clearing the component set keeps the small-tests weights of the retained sequences only. */
+  @Test
+  public void smallTestsRetainsWeightsOfRetainedSequences() {
+    Sequence seed = Sequence.createSequenceForPrimitive(1);
+    Sequence generated = Sequence.createSequenceForPrimitive(2);
+    SmallTestsSequenceSelection selector = new SmallTestsSequenceSelection();
+    selector.selectInputSequence(SIList.from(Arrays.asList(seed, generated)));
+    assertNotNull(selector.getWeight(seed));
+    assertNotNull(selector.getWeight(generated));
+
+    selector.componentsCleared(Collections.singleton(seed));
+    assertNotNull(selector.getWeight(seed));
+    assertNull(selector.getWeight(generated));
+  }
+
+  /**
+   * Clearing the component set via the generator keeps each weighted selector's weights of literals
+   * and discards its weights of generated sequences.
+   */
+  @Test
+  public void generatorClearUpdatesSelectorWeights() throws Exception {
+    checkGeneratorClearUpdatesSelectorWeights(GenInputsAbstract.InputSelectionMode.ORIENTEERING);
+    checkGeneratorClearUpdatesSelectorWeights(GenInputsAbstract.InputSelectionMode.SMALL_TESTS);
+  }
+
+  /**
+   * Checks that {@link ForwardGenerator#clearComponents} keeps the selector's weight of a literal
+   * and discards its weight of a generated sequence.
+   *
+   * @param inputSelection the value for {@link GenInputsAbstract#input_selection}
+   * @throws RandoopSpecificationError if a specification of the class cannot be evaluated
+   */
+  private static void checkGeneratorClearUpdatesSelectorWeights(
+      GenInputsAbstract.InputSelectionMode inputSelection) throws RandoopSpecificationError {
+    GenInputsAbstract.input_selection = inputSelection;
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Adder.class, componentMgr);
+    InputSequenceSelector selector = gen.getInputSequenceSelector();
+
+    for (int i = 0; i < 100; i++) {
+      gen.step();
+    }
+    Set<Sequence> generatedSequences = nonSeedPrimitives(componentMgr, seeds);
+    assertFalse(generatedSequences.isEmpty());
+    Sequence generated = generatedSequences.iterator().next();
+
+    GenInputsAbstract.literals_level = GenInputsAbstract.ClassLiteralsMode.CLASS;
+    Sequence literal = Sequence.createSequenceForPrimitive(4242);
+    assertFalse(generatedSequences.contains(literal));
+    ScopeToLiteralStatistics literals = new ScopeToLiteralStatistics();
+    literals.incrementNumUses(ClassOrInterfaceType.forClass(Adder.class), literal, 1);
+    componentMgr.setScopeToLiteralStatistics(literals);
+
+    // Selecting a sequence caches its weight (and, for Orienteering, changes it).
+    selector.selectInputSequence(SIList.from(Collections.singletonList(literal)));
+    selector.selectInputSequence(SIList.from(Collections.singletonList(generated)));
+    Double literalWeight = getWeight(selector, literal);
+    assertNotNull(literalWeight);
+    assertNotNull(getWeight(selector, generated));
+
+    gen.clearComponents();
+    assertEquals(literalWeight, getWeight(selector, literal));
+    assertNull(getWeight(selector, generated));
+  }
+
+  /**
+   * Returns the weight that the given selector has cached for the given sequence, or null.
+   *
+   * @param selector an {@link OrienteeringSelection} or a {@link SmallTestsSequenceSelection}
+   * @param sequence a sequence
+   * @return the weight that the selector has cached for the sequence, or null
+   */
+  private static @Nullable Double getWeight(InputSequenceSelector selector, Sequence sequence) {
+    if (selector instanceof OrienteeringSelection) {
+      return ((OrienteeringSelection) selector).getWeight(sequence);
+    } else if (selector instanceof SmallTestsSequenceSelection) {
+      return ((SmallTestsSequenceSelection) selector).getWeight(sequence);
+    } else {
+      throw new IllegalArgumentException("Not a weighted selector: " + selector);
+    }
+  }
+
   /**
    * {@link ForwardGenerator#step} clears the component set when the number of generated sequences
    * reaches {@code --clear}, and generation continues afterward.
@@ -123,6 +230,34 @@ public class ClearComponentsTest {
     }
     assertTrue(numClears > 1);
     assertTrue(numCreatedAfterClear > 0);
+  }
+
+  /**
+   * {@link ForwardGenerator#step} clears the component set when the number of generated sequences
+   * exceeds {@code --clear}, not only when it equals it, and retains the seeds.
+   */
+  @Test
+  public void stepClearsAboveThreshold() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    GenInputsAbstract.clear = 10;
+
+    Set<Sequence> added = new HashSet<>();
+    for (int i = 0; i <= GenInputsAbstract.clear; i++) {
+      Sequence s = Sequence.createSequenceForPrimitive(1_000_000 + i);
+      componentMgr.addGeneratedSequence(s);
+      added.add(s);
+    }
+    assertEquals(GenInputsAbstract.clear + 1, componentMgr.numGeneratedSequences());
+
+    gen.step();
+
+    Set<Sequence> afterStep = componentMgr.getAllGeneratedSequences();
+    assertTrue(afterStep.containsAll(seeds));
+    for (Sequence s : added) {
+      assertFalse(afterStep.contains(s));
+    }
   }
 
   /**
