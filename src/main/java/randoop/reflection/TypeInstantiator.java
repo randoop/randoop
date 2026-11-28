@@ -408,17 +408,19 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns the parameterized input types that instantiate the given type, each with its
+   * Returns the class or interface input types that instantiate the given type, each with its
    * instantiating substitution.
    *
    * @param patternType a type
-   * @return a map from each parameterized input type that is an instantiation of {@code
+   * @return a map from each class or interface input type that is an instantiation of {@code
    *     patternType} and has an instantiating substitution for it, to that substitution
    */
   private Map<ReferenceType, Substitution> matchingInputTypes(ClassOrInterfaceType patternType) {
     Map<ReferenceType, Substitution> matches = new LinkedHashMap<>();
     for (Type inputType : inputTypes) {
-      if (inputType.isParameterized()
+      // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
+      // not be parameterized.
+      if (inputType.isClassOrInterfaceType()
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         // isInstantiationOf checks each type argument separately, so it accepts
         // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
@@ -524,9 +526,11 @@ public class TypeInstantiator {
         Type paramType = origParamType.substitute(substitution);
         if (paramType.isGeneric()) {
           if (paramType.isClassOrInterfaceType()) {
+            // The parameter type need not be a ParameterizedType:  for a member class with no type
+            // parameters of its own, such as Outer<E>.Inner, it is a NonParameterizedType.
             // TODO: This seems redundant with isInstantiationOf.  Should they be combined?
             Map<ReferenceType, Substitution> matches =
-                matchingInputTypes((ParameterizedType) paramType);
+                matchingInputTypes((ClassOrInterfaceType) paramType);
             if (matches.isEmpty()) {
               if (Log.isLoggingOn()) {
                 failure = "no input type instantiates " + paramType;
