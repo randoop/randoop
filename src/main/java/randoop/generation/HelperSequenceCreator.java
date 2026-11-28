@@ -81,9 +81,9 @@ final class HelperSequenceCreator {
     if (componentType.isArray()) {
       candidates = createArraySequence(components, componentType);
     } else {
-      // A member class of a parameterized type, such as Outer<String>.Inner, is parameterized but
-      // is not an InstantiatedType.
-      if (componentType.isParameterized() && componentType instanceof InstantiatedType) {
+      // A non-generic member class of a generic class, as in `Outer<String>.Inner`, is
+      // parameterized but is not an InstantiatedType.
+      if (componentType instanceof InstantiatedType) {
         // XXX build elementType default construction sequence here, if cannot build one then stop
         InstantiatedType creationType =
             getImplementingTypeForCollection((InstantiatedType) componentType);

@@ -468,6 +468,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     Substitution substitution = new Substitution();
+    // True if this type or one of its supertypes matches the goal type.  If neither does, then no
+    // substitution unifies them.
+    boolean matched =
+        goalType instanceof ClassOrInterfaceType && goalType.runtimeClassIs(this.getRuntimeClass());
     // The view of the goal type's class from this type, if the goal type is a member class.
     ClassOrInterfaceType thisView = null;
     // For a member class goal type such as Outer<E>.Inner, the enclosing type of this type, or of
@@ -491,6 +495,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (memberSupertype == null) {
         return null;
       }
+      matched = true;
       thisView = memberSupertype;
       // If this type is a proper subclass of the goal type, as Other.Derived is of
       // Outer<String>.Base<X> when Derived extends Outer<String>.Base<Integer>, then the supertype
@@ -534,6 +539,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           return null;
         }
       } else {
+        matched = true;
         Substitution supertypeSubstitution = supertype.getTypeSubstitution();
         if (supertypeSubstitution == null
             || !substitution.isConsistentWith(supertypeSubstitution)) {
@@ -542,7 +548,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         substitution = substitution.extend(supertypeSubstitution);
       }
     }
-    return substitution;
+    return matched ? substitution : null;
   }
 
   /**
@@ -711,11 +717,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
     if (this.isNestedClass() && (otherType instanceof ClassOrInterfaceType)) {
+      ClassOrInterfaceType thisEnclosingType = this.enclosingType;
       ClassOrInterfaceType otherClassType = (ClassOrInterfaceType) otherType;
-      // TODO: This checks that both are member classes, but they should be named the same and with
-      // the same type parameters too.
-      return otherClassType.isNestedClass()
-          && this.enclosingType.isInstantiationOf(otherClassType.enclosingType);
+      ClassOrInterfaceType otherEnclosingType = otherClassType.enclosingType;
+      // Both must be the same nested class, such as Outer<String>.A and Outer<T>.A, not
+      // Outer<String>.A and Outer<T>.B.
+      return otherEnclosingType != null
+          && otherClassType.runtimeClassIs(this.getRuntimeClass())
+          && thisEnclosingType.isInstantiationOf(otherEnclosingType);
     }
     return false;
   }

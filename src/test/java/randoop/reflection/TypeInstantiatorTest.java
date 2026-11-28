@@ -1073,6 +1073,58 @@ public class TypeInstantiatorTest {
     }
   }
 
+  /**
+   * A method whose type parameter {@code T} occurs only in the bound of the type parameter of its
+   * return type.
+   *
+   * @param <S> the element type
+   * @param <T> the key and value type of the value type of {@code S}
+   * @return a list
+   */
+  @SuppressWarnings({"UnusedMethod", "PMD.UnusedPrivateMethod"}) // used via reflection
+  private static <S extends Map<S, Map<T, T>>, T> List<S> make() {
+    return new ArrayList<>();
+  }
+
+  /** A map whose value type has different key and value types, so it is not a {@code Map<T, T>}. */
+  private static class Mixed extends HashMap<Mixed, Map<String, Integer>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /** A map whose value type has the same key and value types, {@code Map<String, String>}. */
+  private static class Same extends HashMap<Same, Map<String, String>> {
+    /** ID for serializing this class. */
+    private static final long serialVersionUID = 20261126;
+  }
+
+  /**
+   * Tests that goal-directed instantiation chooses a type for a type variable that occurs only in
+   * the bound of a type variable that the goal type instantiates. In {@code <S extends Map<S,
+   * Map<T, T>>, T> List<S> make()}, no type for {@code T} makes {@code Mixed} satisfy the bound of
+   * {@code S}, but {@code String} makes {@code Same} satisfy it.
+   */
+  @Test
+  public void testGoalBoundMentionsUninstantiatedVariable()
+      throws NoSuchMethodException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation make =
+        TypedOperation.forMethod(TypeInstantiatorTest.class.getDeclaredMethod("make"));
+    GenericClassType listType = GenericClassType.forClass(List.class);
+    InstantiatedType mixedList = listType.instantiate(ClassOrInterfaceType.forClass(Mixed.class));
+    InstantiatedType sameList = listType.instantiate(ClassOrInterfaceType.forClass(Same.class));
+
+    for (int i = 0; i < ATTEMPTS; i++) {
+      assertNull(instantiator.instantiate(make, mixedList));
+      TypedClassOperation operation = instantiator.instantiate(make, sameList);
+      assertNotNull("no instantiation of " + make + " for " + sameList, operation);
+      assertEquals(sameList, operation.getOutputType());
+    }
+  }
+
   /** A field whose type has a wildcard; used to obtain a capture variable. */
   @SuppressWarnings("unused")
   private static List<? extends Integer> integers;
