@@ -106,9 +106,29 @@ class WildcardType extends ParameterType {
       if (this.getUpperTypeBound().isObject()) {
         return "?";
       }
-      return "? extends " + this.getUpperTypeBound().toString();
+      return "? extends " + fqName(this.getUpperTypeBound());
     }
-    return "? super " + this.getLowerTypeBound().toString();
+    return "? super " + fqName(this.getLowerTypeBound());
+  }
+
+  /**
+   * Returns the fully-qualified name of the given bound, such as {@code
+   * java.util.Map.Entry<java.lang.String,java.lang.Integer>}. A member class in it is written
+   * {@code Map.Entry}, not {@code Map$Entry} as in its binary name.
+   *
+   * @param bound a bound of a wildcard
+   * @return the fully-qualified name of {@code bound}, or its binary name if it has no
+   *     fully-qualified name (as for a local class)
+   */
+  private static String fqName(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      String result = ((ReferenceBound) bound).getBoundType().getFqName();
+      if (result != null) {
+        return result;
+      }
+    }
+    // A LazyParameterBound holds a java.lang.reflect.Type, which has no fully-qualified name.
+    return bound.toString();
   }
 
   @Override
