@@ -163,20 +163,11 @@ public class WildcardArgument extends TypeArgument {
   /*package*/
   @Override
   boolean isInstantiationOfTypeArgument(TypeArgument otherArgument) {
-    if (this.equals(otherArgument)) {
-      return true;
-    }
-
-    if (otherArgument instanceof ReferenceArgument) {
-      ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
-      if (otherReferenceType instanceof CaptureTypeVariable) {
-        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
-        if (this.equals(otherCaptureTypeVar.getWildcard())) {
-          return true;
-        }
-      }
-    }
-    return false;
+    // Consistent with getInstantiatingSubstitution:  ? super String instantiates ? super T.  A
+    // wildcard does not instantiate a capture variable, even the capture of an equal wildcard:  the
+    // capture variable stands for one unknown type, and no substitution of a type for it yields a
+    // wildcard.
+    return getInstantiatingSubstitution(otherArgument) != null;
   }
 
   @Override
@@ -189,13 +180,8 @@ public class WildcardArgument extends TypeArgument {
       return argumentType.getInstantiatingSubstitution(((WildcardArgument) goalType).argumentType);
     }
 
-    if (goalType instanceof ReferenceArgument) {
-      ReferenceType otherReferenceType = ((ReferenceArgument) goalType).getReferenceType();
-      if (otherReferenceType instanceof CaptureTypeVariable) {
-        CaptureTypeVariable otherCaptureTypeVar = (CaptureTypeVariable) otherReferenceType;
-        return this.getInstantiatingSubstitution(otherCaptureTypeVar.getWildcard());
-      }
-    }
+    // A wildcard does not instantiate a type variable, such as a capture variable; see
+    // isInstantiationOfTypeArgument.
     return null;
   }
 

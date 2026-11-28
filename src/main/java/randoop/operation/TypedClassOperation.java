@@ -116,6 +116,23 @@ public class TypedClassOperation extends TypedOperation {
         this.getExecutableSpecification());
   }
 
+  /**
+   * Returns a copy of this operation, with its input types replaced by the given ones. This
+   * implementation returns a {@code TypedClassOperation}. A subclass must override this method to
+   * return an instance of the subclass, so that the result executes the same way as this does.
+   *
+   * @param inputTypes a tuple of input types for the result
+   * @return a copy of this operation, with the given input types
+   */
+  public TypedClassOperation withInputTypes(TypeTuple inputTypes) {
+    return new TypedClassOperation(
+        this.getOperation(),
+        declaringType,
+        inputTypes,
+        this.getOutputType(),
+        this.getExecutableSpecification());
+  }
+
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();

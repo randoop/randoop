@@ -106,9 +106,29 @@ class WildcardType extends ParameterType {
       if (this.getUpperTypeBound().isObject()) {
         return "?";
       }
-      return "? extends " + this.getUpperTypeBound().toString();
+      return "? extends " + fqName(this.getUpperTypeBound());
     }
-    return "? super " + this.getLowerTypeBound().toString();
+    return "? super " + fqName(this.getLowerTypeBound());
+  }
+
+  /**
+   * Returns the fully-qualified name of the given bound, such as {@code
+   * java.util.Map.Entry<java.lang.String,java.lang.Integer>}. A member class in it is written
+   * {@code Map.Entry}, not {@code Map$Entry} as in its binary name.
+   *
+   * @param bound a bound of a wildcard
+   * @return the fully-qualified name of {@code bound}, or its binary name if it has no
+   *     fully-qualified name (as for a local class)
+   */
+  private static String fqName(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      String result = ((ReferenceBound) bound).getBoundType().getFqName();
+      if (result != null) {
+        return result;
+      }
+    }
+    // A LazyParameterBound holds a java.lang.reflect.Type, which has no fully-qualified name.
+    return bound.toString();
   }
 
   @Override
@@ -158,7 +178,9 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? super S} if {@code T} is a subtype of {@code S}
    * </ul>
    *
-   * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}.
+   * A {@code ? super T} wildcard contains no upper-bounded wildcard, such as {@code ?} or {@code ?
+   * extends Object}. For example, {@code Comparator<?>} is not a subtype of {@code Comparator<?
+   * super String>}.
    *
    * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
    * equivalent {@link ReferenceBound}.
@@ -187,6 +209,32 @@ class WildcardType extends ParameterType {
     } else {
       return thisBound.isSubtypeOfOrEqualTo(otherBound);
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This wildcard instantiates a wildcard of the same kind, upper or lower bounded, if the bound
+   * type of this wildcard instantiates the bound type of the other. For example, {@code ? super
+   * String} instantiates {@code ? super T} by the substitution that maps {@code T} to {@code
+   * String}.
+   */
+  @Override
+  public @Nullable Substitution getInstantiatingSubstitution(ReferenceType goalType) {
+    if (goalType instanceof WildcardType) {
+      WildcardType goalWildcard = (WildcardType) goalType;
+      if (this.hasUpperBound == goalWildcard.hasUpperBound
+          && this.getTypeBound() instanceof ReferenceBound
+          && goalWildcard.getTypeBound() instanceof ReferenceBound) {
+        ReferenceType boundType = ((ReferenceBound) this.getTypeBound()).getBoundType();
+        ReferenceType goalBoundType = ((ReferenceBound) goalWildcard.getTypeBound()).getBoundType();
+        if (!goalBoundType.isGeneric()) {
+          return boundType.equals(goalBoundType) ? new Substitution() : null;
+        }
+        return boundType.getInstantiatingSubstitution(goalBoundType);
+      }
+    }
+    return super.getInstantiatingSubstitution(goalType);
   }
 
   @Override

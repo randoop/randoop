@@ -1,11 +1,13 @@
 package randoop.reflection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,11 +16,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import org.junit.Test;
 import randoop.condition.RandoopSpecificationError;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
@@ -116,6 +120,117 @@ public class TypeInstantiatorTest {
           "ill-typed instantiation " + operation, keyType.isSubtypeOfOrEqualTo(comparedType));
     }
     assertTrue("no instantiation of " + thenComparing, instantiated > 0);
+  }
+
+  /** A field of type {@code Comparator<? super String>}. */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  private static Comparator<? super String> superStringComparator;
+
+  /**
+   * Tests that an instantiation contains no capture variable. Capture conversion turns {@code new
+   * TreeMap<K, V>(Comparator<? super K>)} into an operation whose parameter type is {@code
+   * Comparator<CaptureN>}. An input type {@code Comparator<? super String>} must not instantiate
+   * that parameter type, because the result would declare a variable of type {@code
+   * Comparator<CaptureN>}, which cannot be written in Java source code.
+   */
+  @Test
+  public void testWildcardInputTypeDoesNotInstantiateCaptureVariable()
+      throws NoSuchMethodException, NoSuchFieldException, RandoopSpecificationError {
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(INTEGER_TYPE, inputTypes);
+    addTypes(
+        GenericClassType.forClass(TreeMap.class).instantiate(JavaTypes.STRING_TYPE, INTEGER_TYPE),
+        inputTypes);
+    addTypes(fieldType("superStringComparator"), inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(TreeMap.class.getConstructor(Comparator.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(constructor);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertFalse(
+          "capture variable in instantiation " + operation,
+          operation.getInputTypes().hasCaptureVariable()
+              || operation.getOutputType().hasCaptureVariable());
+    }
+    assertTrue("no instantiation of " + constructor, instantiated > 0);
+  }
+
+  /**
+   * Returns the type of the given field of this class.
+   *
+   * @param fieldName a field name of this class
+   * @return the type of the field
+   * @throws NoSuchFieldException if this class has no such field
+   */
+  private static ClassOrInterfaceType fieldType(String fieldName) throws NoSuchFieldException {
+    return (ClassOrInterfaceType)
+        Type.forType(TypeInstantiatorTest.class.getDeclaredField(fieldName).getGenericType());
+  }
+
+  /**
+   * Tests that an input type with a wildcard matches a parameter type with the same wildcard. The
+   * parameter type of {@code new TreeMap<String, Integer>(Comparator<? super K>)} is {@code
+   * Comparator<? super String>}, and so is the only comparator input type.
+   */
+  @Test
+  public void testWildcardInputTypeMatchesWildcardParameterType()
+      throws NoSuchMethodException, NoSuchFieldException, RandoopSpecificationError {
+    ClassOrInterfaceType superStringComparatorType = fieldType("superStringComparator");
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(superStringComparatorType, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation constructor =
+        TypedOperation.forConstructor(TreeMap.class.getConstructor(Comparator.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(constructor);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(superStringComparatorType, operation.getInputTypes().get(0));
+    }
+    assertTrue("no instantiation of " + constructor, instantiated > 0);
+  }
+
+  /**
+   * Tests that an input type with a wildcard instantiates a type variable in the bound of a
+   * wildcard in a parameter type. The input type {@code Comparator<? super String>} instantiates
+   * {@code <T> void sort(T[], Comparator<? super T>)} as {@code sort(String[], Comparator<? super
+   * String>)}.
+   */
+  @Test
+  public void testWildcardInputTypeInstantiatesBoundTypeVariable()
+      throws NoSuchMethodException, NoSuchFieldException, RandoopSpecificationError {
+    ClassOrInterfaceType superStringComparatorType = fieldType("superStringComparator");
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    addTypes(superStringComparatorType, inputTypes);
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+    TypedClassOperation sort =
+        TypedOperation.forMethod(Arrays.class.getMethod("sort", Object[].class, Comparator.class));
+
+    int instantiated = 0;
+    for (int i = 0; i < ATTEMPTS; i++) {
+      TypedClassOperation operation = instantiator.instantiate(sort);
+      if (operation == null) {
+        continue;
+      }
+      instantiated++;
+      assertEquals(
+          ArrayType.ofComponentType(JavaTypes.STRING_TYPE), operation.getInputTypes().get(0));
+      assertEquals(superStringComparatorType, operation.getInputTypes().get(1));
+    }
+    assertTrue("no instantiation of " + sort, instantiated > 0);
   }
 
   /** A map whose values are of the map's own type. */
