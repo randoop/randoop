@@ -225,10 +225,20 @@ public class ForwardGenerator extends AbstractGenerator {
   /** Removes all generated sequences from the component set, retaining seeds and literals. */
   void clearComponents() {
     componentManager.clearGeneratedSequences();
+    inputSequenceSelector.componentsCleared(componentManager.getRetainedSequences());
     sequencesSinceClear = new LinkedHashSet<>();
     operations.addAll(removedParameterlessOperations);
     removedParameterlessOperations.clear();
     numComponentsAfterClear = componentManager.numGeneratedSequences();
+  }
+
+  /**
+   * Returns the selector that chooses input sequences. For use by tests.
+   *
+   * @return the selector that chooses input sequences
+   */
+  InputSequenceSelector getInputSequenceSelector() {
+    return inputSequenceSelector;
   }
 
   @Override

@@ -41,7 +41,7 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * Returns the member bounds of this intersection bound.
+   * Returns the member bounds of this intersection bound. The result must not be modified.
    *
    * @return the member bounds of this intersection bound
    */
