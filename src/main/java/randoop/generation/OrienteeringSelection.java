@@ -220,6 +220,16 @@ public class OrienteeringSelection extends InputSequenceSelector {
   }
 
   /**
+   * Returns true if this has details for the given sequence. For use by tests.
+   *
+   * @param sequence a sequence
+   * @return true if this has details for the sequence
+   */
+  boolean hasDetails(Sequence sequence) {
+    return sequenceDetailsMap.containsKey(sequence);
+  }
+
+  /**
    * Creates and stores a {@link SequenceDetails} for the given {@link Sequence} with the
    * corresponding execution time.
    *
