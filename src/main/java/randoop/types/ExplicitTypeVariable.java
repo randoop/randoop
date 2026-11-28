@@ -94,6 +94,8 @@ public class ExplicitTypeVariable extends TypeVariable {
     if (type != null && (!type.isVariable() || type.equals(this))) {
       return type;
     }
+    // A type variable can occur in its own bound, directly as in `T extends Comparable<T>` or
+    // through the bounds of other type variables.  Such an occurrence remains as it is.
     Set<java.lang.reflect.TypeVariable<?>> substituteIsExecutingSet = substituteIsExecuting.get();
     if (!substituteIsExecutingSet.add(variable)) {
       // This variable occurs in its own bound, which the substitution is already being applied to.

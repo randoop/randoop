@@ -83,8 +83,10 @@ public abstract class ParameterBound {
    * array type that has no type variable in the sense of {@link #hasTypeVariable}. This includes a
    * non-generic member class of a generic class, as in {@code Outer<String>.Inner}, whose
    * conversion to a {@link ReferenceType} is a non-parameterized type with a parameterized owner
-   * type; {@link EagerReferenceBound} compares it with an argument type by subtyping. Otherwise,
-   * the result is a {@link LazyParameterBound}.
+   * type; {@link EagerReferenceBound} compares it with an argument type by subtyping. If the owner
+   * type has a type variable, as in {@code Outer<K>.Inner}, the result is a {@link
+   * LazyParameterBound}, which applies the substitution to the owner type. Otherwise, the result is
+   * a {@link LazyParameterBound}.
    *
    * @param variableSet the set of type variables bound by this type
    * @param type the type for type bound
@@ -137,7 +139,8 @@ public abstract class ParameterBound {
    *
    * <p>Owner types are examined, because the conversion of a reflection type to a {@link
    * ReferenceType} retains the owner type as written, which can mention a type variable, as in
-   * {@code Outer<T>.Holder<Integer>}.
+   * {@code Outer<T>.Holder<Integer>} or {@code Outer<T>.Inner}. An eager bound {@code
+   * Comparable<Outer<T>.Inner>} for {@code T} would be recursive.
    *
    * @param type a reflection type
    * @param variableSet the type variables bound by the type
@@ -160,15 +163,15 @@ public abstract class ParameterBound {
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      // The owner type is null for a top-level class, and a Class for a static nested class.
+      java.lang.reflect.Type ownerType = pt.getOwnerType();
+      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
+        return true;
+      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
-      }
-      // The owner type can mention a type variable, as in Outer<T>.Holder<Integer>.
-      java.lang.reflect.Type ownerType = pt.getOwnerType();
-      if (ownerType != null && hasTypeVariable(ownerType, variableSet)) {
-        return true;
       }
     }
     if (type instanceof java.lang.reflect.GenericArrayType) {

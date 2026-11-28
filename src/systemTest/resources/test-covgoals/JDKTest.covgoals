@@ -129,7 +129,6 @@ java7.util7.TreeMap.descendingKeyIterator() exclude
 java7.util7.TreeMap.firstKey() exclude17+
 java7.util7.TreeMap.fixAfterDeletion(java7.util7.TreeMap.Entry) exclude
 java7.util7.TreeMap.get(java.lang.Object) ignore
-java7.util7.TreeMap.get(java.lang.Object) include11
 java7.util7.TreeMap.getEntryUsingComparator(java.lang.Object) exclude11-
 java7.util7.TreeMap.getPrecedingEntry(java.lang.Object) exclude
 java7.util7.TreeMap.headMap(java.lang.Object) exclude11
