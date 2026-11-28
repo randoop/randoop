@@ -448,6 +448,34 @@ public class ClearComponentsTest {
   }
 
   /**
+   * {@link ForwardGenerator#step} clears the component set when the number of generated sequences
+   * exceeds {@code --clear}, not only when it equals it, and retains the seeds.
+   */
+  @Test
+  public void stepClearsAboveThreshold() throws Exception {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager componentMgr = new ComponentManager(seeds, IS_PUBLIC);
+    ForwardGenerator gen = createGenerator(Box.class, componentMgr);
+    GenInputsAbstract.clear = 10;
+
+    Set<Sequence> added = new HashSet<>();
+    for (int i = 0; i <= GenInputsAbstract.clear; i++) {
+      Sequence s = Sequence.createSequenceForPrimitive(1_000_000 + i);
+      componentMgr.addGeneratedSequence(s);
+      added.add(s);
+    }
+    assertEquals(GenInputsAbstract.clear + 1, componentMgr.numGeneratedSequences());
+
+    gen.step();
+
+    Set<Sequence> afterStep = componentMgr.getAllGeneratedSequences();
+    assertTrue(afterStep.containsAll(seeds));
+    for (Sequence s : added) {
+      assertFalse(afterStep.contains(s));
+    }
+  }
+
+  /**
    * Returns a generator for the given class.
    *
    * @param c the class under test
