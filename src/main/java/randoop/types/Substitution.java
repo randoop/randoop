@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +212,49 @@ public class Substitution {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns a substitution that extends this one by mapping to itself each of the given type
+   * variables that this one does not map. Returns this substitution if it maps all of them.
+   *
+   * @param variables type variables
+   * @return a substitution that maps each of {@code variables}
+   */
+  Substitution extendWithIdentity(Collection<TypeVariable> variables) {
+    // A copy of this substitution, made when the first variable is added.
+    Substitution result = null;
+    for (TypeVariable variable : variables) {
+      if ((result == null ? this : result).get(variable) == null) {
+        if (result == null) {
+          result = new Substitution(this);
+        }
+        result.put(variable, variable);
+      }
+    }
+    return result == null ? this : result;
+  }
+
+  /**
+   * Returns a substitution that is like this one, but that maps the given type variable to the
+   * given type, replacing any mapping of it in this substitution. Returns this substitution if it
+   * already maps the type variable to that type, and if it maps the type variable to itself (as
+   * determined by {@link #mapsToItself}) exactly when {@code type} is {@code variable}. The key of
+   * an existing entry can be a copy of {@code variable} with other bounds, so the latter condition
+   * can fail even if the former holds.
+   *
+   * @param variable a type variable
+   * @param type the type to map {@code variable} to
+   * @return a substitution that is like this one, but that maps {@code variable} to {@code type}
+   */
+  @SuppressWarnings("ReferenceEquality") // an equal copy of a type variable can have other bounds
+  Substitution withMapping(TypeVariable variable, ReferenceType type) {
+    if (map.get(variable) == type && mapsToItself(variable) == (type == variable)) {
+      return this;
+    }
+    Substitution result = new Substitution(this);
+    result.put(variable, type);
+    return result;
   }
 
   /**
