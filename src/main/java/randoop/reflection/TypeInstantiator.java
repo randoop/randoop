@@ -420,11 +420,8 @@ public class TypeInstantiator {
     Map<ReferenceType, Substitution> matches = new LinkedHashMap<>();
     for (Type inputType : inputTypes) {
       // An instantiation of a member class of a generic class, such as Outer<String>.Inner, need
-      // not be parameterized.  For a member class, isInstantiationOf compares only the enclosing
-      // types, so it is true for an unrelated member class such as Outer<String>.Other.  The
-      // runtime class check excludes such types but admits subclasses of the pattern's class.
+      // not be parameterized.
       if (inputType.isClassOrInterfaceType()
-          && patternType.getRuntimeClass().isAssignableFrom(inputType.getRuntimeClass())
           && ((ReferenceType) inputType).isInstantiationOf(patternType)) {
         // isInstantiationOf checks each type argument separately, so it accepts
         // Map<String, Integer> for Map<X, X>, which has no instantiating substitution.
@@ -543,13 +540,9 @@ public class TypeInstantiator {
               break;
             }
             choseAmongSeveral |= matches.size() > 1;
-            Map.Entry<ReferenceType, Substitution> selected =
-                Randomness.randomSetMember(matches.entrySet());
-            Substitution subst = selected.getValue();
+            Substitution subst = Randomness.randomSetMember(matches.values());
             // The substitution can conflict with an earlier one, for example if two parameter
-            // types contain copies of one capture variable, or for an enclosing type:  for
-            // parameters List<U> and Outer<U>.Inner, U might already be String while the selected
-            // type is Outer<Integer>.Inner.  Then extending would throw.
+            // types contain copies of one capture variable.  Then extending would throw.
             if (!substitution.isConsistentWith(subst)) {
               if (Log.isLoggingOn()) {
                 failure = subst + " for " + paramType + " conflicts with " + substitution;
