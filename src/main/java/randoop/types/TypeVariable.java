@@ -594,8 +594,7 @@ public abstract class TypeVariable extends ParameterType {
     boolean lowerBoundAllows;
     try {
       lowerBoundAllows =
-          getLowerTypeBound().isUpperBound(otherType, context)
-              && lowerBoundCanInstantiate(context);
+          getLowerTypeBound().isUpperBound(otherType, context) && lowerBoundCanInstantiate(context);
     } finally {
       inProgress.remove(inProgress.size() - 1);
     }
