@@ -28,7 +28,7 @@ import randoop.util.Log;
  *
  * <ul>
  *   <li>Seed sequences supplied at construction time, which are preserved across calls to {@link
- *       #clearGeneratedSequences()}, and
+ *       #clearGeneratedSequences()} and are not counted by {@link #numGeneratedSequences()}, and
  *   <li>Sequences generated during the current run.
  * </ul>
  *
@@ -51,6 +51,12 @@ public class ComponentManager {
    */
   // "gral" probably stands for "general".
   private final SequenceCollection gralComponents;
+
+  /**
+   * The number of seed sequences that were added to {@link #gralComponents} when it was populated,
+   * as counted by {@link SequenceCollection#numSequencesAdded}.
+   */
+  private int numSeedSequencesAdded;
 
   /** For each scope in the SUT, statistics about its literals (if available). */
   private @Nullable ScopeToLiteralStatistics scopeToLiteralStatistics = null;
@@ -89,6 +95,7 @@ public class ComponentManager {
     seedSequences.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSequences);
     gralComponents = new SequenceCollection(seedSequences);
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     if (GenInputsAbstract.call_non_sut_methods) {
       DemandDrivenInputCreator ddic = new DemandDrivenInputCreator(gralComponents, accessibility);
       gralComponents.setDemandDrivenInputCreator(ddic);
@@ -96,13 +103,16 @@ public class ComponentManager {
   }
 
   /**
-   * Returns the number of sequences stored by this manager.
+   * Returns the number of sequences that have been added to this manager's component set since it
+   * was created or since the last call to {@link #clearGeneratedSequences}. The count includes
+   * sequences added by {@link #addGeneratedSequence} and by the {@link DemandDrivenInputCreator}.
+   * Seed sequences are not counted, nor are sequences that were not stored because they have no
+   * active outputs.
    *
    * @return count of generated sequences in this {@link ComponentManager}
    */
-  // FIXME subtract size of seeds!
   public int numGeneratedSequences() {
-    return gralComponents.size();
+    return gralComponents.numSequencesAdded() - numSeedSequencesAdded;
   }
 
   /**
@@ -201,6 +211,7 @@ public class ComponentManager {
   /*package*/ void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(gralSeeds);
+    numSeedSequencesAdded = gralComponents.numSequencesAdded();
     if (GenInputsAbstract.call_non_sut_methods) {
       // Reuse the existing creator rather than replacing it, so that no stale creator can copy
       // pre-clear sequences into the pool, and so that its visited types (reported at the end of

@@ -1,10 +1,12 @@
 package randoop.generation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static randoop.reflection.AccessibilityPredicate.IS_PUBLIC;
 
 import java.util.Collections;
+import java.util.Set;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,6 +32,57 @@ public class ComponentManagerTest {
     optionsCache.restoreState();
   }
 
+  @Test
+  public void testSeedsAreNotCounted() {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager mgr = new ComponentManager(seeds, IS_PUBLIC);
+    assertEquals(0, mgr.numGeneratedSequences());
+    assertTrue(mgr.getAllGeneratedSequences().containsAll(seeds));
+  }
+
+  @Test
+  public void testAddAndClear() {
+    Set<Sequence> seeds = SeedSequences.defaultSeeds();
+    ComponentManager mgr = new ComponentManager(seeds, IS_PUBLIC);
+    Sequence s1 = Sequence.createSequenceForPrimitive(12345);
+    Sequence s2 = Sequence.createSequenceForPrimitive("ComponentManagerTest");
+    mgr.addGeneratedSequence(s1);
+    assertEquals(1, mgr.numGeneratedSequences());
+    mgr.addGeneratedSequence(s2);
+    assertEquals(2, mgr.numGeneratedSequences());
+
+    mgr.clearGeneratedSequences();
+    assertEquals(0, mgr.numGeneratedSequences());
+    Set<Sequence> afterClear = mgr.getAllGeneratedSequences();
+    assertTrue(afterClear.containsAll(seeds));
+    assertFalse(afterClear.contains(s1));
+    assertFalse(afterClear.contains(s2));
+
+    mgr.addGeneratedSequence(s1);
+    assertEquals(1, mgr.numGeneratedSequences());
+  }
+
+  @Test
+  public void testDuplicateIsNotCounted() {
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
+    Sequence s = Sequence.createSequenceForPrimitive(67890);
+    mgr.addGeneratedSequence(s);
+    assertEquals(1, mgr.numGeneratedSequences());
+    // Adding the same sequence again does not change the component set.
+    mgr.addGeneratedSequence(s);
+    assertEquals(1, mgr.numGeneratedSequences());
+  }
+
+  @Test
+  public void testSequenceWithNoActiveOutputsIsNotCounted() {
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds(), IS_PUBLIC);
+    Sequence inactive = Sequence.createSequenceForPrimitive(54321);
+    inactive.clearAllActiveFlags();
+    mgr.addGeneratedSequence(inactive);
+    assertEquals(0, mgr.numGeneratedSequences());
+    assertFalse(mgr.getAllGeneratedSequences().contains(inactive));
+  }
+
   /** A seed prevents adding its value to the component set again. */
   @Test
   public void seedSuppressesGeneratedValue() {
@@ -37,7 +90,7 @@ public class ComponentManagerTest {
     ComponentManager componentMgr = new ComponentManager(Collections.singleton(seed), IS_PUBLIC);
     componentMgr.addPrimitiveValueIfNew(4242);
     assertEquals(1, componentMgr.getAllGeneratedSequences().size());
-    assertEquals(1, componentMgr.numGeneratedSequences());
+    assertEquals(0, componentMgr.numGeneratedSequences());
   }
 
   /** A literal does not prevent adding its value to the component set, at any literals level. */
