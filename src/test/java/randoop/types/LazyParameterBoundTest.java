@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -59,6 +60,31 @@ public class LazyParameterBoundTest {
         GenericClassType.forClass(List.class)
             .instantiate(ArrayType.ofComponentType(JavaTypes.NULL_TYPE)),
         ((ReferenceBound) substituted).getBoundType());
+  }
+
+  /** Fields whose types are used in tests. */
+  @SuppressWarnings("UnusedVariable") // the fields are read reflectively
+  static class FieldTypes {
+    /** A wildcard whose upper bound is a generic array type that contains no type variable. */
+    List<? extends List<String>[]> arrayOfListWildcard;
+  }
+
+  @Test
+  public void testGenericArrayBoundWithoutTypeVariable() throws NoSuchFieldException {
+    java.lang.reflect.ParameterizedType fieldType =
+        (java.lang.reflect.ParameterizedType)
+            FieldTypes.class.getDeclaredField("arrayOfListWildcard").getGenericType();
+    java.lang.reflect.WildcardType wildcard =
+        (java.lang.reflect.WildcardType) fieldType.getActualTypeArguments()[0];
+    ParameterBound bound = ParameterBound.forTypes(new HashSet<>(0), wildcard.getUpperBounds());
+    // The bound contains no type variable, so it is eager, and a substitution does not change it.
+    assertTrue(bound instanceof EagerReferenceBound);
+    ArrayType arrayOfList =
+        ArrayType.ofComponentType(
+            GenericClassType.forClass(List.class).instantiate(JavaTypes.STRING_TYPE));
+    assertEquals(new EagerReferenceBound(arrayOfList), bound.substitute(new Substitution()));
+    assertTrue(bound.isUpperBound(arrayOfList, new Substitution()));
+    assertFalse(bound.isUpperBound(JavaTypes.STRING_TYPE, new Substitution()));
   }
 
   @Test

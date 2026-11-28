@@ -67,6 +67,33 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound substitute(Substitution substitution) {
+    if (boundType instanceof GenericArrayType) {
+      // A generic array type, such as `List<String>[]`, need not contain a type variable.  Such a
+      // bound is materialized even by an empty substitution, so that it can be compared with types.
+      if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      ArrayType arrayType = (ArrayType) ((ReferenceArgument) typeArgument).getReferenceType();
+      return ReferenceBound.forTypeLazyIfGeneric(arrayType);
+    }
+    if (isNonGenericMemberClass(boundType)) {
+      // A non-generic member class of a generic class, as in `Outer<String>.Inner`, need not
+      // contain a type variable.  Like a generic array type, such a bound is materialized even by
+      // an empty substitution, so that it can be compared with types.
+      if (!getTypeParameterList().isEmpty() && !instantiatesAny(boundType, substitution)) {
+        return this;
+      }
+      TypeArgument typeArgument = substitute(boundType, substitution);
+      if (typeArgument == null) {
+        return this;
+      }
+      return ReferenceBound.forTypeLazyIfGeneric(
+          ((ReferenceArgument) typeArgument).getReferenceType());
+    }
     if (substitution.isEmpty()) {
       return this;
     }
@@ -83,9 +110,7 @@ class LazyParameterBound extends ParameterBound {
           TypeVariable.forType(boundType).substitute(substitution));
     }
 
-    // A parameterized type includes a non-generic member class of a generic class, in whose owner
-    // type a type variable can occur, as in Outer<K>.Inner.
-    if (boundType instanceof ParameterizedType || boundType instanceof GenericArrayType) {
+    if (boundType instanceof ParameterizedType) {
       if (!instantiatesAny(boundType, substitution)) {
         return this;
       }
@@ -151,17 +176,31 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (isNonGenericMemberClass(type)) {
-      // A non-generic member class of a generic class, as in Outer<String>.Inner, has no type
-      // arguments of its own, and GenericClassType.forClass rejects its raw type.  Convert it as
-      // isUpperBound and isLowerBound do:  the result's enclosing type is the owner type, such as
-      // Outer<String>, so the result is not equal to Outer<Integer>.Inner.  The substitution
-      // applies to the owner type, as in Outer<K>.Inner.  The result is unchanged if the owner type
-      // has no type variable.
-      return TypeArgument.forType(ReferenceType.forType(type).substitute(substitution));
+      // A non-generic member class of a generic class, as in `Outer<String>.Inner`, has no type
+      // arguments of its own, and GenericClassType.forClass rejects its raw type.
+      // ClassOrInterfaceType.forType preserves the owner type, such as `Outer<String>`, whose type
+      // arguments the substitution may change.  The owner type is converted here, rather than by
+      // ClassOrInterfaceType.forType, so that type variables in it are treated as in type
+      // arguments.
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      ParameterizedType ownerType = getPreservedOwnerType(parameterizedType);
+      if (ownerType == null || ClassOrInterfaceType.isDeclarationForm(ownerType)) {
+        return TypeArgument.forType(ClassOrInterfaceType.forType(type).substitute(substitution));
+      }
+      TypeArgument ownerArgument = substitute(ownerType, substitution);
+      if (!(ownerArgument instanceof ReferenceArgument)) {
+        return null;
+      }
+      NonParameterizedType memberType =
+          new NonParameterizedType((Class<?>) parameterizedType.getRawType());
+      memberType.enclosingType =
+          (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
+      return TypeArgument.forType(memberType);
     }
 
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type[] actualTypeArgs = ((ParameterizedType) type).getActualTypeArguments();
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      java.lang.reflect.Type[] actualTypeArgs = parameterizedType.getActualTypeArguments();
       List<TypeArgument> argumentList = new ArrayList<>(actualTypeArgs.length);
       for (java.lang.reflect.Type parameter : actualTypeArgs) {
         TypeArgument typeArgument = substitute(parameter, substitution);
@@ -171,25 +210,20 @@ class LazyParameterBound extends ParameterBound {
         argumentList.add(typeArgument);
       }
 
-      Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
-      GenericClassType classType = GenericClassType.forClass(rawType);
+      GenericClassType classType =
+          GenericClassType.forClass((Class<?>) parameterizedType.getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      // For a member class, keep the owner type, with the substitution applied, as
-      // ParameterizedType.forType does.  Otherwise, the result would not equal the same type
-      // converted from reflection, such as Outer<String>.Inner<Integer>.
-      java.lang.reflect.Type ownerType = ((ParameterizedType) type).getOwnerType();
-      if (ownerType != null && rawType.getEnclosingClass() != null && !classType.isStatic()) {
-        ClassOrInterfaceType enclosing;
-        if (ownerType instanceof Class) {
-          enclosing = ClassOrInterfaceType.forType(ownerType);
-        } else {
-          TypeArgument ownerArgument = substitute(ownerType, substitution);
-          if (!(ownerArgument instanceof ReferenceArgument)) {
-            return null;
-          }
-          enclosing = (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
+      // As ClassOrInterfaceType.forType does, preserve the owner type of a generic member class, as
+      // in `Outer<String>.Middle<Integer>`.  An owner type in declaration form, as in
+      // `Outer<X>.Middle<Integer>`, is preserved too, because the substitution may instantiate it.
+      ParameterizedType ownerType = getPreservedOwnerType(parameterizedType);
+      if (ownerType != null) {
+        TypeArgument ownerArgument = substitute(ownerType, substitution);
+        if (!(ownerArgument instanceof ReferenceArgument)) {
+          return null;
         }
-        instantiatedType.enclosingType = enclosing;
+        instantiatedType.enclosingType =
+            (ClassOrInterfaceType) ((ReferenceArgument) ownerArgument).getReferenceType();
       }
       return TypeArgument.forType(instantiatedType);
     }
@@ -222,7 +256,7 @@ class LazyParameterBound extends ParameterBound {
           if (boundType != null) {
             bound = forType(boundType);
           } else {
-            // The substitution can still change the bounds of the type variable.
+            // The substitution can instantiate type variables in the bounds of `lowerBound`.
             bound = new LazyParameterBound(lowerBound).substitute(substitution);
           }
         } else {
@@ -286,16 +320,13 @@ class LazyParameterBound extends ParameterBound {
       return false;
     }
     if (type instanceof ParameterizedType) {
-      java.lang.reflect.Type ownerType = ((ParameterizedType) type).getOwnerType();
-      if (ownerType != null && instantiatesAny(ownerType, substitution, visited)) {
-        return true;
-      }
       for (java.lang.reflect.Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
         if (instantiatesAny(argType, substitution, visited)) {
           return true;
         }
       }
-      return false;
+      ParameterizedType ownerType = getPreservedOwnerType((ParameterizedType) type);
+      return ownerType != null && instantiatesAny(ownerType, substitution, visited);
     }
     if (type instanceof GenericArrayType) {
       return instantiatesAny(
@@ -349,13 +380,12 @@ class LazyParameterBound extends ParameterBound {
       variableList.add(TypeVariable.forType(type));
     } else if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
-      // The type variables of an owner type, as in Outer<K>.Inner, occur in the converted type.
-      java.lang.reflect.Type ownerType = pt.getOwnerType();
-      if (ownerType != null) {
-        variableList.addAll(getTypeParameters(ownerType));
-      }
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
         variableList.addAll(getTypeParameters(argType));
+      }
+      ParameterizedType ownerType = getPreservedOwnerType(pt);
+      if (ownerType != null) {
+        variableList.addAll(getTypeParameters(ownerType));
       }
     } else if (type instanceof GenericArrayType) {
       variableList.addAll(getTypeParameters(((GenericArrayType) type).getGenericComponentType()));
@@ -441,12 +471,9 @@ class LazyParameterBound extends ParameterBound {
    * map to itself each type variable in this bound that it does not map. Each such type variable
    * stands for an unknown type in the result.
    *
-   * <p>Returns null if the result is still this bound, which happens if this bound is a non-generic
-   * member class of a generic class whose owner type has no type variable, as in {@code
-   * Outer<String>.Inner}, which {@link #substitute(Substitution)} leaves unchanged. Otherwise, the
-   * result is still this bound only for a kind of type that {@link #substitute(Substitution)} does
-   * not handle; then this method also fails an assertion. Comparing the unchanged bound would
-   * recurse forever.
+   * <p>Returns null if the result is still this bound, which happens only for a kind of type that
+   * {@link #substitute(Substitution)} does not handle; then this method also fails an assertion.
+   * Comparing the unchanged bound would recurse forever.
    *
    * @param substitution a type substitution
    * @return this bound with the substitution applied, or null
@@ -454,20 +481,51 @@ class LazyParameterBound extends ParameterBound {
   @Nullable ParameterBound substituteWithUnknowns(Substitution substitution) {
     Substitution completeSubstitution = substitution.extendWithIdentity(getTypeParameterList());
     ParameterBound b = this.substitute(completeSubstitution);
-    if (b.equals(this)) {
-      assert isNonGenericMemberClass(boundType)
-          : "substitution " + completeSubstitution + " does not instantiate " + this;
-      return null;
-    }
-    return b;
+    boolean unchanged = b.equals(this);
+    assert !unchanged : "substitution " + completeSubstitution + " does not instantiate " + this;
+    return unchanged ? null : b;
   }
 
-  /*package*/
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    throw new LazyBoundException();
-    // assert false : " not quite sure what to do with lazy type bound";
-    // return false;
+    ParameterBound b = substituteWithUnknowns(substitution);
+    return b != null && b.isUpperBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A type variable in this bound that the substitution does not replace stands for an unknown
+   * type, as in {@link #isUpperBound(Type, Substitution)}.
+   */
+  @Override
+  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
+    ParameterBound b = substituteWithUnknowns(substitution);
+    return b != null && b.isLowerBound(bound, substitution);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Unlike for other bounds, the substitution is also applied to this bound before {@code
+   * lowerBound} is compared with it; a type variable in this bound that the substitution does not
+   * instantiate stands for an unknown type, as in {@link #isUpperBound(Type, Substitution)}.
+   * Returns true if {@code lowerBound} is the null type, which is a lower bound of every reference
+   * type. Otherwise, returns false if the result is not a {@link ReferenceBound}.
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    if (lowerBound.isNullType(substitution)) {
+      return true;
+    }
+    ParameterBound converted = substituteWithUnknowns(substitution);
+    return converted instanceof ReferenceBound && converted.hasLowerBound(lowerBound, substitution);
   }
 
   @Override

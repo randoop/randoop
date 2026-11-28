@@ -82,6 +82,42 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public abstract ReferenceBound substitute(Substitution substitution);
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>A reference bound is within this bound if its type is, as determined by {@link
+   * #isUpperBound(Type, Substitution)}. An intersection bound is within this bound if one of its
+   * components is, since the intersection is a subtype of each of its components. A {@link
+   * LazyParameterBound} is compared after the substitution is applied to it; a type variable in it
+   * that the substitution does not instantiate stands for an unknown type. Returns false for any
+   * other kind of bound.
+   */
+  /*package*/
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
+    if (bound instanceof ReferenceBound) {
+      // An eager bound can also contain type variables, as in T[], where T is not recursive.
+      return isUpperBound(
+          ((ReferenceBound) bound).getBoundType().substitute(substitution), substitution);
+    }
+    if (bound instanceof IntersectionTypeBound) {
+      for (ParameterBound component : ((IntersectionTypeBound) bound).getBounds()) {
+        if (isUpperBound(component, substitution)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (bound instanceof LazyParameterBound) {
+      // The substitution has already been applied to the type, so do not apply it again by
+      // calling isUpperBound(ParameterBound, Substitution).
+      ParameterBound converted = ((LazyParameterBound) bound).substituteWithUnknowns(substitution);
+      return converted instanceof ReferenceBound
+          && isUpperBound(((ReferenceBound) converted).getBoundType(), substitution);
+    }
+    return false;
+  }
+
   /*package*/
   @Override
   public boolean hasCaptureVariable() {
@@ -103,90 +139,11 @@ public abstract class ReferenceBound extends ParameterBound {
     return boundType.isVariable();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is a lower bound
-   * on every one of its members, since a type is a subtype of the intersection if and only if it is
-   * a subtype of each member. A {@link LazyParameterBound} is compared after the substitution is
-   * applied to it; a type variable in it that the substitution does not instantiate stands for an
-   * unknown type. Returns false if {@code bound} is a {@link LazyParameterBound} that contains a
-   * kind of type that it cannot convert to a {@link ReferenceBound}.
-   */
   @Override
-  boolean isLowerBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (!isLowerBound(member, substitution)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    ReferenceType type = asReferenceType(bound, substitution);
-    return type != null && isLowerBound(type, substitution);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * <p>If {@code bound} is an {@link IntersectionTypeBound}, returns true if this is an upper bound
-   * on any of its members, since the intersection is a subtype of each member. A {@link
-   * LazyParameterBound} is compared after the substitution is applied to it; a type variable in it
-   * that the substitution does not instantiate stands for an unknown type. Returns false if {@code
-   * bound} is a {@link LazyParameterBound} that contains a kind of type that it cannot convert to a
-   * {@link ReferenceBound}.
-   */
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution substitution) {
-    if (bound instanceof IntersectionTypeBound) {
-      for (ParameterBound member : ((IntersectionTypeBound) bound).getBounds()) {
-        if (isUpperBound(member, substitution)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    ReferenceType type = asReferenceType(bound, substitution);
-    return type != null && isUpperBound(type, substitution);
-  }
-
-  /**
-   * Returns the type of the given bound, with the given substitution applied, if it is a {@link
-   * ReferenceBound}. If it is a {@link LazyParameterBound}, returns its type with the given
-   * substitution applied, in which a type variable that the substitution does not instantiate
-   * stands for an unknown type; a non-generic member class of a generic class, as in {@code
-   * Outer<String>.Inner}, which the substitution does not change, is converted with {@link
-   * LazyParameterBound#toReferenceBound()}. Otherwise, or if the {@link LazyParameterBound} cannot
-   * be converted to a {@link ReferenceBound}, returns null.
-   *
-   * @param bound a bound
-   * @param substitution a type substitution
-   * @return the type of {@code bound}, or null
-   */
-  private static @Nullable ReferenceType asReferenceType(
-      ParameterBound bound, Substitution substitution) {
-    if (bound instanceof LazyParameterBound) {
-      LazyParameterBound lazyBound = (LazyParameterBound) bound;
-      ParameterBound converted = lazyBound.substituteWithUnknowns(substitution);
-      if (converted == null) {
-        // The bound is a non-generic member class of a generic class, as in Outer<String>.Inner,
-        // which substitution does not change.  Convert it directly, then apply the substitution
-        // as for an eager bound.
-        ReferenceBound referenceBound = lazyBound.toReferenceBound();
-        return referenceBound == null
-            ? null
-            : referenceBound.getBoundType().substitute(substitution);
-      }
-      return converted instanceof ReferenceBound
-          ? ((ReferenceBound) converted).getBoundType()
-          : null;
-    }
-    if (bound instanceof ReferenceBound) {
-      // An eager bound can also contain type variables, as in T[], where T is not recursive.
-      return ((ReferenceBound) bound).getBoundType().substitute(substitution);
-    }
-    return null;
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    // The substitution applies to lowerBound but not to this bound.  An eager bound can contain
+    // type variables, as in T[], where T is not recursive; they stand for themselves.
+    return lowerBound.isLowerBound(boundType, substitution);
   }
 
   /**

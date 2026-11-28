@@ -119,34 +119,35 @@ public class Substitution {
 
   /**
    * Two substitutions are consistent if their type variables are disjoint or, if they both map the
-   * same type variable, they map it to the same type. This is the test for whether this
+   * same type variable, they map it to the same type. Types that are equal but contain copies of a
+   * type variable with different bounds are not the same; see {@link
+   * TypeVariable#areIdentical(ReferenceType, ReferenceType)}. This is the test for whether this
    * substitution can be extended by the other substitution using {@link #extend(Substitution)}.
-   *
-   * <p>Copies of a type variable are equal even if their bounds differ, so two substitutions that
-   * map a type variable to copies of another type variable, or to types that differ only in such
-   * copies, map it to the same type.
    *
    * @param substitution the other substitution to check for consistency with this substitution
    * @return true if the substitutions are consistent, false otherwise
    */
-  @SuppressWarnings("nullness:dereference.of.nullable") // TODO
   public boolean isConsistentWith(Substitution substitution) {
     for (Map.Entry<TypeVariable, ReferenceType> entry : substitution.map.entrySet()) {
-      TypeVariable key = entry.getKey();
-      if (this.map.containsKey(key) && !this.get(key).equals(entry.getValue())) {
+      ReferenceType value = this.get(entry.getKey());
+      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
         return false;
       }
     }
     for (Map.Entry<Type, ReferenceType> entry : substitution.rawMap.entrySet()) {
-      Type key = entry.getKey();
-      if (this.rawMap.containsKey(key) && !this.get(key).equals(entry.getValue())) {
+      ReferenceType value = this.get(entry.getKey());
+      if (value != null && !TypeVariable.areIdentical(value, entry.getValue())) {
         return false;
       }
     }
     return true;
   }
 
-  /** Throws an exception if its arguments are different non-null values. */
+  /**
+   * Throws an exception if its arguments are different non-null values. Values that are equal but
+   * contain copies of a type variable with different bounds are different; see {@link
+   * TypeVariable#areIdentical(ReferenceType, ReferenceType)}.
+   */
   private static BiFunction<ReferenceType, ReferenceType, ReferenceType> requireSameEntry =
       (v1, v2) -> {
         if (v1 == null) {
@@ -155,7 +156,7 @@ public class Substitution {
         if (v2 == null) {
           return v1;
         }
-        if (v1.equals(v2)) {
+        if (TypeVariable.areIdentical(v1, v2)) {
           return v1;
         }
         throw new IllegalArgumentException(
@@ -177,11 +178,9 @@ public class Substitution {
 
   /**
    * Creates a new substitution that contains the entries of two substitutions. If both
-   * substitutions contain the same type variable, they must map to the same type.
-   *
-   * <p>Copies of a type variable are equal even if their bounds differ, so both substitutions can
-   * map a type variable to copies of another type variable, or to types that differ only in such
-   * copies. Then the result maps it to the type that this substitution maps it to.
+   * substitutions contain the same type variable, they must map to the same type. Types that are
+   * equal but contain copies of a type variable with different bounds are not the same; see {@link
+   * #isConsistentWith(Substitution)}.
    *
    * @param other the substitution to add to this substitution
    * @return a new substitution that is this substitution extended by the given substitution
