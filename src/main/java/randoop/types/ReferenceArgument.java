@@ -91,11 +91,19 @@ public final class ReferenceArgument extends TypeArgument {
    * <p>A non-wildcard type argument {@code T} contains only {@code T} itself. In particular, it
    * does not contain a wildcard such as {@code ? extends T} or {@code ? super T}; rather, those
    * wildcards contain {@code T}.
+   *
+   * <p>The types are compared including the enclosing types of member classes, which {@link
+   * InstantiatedType#equals(Object)} ignores when they are generic forms: {@code
+   * Outer<Integer>.Inner<Long>} does not contain {@code Outer<Number>.Inner<Long>}. Different
+   * representations of the same enclosing type are the same type: in {@code Outer<T>.Inner<Long>},
+   * where {@code T} is the type parameter of {@code Outer}, the enclosing type can be the {@link
+   * GenericClassType} for {@code Outer} or its identity instantiation.
    */
   @Override
   public boolean contains(TypeArgument otherArgument) {
+    // Every type variable stands for itself:  the empty substitution makes none of them unknown.
     return otherArgument instanceof ReferenceArgument
-        && referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
+        && Subtyping.contains(this, otherArgument, new Substitution());
   }
 
   /**

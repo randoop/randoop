@@ -99,22 +99,69 @@ public class WildcardArgument extends TypeArgument {
    *       {@code B}
    *   <li>{@code ? super B} contains {@code R} if {@code B} is a subtype of {@code R}
    * </ul>
+   *
+   * <p>For a wildcard argument, considers the cases:
+   *
+   * <ul>
+   *   <li>{@code ? extends B} contains {@code ? extends S} if {@code S} is a subtype of {@code B}
+   *   <li>{@code ?} (that is, {@code ? extends Object}) contains every wildcard, including {@code ?
+   *       super S}
+   *   <li>{@code ? super B} contains {@code ? super S} if {@code B} is a subtype of {@code S}
+   *   <li>{@code ? super B} does not contain {@code ? extends S}, not even {@code ?}
+   * </ul>
+   *
+   * <p>A bound that is a {@link LazyParameterBound}, such as {@code Comparable<T>} for {@code T
+   * extends Comparable<T>}, is converted to the equivalent {@link ReferenceBound} before it is
+   * compared.
    */
   @Override
   public boolean contains(TypeArgument argument) {
-    if (argument.isWildcard()) {
-      return argumentType.contains(((WildcardArgument) argument).argumentType);
+    if (argument.isWildcard() && argumentType.equals(((WildcardArgument) argument).argumentType)) {
+      return true;
     }
-    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
     ReferenceType boundType = ReferenceBound.asReferenceType(argumentType.getTypeBound());
     if (boundType == null) {
       return false;
     }
-    if (argumentType.hasUpperBound()) {
-      return boundType.isObject() || otherType.isSubtypeOfOrEqualTo(boundType);
-    } else {
-      return boundType.isSubtypeOfOrEqualTo(otherType);
+    if (argument.isWildcard()) {
+      // `?`, which is `? extends Object`, contains every wildcard, including every `? super S`.
+      if (argumentType.hasUpperBound() && boundType.isObject()) {
+        return true;
+      }
+      WildcardArgument otherWildcard = (WildcardArgument) argument;
+      ReferenceType otherBoundType = ReferenceBound.asReferenceType(otherWildcard.getTypeBound());
+      if (otherBoundType == null) {
+        return false;
+      }
+      if (argumentType.hasUpperBound()) {
+        return otherWildcard.hasUpperBound() && isSubtypeOfOrEqualTo(otherBoundType, boundType);
+      } else {
+        return !otherWildcard.hasUpperBound() && isSubtypeOfOrEqualTo(boundType, otherBoundType);
+      }
     }
+    ReferenceType otherType = ((ReferenceArgument) argument).getReferenceType();
+    // Subtyping compares the type arguments of enclosing types by containment, so that, for
+    // example, `? extends Outer<?>.Plain` contains Outer<String>.Plain.
+    if (argumentType.hasUpperBound()) {
+      return boundType.isObject() || isSubtypeOfOrEqualTo(otherType, boundType);
+    } else {
+      return isSubtypeOfOrEqualTo(boundType, otherType);
+    }
+  }
+
+  /**
+   * Returns true if {@code type} is a subtype of, or equal to, {@code otherType}. Besides {@link
+   * ReferenceType#isSubtypeOfOrEqualTo(Type)}, uses {@link Subtyping}, which compares the type
+   * arguments of enclosing types by containment: {@code Outer<String>.Plain} is a subtype of {@code
+   * Outer<?>.Plain}.
+   *
+   * @param type a type
+   * @param otherType a type
+   * @return true if {@code type} is a subtype of, or equal to, {@code otherType}
+   */
+  private static boolean isSubtypeOfOrEqualTo(ReferenceType type, ReferenceType otherType) {
+    return type.isSubtypeOfOrEqualTo(otherType)
+        || Subtyping.isSubtypeOrEqual(type, otherType, new Substitution());
   }
 
   /**

@@ -1,5 +1,6 @@
 package randoop.types;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,6 +25,13 @@ public class MemberClassOfParameterizedTypeTest {
 
     /** Another non-generic member class of a generic class. */
     class Other {}
+
+    /** A non-generic member class that extends another member class of the same generic class. */
+    class SubInner extends Inner {}
+
+    /** A non-generic member class whose interface uses the type parameter of the generic class. */
+    @SuppressWarnings("ComparableType")
+    abstract class ComparableInner implements Comparable<T> {}
   }
 
   /**
@@ -42,12 +50,35 @@ public class MemberClassOfParameterizedTypeTest {
     }
   }
 
+  /** A subclass of the raw type {@link Sub}, whose supertypes are erased. */
+  @SuppressWarnings("rawtypes")
+  static class ViaRaw extends Sub {
+    /**
+     * Creates a ViaRaw.
+     *
+     * @param outer an enclosing instance for the superclass
+     */
+    ViaRaw(Outer<String> outer) {
+      super(outer);
+    }
+  }
+
   /** Methods whose return types are used in the tests. */
   @SuppressWarnings("unused")
   abstract static class TypeHolder {
     abstract Outer<String>.Inner innerType();
 
     abstract Outer<String>.Other otherType();
+
+    abstract Outer<Integer>.Inner integerInnerType();
+
+    abstract Outer<String>.SubInner subInnerType();
+
+    abstract Outer<String>.ComparableInner comparableInnerType();
+
+    abstract Comparable<String> stringComparable();
+
+    abstract Comparable<Integer> integerComparable();
 
     abstract Sub<Integer> subType();
 
@@ -56,6 +87,16 @@ public class MemberClassOfParameterizedTypeTest {
     abstract List<? extends Outer<String>.Inner> innerUpperWildcardList();
 
     abstract List<? super Outer<String>.Inner> innerLowerWildcardList();
+
+    abstract Outer<?>.Inner wildcardInnerType();
+
+    abstract List<? extends Outer<?>.Inner> wildcardInnerUpperWildcardList();
+
+    abstract Outer<?>.ComparableInner wildcardComparableInnerType();
+
+    abstract Outer<? extends CharSequence>.Inner charSequenceInnerType();
+
+    abstract Outer<Long>.Inner longInnerType();
   }
 
   /**
@@ -71,9 +112,24 @@ public class MemberClassOfParameterizedTypeTest {
   }
 
   /**
+   * Tests that the supertypes of a member class of a parameterized type, such as {@code
+   * Outer<String>.SubInner}, have the type arguments of its enclosing type.
+   */
+  @Test
+  public void testSupertypesOfMemberClassOfParameterizedType() throws NoSuchMethodException {
+    ReferenceType subInner = returnType("subInnerType");
+    assertTrue(subInner.isSubtypeOfOrEqualTo(returnType("innerType")));
+    assertFalse(subInner.isSubtypeOfOrEqualTo(returnType("integerInnerType")));
+
+    ReferenceType comparableInner = returnType("comparableInnerType");
+    assertTrue(comparableInner.isSubtypeOfOrEqualTo(returnType("stringComparable")));
+    assertFalse(comparableInner.isSubtypeOfOrEqualTo(returnType("integerComparable")));
+  }
+
+  /**
    * Returns the type {@code Outer<String>.C} for the given member class {@code C} of {@link Outer}.
-   * The type is constructed by substitution, because {@link Type#forType} discards the type
-   * arguments of the enclosing type of a non-generic member class, yielding {@code Outer<T>.C}.
+   * The type is constructed by substitution of the generic member class {@code Outer<T>.C}, rather
+   * than by {@link Type#forType}.
    *
    * @param memberClass a non-generic member class of {@link Outer}
    * @return the member class, with {@code Outer<String>} as its enclosing type
@@ -126,6 +182,55 @@ public class MemberClassOfParameterizedTypeTest {
     assertTrue(lower.contains(inner));
     assertFalse(lower.contains(sub));
     assertFalse(lower.contains(other));
+  }
+
+  @Test
+  public void testSubclassOfMemberClassWithWildcardEnclosingType() throws NoSuchMethodException {
+    ReferenceType inner = returnType("innerType");
+    ReferenceType sub = returnType("subType");
+    ReferenceType wildcardInner = returnType("wildcardInnerType");
+    ReferenceType charSequenceInner = returnType("charSequenceInnerType");
+    ReferenceType longInner = returnType("longInnerType");
+
+    assertTrue(inner.isSubtypeOfOrEqualTo(wildcardInner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(inner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(wildcardInner));
+    assertTrue(sub.isSubtypeOfOrEqualTo(charSequenceInner));
+    assertFalse(sub.isSubtypeOfOrEqualTo(longInner));
+    assertFalse(inner.isSubtypeOfOrEqualTo(longInner));
+
+    // Raw Sub is assignable to Outer<?>.Inner only by unchecked conversion, not by subtyping.
+    ReferenceType rawSub = NonParameterizedType.forClass(Sub.class);
+    assertTrue(rawSub.isRawtype());
+    assertFalse(rawSub.isSubtypeOfOrEqualTo(wildcardInner));
+
+    // ViaRaw is not raw, but its superclass is raw Sub, whose superclass is erased to Outer.Inner.
+    ReferenceType viaRaw = ClassOrInterfaceType.forClass(ViaRaw.class);
+    assertFalse(viaRaw.isRawtype());
+    assertFalse(viaRaw.isSubtypeOfOrEqualTo(wildcardInner));
+    assertFalse(viaRaw.isSubtypeOfOrEqualTo(inner));
+
+    // `? extends Outer<?>.Inner` contains Sub<Integer>, but not raw Sub or ViaRaw.
+    TypeArgument upper = typeArgument("wildcardInnerUpperWildcardList");
+    assertTrue(upper.contains(TypeArgument.forType(sub)));
+    assertFalse(upper.contains(TypeArgument.forType(rawSub)));
+    assertFalse(upper.contains(TypeArgument.forType(viaRaw)));
+  }
+
+  /**
+   * The matching supertype of a member class whose enclosing type has a wildcard has the same
+   * capture variables as the supertypes that {@link ClassOrInterfaceType#getInterfaces()} returns.
+   */
+  @Test
+  public void testMatchingSupertypeReusesEnclosingCapture() throws NoSuchMethodException {
+    ClassOrInterfaceType comparableInner =
+        (ClassOrInterfaceType) returnType("wildcardComparableInnerType");
+    GenericClassType comparable = GenericClassType.forClass(Comparable.class);
+    ClassOrInterfaceType fromInterfaces = comparableInner.getInterfaces().get(0);
+    InstantiatedType fromMatching = comparableInner.getMatchingSupertype(comparable);
+    assertTrue(fromInterfaces.hasCaptureVariable());
+    assertEquals(fromInterfaces, fromMatching);
+    assertEquals(fromMatching, comparableInner.getMatchingSupertype(comparable));
   }
 
   @Test

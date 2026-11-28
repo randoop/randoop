@@ -184,7 +184,11 @@ public abstract class ReferenceType extends Type {
    */
   public static @Nullable Substitution getInstantiatingSubstitutionforTypeVariable(
       ReferenceType instantiatedType, ReferenceType goalType) {
-    if (instantiatedType.equals(goalType)) {
+    // The types must be identical, including the enclosing types of member classes at any depth,
+    // as in List<Outer<X>.Inner<Integer>>.  Otherwise the substitution for a generic goal type must
+    // map X, which argument matching does.  Copies of a type variable with different bounds are
+    // equal, but not identical.
+    if (Subtyping.isIdentical(instantiatedType, goalType)) {
       return new Substitution();
     }
     if (goalType.isVariable()) {

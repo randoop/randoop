@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -46,6 +47,16 @@ class IntersectionTypeBound extends ParameterBound {
    * @return the member bounds of this intersection bound
    */
   List<ParameterBound> getBounds() {
+    return Collections.unmodifiableList(boundList);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the member bounds of this intersection bound
+   */
+  @Override
+  public List<ParameterBound> getMembers() {
     return boundList;
   }
 
@@ -200,5 +211,35 @@ class IntersectionTypeBound extends ParameterBound {
       }
     }
     return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given bound is a lower bound on all of the member bounds of this object
+   */
+  @Override
+  boolean hasLowerBound(ParameterBound lowerBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (!b.hasLowerBound(lowerBound, substitution)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the given type is an upper bound on some member bound of this object
+   */
+  @Override
+  boolean hasUpperBound(ReferenceType upperBound, Substitution substitution) {
+    for (ParameterBound b : boundList) {
+      if (b.hasUpperBound(upperBound, substitution)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

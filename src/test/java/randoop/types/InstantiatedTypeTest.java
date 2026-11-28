@@ -25,6 +25,10 @@ public class InstantiatedTypeTest {
      */
     class Inner<U> {}
 
+    /** A field whose type has the owner type {@code Outer<T>}, the generic form of Outer. */
+    @SuppressWarnings("unused")
+    Inner<String> innerOfString;
+
     /**
      * Another generic member class, unrelated to {@link Inner}.
      *
@@ -164,16 +168,16 @@ public class InstantiatedTypeTest {
    * @return the type of the field
    * @throws NoSuchFieldException if there is no such field
    */
-  private static ClassOrInterfaceType fieldType(String fieldName) throws NoSuchFieldException {
+  private static ClassOrInterfaceType ownFieldType(String fieldName) throws NoSuchFieldException {
     return ClassOrInterfaceType.forType(
         InstantiatedTypeTest.class.getDeclaredField(fieldName).getGenericType());
   }
 
   @Test
   public void ownerOfGenericIntermediateOwnerTest() throws NoSuchFieldException {
-    ClassOrInterfaceType stringLeaf = fieldType("stringOuterLeaf");
-    ClassOrInterfaceType stringLeaf2 = fieldType("stringOuterLeaf2");
-    ClassOrInterfaceType longLeaf = fieldType("longOuterLeaf");
+    ClassOrInterfaceType stringLeaf = ownFieldType("stringOuterLeaf");
+    ClassOrInterfaceType stringLeaf2 = ownFieldType("stringOuterLeaf2");
+    ClassOrInterfaceType longLeaf = ownFieldType("longOuterLeaf");
     assertEquals(stringLeaf, stringLeaf2);
     assertEquals(stringLeaf.hashCode(), stringLeaf2.hashCode());
     assertNotEquals(stringLeaf, longLeaf);
@@ -210,8 +214,98 @@ public class InstantiatedTypeTest {
     assertTrue(innerOfStringOuter.isInstantiationOf(innerOfGenericOuter));
   }
 
+  /** A non-generic class with a generic member class. */
+  static class NonGenericOuter {
+    /**
+     * A generic member class of a non-generic class.
+     *
+     * @param <E> the type parameter
+     */
+    class Member<E> {}
+  }
+
+  /** Fields and methods whose types are used in the tests. */
+  @SuppressWarnings("unused")
+  abstract static class TypeHolder {
+    /** A member class whose owner type, as written, is a {@code Class}. */
+    NonGenericOuter.Member<String> memberOfNonGenericOuter;
+
+    /** A map whose keys and values have different types. */
+    java.util.Map<String, Integer> stringToInteger;
+
+    /** A map whose keys and values have the same type. */
+    java.util.Map<String, String> stringToString;
+
+    /**
+     * A method whose parameter is a map whose keys and values have the same type.
+     *
+     * @param <K> the type of the keys and values
+     * @param map a map
+     */
+    abstract <K> void sameKeyAndValue(java.util.Map<K, K> map);
+  }
+
+  /**
+   * Returns the Randoop type of the given field of {@link TypeHolder}.
+   *
+   * @param fieldName the name of a field of {@link TypeHolder}
+   * @return the type of the field
+   */
+  private static Type fieldType(String fieldName) {
+    try {
+      return Type.forType(TypeHolder.class.getDeclaredField(fieldName).getGenericType());
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+  }
+
+  @Test
+  public void equalsReflectionAndInstantiationOfMemberOfNonGenericClassTest() {
+    Type fromReflection = fieldType("memberOfNonGenericOuter");
+    InstantiatedType fromInstantiation =
+        ((GenericClassType) ClassOrInterfaceType.forClass(NonGenericOuter.Member.class))
+            .instantiate(JavaTypes.STRING_TYPE);
+    assertEquals(fromReflection, fromInstantiation);
+    assertEquals(fromInstantiation, fromReflection);
+    assertEquals(fromReflection.hashCode(), fromInstantiation.hashCode());
+  }
+
+  @Test
+  public void equalsReflectionAndInstantiationWithGenericFormOwnerTest() {
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable t = inner.getTypeParameters().get(0);
+    // Outer<T>.Inner<String>, where T is the type parameter of Outer.
+    InstantiatedType fromInstantiation = inner.instantiate(t, JavaTypes.STRING_TYPE);
+    // The owner type of this reflection type is Outer<T>, the generic form of Outer.
+    java.lang.reflect.Type reflectionType;
+    try {
+      reflectionType = Outer.class.getDeclaredField("innerOfString").getGenericType();
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+    Type fromReflection = Type.forType(reflectionType);
+    assertEquals(fromReflection, fromInstantiation);
+    assertEquals(fromInstantiation, fromReflection);
+    assertEquals(fromReflection.hashCode(), fromInstantiation.hashCode());
+  }
+
+  @Test
+  public void getInstantiatingSubstitutionConflictingArgumentsTest() throws NoSuchMethodException {
+    ReferenceType goalType =
+        (ReferenceType)
+            Type.forType(
+                TypeHolder.class.getDeclaredMethod("sameKeyAndValue", java.util.Map.class)
+                    .getGenericParameterTypes()[0]);
+    InstantiatedType stringToInteger = (InstantiatedType) fieldType("stringToInteger");
+    InstantiatedType stringToString = (InstantiatedType) fieldType("stringToString");
+    // Map<String, Integer> would map K to both String and Integer.
+    assertNull(stringToInteger.getInstantiatingSubstitution(goalType));
+    Substitution substitution = stringToString.getInstantiatingSubstitution(goalType);
+    assertEquals(JavaTypes.STRING_TYPE, substitution.get(goalType.getTypeParameters().get(0)));
+  }
+
   /** A field whose type is a reflected member type. */
-  @SuppressWarnings("UnusedVariable")
+  @SuppressWarnings({"UnusedVariable", "PMD.UnusedPrivateField"})
   private Outer<String>.Inner<Integer> reflectedInner;
 
   @Test
@@ -248,5 +342,56 @@ public class InstantiatedTypeTest {
     InstantiatedType innerOfObjectOuterGeneric =
         inner.substitute(new Substitution(outerParameter, JavaTypes.OBJECT_TYPE));
     assertNull(innerOfStringOuter.getInstantiatingSubstitution(innerOfObjectOuterGeneric));
+  }
+
+  /**
+   * A type variable that occurs in both the enclosing type and a type argument must be instantiated
+   * by the same type in both.
+   */
+  @Test
+  public void isInstantiationOfRequiresConsistentEnclosingTypeTest() {
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    List<TypeVariable> innerParameters = inner.getTypeParameters();
+    TypeVariable outerParameter = innerParameters.get(0);
+    // Outer<T>.Inner<T>
+    InstantiatedType sameArguments =
+        inner.substitute(new Substitution(innerParameters.get(1), outerParameter));
+
+    InstantiatedType stringInteger = inner.instantiate(JavaTypes.STRING_TYPE, integerType);
+    InstantiatedType stringString = inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE);
+    assertFalse(stringInteger.isInstantiationOf(sameArguments));
+    assertNull(stringInteger.getInstantiatingSubstitution(sameArguments));
+    assertTrue(stringString.isInstantiationOf(sameArguments));
+  }
+
+  /**
+   * A type argument contains the same type, even if the enclosing types are represented
+   * differently, but not a type with a different enclosing type.
+   */
+  @Test
+  public void referenceArgumentContainsEquivalentEnclosingTypeTest() throws NoSuchFieldException {
+    GenericClassType inner = (GenericClassType) ClassOrInterfaceType.forClass(Outer.Inner.class);
+    TypeVariable t = inner.getTypeParameters().get(0);
+    // Outer<T>.Inner<String>, whose enclosing type is the GenericClassType for Outer.
+    java.lang.reflect.Type reflectionType =
+        Outer.class.getDeclaredField("innerOfString").getGenericType();
+    ReferenceType fromReflection = (ReferenceType) Type.forType(reflectionType);
+    // Outer<T>.Inner<String>, whose enclosing type is an InstantiatedType.
+    InstantiatedType fromInstantiation = inner.instantiate(t, JavaTypes.STRING_TYPE);
+    TypeArgument reflectionArgument = TypeArgument.forType(fromReflection);
+    TypeArgument instantiationArgument = TypeArgument.forType(fromInstantiation);
+    assertTrue(reflectionArgument.contains(instantiationArgument));
+    assertTrue(instantiationArgument.contains(reflectionArgument));
+
+    ReferenceType integerType = ReferenceType.forClass(Integer.class);
+    TypeArgument stringOuter =
+        TypeArgument.forType(inner.instantiate(JavaTypes.STRING_TYPE, JavaTypes.STRING_TYPE));
+    TypeArgument integerOuter =
+        TypeArgument.forType(inner.instantiate(integerType, JavaTypes.STRING_TYPE));
+    assertTrue(stringOuter.contains(stringOuter));
+    assertFalse(stringOuter.contains(integerOuter));
+    assertFalse(integerOuter.contains(stringOuter));
+    assertFalse(stringOuter.contains(instantiationArgument));
   }
 }

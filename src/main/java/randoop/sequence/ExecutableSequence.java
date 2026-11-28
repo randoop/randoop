@@ -522,7 +522,9 @@ public class ExecutableSequence {
         } else {
           // Object is not within the bound of some type parameter (possibly one of an enclosing
           // class, as in Outer<T extends Number>.Inner<U>), so use the raw type instead.
-          elemType = g.getRawtype();
+          // GenericClassType.getRawtype() keeps the generic enclosing type, such as Outer<T>;
+          // NonParameterizedType.getRawtype() erases the enclosing types too, giving Outer.Inner.
+          elemType = g.getRawtype().getRawtype();
         }
       } else if (elemType.isGeneric()) {
         // Special case: a member class can be non-parameterized itself but still generic via

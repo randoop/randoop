@@ -366,7 +366,7 @@ public class CaptureConversionTest {
     InstantiatedType memberType =
         (InstantiatedType)
             Type.forType(CaptureConversionTest.class.getField("memberField").getGenericType());
-    // Type.forType does not record the type arguments of an enclosing type, so set it directly.
+    // Replace the enclosing type, Outer<String>, by one that has a wildcard type argument.
     memberType.enclosingType =
         (ClassOrInterfaceType)
             Type.forType(
@@ -398,6 +398,124 @@ public class CaptureConversionTest {
     assertSame(wildcardOuter, memberType.enclosingType);
     assertTrue(((InstantiatedType) capturedType.enclosingType).hasCaptureVariable());
     assertFalse(((InstantiatedType) memberType.enclosingType).hasCaptureVariable());
+  }
+
+  /**
+   * A generic class with a generic member class whose type parameter is bounded by that of the
+   * enclosing class.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class BoundedOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U extends T> {}
+  }
+
+  /** A field whose type has a wildcard only in its enclosing type. */
+  public Outer<?>.Inner<String> wildcardOnlyInEnclosingTypeField;
+
+  /** A field whose type has wildcards in its enclosing type and its own type arguments. */
+  public BoundedOuter<? extends Number>.Inner<?> wildcardsInBothField;
+
+  /**
+   * Tests capture conversion of a member class whose generic class includes the type parameters of
+   * the enclosing class, when the enclosing type has a wildcard.
+   */
+  @Test
+  public void wildcardOnlyInEnclosingTypeTest() throws NoSuchFieldException {
+    InstantiatedType memberType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class
+                    .getField("wildcardOnlyInEnclosingTypeField")
+                    .getGenericType());
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    assertEquals(memberType.getTypeArguments(), capturedType.getTypeArguments());
+
+    // Ordinary capture conversion still works.
+    InstantiatedType wildcardOuter =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardOuterField").getGenericType());
+    assertTrue(wildcardOuter.applyCaptureConversion().hasCaptureVariable());
+  }
+
+  /**
+   * A generic class with a generic member class, used by no other test, so that its types are first
+   * created by {@link ParameterizedType#forType(java.lang.reflect.Type)} rather than by {@link
+   * ClassOrInterfaceType#forClass(Class)}.
+   *
+   * @param <T> the type parameter of the outer class
+   */
+  public static class UnprimedOuter<T> {
+    /**
+     * A generic member class.
+     *
+     * @param <U> the type parameter of the member class
+     */
+    public class Inner<U> {}
+  }
+
+  /** A field whose type is a generic member class with a wildcard in its enclosing type. */
+  public UnprimedOuter<?>.Inner<String> unprimedMemberField;
+
+  /**
+   * Tests that the generic class of a member class has the type parameters of the enclosing class
+   * when it is first created by {@link ParameterizedType#forType(java.lang.reflect.Type)}, as when
+   * it is first created by {@link ClassOrInterfaceType#forClass(Class)}.
+   */
+  @Test
+  public void memberGenericClassTypeParametersIndependentOfCreationOrder()
+      throws NoSuchFieldException {
+    InstantiatedType memberType =
+        (InstantiatedType)
+            ParameterizedType.forType(
+                CaptureConversionTest.class.getField("unprimedMemberField").getGenericType());
+    List<TypeVariable> parameters = memberType.getGenericClassType().getTypeParameters();
+    assertEquals(
+        Arrays.asList(
+            TypeVariable.forType(UnprimedOuter.class.getTypeParameters()[0]),
+            TypeVariable.forType(UnprimedOuter.Inner.class.getTypeParameters()[0])),
+        parameters);
+    assertEquals(
+        parameters,
+        ((GenericClassType) ClassOrInterfaceType.forClass(UnprimedOuter.Inner.class))
+            .getTypeParameters());
+
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    assertEquals(memberType.getTypeArguments(), capturedType.getTypeArguments());
+  }
+
+  /**
+   * Tests that the bound of a capture variable of a member class mentions the capture variable of
+   * the enclosing type, when the bound of the type parameter mentions a type parameter of the
+   * enclosing class.
+   */
+  @Test
+  public void wildcardsInEnclosingAndMemberTypeTest() throws NoSuchFieldException {
+    InstantiatedType memberType =
+        (InstantiatedType)
+            Type.forType(
+                CaptureConversionTest.class.getField("wildcardsInBothField").getGenericType());
+    InstantiatedType capturedType = memberType.applyCaptureConversion();
+    assertFalse(capturedType.hasWildcardArgument());
+    InstantiatedType capturedEnclosingType = (InstantiatedType) capturedType.enclosingType;
+    TypeVariable enclosingCapture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedEnclosingType.getTypeArguments().get(0))
+                .getReferenceType();
+    TypeVariable memberCapture =
+        (TypeVariable)
+            ((ReferenceArgument) capturedType.getTypeArguments().get(0)).getReferenceType();
+    // The bound of U is T, which is the capture variable of the enclosing type.
+    assertSame(
+        enclosingCapture, ((ReferenceBound) memberCapture.getUpperTypeBound()).getBoundType());
   }
 
   /**
@@ -458,5 +576,33 @@ public class CaptureConversionTest {
     TypeTuple inputTypes = op.getInputTypes();
     assertEquals(inputTypes.size(), 2);
     return (InstantiatedType) inputTypes.get(1);
+  }
+
+  /**
+   * A class whose second type parameter is bounded by the first.
+   *
+   * @param <B> a type parameter with a self-referential bound
+   * @param <A> a type parameter bounded by {@code B}
+   */
+  @SuppressWarnings("UnusedVariable") // the field is read reflectively
+  static class DependentBound<B extends Comparable<B>, A extends B> {
+    /** A field whose type has a bounded wildcard for B and an unbounded one for A. */
+    DependentBound<? extends Number, ?> field;
+  }
+
+  @Test
+  public void testCaptureOfDependentBoundKeepsWildcardBound() throws NoSuchFieldException {
+    InstantiatedType captured =
+        ((InstantiatedType)
+                ClassOrInterfaceType.forType(
+                    DependentBound.class.getDeclaredField("field").getGenericType()))
+            .applyCaptureConversion();
+    TypeVariable captureB =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(0)).getReferenceType();
+    TypeVariable captureA =
+        (TypeVariable) ((ReferenceArgument) captured.getTypeArguments().get(1)).getReferenceType();
+    // The capture of B is bounded by Number, so String can instantiate neither capture.
+    assertFalse(captureB.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
+    assertFalse(captureA.canBeInstantiatedBy(JavaTypes.STRING_TYPE));
   }
 }
