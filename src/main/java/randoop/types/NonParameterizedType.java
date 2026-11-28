@@ -123,7 +123,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of direct interfaces for this class.
+   * Returns the list of direct interfaces for this class. For a member class, such as {@code
+   * Outer<Integer>.Inner}, the interfaces are instantiated by the type arguments of the enclosing
+   * types.
    *
    * @return the list of direct interfaces for this class or interface type
    */
@@ -171,7 +173,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeType.getSuperclass();
       return superclass == null ? null : forClass(superclass);

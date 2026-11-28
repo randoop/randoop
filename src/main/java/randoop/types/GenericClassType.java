@@ -148,7 +148,7 @@ public class GenericClassType extends ParameterizedType {
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
-  public ClassOrInterfaceType getSuperclass() {
+  public @Nullable ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
     return superclass == null ? null : ClassOrInterfaceType.forClass(superclass);
   }
@@ -189,16 +189,6 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeVariable> getTypeParameters() {
     return CollectionsPlume.concatenate(super.getTypeParameters(), directTypeParameters());
-  }
-
-  /**
-   * Returns the type parameters that this generic class declares, excluding those of its enclosing
-   * classes. They correspond to the type arguments of an instantiation of this class.
-   *
-   * @return the type parameters that this generic class declares
-   */
-  /*package*/ List<TypeVariable> getDeclaredTypeParameters() {
-    return directTypeParameters();
   }
 
   /**
