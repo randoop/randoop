@@ -180,6 +180,9 @@ class WildcardType extends ParameterType {
    *
    * A {@code ? super T} wildcard contains no upper-bounded wildcard, including {@code ?}.
    *
+   * <p>A {@link LazyParameterBound}, which cannot be compared directly, is first converted to the
+   * equivalent {@link ReferenceBound}.
+   *
    * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
